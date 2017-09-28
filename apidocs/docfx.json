@@ -11,7 +11,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net"
+      "dest": "obj/docfx/api/Lucene.Net",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -23,7 +26,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Queries"
+      "dest": "obj/docfx/api/Lucene.Net.Queries",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -35,7 +41,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Facet"
+      "dest": "obj/docfx/api/Lucene.Net.Facet",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -47,7 +56,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Classification"
+      "dest": "obj/docfx/api/Lucene.Net.Classification",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -59,7 +71,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Expressions"
+      "dest": "obj/docfx/api/Lucene.Net.Expressions",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -71,7 +86,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Codecs"
+      "dest": "obj/docfx/api/Lucene.Net.Codecs",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -83,7 +101,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Join"
+      "dest": "obj/docfx/api/Lucene.Net.Join",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -93,9 +114,12 @@
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
           "src": "../src"
-        }
+      }
       ],
-      "dest": "api/Lucene.Net.Grouping"
+      "dest": "obj/docfx/api/Lucene.Net.Grouping",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -111,7 +135,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Analysis"
+      "dest": "obj/docfx/api/Lucene.Net.Analysis",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -123,7 +150,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.QueryParser"
+      "dest": "obj/docfx/api/Lucene.Net.QueryParser",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -135,7 +165,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Suggest"
+      "dest": "obj/docfx/api/Lucene.Net.Suggest",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -147,7 +180,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Memory"
+      "dest": "obj/docfx/api/Lucene.Net.Memory",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },    
     {
       "src": [
@@ -159,7 +195,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Spatial"
+      "dest": "obj/docfx/api/Lucene.Net.Spatial",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -171,7 +210,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Highlighter"
+      "dest": "obj/docfx/api/Lucene.Net.Highlighter",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -183,7 +225,10 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Replicator"
+      "dest": "obj/docfx/api/Lucene.Net.Replicator",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -195,7 +240,10 @@
           "src": "../src/dotnet"
         }
       ],
-      "dest": "api/Lucene.Net.ICU"
+      "dest": "obj/docfx/api/Lucene.Net.ICU",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     },
     {
       "src": [
@@ -207,13 +255,17 @@
           "src": "../src"
         }
       ],
-      "dest": "api/Lucene.Net.Demo"
+      "dest": "obj/docfx/api/Lucene.Net.Demo",
+      "properties": {
+          "TargetFramework": "netstandard1.5"
+      }
     }
   ],
   "build": {
     "content": [
       {
-        "files": ["api/**.yml", "api/index.md"] 
+        "files": ["api/**.yml","api/**.md","obj/docfx/api/**.yml"],
+        "dest": "api"
       },
       {
         "files": ["**.md", "**.yml"],
@@ -225,14 +277,7 @@
         "src": "../src"
       },
       {
-        "files": [          
-          //"docs/**.md",
-          //"docs/**/toc.yml",
-          //"wiki/**.md",
-          //"wiki/**/toc.yml",
-          "toc.yml",
-          "*.md"
-        ]
+        "files": ["toc.yml", "*.md"]
       }
     ],
     "resource": [

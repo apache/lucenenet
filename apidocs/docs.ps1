@@ -78,9 +78,9 @@ if (-not (test-path $vswhere))
 if ($Clean -eq 1) {
 	Write-Host "Cleaning..."
 	Remove-Item (Join-Path -Path $ApiDocsFolder "_site\*") -recurse -force -ErrorAction SilentlyContinue
+	Remove-Item (Join-Path -Path $ApiDocsFolder "_site") -force -ErrorAction SilentlyContinue
 	Remove-Item (Join-Path -Path $ApiDocsFolder "obj\*") -recurse -force -ErrorAction SilentlyContinue
 	Remove-Item (Join-Path -Path $ApiDocsFolder "obj") -force -ErrorAction SilentlyContinue
-	Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -exclude "*.md","*.yml" -recurse -force -ErrorAction SilentlyContinue
 }
 
 # Build our custom docfx tools
