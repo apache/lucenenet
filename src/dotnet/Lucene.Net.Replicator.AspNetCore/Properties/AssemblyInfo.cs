@@ -30,7 +30,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDefaultAlias("Lucene.Net.Replicator.AspNetCore")]
 [assembly: AssemblyCulture("")]
 
-[assembly: CLSCompliant(true)]
+// LUCENENET: Not marking CLS Compliant because Microsoft.AspNetCore.Http.Abstractions is not CLS compliant
+// See: https://github.com/aspnet/HttpAbstractions/issues/938
+//[assembly: CLSCompliant(true)]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
