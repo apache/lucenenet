@@ -28,8 +28,8 @@ namespace Lucene.Net.Facet.Taxonomy
     /// to aggregate int values per facet label at search time.
     /// <para/>
     /// NOTE: This was IntAssociationFacetField in Lucene
-    /// 
-    ///  @lucene.experimental 
+    /// <para/>
+    /// @lucene.experimental 
     /// </summary>
     public class Int32AssociationFacetField : AssociationFacetField
     {
@@ -72,7 +72,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public override string ToString()
         {
-            return "IntAssociationFacetField(dim=" + Dim + " path=" + Arrays.ToString(Path) + " value=" + BytesRefToInt32(Assoc) + ")";
+            return "Int32AssociationFacetField(dim=" + Dim + " path=" + Arrays.ToString(Path) + " value=" + BytesRefToInt32(Assoc) + ")";
         }
     }
 }
