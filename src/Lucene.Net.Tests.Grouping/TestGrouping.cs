@@ -550,7 +550,7 @@ namespace Lucene.Net.Search.Grouping
 
             IComparer<GroupDoc> groupSortComp = GetComparer(groupSort);
 
-            // LUCENENET TODO: The original Java API Arrays.Sort does not currently exist.
+            // LUCENENET specific: The original Java API Arrays.Sort does not currently exist.
             // This call ultimately results in calling TimSort, which is why this line was replaced
             // with ArrayUtil.TimSort(T[], IComparer<T>).
             //
@@ -620,7 +620,7 @@ namespace Lucene.Net.Search.Grouping
                 List<GroupDoc> docs = groups[group];
                 totalGroupedHitCount += docs.size();
 
-                // LUCENENET TODO: The original API Collections.Sort does not currently exist.
+                // LUCENENET specific: The original API Collections.Sort does not currently exist.
                 // This call ultimately results in calling TimSort, which is why this line was replaced
                 // with CollectionUtil.TimSort(IList<T>, IComparer<T>).
                 //

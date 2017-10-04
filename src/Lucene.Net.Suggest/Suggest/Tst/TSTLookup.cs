@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Suggest.Tst
 #pragma warning restore 612, 618
 
             List<string> tokens = new List<string>();
-            List<object> vals = new List<object>(); // LUCENENET TODO: Should this be long? in Java it was Number, but we can probably do better than object
+            List<object> vals = new List<object>();
             BytesRef spare;
             CharsRef charsSpare = new CharsRef();
             while ((spare = tfit.Next()) != null)

@@ -310,7 +310,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             EnumFieldSource that = (EnumFieldSource)o;
 
-            // LUCENENET TODO: Make an EquatableDictionary so we can use Equatable.Wrap() here ?
             // LUCENENET specific: must use Collections.Equals() to ensure values
             // contained within the dictionaries are compared for equality
             if (!Collections.Equals(enumIntToStringMap, that.enumIntToStringMap))
@@ -333,7 +332,6 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             int result = base.GetHashCode();
             result = 31 * result + parser.GetHashCode();
-            // LUCENENET TODO: Make an EquatableDictionary so we can use Equatable.Wrap() here ?
             // LUCENENET specific: must use Collections.GetHashCode() to ensure values
             // contained within the dictionaries are compared for equality
             result = 31 * result + Collections.GetHashCode(enumIntToStringMap);

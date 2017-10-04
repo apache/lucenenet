@@ -29,7 +29,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         [Test]
         public virtual void TestSetFieldBuilder()
         {
-            // LUCENENET TODO: Make additional non-generic QueryTreeBuilder of type object?
             QueryTreeBuilder<object> qtb = new QueryTreeBuilder<object>();
             qtb.SetBuilder("field", new DummyBuilder());
             Object result = qtb.Build(new FieldQueryNode(new UnescapedCharSequence("field").ToString(), "foo", 0, 0));

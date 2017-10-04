@@ -198,7 +198,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             set { this.field = value; }
         }
 
-        // LUCENENET TODO: This method is not required because Field is already a string property
+        // LUCENENET specific: This method is technically not required because Field is already a string property, not ICharSequence
         /// <summary>
         /// Gets the field as a string. Returns null if the field was not specified in the query string.
         /// </summary>
