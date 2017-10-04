@@ -356,10 +356,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
             }
 
-            AnalyzerFactory analyzerFactory = new AnalyzerFactory
-                (charFilterFactories, tokenizerFactory, tokenFilterFactories);
-            analyzerFactory.SetPositionIncrementGap(positionIncrementGap.GetValueOrDefault());
-            analyzerFactory.SetOffsetGap(offsetGap.GetValueOrDefault());
+            AnalyzerFactory analyzerFactory = new AnalyzerFactory(charFilterFactories, tokenizerFactory, tokenFilterFactories)
+            {
+                PositionIncrementGap = positionIncrementGap,
+                OffsetGap = offsetGap
+            };
             RunData.AnalyzerFactories[factoryName] = analyzerFactory;
         }
 

@@ -33,9 +33,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         private IList<CharFilterFactory> charFilterFactories;
         private TokenizerFactory tokenizerFactory;
         private IList<TokenFilterFactory> tokenFilterFactories;
-        private string name = null;
-        private int? positionIncrementGap = null;
-        private int? offsetGap = null;
+        public string Name { get; set; } = null;
+        public int? PositionIncrementGap { get; set; } = null;
+        public int? OffsetGap { get; set; } = null;
 
         public AnalyzerFactory(IList<CharFilterFactory> charFilterFactories,
                                TokenizerFactory tokenizerFactory,
@@ -47,21 +47,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             this.tokenFilterFactories = tokenFilterFactories;
         }
 
-        // LUCENENET TODO: Properties ?
-        public void SetName(string name)
-        {
-            this.name = name;
-        }
-
-        public void SetPositionIncrementGap(int positionIncrementGap) // LUCENENET TODO: Nullable?
-        {
-            this.positionIncrementGap = positionIncrementGap;
-        }
-
-        public void SetOffsetGap(int offsetGap) // LUCENENET TODO: Nullable?
-        {
-            this.offsetGap = offsetGap;
-        }
+        // LUCENENET specific - made Name, PositionIncrementGap, and OffsetGap setters into properties (above)
 
         public Analyzer Create()
         {
@@ -104,15 +90,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
             public override int GetPositionIncrementGap(string fieldName)
             {
-                return outerInstance.positionIncrementGap.HasValue
-                    ? outerInstance.positionIncrementGap.Value
+                return outerInstance.PositionIncrementGap.HasValue
+                    ? outerInstance.PositionIncrementGap.Value
                     : base.GetPositionIncrementGap(fieldName);
             }
 
             public override int GetOffsetGap(string fieldName)
             {
-                return outerInstance.offsetGap.HasValue
-                    ? outerInstance.offsetGap.Value
+                return outerInstance.OffsetGap.HasValue
+                    ? outerInstance.OffsetGap.Value
                     : base.GetOffsetGap(fieldName);
             }
         }
@@ -120,22 +106,22 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder("AnalyzerFactory(");
-            if (null != name)
+            if (null != Name)
             {
                 sb.Append("name:");
-                sb.Append(name);
+                sb.Append(Name);
                 sb.Append(", ");
             }
-            if (null != positionIncrementGap)
+            if (null != PositionIncrementGap)
             {
                 sb.Append("positionIncrementGap:");
-                sb.Append(positionIncrementGap);
+                sb.Append(PositionIncrementGap);
                 sb.Append(", ");
             }
-            if (null != offsetGap)
+            if (null != OffsetGap)
             {
                 sb.Append("offsetGap:");
-                sb.Append(offsetGap);
+                sb.Append(OffsetGap);
                 sb.Append(", ");
             }
             foreach (CharFilterFactory charFilterFactory in charFilterFactories)
