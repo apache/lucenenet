@@ -265,31 +265,31 @@ namespace Lucene.Net.Facet
         {
             return false;
         }
+    }
+
+    /// <summary>
+    /// Result of a drill sideways search, including the
+    /// <see cref="Facet.Facets"/> and <see cref="TopDocs"/>. 
+    /// </summary>
+    public class DrillSidewaysResult
+    {
+        /// <summary>
+        /// Combined drill down &amp; sideways results.
+        /// </summary>
+        public Facets Facets { get; private set; }
 
         /// <summary>
-        /// Result of a drill sideways search, including the
-        /// <see cref="Facet.Facets"/> and <see cref="TopDocs"/>. 
+        /// Hits.
         /// </summary>
-        public class DrillSidewaysResult // LUCENENET TODO: API De-nest this class
+        public TopDocs Hits { get; private set; }
+
+        /// <summary>
+        /// Sole constructor.
+        /// </summary>
+        public DrillSidewaysResult(Facets facets, TopDocs hits)
         {
-            /// <summary>
-            /// Combined drill down &amp; sideways results.
-            /// </summary>
-            public Facets Facets { get; private set; }
-
-            /// <summary>
-            /// Hits.
-            /// </summary>
-            public TopDocs Hits { get; private set; }
-
-            /// <summary>
-            /// Sole constructor.
-            /// </summary>
-            public DrillSidewaysResult(Facets facets, TopDocs hits)
-            {
-                this.Facets = facets;
-                this.Hits = hits;
-            }
+            this.Facets = facets;
+            this.Hits = hits;
         }
     }
 }

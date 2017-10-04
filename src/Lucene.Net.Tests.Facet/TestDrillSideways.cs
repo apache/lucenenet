@@ -31,7 +31,6 @@ namespace Lucene.Net.Facet
     using Document = Lucene.Net.Documents.Document;
     using Field = Lucene.Net.Documents.Field;
     using StringField = Lucene.Net.Documents.StringField;
-    using DrillSidewaysResult = Lucene.Net.Facet.DrillSideways.DrillSidewaysResult;
     using DefaultSortedSetDocValuesReaderState = Lucene.Net.Facet.SortedSet.DefaultSortedSetDocValuesReaderState;
     using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
     using SortedSetDocValuesReaderState = Lucene.Net.Facet.SortedSet.SortedSetDocValuesReaderState;

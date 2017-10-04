@@ -202,7 +202,7 @@ namespace Lucene.Net.Demo.Facet
                 q.Add("Publish Date", "2010");
 
                 DrillSideways ds = new DrillSideways(searcher, config, taxoReader);
-                DrillSideways.DrillSidewaysResult result = ds.Search(q, 10);
+                DrillSidewaysResult result = ds.Search(q, 10);
 
                 // Retrieve results
                 IList<FacetResult> facets = result.Facets.GetAllDims(10);
