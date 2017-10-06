@@ -43,3 +43,6 @@
 - name: Lucene.Net.ICU
   href: ../obj/docfx/api/Lucene.Net.ICU/toc.yml
   topicUid: Lucene.Net.Analysis.ICU
+- name: Lucene.Net.Demo
+  href: ../obj/docfx/api/Lucene.Net.Demo/toc.yml
+  topicUid: Lucene.Net.Demo

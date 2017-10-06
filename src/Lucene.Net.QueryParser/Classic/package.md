@@ -16,6 +16,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.QueryParsers.Classic
+summary: *content
+---
+
 A simple query parser implemented with JavaCC.
 
 Note that JavaCC defines lots of public classes, methods and fields
