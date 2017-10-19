@@ -97,7 +97,7 @@ namespace Lucene.Net.Support
 
         /// <summary>
         /// Convenience method to wrap a string in a <see cref="StringCharSequenceWrapper"/>
-        /// so a string can be used as <see cref="ICharSequence"/> in .NET.
+        /// so a <see cref="string"/> can be used as <see cref="ICharSequence"/> in .NET.
         /// </summary>
         public static ICharSequence ToCharSequence(this string str)
         {
