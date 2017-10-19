@@ -5,7 +5,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.6' ">1.6.1</NetStandardImplicitPackageVersion>-->
 
     <AssemblyTitle>Lucene.Net.Replicator.AspNetCore</AssemblyTitle>
     <Description>AspNetCore integration of Lucene.Net.Replicator for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>

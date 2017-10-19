@@ -26,7 +26,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net45</TargetFrameworks>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.6' ">1.6.0</NetStandardImplicitPackageVersion>-->
 
     <AssemblyTitle>Lucene.Net.Suggest</AssemblyTitle>
     <Description>Auto-suggest and Spellchecking support for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
