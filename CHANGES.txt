@@ -1,4 +1,210 @@
-﻿=================== Release 4.8.0-beta00004 =====================
+﻿=================== Release 4.8.0-beta00005 =====================
+
+Bug
+•	Added [Obsolete] attribute to Lucene.Net.Field extension methods that are only for
+	pre-4.0 backward compatibility.
+•	BREAKING: Lucene.Net.Search.Similarites.BasicStats: Changed m_field from protected to 
+	private (to match Lucene).
+•	BREAKING: Lucene.Net.Util.MapOfSets: Changed Map property from IDictionary<TKey, HashSet<TValue>> 
+	to IDictionary<TKey, ISet<TValue>> (to match Lucene).
+•	BREAKING: Lucene.Net.Util.OfflineSorter: Changed setter of BufferSize property to private
+	(to match Lucene).
+•	BREAKING: Lucene.Net.Util.RamUsageEstimator.IdentityHashSet<KType>: Changed accessibility 
+	from public to internal (to match Lucene)
+•	BREAKING: Lucene.Net.Search.BitsFilteredDocIdSet: Changed constructor to throw ArgumentNullException 
+	instead of NullReferenceException (.NET convention)
+•	Lucene.Net.Search.ConstantScoreQuery.ConstantWeight: Fixed initialization issue with commented code 
+	in GetValueForNormalization() (that diverged from Lucene)
+•	Lucene.Net.Util.OfflineSorter: Added line to delete the output file (that existed in Lucene).
+•	BREAKING: Lucene.Net.Analysis.Common.Analysis.Util.AbstractAnalysisFactory: Changed return 
+	type of GetSet from ICollection<T> to ISet<T>.
+•[LUCENENET-544] - Turkish stemmer causes an IndexOutOfRange (Reported in prior version, added
+	regression test to show it is no longer an issue).
+•[LUCENENET-544] - replace java doc notation with ms style xml comments notation.
+•	Lucene.Net.Misc: Removed unnecessary dependency on Lucene.Net.Analysis.Common
+•	Lucene.Net.Highlighter: Removed unnecessary dependency on Lucene.Net.Analysis.Common
+•	BREAKING: Lucene.Net.Facet.Taxonomy.TaxonomyReader: Implemented IDisposable and proper dispose pattern.
+	Public Dispose(bool) method removed.
+•	Lucene.Net.Misc.IndexMergeTool: Added try-finally block to properly dispose of directories.
+•[LUCENENET-521] - Concurrency bug with MMapDirectory (added regression test to confirm fix).
+•[LUCENENET-530] - Create a truly Memory Mapped Directory type as MMapDirectory is not really memory mapped
+	Lucene.Net.Store: Fixed MMapDirectory concurrency using solution suggested by Vincent 
+	Van Den Berghe http://apache.markmail.org/message/hafnuhq2ydhfjmi2.
+•	Lucene.Net.Store.LockVerifyServer: Read/write 1 byte instead of 1 int (4 bytes). 
+	Also, we don't need 2 streams in .NET for input/output (solution provided by Vincent Van Den Berghe).
+•	Lucene.Net.TestFramework.Store.MockDirectoryWrapper.IndexInputSlicerAnonymousInnerClassHelper: Fixed Dispose() method.
+•	Lucene.Net.Index.IndexWriter: Fixed string formatting of numeric values in InfoStream message.
+•	Lucene.Net.Tests.Querys.CommonTermsQueryTest: Added missing TestRandomIndex() test
+•	Lucene.Net.Analysis.Common.Analysis.CharFilter.MappingCharFilterFactory: fixed escaping problem in parsing regex
+•	Lucene.Net.Search.SearcherLifetimeManager: Corrected bug in Lifetime reference count
+•	Lucene.Net.Spatial: Removed unnecessary dependencies on GeoAPI and NetTopologySuite
+•[LUCENENET-593] - Refactored Lucene.Net.Util.Constants so OS identification, processor architecture, and 
+	framework identification are more reliable. Searching for environment variables rather than using well-known APIs 
+	was causing a null reference exception on Linux.
+•	Lazily initialize codecs to ensure the correct type is loaded if overridden
+•	Lucene.Net.Search.FieldCacheRangeFilter.AnonymousStringFieldCacheRangeFilter: Fixed Debug.Assert condition that 
+	was causing assert to fail.
+•	Lucene.Net.Tests.Spatial.SpatialArgsTest.CalcDistanceFromErrPct(): Test fails because floating point asserts 
+	didn't contain any delta and the implementation has changed in .NET Core 2.0 so it is no longer on the nose 
+	(but still well within tolerance for floating point numbers).
+•	Lucene.Net.Tests.Index.TestConcurrentMergeScheduler: Fixed FailOnlyOnFlush class to match the original, 
+	which was causing TestFlushExceptions() to fail. Also removed throw statement on a background thread that 
+	was causing a crash.
+•	Lucene.Net.Tests.Search.TestMutiTermConstantScore: Made Small and Reader variables instance members, since 
+	they are being set by instance methods. When they were static, tests could cross threads on the instance.
+•	Lucene.Net.TestFramework.Util.LuceneTestCase: Added missing catch block for UnauthorizedAccessException, 
+	which does not subclass IOException in .NET as was the case in Java.
+•	Lucene.Net.Tests.Index.TestTransactionRollback: Fixed issue where the value passed to substring could 
+	potentially go beyond the length of the string.
+•	Lucene.Net.Benchmark.ByTask.Tasks.TestPerfTasksLogic.TestLocale(): Original test was using no-NO which 
+	is not consistently supported across platforms on .NET. Changed the test (and the documentation) to use nb-NO instead.
+•	Lucene.Net.Tests.Benchmark.ByTask.TestPerfTasksLogic.TestCollator(): Changed culture from no-NO to nb-NO to ensure 
+	it runs consistently between dev and the CI server.
+•	Lucene.Net.Support.DictionaryExtensions: Fixed Store() method to save the date using the InvariantCulture so the 
+	format is unaffected by the ambient culture.
+•	Lucene.Net.TestFramework: Having sequential folder names creates situations where multiple threads are doing 
+	operations on the same folder at the same time. Changed implementation to use GetRandomFileName() to append 
+	a random string instead of an incremental number.
+•	Lucene.Net.Automaton (BasicAutomata + BasicOperations + MinimizationOperations + SpecialOperations): Corrected 
+	accessibility from internal to public and removed InternalsVisibleTo attributes unneeded as a result of these changes.
+•	Lucene.Net.Tests.Expressions.TestExpressionSorts: Added missing Collections.Shuffle call
+•	Patched behavior of all implementations of String.Split() and Regex.Split() using the .TrimEnd() extension method. 
+	In Java, only the empty entries at the end of the array are removed, not all empty entries.
+•	Lucene.Net.Tests.QueryParser.Flexible.Precedence.TestPrecedenceQueryParser: Fixed test to always use 
+	GregorianCalendar and local time zone.
+•	Added TimeZoneInfo.ConvertTime() to corresponding locations where time zone had been set in Lucene.
+•	Lucene.Net.Tests.Search.TestControlledRealTimeReopenThread.DoAfterWriter(): Enabled Thread priority for 
+	.NET Core 2.0 tests
+•	Lucene.Net.Tests.Search.TestMultiTermConstantScore: Added check to ensure a null instance variable 
+	doesn't cause the AfterClass method to fail
+•	Lucene.Net.Index (ConcurrentMergeScheduler + TaskMergeScheduler): Fixed null reference exception 
+	due to synchronization of list across threads.
+	
+Improvement
+•	BREAKING: Changed namespace of Collections class from Lucene.Net to Lucene.Net.Support.
+•	BREAKING: Changed namespace of IcuBreakIterator class from Lucene.Net to Lucene.Net.Support.
+•	Fixed several broken XML documentation comment issues.
+•	Lucene.Net.Codecs.MultiLevelSkipListReader: Implemented proper dispose pattern.
+•	BREAKING: Lucene.Net.Index.SegmentCommitInfo: Renamed Files() method to GetFiles().
+•	BREAKING: Lucene.Net.Index.SegmentInfos: Renamed Files() method to GetFiles().
+•	BREAKING: Lucene.Net.Search.Similarities.LMSimilarity.ICollectionModel: Changed Name 
+	property to GetName() method (consistency).
+•	BREAKING: Lucene.Net.Util (PagedBytes + PagedBytes.PagedBytesDataInput + PagedBytes.PagedBytesDataOutput): 
+	Changed Pointer > GetPointer(), Position > GetPosition()
+•	Lucene.Net.Util.PrintStreamInfoStream: Marked obsolete and replaced with class named TextWriterInfoStream.
+•	Lucene.Net.Util.RamUsageEstimator: Added SizeOf() overloads for ulong, uint, and ushort
+•	BREAKING: Lucene.Net.MultiTermQuery: Removed nested ConstantScoreAutoRewrite class, since it is exactly 
+	the same as the non-nested ConstantScoreAutoRewrite class. Made public constructor for ConstantScoreAutoRewrite.
+•	BREAKING: Lucene.Net.Index.SegmentReader.ICoreClosedListener: Renamed ICoreDisposedListener, OnClose() > OnDispose()
+•	Lucene.Net.Search.ReferenceManager: Implemented proper dispose pattern.
+•	Lucene.Net.Util.IOUtils: Added Dispose() and DisposeWhileHandlingException() overloads
+	and marked Close() and CloseWhileHandlingException() overloads [Obsolete].
+•	Lucene.Net.Search.BooleanQuery: Added documentation to show .NET usage of collection initializer.
+•	Lucene.Net.Search.MultiPhraseQuery: Implemented IEnumerable<T> so collection initializer can be used and 
+	added documentation to show usage of collection initializer.
+•	Lucene.Net.Search.PhraseQuery: Implemented IEnumerable<T> so collection initializer can be used and 
+	added documentation to show usage of collection initializer.
+•	Lucene.Net.Search.NGramPhraseQuery: Added documentation to show usage of collection initializer.
+•	Lucene.Net.Queries.CommonTermsQuery: Implemented IEnumerable<T> so collection initializer can be used and 
+	added documentation to show usage of collection initializer.
+•	Lucene.Net.Search.DisjunctionMaxQuery: Added documentation to show usage of collection initializer.
+•	Lucene.Net.Facet.Range.DoubleRangeFacetCounts: Added missing params keyword on ranges constructor argument.
+•	BREAKING: Lucene.Net.Support.MathExtension: Renamed MathExtensions and added overloads of ToRadians() 
+	for decimal and int, and added the ToDegrees() method overloads.
+•	Lucene.Net.Analysis.Stempel: Modified Egothor.Stemmer Compile and DiffIt programs to accept file 
+	encoding on the command line and cleaned up implementation.
+•[Pull Request #207] - Added ReferenceManager<G>.GetContext(), which is similar to ReferenceManager<G>.Acquire() but can be 
+	used in a using block to implicitly dereference instead of having to do it explicitly in a finally block.
+•	Lucene.Net.Support.Document: Added extension methods to make casting to the correct IIndexableField-derived type simpler.
+•	BREAKING: Lucene.Net.Store.FSDirectory: Removed Fsync() method and m_staleFiles variable and all references to them.
+•	Lucene.Net.Store.NativeFSLockFactory: Refactored implementation to utilize locking/sharing features of FileStream in .NET
+	on Windows only - fallback to a different locking strategy on other plaforms. (solution mostly provided by Vincent Van Den Burghe).
+•	Ported StreamTokenizer from Apache Harmony.
+•	Moved SystemProperties class from Lucene.Net.TestFramework to Lucene.Net so the more Java System.properties-like 
+	default value and security exception handling can be used globally
+•	Lucene.Net.Support.Character: Ported Digit(char, int) method from Apache Harmony for use in Lucene.Net.Benchmark.
+•	Lucene.Net.Support.DictionaryExtensions: Added Load and Store methods from Apache Harmony, so an 
+	IDictionary<string, string> can be used the same way the Properties class is used in Java 
+	(saving and loading the same file format).
+•	Lucene.Net.Support.StringTokenizer: Did a fresh port from Apache Harmony and ported tests.
+•	Lucene.Net.Support: Added a SystemConsole class as a stand-in for System.Console, but with the ability to 
+	swap Out and Error to a different destination than System.Out and System.Error.
+•	Lucene.Net.Support.StringExtensions: Added a TrimEnd() method that can be used on string arrays. 
+	This is to mimic Java's Split() method that removes only the null or empty elements from the end 
+	of the array that is returned, but leaves any prior empty elements intact.
+•	Lucene.Net.Support.StringBuilderExtensions: Added IndexOf() extension methods and tests from Apache Harmony.
+•	Lucene.Net.Util.SPIClassIterator: Factored out code to get all non-Microsoft referenced assemblies into a 
+	new class in Support named AssemblyUtils
+•	BREAKING: Lucene.Net.Index.IIndexableField: Renamed FieldType > IndexableFieldType and added additional FieldType 
+	property on Lucene.Net.Documents.Field that returns FieldType rather than IIndexableFieldType so we can avoid casting.
+•	Lucene.Net.Documents.Field: Added similar Number value types as in Java so the numeric types can be stored as object 
+	without boxing/unboxing. Also added overloads for numeric GetXXXValue() fields to IIndexableField so numeric values 
+	can be retrieved without boxing/unboxing.
+•	Lucene.Net.Documents.Field: Added NumericType property that returns an enum so the Field type can be determined without boxing/unboxing. 
+•	Lucene.Net.Documents.Field: Added extension methods GetXXXValueOrDefault() to easily retrieve the numeric value if it is not a 
+	concern that it could be null.
+•	BREAKING: Lucene.Net.Facet.Taxonomy.WriterCache.CharBlockArray: Refactored to use BinaryReader/BinaryWriter for serialzation 
+	and eliminated the 2 serialization support classes StreamUtils and CharBlockArrayConverter
+•	BREAKING: Removed indescriminate use of [Serializable] and chose specific targets to make serializable,
+	namely types that maintain a single value, collection, or array.
+•	BREAKING: Added ICloneable to all places where it was used in Lucene, but made it a compilation option that can be used
+	in custom builds only, since Microsoft discourages use of this interface.
+•	Moved Intern() functionality to StringExtensions rather than using string.Intern() directly.
+•	Eliminated [Debuggable] attribute and added [MethodImpl(MethodImplOptions.NoInlining)] to each potential match 
+	for the StackTraceHelper, which allows tests that use it to work in release mode. Solution provided by Vincent Van Den Berghe.
+•	Changed to new .csproj format and merged Lucene.Net.sln and Lucene.Net.Portable.sln files into one Lucene.Net.sln file.
+•	Require VS 2017+ to load solution
+•	Lucene.Net.Search.Suggest.Analyzing.FSTUtil.Path<T>.Output: Changed accessibility to public. This wasn't made public until 
+	Lucene 5.1, but doing it for 4.8 since it is required by end users.
+•	BREAKING: Lucene.Net.MMapDirectory: Removed UnmapHack/UNMAP_SUPPORTED features since these are not needed in .NET.
+•	Lucene.Net.Suggest.Analyzing.FreeTextSuggester: Changed to use Path.GetRandomFileName() instead of using random 
+	integers to make the file name. Changed to delete the folder using System.IO.Directory.Delete and rearranged 
+	try catch statements so the Lucene Directory disposes before deleting the OS directory.
+•	Lucene.Net.TestFramework.Index.BasePostingsFormatTestCase + Lucene.Net.Suggest.Analyzing 
+	(AnalyzingInfixSuggesterTest + TestFreeTextSuggester) + Lucene.Net.Tests.Index.TestCodecs: 
+	Added using blocks to make the tests run more reliably.
+•	BREAKING: Lucene.Net.Support.IO.FileSupport: Removed unused GetFiles(), GetLuceneIndexFiles(), and Sync() methods
+•	Lucene.Net.Support.IO.FileSupport: Made class static
+•	Lucene.Net.Support.IO.FileSupport: Fixed several issues with CreateTempFile() implementation
+•	Lucene.Net.Support.IO.FileSupport: Added GetCanonicalPath() method + tests
+•	Swapped GetCanonicalPath() call into each of the locations where it was originally used in Lucene
+•	Lucene.Net + Lucene.Net.Facet + Lucene.Net.ICU: Added extension methods to Document class for adding
+	non-obsolete project-related Field types
+•	BREAKING: Lucene.Net.Facet: De-nested DrillSidewaysResult from DrillSideways class
+•	BREAKING: Lucene.Net.Support: Removed CharAt() method from StringCharSequenceWrapper
+•	Lucene.Net.Support: Added StringBuilderCharSequenceWrapper class and StringBuilder.ToCharSequence()
+	extension method.
+•[LUCENENET-592] - Lucene.Net.QueryParser.Flexible: Added an overload of type StringBuilder for all 
+	ICharSequence-based methods and constructors.
+
+New Feature
+•	Lucene.Net.Search.Filter: Added NewAnonymous() method for easy creation of anonymous classes via delegate methods.
+•	Lucene.Net.Search.DocIdSet: Added NewAnonymous() method for easy creation of anonymous classes via delegate methods.
+•	Lucene.Net.Search.Collector: Added Collector.NewAnonymous() method for easy creation of anonymous classes via delegate methods.
+•[LUCENENET-514] - Ported Lucene.Net.Analysis.SmartCn (Smart Chinese Analyzer)
+•[LUCENENET-569] - Ported Lucene.Net.Analysis.Phonetic
+•[LUCENENET-563] - Ported Lucene.Net.Demo (part of lucene-cli utility)
+•[LUCENENET-577] - Port Lock Stress Test CLI Utility (part of lucene-cli utility)
+•[LUCENENET-576] - Port IndexUpgrader CLI Utility (part of lucene-cli utility)
+•[LUCENENET-575] - Port CheckIndex CLI Utility (part of lucene-cli utility)
+•[LUCENENET-582] - Port Index Splitter CLI Utility (part of lucene-cli utility)
+•[LUCENENET-585] - Port High Freq Terms CLI Utility (part of lucene-cli utility)
+•[LUCENENET-584] - Port Get Term Info CLI Utility (part of lucene-cli utility)
+•[LUCENENET-581] - Port Compound File Extractor CLI Utility (part of lucene-cli utility)
+•[LUCENENET-586] - Port Index Merge Tool CLI Utility (part of lucene-cli utility)
+•[LUCENENET-583] - Port Multi-Pass Index Splitter CLI Utility (part of lucene-cli utility)
+•[LUCENENET-579] - Port Print Taxonomy Stats CLI Utility (part of lucene-cli utility)
+•[LUCENENET-578] - Port Lock Verify Server CLI Utility (part of lucene-cli utility)
+•[LUCENENET-588] - Create unified CLI tool (lucene-cli) to wrap all Lucene maintenance tools and demos for .NET
+•[LUCENENET-565 & Pull Request #209] - Port Lucene.Net.Replicator
+•[LUCENENET-567] - Port Lucene.Net.Analysis.Kuromoji
+•	Added Collation features of Lucene.Net.Analysis.ICU to Lucene.Net.ICU (as linked files).
+•[LUCENENET-564] - Port Lucene.Net.Benchmarks
+•	Added .NET Core 2.0 support
+•	Added .NET Framework 4.5 support
+•	Created JavaDocToMarkdownConverter utility to assist with converting java docs to markdown docs for docfx.
+
+=================== Release 4.8.0-beta00004 =====================
 
 Bug
 •	AssemblyVersion and other metadata not being set on .NET Standard assemblies 
