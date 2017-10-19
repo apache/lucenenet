@@ -2,9 +2,13 @@
 
 The Lucene.Net command line interface (CLI) is a new cross-platform toolchain with utilities for maintaining Lucene.Net and demos for learning basic Lucene.Net functionality.
 
+## Prerequisites
+
+- [.NET Core 2.0 Runtime](https://www.microsoft.com/net/download/core#/runtime)
+
 ## Installation
 
-LUCENENET TODO
+Download the binaries from the [Apache Lucene.Net Distribution](http://www.apache.org/dyn/closer.cgi). Unzip the `lucene-cli.zip` file to a local directory and add that directory to the PATH environment variable of the local system.
 
 ## CLI Commands
 
