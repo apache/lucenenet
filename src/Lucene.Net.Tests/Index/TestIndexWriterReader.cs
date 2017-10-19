@@ -507,12 +507,12 @@ namespace Lucene.Net.Index
             {
                 for (int i = 0; i < OuterInstance.NumThreads; i++)
                 {
-//#if !NETSTANDARD1_5
+//#if !NETSTANDARD1_6
 //                    try
 //                    {
 //#endif
                     Threads[i].Join();
-//#if !NETSTANDARD1_5
+//#if !NETSTANDARD1_6
 //                    }
 //                    catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                    {

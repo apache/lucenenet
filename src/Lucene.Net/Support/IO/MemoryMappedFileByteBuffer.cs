@@ -73,7 +73,7 @@ namespace Lucene.Net.Support.IO
             return accessor.ReadByte(Ix(CheckIndex(index)));
         }
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
         // Implementation provided by Vincent Van Den Berghe: http://git.net/ml/general/2017-02/msg31639.html
         public override ByteBuffer Get(byte[] dst, int offset, int length)
         {

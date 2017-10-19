@@ -85,7 +85,7 @@ namespace Lucene.Net.Support.IO
             }
         }
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
         public override void Close()
         {
             Run(() => textWriter.Close());
@@ -119,7 +119,7 @@ namespace Lucene.Net.Support.IO
             return Run(() => textWriter.GetHashCode());
         }
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
         public override object InitializeLifetimeService()
         {
             return Run(() => textWriter.InitializeLifetimeService());

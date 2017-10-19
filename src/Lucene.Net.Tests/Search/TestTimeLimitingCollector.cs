@@ -411,7 +411,7 @@ namespace Lucene.Net.Search
                     //{
                         ThreadClass.Sleep(slowdown);
 //                    }
-//#if NETSTANDARD1_5
+//#if NETSTANDARD1_6
 //                    catch (Exception)
 //                    {
 //                        throw;

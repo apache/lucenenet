@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
                     if (stalled) // react on the first wakeup call!
                     {
                         // don't loop here, higher level logic will re-stall!
-//#if !NETSTANDARD1_5
+//#if !NETSTANDARD1_6
 //                        try
 //                        {
 //#endif
@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
                             Monitor.Wait(this);
                             result = DecrWaiters();
                             Debug.Assert(result);
-//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                        }
 //                        catch (ThreadInterruptedException e)
 //                        {

@@ -694,12 +694,12 @@ namespace Lucene.Net.Analysis
                 startingGun.Signal();
                 foreach (var t in threads)
                 {
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
                     try
                     {
 #endif
                         t.Join();
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
                     }
 #pragma warning disable 168
                     catch (ThreadInterruptedException e)

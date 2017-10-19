@@ -778,7 +778,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-#if !NETSTANDARD1_5 //NOTE: Cannot set ThreadPriority in .NET Core.
+#if !NETSTANDARD1_6 //NOTE: Cannot set ThreadPriority in .NET Core.
         // LUCENE-1036
         [Test]
         public virtual void TestMaxThreadPriority()
@@ -1311,7 +1311,7 @@ namespace Lucene.Net.Index
                             AllowInterrupt = true;
                         }
                     }
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
                     catch (ThreadInterruptedException re)
                     {
                         // NOTE: important to leave this verbosity/noise
@@ -1357,7 +1357,7 @@ namespace Lucene.Net.Index
                         {
                             w.Rollback();
                         }
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
                         // LUCENENET TODO: Is this the right decision here, or is IndexWriter
                         // supposed to swallow ThreadInterruptedException?
 
@@ -1433,7 +1433,7 @@ namespace Lucene.Net.Index
         public virtual void TestThreadInterruptDeadlock()
         {
 #if DEBUG
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
             fail("LUCENENET TODO: Uncaught exceptions on background thread causing test runner crash");
 #endif
 #endif

@@ -87,7 +87,7 @@ namespace Lucene.Net.Tests.Spatial
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Spatial.DisjointSpatialFilter))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)

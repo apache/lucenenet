@@ -1,4 +1,4 @@
-﻿#if !NETSTANDARD1_5
+﻿#if !NETSTANDARD1_6
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;

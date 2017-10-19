@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Ja.Support
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Analysis.Ja.GraphvizFormatter))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)

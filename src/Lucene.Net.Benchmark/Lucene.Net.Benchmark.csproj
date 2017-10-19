@@ -24,9 +24,9 @@
   <Import Project="..\..\Version.proj" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard1.5;net45</TargetFrameworks>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.5' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>-->
+    <TargetFrameworks>netstandard2.0;netstandard1.6;net45</TargetFrameworks>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.6' ">1.6.0</NetStandardImplicitPackageVersion>-->
 
     <AssemblyTitle>Lucene.Net.Benchmark</AssemblyTitle>
     <Description>System for benchmarking the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
@@ -74,12 +74,12 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <PackageReference Include="SharpZipLib.NETStandard" Version="0.86.0.1" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <DebugType>portable</DebugType>
   </PropertyGroup>
 

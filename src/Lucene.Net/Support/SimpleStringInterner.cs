@@ -84,7 +84,7 @@ namespace Lucene.Net.Support
 
             // insertion-order cache: add new entry at head
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
             s = String.Intern(s);
 #endif
 

@@ -170,7 +170,7 @@ namespace Lucene.Net.Support
         /// LUCENENET specific.
         /// </summary>
         private static StringInterner interner =
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
             new SimpleStringInterner(1024, 8);
 #else
             new StringInterner();

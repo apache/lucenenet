@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Util
         private int mark = -1;
         private int markLimit = -1;
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
         /// <summary>
         /// LUCENENET specific to throw an exception if the user calls <see cref="Close()"/> instead of <see cref="TextReader.Dispose()"/>
         /// </summary>
@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (disposing)
             {
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
                 this.isDisposing = true;
 #endif
                 lock (m_lock)
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Util
                         buf = null;
                     }
                 }
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
                 this.isDisposing = false;
 #endif
             }
@@ -616,7 +616,7 @@ namespace Lucene.Net.Analysis.Util
         {
             throw new NotImplementedException();
         }
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
         public override object InitializeLifetimeService()
         {
             throw new NotImplementedException();

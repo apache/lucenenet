@@ -87,7 +87,7 @@ namespace Lucene.Net.Tests.Grouping
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Search.Grouping.ICollectedSearchGroup))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)

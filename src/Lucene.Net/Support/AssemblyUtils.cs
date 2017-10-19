@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
 using Microsoft.Extensions.DependencyModel;
 #endif
 
@@ -26,7 +26,7 @@ namespace Lucene.Net.Support
             // hoping would be loaded hasn't been loaded yet into the app domain,
             // it is unavailable. So we go to the next level on each and check each referenced
             // assembly.
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
             var dependencyContext = DependencyContext.Default;
             var assemblyNames = dependencyContext.RuntimeLibraries
                 .SelectMany(lib => lib.GetDefaultAssemblyNames(dependencyContext))

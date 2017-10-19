@@ -3,9 +3,9 @@
   <Import Project="..\..\..\Version.proj" />
   
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;net451</TargetFrameworks>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.5' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.1</NetStandardImplicitPackageVersion>-->
+    <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.6' ">1.6.1</NetStandardImplicitPackageVersion>-->
 
     <AssemblyTitle>Lucene.Net.Replicator.AspNetCore</AssemblyTitle>
     <Description>AspNetCore integration of Lucene.Net.Replicator for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
@@ -39,7 +39,7 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>-->
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <DebugType>portable</DebugType>
   </PropertyGroup>
 

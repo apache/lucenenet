@@ -70,7 +70,7 @@
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
-    <DefineConstants>$(DefineConstants);NETSTANDARD1_5</DefineConstants>
+    <DefineConstants>$(DefineConstants);NETSTANDARD1_6</DefineConstants>
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
