@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.Support;
+using System.Text;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 {
@@ -37,7 +38,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         // LUCENENET specific overload for passing text as string
         public WildcardQueryNode(string field, string text, int begin,
             int end)
-            : this(field, new StringCharSequenceWrapper(text), begin, end)
+            : this(field, text.ToCharSequence(), begin, end)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">field name</param>
+        /// <param name="text">value that contains one or more wild card characters (? or *)</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
+        // LUCENENET specific overload for passing text as StringBuilder
+        public WildcardQueryNode(string field, StringBuilder text, int begin,
+            int end)
+            : this(field, text.ToCharSequence(), begin, end)
         {
         }
 

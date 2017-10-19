@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.Support;
+using System.Text;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 {
@@ -33,8 +34,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <param name="text">value</param>
         /// <param name="begin">position in the query string</param>
         /// <param name="end">position in the query string</param>
-        // LUCENENET specific overload for text string
+        // LUCENENET specific overload for string text
         public QuotedFieldQueryNode(string field, string text, int begin,
+            int end)
+            : this(field, text.ToCharSequence(), begin, end)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">field name</param>
+        /// <param name="text">value</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
+        // LUCENENET specific overload for StringBuilder text
+        public QuotedFieldQueryNode(string field, StringBuilder text, int begin,
             int end)
             : this(field, text.ToCharSequence(), begin, end)
         {

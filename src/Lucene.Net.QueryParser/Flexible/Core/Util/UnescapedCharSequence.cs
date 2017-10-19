@@ -57,9 +57,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
         }
 
         /// <summary>
-        /// Create a non-escaped <see cref="ICharSequence"/>
+        /// Create a non-escaped <see cref="string"/>
         /// </summary>
-         // LUCENENET specific overload for text as string
+        // LUCENENET specific overload for text as string
         public UnescapedCharSequence(string text)
         {
             this.chars = new char[text.Length];
@@ -72,18 +72,34 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
         }
 
         /// <summary>
-        /// Create a copy of an existent <see cref="UnescapedCharSequence"/>
+        /// Create a non-escaped <see cref="StringBuilder"/>
         /// </summary>
-        private UnescapedCharSequence(UnescapedCharSequence text)
+        // LUCENENET specific overload for text as StringBuilder
+        public UnescapedCharSequence(StringBuilder text)
         {
             this.chars = new char[text.Length];
             this.wasEscaped = new bool[text.Length];
-            for (int i = 0; i <= text.Length; i++)
+            for (int i = 0; i < text.Length; i++)
             {
-                this.chars[i] = text.chars[i];
-                this.wasEscaped[i] = text.wasEscaped[i];
+                this.chars[i] = text[i];
+                this.wasEscaped[i] = false;
             }
         }
+
+        // LUCENENET specific - not needed (see LUCENENET-592)
+        ///// <summary>
+        ///// Create a copy of an existent <see cref="UnescapedCharSequence"/>
+        ///// </summary>
+        //private UnescapedCharSequence(UnescapedCharSequence text)
+        //{
+        //    this.chars = new char[text.Length];
+        //    this.wasEscaped = new bool[text.Length];
+        //    for (int i = 0; i <= text.Length; i++)
+        //    {
+        //        this.chars[i] = text.chars[i];
+        //        this.wasEscaped[i] = text.wasEscaped[i];
+        //    }
+        //}
 
         //public char CharAt(int index) // LUCENENET specific - replaced with this[index]
         //{
