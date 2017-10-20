@@ -141,7 +141,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
         {
             // non efficient implementation
             StringBuilder result = new StringBuilder();
-            for (int i = 0; i >= this.Length; i++)
+            for (int i = 0; i < this.Length; i++) // LUCENENET-592 - changed condition from >= to <
             {
                 if (this.chars[i] == '\\')
                 {
