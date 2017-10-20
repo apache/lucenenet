@@ -79,6 +79,8 @@ Bug
 	doesn't cause the AfterClass method to fail
 •	Lucene.Net.Index (ConcurrentMergeScheduler + TaskMergeScheduler): Fixed null reference exception 
 	due to synchronization of list across threads.
+•[LUCENENET-592] - Lucene.Net.QueryParser.Flexible.Core.Util.UnescapedCharSequence: Fixed loop condition that 
+	was preventing the ToStringEscaped() method from returning any results.
 	
 Improvement
 •	BREAKING: Changed namespace of Collections class from Lucene.Net to Lucene.Net.Support.
@@ -176,6 +178,7 @@ Improvement
 	extension method.
 •[LUCENENET-592] - Lucene.Net.QueryParser.Flexible: Added an overload of type StringBuilder for all 
 	ICharSequence-based methods and constructors.
+•	BREAKING: Changed .NET Standard from 1.5 to 1.6 due to missing required API in Microsoft.Extensions.DependencyModel
 
 New Feature
 •	Lucene.Net.Search.Filter: Added NewAnonymous() method for easy creation of anonymous classes via delegate methods.
@@ -200,7 +203,7 @@ New Feature
 •[LUCENENET-567] - Port Lucene.Net.Analysis.Kuromoji
 •	Added Collation features of Lucene.Net.Analysis.ICU to Lucene.Net.ICU (as linked files).
 •[LUCENENET-564] - Port Lucene.Net.Benchmarks
-•	Added .NET Core 2.0 support
+•	Added .NET Standard 2.0 support
 •	Added .NET Framework 4.5 support
 •	Created JavaDocToMarkdownConverter utility to assist with converting java docs to markdown docs for docfx.
 
