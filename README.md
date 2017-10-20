@@ -16,6 +16,14 @@ The Apache Lucene.Net web site is at:
 
 ### Lucene.Net 4.8.0
 
+<!-- TO BE CHANGED TO THIS WHEN RELEASED 
+
+- [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
+- [.NET Standard 1.6](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
+- .NET Framework 4.5
+
+-->
+
 - [.NET Standard 1.5](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - .NET Framework 4.5.1
 
