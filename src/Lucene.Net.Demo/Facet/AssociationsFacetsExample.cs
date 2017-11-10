@@ -76,21 +76,20 @@ namespace Lucene.Net.Demo.Facet
                 Document doc = new Document();
                 // 3 occurrences for tag 'lucene'
 
-                // LUCENENET TODO: Create extension methods for built-in field types ( .AddFacetField("", ""), .AddInt32AssociationsFacetField(), etc ).
-                doc.Add(new Int32AssociationFacetField(3, "tags", "lucene"));
+                doc.AddInt32AssociationFacetField(3, "tags", "lucene");
                 // 87% confidence level of genre 'computing'
-                doc.Add(new SingleAssociationFacetField(0.87f, "genre", "computing"));
+                doc.AddSingleAssociationFacetField(0.87f, "genre", "computing");
                 indexWriter.AddDocument(config.Build(taxoWriter, doc));
 
                 doc = new Document();
                 // 1 occurrence for tag 'lucene'
-                doc.Add(new Int32AssociationFacetField(1, "tags", "lucene"));
+                doc.AddInt32AssociationFacetField(1, "tags", "lucene");
                 // 2 occurrence for tag 'solr'
-                doc.Add(new Int32AssociationFacetField(2, "tags", "solr"));
+                doc.AddInt32AssociationFacetField(2, "tags", "solr");
                 // 75% confidence level of genre 'computing'
-                doc.Add(new SingleAssociationFacetField(0.75f, "genre", "computing"));
+                doc.AddSingleAssociationFacetField(0.75f, "genre", "computing");
                 // 34% confidence level of genre 'software'
-                doc.Add(new SingleAssociationFacetField(0.34f, "genre", "software"));
+                doc.AddSingleAssociationFacetField(0.34f, "genre", "software");
                 indexWriter.AddDocument(config.Build(taxoWriter, doc));
 
             } // Disposes indexWriter and taxoWriter

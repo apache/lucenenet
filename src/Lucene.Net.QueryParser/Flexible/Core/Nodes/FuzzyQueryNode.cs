@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.Support;
+using System.Text;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 {
@@ -40,6 +41,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <param name="end">position in the query string</param>
          // LUCENENET specific overload for string term
         public FuzzyQueryNode(string field, string term,
+            float minSimilarity, int begin, int end)
+            : this(field, term.ToCharSequence(), minSimilarity, begin, end)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="field">Name of the field query will use.</param>
+        /// <param name="term">Term token to use for building term for the query</param>
+        /// <param name="minSimilarity">similarity value</param>
+        /// <param name="begin">position in the query string</param>
+        /// <param name="end">position in the query string</param>
+         // LUCENENET specific overload for StringBuilder term
+        public FuzzyQueryNode(string field, StringBuilder term,
             float minSimilarity, int begin, int end)
             : this(field, term.ToCharSequence(), minSimilarity, begin, end)
         {

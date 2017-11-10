@@ -301,14 +301,14 @@ namespace Lucene.Net.Index
 
                     while (paused)
                     {
-//#if !NETSTANDARD1_5
+//#if !NETSTANDARD1_6
 //                        try
 //                        {
 //#endif
                             // In theory we could wait() indefinitely, but we
                             // do 1000 msec, defensively
                             Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
-//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                        }
 //                        catch (ThreadInterruptedException ie)
 //                        {

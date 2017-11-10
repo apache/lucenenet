@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
                 return 2;
 #else
                 return (int)ThreadPriority.Normal;
@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
         {
             foreach (var merge in _mergeThreads.ToArray())
             {
-                if (!merge.IsAlive)
+                if (merge == null || !merge.IsAlive)
                 {
                     continue;
                 }
@@ -367,7 +367,7 @@ namespace Lucene.Net.Index
                 return;
             }
 
-//#if !NETSTANDARD1_5
+//#if !NETSTANDARD1_6
 //            try
 //            {
 //#endif
@@ -378,7 +378,7 @@ namespace Lucene.Net.Index
                 // so, we sleep here to avoid saturating CPU in such
                 // cases:
                 Thread.Sleep(250);
-//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //            }
 //            catch (ThreadInterruptedException ie)
 //            {

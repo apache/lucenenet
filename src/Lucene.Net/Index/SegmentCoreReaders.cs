@@ -163,23 +163,7 @@ namespace Lucene.Net.Index
                     normsProducer = null;
                 }
 
-                // LUCENENET TODO: EXCEPTIONS Not sure why this catch block is swallowing AccessViolationException, 
-                // because it didn't exist in Lucene. Is it really needed? AVE is for protected memory...could
-                // this be needed because we are using unchecked??
-
-#if !NETSTANDARD
-                try
-                {
-#endif
-                    fieldsReaderOrig = si.Info.Codec.StoredFieldsFormat.FieldsReader(cfsDir, si.Info, fieldInfos, context);
-#if !NETSTANDARD
-                }
-#pragma warning disable 168
-                catch (System.AccessViolationException ave)
-#pragma warning restore 168
-                {
-                }
-#endif
+                fieldsReaderOrig = si.Info.Codec.StoredFieldsFormat.FieldsReader(cfsDir, si.Info, fieldInfos, context);
 
                 if (fieldInfos.HasVectors) // open term vector files only as needed
                 {

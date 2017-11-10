@@ -352,7 +352,7 @@ namespace Lucene.Net.Index
                     {
                         foreach (MergeThread t in m_mergeThreads)
                         {
-                            if (t.IsAlive)
+                            if (t != null && t.IsAlive)
                             {
                                 toSync = t;
                                 break;

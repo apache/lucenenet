@@ -37,7 +37,7 @@ namespace Lucene.Net.Facet.Range
     using SingleField = Lucene.Net.Documents.SingleField;
     using Int64Field = Lucene.Net.Documents.Int64Field;
     using NumericDocValuesField = Lucene.Net.Documents.NumericDocValuesField;
-    using DrillSidewaysResult = Lucene.Net.Facet.DrillSideways.DrillSidewaysResult;
+    using DrillSidewaysResult = Lucene.Net.Facet.DrillSidewaysResult;
     using TaxonomyReader = Lucene.Net.Facet.Taxonomy.TaxonomyReader;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;

@@ -2,12 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
 using Microsoft.Extensions.DependencyModel;
 #endif
 
 namespace Lucene.Net.Support
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
     /// Methods for working with Assemblies.
     /// </summary>
@@ -26,7 +43,7 @@ namespace Lucene.Net.Support
             // hoping would be loaded hasn't been loaded yet into the app domain,
             // it is unavailable. So we go to the next level on each and check each referenced
             // assembly.
-#if NETSTANDARD1_5
+#if NETSTANDARD1_6
             var dependencyContext = DependencyContext.Default;
             var assemblyNames = dependencyContext.RuntimeLibraries
                 .SelectMany(lib => lib.GetDefaultAssemblyNames(dependencyContext))

@@ -428,7 +428,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// <summary>
         /// Gets or sets the culture.
         /// </summary>
-        public virtual CultureInfo Locale // LUCENENET TODO: API Is this really needed since we have on the thread already?
+        public virtual CultureInfo Locale
         {
             get { return locale; }
             set { locale = value; }

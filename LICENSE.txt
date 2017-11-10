@@ -706,6 +706,16 @@ falls under the following license
  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  THE POSSIBILITY OF SUCH DAMAGE.
 
+========
+
+The code in
+src/Lucene.Net.Benchmark/Support/Sax
+falls under the following license:
+
+// http://www.saxproject.org
+// Written by David Megginson
+// NO WARRANTY!  This class is in the public domain.
+
 ---
  
 The code in build/dotnet-install.ps1 falls under the following license:

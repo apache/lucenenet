@@ -19,6 +19,9 @@ namespace Lucene.Net.Support
 	 * limitations under the License.
 	 */
 
+    /// <summary>
+    /// An adapter for <see cref="string"/> that implements <see cref="ICharSequence"/>
+    /// </summary>
     public class StringCharSequenceWrapper : ICharSequence
     {
         public static readonly StringCharSequenceWrapper Empty = new StringCharSequenceWrapper(string.Empty);
@@ -35,10 +38,11 @@ namespace Lucene.Net.Support
             get { return value.Length; }
         }
 
-        public char CharAt(int index)
-        {
-            return value[index];
-        }
+        // LUCENENET specific - removed
+        //public char CharAt(int index)
+        //{
+        //    return value[index];
+        //}
 
         // LUCENENET specific - added to .NETify
         public char this[int index]

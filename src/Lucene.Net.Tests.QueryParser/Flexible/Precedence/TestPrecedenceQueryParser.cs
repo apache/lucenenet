@@ -145,7 +145,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
                 a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
             PrecedenceQueryParser qp = new PrecedenceQueryParser();
             qp.Analyzer = (a);
-            qp.DefaultOperator = (StandardQueryConfigHandler.Operator.OR); // LUCENENET TODO: Change API back to the way it was..?
+            qp.DefaultOperator = (StandardQueryConfigHandler.Operator.OR);
             return qp;
         }
 

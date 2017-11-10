@@ -32,8 +32,8 @@ namespace Lucene.Net.Facet.Taxonomy
     /// implementation at search time; see <see cref="Int32AssociationFacetField"/> 
     /// and <see cref="SingleAssociationFacetField"/> to use existing 
     /// <see cref="Facets"/> implementations.
-    /// 
-    ///  @lucene.experimental 
+    /// <para/>
+    /// @lucene.experimental 
     /// </summary>
     public class AssociationFacetField : Field
     {

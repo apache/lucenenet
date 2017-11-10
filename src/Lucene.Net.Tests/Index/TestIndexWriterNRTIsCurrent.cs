@@ -201,12 +201,12 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
                 try
                 {
 #endif
                     Latch.Wait();
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
                 }
                 catch (ThreadInterruptedException e)
                 {

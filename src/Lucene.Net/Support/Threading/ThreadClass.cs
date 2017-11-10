@@ -92,7 +92,7 @@ namespace Lucene.Net.Support.Threading
         /// </summary>
         public virtual void Interrupt()
         {
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
             _threadField.Interrupt();
 #endif
         }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Support.Threading
             _threadField.IsBackground = isDaemon;
         }
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
         /// <summary>
         /// Gets or sets a value indicating the scheduling priority of a thread
         /// </summary>
@@ -224,7 +224,7 @@ namespace Lucene.Net.Support.Threading
             Monitor.PulseAll(_threadField);
         }
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
 
         /// <summary>
         /// Raises a ThreadAbortException in the thread on which it is invoked,
@@ -263,7 +263,7 @@ namespace Lucene.Net.Support.Threading
         /// <returns>A String that represents the current object</returns>
         public override System.String ToString()
         {
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
             return "Thread[" + Name + "," + Priority.ToString() + "]";
 #else
             return "Thread[" + Name + "]";

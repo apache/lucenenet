@@ -216,5 +216,14 @@ namespace Lucene.Net.Support
 
             return -1;
         }
+
+        /// <summary>
+        /// Convenience method to wrap a string in a <see cref="StringBuilderCharSequenceWrapper"/>
+        /// so a <see cref="StringBuilder"/> can be used as <see cref="ICharSequence"/> in .NET.
+        /// </summary>
+        public static ICharSequence ToCharSequence(this StringBuilder text)
+        {
+            return new StringBuilderCharSequenceWrapper(text);
+        }
     }
 }

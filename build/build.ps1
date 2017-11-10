@@ -232,9 +232,16 @@ task Publish -depends Pack -description "This task publishes the command line to
 		Write-Host "Publishing $tool..." -ForegroundColor Magenta
 
 		$toolName = [io.path]::GetFileNameWithoutExtension($tool)
+		$outputDirectory = "$publish_directory\$toolName"
 		Exec {
-			& dotnet.exe publish $tool --configuration $Configuration --output "$publish_directory\$toolName"
+			& dotnet.exe publish $tool --configuration $Configuration --output $outputDirectory
 		}
+
+		# Zip up the result of the publish
+		$outputFile = "$outputDirectory.zip"
+		if (Test-Path $outputFile) { Remove-Item $outputFile }
+		Add-Type -assembly "system.io.compression.filesystem"
+		[io.compression.zipfile]::CreateFromDirectory($outputDirectory, $outputFile)
 	}
 }
 

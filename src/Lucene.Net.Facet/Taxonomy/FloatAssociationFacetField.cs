@@ -29,8 +29,8 @@ namespace Lucene.Net.Facet.Taxonomy
     /// to aggregate <see cref="float"/> values per facet label at search time.
     /// <para/>
     /// NOTE: This was FloatAssociationFacetField in Lucene
-    /// 
-    ///  @lucene.experimental 
+    /// <para/>
+    /// @lucene.experimental 
     /// </summary>
     public class SingleAssociationFacetField : AssociationFacetField
     {
@@ -65,7 +65,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public override string ToString()
         {
-            return "FloatAssociationFacetField(dim=" + Dim + " path=" + Arrays.ToString(Path) + 
+            return "SingleAssociationFacetField(dim=" + Dim + " path=" + Arrays.ToString(Path) + 
                 " value=" + BytesRefToSingle(Assoc).ToString("0.0#####", CultureInfo.InvariantCulture) + ")";
         }
     }

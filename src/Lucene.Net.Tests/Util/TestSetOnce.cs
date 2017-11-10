@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
                     set.Set(new Integer(Convert.ToInt32(Name.Substring(2), CultureInfo.InvariantCulture)));
                     success = true;
                 }
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
                 catch (ThreadInterruptedException)
                 {
                     // ignore

@@ -83,7 +83,7 @@ namespace Lucene.Net.Expressions
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD1_5
+#if !NETSTANDARD1_6
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Expressions.Bindings))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
