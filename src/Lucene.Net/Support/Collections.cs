@@ -279,6 +279,10 @@ namespace Lucene.Net.Support
                 return false;
             }
 
+            if (listA.Count != listB.Count)
+            {
+                return false;
+            }
 
             using (IEnumerator<T> eA = listA.GetEnumerator())
             {
