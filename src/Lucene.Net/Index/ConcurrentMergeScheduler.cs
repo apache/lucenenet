@@ -732,6 +732,9 @@ namespace Lucene.Net.Index
             //{
             //    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
             //}
+            
+            //Note: Non-treatable exception
+            //In this case, the whole process dies probably because the exception isn't handled (except: AppDomain.UnhandledException)
             throw new MergePolicy.MergeException(exc, m_dir);
         }
 
