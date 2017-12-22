@@ -45,7 +45,7 @@ if (-not (test-path $DocFxExe))
 {
 	Write-Host "Retrieving docfx..."
 	$DocFxZip = "$ToolsFolder\tmp\docfx.zip"
-	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.24/docfx.zip" -OutFile $DocFxZip
+	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.29/docfx.zip" -OutFile $DocFxZip
 	#unzip
 	Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
 }
@@ -103,11 +103,22 @@ if ($msbuild) {
   if (-not (test-path $msbuild)) {
 	throw "MSBuild not found!"
   }
-  $sln = (Join-Path -Path $RepoRoot "src\docs\LuceneDocsPlugins\LuceneDocsPlugins.sln")
-  & $nuget restore $sln
+
+  # Build the plugin solution
+  $pluginSln = (Join-Path -Path $RepoRoot "src\docs\LuceneDocsPlugins\LuceneDocsPlugins.sln")
+  & $nuget restore $pluginSln
+
   $PluginsFolder = (Join-Path -Path $ApiDocsFolder "lucenetemplate\plugins")
-  New-Item PluginsFolder -type directory -force
-  & $msbuild $sln "/p:OutDir=$PluginsFolder"
+  New-Item $PluginsFolder -type directory -force
+  & $msbuild $pluginSln "/p:OutDir=$PluginsFolder"
+
+  # Rebuild the main solution to ensure everything is in place correctly (only on clean)
+  if ($Clean -eq 1) {
+	$mainSln = (Join-Path -Path $RepoRoot "Lucene.Net.sln")
+	& $nuget restore $mainSln  
+	& $msbuild $mainSln "/t:Clean,Build"
+  }  
+
 }
 else {
 	throw "MSBuild not found!"
@@ -123,15 +134,17 @@ else {
 $DocFxJson = Join-Path -Path $RepoRoot "apidocs\docfx.json"
 $DocFxLog = Join-Path -Path $RepoRoot "apidocs\obj\docfx.log"
 
-Write-Host "Building metadata..."
-if ($Clean -eq 1) {
-	& $DocFxExe metadata $DocFxJson -l "$DocFxLog" --loglevel $LogLevel --force
-}
-else {
-	& $DocFxExe metadata $DocFxJson -l "$DocFxLog" --loglevel $LogLevel
-}
 if($?) { 
 	if ($ServeDocs -eq 0){
+
+		Write-Host "Building metadata..."
+		if ($Clean -eq 1) {
+			& $DocFxExe metadata $DocFxJson -l "$DocFxLog" --loglevel $LogLevel --force
+		}
+		else {
+			& $DocFxExe metadata $DocFxJson -l "$DocFxLog" --loglevel $LogLevel
+		}
+
 		# build the output		
 		Write-Host "Building docs..."
 		& $DocFxExe build $DocFxJson -l "$DocFxLog" --loglevel $LogLevel

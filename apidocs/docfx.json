@@ -13,7 +13,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -28,7 +28,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Queries",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -43,7 +43,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Facet",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -58,7 +58,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Classification",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -73,7 +73,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Expressions",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -88,7 +88,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Codecs",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -103,7 +103,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Join",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -118,7 +118,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Grouping",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -137,7 +137,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -152,7 +152,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.QueryParser",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -167,7 +167,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Suggest",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -182,7 +182,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Memory",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },    
     {
@@ -197,7 +197,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Spatial",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -212,7 +212,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Highlighter",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -227,7 +227,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Replicator",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -242,7 +242,7 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.ICU",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     },
     {
@@ -257,25 +257,25 @@
       ],
       "dest": "obj/docfx/api/Lucene.Net.Demo",
       "properties": {
-          "TargetFramework": "netstandard1.5"
+          "TargetFramework": "netstandard1.6"
       }
     }
   ],
   "build": {
     "content": [
       {
-        "files": ["api/**.yml","api/**.md","obj/docfx/api/**.yml"],
+        "files": ["Lucene.Net/overview.md"],
+        "src": "../src"
+      },
+      {
+        "files": ["api/**.yml","api/**.md","obj/docfx/api/**"],
         "dest": "api"
       },
       {
         "files": ["**.md", "**.yml"],
         "src": "../src/dotnet/tools/lucene-cli/docs",
         "dest": "cli"
-      },
-      {
-        "files": ["**/package.md","**/overview.md"],
-        "src": "../src"
-      },
+      },      
       {
         "files": ["toc.yml", "*.md"]
       }
@@ -299,11 +299,9 @@
     },
     "overwrite": [
       {
-        "files": ["apispec/**.md"]
-      },
-      {
         "files": ["**/package.md","**/overview.md"],
-        "src": "../src"
+        "src": "../src",
+        "exclude": ["Lucene.Net/overview.md"]
       }
     ],
     "dest": "_site",
