@@ -265,10 +265,17 @@
     "content": [
       {
         "files": ["Lucene.Net/overview.md"],
-        "src": "../src"
+        "src": "../src",
+        "dest": "api"
       },
       {
-        "files": ["api/**.yml","api/**.md","obj/docfx/api/**"],
+        "files": ["**.yml","**.md"],
+        "src": "obj/docfx/api",
+        "dest": "api"
+      },
+      {
+        "files": ["**.yml","**.md"],
+        "src": "api",
         "dest": "api"
       },
       {
