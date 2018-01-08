@@ -279,9 +279,7 @@
   "build": {
     "content": [
       {
-        "files": [
-          "Lucene.Net/overview.md", 
-          "Lucene.Net.Sandbox/overview.md"],
+        "files": ["Lucene.Net/overview.md"],
         "src": "../src",
         "dest": "api"
       },
