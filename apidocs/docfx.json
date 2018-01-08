@@ -127,7 +127,7 @@
           "files": [
             "Lucene.Net.TestFramework/Lucene.Net.TestFramework.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": ["**/obj/**", "**/bin/**"],
           "src": "../src"
       }
       ],
@@ -279,7 +279,9 @@
   "build": {
     "content": [
       {
-        "files": ["Lucene.Net/overview.md"],
+        "files": [
+          "Lucene.Net/overview.md", 
+          "Lucene.Net.Sandbox/overview.md"],
         "src": "../src",
         "dest": "api"
       },

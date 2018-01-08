@@ -16,7 +16,7 @@
 -->
 
 ---
-uid: Lucene.Net.Suggest
+uid: Lucene.Net.Search.Suggest
 summary: *content
 ---
 

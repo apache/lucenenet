@@ -17,7 +17,7 @@
 <!-- :Post-Release-Update-Version.LUCENE_XY: - several mentions in this file -->
 
 ---
-uid: Lucene.Net.Analysis.ICU
+uid: Lucene.Net.Analysis.Icu
 summary: *content
 ---
 

@@ -16,7 +16,7 @@
  limitations under the License.
 -->
 ---
-uid: Lucene.Net.Memory
+uid: Lucene.Net.Index.Memory
 summary: *content
 ---
 

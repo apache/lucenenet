@@ -16,7 +16,7 @@
 -->
 
 ---
-uid: Lucene.Net.Grouping
+uid: Lucene.Net.Search.Grouping
 summary: *content
 ---
 

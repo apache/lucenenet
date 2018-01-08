@@ -17,7 +17,7 @@
 -->
 
 ---
-uid: Lucene.Net.Analysis.SmartCn
+uid: Lucene.Net.Analysis.Cn.Smart
 summary: *content
 ---
 

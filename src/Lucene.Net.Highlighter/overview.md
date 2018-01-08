@@ -16,7 +16,7 @@
 -->
 
 ---
-uid: Lucene.Net.Highlighter
+uid: Lucene.Net.Search.Highlight
 summary: *content
 ---
 
