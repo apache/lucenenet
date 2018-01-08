@@ -46,7 +46,7 @@ namespace Lucene.Net.Facet.Range
     ///  <see cref="DoubleFieldSource"/> (this is the default used when you
     ///  pass just a the field name).
     /// 
-    ///  @lucene.experimental 
+    /// @lucene.experimental 
     /// </para>
     /// </summary>
     public class DoubleRangeFacetCounts : RangeFacetCounts

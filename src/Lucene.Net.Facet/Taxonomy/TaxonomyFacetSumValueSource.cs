@@ -37,7 +37,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// Aggregates sum of values from <see cref="FunctionValues.DoubleVal(int)"/> and <see cref="FunctionValues.DoubleVal(int, double[])"/>, 
     /// for each facet label.
     /// 
-    ///  @lucene.experimental 
+    /// @lucene.experimental 
     /// </summary>
     public class TaxonomyFacetSumValueSource : SingleTaxonomyFacets
     {

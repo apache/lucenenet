@@ -22,7 +22,7 @@ namespace Lucene.Net.Facet
     /// <summary>
     /// Common base class for all facets implementations.
     /// 
-    ///  @lucene.experimental 
+    /// @lucene.experimental 
     /// </summary>
     public abstract class Facets
     {
