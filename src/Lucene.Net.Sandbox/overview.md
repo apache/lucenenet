@@ -15,8 +15,9 @@
   limitations under the License.
   -->
 
-    <title>
-      Sandbox
-    </title>
+---
+uid: Lucene.Net.Sandbox
+summary: *content
+---
 
-  Sandbox
+Sandbox

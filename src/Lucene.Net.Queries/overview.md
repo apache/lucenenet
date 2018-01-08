@@ -15,8 +15,9 @@
   limitations under the License.
   -->
 
-    <title>
-      Queries
-    </title>
+---
+uid: Lucene.Net.Queries
+summary: *content
+---
 
-  Queries
+Queries

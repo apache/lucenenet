@@ -15,8 +15,9 @@
  limitations under the License.
 -->
 
-    <title>
-      suggest
-    </title>
+---
+uid: Lucene.Net.Suggest
+summary: *content
+---
 
-  Auto-suggest and spellchecking support.
+Auto-suggest and spellchecking support.

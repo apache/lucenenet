@@ -15,9 +15,10 @@
  limitations under the License.
 -->
 
-    <title>
-      miscellaneous
-    </title>
+---
+uid: Lucene.Net.Misc
+summary: *content
+---
 
 ## Misc Tools
 

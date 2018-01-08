@@ -15,4 +15,9 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.TestFramework
+summary: *content
+---
+
  The Lucene Test Framework is used by Lucene as the basis for its tests. The framework can also be used for testing third-party code that uses the Lucene API. 

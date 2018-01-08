@@ -35,7 +35,37 @@ on some of the conceptual or inner details of Lucene:
 * [Changes](https://github.com/apache/lucenenet/releases/tag/Lucene.Net_4_8_0): List of changes in this release.
 * [System Requirements](SYSTEM_REQUIREMENTS.html): Minimum and supported .NET versions.
 * [Migration Guide](MIGRATE.html): What changed in Lucene 4; how to migrate code from Lucene 3.x.
-* [File Formats](xref:Lucene.​Net.​Codecs.​Lucene46): Guide to the supported index format used by Lucene.  This can be customized by using [an alternate codec](xref:Lucene.Net.Codecs).
+* [File Formats](xref:Lucene.Net.Codecs.Lucene46) : Guide to the supported index format used by Lucene.  This can be customized by using [an alternate codec](xref:Lucene.Net.Codecs).
 * [Search and Scoring in Lucene](xref:Lucene.Net.Search): Introduction to how Lucene scores documents.
 * [Classic Scoring Formula](xref:Lucene.Net.Search.Similarities.TFIDFSimilarity): Formula of Lucene's classic [Vector Space](http://en.wikipedia.org/wiki/Vector_Space_Model) implementation. (look [here](xref:Lucene.Net.Search.Similarities) for other models)
 * [Classic QueryParser Syntax](xref:Lucene.Net.QueryParsers.Classic): Overview of the Classic QueryParser's syntax and features.
+
+## API Docs
+
+* [core](xref:Lucene.Net): Lucene core library
+* [analyzers-common](xref:Lucene.Net.Analysis.Common): Analyzers for indexing content in different languages and domains.
+* [analyzers-icu](xref:Lucene.Net.Analysis.ICU): Analysis integration with ICU (International Components for Unicode).
+* [analyzers-kuromoji](xref:Lucene.Net.Analysis.Kuromoji): Japanese Morphological Analyzer
+* To be completed: analyzers-morfologik: Analyzer for indexing Polish
+* [analyzers-phonetic](xref:Lucene.Net.Analysis.Phonetic): Analyzer for indexing phonetic signatures (for sounds-alike search)
+* [analyzers-smartcn](xref:Lucene.Net.Analysis.SmartCn): Analyzer for indexing Chinese
+* [analyzers-stempel](xref:Lucene.Net.Analysis.Stempel): Analyzer for indexing Polish
+* To be completed: analyzers-uima: Analysis integration with Apache UIMA
+* [benchmark](xref:Lucene.Net.Cli.Benchmark): System for benchmarking Lucene
+* [classification](xref:Lucene.Net.Classification): Classification module for Lucene
+* [codecs](xref:Lucene.Net.Codecs): Lucene codecs and postings formats.
+* [demo](xref:Lucene.Net.Demo): Simple example code
+* [expressions](xref:Lucene.Net.Expressions): Dynamically computed values to sort/facet/search on based on a pluggable grammar.
+* [facet](xref:Lucene.Net.Facet): Faceted indexing and search capabilities
+* [grouping](xref:Lucene.Net.Grouping): Collectors for grouping search results.
+* [highlighter](xref:Lucene.Net.Highlighter): Highlights search keywords in results
+* [join](xref:Lucene.Net.Join): Index-time and Query-time joins for normalized content
+* [memory](xref:Lucene.Net.Memory): Single-document in-memory index implementation
+* [misc](xref:Lucene.Net.Misc): Index tools and other miscellaneous code
+* [queries](xref:Lucene.Net.Queries): Filters and Queries that add to core Lucene
+* [queryparser](xref:Lucene.Net.QueryParser): Query parsers and parsing framework
+* [replicator](xref:Lucene.Net.Replicator): Files replication utility
+* [sandbox](xref:Lucene.Net.Sandbox): Various third party contributions and new ideas
+* [spatial](xref:Lucene.Net.Spatial): Geospatial search
+* [suggest](xref:Lucene.Net.Suggest): Auto-suggest and Spellchecking support
+* [test-framework](xref:Lucene.Net.TestFramework): Framework for testing Lucene-based applications

@@ -125,6 +125,21 @@
       "src": [
         {
           "files": [
+            "Lucene.Net.TestFramework/Lucene.Net.TestFramework.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
+      }
+      ],
+      "dest": "obj/docfx/api/Lucene.Net.TestFramework",
+      "properties": {
+          "TargetFramework": "netstandard1.6"
+      }
+    },
+    {
+      "src": [
+        {
+          "files": [
             "Lucene.Net.Analysis.Common/Lucene.Net.Analysis.Common.csproj",
             "Lucene.Net.Analysis.Stempel/Lucene.Net.Analysis.Stempel.csproj",
             "Lucene.Net.Analysis.SmartCn/Lucene.Net.Analysis.SmartCn.csproj",
