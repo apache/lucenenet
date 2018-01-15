@@ -120,22 +120,7 @@
       "properties": {
           "TargetFramework": "netstandard1.6"
       }
-    },
-    {
-      "src": [
-        {
-          "files": [
-            "Lucene.Net.TestFramework/Lucene.Net.TestFramework.csproj"
-          ],
-          "exclude": ["**/obj/**", "**/bin/**"],
-          "src": "../src"
-      }
-      ],
-      "dest": "obj/docfx/api/Lucene.Net.TestFramework",
-      "properties": {
-          "TargetFramework": "netstandard1.6"
-      }
-    },
+    },    
     {
       "src": [
         {
@@ -297,7 +282,7 @@
         "files": ["**.md", "**.yml"],
         "src": "../src/dotnet/tools/lucene-cli/docs",
         "dest": "cli"
-      },      
+      },
       {
         "files": ["toc.yml", "*.md"]
       }

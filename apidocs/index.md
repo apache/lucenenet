@@ -68,4 +68,4 @@ on some of the conceptual or inner details of Lucene:
 * [sandbox](xref:Lucene.Net.Sandbox): Various third party contributions and new ideas
 * [spatial](xref:Lucene.Net.Spatial): Geospatial search
 * [suggest](xref:Lucene.Net.Search.Suggest): Auto-suggest and Spellchecking support
-* [test-framework](xref:Lucene.Net.TestFramework): Framework for testing Lucene-based applications
+* __Docs to be fixed__:* test-framework: Framework for testing Lucene-based applications
