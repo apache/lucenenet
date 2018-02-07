@@ -47,7 +47,6 @@ namespace Lucene.Net.Analysis.Core
             : base(@in)
         {
             termAtt = AddAttribute<ICharTermAttribute>();
-            termAtt = AddAttribute<ICharTermAttribute>();
             charUtils = CharacterUtils.GetInstance(matchVersion);
         }
 
