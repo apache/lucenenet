@@ -2,9 +2,10 @@
   href: /#about
 - name: Quick start
   href: /#quick-start
-- name: Getting started
-  href: getting-started/
-- name: Community
-  href: community/
-- name: Wiki
-  href: wiki/
+- name: Download
+  topicHref: download.md
+- name: Documentation
+  href: https://lucenenetdocs.azurewebsites.net/
+- name: Contributing
+  href: contributing/
+  topicHref: contributing/index.md
