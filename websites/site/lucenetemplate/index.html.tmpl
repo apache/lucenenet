@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html lang="en">
-  {{>partials/head-home}}
+  {{>partials/head-content}}
   <body id="homepage" data-spy="scroll" data-target="#affix">
     <div id="wrapper">
       <header>
@@ -38,7 +38,19 @@
           </div>
         </div>
       </section>
-      {{{conceptual}}}
+{{>partials/home-quick-start}}
+      <section class="home-section">
+        <div class="container">
+          <div class="row">
+            {{{conceptual}}}
+          </div>
+        </div>
+      </section>
+      <section class="home-section">
+        <div class="container">
+          <div class="row"></div>
+        </div>
+      </section>
       {{>partials/footer}}
     </div>
     {{>partials/scripts}}
