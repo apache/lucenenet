@@ -3,14 +3,6 @@ Apache Lucene.NET&trade; 4.8.0 Documentation
 
 ---------------
 
-
-<div>
-<a href="https://lucenenet.apache.org/">
-    <img src="https://raw.githubusercontent.com/apache/lucenenet/master/branding/logo/lucene-net-icon-128.png" title="Apache.NET Lucene Logo" alt="Lucene.NET">
-</a>
-<br/>
-</div>
-
 Lucene is a .NET full-text search engine. Lucene.NET is not a complete application, 
 but rather a code library and API that can easily be used to add search capabilities
 to applications.

@@ -8,7 +8,7 @@
             "Lucene.Net.Misc/Lucene.Net.Misc.csproj"      
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net",
@@ -23,7 +23,7 @@
             "Lucene.Net.Queries/Lucene.Net.Queries.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Queries",
@@ -38,7 +38,7 @@
             "Lucene.Net.Facet/Lucene.Net.Facet.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Facet",
@@ -53,7 +53,7 @@
             "Lucene.Net.Classification/Lucene.Net.Classification.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Classification",
@@ -68,7 +68,7 @@
             "Lucene.Net.Expressions/Lucene.Net.Expressions.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Expressions",
@@ -83,7 +83,7 @@
             "Lucene.Net.Codecs/Lucene.Net.Codecs.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Codecs",
@@ -98,7 +98,7 @@
             "Lucene.Net.Join/Lucene.Net.Join.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Join",
@@ -113,7 +113,7 @@
             "Lucene.Net.Grouping/Lucene.Net.Grouping.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
       }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Grouping",
@@ -132,7 +132,7 @@
             "Lucene.Net.Analysis.Kuromoji/Lucene.Net.Analysis.Kuromoji.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis",
@@ -147,7 +147,7 @@
             "Lucene.Net.QueryParser/Lucene.Net.QueryParser.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.QueryParser",
@@ -162,7 +162,7 @@
             "Lucene.Net.Suggest/Lucene.Net.Suggest.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Suggest",
@@ -177,7 +177,7 @@
             "Lucene.Net.Memory/Lucene.Net.Memory.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Memory",
@@ -192,7 +192,7 @@
             "Lucene.Net.Spatial/Lucene.Net.Spatial.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Spatial",
@@ -207,7 +207,7 @@
             "Lucene.Net.Highlighter/Lucene.Net.Highlighter.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Highlighter",
@@ -222,7 +222,7 @@
             "Lucene.Net.Replicator/Lucene.Net.Replicator.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Replicator",
@@ -237,7 +237,7 @@
             "Lucene.Net.ICU/Lucene.Net.ICU.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src/dotnet"
+          "src": "../../src/dotnet"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.ICU",
@@ -252,7 +252,7 @@
             "Lucene.Net.Demo/Lucene.Net.Demo.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../src"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Demo",
@@ -265,7 +265,7 @@
     "content": [
       {
         "files": ["Lucene.Net/overview.md"],
-        "src": "../src",
+        "src": "../../src",
         "dest": "api"
       },
       {
@@ -280,20 +280,22 @@
       },
       {
         "files": ["**.md", "**.yml"],
-        "src": "../src/dotnet/tools/lucene-cli/docs",
+        "src": "../../src/dotnet/tools/lucene-cli/docs",
         "dest": "cli"
       },
       {
-        "files": ["toc.yml", "*.md"]
+        "files": ["toc.yml", "*.md", "web.config"]
       }
     ],
     "resource": [
       {
         "files": [
           "logo/favicon.ico",
-          "logo/lucene-net-icon-64x64.png"
+          "logo/lucene-net-icon-64x64.png",
+          "logo/lucene-net-color.png",
+          "logo/lucene-net-reverse-color.png"
         ],
-        "src": "../branding"
+        "src": "../../branding"
       }
     ],   
     "globalMetadata": {
@@ -301,13 +303,13 @@
       "_disableContribution": false,
       "_appFaviconPath": "logo/favicon.ico",
       "_enableSearch": true,
-      "_appLogoPath": "logo/lucene-net-icon-64x64.png",
-      "_appFooter": "Copyright © 2017 Licensed to the Apache Software Foundation (ASF)"
+      
+      "_appFooter": "Copyright © 2018 Licensed to the Apache Software Foundation (ASF)"
     },
     "overwrite": [
       {
         "files": ["**/package.md","**/overview.md"],
-        "src": "../src",
+        "src": "../../src",
         "exclude": ["Lucene.Net/overview.md"]
       }
     ],
@@ -315,10 +317,13 @@
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [
-      "default",
-      "lucenetemplate"
+      "default"
     ],
     "postProcessors": [],
-    "noLangKeyword": false
+    "markdownEngineName": "markdig",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
   }
 }

@@ -1,0 +1,10 @@
+- name: About
+  href: /#about
+- name: Quick start
+  href: /#quick-start
+- name: Getting started
+  href: getting-started/
+- name: Community
+  href: community/
+- name: Wiki
+  href: wiki/

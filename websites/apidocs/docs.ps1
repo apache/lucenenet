@@ -20,19 +20,21 @@
 param (
 	[Parameter(Mandatory=$false)]
 	[int]
-	$ServeDocs = 0,
+	$ServeDocs = 1,
 	[Parameter(Mandatory=$false)]
 	[int]
-	$Clean = 1,
+	$Clean = 0,
 	# LogLevel can be: Diagnostic, Verbose, Info, Warning, Error
 	[Parameter(Mandatory=$false)]
 	[string]
 	$LogLevel = 'Info'
 )
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
-$RepoRoot = (get-item $PSScriptFilePath).Directory.Parent.FullName;
-$ApiDocsFolder = Join-Path -Path $RepoRoot -ChildPath "apidocs";
+$RepoRoot = (get-item $PSScriptFilePath).Directory.Parent.Parent.FullName;
+$ApiDocsFolder = Join-Path -Path $RepoRoot -ChildPath "websites\apidocs";
 $ToolsFolder = Join-Path -Path $ApiDocsFolder -ChildPath "tools";
 #ensure the /build/tools folder
 New-Item $ToolsFolder -type directory -force
@@ -51,7 +53,7 @@ if (-not (test-path $DocFxExe))
 {
 	Write-Host "Retrieving docfx..."
 	$DocFxZip = "$ToolsFolder\tmp\docfx.zip"
-	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.30/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
+	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.36.1/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
 	#unzip
 	Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
 }
@@ -137,8 +139,8 @@ else {
 # Html pages - 	Example: https://github.com/apache/lucene-solr/blob/releases/lucene-solr/4.8.0/lucene/highlighter/src/java/org/apache/lucene/search/highlight/package.html - these seem to be throughout the source
 #				For these ones, could we go fetch them and download all *.html files from Git?
 
-$DocFxJson = Join-Path -Path $RepoRoot "apidocs\docfx.json"
-$DocFxLog = Join-Path -Path $RepoRoot "apidocs\obj\docfx.log"
+$DocFxJson = Join-Path -Path $ApiDocsFolder "docfx.json"
+$DocFxLog = Join-Path -Path $ApiDocsFolder "obj\docfx.log"
 
 if($?) { 
 	if ($ServeDocs -eq 0){
