@@ -1,4 +1,5 @@
-﻿<!--
+﻿
+<!--
  dk.brics.automaton
 
  Copyright (c) 2001-2009 Anders Moeller
