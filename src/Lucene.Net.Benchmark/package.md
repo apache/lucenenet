@@ -15,11 +15,9 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<html>
-<head>
-    <title>Lucene Benchmarking Package</title>
-</head>
-<body>
+
+
+
 The benchmark contribution contains tools for benchmarking Lucene using standard, freely available corpora.
 <div>
 
@@ -42,5 +40,4 @@ The benchmark contribution contains tools for benchmarking Lucene using standard
     The original code for these classes was donated by Andrzej Bialecki at http://issues.apache.org/jira/browse/LUCENE-675 and has been updated by Grant Ingersoll to make some parts of the code reusable in other benchmarkers
 </div>
 <div> </div>
-</body>
-</html>
+

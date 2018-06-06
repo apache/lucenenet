@@ -1,4 +1,9 @@
-﻿<!--
+﻿---
+uid: Lucene.Net.Highlighter
+summary: *content
+---
+
+<!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
  this work for additional information regarding copyright ownership.
@@ -15,10 +20,7 @@
  limitations under the License.
 -->
 
----
-uid: Lucene.Net.Search.Highlight
-summary: *content
----
+    
 
-The highlight package contains classes to provide "keyword in context" features
-typically used to highlight search terms in the text of results pages.
+  The highlight package contains classes to provide "keyword in context" features
+  typically used to highlight search terms in the text of results pages.

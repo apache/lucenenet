@@ -1,4 +1,9 @@
-﻿<!--
+﻿---
+uid: Lucene.Net
+summary: *content
+---
+
+<!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
  this work for additional information regarding copyright ownership.
@@ -14,11 +19,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
----
-uid: Lucene.Net
-summary: *content
----
 
 Apache Lucene is a high-performance, full-featured text search engine library. Here's a simple example how to use Lucene for indexing and searching (using JUnit to check if the results are what we expect):
 

@@ -1,4 +1,9 @@
-﻿<!--
+﻿---
+uid: Lucene.Net.Analysis.Icu
+summary: *content
+---
+
+<!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
  this work for additional information regarding copyright ownership.
@@ -16,10 +21,8 @@
 -->
 <!-- :Post-Release-Update-Version.LUCENE_XY: - several mentions in this file -->
 
----
-uid: Lucene.Net.Analysis.Icu
-summary: *content
----
+    
+    
 
 This module exposes functionality from 
 [ICU](http://site.icu-project.org/) to Apache Lucene. ICU4J is a Java

@@ -1,4 +1,9 @@
-﻿<!--
+﻿---
+uid: Lucene.Net.Analysis.Kuromoji
+summary: *content
+---
+
+<!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
  this work for additional information regarding copyright ownership.
@@ -14,13 +19,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
----
-uid: Lucene.Net.Analysis.Ja
-summary: *content
----
 
-Kuromoji is a morphological analyzer for Japanese text.  
+    
 
-This module provides support for Japanese text analysis, including features such as part-of-speech tagging, lemmatization, and compound word analysis. 
+  Kuromoji is a morphological analyzer for Japanese text.  
 
-For an introduction to Lucene's analysis API, see the [](xref:Lucene.Net.Analysis) package documentation. 
+ This module provides support for Japanese text analysis, including features such as part-of-speech tagging, lemmatization, and compound word analysis. 
+
+ For an introduction to Lucene's analysis API, see the [](xref:Lucene.Net.Analysis) package documentation. 
