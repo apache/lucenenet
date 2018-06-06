@@ -1,4 +1,9 @@
-Apache Lucene.NET&trade; 4.8.0 Documentation
+---
+title: Lucene.Net Docs - The documentation website for Lucene.Net
+description: The documentation website for Lucene.Net
+---
+
+Apache Lucene.Net 4.8.0 Documentation
 ===============
 
 ---------------
@@ -25,8 +30,8 @@ on some of the conceptual or inner details of Lucene:
 ## Reference Documents
 
 * [Changes](https://github.com/apache/lucenenet/releases/tag/Lucene.Net_4_8_0): List of changes in this release.
-* [System Requirements](SYSTEM_REQUIREMENTS.html): Minimum and supported .NET versions.
-* [Migration Guide](MIGRATE.html): What changed in Lucene 4; how to migrate code from Lucene 3.x.
+* System Requirements: Minimum and supported .NET versions. __TODO: Add link__
+* Migration Guide: What changed in Lucene 4; how to migrate code from Lucene 3.x. __TODO: Add link__
 * [File Formats](xref:Lucene.Net.Codecs.Lucene46) : Guide to the supported index format used by Lucene.  This can be customized by using [an alternate codec](xref:Lucene.Net.Codecs).
 * [Search and Scoring in Lucene](xref:Lucene.Net.Search): Introduction to how Lucene scores documents.
 * [Classic Scoring Formula](xref:Lucene.Net.Search.Similarities.TFIDFSimilarity): Formula of Lucene's classic [Vector Space](http://en.wikipedia.org/wiki/Vector_Space_Model) implementation. (look [here](xref:Lucene.Net.Search.Similarities) for other models)

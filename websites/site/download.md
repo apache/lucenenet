@@ -17,6 +17,8 @@ _Released:_ __`Pending...`__
 
 See __[Current Status](https://cwiki.apache.org/confluence/display/LUCENENET/Current+Status)__ for more details on the remaining work
 
+This version is a direct port of the Java Lucene project at this release: [https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.0](https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.0)
+
 ## Lucene 3.0.3
 
 _Status:_ __`Stable`__

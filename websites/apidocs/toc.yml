@@ -1,6 +1,8 @@
-- name: Lucene.NET API
+- name: Lucene.Net API
   href: api/
   topicUid: Lucene.Net
-- name: Lucene.NET CLI
+- name: Lucene.Net CLI
   href: ../../src/dotnet/tools/lucene-cli/docs/
   topicHref: ../../src/dotnet/tools/lucene-cli/docs/index.md
+- name: Lucene.Net Website
+  href: https://lucenenetsite.azurewebsites.net

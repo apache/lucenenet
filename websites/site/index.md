@@ -4,7 +4,7 @@ description: Lucene.Net is a port of the Lucene search engine library, written i
 documentType: index
 ---
 
-Lucene.NET
+Lucene.Net
 ===============
 
 <h2 id="about" class="text-center">About the project</h2>
