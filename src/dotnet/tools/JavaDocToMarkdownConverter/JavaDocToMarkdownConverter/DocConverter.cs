@@ -75,12 +75,19 @@ namespace JavaDocToMarkdownConverter
             var converter = new Html2Markdown.Converter();
             var markdown = converter.ConvertFile(inputDoc);
 
-            foreach(var r in JavaDocFormatters.Replacers)
+            var ns = ExtractNamespaceFromFile(outputFile);
+            if (NamespaceFileMappings.TryGetValue(ns, out var realNs))
+                ns = realNs;
+
+            foreach (var r in JavaDocFormatters.Replacers)
             {
                 markdown = r.Replace(markdown);
             }
+            if (JavaDocFormatters.CustomReplacers.TryGetValue(ns, out var cr))
+            {
+                markdown = cr.Replace(markdown);
+            }
 
-            var ns = ExtractNamespaceFromFile(outputFile);
             var appendYamlHeader = ShouldAppendYamlHeader(inputDoc, ns);
 
             var fileContent = appendYamlHeader ? AppendYamlHeader(ns, markdown) : markdown;
@@ -123,9 +130,9 @@ namespace JavaDocToMarkdownConverter
                 "Lucene.Net.Facet",
                 "Lucene.Net.Grouping",
                 "Lucene.Net.Join",
-                "Lucene.Net.Memory",
+                "Lucene.Net.Index.Memory",
                 "Lucene.Net.Replicator",
-                "Lucene.Net.QueryParser.Classic",
+                "Lucene.Net.QueryParsers.Classic",
                 "Lucene.Net.Codecs",
                 "Lucene.Net.Analysis",
                 "Lucene.Net.Codecs.Compressing",
@@ -135,7 +142,7 @@ namespace JavaDocToMarkdownConverter
                 "Lucene.Net.Codecs.Lucene42",
                 "Lucene.Net.Codecs.Lucene45",
                 "Lucene.Net.Codecs.Lucene46",
-                "Lucene.Net.Document",
+                "Lucene.Net.Documents",
                 "Lucene.Net.Index",
                 "Lucene.Net.Search",
                 "Lucene.Net.Search.Payloads",

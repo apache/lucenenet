@@ -4,6 +4,9 @@ using System.Text.RegularExpressions;
 namespace JavaDocToMarkdownConverter.Formatters
 {
 
+    //TODO: This could instead be done with the LuceneDocsPlugins and our custom markdown parsing
+    //TODO: We need to pass in a tag here
+
     public class RepoLinkReplacer : IReplacer
     {
         private static readonly Regex RepoLinkRegex = new Regex(@"(?<=\()(?<cref>src-html/[^)]*)", RegexOptions.Compiled);

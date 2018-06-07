@@ -16,6 +16,8 @@ namespace JavaDocToMarkdownConverter
                 temp = temp.Replace(item.Key, item.Value);
             }
 
+
+            //TODO: Not sure if this is necessary? The # delimits a method name and we already take care of that
             int index = temp.IndexOf('#');
             if (index > -1)
             {

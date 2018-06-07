@@ -128,6 +128,7 @@
     <Compile Include="Formatters\ExtraHtmlElementReplacer.cs" />
     <Compile Include="Formatters\IReplacer.cs" />
     <Compile Include="Formatters\JavaDocFormatters.cs" />
+    <Compile Include="Formatters\PatternReplacer.cs" />
     <Compile Include="Formatters\RepoLinkReplacer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
