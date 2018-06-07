@@ -15,9 +15,7 @@
  limitations under the License.
 -->
 
-    <title>
-      smartcn
-    </title>
+    
 
   Analyzer for Simplified Chinese, which indexes words.
 

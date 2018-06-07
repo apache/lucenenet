@@ -1,4 +1,9 @@
-﻿
+﻿---
+uid: Lucene.Net.Store
+summary: *content
+---
+
+
 <!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -15,10 +20,5 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
----
-uid: Lucene.Net.Store
-summary: *content
----
 
 Binary i/o API, used for all index data.

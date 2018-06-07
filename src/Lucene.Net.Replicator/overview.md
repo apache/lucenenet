@@ -15,8 +15,6 @@
  limitations under the License.
 -->
 
-    <title>
-      replicator
-    </title>
+    
 
   Provides index files replication capabilities.

@@ -1,4 +1,9 @@
-﻿<!--
+﻿---
+uid: Lucene.Net.Join
+summary: *content
+---
+
+<!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
  this work for additional information regarding copyright ownership.
@@ -14,11 +19,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
----
-uid: Lucene.Net.Join
-summary: *content
----
 
 This modules support index-time and query-time joins.
 
