@@ -303,7 +303,7 @@
       "_disableContribution": false,
       "_appFaviconPath": "logo/favicon.ico",
       "_enableSearch": true,
-      
+      "_appLogoPath": "logo/lucene-net-color.png",
       "_appFooter": "Copyright © 2018 Licensed to the Apache Software Foundation (ASF)"
     },
     "overwrite": [
@@ -317,7 +317,8 @@
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [
-      "default"
+      "default",
+      "lucenetemplate"
     ],
     "postProcessors": [],
     "markdownEngineName": "markdig",
