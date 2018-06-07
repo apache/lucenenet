@@ -16,5 +16,5 @@
  limitations under the License.
 -->
 
-Support for testing automata. The primary class is [](xref:Lucene.Net.Util.Automaton.AutomatonTestUtil),
+Support for testing automata. The primary class is <xref:Lucene.Net.Util.Automaton.AutomatonTestUtil>,
 which can generate random automata, has simplified implementations for testing, etc.

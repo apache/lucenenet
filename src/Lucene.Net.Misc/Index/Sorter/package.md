@@ -22,10 +22,10 @@ reverse the order of the documents (by using SortField.Type.DOC in reverse).
 Multi-level sorts can be specified the same way you would when searching, by
 building Sort from multiple SortFields.
 
-[](xref:Lucene.Net.Index.Sorter.SortingMergePolicy) can be used to
+<xref:Lucene.Net.Index.Sorter.SortingMergePolicy> can be used to
 make Lucene sort segments before merging them. This will ensure that every
 segment resulting from a merge will be sorted according to the provided
-[](xref:Lucene.Net.Search.Sort). This however makes merging and
+<xref:Lucene.Net.Search.Sort>. This however makes merging and
 thus indexing slower.
 
 Sorted segments allow for early query termination when the sort order

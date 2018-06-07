@@ -30,7 +30,7 @@ Sorry.
 Note that because JavaCC defines a class named <tt>Token</tt>, <tt>org.apache.lucene.analysis.Token</tt>
 must always be fully qualified in source code in this package.
 
-**NOTE**: [](xref:Lucene.Net.QueryParsers.Flexible.Standard) has an alternative queryparser that matches the syntax of this one, but is more modular,
+**NOTE**: <xref:Lucene.Net.QueryParsers.Flexible.Standard> has an alternative queryparser that matches the syntax of this one, but is more modular,
 enabling substantial customization to how a query is created.
 
 ## Query Parser Syntax
@@ -161,7 +161,7 @@ Note: You cannot use a * or ? symbol as the first character of a search.
 
 ### Regular Expression Searches
 
-Lucene supports regular expression searches matching a pattern between forward slashes "/". The syntax may change across releases, but the current supported syntax is documented in the [](xref:Lucene.Net.Util.Automaton.RegExp RegExp) class. For example to find documents containing "moat" or "boat": 
+Lucene supports regular expression searches matching a pattern between forward slashes "/". The syntax may change across releases, but the current supported syntax is documented in the [RegExp](xref:Lucene.Net.Util.Automaton.RegExp) class. For example to find documents containing "moat" or "boat": 
 
 /[mb]oat/
 

@@ -22,6 +22,6 @@ summary: *content
 
   Analyzers for indexing content in different languages and domains.
 
- For an introduction to Lucene's analysis API, see the [](xref:Lucene.Net.Analysis) package documentation. 
+ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis> package documentation. 
 
- This module contains concrete components ([](xref:Lucene.Net.Analysis.CharFilter)s, [](xref:Lucene.Net.Analysis.Tokenizer)s, and ([](xref:Lucene.Net.Analysis.TokenFilter)s) for analyzing different types of content. It also provides a number of [](xref:Lucene.Net.Analysis.Analyzer)s for different languages that you can use to get started quickly. 
+ This module contains concrete components (<xref:Lucene.Net.Analysis.CharFilter>s, <xref:Lucene.Net.Analysis.Tokenizer>s, and (<xref:Lucene.Net.Analysis.TokenFilter>s) for analyzing different types of content. It also provides a number of <xref:Lucene.Net.Analysis.Analyzer>s for different languages that you can use to get started quickly. 

@@ -35,8 +35,8 @@ alphabet and support for all standard (and a number of non-standard)
 regular expression operations.
 
 The most commonly used functionality is located in the classes
-<tt>[](xref:Lucene.Net.Util.Automaton.Automaton)</tt> and
-<tt>[](xref:Lucene.Net.Util.Automaton.RegExp)</tt>.
+<tt><xref:Lucene.Net.Util.Automaton.Automaton></tt> and
+<tt><xref:Lucene.Net.Util.Automaton.RegExp></tt>.
 
 For more information, go to the package home page at 
 <tt>[http://www.brics.dk/automaton/](http://www.brics.dk/automaton/)</tt>.

@@ -22,4 +22,4 @@ Precedence Query Parser Implementation
 
  The Precedence Query Parser extends the Standard Query Parser and enables the boolean precedence. So, the query <a AND b OR c AND d> is parsed to <(+a +b) (+c +d)> instead of <+a +b +c +d>. 
 
- Check [](xref:Lucene.Net.QueryParsers.Flexible.Standard.StandardQueryParser) for more details about the supported syntax and query parser functionalities. 
+ Check <xref:Lucene.Net.QueryParsers.Flexible.Standard.StandardQueryParser> for more details about the supported syntax and query parser functionalities. 

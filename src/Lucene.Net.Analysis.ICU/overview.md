@@ -30,7 +30,7 @@ library that enhances Java's internationalization support by improving
 performance, keeping current with the Unicode Standard, and providing richer
 APIs. 
 
-For an introduction to Lucene's analysis API, see the [](xref:Lucene.Net.Analysis) package documentation.
+For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis> package documentation.
 
  This module exposes the following functionality: 
 
@@ -87,8 +87,8 @@ For an introduction to Lucene's analysis API, see the [](xref:Lucene.Net.Analysi
     very slow.)
 
 *   Effective Locale-specific normalization (case differences, diacritics, etc.).
-    ([](xref:Lucene.Net.Analysis.Core.LowerCaseFilter) and 
-    [](xref:Lucene.Net.Analysis.Miscellaneous.ASCIIFoldingFilter) provide these services
+    (<xref:Lucene.Net.Analysis.Core.LowerCaseFilter> and 
+    <xref:Lucene.Net.Analysis.Miscellaneous.ASCIIFoldingFilter> provide these services
     in a generic way that doesn't take into account locale-specific needs.)
 
 ## Example Usages
@@ -269,7 +269,7 @@ For an introduction to Lucene's analysis API, see the [](xref:Lucene.Net.Analysi
 
 # [Backwards Compatibility]()
 
- This module exists to provide up-to-date Unicode functionality that supports the most recent version of Unicode (currently 6.3). However, some users who wish for stronger backwards compatibility can restrict [](xref:Lucene.Net.Analysis.Icu.ICUNormalizer2Filter) to operate on only a specific Unicode Version by using a {@link com.ibm.icu.text.FilteredNormalizer2}. 
+ This module exists to provide up-to-date Unicode functionality that supports the most recent version of Unicode (currently 6.3). However, some users who wish for stronger backwards compatibility can restrict <xref:Lucene.Net.Analysis.Icu.ICUNormalizer2Filter> to operate on only a specific Unicode Version by using a {@link com.ibm.icu.text.FilteredNormalizer2}. 
 
 ## Example Usages
 

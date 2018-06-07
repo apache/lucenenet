@@ -17,8 +17,8 @@
 
 # expressions
 
- [](xref:Lucene.Net.Expressions.Expression) - result of compiling an expression, which can evaluate it for a given document. Each expression can have external variables are resolved by {@code Bindings}. 
+ <xref:Lucene.Net.Expressions.Expression> - result of compiling an expression, which can evaluate it for a given document. Each expression can have external variables are resolved by {@code Bindings}. 
 
- [](xref:Lucene.Net.Expressions.Bindings) - abstraction for binding external variables to a way to get a value for those variables for a particular document (ValueSource). 
+ <xref:Lucene.Net.Expressions.Bindings> - abstraction for binding external variables to a way to get a value for those variables for a particular document (ValueSource). 
 
- [](xref:Lucene.Net.Expressions.SimpleBindings) - default implementation of bindings which provide easy ways to bind sort fields and other expressions to external variables 
+ <xref:Lucene.Net.Expressions.SimpleBindings> - default implementation of bindings which provide easy ways to bind sort fields and other expressions to external variables 

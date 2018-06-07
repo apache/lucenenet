@@ -26,4 +26,4 @@ summary: *content
 
  This module provides support for Japanese text analysis, including features such as part-of-speech tagging, lemmatization, and compound word analysis. 
 
- For an introduction to Lucene's analysis API, see the [](xref:Lucene.Net.Analysis) package documentation. 
+ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis> package documentation. 

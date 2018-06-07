@@ -16,7 +16,7 @@
  limitations under the License.
 -->
 
-[](xref:Lucene.Net.Analysis.TokenFilter) and [](xref:Lucene.Net.Analysis.Analyzer) implementations that use Snowball
+<xref:Lucene.Net.Analysis.TokenFilter> and <xref:Lucene.Net.Analysis.Analyzer> implementations that use Snowball
 stemmers.
 
  This project provides pre-compiled version of the Snowball stemmers based on revision 500 of the Tartarus Snowball repository, together with classes integrating them with the Lucene search engine. 

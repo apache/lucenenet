@@ -16,4 +16,4 @@
  limitations under the License.
 -->
 
-Codec for testing that wraps [](xref:Lucene.Net.Codecs.Pulsing.PulsingPostingsFormat) with itself.
+Codec for testing that wraps <xref:Lucene.Net.Codecs.Pulsing.PulsingPostingsFormat> with itself.

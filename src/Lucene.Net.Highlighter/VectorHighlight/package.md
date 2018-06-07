@@ -61,7 +61,7 @@ For your convenience, here is the offsets and positions info of the sample text.
 
 ### Step 1.
 
-In Step 1, Fast Vector Highlighter generates [](xref:Lucene.Net.Search.VectorHighlight.FieldQuery.QueryPhraseMap) from the user query. `QueryPhraseMap` consists of the following members:
+In Step 1, Fast Vector Highlighter generates <xref:Lucene.Net.Search.VectorHighlight.FieldQuery.QueryPhraseMap> from the user query. `QueryPhraseMap` consists of the following members:
 
     public class QueryPhraseMap {
       boolean terminal;
@@ -85,7 +85,7 @@ From the sample user query, the following `QueryPhraseMap` will be generated:
 
 ### Step 2.
 
-In Step 2, Fast Vector Highlighter generates [](xref:Lucene.Net.Search.VectorHighlight.FieldTermStack). Fast Vector Highlighter uses term vector data (must be stored [](xref:Lucene.Net.Documents.FieldType.SetStoreTermVectorOffsets(boolean)) and [](xref:Lucene.Net.Documents.FieldType.SetStoreTermVectorPositions(boolean))) to generate it. `FieldTermStack` keeps the terms in the user query. Therefore, in this sample case, Fast Vector Highlighter generates the following `FieldTermStack`:
+In Step 2, Fast Vector Highlighter generates <xref:Lucene.Net.Search.VectorHighlight.FieldTermStack>. Fast Vector Highlighter uses term vector data (must be stored [#setStoreTermVectorOffsets(boolean)](xref:Lucene.Net.Documents.FieldType) and [#setStoreTermVectorPositions(boolean)](xref:Lucene.Net.Documents.FieldType)) to generate it. `FieldTermStack` keeps the terms in the user query. Therefore, in this sample case, Fast Vector Highlighter generates the following `FieldTermStack`:
 
        FieldTermStack
     +------------------+
@@ -99,7 +99,7 @@ In Step 2, Fast Vector Highlighter generates [](xref:Lucene.Net.Search.VectorHig
 
 ### Step 3.
 
-In Step 3, Fast Vector Highlighter generates [](xref:Lucene.Net.Search.VectorHighlight.FieldPhraseList) by reference to `QueryPhraseMap` and `FieldTermStack`.
+In Step 3, Fast Vector Highlighter generates <xref:Lucene.Net.Search.VectorHighlight.FieldPhraseList> by reference to `QueryPhraseMap` and `FieldTermStack`.
 
        FieldPhraseList
     +----------------+-----------------+---+

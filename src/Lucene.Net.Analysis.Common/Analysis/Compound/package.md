@@ -74,8 +74,8 @@ filter available:
 
 #### HyphenationCompoundWordTokenFilter
 
-The [](xref:Lucene.Net.Analysis.Compound.HyphenationCompoundWordTokenFilter
-HyphenationCompoundWordTokenFilter) uses hyphenation grammars to find
+The [
+HyphenationCompoundWordTokenFilter](xref:Lucene.Net.Analysis.Compound.HyphenationCompoundWordTokenFilter) uses hyphenation grammars to find
 potential subwords that a worth to check against the dictionary. It can be used
 without a dictionary as well but then produces a lot of "nonword" tokens.
 The quality of the output tokens is directly connected to the quality of the
@@ -101,8 +101,8 @@ Credits for the hyphenation code go to the
 
 #### DictionaryCompoundWordTokenFilter
 
-The [](xref:Lucene.Net.Analysis.Compound.DictionaryCompoundWordTokenFilter
-DictionaryCompoundWordTokenFilter) uses a dictionary-only approach to
+The [
+DictionaryCompoundWordTokenFilter](xref:Lucene.Net.Analysis.Compound.DictionaryCompoundWordTokenFilter) uses a dictionary-only approach to
 find subwords in a compound word. It is much slower than the one that
 uses the hyphenation grammars. You can use it as a first start to
 see if your dictionary is good or not because it is much simpler in design.

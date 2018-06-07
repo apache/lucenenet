@@ -20,6 +20,6 @@ Standard Lucene Query Node Builders.
 
 ## Standard Lucene Query Node Builders
 
- The package org.apache.lucene.queryparser.flexible.standard.builders contains all the builders needed to build a Lucene Query object from a query node tree. These builders expect the query node tree was already processed by the [](xref:Lucene.Net.QueryParsers.Flexible.Standard.Processors.StandardQueryNodeProcessorPipeline). 
+ The package org.apache.lucene.queryparser.flexible.standard.builders contains all the builders needed to build a Lucene Query object from a query node tree. These builders expect the query node tree was already processed by the <xref:Lucene.Net.QueryParsers.Flexible.Standard.Processors.StandardQueryNodeProcessorPipeline>. 
 
- [](xref:Lucene.Net.QueryParsers.Flexible.Standard.Builders.StandardQueryTreeBuilder) is a builder that already contains a defined map that maps each QueryNode object with its respective builder. 
+ <xref:Lucene.Net.QueryParsers.Flexible.Standard.Builders.StandardQueryTreeBuilder> is a builder that already contains a defined map that maps each QueryNode object with its respective builder. 

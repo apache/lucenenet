@@ -18,7 +18,7 @@
 
 
 
-[](xref:Lucene.Net.Analysis.Sinks.TeeSinkTokenFilter) and implementations
-of [](xref:Lucene.Net.Analysis.Sinks.TeeSinkTokenFilter.SinkFilter) that
+<xref:Lucene.Net.Analysis.Sinks.TeeSinkTokenFilter> and implementations
+of <xref:Lucene.Net.Analysis.Sinks.TeeSinkTokenFilter.SinkFilter> that
 might be useful.
 

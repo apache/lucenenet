@@ -18,5 +18,5 @@
 
 Support for testing store mechanisms. 
 
-The primary class is [](xref:Lucene.Net.Store.MockDirectoryWrapper), which
+The primary class is <xref:Lucene.Net.Store.MockDirectoryWrapper>, which
 wraps any Directory implementation and provides additional checks.
