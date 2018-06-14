@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -113,7 +114,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                     {
                                         case StreamTokenizer.TT_NUMBER:
                                             {
-                                                @params.Append(stok.NumberValue);
+                                                @params.Append(stok.NumberValue.ToString(CultureInfo.InvariantCulture));
                                                 break;
                                             }
                                         case StreamTokenizer.TT_WORD:

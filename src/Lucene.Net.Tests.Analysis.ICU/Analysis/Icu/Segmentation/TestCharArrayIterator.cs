@@ -1,5 +1,6 @@
-﻿#if FEATURE_BREAKITERATOR
-using Lucene.Net.Support;
+﻿// Lucene version compatibility level 7.1.0
+#if FEATURE_BREAKITERATOR
+using ICU4N.Support.Text;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -38,7 +39,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             assertEquals('g', ci.Last());
             assertEquals('n', ci.Previous());
             assertEquals('t', ci.First());
-            assertEquals(CharacterIterator.DONE, ci.Previous());
+            assertEquals(CharacterIterator.Done, ci.Previous());
         }
 
         [Test]
@@ -52,7 +53,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             assertEquals(ci.BeginIndex, ci.Index);
             // or DONE if the text is empty
             ci.SetText(new char[] { }, 0, 0);
-            assertEquals(CharacterIterator.DONE, ci.First());
+            assertEquals(CharacterIterator.Done, ci.First());
         }
 
         [Test]
@@ -66,7 +67,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             assertEquals(ci.Index, ci.EndIndex - 1);
             // or DONE if the text is empty
             ci.SetText(new char[] { }, 0, 0);
-            assertEquals(CharacterIterator.DONE, ci.Last());
+            assertEquals(CharacterIterator.Done, ci.Last());
             assertEquals(ci.EndIndex, ci.Index);
         }
 
@@ -80,7 +81,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             ci.Last();
             ci.Next();
             // or DONE if the current position is off the end of the text.
-            assertEquals(CharacterIterator.DONE, ci.Current);
+            assertEquals(CharacterIterator.Done, ci.Current);
         }
 
         [Test]
@@ -92,7 +93,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             assertEquals('e', ci.Next());
             assertEquals(1, ci.Index);
             // or DONE if the new position is off the end of the text range.
-            assertEquals(CharacterIterator.DONE, ci.Next());
+            assertEquals(CharacterIterator.Done, ci.Next());
             assertEquals(ci.EndIndex, ci.Index);
         }
 

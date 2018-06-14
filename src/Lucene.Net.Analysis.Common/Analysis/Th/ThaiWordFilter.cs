@@ -1,4 +1,5 @@
 ﻿#if FEATURE_BREAKITERATOR
+using ICU4N.Text;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
@@ -36,7 +37,7 @@ namespace Lucene.Net.Analysis.Th
     // </para>
 
     /// <summary>
-    /// <see cref="TokenFilter"/> that use <see cref="Support.BreakIterator"/> to break each 
+    /// <see cref="TokenFilter"/> that use <see cref="BreakIterator"/> to break each 
     /// Token that is Thai into separate Token(s) for each Thai word.
     /// <para>Please note: Since matchVersion 3.1 on, this filter no longer lowercases non-thai text.
     /// <see cref="ThaiAnalyzer"/> will insert a <see cref="LowerCaseFilter"/> before this filter
@@ -48,12 +49,9 @@ namespace Lucene.Net.Analysis.Th
     [Obsolete("Use ThaiTokenizer instead.")]
     public sealed class ThaiWordFilter : TokenFilter
     {
-        /// <summary>
-        /// True if the JRE supports a working dictionary-based breakiterator for Thai.
-        /// If this is false, this filter will not work at all!
-        /// </summary>
-        public static readonly bool DBBI_AVAILABLE = ThaiTokenizer.DBBI_AVAILABLE;
-        private readonly ThaiWordBreaker breaker = new ThaiWordBreaker(new IcuBreakIterator(global::Icu.BreakIterator.UBreakIteratorType.WORD, new CultureInfo("th")));
+        // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
+        private static readonly BreakIterator proto = BreakIterator.GetWordInstance(new CultureInfo("th"));
+        private readonly ThaiWordBreaker breaker = new ThaiWordBreaker((BreakIterator)proto.Clone());
         private readonly CharArrayIterator charIterator = CharArrayIterator.NewWordInstance();
 
         private readonly bool handlePosIncr;
@@ -73,10 +71,8 @@ namespace Lucene.Net.Analysis.Th
         public ThaiWordFilter(LuceneVersion matchVersion, TokenStream input)
               : base(matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? input : new LowerCaseFilter(matchVersion, input))
         {
-            if (!DBBI_AVAILABLE)
-            {
-                throw new System.NotSupportedException("This JRE does not have support for Thai segmentation");
-            }
+            // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
+
             handlePosIncr = matchVersion.OnOrAfter(LuceneVersion.LUCENE_31);
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
@@ -87,9 +83,9 @@ namespace Lucene.Net.Analysis.Th
         {
             if (hasMoreTokensInClone)
             {
-                int start = breaker.Current();
+                int start = breaker.Current;
                 int end = breaker.Next();
-                if (end != BreakIterator.DONE)
+                if (end != BreakIterator.Done)
                 {
                     clonedToken.CopyTo(this);
                     termAtt.CopyBuffer(clonedTermAtt.Buffer, start, end - start);
@@ -142,7 +138,7 @@ namespace Lucene.Net.Analysis.Th
             charIterator.SetText(clonedTermAtt.Buffer, 0, clonedTermAtt.Length);
             breaker.SetText(new string(charIterator.Text, charIterator.Start, charIterator.Length));
             int end2 = breaker.Next();
-            if (end2 != BreakIterator.DONE)
+            if (end2 != BreakIterator.Done)
             {
                 termAtt.Length = end2;
                 if (hasIllegalOffsets)

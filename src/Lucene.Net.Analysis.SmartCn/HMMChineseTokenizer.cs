@@ -1,8 +1,8 @@
 ﻿// lucene version compatibility level: 4.8.1
+using ICU4N.Text;
 using Lucene.Net.Analysis.Cn.Smart.Hhmm;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -34,8 +34,8 @@ namespace Lucene.Net.Analysis.Cn.Smart
     /// </summary>
     public class HMMChineseTokenizer : SegmentingTokenizerBase
     {
-        ///** used for breaking the text into sentences */
-        //private static readonly BreakIterator sentenceProto = BreakIterator.getSentenceInstance(Locale.ROOT);
+        /// <summary>used for breaking the text into sentences</summary>
+        private static readonly BreakIterator sentenceProto = BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
 
         private readonly ICharTermAttribute termAtt;
         private readonly IOffsetAttribute offsetAtt;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         /// Creates a new <see cref="HMMChineseTokenizer"/>, supplying the <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/>
         /// </summary>
         public HMMChineseTokenizer(AttributeFactory factory, TextReader reader)
-            : base(factory, reader, new IcuBreakIterator(global::Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture) { EnableHacks = false })
+            : base(factory, reader, (BreakIterator)sentenceProto.Clone())
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();

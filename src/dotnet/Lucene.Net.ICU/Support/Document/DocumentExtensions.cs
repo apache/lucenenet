@@ -1,4 +1,4 @@
-﻿using Icu.Collation;
+﻿using ICU4N.Text;
 using Lucene.Net.Collation;
 
 namespace Lucene.Net.Documents

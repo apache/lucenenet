@@ -42,7 +42,8 @@ namespace Lucene.Net.Analysis.Th
         [Test]
         public virtual void TestWordBreak()
         {
-            AssumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiWordFilter.DBBI_AVAILABLE);
+            // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
+            //AssumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiWordFilter.DBBI_AVAILABLE);
             TextReader reader = new StringReader("การที่ได้ต้องแสดงว่างานดี");
             TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
             stream = TokenFilterFactory("ThaiWord").Create(stream);
@@ -54,7 +55,8 @@ namespace Lucene.Net.Analysis.Th
         [Test]
         public virtual void TestBogusArguments()
         {
-            AssumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiWordFilter.DBBI_AVAILABLE);
+            // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
+            //AssumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiWordFilter.DBBI_AVAILABLE);
             try
             {
                 TokenFilterFactory("ThaiWord", "bogusArg", "bogusValue");

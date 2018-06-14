@@ -1,8 +1,8 @@
 ﻿#if FEATURE_BREAKITERATOR
+using ICU4N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -11,12 +11,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using Directory = Lucene.Net.Store.Directory;
-using FieldInfo = Lucene.Net.Index.FieldInfo;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {
@@ -635,13 +631,6 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             IndexSearcher searcher = NewSearcher(ir);
             PostingsHighlighter highlighter = new WholeBreakIteratorPostingsHighlighter(10000);
-            //PostingsHighlighter highlighter = new PostingsHighlighter(10000) {
-            //      @Override
-            //      protected BreakIterator getBreakIterator(String field)
-            //{
-            //    return new WholeBreakIterator();
-            //}
-            //    };
             Query query = new TermQuery(new Term("body", "test"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(1, topDocs.TotalHits);
@@ -733,25 +722,6 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             IndexSearcher searcher = NewSearcher(ir);
             PostingsHighlighter highlighter = new LoadFieldValuesPostingsHighlighter(10000, text);
-            //PostingsHighlighter highlighter = new PostingsHighlighter(10000) {
-            //        @Override
-            //        protected String[][] loadFieldValues(IndexSearcher searcher, String[] fields, int[] docids, int maxLength) 
-            //{
-            //    assert fields.Length == 1;
-            //    assert docids.Length == 1;
-            //    String []
-            //    []
-            //    contents = new String[1][1];
-            //          contents[0][0] = text;
-            //          return contents;
-            //        }
-
-            //        @Override
-            //        protected BreakIterator getBreakIterator(String field)
-            //{
-            //    return new WholeBreakIterator();
-            //}
-            //      };
 
             Query query = new TermQuery(new Term("body", "test"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
@@ -840,13 +810,6 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             IndexSearcher searcher = NewSearcher(ir);
             PostingsHighlighter highlighter = new GetEmptyHighlightPostingsHighlighter();
-            //PostingsHighlighter highlighter = new PostingsHighlighter() {
-            //        @Override
-            //        public Passage[] getEmptyHighlight(String fieldName, BreakIterator bi, int maxPassages)
-            //{
-            //    return new Passage[0];
-            //}
-            //      };
             Query query = new TermQuery(new Term("body", "highlighting"));
             int[] docIDs = new int[] { 0 };
             String[] snippets = highlighter.HighlightFields(new String[] { "body" }, query, searcher, docIDs, new int[] { 2 })["body"];
@@ -888,13 +851,6 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             IndexSearcher searcher = NewSearcher(ir);
             PostingsHighlighter highlighter = new WholeBreakIteratorPostingsHighlighter(10000);
-            //PostingsHighlighter highlighter = new PostingsHighlighter(10000) {
-            //      @Override
-            //      protected BreakIterator getBreakIterator(String field)
-            //{
-            //    return new WholeBreakIterator();
-            //}
-            //    };
             Query query = new TermQuery(new Term("body", "highlighting"));
             int[] docIDs = new int[] { 0 };
             String[] snippets = highlighter.HighlightFields(new String[] { "body" }, query, searcher, docIDs, new int[] { 2 })["body"];
@@ -1130,13 +1086,6 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             IndexSearcher searcher = NewSearcher(ir);
             PostingsHighlighter highlighter = new GetFormatterPostingsHighlighter();
-            //PostingsHighlighter highlighter = new PostingsHighlighter() {
-            //      @Override
-            //      protected PassageFormatter getFormatter(String field)
-            //{
-            //    return new DefaultPassageFormatter("<b>", "</b>", "... ", true);
-            //}
-            //    };
             Query query = new TermQuery(new Term("body", "highlighting"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(1, topDocs.TotalHits);
@@ -1185,14 +1134,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             IndexSearcher searcher = NewSearcher(ir);
             PostingsHighlighter highlighter = new GetMultiValuedSeparatorPostingsHighlighter();
-            //PostingsHighlighter highlighter = new PostingsHighlighter() {
-            //      @Override
-            //      protected char getMultiValuedSeparator(String field)
-            //{
-            //    assert field.equals("body");
-            //    return '\u2029';
-            //}
-            //    };
+
             Query query = new TermQuery(new Term("body", "field"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(1, topDocs.TotalHits);
@@ -1236,23 +1178,6 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             IndexSearcher searcher = NewSearcher(ir);
             PostingsHighlighter highlighter = new ObjectFormatterPostingsHighlighter();
-            //PostingsHighlighter highlighter = new PostingsHighlighter() {
-            //      @Override
-            //      protected PassageFormatter getFormatter(String field)
-            //{
-            //    return new PassageFormatter() {
-            //          PassageFormatter defaultFormatter = new DefaultPassageFormatter();
-
-            //    @Override
-            //          public String[] format(Passage passages[], String content)
-            //{
-            //    // Just turns the String snippet into a length 2
-            //    // array of String
-            //    return new String[] { "blah blah", defaultFormatter.format(passages, content).toString() };
-            //}
-            //        };
-            //      }
-            //    };
 
             Query query = new TermQuery(new Term("body", "highlighting"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);

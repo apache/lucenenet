@@ -37,7 +37,8 @@ namespace Lucene.Net.Analysis.Th
         public override void SetUp()
         {
             base.SetUp();
-            AssumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiTokenizer.DBBI_AVAILABLE);
+            // LUCENENET specific - ICU always has a dictionary-based BreakIterator in .NET.
+            //AssumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiTokenizer.DBBI_AVAILABLE);
         }
         /*
          * testcase for offsets

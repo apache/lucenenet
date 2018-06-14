@@ -180,6 +180,31 @@ namespace Lucene.Net.Support
                                            - MIN_LOW_SURROGATE);
         }
 
+        public static int CodePointBefore(char[] seq, int index)
+        {
+            if (seq == null)
+            {
+                throw new ArgumentNullException(nameof(seq));
+            }
+            int len = seq.Length;
+            if (index < 1 || index > len)
+            {
+                throw new IndexOutOfRangeException(nameof(index));
+            }
+
+            char low = seq[--index];
+            if (--index < 0)
+            {
+                return low;
+            }
+            char high = seq[index];
+            if (char.IsSurrogatePair(high, low))
+            {
+                return ToCodePoint(high, low);
+            }
+            return low;
+        }
+
         public static int ToLower(int codePoint)
         {
             var str = UnicodeUtil.NewString(new[] {codePoint}, 0, 1);

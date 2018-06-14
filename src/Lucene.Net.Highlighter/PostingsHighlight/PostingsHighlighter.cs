@@ -1,5 +1,7 @@
 ﻿#if FEATURE_BREAKITERATOR
+using ICU4N.Text;
 using Lucene.Net.Analysis;
+using Lucene.Net.ICU.Support;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -38,7 +40,7 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// <para/>
     /// PostingsHighlighter treats the single original document as the whole corpus, and then scores individual
     /// passages as if they were documents in this corpus. It uses a <see cref="BreakIterator"/> to find 
-    /// passages in the text; by default it breaks using <see cref="IcuBreakIterator"/> (for sentence breaking). 
+    /// passages in the text; by default it breaks using <see cref="JdkBreakIterator.GetSentenceInstance(CultureInfo)"/> (for sentence breaking). 
     /// It then iterates in parallel (merge sorting by offset) through
     /// the positions of all terms from the query, coalescing those hits that occur in a single passage
     /// into a <see cref="Passage"/>, and then scores each Passage using a separate <see cref="PassageScorer"/>.
@@ -126,15 +128,12 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <summary>
         /// Returns the <see cref="BreakIterator"/> to use for
         /// dividing text into passages.  This instantiates an
-        /// <see cref="IcuBreakIterator"/> by default;
+        /// <see cref="BreakIterator.GetSentenceInstance(CultureInfo)"/> by default;
         /// subclasses can override to customize.
         /// </summary>
         protected virtual BreakIterator GetBreakIterator(string field)
         {
-            return new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture)
-            {
-                EnableHacks = true
-            };
+            return JdkBreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -714,7 +713,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                         return passages;
                     }
                     // advance breakiterator
-                    Debug.Assert(BreakIterator.DONE < 0);
+                    Debug.Assert(BreakIterator.Done < 0);
                     current.startOffset = Math.Max(bi.Preceding(start + 1), 0);
                     current.endOffset = Math.Min(bi.Next(), contentLength);
                 }
@@ -770,7 +769,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             while (passages.Count < maxPassages)
             {
                 int next = bi.Next();
-                if (next == BreakIterator.DONE)
+                if (next == BreakIterator.Done)
                 {
                     break;
                 }
@@ -906,7 +905,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 }
             }
 
-            public override void StringField(FieldInfo fieldInfo, string value)
+            public override void StringField(Index.FieldInfo fieldInfo, string value)
             {
                 Debug.Assert(currentField >= 0);
                 StringBuilder builder = builders[currentField];
@@ -924,7 +923,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 }
             }
 
-            public override Status NeedsField(FieldInfo fieldInfo)
+            public override Status NeedsField(Index.FieldInfo fieldInfo)
             {
                 currentField = Array.BinarySearch(fields, fieldInfo.Name);
                 if (currentField < 0)

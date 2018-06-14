@@ -40,11 +40,16 @@
   <ItemGroup>
     <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\**\*.cs" LinkBase="Analysis\Th" />
     <EmbeddedResource Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\stopwords.txt" Link="Analysis\Th\stopwords.txt" />
+    <EmbeddedResource Include="Support\*.brk" />
     <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Util\CharArrayIterator.cs" Link="Analysis\Util\CharArrayIterator.cs" />
     <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Util\SegmentingTokenizerBase.cs" Link="Analysis\Util\SegmentingTokenizerBase.cs" />
     <Compile Include="..\..\Lucene.Net.Analysis.ICU\Analysis\**\*.cs" LinkBase="Analysis" />
+    <EmbeddedResource Include="..\..\Lucene.Net.Analysis.ICU\Analysis\**\*.nrm" LinkBase="Analysis" />
+    <EmbeddedResource Include="..\..\Lucene.Net.Analysis.ICU\Analysis\**\*.brk" LinkBase="Analysis" />
     <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\**\*.cs" LinkBase="Collation" />
     <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\**\*.cs" LinkBase="Search\PostingsHighlight" />
+    <EmbeddedResource Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\**\*.brk" LinkBase="Search\PostingsHighlight" />
+    <None Remove="Support\*.brk" />
     <Compile Include="..\..\Lucene.Net.Highlighter\VectorHighlight\BreakIteratorBoundaryScanner.cs" Link="Search\VectorHighlight\BreakIteratorBoundaryScanner.cs" />
   </ItemGroup>
 
@@ -55,7 +60,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="icu.net" Version="$(IcuNetPackageVersion)" />
+    <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
+    <PackageReference Include="ICU4N.Collation" Version="$(ICU4NCollationPackageVersion)" />
+    <PackageReference Include="ICU4N.CurrencyData" Version="$(ICU4NCurrencyDataPackageVersion)" />
+    <PackageReference Include="ICU4N.LanguageData" Version="$(ICU4NLanguageDataPackageVersion)" />
+    <PackageReference Include="ICU4N.RegionData" Version="$(ICU4NRegionDataPackageVersion)" />
+    <PackageReference Include="ICU4N.Transliterator" Version="$(ICU4NTransliteratorPackageVersion)" />
   </ItemGroup>
 
   <!-- NOTE: Microsoft's recommendation is not to use the ICloneable interface. We put in a FEATURE_CLONEABLE constant in case anyone wants to add it to the build -->

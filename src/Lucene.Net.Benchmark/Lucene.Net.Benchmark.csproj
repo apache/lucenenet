@@ -52,7 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="icu.net" Version="$(IcuNetPackageVersion)" />
+    <PackageReference Include="ICU4N.Collation" Version="$(ICU4NCollationPackageVersion)" />
     <PackageReference Include="Spatial4n.Core" Version="$(Spatial4nCorePackageVersion)" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
-﻿using Icu.Collation;
+﻿using ICU4N.Text;
+using ICU4N.Util;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -112,37 +113,33 @@ namespace Lucene.Net.Collation
             assertCollatesToSame(tsPunctuation, tsWithoutPunctuation);
         }
 
-        // LUCENENET TODO: variableTop is not supported by icu.net. Besides this,
-        // it is deprecated as of ICU 53 and has been superceded by maxVariable,
-        // but that feature is also not supported by icu.net at the time of this writing.
-
-        ///*
-        // * Setting alternate=shifted and variableTop to shift whitespace, but not 
-        // * punctuation or symbols, to quaternary level 
-        // */
-        //[Test]
-        //public void TestIgnoreWhitespace()
-        //{
-        //    String withSpace = "foo bar";
-        //    String withoutSpace = "foobar";
-        //    String withPunctuation = "foo-bar";
-        //    TokenFilterFactory factory = tokenFilterFactory("ICUCollationKey",
-        //        "locale", "en",
-        //        "strength", "primary",
-        //        "alternate", "shifted",
-        //        "variableTop", " ");
-        //    TokenStream tsWithSpace = factory.Create(
-        //        new KeywordTokenizer(new StringReader(withSpace)));
-        //    TokenStream tsWithoutSpace = factory.Create(
-        //        new KeywordTokenizer(new StringReader(withoutSpace)));
-        //    assertCollatesToSame(tsWithSpace, tsWithoutSpace);
-        //    // now assert that punctuation still matters: foo-bar < foo bar
-        //    tsWithSpace = factory.Create(
-        //            new KeywordTokenizer(new StringReader(withSpace)));
-        //    TokenStream tsWithPunctuation = factory.Create(
-        //        new KeywordTokenizer(new StringReader(withPunctuation)));
-        //    assertCollation(tsWithPunctuation, tsWithSpace, -1);
-        //}
+        /*
+         * Setting alternate=shifted and variableTop to shift whitespace, but not 
+         * punctuation or symbols, to quaternary level 
+         */
+        [Test]
+        public void TestIgnoreWhitespace()
+        {
+            String withSpace = "foo bar";
+            String withoutSpace = "foobar";
+            String withPunctuation = "foo-bar";
+            TokenFilterFactory factory = tokenFilterFactory("ICUCollationKey",
+                "locale", "en",
+                "strength", "primary",
+                "alternate", "shifted",
+                "variableTop", " ");
+            TokenStream tsWithSpace = factory.Create(
+                new KeywordTokenizer(new StringReader(withSpace)));
+            TokenStream tsWithoutSpace = factory.Create(
+                new KeywordTokenizer(new StringReader(withoutSpace)));
+            assertCollatesToSame(tsWithSpace, tsWithoutSpace);
+            // now assert that punctuation still matters: foo-bar < foo bar
+            tsWithSpace = factory.Create(
+                    new KeywordTokenizer(new StringReader(withSpace)));
+            TokenStream tsWithPunctuation = factory.Create(
+                new KeywordTokenizer(new StringReader(withPunctuation)));
+            assertCollation(tsWithPunctuation, tsWithSpace, -1);
+        }
 
         /*
          * Setting numeric to encode digits with numeric value, so that
@@ -228,15 +225,15 @@ namespace Lucene.Net.Collation
         [Test]
         public void TestCustomRules()
         {
+            RuleBasedCollator baseCollator = (RuleBasedCollator)Collator.GetInstance(new ULocale("de_DE"));
+
             String DIN5007_2_tailorings =
               "& ae , a\u0308 & AE , A\u0308" +
               "& oe , o\u0308 & OE , O\u0308" +
               "& ue , u\u0308 & UE , u\u0308";
 
-            string baseRules = RuleBasedCollator.GetCollationRules(new Icu.Locale("de-DE"), UColRuleOption.UCOL_TAILORING_ONLY);
-            //RuleBasedCollator tailoredCollator = new RuleBasedCollator(baseRules + DIN5007_2_tailorings);
-
-            string tailoredRules = baseRules + DIN5007_2_tailorings;
+            RuleBasedCollator tailoredCollator = new RuleBasedCollator(baseCollator.GetRules() + DIN5007_2_tailorings);
+            string tailoredRules = tailoredCollator.GetRules();
             //
             // at this point, you would save these tailoredRules to a file, 
             // and use the custom parameter.

@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Th
 	 */
 
     /// <summary>
-    /// <see cref="Analyzer"/> for Thai language. It uses <see cref="Support.BreakIterator"/> to break words.
+    /// <see cref="Analyzer"/> for Thai language. It uses <see cref="ICU4N.Text.BreakIterator"/> to break words.
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="ThaiAnalyzer"/>:
     /// <list type="bullet">

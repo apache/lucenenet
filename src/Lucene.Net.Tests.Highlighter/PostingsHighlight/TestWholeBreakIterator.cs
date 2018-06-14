@@ -1,4 +1,6 @@
 ﻿#if FEATURE_BREAKITERATOR
+using ICU4N.Support.Text;
+using ICU4N.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -30,8 +32,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         [Test]
         public void TestSingleSentences()
         {
-            //BreakIterator expected = BreakIterator.getSentenceInstance(Locale.ROOT);
-            BreakIterator expected = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture);
+            BreakIterator expected = BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
             BreakIterator actual = new WholeBreakIterator();
             assertSameBreaks("a", expected, actual);
             assertSameBreaks("ab", expected, actual);
@@ -42,8 +43,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         [Test]
         public void TestSliceEnd()
         {
-            //BreakIterator expected = BreakIterator.getSentenceInstance(Locale.ROOT);
-            BreakIterator expected = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture);
+            BreakIterator expected = BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
             BreakIterator actual = new WholeBreakIterator();
             assertSameBreaks("a000", 0, 1, expected, actual);
             assertSameBreaks("ab000", 0, 1, expected, actual);
@@ -54,8 +54,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         [Test]
         public void TestSliceStart()
         {
-            //BreakIterator expected = BreakIterator.getSentenceInstance(Locale.ROOT);
-            BreakIterator expected = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture);
+            BreakIterator expected = BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
             BreakIterator actual = new WholeBreakIterator();
             assertSameBreaks("000a", 3, 1, expected, actual);
             assertSameBreaks("000ab", 3, 2, expected, actual);
@@ -66,8 +65,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         [Test]
         public void TestSliceMiddle()
         {
-            //BreakIterator expected = BreakIterator.getSentenceInstance(Locale.ROOT);
-            BreakIterator expected = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture);
+            BreakIterator expected = BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
             BreakIterator actual = new WholeBreakIterator();
             assertSameBreaks("000a000", 3, 1, expected, actual);
             assertSameBreaks("000ab000", 3, 2, expected, actual);
@@ -79,8 +77,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         [Test]
         public void TestFirstPosition()
         {
-            //BreakIterator expected = BreakIterator.getSentenceInstance(Locale.ROOT);
-            BreakIterator expected = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture);
+            BreakIterator expected = BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
             BreakIterator actual = new WholeBreakIterator();
             assertSameBreaks("000ab000", 3, 2, 4, expected, actual);
         }
@@ -116,7 +113,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // next()
             int v = expected.Current;
-            while (v != BreakIterator.DONE)
+            while (v != BreakIterator.Done)
             {
                 assertEquals(v = expected.Next(), actual.Next());
                 assertEquals(expected.Current, actual.Current);
@@ -131,7 +128,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // previous()
             v = expected.Current;
-            while (v != BreakIterator.DONE)
+            while (v != BreakIterator.Done)
             {
                 assertEquals(v = expected.Previous(), actual.Previous());
                 assertEquals(expected.Current, actual.Current);

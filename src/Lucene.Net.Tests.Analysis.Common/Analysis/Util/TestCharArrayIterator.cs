@@ -1,10 +1,10 @@
 ﻿#if FEATURE_BREAKITERATOR
 using System;
-using Icu;
-using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using CharacterIterator = Lucene.Net.Support.CharacterIterator;
+using ICU4N.Text;
+using ICU4N.Support.Text;
+using System.Globalization;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -38,14 +38,13 @@ namespace Lucene.Net.Analysis.Util
         public virtual void TestConsumeWordInstance()
         {
             // we use the default locale, as its randomized by LuceneTestCase
-            var iteratorType = BreakIterator.UBreakIteratorType.WORD;
-            var locale = new Locale("en", "US");
+            BreakIterator bi = BreakIterator.GetWordInstance(CultureInfo.CurrentCulture);
             var ci = CharArrayIterator.NewWordInstance();
             for (var i = 0; i < 10000; i++)
             {
                 var text = TestUtil.RandomUnicodeString(Random()).toCharArray();
                 ci.SetText(text, 0, text.Length);
-                Consume(iteratorType, locale, ci);
+                Consume(bi, ci);
             }
         }
 
@@ -74,14 +73,13 @@ namespace Lucene.Net.Analysis.Util
         public virtual void TestConsumeSentenceInstance()
         {
             // we use the default locale, as its randomized by LuceneTestCase
-            var iteratorType = BreakIterator.UBreakIteratorType.SENTENCE;
-            var locale = new Locale("en-US");
+            BreakIterator bi = BreakIterator.GetSentenceInstance(CultureInfo.CurrentCulture);
             var ci = CharArrayIterator.NewSentenceInstance();
             for (var i = 0; i < 10000; i++)
             {
                 var text = TestUtil.RandomUnicodeString(Random()).toCharArray();
                 ci.SetText(text, 0, text.Length);
-                Consume(iteratorType, locale, ci);
+                Consume(bi, ci);
             }
         }
 
@@ -112,7 +110,7 @@ namespace Lucene.Net.Analysis.Util
             assertEquals('g', ci.Last());
             assertEquals('n', ci.Previous());
             assertEquals('t', ci.First());
-            assertEquals(CharacterIterator.DONE, ci.Previous());
+            assertEquals(CharacterIterator.Done, ci.Previous());
 
             // first()
             ci.SetText("testing".ToCharArray(), 0, "testing".Length);
@@ -122,7 +120,7 @@ namespace Lucene.Net.Analysis.Util
             assertEquals(ci.BeginIndex, ci.Index);
             // or DONE if the text is empty
             ci.SetText(new char[] { }, 0, 0);
-            assertEquals(CharacterIterator.DONE, ci.First());
+            assertEquals(CharacterIterator.Done, ci.First());
 
             // last()
             ci.SetText("testing".ToCharArray(), 0, "testing".Length);
@@ -132,7 +130,7 @@ namespace Lucene.Net.Analysis.Util
             assertEquals(ci.Index, ci.EndIndex - 1);
             // or DONE if the text is empty
             ci.SetText(new char[] { }, 0, 0);
-            assertEquals(CharacterIterator.DONE, ci.Last());
+            assertEquals(CharacterIterator.Done, ci.Last());
             assertEquals(ci.EndIndex, ci.Index);
 
             // current()
@@ -142,7 +140,7 @@ namespace Lucene.Net.Analysis.Util
             ci.Last();
             ci.Next();
             // or DONE if the current position is off the end of the text.
-            assertEquals(CharacterIterator.DONE, ci.Current);
+            assertEquals(CharacterIterator.Done, ci.Current);
 
             // next()
             ci.SetText("te".ToCharArray(), 0, 2);
@@ -150,7 +148,7 @@ namespace Lucene.Net.Analysis.Util
             assertEquals('e', ci.Next());
             assertEquals(1, ci.Index);
             // or DONE if the new position is off the end of the text range.
-            assertEquals(CharacterIterator.DONE, ci.Next());
+            assertEquals(CharacterIterator.Done, ci.Next());
             assertEquals(ci.EndIndex, ci.Index);
 
             // setIndex()
@@ -175,13 +173,11 @@ namespace Lucene.Net.Analysis.Util
             assertEquals(ci.Last(), ci2.Last());
         }
 
-        private void Consume(BreakIterator.UBreakIteratorType iteratorType, Locale locale, CharacterIterator ci)
+        private void Consume(BreakIterator bi, CharacterIterator ci)
         {
-            var contents = BreakIterator.Split(iteratorType, locale, ci.ToString());
-
-            foreach (var token in contents)
+            bi.SetText(ci);
+            while (bi.Next() != BreakIterator.Done)
             {
-                ;
             }
         }
     }

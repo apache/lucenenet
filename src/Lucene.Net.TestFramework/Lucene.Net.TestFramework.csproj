@@ -53,7 +53,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="icu.net" Version="$(IcuNetPackageVersion)" />
     <PackageReference Include="NUnit" Version="$(NUnitPackageVersion)" />
   </ItemGroup>
 

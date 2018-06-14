@@ -1,4 +1,6 @@
-﻿using Icu.Collation;
+﻿// lucene version compatibility level: 4.8.1
+using ICU4N.Text;
+using ICU4N.Util;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
@@ -61,10 +63,9 @@ namespace Lucene.Net.Collation
     /// </remarks>
     /// <seealso cref="Collator"/>
     /// <seealso cref="RuleBasedCollator"/>
-    /// LUCENENET NOTE: variableTop is not supported by icu.net
     [Obsolete("Use ICUCollationKeyAnalyzer instead.")]
     [ExceptionToClassNameConvention]
-    public class ICUCollationKeyFilterFactory : TokenFilterFactory, IMultiTermAwareComponent, IResourceLoaderAware, IDisposable
+    public class ICUCollationKeyFilterFactory : TokenFilterFactory, IMultiTermAwareComponent, IResourceLoaderAware
     {
         private Collator collator;
         private readonly string custom;
@@ -76,7 +77,7 @@ namespace Lucene.Net.Collation
         private readonly string caseLevel;
         private readonly string caseFirst;
         private readonly string numeric;
-        //private readonly string variableTop;
+        private readonly string variableTop;
 
         public ICUCollationKeyFilterFactory(IDictionary<string, string> args)
             : base(args)
@@ -90,11 +91,7 @@ namespace Lucene.Net.Collation
             caseLevel = Get(args, "caseLevel");
             caseFirst = Get(args, "caseFirst");
             numeric = Get(args, "numeric");
-
-            // LUCENENET TODO: variableTop is not supported by icu.net. Besides this,
-            // it is deprecated as of ICU 53 and has been superceded by maxVariable,
-            // but that feature is also not supported by icu.net at the time of this writing.
-            //variableTop = Get(args, "variableTop");
+            variableTop = Get(args, "variableTop");
 
             if (custom == null && localeID == null)
                 throw new ArgumentException("Either custom or locale is required.");
@@ -144,9 +141,9 @@ namespace Lucene.Net.Collation
             if (decomposition != null)
             {
                 if (decomposition.Equals("no", StringComparison.OrdinalIgnoreCase))
-                    collator.NormalizationMode = NormalizationMode.Off;  // (Collator.NO_DECOMPOSITION);
+                    collator.Decomposition = NormalizationMode.NoDecomposition;  // (Collator.NO_DECOMPOSITION);
                 else if (decomposition.Equals("canonical", StringComparison.OrdinalIgnoreCase))
-                    collator.NormalizationMode = NormalizationMode.On;     //.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
+                    collator.Decomposition = NormalizationMode.CanonicalDecomposition;     //.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
                 else
                     throw new ArgumentException("Invalid decomposition: " + decomposition);
             }
@@ -157,11 +154,11 @@ namespace Lucene.Net.Collation
             {
                 if (alternate.Equals("shifted", StringComparison.OrdinalIgnoreCase))
                 {
-                    rbc.AlternateHandling = AlternateHandling.Shifted;//  .setAlternateHandlingShifted(true);
+                    rbc.IsAlternateHandlingShifted = true;
                 }
                 else if (alternate.Equals("non-ignorable", StringComparison.OrdinalIgnoreCase))
                 {
-                    rbc.AlternateHandling = AlternateHandling.NonIgnorable; //.setAlternateHandlingShifted(false);
+                    rbc.IsAlternateHandlingShifted = false;
                 }
                 else
                 {
@@ -170,17 +167,17 @@ namespace Lucene.Net.Collation
             }
             if (caseLevel != null)
             {
-                rbc.CaseLevel = bool.Parse(caseLevel) ? CaseLevel.On : CaseLevel.Off; //  setCaseLevel(Boolean.parseBoolean(caseLevel));
+                rbc.IsCaseLevel = bool.Parse(caseLevel);
             }
             if (caseFirst != null)
             {
                 if (caseFirst.Equals("lower", StringComparison.OrdinalIgnoreCase))
                 {
-                    rbc.CaseFirst = CaseFirst.LowerFirst; //.setLowerCaseFirst(true);
+                    rbc.IsLowerCaseFirst = true;
                 }
                 else if (caseFirst.Equals("upper", StringComparison.OrdinalIgnoreCase))
                 {
-                    rbc.CaseFirst = CaseFirst.UpperFirst; //.setUpperCaseFirst(true);
+                    rbc.IsUpperCaseFirst = true;
                 }
                 else
                 {
@@ -189,16 +186,13 @@ namespace Lucene.Net.Collation
             }
             if (numeric != null)
             {
-                rbc.NumericCollation = bool.Parse(numeric) ? NumericCollation.On : NumericCollation.Off;   //.setNumericCollation(Boolean.parseBoolean(numeric));
+                rbc.IsNumericCollation = bool.Parse(numeric);
             }
 
-            // LUCENENET TODO: variableTop is not supported by icu.net. Besides this,
-            // it is deprecated as of ICU 53 and has been superceded by maxVariable,
-            // but that feature is also not supported by icu.net at the time of this writing.
-            //if (variableTop != null)
-            //{
-            //    rbc.setVariableTop(variableTop);
-            //}
+            if (variableTop != null)
+            {
+                rbc.SetVariableTop(variableTop);
+            }
         }
 
         public override TokenStream Create(TokenStream input)
@@ -214,7 +208,7 @@ namespace Lucene.Net.Collation
         /// <returns>The appropriate collator for the locale.</returns>
         private Collator CreateFromLocale(string localeID)
         {
-            return Collator.Create(localeID);
+            return Collator.GetInstance(new ULocale(localeID));
         }
 
         /// <summary>
@@ -257,21 +251,6 @@ namespace Lucene.Net.Collation
                 sb.Append(buffer, 0, len);
             }
             return sb.ToString();
-        }
-
-        // LUCENENET specific - must dispose collator
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                collator?.Dispose();
-            }
         }
     }
 }

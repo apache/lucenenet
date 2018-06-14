@@ -162,7 +162,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private void doReadTest(FileInfo file, FileType fileType, String expTitle,
                                 String expDate, String expBody)
         {
-            Stream input = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
+            Stream input = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             switch (fileType)
             {
                 case FileType.BZIP2:
@@ -308,7 +308,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             wldt.DoLogic();
             wldt.Dispose();
 
-            TextReader br = new StreamReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8);
+            TextReader br = new StreamReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), Encoding.UTF8);
             try
             {
                 String line = br.ReadLine();
@@ -331,7 +331,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             wldt.DoLogic();
             wldt.Dispose();
 
-            TextReader br = new StreamReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8);
+            TextReader br = new StreamReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), Encoding.UTF8);
             try
             {
                 String line = br.ReadLine();
@@ -354,7 +354,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             wldt.DoLogic();
             wldt.Dispose();
 
-            TextReader br = new StreamReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8);
+            TextReader br = new StreamReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), Encoding.UTF8);
             try
             {
                 String line = br.ReadLine();
@@ -420,7 +420,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
 
             ISet<String> ids = new HashSet<string>();
-            TextReader br = new StreamReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8);
+            TextReader br = new StreamReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), Encoding.UTF8);
             try
             {
                 String line = br.ReadLine();

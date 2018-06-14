@@ -172,7 +172,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             Regex matcher = threadNormalizer.Value;
             if (matcher == null)
             {
-                matcher = new Regex("[\t\r\n]+");
+                matcher = new Regex("[\t\r\n]+", RegexOptions.Compiled);
                 threadNormalizer.Value = matcher;
             }
 

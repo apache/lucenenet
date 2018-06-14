@@ -1,6 +1,7 @@
 ﻿#if FEATURE_BREAKITERATOR
-using Lucene.Net.Support;
+using ICU4N.Text;
 using System;
+using ICU4N.Support.Text;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {
@@ -24,8 +25,7 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// <summary>Just produces one single fragment for the entire text</summary>
     public sealed class WholeBreakIterator : BreakIterator
     {
-        //private CharacterIterator text;
-        private string text;
+        private CharacterIterator text;
         private int start; 
         private int end; 
         private int current;
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 // this conflicts with the javadocs, but matches actual behavior (Oracle has a bug in something)
                 // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=9000909
                 current = end;
-                return DONE;
+                return Done;
             }
             else
             {
@@ -59,12 +59,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-        //public override CharacterIterator GetText()
-        //{
-        //    return new StringCharacterIterator( text);
-        //}
-
-        public override string Text
+        public override CharacterIterator Text
         {
             get { return text; }
         }
@@ -78,7 +73,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             if (current == end)
             {
-                return DONE;
+                return Done;
             }
             else
             {
@@ -116,7 +111,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 // this conflicts with the javadocs, but matches actual behavior (Oracle has a bug in something)
                 // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=9000909
                 current = start;
-                return DONE;
+                return Done;
             }
             else
             {
@@ -128,7 +123,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             if (current == start)
             {
-                return DONE;
+                return Done;
             }
             else
             {
@@ -143,29 +138,18 @@ namespace Lucene.Net.Search.PostingsHighlight
                 return true;
             }
             int boundary = Following(offset - 1);
-            if (boundary == DONE)
+            if (boundary == Done)
             {
                 throw new ArgumentException();
             }
             return boundary == offset;
         }
 
-        public override void SetText(string newText)
-        {
-            if (newText == null)
-                throw new ArgumentNullException("newText");
-            this.text = newText;
-
-            this.start = 0;
-            this.end = newText.Length;
-            this.current = start;
-        }
-
         public override void SetText(CharacterIterator newText)
         {
             start = newText.BeginIndex;
             end = newText.EndIndex;
-            text = newText.GetTextAsString();
+            text = newText;
             current = start;
         }
     }

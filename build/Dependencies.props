@@ -1,8 +1,12 @@
 <Project> 
   <PropertyGroup Label="NuGet Package Reference Versions">
     <Antlr3RuntimePackageVersion>3.5.1</Antlr3RuntimePackageVersion>
-    <Icu4cWinFullLibPackageVersion>59.1.15</Icu4cWinFullLibPackageVersion>
-    <IcuNetPackageVersion>2.5.4</IcuNetPackageVersion>
+    <ICU4NPackageVersion>60.1.0-alpha.19.ga158055102</ICU4NPackageVersion>
+    <ICU4NCollationPackageVersion>$(ICU4NPackageVersion)</ICU4NCollationPackageVersion>
+    <ICU4NCurrencyDataPackageVersion>$(ICU4NPackageVersion)</ICU4NCurrencyDataPackageVersion>
+    <ICU4NLanguageDataPackageVersion>$(ICU4NPackageVersion)</ICU4NLanguageDataPackageVersion>
+    <ICU4NRegionDataPackageVersion>$(ICU4NPackageVersion)</ICU4NRegionDataPackageVersion>
+    <ICU4NTransliteratorPackageVersion>$(ICU4NPackageVersion)</ICU4NTransliteratorPackageVersion>
     <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>1.0.3</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>1.0.3</MicrosoftAspNetCoreTestHostPackageVersion>
     <MicrosoftCSharpPackageVersion>4.4.0</MicrosoftCSharpPackageVersion>

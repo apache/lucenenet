@@ -1,4 +1,4 @@
-﻿using Icu.Collation;
+﻿using ICU4N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Util;
@@ -29,7 +29,7 @@ namespace Lucene.Net.Collation
     [Obsolete("remove this when ICUCollationKeyFilter is removed")]
     public class TestICUCollationKeyFilter : CollationTestBase
     {
-        private Collator collator = Collator.Create(new CultureInfo("fa"));
+        private Collator collator = Collator.GetInstance(new CultureInfo("fa"));
         private Analyzer analyzer;
 
         private BytesRef firstRangeBeginning;
@@ -44,13 +44,13 @@ namespace Lucene.Net.Collation
 
             this.analyzer = new TestAnalyzer(collator);
             this.firstRangeBeginning = new BytesRef(EncodeCollationKey
-                (collator.GetSortKey(FirstRangeBeginningOriginal).KeyData));
+                (collator.GetCollationKey(FirstRangeBeginningOriginal).ToByteArray()));
             this.firstRangeEnd = new BytesRef(EncodeCollationKey
-                (collator.GetSortKey(FirstRangeEndOriginal).KeyData));
+                (collator.GetCollationKey(FirstRangeEndOriginal).ToByteArray()));
             this.secondRangeBeginning = new BytesRef(EncodeCollationKey
-                (collator.GetSortKey(SecondRangeBeginningOriginal).KeyData));
+                (collator.GetCollationKey(SecondRangeBeginningOriginal).ToByteArray()));
             this.secondRangeEnd = new BytesRef(EncodeCollationKey
-                (collator.GetSortKey(SecondRangeEndOriginal).KeyData));
+                (collator.GetCollationKey(SecondRangeEndOriginal).ToByteArray()));
         }
 
         public sealed class TestAnalyzer : Analyzer
@@ -100,13 +100,13 @@ namespace Lucene.Net.Collation
         [Test]
         public void TestCollationKeySort()
         {
-            Analyzer usAnalyzer = new TestAnalyzer(Collator.Create(new CultureInfo("en-us"), Collator.Fallback.FallbackAllowed));
+            Analyzer usAnalyzer = new TestAnalyzer(Collator.GetInstance(new CultureInfo("en-us")));
             Analyzer franceAnalyzer
-              = new TestAnalyzer(Collator.Create(new CultureInfo("fr")));
+              = new TestAnalyzer(Collator.GetInstance(new CultureInfo("fr")));
             Analyzer swedenAnalyzer
-              = new TestAnalyzer(Collator.Create(new CultureInfo("sv-se"), Collator.Fallback.FallbackAllowed));
+              = new TestAnalyzer(Collator.GetInstance(new CultureInfo("sv-se")));
             Analyzer denmarkAnalyzer
-              = new TestAnalyzer(Collator.Create(new CultureInfo("da-dk"), Collator.Fallback.FallbackAllowed));
+              = new TestAnalyzer(Collator.GetInstance(new CultureInfo("da-dk")));
 
             // The ICU Collator and java.text.Collator implementations differ in their
             // orderings - "BFJHD" is the ordering for the ICU Collator for Locale.US.

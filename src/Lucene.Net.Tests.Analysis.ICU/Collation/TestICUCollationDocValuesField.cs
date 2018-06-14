@@ -1,4 +1,4 @@
-﻿using Icu.Collation;
+﻿using ICU4N.Text;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -40,7 +40,7 @@ namespace Lucene.Net.Collation
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             Field field = NewField("field", "", StringField.TYPE_STORED);
-            ICUCollationDocValuesField collationField = new ICUCollationDocValuesField("collated", Collator.Create(new CultureInfo("en")));
+            ICUCollationDocValuesField collationField = new ICUCollationDocValuesField("collated", Collator.GetInstance(new CultureInfo("en")));
             doc.Add(field);
             doc.Add(collationField);
 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Collation
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
             Document doc = new Document();
             Field field = NewField("field", "", StringField.TYPE_STORED);
-            Collator collator = Collator.Create(CultureInfo.CurrentCulture, Collator.Fallback.FallbackAllowed); // uses -Dtests.locale
+            Collator collator = Collator.GetInstance(CultureInfo.CurrentCulture); // uses -Dtests.locale
             if (Random().nextBoolean())
             {
                 collator.Strength = CollationStrength.Primary;
@@ -100,8 +100,8 @@ namespace Lucene.Net.Collation
             {
                 String start = TestUtil.RandomSimpleString(Random());
                 String end = TestUtil.RandomSimpleString(Random());
-                BytesRef lowerVal = new BytesRef(collator.GetSortKey(start).KeyData);
-                BytesRef upperVal = new BytesRef(collator.GetSortKey(end).KeyData);
+                BytesRef lowerVal = new BytesRef(collator.GetCollationKey(start).ToByteArray());
+                BytesRef upperVal = new BytesRef(collator.GetCollationKey(end).ToByteArray());
                 Query query = new ConstantScoreQuery(FieldCacheRangeFilter.NewBytesRefRange("collated", lowerVal, upperVal, true, true));
                 DoTestRanges(@is, start, end, query, collator);
             }

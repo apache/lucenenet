@@ -1,4 +1,6 @@
-﻿#if FEATURE_BREAKITERATOR
+﻿// Lucene version compatibility level 7.1.0
+#if FEATURE_BREAKITERATOR
+using ICU4N.Support.Text;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -23,7 +25,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
      */
 
     /// <summary>
-    /// Wraps a char[] as CharacterIterator for processing with a BreakIterator
+    /// Wraps a <see cref="T:char[]"/> as <see cref="CharacterIterator"/> for processing with a <see cref="ICU4N.Text.BreakIterator"/>
     /// <para/>
     /// @lucene.experimental
     /// </summary>
@@ -72,7 +74,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         public override char Current
         {
-            get { return (index == limit) ? DONE : array[index]; }
+            get { return (index == limit) ? Done : array[index]; }
         }
 
         public override char First()
@@ -107,7 +109,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             if (++index >= limit)
             {
                 index = limit;
-                return DONE;
+                return Done;
             }
             else
             {
@@ -120,7 +122,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             if (--index < start)
             {
                 index = start;
-                return DONE;
+                return Done;
             }
             else
             {
@@ -134,11 +136,6 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                 throw new ArgumentException("Illegal Position: " + position);
             index = start + position;
             return Current;
-        }
-
-        public override string GetTextAsString()
-        {
-            return new string(array);
         }
 
         public override object Clone()

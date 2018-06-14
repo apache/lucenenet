@@ -1,0 +1,134 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http:#www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# This file was modified to be similar to BreakIteratorRules.java in the OpenJDK 7.0,
+# although it could be made a closer match than it is now.
+
+# Copyright (C) 2016 and later: Unicode, Inc. and others.
+# License & terms of use: http://www.unicode.org/copyright.html
+#
+#   Copyright (C) 2002-2015, International Business Machines Corporation and others.
+#       All Rights Reserved.
+#
+#   file:  sent.txt
+#
+#   ICU Sentence Break Rules
+#      See Unicode Standard Annex #29.
+#      These rules are based on UAX #29 Revision 26 for Unicode Version 8.0
+#
+
+!!quoted_literals_only;
+
+#
+# Character categories as defined in TR 29
+#
+$CR        = [\p{Sentence_Break = CR}];
+$LF        = [\p{Sentence_Break = LF}];
+$Extend    = [\p{Sentence_Break = Extend}];
+$Sep       = [\p{Sentence_Break = Sep}];
+$Format    = [\p{Sentence_Break = Format}];
+$Sp        = [\p{Sentence_Break = Sp}];
+$Lower     = [\p{Sentence_Break = Lower}];
+$Upper     = [\p{Sentence_Break = Upper}];
+$OLetter   = [\p{Sentence_Break = OLetter}];
+$Numeric   = [\p{Sentence_Break = Numeric}];
+$ATerm     = [\p{Sentence_Break = ATerm}];
+$SContinue = [\p{Sentence_Break = SContinue}];
+$STerm     = [\p{Sentence_Break = STerm}];
+$Close     = [\p{Sentence_Break = Close}];
+
+#
+# Define extended forms of the character classes,
+#   incorporate trailing Extend or Format chars.
+#   Rules 4 and 5.  
+
+$SpEx       = $Sp      ($Extend | $Format)*;
+$LowerEx    = $Lower   ($Extend | $Format)*;
+$UpperEx    = $Upper   ($Extend | $Format)*;
+$OLetterEx  = $OLetter ($Extend | $Format)*;
+$NumericEx  = $Numeric ($Extend | $Format)*;
+$ATermEx    = $ATerm   ($Extend | $Format)*;
+$SContinueEx= $SContinue ($Extend | $Format)*;
+$STermEx    = $STerm   ($Extend | $Format)*;
+$CloseEx    = $Close   ($Extend | $Format)*;
+
+
+## -------------------------------------------------
+
+!!chain;
+!!forward;
+
+#^($STerm ($Extend | $Format)* | $ATerm ($Extend | $Format)*) $CR $LF;
+
+# Rule 3 - break after separators.  Keep CR/LF together.
+#
+$CR $LF;
+
+
+# Rule 4 - Break after $Sep.
+# Rule 5 - Ignore $Format and $Extend
+#
+[^$Sep $CR $LF]? ($Extend | $Format)*;
+
+
+# Rule 6
+#$ATermEx $NumericEx;
+
+# Rule 7
+($UpperEx | $LowerEx) $ATermEx $UpperEx;
+
+#Rule 8 (Removed, since we want a full stop followed by 2 spaces followed by a lowercase letter to be a sentence break like in the JDK)
+#$NotLettersEx = [^$OLetter $Upper $Lower $Sep $CR $LF $ATerm $STerm] ($Extend | $Format)*;
+#$ATermEx $CloseEx* $SpEx* $NotLettersEx* $Lower;
+
+# Rule 8a
+($STermEx | $ATermEx) $CloseEx* $SpEx* ($SContinueEx | $STermEx | $ATermEx);
+
+#Rule 9, 10, 11
+($STermEx | $ATermEx) $CloseEx* $SpEx* ($Sep | $CR | $LF)?;
+
+#Rule 12, modified to ignore $CR $LF mid sentence (like in the JDK)
+[[^$STerm $ATerm $Close $Sp $Sep $LF $CR $Format $Extend]{bof}] ($Extend | $Format | $Close | $CR | $LF | $Sp)* .;
+[[^$STerm $ATerm $Close $Sp $Sep $LF $CR $Format $Extend]{bof}] ($Extend | $Format | $Close | $CR | $LF | $Sp)* ([$Sep $LF $CR {eof}] | $CR $LF){100};
+
+## -------------------------------------------------
+
+!!safe_reverse;
+
+$SpEx_R       = ($Extend | $Format)* $Sp;
+$ATermEx_R    = ($Extend | $Format)* $ATerm;
+$STermEx_R    = ($Extend | $Format)* $STerm;
+$CloseEx_R    = ($Extend | $Format)* $Close;
+
+[{bof}] (.? | $LF $CR) [^$Sep $CR $LF]* [$Sep $CR $LF {eof}] ($SpEx_R* $CloseEx_R* ($STermEx_R | $ATermEx_R))*;
+#.*;
+
+# Explanation for this rule:
+#
+#    It needs to back over
+#        The $Sep at which we probably begin
+#        All of the non $Sep chars leading to the preceding $Sep
+#        The preceding $Sep, which will be the second one that the rule matches.
+#        Any immediately preceding STerm or ATerm sequences.  We need to see these
+#              to get the correct rule status when moving forwards again.
+#
+# [{bof}]           inhibit rule chaining.  Without this, rule would loop on itself and match
+#                   the entire string. TODO: can bof be replaced with ^
+#
+# (.? | $LF $CR)    Match one $Sep instance.  Use .? rather than $Sep because position might be
+#                   at the beginning of the string at this point, and we don't want to fail.
+#                   Can only use {eof} once, and it is used later.
+#

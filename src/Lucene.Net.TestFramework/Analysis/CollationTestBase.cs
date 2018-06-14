@@ -1,4 +1,3 @@
-using Icu.Collation;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -9,7 +8,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Directory = Lucene.Net.Store.Directory;
 
@@ -44,7 +42,9 @@ namespace Lucene.Net.Analysis
 		protected internal string SecondRangeEndOriginal = "\u0638";
 
         // LUCENENET: The all locales may are not available for collation.
-        protected readonly string[] availableCollationLocales = RuleBasedCollator.GetAvailableCollationLocales().ToArray();
+        // LUCENENET: Removed this (only) reference to the ICU library, since it has a lot of data and we don't
+        // want to unnecessarily reference it in all test projects.
+        //protected readonly string[] availableCollationLocales = RuleBasedCollator.GetAvailableCollationLocales().ToArray();
 
         /// <summary>
         /// Convenience method to perform the same function as CollationKeyFilter.

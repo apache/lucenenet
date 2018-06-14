@@ -1,6 +1,6 @@
 ﻿#if FEATURE_BREAKITERATOR
+using ICU4N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -214,7 +214,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 int start = iterator.Current;
 
-                if (start == BreakIterator.DONE)
+                if (start == BreakIterator.Done)
                 {
                     return false; // BreakIterator exhausted
                 }
@@ -222,7 +222,7 @@ namespace Lucene.Net.Analysis.Util
                 // find the next set of boundaries
                 int end_Renamed = iterator.Next();
 
-                if (end_Renamed == BreakIterator.DONE)
+                if (end_Renamed == BreakIterator.Done)
                 {
                     return false; // BreakIterator exhausted
                 }

@@ -1,4 +1,5 @@
 ﻿#if FEATURE_BREAKITERATOR
+using ICU4N.Support.Text;
 using Lucene.Net.Support;
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
@@ -23,10 +24,11 @@ namespace Lucene.Net.Analysis.Util
      */
 
     /// <summary>
-    /// A CharacterIterator used internally for use with <see cref="BreakIterator"/>
+    /// A CharacterIterator used internally for use with <see cref="ICU4N.Text.BreakIterator"/>
+    /// <para/>
     /// @lucene.internal
     /// </summary>
-    public abstract class CharArrayIterator : CharacterIterator // LUCENENET TODO: Since the only purpose of this class is to work around Java bugs, is this class really needed?
+    public abstract class CharArrayIterator : CharacterIterator
     {
         private char[] array;
         private int start;
@@ -79,7 +81,7 @@ namespace Lucene.Net.Analysis.Util
         {
             get
             {
-                return (index == limit) ? DONE : JreBugWorkaround(array[index]);
+                return (index == limit) ? Done : array[index];
             }
         }
 
@@ -90,6 +92,21 @@ namespace Lucene.Net.Analysis.Util
         {
             index = start;
             return Current;
+        }
+
+        public override int BeginIndex
+        {
+            get { return 0; }
+        }
+
+        public override int EndIndex
+        {
+            get { return length; }
+        }
+
+        public override int Index
+        {
+            get { return index - start; }
         }
 
         public override char Last()
@@ -103,7 +120,7 @@ namespace Lucene.Net.Analysis.Util
             if (++index >= limit)
             {
                 index = limit;
-                return DONE;
+                return Done;
             }
             else
             {
@@ -116,7 +133,7 @@ namespace Lucene.Net.Analysis.Util
             if (--index < start)
             {
                 index = start;
-                return DONE;
+                return Done;
             }
             else
             {
@@ -134,43 +151,14 @@ namespace Lucene.Net.Analysis.Util
             return Current;
         }
 
-        public override int BeginIndex
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
-        public override int EndIndex
-        {
-            get
-            {
-                return length;
-            }
-        }
-
-        public override int Index
-        {
-            get
-            {
-                return index - start;
-            }
-        }
-
-        public override string GetTextAsString()
-        {
-            return new string(array);
-        }
-
         public override object Clone()
         {
             return this.MemberwiseClone();
         }
 
         /// <summary>
-        /// Create a new CharArrayIterator that works around JRE bugs
-        /// in a manner suitable for <c>BreakIterator#getSentenceInstance()</c>
+        /// Create a new <see cref="CharArrayIterator"/> that works around JRE bugs
+        /// in a manner suitable for <see cref="ICU4N.Text.BreakIterator.GetSentenceInstance()"/>.
         /// </summary>
         public static CharArrayIterator NewSentenceInstance()
         {
@@ -187,8 +175,8 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Create a new CharArrayIterator that works around JRE bugs
-        /// in a manner suitable for <c>BreakIterator#getWordInstance()</c>
+        /// Create a new <see cref="CharArrayIterator"/> that works around JRE bugs
+        /// in a manner suitable for <see cref="ICU4N.Text.BreakIterator.GetWordInstance()"/>.
         /// </summary>
         public static CharArrayIterator NewWordInstance()
         {

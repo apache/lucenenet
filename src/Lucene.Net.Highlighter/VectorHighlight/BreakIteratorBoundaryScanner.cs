@@ -1,5 +1,5 @@
 ﻿#if FEATURE_BREAKITERATOR
-using Lucene.Net.Support;
+using ICU4N.Text;
 using System.Text;
 
 namespace Lucene.Net.Search.VectorHighlight

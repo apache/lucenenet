@@ -50,11 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="icu.net" Version="$(IcuNetPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$([MSBuild]::IsOsPlatform('Windows'))">
-    <PackageReference Include="Icu4c.Win.Full.Lib" Version="$(Icu4cWinFullLibPackageVersion)" />
+    <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
   </ItemGroup>
 
   <!--<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">

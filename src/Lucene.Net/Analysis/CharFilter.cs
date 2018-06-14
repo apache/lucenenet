@@ -85,6 +85,18 @@ namespace Lucene.Net.Analysis
             return (m_input is CharFilter) ? ((CharFilter)m_input).CorrectOffset(corrected) : corrected;
         }
 
+        // LUCENENET specific - force subclasses to implement Read(char[] buffer, int index, int count),
+        // since it is required (and the .NET implementation calls Read() which would have infinite recursion
+        // if it were called.
+        public abstract override int Read(char[] buffer, int index, int count);
+
+        // LUCENENET specific - need to override read, as it returns -1 by default in .NET.
+        public override int Read()
+        {
+            var buffer = new char[1];
+            int count = Read(buffer, 0, 1);
+            return (count < 1) ? -1 : buffer[0];
+        }
 
         // LUCENENET specific
         #region From Reader Class

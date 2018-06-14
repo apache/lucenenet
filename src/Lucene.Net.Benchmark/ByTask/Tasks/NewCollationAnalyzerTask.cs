@@ -1,4 +1,4 @@
-﻿using Icu.Collation;
+﻿using ICU4N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -52,9 +52,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 //    return typeof(Icu.Collation.Collator);
 
                 case NewCollationAnalyzerTask.Implementation.ICU:
-                    return typeof(Icu.Collation.Collator);
+                    return typeof(Collator);
                 default:
-                    return typeof(Icu.Collation.Collator);
+                    return typeof(Collator);
             }
         }
     }
@@ -84,7 +84,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             // LUCENENET specific - senseless to use reflection here because we only have one
             // collator.
-            object collator = Collator.Create(locale, Collator.Fallback.FallbackAllowed);
+            object collator = Collator.GetInstance(locale);
+
+            // LUCENENET TODO: The .NET equivalent to create a collator like the one in the JDK is:
+            //CompareInfo.GetCompareInfo(locale.Name);
 
             Type clazz = impl.GetAnalyzerType(); 
             return (Analyzer)Activator.CreateInstance(clazz,

@@ -1,4 +1,4 @@
-﻿using Icu.Collation;
+﻿using ICU4N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Attributes;
@@ -1020,17 +1020,17 @@ namespace Lucene.Net.Benchmarks.ByTask
             // ROOT locale
             Benchmark benchmark = execBenchmark(getCollatorConfig("ROOT", collatorParam));
             ICUCollationKeyAnalyzer expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator
-                .Create(CultureInfo.InvariantCulture));
+                .GetInstance(CultureInfo.InvariantCulture));
             assertEqualCollation(expected, benchmark.RunData.Analyzer, "foobar");
 
             // specify just a language
             benchmark = execBenchmark(getCollatorConfig("de", collatorParam));
-            expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator.Create(new CultureInfo("de")));
+            expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator.GetInstance(new CultureInfo("de")));
             assertEqualCollation(expected, benchmark.RunData.Analyzer, "foobar");
 
             // specify language + country
             benchmark = execBenchmark(getCollatorConfig("en,US", collatorParam));
-            expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator.Create(new CultureInfo("en-US"), Collator.Fallback.FallbackAllowed));
+            expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator.GetInstance(new CultureInfo("en-US")));
             assertEqualCollation(expected, benchmark.RunData.Analyzer, "foobar");
 
             //// specify language + country + variant
@@ -1044,7 +1044,7 @@ namespace Lucene.Net.Benchmarks.ByTask
 
             // specify language + country + variant
             benchmark = execBenchmark(getCollatorConfig("nb,NO,NY", collatorParam));
-            expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator.Create(new CultureInfo("nb-NO"/*, "NY"*/), Collator.Fallback.FallbackAllowed));
+            expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator.GetInstance(new CultureInfo("nb-NO"/*, "NY"*/)));
             assertEqualCollation(expected, benchmark.RunData.Analyzer, "foobar");
         }
 

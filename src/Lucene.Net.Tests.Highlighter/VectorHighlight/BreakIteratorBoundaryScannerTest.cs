@@ -1,4 +1,6 @@
 ﻿#if FEATURE_BREAKITERATOR
+using ICU4N.Text;
+using Lucene.Net.ICU.Support;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -36,8 +38,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public void TestOutOfRange()
         {
             StringBuilder text = new StringBuilder(TEXT);
-            //BreakIterator bi = BreakIterator.getWordInstance(Locale.ROOT);
-            BreakIterator bi = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.WORD, CultureInfo.InvariantCulture);
+            BreakIterator bi = BreakIterator.GetWordInstance(CultureInfo.InvariantCulture);
             IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
 
             int start = TEXT.Length + 1;
@@ -53,9 +54,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public void TestWordBoundary()
         {
             StringBuilder text = new StringBuilder(TEXT);
-            //BreakIterator bi = BreakIterator.getWordInstance(Locale.ROOT);
-            //BreakIterator bi = new WordBreakIterator(CultureInfo.CurrentCulture);
-            BreakIterator bi = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.WORD, CultureInfo.InvariantCulture) { EnableHacks = true };
+            BreakIterator bi = JdkBreakIterator.GetWordInstance(CultureInfo.InvariantCulture);
             IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
 
             int start = TEXT.IndexOf("formance");
@@ -71,8 +70,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             StringBuilder text = new StringBuilder(TEXT);
             // we test this with default locale, its randomized by LuceneTestCase
-            //BreakIterator bi = BreakIterator.getSentenceInstance(Locale.getDefault());
-            BreakIterator bi = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.CurrentCulture) { EnableHacks = true };
+            BreakIterator bi = JdkBreakIterator.GetSentenceInstance(CultureInfo.CurrentCulture);
             IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
 
             int start = TEXT.IndexOf("any application");
@@ -88,8 +86,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             StringBuilder text = new StringBuilder(TEXT);
             // we test this with default locale, its randomized by LuceneTestCase
-            //BreakIterator bi = BreakIterator.getLineInstance(Locale.getDefault());
-            BreakIterator bi = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.LINE, CultureInfo.CurrentCulture);
+            BreakIterator bi = BreakIterator.GetLineInstance(CultureInfo.CurrentCulture);
             IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
 
             int start = TEXT.IndexOf("any application");

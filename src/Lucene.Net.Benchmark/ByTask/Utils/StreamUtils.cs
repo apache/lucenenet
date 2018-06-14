@@ -77,7 +77,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         {
             // First, create a FileInputStream, as this will be required by all types.
             // Wrap with BufferedInputStream for better performance
-            Stream os = new FileStream(file.FullName, FileMode.Create, FileAccess.Write);
+            Stream os = new FileStream(file.FullName, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
             return GetFileType(file).GetOutputStream(os);
         }
     }

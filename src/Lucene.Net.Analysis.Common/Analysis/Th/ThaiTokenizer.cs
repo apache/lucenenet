@@ -1,4 +1,5 @@
 ﻿#if FEATURE_BREAKITERATOR
+using ICU4N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
@@ -27,7 +28,7 @@ namespace Lucene.Net.Analysis.Th
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-    
+
     // LUCENENET NOTE: Removing this notice from the doc comment because it is not relevant for our purposes.
 
     // <para>WARNING: this tokenizer may not be supported by all JREs.
@@ -41,21 +42,16 @@ namespace Lucene.Net.Analysis.Th
     /// </summary>
     public class ThaiTokenizer : SegmentingTokenizerBase
     {
+        // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
+        private static readonly BreakIterator proto = BreakIterator.GetWordInstance(new CultureInfo("th"));
+
         /// <summary>
-        /// True if the JRE supports a working dictionary-based breakiterator for Thai.
-        /// If this is false, this tokenizer will not work at all!
+        /// used for breaking the text into sentences
         /// </summary>
-        public static readonly bool DBBI_AVAILABLE;
-        private static readonly BreakIterator proto = new IcuBreakIterator(global::Icu.BreakIterator.UBreakIteratorType.WORD, new CultureInfo("th"));
-        static ThaiTokenizer()
-        {
-            // check that we have a working dictionary-based break iterator for thai
-            proto.SetText("ภาษาไทย");
-            DBBI_AVAILABLE = proto.IsBoundary(4);
-        }
+        private static readonly BreakIterator sentenceProto = BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
 
         private readonly ThaiWordBreaker wordBreaker;
-        private readonly CharArrayIterator wrapper = CharArrayIterator.NewWordInstance();
+        private readonly CharArrayIterator wrapper = Analysis.Util.CharArrayIterator.NewWordInstance();
 
         private int sentenceStart;
         private int sentenceEnd;
@@ -73,13 +69,11 @@ namespace Lucene.Net.Analysis.Th
         /// <summary>
         /// Creates a new <see cref="ThaiTokenizer"/>, supplying the <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/> </summary>
         public ThaiTokenizer(AttributeFactory factory, TextReader reader)
-            : base(factory, reader, new IcuBreakIterator(global::Icu.BreakIterator.UBreakIteratorType.SENTENCE, new CultureInfo("th")))
+            : base(factory, reader, (BreakIterator)sentenceProto.Clone())
         {
-            if (!DBBI_AVAILABLE)
-            {
-                throw new System.NotSupportedException("This JRE does not have support for Thai segmentation");
-            }
-            wordBreaker = new ThaiWordBreaker(new IcuBreakIterator(global::Icu.BreakIterator.UBreakIteratorType.WORD, CultureInfo.InvariantCulture));
+            // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
+
+            wordBreaker = new ThaiWordBreaker((BreakIterator)proto.Clone());
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
@@ -94,21 +88,21 @@ namespace Lucene.Net.Analysis.Th
 
         protected override bool IncrementWord()
         {
-            int start = wordBreaker.Current();
-            if (start == BreakIterator.DONE)
+            int start = wordBreaker.Current;
+            if (start == BreakIterator.Done)
             {
                 return false; // BreakIterator exhausted
             }
 
             // find the next set of boundaries, skipping over non-tokens
             int end = wordBreaker.Next();
-            while (end != BreakIterator.DONE && !char.IsLetterOrDigit((char)Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
+            while (end != BreakIterator.Done && !char.IsLetterOrDigit((char)Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
             {
                 start = end;
                 end = wordBreaker.Next();
             }
 
-            if (end == BreakIterator.DONE)
+            if (end == BreakIterator.Done)
             {
                 return false; // BreakIterator exhausted
             }
@@ -147,13 +141,16 @@ namespace Lucene.Net.Analysis.Th
             wordBreaker.SetText(text);
         }
 
-        public int Current()
+        public int Current
         {
-            if (transitions.Any())
+            get
             {
-                return transitions.First();
+                if (transitions.Any())
+                {
+                    return transitions.First();
+                }
+                return wordBreaker.Current;
             }
-            return wordBreaker.Current;
         }
 
         public int Next()
@@ -176,7 +173,7 @@ namespace Lucene.Net.Analysis.Th
             int prev = wordBreaker.Current;
             int current = wordBreaker.Next();
 
-            if (current != BreakIterator.DONE && current - prev > 0)
+            if (current != BreakIterator.Done && current - prev > 0)
             {
                 // Find all of the transitions between Thai and non-Thai characters and digits
                 for (int i = prev; i < current; i++)
