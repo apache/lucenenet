@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
             {
                 // If sentinel objects are supported, populate the queue with them
                 T sentinel = GetSentinelObject();
-                if (!EqualityComparer<T>.Default.Equals(sentinel, default(T)))
+                if (!Support.EqualityComparer<T>.Default.Equals(sentinel, default(T)))
                 {
                     heap[1] = sentinel;
                     for (int i = 2; i < heap.Length; i++)

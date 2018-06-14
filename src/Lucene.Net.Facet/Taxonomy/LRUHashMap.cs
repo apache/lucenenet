@@ -50,7 +50,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// The maximum size (in number of entries) to which the map can grow
         /// before the least recently used entries start being removed.
         /// <para/>
-        /// Setting maxSize to a very large value, like <see cref="int.MaxValue"/>
+        /// Setting <paramref name="limit"/> to a very large value, like <see cref="int.MaxValue"/>
         /// is allowed, but is less efficient than
         /// using <see cref="Support.HashMap{TKey, TValue}"/> or 
         /// <see cref="Dictionary{TKey, TValue}"/> because our class needs
@@ -59,8 +59,36 @@ namespace Lucene.Net.Facet.Taxonomy
         /// maximum size.
         /// </param>
         public LRUHashMap(int limit)
+            : this(limit, null)
         {
-            cache = new LurchTable<TKey, TValue>(LurchTableOrder.Access, limit);
+        }
+
+        /// <summary>
+        /// Create a new hash map with a bounded size and with least recently
+        /// used entries removed.
+        /// <para/>
+        /// LUCENENET specific overload to allow passing in custom <see cref="IEqualityComparer{T}"/>. 
+        /// See LUCENENET-602.
+        /// </summary>
+        /// <param name="limit">
+        /// The maximum size (in number of entries) to which the map can grow
+        /// before the least recently used entries start being removed.
+        /// <para/>
+        /// Setting <paramref name="limit"/> to a very large value, like <see cref="int.MaxValue"/>
+        /// is allowed, but is less efficient than
+        /// using <see cref="Support.HashMap{TKey, TValue}"/> or 
+        /// <see cref="Dictionary{TKey, TValue}"/> because our class needs
+        /// to keep track of the use order (via an additional doubly-linked
+        /// list) which is not used when the map's size is always below the
+        /// maximum size.
+        /// </param>
+        /// <param name="comparer">
+        /// The <see cref="IEqualityComparer{TKey}"/> implementation to use when comparing keys, 
+        /// or <c>null</c> to use the default <see cref="IEqualityComparer{TKey}"/> for the type of the key.
+        /// </param>
+        public LRUHashMap(int limit, IEqualityComparer<TKey> comparer)
+        {
+            cache = new LurchTable<TKey, TValue>(LurchTableOrder.Access, limit, comparer);
         }
 
         /// <summary>

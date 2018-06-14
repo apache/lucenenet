@@ -40,7 +40,7 @@ namespace Lucene.Net.Support
         /// Create a red-black tree dictionary using the natural comparer for keys.
         /// <exception cref="ArgumentException"/> if the key type K is not comparable.
         /// </summary>
-		public TreeDictionary(MemoryType memoryType = MemoryType.Normal) : this(SCG.Comparer<K>.Default, EqualityComparer<K>.Default, memoryType) { }
+		public TreeDictionary(MemoryType memoryType = MemoryType.Normal) : this(SCG.Comparer<K>.Default, C5.EqualityComparer<K>.Default, memoryType) { }
 
         /// <summary>
         /// Create a red-black tree dictionary using an external comparer for keys.

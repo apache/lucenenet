@@ -95,7 +95,7 @@ namespace Lucene.Net.Support
         }
 
         public HashMap(int initialCapacity)
-            : this(initialCapacity, EqualityComparer<TKey>.Default)
+            : this(initialCapacity, Support.EqualityComparer<TKey>.Default)
         {
         }
 
@@ -115,7 +115,8 @@ namespace Lucene.Net.Support
 
         internal HashMap(IDictionary<TKey, TValue> wrappedDict, IEqualityComparer<TKey> comparer)
         {
-            _comparer = EqualityComparer<TKey>.Default;
+            // LUCENENET TODO: Is this a bug? Shouldn't we be using the passed in comparer if non-null?
+            _comparer = /* comparer ?? */ Support.EqualityComparer<TKey>.Default;
             _dict = wrappedDict;
             _hasNullValue = false;
 
@@ -260,7 +261,7 @@ namespace Lucene.Net.Support
         {
             if (!_isValueType && _comparer.Equals(item.Key, default(TKey)))
             {
-                return _hasNullValue && EqualityComparer<TValue>.Default.Equals(item.Value, _nullValue);
+                return _hasNullValue && Support.EqualityComparer<TValue>.Default.Equals(item.Value, _nullValue);
             }
 
             return _dict.Contains(item);

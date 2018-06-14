@@ -199,7 +199,7 @@ namespace Lucene.Net.Support
         private bool TryGetNode(TKey key, TValue value, out LinkedListNode<KeyValuePair<TKey, TValue>> node)
         {
             LinkedListNode<KeyValuePair<TKey, TValue>> n;
-            if (dict.TryGetValue(key, out n) && EqualityComparer<TValue>.Default.Equals(value, n.Value.Value))
+            if (dict.TryGetValue(key, out n) && Support.EqualityComparer<TValue>.Default.Equals(value, n.Value.Value))
             {
                 node = n;
                 return true;

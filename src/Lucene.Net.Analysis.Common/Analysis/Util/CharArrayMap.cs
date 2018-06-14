@@ -764,7 +764,7 @@ namespace Lucene.Net.Analysis.Util
                 if (!this.ContainsKey(iter.Current.Key))
                     return false;
 
-                if (!EqualityComparer<TValue>.Default.Equals(this[iter.Current.Key], iter.Current.Value))
+                if (!Support.EqualityComparer<TValue>.Default.Equals(this[iter.Current.Key], iter.Current.Value))
                     return false;
             }
 

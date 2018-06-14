@@ -45,7 +45,7 @@ namespace System.Collections.Concurrent
         { }
 
         public ConcurrentDictionary(int capacity)
-            : this(capacity, EqualityComparer<TKey>.Default)
+            : this(capacity, Support.EqualityComparer<TKey>.Default)
         { }
 
         public ConcurrentDictionary(int capacity, IEqualityComparer<TKey> comparer)

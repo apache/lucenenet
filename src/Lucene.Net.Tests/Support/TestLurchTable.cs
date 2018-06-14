@@ -180,7 +180,7 @@ namespace Lucene.Net.Support
         {
             //multiple of prime will produce hash collision, thus testing removal of non-first elements
             const int prime = 1103;
-            var test = new LurchTable<int, string>(LurchTableOrder.Access, 3, prime, 10, 10, EqualityComparer<int>.Default);
+            var test = new LurchTable<int, string>(LurchTableOrder.Access, 3, prime, 10, 10, Support.EqualityComparer<int>.Default);
             test[1 * prime] = "a";
             test[2 * prime] = "b";
             test[3 * prime] = "c";
@@ -207,7 +207,7 @@ namespace Lucene.Net.Support
         public void TestCrudEvents()
         {
             var recorder = new RecordEvents<int, string>();
-            var test = new LurchTable<int, string>(LurchTableOrder.Access, 3, 1103, 10, 10, EqualityComparer<int>.Default);
+            var test = new LurchTable<int, string>(LurchTableOrder.Access, 3, 1103, 10, 10, Support.EqualityComparer<int>.Default);
             test.ItemAdded += recorder.ItemAdded;
             test.ItemUpdated += recorder.ItemUpdated;
             test.ItemRemoved += recorder.ItemRemoved;
@@ -247,7 +247,7 @@ namespace Lucene.Net.Support
         {
             //multiple of prime will produce hash collision, thus testing removal of non-first elements
             const int prime = 1103;
-            var test = new LurchTable<int, string>(LurchTableOrder.Access, 10, prime, 10, 10, EqualityComparer<int>.Default);
+            var test = new LurchTable<int, string>(LurchTableOrder.Access, 10, prime, 10, 10, Support.EqualityComparer<int>.Default);
             test[1 * prime] = "a";
             test[2 * prime] = "b";
             test[3 * prime] = "c";
@@ -487,8 +487,8 @@ namespace Lucene.Net.Support
             var keys = new List<int>();
             foreach (var kv in sample)
                 keys.Add(kv.Key);
-            VerifyCollection(EqualityComparer<int>.Default, keys.AsReadOnly(), items.Keys);
-            VerifyCollection(EqualityComparer<int>.Default, keys.AsReadOnly(), dict.Keys);
+            VerifyCollection(Support.EqualityComparer<int>.Default, keys.AsReadOnly(), items.Keys);
+            VerifyCollection(Support.EqualityComparer<int>.Default, keys.AsReadOnly(), dict.Keys);
         }
 
         [Test, LuceneNetSpecific]
@@ -500,8 +500,8 @@ namespace Lucene.Net.Support
             var values = new List<string>();
             foreach (var kv in sample)
                 values.Add(kv.Value);
-            VerifyCollection(EqualityComparer<string>.Default, values.AsReadOnly(), items.Values);
-            VerifyCollection(EqualityComparer<string>.Default, values.AsReadOnly(), dict.Values);
+            VerifyCollection(Support.EqualityComparer<string>.Default, values.AsReadOnly(), items.Values);
+            VerifyCollection(Support.EqualityComparer<string>.Default, values.AsReadOnly(), dict.Values);
         }
 
         [Test]
@@ -518,8 +518,8 @@ namespace Lucene.Net.Support
 
         class KeyValueEquality<TKey, TValue> : IEqualityComparer<KeyValuePair<TKey, TValue>>
         {
-            IEqualityComparer<TKey> KeyComparer = EqualityComparer<TKey>.Default;
-            IEqualityComparer<TValue> ValueComparer = EqualityComparer<TValue>.Default;
+            IEqualityComparer<TKey> KeyComparer = Support.EqualityComparer<TKey>.Default;
+            IEqualityComparer<TValue> ValueComparer = Support.EqualityComparer<TValue>.Default;
             public bool Equals(KeyValuePair<TKey, TValue> x, KeyValuePair<TKey, TValue> y)
             {
                 return KeyComparer.Equals(x.Key, y.Key) && ValueComparer.Equals(x.Value, y.Value);

@@ -50,7 +50,7 @@ namespace Lucene.Net.Support.C5
         /// <summary>
         /// Create a hash bag with the default item equalityComparer.
         /// </summary>
-		public HashBag(MemoryType memoryType = MemoryType.Normal) : this(EqualityComparer<T>.Default, memoryType) { }
+		public HashBag(MemoryType memoryType = MemoryType.Normal) : this(C5.EqualityComparer<T>.Default, memoryType) { }
 
         /// <summary>
         /// Create a hash bag with an external item equalityComparer.

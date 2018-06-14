@@ -362,7 +362,7 @@ namespace Lucene.Net.Util.Fst
             {
                 throw new InvalidOperationException("already finished");
             }
-            if (newStartNode == FST.FINAL_END_NODE && !EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
+            if (newStartNode == FST.FINAL_END_NODE && !Support.EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
             {
                 newStartNode = 0;
             }
@@ -514,7 +514,7 @@ namespace Lucene.Net.Util.Fst
             }
             // TODO: really we should encode this as an arc, arriving
             // to the root node, instead of special casing here:
-            if (!EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
+            if (!Support.EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
             {
                 // Accepts empty string
                 @out.WriteByte(1);
@@ -875,7 +875,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public FST.Arc<T> GetFirstArc(FST.Arc<T> arc)
         {
-            if (!EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
+            if (!Support.EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
             {
                 arc.Flags = FST.BIT_FINAL_ARC | FST.BIT_LAST_ARC;
                 arc.NextFinalOutput = emptyOutput;
@@ -2053,7 +2053,7 @@ namespace Lucene.Net.Util.Fst
             fst.startNode = newNodeAddress.Get((int)startNode);
             //System.out.println("new startNode=" + fst.startNode + " old startNode=" + startNode);
 
-            if (!EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
+            if (!Support.EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
             {
                 fst.EmptyOutput = emptyOutput;
             }

@@ -38,7 +38,7 @@ namespace Lucene.Net.Support.Templates.Events
         {
             this.collection = list;
             listenTo = testSpec;
-            seen = new CollectionEventList<TItem>(EqualityComparer<TItem>.Default, memoryType);
+            seen = new CollectionEventList<TItem>(C5.EqualityComparer<TItem>.Default, memoryType);
         }
 
         public SCG.IEnumerable<EventTypeEnum> SpecsBasic

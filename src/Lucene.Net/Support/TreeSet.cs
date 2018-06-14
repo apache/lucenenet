@@ -228,7 +228,7 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <exception cref="NotComparableException">If <code>T</code> is not comparable.
         /// </exception>
-		public TreeSet(MemoryType memoryType = MemoryType.Normal) : this(SCG.Comparer<T>.Default, EqualityComparer<T>.Default, memoryType) { }
+		public TreeSet(MemoryType memoryType = MemoryType.Normal) : this(SCG.Comparer<T>.Default, C5.EqualityComparer<T>.Default, memoryType) { }
 
 
         /// <summary>
