@@ -19,6 +19,7 @@
     "globalMetadata": {
       "_appTitle": "Apache Lucene.NET 4.8.0",      
       "_disableContribution": false,
+      "_disableBreadcrumb": false,
       "_appFaviconPath": "logo/favicon.ico",
       "_enableSearch": false,
       "_appLogoPath": "logo/lucene-net-color.png",

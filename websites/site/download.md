@@ -1,3 +1,7 @@
+---
+_disableBreadcrumb: true
+---
+
 Download Lucene.Net
 ===============
 

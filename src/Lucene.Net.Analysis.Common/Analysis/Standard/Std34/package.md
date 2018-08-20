@@ -16,4 +16,4 @@
  limitations under the License.
 -->
 
-Backwards-compatible implementation to match [](xref:Lucene.Net.Util.Version.LUCENE_34)
+Backwards-compatible implementation to match [#LUCENE_34](xref:Lucene.Net.Util.Version)
