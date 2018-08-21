@@ -321,7 +321,7 @@
       "lucenetemplate"
     ],
     "postProcessors": [],
-    "markdownEngineName": "markdig-custom",
+    "markdownEngineName": "markdig",
     "noLangKeyword": false,
     "keepFileLink": false,
     "cleanupCacheHistory": false,
