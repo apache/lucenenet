@@ -39,10 +39,10 @@ $ToolsFolder = Join-Path -Path $SiteFolder -ChildPath "tools";
 #ensure the /build/tools folder
 New-Item $ToolsFolder -type directory -force
 
-# if ($Clean -eq 1) {
-# 	Write-Host "Cleaning tools..."
-# 	Remove-Item (Join-Path -Path $ToolsFolder "\*") -recurse -force -ErrorAction SilentlyContinue
-# }
+if ($Clean -eq 1) {
+	Write-Host "Cleaning tools..."
+	Remove-Item (Join-Path -Path $ToolsFolder "\*") -recurse -force -ErrorAction SilentlyContinue
+}
 
 New-Item "$ToolsFolder\tmp" -type directory -force
 
@@ -53,7 +53,7 @@ if (-not (test-path $DocFxExe))
 {
 	Write-Host "Retrieving docfx..."
 	$DocFxZip = "$ToolsFolder\tmp\docfx.zip"
-	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.36.1/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
+	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.38.1/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
 	#unzip
 	Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
 }

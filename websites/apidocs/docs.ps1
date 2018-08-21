@@ -53,7 +53,7 @@ if (-not (test-path $DocFxExe))
 {
 	Write-Host "Retrieving docfx..."
 	$DocFxZip = "$ToolsFolder\tmp\docfx.zip"
-	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.36.1/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
+	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.38.1/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
 	#unzip
 	Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
 }
