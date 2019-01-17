@@ -580,7 +580,11 @@ namespace Lucene.Net.Store
         {
             if (RandomState.NextBoolean())
             {
+#if NETSTANDARD1_6
                 Thread.Sleep(0);
+#else
+                Thread.Yield();
+#endif
             }
         }
 

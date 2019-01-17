@@ -1350,7 +1350,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: now rollback");
                     }
                     // clear interrupt state:
-                    //Thread.interrupted();
+                    ThreadClass.Interrupted();
                     if (w != null)
                     {
                         try
@@ -1438,10 +1438,6 @@ namespace Lucene.Net.Index
 #endif
 #endif
 
-#if NETCOREAPP2_0
-            fail("LUCENENET TODO: Uncaught exceptions on background thread causing test runner crash");
-#endif
-
             IndexerThreadInterrupt t = new IndexerThreadInterrupt(this);
             t.SetDaemon(true);
             t.Start();
@@ -1484,10 +1480,6 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTwoThreadsInterruptDeadlock()
         {
-#if NETCOREAPP2_0
-            fail("LUCENENET TODO: Uncaught exceptions on background thread causing test runner crash");
-#endif
-
             IndexerThreadInterrupt t1 = new IndexerThreadInterrupt(this);
             t1.SetDaemon(true);
             t1.Start();

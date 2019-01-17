@@ -300,6 +300,25 @@ namespace Lucene.Net.Support.Threading
             return This;
         }
 
+        /// <summary>
+        /// LUCENENET specific.
+        /// Java has Thread.interrupted() which returns, and clears, the interrupt
+        /// flag of the current thread. .NET has no such method, so we're calling
+        /// Thread.Sleep to provoke the exception which will also clear the flag.
+        /// </summary>
+        /// <returns></returns>
+        internal static bool Interrupted() {
+#if !NETSTANDARD1_6
+            try {
+                Thread.Sleep(0);
+            } catch (ThreadInterruptedException) {
+                return true;
+            }
+#endif
+
+            return false;
+        }
+
         public static bool operator ==(ThreadClass t1, object t2)
         {
             if (((object)t1) == null) return t2 == null;

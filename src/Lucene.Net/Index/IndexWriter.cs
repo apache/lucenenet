@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -1180,9 +1181,7 @@ namespace Lucene.Net.Index
                     try
                     {
                         // clean up merge scheduler in all cases, although flushing may have failed:
-                        //interrupted = Thread.Interrupted();
-                        //LUCENE TO-DO
-                        interrupted = false;
+                        interrupted = ThreadClass.Interrupted();
 
                         if (waitForMerges)
                         {
