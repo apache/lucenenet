@@ -134,11 +134,11 @@ namespace Lucene.Net.Search.Spans
             while (i.MoveNext())
             {
                 SpanQuery clause = i.Current;
-                buffer.Append(clause.ToString(field));
                 if (!isFirst)
                 {
                     buffer.Append(", ");
                 }
+                buffer.Append(clause.ToString(field));
                 isFirst = false;
             }
             buffer.Append("], ");

@@ -554,6 +554,22 @@ namespace Lucene.Net.Search.Spans
             Assert.AreEqual(0, SpanCount("s3", "s1", 8, 8), "SpanNotS3NotS1_8_8");
         }
 
+        [Test]
+        [Description("LUCENENET-597")]
+        public void TestToString_LUCENENET_597()
+        {
+            var clauses = new[]
+            {
+                new SpanTermQuery(new Term("f", "lucene")),
+                new SpanTermQuery(new Term("f", "net")),
+                new SpanTermQuery(new Term("f", "solr"))
+            };
+            var query = new SpanNearQuery(clauses, 0, true);
+            var queryString = query.ToString();
+
+            Assert.AreEqual("SpanNear([f:lucene, f:net, f:solr], 0, True)", queryString);
+        }
+
         private int SpanCount(string include, string exclude, int pre, int post)
         {
             SpanTermQuery iq = new SpanTermQuery(new Term(field, include));
