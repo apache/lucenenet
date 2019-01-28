@@ -732,7 +732,13 @@ namespace Lucene.Net.Index
             //{
             //    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
             //}
-            throw new MergePolicy.MergeException(exc, m_dir);
+            
+            // LUCENENET specific
+            //Note: Was non-treatable exception 
+            //In this case in .NET the whole process died because the exception wasn't handled (except: AppDomain.UnhandledException)
+            //See: https://github.com/apache/lucenenet/pull/214#issuecomment-457829614
+            //throw new MergePolicy.MergeException(exc, m_dir);
+            System.Diagnostics.Trace.WriteLine("Error in merge thread: " + exc);
         }
 
         private bool suppressExceptions;
