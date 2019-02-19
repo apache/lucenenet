@@ -8,15 +8,46 @@ Lucene.Net project contributing guide
 
 ## Getting involved
 
-_There are several ways to help contribute to the Lucene.Net project!_
+_There are lots ways to help contribute to the Lucene.Net project!_
 
-* Join the __[mailing lists](xref:contributing/mailing-lists)__ to ask questions as either a developer or user, to keep up with the latest developments in the project to make sure you're coordinating with the rest of the team
-* Coding help for creating new releases (see __[Current Status](https://cwiki.apache.org/confluence/display/LUCENENET/Current+Status)__). Take a look at what we're doing and then email the dev list to let us know that you're working on something
-* Testing and providing feedback on the __[issue tracker](xref:contributing/issue-tracker)__
-* Bug fixing, see the __[issue tracker](xref:contributing/issue-tracker)__ for latest issues
-* Help with keeping this website and documentation up to date
+Lucene.Net is a very large project (over 400,000 executable lines of code and nearly 1,000,000 lines of text total) and we welcome any and all help to maintain such an effort. 
 
-### The boring bits
+### Ask a Question
 
-* [Individual Contributor License](https://cwiki.apache.org/confluence/display/LUCENENET/Individual+Contributor+License) - We need this to accept any code you submit
-* [Git Setup and Pull Requests](https://cwiki.apache.org/confluence/display/LUCENENET/Git+Setup+and+Pull+Requests) - All the basics of getting started with the repo and how we prefer to receive pull requests
+If you have a general how-to question or need help from the Lucene.Net community, please email the Apache Lucene.Net-User mailing list by sending a message to:
+
+[user@lucenenet.apache.org](mailto:user@lucenenet.apache.org)
+
+We recommend you join the [user mailing list](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists) to stay looped into all user discussions.
+
+Alternatively, you can get help via [StackOverflow](https://stackoverflow.com/questions/tagged/lucene.net).
+
+Please do not submit general how-to questions to JIRA, use JIRA for bug reports/tasks only.
+
+see __[mailing lists](xref:contributing/mailing-lists)__ 
+
+### Start a Discussion
+
+To start a development discussion regarding technical features of Lucene.Net, please email the Apache Lucene.Net-Developer mailing list by sending a message to: 
+
+[dev@lucenenet.apache.org](mailto:dev@lucenenet.apache.org)
+
+We recommend you join both the [user and dev mailing lists](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists) to stay looped in to all user and developer discussions.
+
+see __[mailing lists](xref:contributing/mailing-lists)__ 
+
+### Website and Documentation
+
+Help with keeping this website and documentation up to date would be a great help. It would be great to migrate/consolidate a lot of the important information from the wiki to this website. See __[website and documentation](xref:contributing/documentation)__ for more information about contributing to this area.
+
+### Report a Bug
+
+To report a bug, please use the [JIRA issue tracker](xref:contributing/issue-tracker). You can signup for a JIRA account [here](https://cwiki.apache.org/confluence/signup.action) (it just takes a minute).
+
+### Submit a Pull Request
+
+First have a look at the __[Current Status](xref:contributing/current-status)__ of the project to see where things are at.
+
+There's a [detailed contribution guide here](https://github.com/apache/lucenenet/blob/master/CONTRIBUTING.md). _(it would be good to migrate this guide to this website)_
+
+And another guide is here about all the basics of getting started with the repo and how we prefer to receive pull requests [Git Setup and Pull Requests](https://cwiki.apache.org/confluence/display/LUCENENET/Git+Setup+and+Pull+Requests)
