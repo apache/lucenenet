@@ -3,7 +3,8 @@
 - name: Quick start
   href: /#quick-start
 - name: Download
-  topicHref: download.md
+  href: download/
+  topicHref: download/download.md
 - name: Documentation
   topicHref: docs.md
 - name: Contributing

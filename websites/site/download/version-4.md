@@ -1,5 +1,5 @@
 ---
-_disableBreadcrumb: true
+uid: download/4
 ---
 
 Download Lucene.Net
@@ -16,6 +16,10 @@ _Released:_ __`Pending...`__
 <div class="nuget-well" style="text-align:left;">
     PM> Install-Package Lucene.Net -Version 4.8.0-beta00005
 </div>
+
+### Source code
+
+* [Git Repository](https://github.com/apache/lucenenet)
 
 ### Supported Frameworks
 
@@ -60,39 +64,3 @@ _Released:_ __`Pending...`__
 See __[Current Status](xref:contributing/current-status)__ for more details on the remaining work
 
 This version is a direct port of the Java Lucene project at [this release](https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.0)
-
-
-
-## Lucene 3.0.3
-
-_Status:_ __`Stable`__
-
-_Released:_ `2012-10-26`
-
-__[Release notes](https://cwiki.apache.org/confluence/display/LUCENENET/Lucene.Net+3.0.3)__
-
-<div class="nuget-well" style="text-align:left;">
-    PM> Install-Package Lucene.Net -Version 3.0.3
-</div>
-
-### Supported Frameworks
-
-- .NET Framework 4.0
-- .NET Framework 3.5
-
-### All Packages
-
-- [Lucene.Net](https://www.nuget.org/packages/Lucene.Net/3.0.3) - Core library
-- [Lucene.Net.Contrib](https://www.nuget.org/packages/Lucene.Net.Contrib/3.0.3) - Various user contributed functionality and extras
-- [Lucene.Net.Contrib.Spatial](https://www.nuget.org/packages/Lucene.Net.Contrib.Spatial/3.0.3) - Geospatial Search
-- [Lucene.Net.Contrib.Spatial.NTS](https://www.nuget.org/packages/Lucene.Net.Contrib.Spatial.NTS/3.0.3) - Geospatial search with support for NetTopologySuite.
-
-## Lucene 2.9.4.1
-
-_Status:_ __`Stable`__
-
-_Released:_ `2011-12-02`
-
-<div class="nuget-well" style="text-align:left;">
-    PM> Install-Package Lucene.Net -Version 2.9.4.1
-</div>

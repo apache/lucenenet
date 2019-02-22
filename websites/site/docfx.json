@@ -2,7 +2,13 @@
   "build": {
     "content": [
       {
-        "files": ["contributing/**.md", "contributing/**/toc.yml", "wiki/**.md", "wiki/**/toc.yml", "toc.yml", "*.md"]
+        "files": [
+          "contributing/**.md", 
+          "contributing/**/toc.yml", 
+          "download/**.md", 
+          "download/**/toc.yml", 
+          "toc.yml", 
+          "*.md"]
       }
     ],
     "resource": [
