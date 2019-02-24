@@ -38,14 +38,14 @@ __[Release notes](https://cwiki.apache.org/confluence/display/LUCENENET/Lucene.N
 ### Binary releases
 
 <ul>
-<li><a href="https://www-us.apache.org/dist//lucenenet/Apache-Lucene.Net-3.0.3-RC2.bin.zip">Binary</a>
- / <a href="http://archive.apache.org/dist/lucenenet/Apache-Lucene.Net-3.0.3-RC2.bin.zip.asc">PGP Signature</a>
- / <a href="http://archive.apache.org/dist/lucenenet/Apache-Lucene.Net-3.0.3-RC2.bin.zip.sha1">SHA1 Checksum</a>
- / <a href="http://archive.apache.org/dist/lucenenet/Apache-Lucene.Net-3.0.3-RC2.bin.zip.md5">MD5 Checksum</a> </li>
-<li><a href="https://www-us.apache.org/dist//lucenenet/Apache-Lucene.Net-3.0.3-RC2.src.zip">Source</a>
- / <a href="http://archive.apache.org/dist/lucenenet/Apache-Lucene.Net-3.0.3-RC2.src.zip.asc">PGP Signature</a>
- / <a href="http://archive.apache.org/dist/lucenenet/Apache-Lucene.Net-3.0.3-RC2.src.zip.sha1">SHA1 Checksum</a>
- / <a href="http://archive.apache.org/dist/lucenenet/Apache-Lucene.Net-3.0.3-RC2.src.zip.md5">MD5 Checksum</a> </li>
+<li><a href="https://www.apache.org/dist/lucenenet/3.0.3-RC2/Apache-Lucene.Net-3.0.3-RC2.bin.zip">Binary</a>
+ / <a href="https://www.apache.org/dist/lucenenet/3.0.3-RC2/Apache-Lucene.Net-3.0.3-RC2.bin.zip.asc">PGP Signature</a>
+ / <a href="https://www.apache.org/dist/lucenenet/3.0.3-RC2/Apache-Lucene.Net-3.0.3-RC2.bin.zip.sha1">SHA1 Checksum</a>
+ / <a href="https://www.apache.org/dist/lucenenet/3.0.3-RC2/Apache-Lucene.Net-3.0.3-RC2.bin.zip.md5">MD5 Checksum</a> </li>
+<li><a href="https://www.apache.org/dist/lucenenet/3.0.3-RC2/Apache-Lucene.Net-3.0.3-RC2.src.zip">Source</a>
+ / <a href="https://www.apache.org/dist/lucenenet/3.0.3-RC2/Apache-Lucene.Net-3.0.3-RC2.src.zip.asc">PGP Signature</a>
+ / <a href="https://www.apache.org/dist/lucenenet/3.0.3-RC2/Apache-Lucene.Net-3.0.3-RC2.src.zip.sha1">SHA1 Checksum</a>
+ / <a href="https://www.apache.org/dist/lucenenet/3.0.3-RC2/Apache-Lucene.Net-3.0.3-RC2.src.zip.md5">MD5 Checksum</a> </li>
 </ul>
 
 The above release files should be verified using the PGP signatures and the
