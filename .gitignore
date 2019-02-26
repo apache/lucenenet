@@ -50,3 +50,12 @@ release/
 
 # NUnit test result file produced by nunit3-console.exe
 [Tt]est[Rr]esult.xml
+websites/**/_site/*
+websites/**/tools/*
+websites/**/_exported_templates/*
+websites/**/api/.manifest
+websites/**/docfx.log
+websites/**/lucenetemplate/plugins/*
+websites/apidocs/api/**/*.yml
+websites/apidocs/api/**/*.manifest
+!websites/apidocs/api/toc.yml

@@ -1,0 +1,131 @@
+/* START From hugo academic css */
+#homepage section {
+    font-family: 'Merriweather', serif;
+    font-size: 16px;
+    line-height: 1.65;
+}
+#homepage pre, #homepage code {
+  font-family: 'Roboto Mono', 'Courier New', 'Courier', monospace;
+}
+#homepage h2, #homepage h3, #homepage h4  {
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    margin-bottom: 1em;
+    line-height: 1.25;
+    color: #313131;
+    text-rendering: optimizeLegibility;
+}
+#homepage h3 {
+    font-weight: 700;
+}
+nav.navbar {
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    line-height: 1.25;
+    text-rendering: optimizeLegibility;
+    font-size: 16px;
+}
+.home-section:first-of-type {
+    padding-top: 50px;
+}
+.home-section:nth-of-type(even) {
+    background-color: rgb(247, 247, 247);
+}
+@media screen and (min-width: 58em) {
+    #homepage section {
+        font-size: 20px;
+    }
+}
+/* END From hugo academic css */
+
+pre.clean {
+    border: none !important;
+    border-radius: 0 !important;
+    background-color: #f8f8f8;
+    overflow: auto;
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+#intro {
+    margin-top:80px;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#2c5fa3+0,4096ee+100 */
+    background: rgb(44, 95, 163);
+    /* Old browsers */
+    background: -moz-linear-gradient(top, rgba(44, 95, 163, 1) 0%, rgba(64, 150, 238, 1) 100%);
+    /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, rgba(44, 95, 163, 1) 0%, rgba(64, 150, 238, 1) 100%);
+    /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, rgba(44, 95, 163, 1) 0%, rgba(64, 150, 238, 1) 100%);
+    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2c5fa3', endColorstr='#4096ee', GradientType=0);
+    /* IE6-9 */
+    color: white;
+}
+#intro p {
+    margin: 0 0 10px;
+    margin-bottom: 2rem;
+}
+
+.project-links {
+    margin-top: 20px;
+    font-size:30px;
+
+    vertical-align: bottom;
+}
+
+.project-links a {
+    color: white;
+}
+
+.project-links a:hover {
+    color: #0095eb;
+    text-decoration: none;
+    transition: color 0.6s ease;
+}
+
+.project-links i {
+    font-size: 1.7em;
+    margin-left: 2rem;
+}
+
+#intro h1 h2 h3 h4 h5 {
+    color: white;
+}
+
+.no-padding {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.nuget-well {
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    background-color: #202020;
+    border: 4px solid silver;
+    border-radius: 5px;
+    box-shadow: 2px 2px 3px #6e6e6e;
+    color: #e2e2e2;
+    display: block;
+    font: 1em 'andale mono', 'lucida console', monospace;
+    line-height: 1em;
+    overflow: auto;
+    padding: 15px;
+    text-align: center;
+}
+
+.home-section {
+    padding: 4rem 0 4rem 0;
+}
+
+@media screen and (min-width: 700px) {
+    .project-links {
+        margin-top: 4rem;
+    }
+}

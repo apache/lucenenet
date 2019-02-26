@@ -16,7 +16,7 @@
  limitations under the License.
 -->
 
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 
 Analyzer for Chinese, which indexes unigrams (individual chinese characters).
 

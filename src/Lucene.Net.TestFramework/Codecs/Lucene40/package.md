@@ -16,4 +16,4 @@
  limitations under the License.
 -->
 
-Support for testing [](xref:Lucene.Net.Codecs.Lucene40.Lucene40PostingsFormat).
+Support for testing <xref:Lucene.Net.Codecs.Lucene40.Lucene40PostingsFormat>.

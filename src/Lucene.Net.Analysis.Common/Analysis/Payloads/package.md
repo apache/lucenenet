@@ -15,11 +15,8 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<HTML>
-<HEAD>
-    <TITLE>org.apache.lucene.analysis.payloads</TITLE>
-</HEAD>
-<BODY>
+
+
+
 Provides various convenience classes for creating payloads on Tokens.
-</BODY>
-</HTML>
+

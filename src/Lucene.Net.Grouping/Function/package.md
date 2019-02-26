@@ -15,4 +15,4 @@
  limitations under the License.
 -->
 
-Support for grouping by [](xref:Lucene.Net.Queries.Function.ValueSource).
+Support for grouping by <xref:Lucene.Net.Queries.Function.ValueSource>.

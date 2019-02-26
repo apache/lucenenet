@@ -1,0 +1,73 @@
+/* .navbar-inverse {
+    background: #4a95da;
+    background: rgb(44, 95, 163);
+    background: -moz-linear-gradient(top, rgba(44, 95, 163, 1) 0%, rgba(64, 150, 238, 1) 100%);
+    background: -webkit-linear-gradient(top, rgba(44, 95, 163, 1) 0%, rgba(64, 150, 238, 1) 100%);
+    background: linear-gradient(to bottom, rgba(44, 95, 163, 1) 0%, rgba(64, 150, 238, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2c5fa3', endColorstr='#4096ee', GradientType=0);
+    border-color:white;
+  }
+  .navbar-inverse .navbar-nav>li>a, .navbar-inverse .navbar-text {
+    color: #fff;
+  }
+  .navbar-inverse .navbar-nav>.active>a {
+      background-color: #1764AA;
+  }
+  .navbar-inverse .navbar-nav>.active>a:focus, .navbar-inverse .navbar-nav>.active>a:hover {
+      background-color: #1764AA;
+  } */
+
+  .btn-primary:hover {
+    background-color: #1764AA;
+}
+button, a {
+    color: #1764AA;
+    /* #0095eb */
+}
+button:hover,
+button:focus,
+a:hover,
+a:focus {
+  color: #143653;
+  text-decoration: none;
+}
+nav.navbar {
+    background-color:white;
+}
+.navbar-brand  {
+    height: 80px;
+}
+.navbar-header .navbar-brand img {    
+    width:300px;
+    height:55px;
+    margin:10px 10px 10px 0px;
+}
+.navbar-toggle .icon-bar{
+    margin-top: 2px;
+    background-color:#0095eb;
+}
+.navbar-toggle {
+    border-color:#0095eb;
+}
+header ul.navbar-nav {
+    font-size:1.2em;
+    float:right;
+    font-weight: 600;
+}
+
+.sidefilter {
+    top:120px;
+}
+
+.sidetoc {
+    top: 180px;
+    background-color:rgb(247, 247, 247);
+}
+
+body .toc {
+    background-color:rgb(247, 247, 247);
+}
+
+.sidefilter {
+    background-color: rgb(247, 247, 247);
+}

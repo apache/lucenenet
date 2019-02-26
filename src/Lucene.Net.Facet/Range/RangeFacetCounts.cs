@@ -24,7 +24,7 @@ namespace Lucene.Net.Facet.Range
     /// <summary>
     /// Base class for range faceting.
     /// 
-    ///  @lucene.experimental 
+    /// @lucene.experimental 
     /// </summary>
     public abstract class RangeFacetCounts : Facets
     {

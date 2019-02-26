@@ -1,4 +1,9 @@
-﻿<!--
+﻿---
+uid: Lucene.Net.Facet
+summary: *content
+---
+
+<!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
  this work for additional information regarding copyright ownership.
@@ -17,8 +22,8 @@
 
 # faceted search
 
- This module provides multiple methods for computing facet counts and value aggregations: * Taxonomy-based methods rely on a separate taxonomy index to map hierarchical facet paths to global int ordinals for fast counting at search time; these methods can compute counts (([](xref:Lucene.Net.Facet.Taxonomy.FastTaxonomyFacetCounts), [](xref:Lucene.Net.Facet.Taxonomy.TaxonomyFacetCounts)) aggregate long or double values [](xref:Lucene.Net.Facet.Taxonomy.TaxonomyFacetSumIntAssociations), [](xref:Lucene.Net.Facet.Taxonomy.TaxonomyFacetSumFloatAssociations), [](xref:Lucene.Net.Facet.Taxonomy.TaxonomyFacetSumValueSource). Add [](xref:Lucene.Net.Facet.FacetField) or [](xref:Lucene.Net.Facet.Taxonomy.AssociationFacetField) to your documents at index time to use taxonomy-based methods. Sorted-set doc values method does not require a separate taxonomy index, and computes counts based on sorted set doc values fields ([](xref:Lucene.Net.Facet.Sortedset.SortedSetDocValuesFacetCounts)). Add [](xref:Lucene.Net.Facet.Sortedset.SortedSetDocValuesFacetField) to your documents at index time to use sorted set facet counts. Range faceting [](xref:Lucene.Net.Facet.Range.LongRangeFacetCounts), [](xref:Lucene.Net.Facet.Range.DoubleRangeFacetCounts) compute counts for a dynamic numeric range from a provided [](xref:Lucene.Net.Queries.Function.ValueSource) (previously indexed numeric field, or a dynamic expression such as distance). 
+ This module provides multiple methods for computing facet counts and value aggregations: * Taxonomy-based methods rely on a separate taxonomy index to map hierarchical facet paths to global int ordinals for fast counting at search time; these methods can compute counts ((<xref:Lucene.Net.Facet.Taxonomy.FastTaxonomyFacetCounts>, <xref:Lucene.Net.Facet.Taxonomy.TaxonomyFacetCounts>) aggregate long or double values <xref:Lucene.Net.Facet.Taxonomy.TaxonomyFacetSumIntAssociations>, <xref:Lucene.Net.Facet.Taxonomy.TaxonomyFacetSumFloatAssociations>, <xref:Lucene.Net.Facet.Taxonomy.TaxonomyFacetSumValueSource>. Add <xref:Lucene.Net.Facet.FacetField> or <xref:Lucene.Net.Facet.Taxonomy.AssociationFacetField> to your documents at index time to use taxonomy-based methods. Sorted-set doc values method does not require a separate taxonomy index, and computes counts based on sorted set doc values fields (<xref:Lucene.Net.Facet.Sortedset.SortedSetDocValuesFacetCounts>). Add <xref:Lucene.Net.Facet.Sortedset.SortedSetDocValuesFacetField> to your documents at index time to use sorted set facet counts. Range faceting <xref:Lucene.Net.Facet.Range.LongRangeFacetCounts>, <xref:Lucene.Net.Facet.Range.DoubleRangeFacetCounts> compute counts for a dynamic numeric range from a provided <xref:Lucene.Net.Queries.Function.ValueSource> (previously indexed numeric field, or a dynamic expression such as distance). 
 
- At search time you first run your search, but pass a [](xref:Lucene.Net.Facet.FacetsCollector) to gather all hits (and optionally, scores for each hit). Then, instantiate whichever facet methods you'd like to use to compute aggregates. Finally, all methods implement a common [](xref:Lucene.Net.Facet.Facets) base API that you use to obtain specific facet counts. 
+ At search time you first run your search, but pass a <xref:Lucene.Net.Facet.FacetsCollector> to gather all hits (and optionally, scores for each hit). Then, instantiate whichever facet methods you'd like to use to compute aggregates. Finally, all methods implement a common <xref:Lucene.Net.Facet.Facets> base API that you use to obtain specific facet counts. 
 
- The various [](xref:Lucene.Net.Facet.FacetsCollector.Search) utility methods are useful for doing an "ordinary" search (sorting by score, or by a specified Sort) but also collecting into a [](xref:Lucene.Net.Facet.FacetsCollector) for subsequent faceting. 
+ The various [#search](xref:Lucene.Net.Facet.FacetsCollector) utility methods are useful for doing an "ordinary" search (sorting by score, or by a specified Sort) but also collecting into a <xref:Lucene.Net.Facet.FacetsCollector> for subsequent faceting. 

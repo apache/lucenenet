@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// Create a new <see cref="CompressingStoredFieldsFormat"/> with an empty segment
         /// suffix.
         /// </summary>
-        /// <seealso cref="CompressingStoredFieldsFormat.CompressingStoredFieldsFormat(string, string, CompressionMode, int)"/>
+        /// <seealso cref="CompressingStoredFieldsFormat(string, string, CompressionMode, int)"/>
         public CompressingStoredFieldsFormat(string formatName, CompressionMode compressionMode, int chunkSize)
             : this(formatName, "", compressionMode, chunkSize)
         {
@@ -83,6 +83,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// to the size of your index).
         /// </summary>
         /// <param name="formatName"> The name of the <see cref="StoredFieldsFormat"/>. </param>
+        /// <param name="segmentSuffix"></param>
         /// <param name="compressionMode"> The <see cref="CompressionMode"/> to use. </param>
         /// <param name="chunkSize"> The minimum number of bytes of a single chunk of stored documents. </param>
         /// <seealso cref="CompressionMode"/>

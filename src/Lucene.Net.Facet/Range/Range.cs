@@ -23,7 +23,7 @@
     /// <summary>
     /// Base class for a single labeled range.
     /// 
-    ///  @lucene.experimental 
+    /// @lucene.experimental 
     /// </summary>
     public abstract class Range
     {

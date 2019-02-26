@@ -24,4 +24,4 @@ Implementation of the {@linkplain org.apache.lucene.queryparser.classic Lucene c
 
  The classes contained in the package org.apache.lucene.queryParser.standard are used to reproduce the same behavior as the old query parser. 
 
- Check [](xref:Lucene.Net.QueryParsers.Flexible.Standard.StandardQueryParser) to quick start using the Lucene query parser. 
+ Check <xref:Lucene.Net.QueryParsers.Flexible.Standard.StandardQueryParser> to quick start using the Lucene query parser. 

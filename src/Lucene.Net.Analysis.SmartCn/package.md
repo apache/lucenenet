@@ -1,4 +1,9 @@
-﻿
+﻿---
+uid: Lucene.Net.Analysis.Smartcn
+summary: *content
+---
+
+
 <!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -16,7 +21,7 @@
  limitations under the License.
 -->
 
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 
 Analyzer for Simplified Chinese, which indexes words.
 @lucene.experimental

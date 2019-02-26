@@ -15,4 +15,4 @@
  limitations under the License.
 -->
 
-Support for grouping by indexed terms via [](xref:Lucene.Net.Search.FieldCache).
+Support for grouping by indexed terms via <xref:Lucene.Net.Search.FieldCache>.

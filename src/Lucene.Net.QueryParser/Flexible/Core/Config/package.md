@@ -22,6 +22,6 @@ Base classes used to configure the query processing.
 
  The package <tt>org.apache.lucene.queryparser.flexible.config</tt> contains query configuration handler abstract class that all config handlers should extend. 
 
- See [](xref:Lucene.Net.QueryParsers.Flexible.Standard.Config.StandardQueryConfigHandler) for a reference implementation. 
+ See <xref:Lucene.Net.QueryParsers.Flexible.Standard.Config.StandardQueryConfigHandler> for a reference implementation. 
 
- The [](xref:Lucene.Net.QueryParsers.Flexible.Core.Config.QueryConfigHandler) and [](xref:Lucene.Net.QueryParsers.Flexible.Core.Config.FieldConfig) are used in the processors to access config information in a flexible and independent way. See [](xref:Lucene.Net.QueryParsers.Flexible.Standard.Processors.TermRangeQueryNodeProcessor) for a reference implementation. 
+ The <xref:Lucene.Net.QueryParsers.Flexible.Core.Config.QueryConfigHandler> and <xref:Lucene.Net.QueryParsers.Flexible.Core.Config.FieldConfig> are used in the processors to access config information in a flexible and independent way. See <xref:Lucene.Net.QueryParsers.Flexible.Standard.Processors.TermRangeQueryNodeProcessor> for a reference implementation. 

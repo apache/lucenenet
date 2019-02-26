@@ -1,4 +1,9 @@
-﻿<!--
+﻿---
+uid: Lucene.Net.Grouping
+summary: *content
+---
+
+<!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
  this work for additional information regarding copyright ownership.
@@ -50,15 +55,15 @@ Grouping requires a number of inputs:
      `withinGroupOffset`: which "slice" of top
       documents you want to retrieve from each group.
 
-The implementation is two-pass: the first pass ([](xref:Lucene.Net.Search.Grouping.Term.TermFirstPassGroupingCollector)) gathers the top groups, and the second pass ([](xref:Lucene.Net.Search.Grouping.Term.TermSecondPassGroupingCollector)) gathers documents within those groups. If the search is costly to run you may want to use the [](xref:Lucene.Net.Search.CachingCollector) class, which caches hits and can (quickly) replay them for the second pass. This way you only run the query once, but you pay a RAM cost to (briefly) hold all hits. Results are returned as a [](xref:Lucene.Net.Search.Grouping.TopGroups) instance.
+The implementation is two-pass: the first pass (<xref:Lucene.Net.Search.Grouping.Term.TermFirstPassGroupingCollector>) gathers the top groups, and the second pass (<xref:Lucene.Net.Search.Grouping.Term.TermSecondPassGroupingCollector>) gathers documents within those groups. If the search is costly to run you may want to use the <xref:Lucene.Net.Search.CachingCollector> class, which caches hits and can (quickly) replay them for the second pass. This way you only run the query once, but you pay a RAM cost to (briefly) hold all hits. Results are returned as a <xref:Lucene.Net.Search.Grouping.TopGroups> instance.
 
  This module abstracts away what defines group and how it is collected. All grouping collectors are abstract and have currently term based implementations. One can implement collectors that for example group on multiple fields. 
 
 Known limitations:
 
 *   For the two-pass grouping search, the group field must be a
-    single-valued indexed field (or indexed as a [](xref:Lucene.Net.Documents.SortedDocValuesField)).
-    [](xref:Lucene.Net.Search.FieldCache) is used to load the [](xref:Lucene.Net.Index.SortedDocValues) for this field.
+    single-valued indexed field (or indexed as a <xref:Lucene.Net.Documents.SortedDocValuesField>).
+    <xref:Lucene.Net.Search.FieldCache> is used to load the <xref:Lucene.Net.Index.SortedDocValues> for this field.
    Although Solr support grouping by function and this module has abstraction of what a group is, there are currently only
     implementations for grouping based on terms.
    Sharding is not directly supported, though is not too

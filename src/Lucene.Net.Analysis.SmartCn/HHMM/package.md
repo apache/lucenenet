@@ -16,7 +16,7 @@
  limitations under the License.
 -->
 
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 
 SmartChineseAnalyzer Hidden Markov Model package.
 @lucene.experimental

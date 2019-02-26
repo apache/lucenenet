@@ -16,4 +16,4 @@
  limitations under the License.
 -->
 
-Very simple implementations of [](xref:Lucene.Net.Codecs.Sep) for testing.
+Very simple implementations of <xref:Lucene.Net.Codecs.Sep> for testing.

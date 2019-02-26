@@ -1,4 +1,9 @@
-﻿<!--
+﻿---
+uid: Lucene.Net.Queryparser
+summary: *content
+---
+
+<!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
   this work for additional information regarding copyright ownership.
@@ -15,9 +20,7 @@
   limitations under the License.
   -->
 
-    <title>
-      QueryParsers
-    </title>
+    
 
   Apache Lucene QueryParsers.
 
@@ -53,7 +56,7 @@
 
  This project contains the new Lucene query parser implementation, which matches the syntax of the core QueryParser but offers a more modular architecture to enable customization. 
 
- It's currently divided in 2 main packages: * [](xref:Lucene.Net.QueryParsers.Flexible.Core): it contains the query parser API classes, which should be extended by query parser implementations. * [](xref:Lucene.Net.QueryParsers.Flexible.Standard): it contains the current Lucene query parser implementation using the new query parser API. 
+ It's currently divided in 2 main packages: * <xref:Lucene.Net.QueryParsers.Flexible.Core>: it contains the query parser API classes, which should be extended by query parser implementations. * <xref:Lucene.Net.QueryParsers.Flexible.Standard>: it contains the current Lucene query parser implementation using the new query parser API. 
 
 ### Features
 
@@ -88,8 +91,8 @@
 <dt>QueryParser</dt>
 <dd>
 This layer is the text parsing layer which simply transforms the
-query text string into a [](xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes.QueryNode) tree. Every text parser
-must implement the interface [](xref:Lucene.Net.QueryParsers.Flexible.Core.Parser.SyntaxParser).
+query text string into a <xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes.QueryNode> tree. Every text parser
+must implement the interface <xref:Lucene.Net.QueryParsers.Flexible.Core.Parser.SyntaxParser>.
 Lucene default implementations implements it using JavaCC.
 </dd>
 
@@ -103,7 +106,7 @@ terms.
 
 <dt>QueryBuilder</dt>
 <dd>
-The third layer is a configurable map of builders, which map [](xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes.QueryNode) types to its specific 
+The third layer is a configurable map of builders, which map <xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes.QueryNode> types to its specific 
 builder that will transform the QueryNode into Lucene Query object.
 </dd>
 
@@ -116,15 +119,15 @@ builder that will transform the QueryNode into Lucene Query object.
 ### StandardQueryParser and QueryParserWrapper
 
 The classic Lucene query parser is located under
-[](xref:Lucene.Net.QueryParsers.Classic).
+<xref:Lucene.Net.QueryParsers.Classic>.
 
 To make it simpler to use the new query parser 
-the class [](xref:Lucene.Net.QueryParsers.Flexible.Standard.StandardQueryParser) may be helpful,
+the class <xref:Lucene.Net.QueryParsers.Flexible.Standard.StandardQueryParser> may be helpful,
 specially for people that do not want to extend the Query Parser.
 It uses the default Lucene query processors, text parser and builders, so
 you don't need to worry about dealing with those.
 
-[](xref:Lucene.Net.QueryParsers.Flexible.Standard.StandardQueryParser) usage:
+<xref:Lucene.Net.QueryParsers.Flexible.Standard.StandardQueryParser> usage:
 
           StandardQueryParser qpHelper = new StandardQueryParser();
           StandardQueryConfigHandler config =  qpHelper.getQueryConfigHandler();

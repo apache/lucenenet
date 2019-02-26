@@ -16,7 +16,7 @@
  limitations under the License.
 -->
 
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 
 Analyzer for Chinese, Japanese, and Korean, which indexes bigrams. 
 This analyzer generates bigram terms, which are overlapping groups of two adjacent Han, Hiragana, Katakana, or Hangul characters.

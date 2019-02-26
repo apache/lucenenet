@@ -16,5 +16,5 @@
  limitations under the License.
 -->
 
-General test support.  The primary class is [](xref:Lucene.Net.Util.LuceneTestCase),
+General test support.  The primary class is <xref:Lucene.Net.Util.LuceneTestCase>,
 which extends JUnit with additional functionality.

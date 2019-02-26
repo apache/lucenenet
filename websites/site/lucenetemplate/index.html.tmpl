@@ -1,0 +1,58 @@
+{{!Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE file in the project root for full license information.}}
+{{!include(/^styles/.*/)}}
+{{!include(/^fonts/.*/)}}
+{{!include(favicon.ico)}}
+{{!include(logo.svg)}}
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html lang="en">
+  {{>partials/head-content}}
+  <body id="homepage" data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        {{>partials/navbar}}
+      </header>
+      <section id="intro" class="home-section">
+        <div class="container">
+          <p class="text-center">Lucene.Net is a high performance search engine library for .NET</p>
+          <div class="row">
+              <div class="nuget-well col-xs-8 col-xs-offset-2 col-sm-6 col-sm-offset-3">
+                  Install-Package Lucene.Net -Pre
+              </div>
+          </div>
+          <div class="row">
+              <div class="text-center project-links">
+                  <a href="https://github.com/apache/lucenenet" target="_blank" >
+                      <i class="fa fa-github"></i>
+                  </a>
+                  <a href="http://mail-archives.apache.org/mod_mbox/lucenenet-dev/" target="_blank">
+                      <i class="fa fa-envelope-o"></i>
+                  </a>
+                  <a href="https://stackoverflow.com/questions/tagged/lucene.net" target="_blank">
+                      <i class="fa fa-stack-overflow"></i>
+                  </a>
+                  <a href="download.html">
+                      <i class="fa fa-download" target="_blank"></i>
+                  </a>
+              </div>
+          </div>
+        </div>
+      </section>
+{{>partials/home-quick-start}}
+      <section class="home-section">
+        <div class="container">
+          <div class="row">
+            {{{conceptual}}}
+          </div>
+        </div>
+      </section>
+      <section class="home-section">
+        <div class="container">
+          <div class="row"></div>
+        </div>
+      </section>
+      {{>partials/footer}}
+    </div>
+    {{>partials/scripts}}
+  </body>
+</html>

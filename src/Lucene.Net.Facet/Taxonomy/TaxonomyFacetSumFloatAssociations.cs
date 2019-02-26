@@ -32,7 +32,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <para/>
     /// NOTE: This was TaxonomyFacetSumFloatAssociations in Lucene
     /// 
-    ///  @lucene.experimental 
+    /// @lucene.experimental 
     /// </summary>
     public class TaxonomyFacetSumSingleAssociations : SingleTaxonomyFacets
     {

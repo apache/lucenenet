@@ -31,7 +31,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <para/>
     /// NOTE: This was TaxonomyFacetSumIntAssociations in Lucene
     /// 
-    ///  @lucene.experimental 
+    /// @lucene.experimental 
     /// </summary>
     public class TaxonomyFacetSumInt32Associations : Int32TaxonomyFacets
     {

@@ -1,4 +1,9 @@
-﻿
+﻿---
+uid: Lucene.Net.Codecs.Lucene45
+summary: *content
+---
+
+
 <!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -75,7 +80,7 @@ In Lucene, fields may be *stored*, in which case their text is stored in the ind
 
 The text of a field may be *tokenized* into terms to be indexed, or the text of a field may be used literally as a term to be indexed. Most fields are tokenized, but sometimes it is useful for certain identifier fields to be indexed literally.
 
-See the [](xref:Lucene.Net.Documents.Field Field) java docs for more information on Fields.
+See the [Field](xref:Lucene.Net.Documents.Field) java docs for more information on Fields.
 
 ### Segments
 
@@ -108,52 +113,52 @@ When documents are deleted, gaps are created in the numbering. These are eventua
 
 Each segment index maintains the following:
 
-*   [](xref:Lucene.Net.Codecs.Lucene40.Lucene40SegmentInfoFormat Segment info).
+*   [Segment info](xref:Lucene.Net.Codecs.Lucene40.Lucene40SegmentInfoFormat).
    This contains metadata about a segment, such as the number of documents,
    what files it uses, 
 
-*   [](xref:Lucene.Net.Codecs.Lucene42.Lucene42FieldInfosFormat Field names). 
+*   [Field names](xref:Lucene.Net.Codecs.Lucene42.Lucene42FieldInfosFormat). 
    This contains the set of field names used in the index.
 
-*   [](xref:Lucene.Net.Codecs.Lucene41.Lucene41StoredFieldsFormat Stored Field values). 
+*   [Stored Field values](xref:Lucene.Net.Codecs.Lucene41.Lucene41StoredFieldsFormat). 
 This contains, for each document, a list of attribute-value pairs, where the attributes 
 are field names. These are used to store auxiliary information about the document, such as 
 its title, url, or an identifier to access a database. The set of stored fields are what is 
 returned for each hit when searching. This is keyed by document number.
 
-*   [](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat Term dictionary). 
+*   [Term dictionary](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat). 
 A dictionary containing all of the terms used in all of the
 indexed fields of all of the documents. The dictionary also contains the number
 of documents which contain the term, and pointers to the term's frequency and
 proximity data.
 
-*   [](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat Term Frequency data). 
+*   [Term Frequency data](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat). 
 For each term in the dictionary, the numbers of all the
 documents that contain that term, and the frequency of the term in that
 document, unless frequencies are omitted (IndexOptions.DOCS_ONLY)
 
-*   [](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat Term Proximity data). 
+*   [Term Proximity data](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat). 
 For each term in the dictionary, the positions that the
 term occurs in each document. Note that this will not exist if all fields in
 all documents omit position data.
 
-*   [](xref:Lucene.Net.Codecs.Lucene42.Lucene42NormsFormat Normalization factors). 
+*   [Normalization factors](xref:Lucene.Net.Codecs.Lucene42.Lucene42NormsFormat). 
 For each field in each document, a value is stored
 that is multiplied into the score for hits on that field.
 
-*   [](xref:Lucene.Net.Codecs.Lucene42.Lucene42TermVectorsFormat Term Vectors). 
+*   [Term Vectors](xref:Lucene.Net.Codecs.Lucene42.Lucene42TermVectorsFormat). 
 For each field in each document, the term vector (sometimes
 called document vector) may be stored. A term vector consists of term text and
 term frequency. To add Term Vectors to your index see the 
-[](xref:Lucene.Net.Documents.Field Field) constructors
+[Field](xref:Lucene.Net.Documents.Field) constructors
 
-*   [](xref:Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat Per-document values). 
+*   [Per-document values](xref:Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat). 
 Like stored values, these are also keyed by document
 number, but are generally intended to be loaded into main memory for fast
 access. Whereas stored values are generally intended for summary results from
 searches, per-document values are useful for things like scoring factors.
 
-*   [](xref:Lucene.Net.Codecs.Lucene40.Lucene40LiveDocsFormat Deleted documents). 
+*   [Deleted documents](xref:Lucene.Net.Codecs.Lucene40.Lucene40LiveDocsFormat). 
 An optional file indicating which documents are deleted.
 
 Details on each of these are provided in their linked pages.
@@ -185,7 +190,7 @@ The following table summarizes the names and extensions of the files in Lucene:
 <th>Brief Description</th>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Index.SegmentInfos Segments File)</td>
+<td>[Segments File](xref:Lucene.Net.Index.SegmentInfos)</td>
 <td>segments.gen, segments_N</td>
 <td>Stores information about a commit point</td>
 </tr>
@@ -196,83 +201,83 @@ The following table summarizes the names and extensions of the files in Lucene:
 file.</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene40.Lucene40SegmentInfoFormat Segment Info)</td>
+<td>[Segment Info](xref:Lucene.Net.Codecs.Lucene40.Lucene40SegmentInfoFormat)</td>
 <td>.si</td>
 <td>Stores metadata about a segment</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Store.CompoundFileDirectory Compound File)</td>
+<td>[Compound File](xref:Lucene.Net.Store.CompoundFileDirectory)</td>
 <td>.cfs, .cfe</td>
 <td>An optional "virtual" file consisting of all the other index files for
 systems that frequently run out of file handles.</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene42.Lucene42FieldInfosFormat Fields)</td>
+<td>[Fields](xref:Lucene.Net.Codecs.Lucene42.Lucene42FieldInfosFormat)</td>
 <td>.fnm</td>
 <td>Stores information about the fields</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene41.Lucene41StoredFieldsFormat Field Index)</td>
+<td>[Field Index](xref:Lucene.Net.Codecs.Lucene41.Lucene41StoredFieldsFormat)</td>
 <td>.fdx</td>
 <td>Contains pointers to field data</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene41.Lucene41StoredFieldsFormat Field Data)</td>
+<td>[Field Data](xref:Lucene.Net.Codecs.Lucene41.Lucene41StoredFieldsFormat)</td>
 <td>.fdt</td>
 <td>The stored fields for documents</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat Term Dictionary)</td>
+<td>[Term Dictionary](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat)</td>
 <td>.tim</td>
 <td>The term dictionary, stores term info</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat Term Index)</td>
+<td>[Term Index](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat)</td>
 <td>.tip</td>
 <td>The index into the Term Dictionary</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat Frequencies)</td>
+<td>[Frequencies](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat)</td>
 <td>.doc</td>
 <td>Contains the list of docs which contain each term along with frequency</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat Positions)</td>
+<td>[Positions](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat)</td>
 <td>.pos</td>
 <td>Stores position information about where a term occurs in the index</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat Payloads)</td>
+<td>[Payloads](xref:Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat)</td>
 <td>.pay</td>
 <td>Stores additional per-position metadata information such as character offsets and user payloads</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene42.Lucene42NormsFormat Norms)</td>
+<td>[Norms](xref:Lucene.Net.Codecs.Lucene42.Lucene42NormsFormat)</td>
 <td>.nvd, .nvm</td>
 <td>Encodes length and boost factors for docs and fields</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat Per-Document Values)</td>
+<td>[Per-Document Values](xref:Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat)</td>
 <td>.dvd, .dvm</td>
 <td>Encodes additional scoring factors or other per-document information.</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene42.Lucene42TermVectorsFormat Term Vector Index)</td>
+<td>[Term Vector Index](xref:Lucene.Net.Codecs.Lucene42.Lucene42TermVectorsFormat)</td>
 <td>.tvx</td>
 <td>Stores offset into the document data file</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene42.Lucene42TermVectorsFormat Term Vector Documents)</td>
+<td>[Term Vector Documents](xref:Lucene.Net.Codecs.Lucene42.Lucene42TermVectorsFormat)</td>
 <td>.tvd</td>
 <td>Contains information about each document that has term vectors</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene42.Lucene42TermVectorsFormat Term Vector Fields)</td>
+<td>[Term Vector Fields](xref:Lucene.Net.Codecs.Lucene42.Lucene42TermVectorsFormat)</td>
 <td>.tvf</td>
 <td>The field level info about term vectors</td>
 </tr>
 <tr>
-<td>[](xref:Lucene.Net.Codecs.Lucene40.Lucene40LiveDocsFormat Deleted Documents)</td>
+<td>[Deleted Documents](xref:Lucene.Net.Codecs.Lucene40.Lucene40LiveDocsFormat)</td>
 <td>.del</td>
 <td>Info about what files are deleted</td>
 </tr>
@@ -326,9 +331,9 @@ file, previously they were stored in text format only.
 *   In version 3.4, fields can omit position data while still indexing term
 frequencies.
 *   In version 4.0, the format of the inverted index became extensible via
-the [](xref:Lucene.Net.Codecs.Codec Codec) api. Fast per-document storage
+the [Codec](xref:Lucene.Net.Codecs.Codec) api. Fast per-document storage
 ({@code DocValues}) was introduced. Normalization factors need no longer be a 
-single byte, they can be any [](xref:Lucene.Net.Index.NumericDocValues NumericDocValues). 
+single byte, they can be any [NumericDocValues](xref:Lucene.Net.Index.NumericDocValues). 
 Terms need not be unicode strings, they can be any byte sequence. Term offsets 
 can optionally be indexed into the postings lists. Payloads can be stored in the 
 term vectors.
@@ -345,6 +350,6 @@ on multi-valued fields.
 
 <div>
 
-Lucene uses a Java `int` to refer to document numbers, and the index file format uses an `Int32` on-disk to store document numbers. This is a limitation of both the index file format and the current implementation. Eventually these should be replaced with either `UInt64` values, or better yet, [](xref:Lucene.Net.Store.DataOutput.WriteVInt VInt) values which have no limit.
+Lucene uses a Java `int` to refer to document numbers, and the index file format uses an `Int32` on-disk to store document numbers. This is a limitation of both the index file format and the current implementation. Eventually these should be replaced with either `UInt64` values, or better yet, [VInt](xref:Lucene.Net.Store.DataOutput#methods) values which have no limit.
 
 </div>

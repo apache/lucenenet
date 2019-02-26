@@ -16,4 +16,4 @@
  limitations under the License.
 -->
 
-Support for testing [](xref:Lucene.Net.Codecs.Compressing.CompressingStoredFieldsFormat).
+Support for testing <xref:Lucene.Net.Codecs.Compressing.CompressingStoredFieldsFormat>.

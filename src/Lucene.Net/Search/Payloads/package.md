@@ -1,4 +1,9 @@
-﻿<html>
+﻿---
+uid: Lucene.Net.Search.Payloads
+summary: *content
+---
+
+
 <!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +20,10 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<head>
-    <title>org.apache.lucene.search.payloads</title>
-</head>
-<body>
+
+
 The payloads package provides Query mechanisms for finding and using payloads.
 
- The following Query implementations are provided: 1. [](xref:Lucene.Net.Search.Payloads.PayloadTermQuery PayloadTermQuery) -- Boost a term's score based on the value of the payload located at that term. 2. [](xref:Lucene.Net.Search.Payloads.PayloadNearQuery PayloadNearQuery) -- A [](xref:Lucene.Net.Search.Spans.SpanNearQuery SpanNearQuery) that factors in the value of the payloads located at each of the positions where the spans occur. 
+ The following Query implementations are provided: 1. [PayloadTermQuery](xref:Lucene.Net.Search.Payloads.PayloadTermQuery) -- Boost a term's score based on the value of the payload located at that term. 2. [PayloadNearQuery](xref:Lucene.Net.Search.Payloads.PayloadNearQuery) -- A [SpanNearQuery](xref:Lucene.Net.Search.Spans.SpanNearQuery) that factors in the value of the payloads located at each of the positions where the spans occur. 
 
-</body>
-</html>
+

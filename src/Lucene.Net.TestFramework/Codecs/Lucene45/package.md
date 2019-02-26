@@ -16,4 +16,4 @@
  limitations under the License.
 -->
 
-Support for testing [](xref:Lucene.Net.Codecs.Lucene45.Lucene45Codec).
+Support for testing <xref:Lucene.Net.Codecs.Lucene45.Lucene45Codec>.

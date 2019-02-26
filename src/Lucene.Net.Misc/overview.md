@@ -1,4 +1,9 @@
-﻿<!--
+﻿---
+uid: Lucene.Net.Misc
+summary: *content
+---
+
+<!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
  this work for additional information regarding copyright ownership.
@@ -15,9 +20,7 @@
  limitations under the License.
 -->
 
-    <title>
-      miscellaneous
-    </title>
+    
 
 ## Misc Tools
 
@@ -29,7 +32,7 @@ changing norms, finding high freq terms, and others.
 **NOTE**: This uses C++ sources (accessible via JNI), which you'll
 have to compile on your platform.
 
-[](xref:Lucene.Net.Store.NativeUnixDirectory) is a Directory implementation that bypasses the
+<xref:Lucene.Net.Store.NativeUnixDirectory> is a Directory implementation that bypasses the
 OS's buffer cache (using direct IO) for any IndexInput and IndexOutput
 used during merging of segments larger than a specified size (default
 10 MB).  This avoids evicting hot pages that are still in-use for

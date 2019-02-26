@@ -112,6 +112,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Join", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Memory", "src\Lucene.Net.Tests.Memory\Lucene.Net.Tests.Memory.csproj", "{3BE7B6EA-8DBC-45E2-947C-1CA7E63B5603}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apidocs", "apidocs", "{58FD6E39-F30F-4566-90E5-B7C9D6BC0660}"
+	ProjectSection(SolutionItems) = preProject
+		apidocs\docfx.filter.yml = apidocs\docfx.filter.yml
+		apidocs\docfx.json = apidocs\docfx.json
+		apidocs\docs.ps1 = apidocs\docs.ps1
+		apidocs\index.md = apidocs\index.md
+		apidocs\toc.yml = apidocs\toc.yml
+	EndProjectSection
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Misc", "src\Lucene.Net.Tests.Misc\Lucene.Net.Tests.Misc.csproj", "{F8DDC5B7-A621-4B67-AB4B-BBE083C05BB8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Queries", "src\Lucene.Net.Tests.Queries\Lucene.Net.Tests.Queries.csproj", "{AC750DC0-05A3-4F96-8CC5-CFC8FD01D4CF}"
@@ -357,8 +366,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{EFB2E31A-5917-49D5-A808-FE5061A550B4} = {8CA61D33-3590-4024-A304-7B1F75B50653}
 		{4DF7EACE-2B25-43F6-B558-8520BF20BD76} = {8CA61D33-3590-4024-A304-7B1F75B50653}
+		{EFB2E31A-5917-49D5-A808-FE5061A550B4} = {8CA61D33-3590-4024-A304-7B1F75B50653}
 		{119BBACD-D4DB-4E3B-922F-3DA83E0B29E2} = {4DF7EACE-2B25-43F6-B558-8520BF20BD76}
 		{CF3A74CA-FEFD-4F41-961B-CC8CF8D96286} = {8CA61D33-3590-4024-A304-7B1F75B50653}
 		{4B054831-5275-44E2-A4D4-CA0B19BEE19A} = {8CA61D33-3590-4024-A304-7B1F75B50653}

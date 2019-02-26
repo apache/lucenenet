@@ -1,5 +1,8 @@
-﻿using System;
+﻿//using JavaDocToMarkdownConverter.MarkdownParsers;
+using JavaDocToMarkdownConverter.Formatters;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace JavaDocToMarkdownConverter
 {
+
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,12 +30,7 @@ namespace JavaDocToMarkdownConverter
      */
 
     public class DocConverter
-    {
-        private static Regex LinkRegex = new Regex(@"{@link\s*?(?<cref>org\.apache\.lucene\.[^}]*)\s?(?<text>[^}]*)}", RegexOptions.Compiled);
-        private static Regex RepoLinkRegex = new Regex(@"(?<=\()(?<cref>src-html/[^)]*)", RegexOptions.Compiled);
-
-        private static Regex JavaCodeExtension = new Regex(@".java$", RegexOptions.Compiled);
-        private static Regex DocType = new Regex(@"<!doctype[^>]*>", RegexOptions.Compiled);
+    {   
 
         /// <summary>
         /// 
@@ -76,186 +75,141 @@ namespace JavaDocToMarkdownConverter
             var converter = new Html2Markdown.Converter();
             var markdown = converter.ConvertFile(inputDoc);
 
-            markdown = ReplaceCodeLinks(markdown);
-            markdown = ReplaceRepoLinks(markdown);
+            var ns = ExtractNamespaceFromFile(outputFile);
+            if (NamespaceFileMappings.TryGetValue(ns, out var realNs))
+                ns = realNs;
 
-            // Remove <doctype>
-            markdown = DocType.Replace(markdown, string.Empty);
-
-            File.WriteAllText(outputFile, markdown, Encoding.UTF8);
-        }
-
-        private string ReplaceCodeLinks(string markdown)
-        {
-            Match link = LinkRegex.Match(markdown);
-            if (link.Success)
+            foreach (var r in JavaDocFormatters.Replacers)
             {
-                do
-                {
-                    string cref = CorrectCRef(link.Groups["cref"].Value);
-                    string newLink;
-                    if (!string.IsNullOrWhiteSpace(link.Groups["text"].Value))
-                    {
-                        string linkText = link.Groups[2].Value;
-                        linkText = JavaCodeExtension.Replace(linkText, ".cs");
-                        //newLink = "<see cref=\"" + cref + "\">" + linkText + "</see>";
-                        newLink = "[" + linkText + "](xref:" + cref + ")";
-                    }
-                    else
-                    {
-                        //newLink = "<see cref=\"" + cref + "\"/>";
-                        newLink = "[](xref:" + cref + ")";
-                    }
-
-                    markdown = LinkRegex.Replace(markdown, newLink, 1);
-
-
-                } while ((link = LinkRegex.Match(markdown)).Success);
+                markdown = r.Replace(markdown);
+            }
+            if (JavaDocFormatters.CustomReplacers.TryGetValue(ns, out var cr))
+            {
+                markdown = cr.Replace(markdown);
             }
 
-            return markdown;
+            var appendYamlHeader = ShouldAppendYamlHeader(inputDoc, ns);
+
+            var fileContent = appendYamlHeader ? AppendYamlHeader(ns, markdown) : markdown;
+
+            File.WriteAllText(outputFile, fileContent, Encoding.UTF8);
         }
 
-        //https://github.com/apache/lucenenet/blob/Lucene.Net_4_8_0_beta00004/src/Lucene.Net.Analysis.Common/Analysis/Ar/ArabicAnalyzer.cs
-        private string ReplaceRepoLinks(string markdown)
+        /// <summary>
+        /// Normally yaml headers are applied to "overview" files but in some cases it's the equivalent "package" file that 
+        /// contains the documentation we want
+        /// </summary>
+        /// <param name="inputFile"></param>
+        /// <param name="ns"></param>
+        /// <returns></returns>
+        private bool ShouldAppendYamlHeader(string inputFile, string ns)
         {
-            Match link = RepoLinkRegex.Match(markdown);
-            if (link.Success)
+            var fileName = Path.GetFileNameWithoutExtension(inputFile); //should be either "overview" or "package"
+            if (string.Equals("overview", fileName, StringComparison.InvariantCultureIgnoreCase))
             {
-                do
-                {
-                    string cref = CorrectRepoCRef(link.Groups["cref"].Value);
-                    cref = "https://github.com/apache/lucenenet/blob/{tag}/src/" + cref;
+                if (YamlHeadersForPackageFiles.Contains(ns, StringComparer.InvariantCultureIgnoreCase)) 
+                    return false; //don't append yaml header for this overview file, it will be put on the package file
 
-                    markdown = RepoLinkRegex.Replace(markdown, cref, 1);
-
-
-                } while ((link = RepoLinkRegex.Match(markdown)).Success);
+                return true; //the default for 'overview' files
+            }
+            else if (string.Equals("package", fileName, StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (YamlHeadersForPackageFiles.Contains(ns, StringComparer.InvariantCultureIgnoreCase))
+                    return true;
             }
 
-            return markdown;
+            return false;
         }
 
-        private IDictionary<string, string> packageToProjectName = new Dictionary<string, string>()
-        {
-            { "analysis.common" , "Lucene.Net.Analysis.Common"},
-            { "analysis.icu" , "Lucene.Net.Analysis.ICU"},
-            { "analysis.kuromoji" , "Lucene.Net.Analysis.Kuromoji"},
-            { "analysis.morfologik" , "Lucene.Net.Analysis.Morfologik"},
-            { "analysis.phonetic" , "Lucene.Net.Analysis.Phonetic"},
-            { "analysis.smartcn" , "Lucene.Net.Analysis.SmartCn"},
-            { "analysis.stempel" , "Lucene.Net.Analysis.Stempel"},
-            { "analysis.uima" , "Lucene.Net.Analysis.UIMA"},
-            { "benchmark" , "Lucene.Net.Benchmark"},
-            { "classification" , "Lucene.Net.Classification"},
-            { "codecs" , "Lucene.Net.Codecs"},
-            { "core" , "Lucene.Net"},
-            { "demo" , "Lucene.Net.Demo"},
-            { "expressions" , "Lucene.Net.Expressions"},
-            { "facet" , "Lucene.Net.Facet"},
-            { "grouping" , "Lucene.Net.Grouping"},
-            { "highlighter" , "Lucene.Net.Highlighter"},
-            { "join" , "Lucene.Net.Join"},
-            { "memory" , "Lucene.Net.Memory"},
-            { "misc" , "Lucene.Net.Misc"},
-            { "queries" , "Lucene.Net.Queries"},
-            { "queryparser" , "Lucene.Net.QueryParser"},
-            { "replicator" , "Lucene.Net.Replicator"},
-            { "sandbox" , "Lucene.Net.Sandbox"},
-            { "spatial" , "Lucene.Net.Spatial"},
-            { "suggest" , "Lucene.Net.Suggest"},
-            { "test-framework" , "Lucene.Net.TestFramework"},
+        /// <summary>
+        /// For these namespaces we'll use the package.md file instead of the overview.md as the doc file
+        /// </summary>
+        private static readonly List<string> YamlHeadersForPackageFiles = new List<string>
+            {
+                "Lucene.Net.Analysis.SmartCn",
+                "Lucene.Net.Facet",
+                "Lucene.Net.Grouping",
+                "Lucene.Net.Join",
+                "Lucene.Net.Index.Memory",
+                "Lucene.Net.Replicator",
+                "Lucene.Net.QueryParsers.Classic",
+                "Lucene.Net.Codecs",
+                "Lucene.Net.Analysis",
+                "Lucene.Net.Codecs.Compressing",
+                "Lucene.Net.Codecs.Lucene3x",
+                "Lucene.Net.Codecs.Lucene40",
+                "Lucene.Net.Codecs.Lucene41",
+                "Lucene.Net.Codecs.Lucene42",
+                "Lucene.Net.Codecs.Lucene45",
+                "Lucene.Net.Codecs.Lucene46",
+                "Lucene.Net.Documents",
+                "Lucene.Net.Index",
+                "Lucene.Net.Search",
+                "Lucene.Net.Search.Payloads",
+                "Lucene.Net.Search.Similarities",
+                "Lucene.Net.Search.Spans",
+                "Lucene.Net.Store",
+                "Lucene.Net.Util",
+            };
+
+        /// <summary>
+        /// Maps the file based namespace folders to the actual namespaces
+        /// </summary>
+        private static readonly Dictionary<string, string> NamespaceFileMappings = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase)
+        { 
+            ["Lucene.Net.Memory"] = "Lucene.Net.Index.Memory",
+            ["Lucene.Net.QueryParser.Classic"] = "Lucene.Net.QueryParsers.Classic",
+            ["Lucene.Net.Document"] = "Lucene.Net.Documents",
         };
 
-        private string CorrectRepoCRef(string cref)
+        private string AppendYamlHeader(string ns, string fileContent)
         {
-            string temp = cref;
-            if (temp.StartsWith("src-html"))
-            {
-                temp = temp.Replace("src-html/", "");
-            }
-
-            temp = temp.Replace("/", ".");
-            temp = temp.Replace(".html", ".cs");
-
-            var segments = temp.Split('.');
-
-            if (temp.StartsWith("analysis"))
-            {
-                string project;
-                if (packageToProjectName.TryGetValue(segments[3] + "." + segments[4], out project))
-                    temp = project + "/" + string.Join("/", segments.Skip(5).ToArray());
-            }
+            var sb = new StringBuilder();
+            sb.AppendLine("---");
+            sb.Append("uid: ");
+            if (NamespaceFileMappings.TryGetValue(ns, out var realNs))
+                sb.AppendLine(realNs);
             else
-            {
-                string project;
-                if (packageToProjectName.TryGetValue(segments[3], out project))
-                    temp = project + "/" + string.Join("/", segments.Skip(4).ToArray());
-            }
+                sb.AppendLine(ns);            
+            sb.AppendLine("summary: *content");
+            sb.AppendLine("---");
+            sb.AppendLine();
 
-            temp = CorrectCRefCase(temp);
-            foreach (var item in namespaceCorrections)
-            {
-                if (!item.Key.StartsWith("Lucene.Net"))
-                    temp = temp.Replace(item.Key, item.Value);
-            }
-
-            temp = Regex.Replace(temp, "/[Cc]s", ".cs");
-
-            return temp;
+            return sb + fileContent;
         }
 
-        private string CorrectCRef(string cref)
+        /// <summary>
+        /// Normally the files would be in the same folder name as their namespace but this isn't the case so we need to try to figure it out
+        /// </summary>
+        /// <param name="outputFile"></param>
+        /// <returns></returns>
+        private string ExtractNamespaceFromFile(string outputFile)
         {
-            var caseCorrected = CorrectCRefCase(cref);
-            var temp = caseCorrected.Replace("org.Apache.Lucene.", "Lucene.Net.");
-            foreach (var item in namespaceCorrections)
+            var folder = Path.GetDirectoryName(outputFile);
+            var folderParts = folder.Split(Path.DirectorySeparatorChar);
+
+            var index = folderParts.Length - 1;
+            for(int i = index; i >= 0;i--)
             {
-                temp = temp.Replace(item.Key, item.Value);
+                if (folderParts[i].StartsWith("Lucene.Net", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    index = i;
+                    break;
+                }
             }
 
-            int index = temp.IndexOf('#');
-            if (index > -1)
+            var nsParts = new List<string>();
+            for(var i = index;i< folderParts.Length;i++)
             {
-                var sb = new StringBuilder(temp);
-                // special case - capitalize char after #
-                sb[index + 1] = char.ToUpperInvariant(sb[index + 1]);
-                // special case - replace Java # with .
-                temp = sb.ToString().Replace('#', '.');
+                var innerParts = folderParts[i].Split('.');
+                foreach(var innerPart in innerParts)
+                {
+                    nsParts.Add(innerPart);
+                }
             }
-
-            return temp;
-        }
-
-        private IDictionary<string, string> namespaceCorrections = new Dictionary<string, string>()
-        {
-            { "Lucene.Net.Document", "Lucene.Net.Documents" },
-            { "Lucene.Net.Benchmark", "Lucene.Net.Benchmarks" },
-            { "Lucene.Net.Queryparser", "Lucene.Net.QueryParsers" },
-            { ".Tokenattributes", ".TokenAttributes" },
-            { ".Charfilter", ".CharFilter" },
-            { ".Commongrams", ".CommonGrams" },
-            { ".Ngram", ".NGram" },
-            { ".Hhmm", ".HHMM" },
-            { ".Blockterms", ".BlockTerms" },
-            { ".Diskdv", ".DiskDV" },
-            { ".Intblock", ".IntBlock" },
-            { ".Simpletext", ".SimpleText" },
-            { ".Postingshighlight", ".PostingsHighlight" },
-            { ".Vectorhighlight", ".VectorHighlight" },
-            { ".Complexphrase", ".ComplexPhrase" },
-            { ".Valuesource", ".ValueSources" },
-        };
-
-        private string CorrectCRefCase(string cref)
-        {
-            var sb = new StringBuilder(cref);
-            for (int i = 0; i < sb.Length - 1; i++)
-            {
-                if (sb[i] == '.')
-                    sb[i + 1] = char.ToUpper(sb[i + 1]);
-            }
-            return sb.ToString();
+                                    
+            var textInfo = new CultureInfo("en-US", false).TextInfo;
+            return string.Join(".", nsParts.Select(x => textInfo.ToTitleCase(x)).ToArray());
         }
 
 

@@ -28,8 +28,8 @@
     very slow.)
 
 *   Effective Locale-specific normalization (case differences, diacritics, etc.).
-    ([](xref:Lucene.Net.Analysis.Core.LowerCaseFilter) and 
-    [](xref:Lucene.Net.Analysis.Miscellaneous.ASCIIFoldingFilter) provide these services
+    (<xref:Lucene.Net.Analysis.Core.LowerCaseFilter> and 
+    <xref:Lucene.Net.Analysis.Miscellaneous.ASCIIFoldingFilter> provide these services
     in a generic way that doesn't take into account locale-specific needs.)
 
 ## Example Usages

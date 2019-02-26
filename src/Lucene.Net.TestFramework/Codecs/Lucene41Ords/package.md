@@ -16,4 +16,4 @@
  limitations under the License.
 -->
 
-Codec for testing that supports [](xref:Lucene.Net.Index.TermsEnum.Ord())
+Codec for testing that supports [#ord()](xref:Lucene.Net.Index.TermsEnum)

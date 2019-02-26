@@ -1,4 +1,9 @@
-﻿<!--
+﻿---
+uid: Lucene.Net.Analysis.Phonetic
+summary: *content
+---
+
+<!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
  this work for additional information regarding copyright ownership.
@@ -15,12 +20,10 @@
  limitations under the License.
 -->
 
-    <title>
-      analyzers-phonetic
-    </title>
+    
 
   Analysis for indexing phonetic signatures (for sounds-alike search)
 
- For an introduction to Lucene's analysis API, see the [](xref:Lucene.Net.Analysis) package documentation. 
+ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis> package documentation. 
 
  This module provides analysis components (using encoders from [Apache Commons Codec](http://commons.apache.org/codec/)) that index and search phonetic signatures. 

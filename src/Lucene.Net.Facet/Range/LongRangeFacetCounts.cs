@@ -40,7 +40,7 @@ namespace Lucene.Net.Facet.Range
     /// <para/>
     /// NOTE: This was LongRangeFacetCounts in Lucene
     /// 
-    ///  @lucene.experimental 
+    /// @lucene.experimental 
     /// </summary>
     public class Int64RangeFacetCounts : RangeFacetCounts
     {

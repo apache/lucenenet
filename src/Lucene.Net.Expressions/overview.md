@@ -1,4 +1,9 @@
-﻿<!--
+﻿---
+uid: Lucene.Net.Expressions
+summary: *content
+---
+
+<!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
  this work for additional information regarding copyright ownership.
@@ -19,6 +24,6 @@
 
  The expressions module is new to Lucene 4.6. It provides an API for dynamically computing per-document values based on string expressions. 
 
- The module is organized in two sections: 1. [](xref:Lucene.Net.Expressions) - The abstractions and simple utilities for common operations like sorting on an expression 2. [](xref:Lucene.Net.Expressions.Js) - A compiler for a subset of JavaScript expressions 
+ The module is organized in two sections: 1. <xref:Lucene.Net.Expressions> - The abstractions and simple utilities for common operations like sorting on an expression 2. <xref:Lucene.Net.Expressions.Js> - A compiler for a subset of JavaScript expressions 
 
- For sample code showing how to use the API, see [](xref:Lucene.Net.Expressions.Expression). 
+ For sample code showing how to use the API, see <xref:Lucene.Net.Expressions.Expression>. 

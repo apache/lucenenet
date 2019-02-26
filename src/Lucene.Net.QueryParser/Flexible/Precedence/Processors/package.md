@@ -20,8 +20,8 @@ Processors used by Precedence Query Parser
 
 ## Lucene Precedence Query Parser Processors
 
- This package contains the 2 [](xref:Lucene.Net.QueryParsers.Flexible.Core.Processors.QueryNodeProcessor)s used by [](xref:Lucene.Net.QueryParsers.Flexible.Precedence.PrecedenceQueryParser). 
+ This package contains the 2 <xref:Lucene.Net.QueryParsers.Flexible.Core.Processors.QueryNodeProcessor>s used by <xref:Lucene.Net.QueryParsers.Flexible.Precedence.PrecedenceQueryParser>. 
 
- [](xref:Lucene.Net.QueryParsers.Flexible.Precedence.Processors.BooleanModifiersQueryNodeProcessor): this processor is used to apply [](xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes.ModifierQueryNode)s on [](xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes.BooleanQueryNode) children according to the boolean type or the default operator. 
+ <xref:Lucene.Net.QueryParsers.Flexible.Precedence.Processors.BooleanModifiersQueryNodeProcessor>: this processor is used to apply <xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes.ModifierQueryNode>s on <xref:Lucene.Net.QueryParsers.Flexible.Core.Nodes.BooleanQueryNode> children according to the boolean type or the default operator. 
 
- [](xref:Lucene.Net.QueryParsers.Flexible.Precedence.Processors.PrecedenceQueryNodeProcessorPipeline): this processor pipeline is used by [](xref:Lucene.Net.QueryParsers.Flexible.Precedence.PrecedenceQueryParser). It extends [](xref:Lucene.Net.QueryParsers.Flexible.Standard.Processors.StandardQueryNodeProcessorPipeline) and rearrange the pipeline so the boolean precedence is processed correctly. Check [](xref:Lucene.Net.QueryParsers.Flexible.Precedence.Processors.PrecedenceQueryNodeProcessorPipeline) for more details. 
+ <xref:Lucene.Net.QueryParsers.Flexible.Precedence.Processors.PrecedenceQueryNodeProcessorPipeline>: this processor pipeline is used by <xref:Lucene.Net.QueryParsers.Flexible.Precedence.PrecedenceQueryParser>. It extends <xref:Lucene.Net.QueryParsers.Flexible.Standard.Processors.StandardQueryNodeProcessorPipeline> and rearrange the pipeline so the boolean precedence is processed correctly. Check <xref:Lucene.Net.QueryParsers.Flexible.Precedence.Processors.PrecedenceQueryNodeProcessorPipeline> for more details. 
