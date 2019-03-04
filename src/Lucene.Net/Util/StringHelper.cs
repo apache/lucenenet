@@ -29,6 +29,38 @@ namespace Lucene.Net.Util
     public abstract class StringHelper
     {
         /// <summary>
+        /// Pass this as the seed to <see cref="Murmurhash3_x86_32(byte[], int, int, int)"/>. </summary>
+
+        // Poached from Guava: set a different salt/seed
+        // for each JVM instance, to frustrate hash key collision
+        // denial of service attacks, and to catch any places that
+        // somehow rely on hash function/order across JVM
+        // instances:
+
+        //Singleton-esque member. Only created once
+        public static readonly int GOOD_FAST_HASH_SEED;
+
+        static StringHelper()
+        {
+            string prop = SystemProperties.GetProperty("tests.seed", null);
+
+            if (prop != null)
+            {
+                // So if there is a test failure that relied on hash
+                // order, we remain reproducible based on the test seed:
+                if (prop.Length > 8)
+                {
+                    prop = prop.Substring(prop.Length - 8);
+                }
+                GOOD_FAST_HASH_SEED = (int)Convert.ToInt32(prop, 16);
+            }
+            else
+            {
+                GOOD_FAST_HASH_SEED = (int)DateTime.Now.Millisecond;
+            }
+        }
+
+        /// <summary>
         /// Compares two <see cref="BytesRef"/>, element by element, and returns the
         /// number of elements common to both arrays.
         /// </summary>
@@ -176,45 +208,6 @@ namespace Lucene.Net.Util
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Pass this as the seed to <see cref="Murmurhash3_x86_32(byte[], int, int, int)"/>. </summary>
-
-        // Poached from Guava: set a different salt/seed
-        // for each JVM instance, to frustrate hash key collision
-        // denial of service attacks, and to catch any places that
-        // somehow rely on hash function/order across JVM
-        // instances:
-
-        //Singleton-esque member. Only created once
-        private static int good_fast_hash_seed;
-
-        public static int GOOD_FAST_HASH_SEED
-        {
-            get
-            {
-                if (good_fast_hash_seed == 0)
-                {
-                    string prop = SystemProperties.GetProperty("tests.seed", null);
-
-                    if (prop != null)
-                    {
-                        // So if there is a test failure that relied on hash
-                        // order, we remain reproducible based on the test seed:
-                        if (prop.Length > 8)
-                        {
-                            prop = prop.Substring(prop.Length - 8);
-                        }
-                        good_fast_hash_seed = (int)Convert.ToInt32(prop, 16);
-                    }
-                    else
-                    {
-                        good_fast_hash_seed = (int)DateTime.Now.Millisecond;
-                    }
-                }
-                return good_fast_hash_seed;
-            }
         }
 
         /// <summary>
