@@ -31,16 +31,15 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Pass this as the seed to <see cref="Murmurhash3_x86_32(byte[], int, int, int)"/>. </summary>
 
+        //Singleton-esque member. Only created once
+        public static readonly int GOOD_FAST_HASH_SEED = InitializeHashSeed();
+
         // Poached from Guava: set a different salt/seed
         // for each JVM instance, to frustrate hash key collision
         // denial of service attacks, and to catch any places that
         // somehow rely on hash function/order across JVM
         // instances:
-
-        //Singleton-esque member. Only created once
-        public static readonly int GOOD_FAST_HASH_SEED;
-
-        static StringHelper()
+        private static int InitializeHashSeed()
         {
             string prop = SystemProperties.GetProperty("tests.seed", null);
 
@@ -52,11 +51,11 @@ namespace Lucene.Net.Util
                 {
                     prop = prop.Substring(prop.Length - 8);
                 }
-                GOOD_FAST_HASH_SEED = (int)Convert.ToInt32(prop, 16);
+                return Convert.ToInt32(prop, 16);
             }
             else
             {
-                GOOD_FAST_HASH_SEED = (int)DateTime.Now.Millisecond;
+                return DateTime.Now.Millisecond;
             }
         }
 
