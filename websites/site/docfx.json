@@ -20,6 +20,12 @@
           "logo/lucene-net-reverse-color.png"
         ],
         "src": "../../branding"
+      },
+      {
+        "files": [
+          "doap_Lucene_Net.rdf"
+        ],
+        "src": "lucenetemplate"
       }
     ],
     "globalMetadata": {

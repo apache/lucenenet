@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl"?>
+<rdf:RDF xml:lang="en"
+         xmlns="http://usefulinc.com/ns/doap#" 
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+         xmlns:asfext="http://projects.apache.org/ns/asfext#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/">
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+  <Project rdf:about="http://lucenenet.apache.org/">
+    <created>2014-04-14</created>
+    <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
+    <name>Apache Lucene.Net</name>
+    <homepage rdf:resource="http://lucenenet.apache.org/" />
+    <asfext:pmc rdf:resource="http://lucenenet.apache.org" />
+    <shortdesc>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users.</shortdesc>
+    <description>Lucene.Net is a port of the Lucene search engine library, written in C# and targeted at .NET runtime users. The Lucene search library is based on an inverted index. Lucene.Net has three primary goals:
+
+1. Maintain the existing line-by-line port from Java to C#, fully automating and commoditizing the process such that the project can easily synchronize with the Java Lucene release schedule;
+2. Maintaining the high-performance requirements expected of a first class C# search engine library;
+3. Maximize usability and power when used within the .NET runtime. To that end, it will present a highly idiomatic, carefully tailored API that takes advantage of many of the special features of the .NET runtime.
+</description>
+    <bug-database rdf:resource="https://issues.apache.org/jira/browse/LUCENENET/" />
+    <mailing-list rdf:resource="http://lucenenet.apache.org/community.html" />
+    <download-page rdf:resource="http://lucenenet.apache.org/download.cgi" />
+    <programming-language>C#</programming-language>
+    <category rdf:resource="http://projects.apache.org/category/database" />
+    <release>
+      <Version>
+        <name>Apache Lucene.Net 3.0.3</name>
+        <created>2012-10-10</created>
+        <revision>3.0.3</revision>
+      </Version>
+    </release>
+  </Project>
+</rdf:RDF>
