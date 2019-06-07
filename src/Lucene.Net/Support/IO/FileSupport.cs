@@ -180,7 +180,7 @@ namespace Lucene.Net.Support.IO
             return Path.Combine(directory.FullName, string.Concat(prefix, randomFileName));
         }
 
-        private static readonly IDictionary<string, string> fileCanonPathCache = new ConcurrentDictionary<string, string>();
+        private static readonly ConcurrentDictionary<string, string> fileCanonPathCache = new ConcurrentDictionary<string, string>();
 
         /// <summary>
         /// Returns the absolute path of this <see cref="FileSystemInfo"/> with all references resolved and
@@ -299,7 +299,7 @@ namespace Lucene.Net.Support.IO
             //newResult = getCanonImpl(newResult);
             newLength = newResult.Length;
             canonPath = Encoding.UTF8.GetString(newResult, 0, newLength).TrimEnd('\0'); // LUCENENET: Eliminate null terminator char
-            fileCanonPathCache[absPath] = canonPath;
+            canonPath = fileCanonPathCache.GetOrAdd(absPath, canonPath); // It's possible that a concurrent call may have already added it to the cache.
             return canonPath;
         }
     }
