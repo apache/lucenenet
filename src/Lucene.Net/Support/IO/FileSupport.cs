@@ -298,8 +298,9 @@ namespace Lucene.Net.Support.IO
             newResult[newLength] = 0;
             //newResult = getCanonImpl(newResult);
             newLength = newResult.Length;
-            canonPath = Encoding.UTF8.GetString(newResult, 0, newLength).TrimEnd('\0'); // LUCENENET: Eliminate null terminator char
-            canonPath = fileCanonPathCache.GetOrAdd(absPath, canonPath); // It's possible that a concurrent call may have already added it to the cache.
+            canonPath = fileCanonPathCache.GetOrAdd(
+                absPath,
+                k => Encoding.UTF8.GetString(newResult, 0, newLength).TrimEnd('\0')); // LUCENENET: Eliminate null terminator char
             return canonPath;
         }
     }
