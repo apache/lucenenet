@@ -1,5 +1,6 @@
 using Lucene.Net.Util;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -179,7 +180,7 @@ namespace Lucene.Net.Support.IO
             return Path.Combine(directory.FullName, string.Concat(prefix, randomFileName));
         }
 
-        private static readonly IDictionary<string, string> fileCanonPathCache = new Dictionary<string, string>();
+        private static readonly IDictionary<string, string> fileCanonPathCache = new ConcurrentDictionary<string, string>();
 
         /// <summary>
         /// Returns the absolute path of this <see cref="FileSystemInfo"/> with all references resolved and
