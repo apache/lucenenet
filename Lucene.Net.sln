@@ -22,6 +22,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 15.0.26730.8
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{8CA61D33-3590-4024-A304-7B1F75B50653}"
+	ProjectSection(SolutionItems) = preProject
+		src\dotnet\Directory.Build.props = src\dotnet\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{4016BDAB-6C33-4D1E-9439-57B416EA45D5}"
 	ProjectSection(SolutionItems) = preProject
@@ -33,6 +36,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{4016BDAB
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4DF7EACE-2B25-43F6-B558-8520BF20BD76}"
+	ProjectSection(SolutionItems) = preProject
+		src\dotnet\tools\Directory.Build.props = src\dotnet\tools\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net", "src\Lucene.Net\Lucene.Net.csproj", "{3A0AA37E-2B7B-4416-B528-DA4E0E6A6706}"
 EndProject

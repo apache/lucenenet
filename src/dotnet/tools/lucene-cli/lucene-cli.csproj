@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -21,7 +21,7 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\..\..\Version.proj" />
+  <Import Project="$(SolutionDir)Version.proj" />
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
