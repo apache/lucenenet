@@ -23,6 +23,12 @@
 
   <Import Project="$(SolutionDir)TestTargetFramework.proj" />
   <Import Project="$(SolutionDir)Version.proj" />
+  <Import Project="..\..\..\TestTargetFramework.proj" />
+  <Import Project="..\..\..\Version.proj" />
+  <PropertyGroup>
+    <!-- Override AssemblyOriginatorKeyFile specified in Version.proj because we're deeper from the root -->
+    <AssemblyOriginatorKeyFile>..\..\..\Lucene.Net.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
 
   <PropertyGroup>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>

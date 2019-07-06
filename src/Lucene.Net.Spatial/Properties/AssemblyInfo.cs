@@ -38,6 +38,6 @@ using System.Security;
 [assembly: Guid("5c8e810f-4bf7-472f-9785-8d80a0de6ea8")]
 
 // for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Spatial")]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Spatial, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
 
 // NOTE: Version information is in CommonAssemblyInfo.cs
