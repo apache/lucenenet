@@ -53,7 +53,7 @@ properties {
 
 $backedUpFiles = New-Object System.Collections.ArrayList
 
-task default -depends Publish
+task default -depends Pack
 
 task Clean -description "This task cleans up the build directory" {
 	Write-Host "##teamcity[progressMessage 'Cleaning']"
@@ -195,53 +195,15 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 	Ensure-Directory-Exists "$nuget_package_directory"
 
 	try {
-		pushd $base_directory
-		$packages = Get-ChildItem -Path "$source_directory\**\*.csproj" -Recurse | ? { 
-			!$_.Directory.Name.Contains(".Test") -and 
-			!$_.Directory.Name.Contains(".Demo") -and 
-			!$_.Directory.FullName.Contains("\tools\") -and 
-			!$_.Directory.FullName.Contains("/tools/") -and 
-			!$_.Directory.Name.Contains(".Replicator.AspNetCore")
+		Exec {
+			& dotnet.exe pack $solutionFile --configuration $Configuration --output $nuget_package_directory --no-build --include-symbols /p:PackageVersion=$packageVersion
 		}
-		popd
-
-		Pack-Assemblies $packages
 
 		$success = $true
 	} finally {
 		#if ($success -ne $true) {
 			Restore-Files $backedUpFiles
 		#}
-	}
-}
-
-task Publish -depends Pack -description "This task publishes the command line tools" {
-	Write-Host "##teamcity[progressMessage 'Publishing']"
-	#create the publish output directory
-	Ensure-Directory-Exists "$publish_directory"
-
-	pushd $base_directory
-	$tools = Get-ChildItem -Path "$source_directory\**\*.csproj" -Recurse | ? {
-		$_.Directory.FullName.Contains("\tools\") -or $_.Directory.FullName.Contains("/tools/") -and 
-		!$_.Directory.Name.Contains(".Test") -and
-		!$_.Directory.Name.Contains("JavaDocToMarkdownConverter")
-	}
-	popd
-
-	foreach ($tool in $tools) {
-		Write-Host "Publishing $tool..." -ForegroundColor Magenta
-
-		$toolName = [io.path]::GetFileNameWithoutExtension($tool)
-		$outputDirectory = "$publish_directory\$toolName"
-		Exec {
-			& dotnet.exe publish $tool --configuration $Configuration --output $outputDirectory
-		}
-
-		# Zip up the result of the publish
-		$outputFile = "$outputDirectory.zip"
-		if (Test-Path $outputFile) { Remove-Item $outputFile }
-		Add-Type -assembly "system.io.compression.filesystem"
-		[io.compression.zipfile]::CreateFromDirectory($outputDirectory, $outputFile)
 	}
 }
 
@@ -494,16 +456,6 @@ endlocal
 	#Out-File -filePath $file -encoding UTF8 -inputObject $buildBat -Force
 	$Utf8EncodingNoBom = New-Object System.Text.UTF8Encoding $false
 	[System.IO.File]::WriteAllLines($file, $buildBat, $Utf8EncodingNoBom)
-}
-
-function Pack-Assemblies([string[]]$projects) {
-	Ensure-Directory-Exists $nuget_package_directory
-	foreach ($project in $projects) {
-		Write-Host "Creating NuGet package for $project..." -ForegroundColor Magenta
-		Exec {
-			& dotnet.exe pack $project --configuration $Configuration --output $nuget_package_directory --no-build --include-symbols /p:PackageVersion=$packageVersion
-		}
-	}
 }
 
 function Backup-Files([string[]]$paths) {
