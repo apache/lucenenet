@@ -24,7 +24,10 @@
   <Import Project="$(SolutionDir)Version.proj" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>lucene</ToolCommandName>
     
     <AssemblyName>lucene-cli</AssemblyName>
     <OutputType>Exe</OutputType>
@@ -37,6 +40,8 @@
     <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
     <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
     <Copyright>Copyright © 2006 - 2017 The Apache Software Foundation</Copyright>
+    <Description>The Lucene.Net command line interface (CLI) is a new cross-platform toolchain with utilities for maintaining Lucene.Net and demos for learning basic Lucene.Net functionality. Run 'lucene' to see usage information.</Description>
+    <PackageTags>$(PackageTags);maintenance;utility</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
 

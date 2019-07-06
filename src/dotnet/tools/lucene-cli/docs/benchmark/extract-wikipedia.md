@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll benchmark extract-wikipedia [?|-h|--help]</code>
+<code>lucene benchmark extract-wikipedia [?|-h|--help]</code>
 
 ### Arguments
 
@@ -32,4 +32,4 @@ Tells the extractor to skip WIKI docs that contain only images.
 
 Extracts the `c:\wiki.xml` file into the `c:\out` directory, skipping any docs that only contain images.
 
-<code>dotnet lucene-cli.dll benchmark extract-wikipedia c:\wiki.xml c:\out -d</code>
+<code>lucene benchmark extract-wikipedia c:\wiki.xml c:\out -d</code>

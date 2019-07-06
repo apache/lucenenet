@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll index extract-cfs <CFS_FILE_NAME> [-dir|--directory-type] [?|-h|--help]</code>
+<code>lucene index extract-cfs <CFS_FILE_NAME> [-dir|--directory-type] [?|-h|--help]</code>
 
 ### Description
 
@@ -34,9 +34,9 @@ The FSDirectory implementation to use. If ommitted, it defaults to the optimal F
 
 Extract the files from the compound file at `X:\lucene-index\_81.cfs` to the current working directory:
 
-<code>dotnet lucene-cli.dll index extract-cfs X:\lucene-index\_81.cfs</code>
+<code>lucene index extract-cfs X:\lucene-index\_81.cfs</code>
 
 
 Extract the files from the compound file at `X:\lucene-index\_64.cfs` to the current working directory using the `SimpleFSDirectory` implementation:
 
-<code>dotnet lucene-cli.dll index extract-cfs X:\lucene-index\_64.cfs --directory-type SimpleFSDirectory</code>
+<code>lucene index extract-cfs X:\lucene-index\_64.cfs --directory-type SimpleFSDirectory</code>

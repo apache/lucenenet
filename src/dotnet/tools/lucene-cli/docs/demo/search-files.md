@@ -7,8 +7,8 @@
 ### Synopsis
 
 ```
-dotnet lucene-cli.dll demo search-files <INDEX_DIRECTORY> [-f|--field] [-r|--repeat] [-qf|--queries-file] [-q|--query] [--raw] [-p|--page-size] [?|-h|--help]
-dotnet lucene-cli.dll demo search-files [-src|--view-source-code] [-out|--output-source-code]
+lucene demo search-files <INDEX_DIRECTORY> [-f|--field] [-r|--repeat] [-qf|--queries-file] [-q|--query] [--raw] [-p|--page-size] [?|-h|--help]
+lucene demo search-files [-src|--view-source-code] [-out|--output-source-code]
 ```
 
 ### Description
@@ -65,8 +65,8 @@ Outputs the source code to the specified directory.
 
 Search the index located in the `X:\test-index` directory interactively, showing 15 results per page in raw format:
 
-<code>dotnet lucene-cli.dll demo search-files X:\test-index -p 15 --raw</code>
+<code>lucene demo search-files X:\test-index -p 15 --raw</code>
 
 Run the query "foobar" against the "path" field in the index located in the `X:\test-index` directory:
 
-<code>dotnet lucene-cli.dll demo search-files X:\test-index --field path --query foobar</code>
+<code>lucene demo search-files X:\test-index --field path --query foobar</code>

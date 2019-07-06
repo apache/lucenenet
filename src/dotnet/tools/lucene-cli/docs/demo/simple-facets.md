@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-</code>dotnet lucene-cli.dll demo simple-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]</code>
+</code>lucene demo simple-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]</code>
 
 ### Options
 
@@ -24,4 +24,4 @@ Outputs the source code to the specified directory.
 
 ### Example
 
-<code>dotnet lucene-cli.dll demo simple-facets</code>
+<code>lucene demo simple-facets</code>

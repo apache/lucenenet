@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll index check [<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vectors] [-dir|--directory-type] [-s|--segment] [?|-h|--help]</code>
+<code>lucene index check [<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vectors] [-dir|--directory-type] [-s|--segment] [?|-h|--help]</code>
 
 ### Description
 
@@ -46,10 +46,10 @@ Only check the specified segment(s). This can be specified multiple times, to ch
 
 Check the index located at `X:\lucenenet-index\` verbosely, scanning only the segments named `_1j_Lucene41_0` and `_2u_Lucene41_0` for problems:
 
-<code>dotnet lucene-cli.dll index check X:\lucenenet-index -v -s _1j_Lucene41_0 -s _2u_Lucene41_0</code>
+<code>lucene index check X:\lucenenet-index -v -s _1j_Lucene41_0 -s _2u_Lucene41_0</code>
 
 
 Check the index located at `C:\taxonomy\` using the `MMapDirectory` memory-mapped directory implementation:
 
-<code>dotnet lucene-cli.dll index check C:\taxonomy --directory-type MMapDirectory</code>
+<code>lucene index check C:\taxonomy --directory-type MMapDirectory</code>
 

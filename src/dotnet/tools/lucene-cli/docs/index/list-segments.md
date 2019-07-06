@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll index list-segments [<INDEX_DIRECTORY>] [?|-h|--help]</code>
+<code>lucene index list-segments [<INDEX_DIRECTORY>] [?|-h|--help]</code>
 
 ### Description
 
@@ -28,5 +28,5 @@ Prints out a short help for the command.
 
 List the segments in the index located at `X:\lucene-index\`:
 
-<code>dotnet lucene-cli.dll index list-segments X:\lucene-index</code>
+<code>lucene index list-segments X:\lucene-index</code>
 

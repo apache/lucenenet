@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll index list-taxonomy-stats [<INDEX_DIRECTORY>] [-tree|--show-tree] [?|-h|--help]</code>
+<code>lucene index list-taxonomy-stats [<INDEX_DIRECTORY>] [-tree|--show-tree] [?|-h|--help]</code>
 
 ### Description
 
@@ -34,5 +34,5 @@ Recursively lists all descendant nodes.
 
 List the taxonomy statistics from the index located at `X:\category-taxonomy-index\`, viewing all descendant nodes:
 
-<code>dotnet lucene-cli.dll index list-taxonomy-stats X:\category-taxonomy-index -tree</code>
+<code>lucene index list-taxonomy-stats X:\category-taxonomy-index -tree</code>
 

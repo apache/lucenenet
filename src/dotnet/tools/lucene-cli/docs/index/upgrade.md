@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll index upgrade [<INDEX_DIRECTORY>] [-d|--delete-prior-commits] [-v|--verbose] [-dir|--directory-type] [?|-h|--help]</code>
+<code>lucene index upgrade [<INDEX_DIRECTORY>] [-d|--delete-prior-commits] [-v|--verbose] [-dir|--directory-type] [?|-h|--help]</code>
 
 ### Description
 
@@ -44,9 +44,9 @@ The `FSDirectory` implementation to use. Defaults to the optional `FSDirectory` 
 
 Upgrade the index format of the index located at `X:\lucene-index\` to the same version as this tool, using the `SimpleFSDirectory` implementation:
 
-<code>dotnet lucene-cli.dll index upgrade X:\lucene-index -dir SimpleFSDirectory</code>
+<code>lucene index upgrade X:\lucene-index -dir SimpleFSDirectory</code>
 
 
 Upgrade the index located at `C:\indexes\category-index\` verbosely, deleting all but the last commit:
 
-<code>dotnet lucene-cli.dll index upgrade C:\indexes\category-index --verbose --delete-prior-commits</code>
+<code>lucene index upgrade C:\indexes\category-index --verbose --delete-prior-commits</code>

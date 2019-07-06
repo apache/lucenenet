@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll lock verify-server <IP_HOSTNAME> <MAX_CLIENTS> [?|-h|--help]</code>
+<code>lucene lock verify-server <IP_HOSTNAME> <MAX_CLIENTS> [?|-h|--help]</code>
 
 ### Description
 
@@ -32,4 +32,4 @@ Prints out a short help for the command.
 
 Run the server on IP `127.0.0.4` with a 10 connected clients:
 
-<code>dotnet lucene-cli.dll lock verify-server 127.0.0.4 10</code>
+<code>lucene lock verify-server 127.0.0.4 10</code>

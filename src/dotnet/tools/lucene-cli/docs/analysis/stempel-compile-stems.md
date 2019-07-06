@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll analysis stempel-compile-stems <STEMMING_ALGORITHM> <STEMMER_TABLE_FILE> [-e|--encoding] [?|-h|--help]</code>
+<code>lucene analysis stempel-compile-stems <STEMMING_ALGORITHM> <STEMMER_TABLE_FILE> [-e|--encoding] [?|-h|--help]</code>
 
 ### Description
 
@@ -34,4 +34,4 @@ The file encoding used by the stemmer files. If not supplied, the default value 
 
 ### Example
 
-<code>dotnet lucene-cli.dll analysis stempel-compile-stems test X:\stemmer-data\table1.txt X:\stemmer-data\table2.txt</code>
+<code>lucene analysis stempel-compile-stems test X:\stemmer-data\table1.txt X:\stemmer-data\table2.txt</code>

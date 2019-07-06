@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll benchmark extract-reuters [?|-h|--help]</code>
+<code>lucene benchmark extract-reuters [?|-h|--help]</code>
 
 ### Arguments
 
@@ -28,4 +28,4 @@ Prints out a short help for the command.
 
 Extracts the reuters SGML files in the `z:\input` directory and places the content in the `z:\output` directory.
 
-<code>dotnet lucene-cli.dll benchmark extract-reuters z:\input z:\output</code>
+<code>lucene benchmark extract-reuters z:\input z:\output</code>

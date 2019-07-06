@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll benchmark sample [-src|--view-source-code] [-out|--output-source-code]  [?|-h|--help]</code>
+<code>lucene benchmark sample [-src|--view-source-code] [-out|--output-source-code]  [?|-h|--help]</code>
 
 ### Options
 
@@ -26,4 +26,4 @@ Outputs the source code to the specified directory.
 
 Runs the sample.
 
-<code>dotnet lucene-cli.dll benchmark sample</code>
+<code>lucene benchmark sample</code>

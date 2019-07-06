@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll benchmark run-trec-eval [?|-h|--help]</code>
+<code>lucene benchmark run-trec-eval [?|-h|--help]</code>
 
 ### Arguments
 
@@ -48,4 +48,4 @@ Use narrative field in query.
 
 Runs a TREC evaluation on the `c:\topics` queries file and the `c:\queries` relevance judgements on the `c:\lucene-index` index using the description and narrative fields and places the output in `c:\output.txt`.
 
-<code>dotnet lucene-cli.dll benchmark run-trec-eval c:\topics.txt c:\queries.txt c:\submissions.txt c:\output.txt c:\lucene-index -d -n</code>
+<code>lucene benchmark run-trec-eval c:\topics.txt c:\queries.txt c:\submissions.txt c:\output.txt c:\lucene-index -d -n</code>

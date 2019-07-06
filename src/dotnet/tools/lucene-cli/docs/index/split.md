@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll index split <OUTPUT_DIRECTORY> <INPUT_DIRECTORY>[ <INPUT_DIRECTORY_2>...] [-n|--number-of-parts] [-s|--sequential] [?|-h|--help]</code>
+<code>lucene index split <OUTPUT_DIRECTORY> <INPUT_DIRECTORY>[ <INPUT_DIRECTORY_2>...] [-n|--number-of-parts] [-s|--sequential] [?|-h|--help]</code>
 
 ### Description
 
@@ -46,9 +46,9 @@ Sequential doc-id range split (default is round-robin).
 
 Split the index located at `X:\old-index\` sequentially, placing the resulting 2 indices into the `X:\new-index\` directory:
 
-<code>dotnet lucene-cli.dll index split X:\new-index X:\old-index --sequential</code>
+<code>lucene index split X:\new-index X:\old-index --sequential</code>
 
 
 Split the index located at `T:\in\` into 4 parts and place them into the `T:\out\` directory:
 
-<code>dotnet lucene-cli.dll index split T:\out T:\in -n 4</code>
+<code>lucene index split T:\out T:\in -n 4</code>

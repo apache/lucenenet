@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll index list-cfs <CFS_FILE_NAME> [-dir|--directory-type] [?|-h|--help]</code>
+<code>lucene index list-cfs <CFS_FILE_NAME> [-dir|--directory-type] [?|-h|--help]</code>
 
 ### Description
 
@@ -32,5 +32,5 @@ The `FSDirectory` implementation to use. If omitted, defaults to the optimal `FS
 
 Lists the files within the `X:\categories\_53.cfs` compound file using the `NIOFSDirectory` directory implementation:
 
-<code>dotnet lucene-cli.dll index list-cfs X:\categories\_53.cfs -dir NIOFSDirectory</code>
+<code>lucene index list-cfs X:\categories\_53.cfs -dir NIOFSDirectory</code>
 

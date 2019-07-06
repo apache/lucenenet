@@ -24,7 +24,7 @@
   <Import Project="$(SolutionDir)Version.proj" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     
     <AssemblyTitle>Lucene.Net.Tests.Cli</AssemblyTitle>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>

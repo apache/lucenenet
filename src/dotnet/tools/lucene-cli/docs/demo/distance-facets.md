@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll demo distance-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]</code>
+<code>lucene demo distance-facets [-src|--view-source-code] [-out|--output-source-code] [?|-h|--help]</code>
 
 ### Options
 
@@ -24,4 +24,4 @@ Outputs the source code to the specified directory.
 
 ### Example
 
-<code>dotnet lucene-cli.dll demo distance-facets</code>
+<code>lucene demo distance-facets</code>

@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll index fix [<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vectors] [-dir|--directory-type] [--dry-run] [?|-h|--help]</code>
+<code>lucene index fix [<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vectors] [-dir|--directory-type] [--dry-run] [?|-h|--help]</code>
 
 ### Description
 
@@ -46,9 +46,9 @@ Doesn't change the index, but reports any actions that would be taken if this op
 
 Check what a fix operation would do if run on the index located at `X:\product-index\`, using verbose output:
 
-<code>dotnet lucene-cli.dll index fix X:\product-index --verbose --dry-run</code>
+<code>lucene index fix X:\product-index --verbose --dry-run</code>
 
 
 Fix the index located at `X:\product-index` and cross check term vectors:
 
-<code>dotnet lucene-cli.dll index fix X:\product-index -c</code>
+<code>lucene index fix X:\product-index -c</code>

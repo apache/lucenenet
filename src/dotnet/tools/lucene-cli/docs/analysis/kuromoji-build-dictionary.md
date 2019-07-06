@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll analysis kuromoji-build-dictionary <FORMAT> <INPUT_DIRECTORY> <OUTPUT_DIRECTORY> [-e|--encoding] [-n|--normalize] [?|-h|--help]</code>
+<code>lucene analysis kuromoji-build-dictionary <FORMAT> <INPUT_DIRECTORY> <OUTPUT_DIRECTORY> [-e|--encoding] [-n|--normalize] [?|-h|--help]</code>
 
 ### Description
 
@@ -56,5 +56,5 @@ Normalize the entries using normalization form KC.
 
 ### Example
 
-<code>dotnet lucene-cli.dll analysis kuromoji-build-dictionary X:\kuromoji-data X:\kuromoji-dictionary --normalize</code>
+<code>lucene analysis kuromoji-build-dictionary X:\kuromoji-data X:\kuromoji-dictionary --normalize</code>
 

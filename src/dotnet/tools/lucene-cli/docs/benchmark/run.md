@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll benchmark run [?|-h|--help]</code>
+<code>lucene benchmark run [?|-h|--help]</code>
 
 ### Arguments
 
@@ -28,4 +28,4 @@ Prints out a short help for the command.
 
 Runs a benchmark on the `c:\check.alg` algorithm file.
 
-<code>dotnet lucene-cli.dll benchmark run c:\check.alg</code>
+<code>lucene benchmark run c:\check.alg</code>

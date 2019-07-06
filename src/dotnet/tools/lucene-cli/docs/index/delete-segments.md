@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>dotnet lucene-cli.dll index delete-segments <INDEX_DIRECTORY> <SEGMENT>[ <SEGMENT_2>...] [?|-h|--help]</code>
+<code>lucene index delete-segments <INDEX_DIRECTORY> <SEGMENT>[ <SEGMENT_2>...] [?|-h|--help]</code>
 
 ### Description
 
@@ -32,4 +32,4 @@ Prints out a short help for the command.
 
 Delete the segments named `_8c` and `_83` from the index located at `X:\category-data\`:
 
-<code>dotnet lucene-cli.dll index delete-segments X:\category-data _8c _83</code>
+<code>lucene index delete-segments X:\category-data _8c _83</code>
