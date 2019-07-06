@@ -37,6 +37,6 @@ using System.Runtime.InteropServices;
 [assembly: Guid("8408625a-2508-46d5-8519-045183c43724")]
 
 // for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Kuromoji")]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Kuromoji, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
 
 // NOTE: Version information is in CommonAssemblyInfo.cs

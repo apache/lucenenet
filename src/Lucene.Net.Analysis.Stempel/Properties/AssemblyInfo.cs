@@ -41,6 +41,6 @@ using System.Runtime.InteropServices;
 [assembly: Guid("a76dad88-e3a5-40f9-9114-facd77bd8265")]
 
 // for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Stempel")]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Stempel, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
 
 // NOTE: Version information is in CommonAssemblyInfo.cs

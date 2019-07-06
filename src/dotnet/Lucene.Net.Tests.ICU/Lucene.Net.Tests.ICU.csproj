@@ -23,6 +23,10 @@
 
   <Import Project="..\..\..\TestTargetFramework.proj" />
   <Import Project="..\..\..\Version.proj" />
+  <PropertyGroup>
+    <!-- Override AssemblyOriginatorKeyFile specified in Version.proj because we're deeper from the root -->
+    <AssemblyOriginatorKeyFile>..\..\..\Lucene.Net.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
 
   <PropertyGroup>
     <!--<TargetFrameworks>netcoreapp1.0;net451</TargetFrameworks>-->

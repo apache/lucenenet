@@ -22,6 +22,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\..\Version.proj" />
+  <PropertyGroup>
+    <!-- Override AssemblyOriginatorKeyFile specified in Version.proj because we're deeper from the root -->
+    <AssemblyOriginatorKeyFile>..\..\..\Lucene.Net.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net45</TargetFrameworks>

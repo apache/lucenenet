@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant(true)]
 
 // for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Demo")]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Demo, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

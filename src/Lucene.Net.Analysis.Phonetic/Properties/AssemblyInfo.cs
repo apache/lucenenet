@@ -41,6 +41,6 @@ using System.Runtime.InteropServices;
 [assembly: Guid("dafe3b64-616a-4a2f-90e5-1f135e8a9af5")]
 
 // for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Phonetic")]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Phonetic, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
 
 // NOTE: Version information is in CommonAssemblyInfo.cs
