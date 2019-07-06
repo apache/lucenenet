@@ -1,0 +1,41 @@
+<Project> 
+  <PropertyGroup Label="NuGet Package Reference Versions">
+    <Antlr3RuntimePackageVersion>3.5.1</Antlr3RuntimePackageVersion>
+    <IcuNetPackageVersion>54.1.1-alpha</IcuNetPackageVersion>
+    <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>1.0.3</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
+    <MicrosoftAspNetCoreTestHostPackageVersion>1.0.3</MicrosoftAspNetCoreTestHostPackageVersion>
+    <MicrosoftCSharpPackageVersion>4.4.0</MicrosoftCSharpPackageVersion>
+    <MicrosoftExtensionsDependencyModelPackageVersion>2.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
+    <MicrosoftNETTestSdkPackageVersion>15.3.0</MicrosoftNETTestSdkPackageVersion>
+    <NETStandardLibrary16PackageVersion>1.6.1</NETStandardLibrary16PackageVersion>
+    <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
+    <NewtonsoftJsonPackageVersion>10.0.3</NewtonsoftJsonPackageVersion>
+    <NUnitPackageVersion>3.8.1</NUnitPackageVersion>
+    <NUnit3TestAdapterPackageVersion>3.8.0</NUnit3TestAdapterPackageVersion>
+    <SharpZipLibPackageVersion>0.86.0</SharpZipLibPackageVersion>
+    <SharpZipLibNETStandardPackageVersion>0.86.0.1</SharpZipLibNETStandardPackageVersion>
+    <Spatial4nCorePackageVersion>0.4.1-beta00007</Spatial4nCorePackageVersion>
+    <Spatial4nCoreNTSPackageVersion>0.4.1-beta00007</Spatial4nCoreNTSPackageVersion>
+    <SystemCollectionsNonGenericPackageVersion>4.3.0</SystemCollectionsNonGenericPackageVersion>
+    <SystemCollectionsSpecializedPackageVersion>4.3.0</SystemCollectionsSpecializedPackageVersion>
+    <SystemComponentModelPrimitivesPackageVersion>4.3.0</SystemComponentModelPrimitivesPackageVersion>
+    <SystemDiagnosticsProcessPackageVersion>4.3.0</SystemDiagnosticsProcessPackageVersion>
+    <SystemDiagnosticsStackTracePackageVersion>4.3.0</SystemDiagnosticsStackTracePackageVersion>
+    <SystemDiagnosticsTraceSourcePackageVersion>4.3.0</SystemDiagnosticsTraceSourcePackageVersion>
+    <SystemGlobalizationExtensionsPackageVersion>4.3.0</SystemGlobalizationExtensionsPackageVersion>
+    <SystemGlobalizationPackageVersion>4.3.0</SystemGlobalizationPackageVersion>
+    <SystemIOMemoryMappedFilesPackageVersion>4.3.0</SystemIOMemoryMappedFilesPackageVersion>
+    <SystemNetNameResolutionPackageVersion>4.3.0</SystemNetNameResolutionPackageVersion>
+    <SystemNetPrimitivesPackageVersion>4.3.0</SystemNetPrimitivesPackageVersion>
+    <SystemNetSocketsPackageVersion>4.3.0</SystemNetSocketsPackageVersion>
+    <SystemReflectionEmitPackageVersion>4.3.0</SystemReflectionEmitPackageVersion>
+    <SystemReflectionEmitILGenerationPackageVersion>4.3.0</SystemReflectionEmitILGenerationPackageVersion>
+    <SystemReflectionTypeExtensionsPackageVersion>4.3.0</SystemReflectionTypeExtensionsPackageVersion>
+    <SystemRuntimeInteropServicesRuntimeInformationPackageVersion>4.3.0</SystemRuntimeInteropServicesRuntimeInformationPackageVersion>
+    <SystemTextEncodingCodePagesPackageVersion>4.3.0</SystemTextEncodingCodePagesPackageVersion>
+    <SystemThreadingThreadPackageVersion>4.3.0</SystemThreadingThreadPackageVersion>
+    <SystemThreadingThreadPoolPackageVersion>4.3.0</SystemThreadingThreadPoolPackageVersion>
+    <SystemXmlXmlDocumentPackageVersion>4.3.0</SystemXmlXmlDocumentPackageVersion>
+    <TeamCityVSTestTestAdapterPackageVersion>1.0.5</TeamCityVSTestTestAdapterPackageVersion>
+  </PropertyGroup>
+</Project>

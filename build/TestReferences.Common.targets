@@ -1,0 +1,10 @@
+<Project>
+  <ItemGroup Label="Test Project Common References">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkPackageVersion)" />
+    <PackageReference Include="NUnit" Version="$(NUnitPackageVersion)" />
+    <PackageReference Include="NUnit3TestAdapter" Version="$(NUnit3TestAdapterPackageVersion)" />
+    <!-- Required by NUnit3TestAdapter on .NET Core -->
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="$(SystemRuntimeInteropServicesRuntimeInformationPackageVersion)" />
+    <PackageReference Include="TeamCity.VSTest.TestAdapter" Version="$(TeamCityVSTestTestAdapterPackageVersion)" />
+  </ItemGroup>
+</Project>

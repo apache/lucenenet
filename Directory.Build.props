@@ -19,6 +19,8 @@
 
 -->
 <Project>
+  <Import Project="build\Dependencies.props" />
+
   <PropertyGroup Label="NuGet Package Defaults">
     <IsPackable>false</IsPackable>
   </PropertyGroup>

@@ -53,7 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Spatial4n.Core" Version="0.4.1-beta00007" /> 
+    <PackageReference Include="Spatial4n.Core" Version="$(Spatial4nCorePackageVersion)" /> 
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
