@@ -22,6 +22,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)Version.proj" />
+  <!-- This package is currently not being deployed to NuGet because it only works with NUnit and has many quality issues -->
+  <!--<Import Project="$(SolutionDir)build/NuGet.props" />-->
   
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard1.6;net45</TargetFrameworks>
@@ -29,12 +31,7 @@
 
     <AssemblyTitle>Lucene.Net.TestFramework</AssemblyTitle>
     <Description>Framework for testing Lucene.Net-based applications from The Apache Software Foundation.</Description>
-    <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query</PackageTags>
-    <Authors>The Apache Software Foundation</Authors>
-    <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/apache/lucenenet/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
-    <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
+    <PackageTags>$(PackageTags);testframework;test;framework</PackageTags>
     <!-- LUCENENET TODO: If we ever complete the work to release this module, we should add the documentation and
       remove all of the warnings this line produces. -->
     <!--<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>-->

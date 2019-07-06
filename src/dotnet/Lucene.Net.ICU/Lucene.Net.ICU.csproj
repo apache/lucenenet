@@ -22,6 +22,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)Version.proj" />
+  <Import Project="$(SolutionDir)build/NuGet.props" />
   
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net45</TargetFrameworks>
@@ -29,13 +30,8 @@
 
     <AssemblyTitle>Lucene.Net.ICU</AssemblyTitle>
     <Description>International Components for Unicode-based features including Thai analyzer support, an international postings highlighter, and BreakIterator support for the vector highlighter for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
-    <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query;icu;international;unicode</PackageTags>
+    <PackageTags>$(PackageTags);icu;international;unicode</PackageTags>
     <PackageReleaseNotes>This package depends on a temporary version of icu.net hosted on MyGet until official .NET Core support is added. To install, copy the NuGet.config file from https://github.com/apache/lucenenet/blob/master/NuGet.config into your project and then install this package via Package Manager Console as usual.</PackageReleaseNotes>
-    <Authors>The Apache Software Foundation</Authors>
-    <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/apache/lucenenet/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
-    <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <DefineConstants>$(DefineConstants);FEATURE_BREAKITERATOR</DefineConstants>

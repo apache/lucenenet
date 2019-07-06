@@ -30,6 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{4016BDAB
 	ProjectSection(SolutionItems) = preProject
 		build.bat = build.bat
 		build\build.ps1 = build\build.ps1
+		build\NuGet.props = build\NuGet.props
 		src\CommonAssemblyInfo.cs = src\CommonAssemblyInfo.cs
 		TestTargetFramework.proj = TestTargetFramework.proj
 		Version.proj = Version.proj

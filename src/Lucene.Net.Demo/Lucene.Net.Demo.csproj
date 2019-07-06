@@ -22,6 +22,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)Version.proj" />
+  <!-- Demo is deployed through the dotnet/tools/lucene-cli package -->
   
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard1.6;net45</TargetFrameworks>
@@ -29,12 +30,7 @@
 
     <AssemblyTitle>Lucene.Net.Demo</AssemblyTitle>
     <Description>Simple example code for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
-    <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query</PackageTags>
-    <Authors>The Apache Software Foundation</Authors>
-    <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/apache/lucenenet/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
-    <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
+    <PackageTags>$(PackageTags);demo</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
 

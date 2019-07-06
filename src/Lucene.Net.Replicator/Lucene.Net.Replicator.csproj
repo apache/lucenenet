@@ -22,6 +22,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)Version.proj" />
+  <Import Project="$(SolutionDir)build/NuGet.props" />
   
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net45</TargetFrameworks>
@@ -29,12 +30,7 @@
 
     <AssemblyTitle>Lucene.Net.Replicator</AssemblyTitle>
     <Description>Replicator that allows replication of files between a server and client(s) for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
-    <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query;files;replication;replicate</PackageTags>
-    <Authors>The Apache Software Foundation</Authors>
-    <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/apache/lucenenet/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
-    <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
+    <PackageTags>$(PackageTags);files;replication;replicate</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
 

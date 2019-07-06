@@ -22,6 +22,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)Version.proj" />
+  <Import Project="$(SolutionDir)build/NuGet.props" />
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -32,14 +33,6 @@
     <AssemblyName>lucene-cli</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>lucene-cli</PackageId>
-    <Description>The Lucene.Net command line interface (CLI) is a new cross-platform toolchain with utilities for maintaining Lucene.Net and demos for learning basic Lucene.Net functionality. Run 'dotnet lucene-cli.dll' to see usage information.</Description>
-    <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query;maintenance;utility</PackageTags>
-    <Authors>The Apache Software Foundation</Authors>
-    <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/apache/lucenenet/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
-    <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
-    <Copyright>Copyright © 2006 - 2017 The Apache Software Foundation</Copyright>
     <Description>The Lucene.Net command line interface (CLI) is a new cross-platform toolchain with utilities for maintaining Lucene.Net and demos for learning basic Lucene.Net functionality. Run 'lucene' to see usage information.</Description>
     <PackageTags>$(PackageTags);maintenance;utility</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
