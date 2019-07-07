@@ -42,6 +42,15 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             string[] uniqueValues = new string[numUniqueValues];
             byte[] buffer = new byte[50];
 
+            // This is essentially the equivalent of
+            // CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder()
+            //     .onUnmappableCharacter(CodingErrorAction.REPLACE)
+            //     .onMalformedInput(CodingErrorAction.REPLACE);
+            // 
+            // Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage, 
+            //     new EncoderReplacementFallback("?"), 
+            //     new DecoderReplacementFallback("?"));
+
             Random random = Random();
             for (int i = 0; i < numUniqueValues;)
             {
@@ -50,7 +59,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                uniqueValues[i] = Encoding.UTF8.GetString(buffer, 0, size);
+                Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,
+                    new EncoderReplacementFallback("?"),
+                    new DecoderReplacementFallback("?"));
+                uniqueValues[i] = decoder.GetString(buffer, 0, size);
                 // we cannot have empty path components, so eliminate all prefix as well
                 // as middle consecutive delimiter chars.
                 uniqueValues[i] = Regex.Replace(uniqueValues[i], "/+", "/");

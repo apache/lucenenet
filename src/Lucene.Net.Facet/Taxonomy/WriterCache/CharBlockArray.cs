@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,7 +36,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     // BinaryFormatter is not implemented in .NET Standard 1.x.
     internal class CharBlockArray : ICharSequence
     {
-        //private const long serialVersionUID = 1L; // LUCENENET: Not used
+        private const long serialVersionUID = 1L;
 
         private const int DEFAULT_BLOCK_SIZE = 32 * 1024; // 32 KB default size
 
@@ -44,7 +45,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             : System.ICloneable
 #endif
         {
-            //internal const long serialVersionUID = 1L; // LUCENENET: Not used
+            internal const long serialVersionUID = 1L;
 
             internal readonly char[] chars;
             internal int length;
@@ -64,8 +65,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
 
             // LUCENENET specific
-            public void Serialize(BinaryWriter writer)
+            public void Serialize(Stream writer)
             {
+                writer.Write(serialVersionUID); // Version of this object to use when deserializing
                 writer.Write(chars.Length);
                 writer.Write(chars);
                 writer.Write(length);
@@ -73,11 +75,23 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             // LUCENENET specific
             // Deserialization constructor
-            public Block(BinaryReader reader)
+            public Block(Stream reader)
             {
-                int charsLength = reader.ReadInt32();
-                this.chars = reader.ReadChars(charsLength);
-                this.length = reader.ReadInt32();
+                long serialVersion = reader.ReadInt64();
+
+                switch (serialVersion)
+                {
+                    case serialVersionUID:
+                        int charsLength = reader.ReadInt32();
+                        this.chars = reader.ReadChars(charsLength);
+                        this.length = reader.ReadInt32();
+                        break;
+
+                    // case 1L:
+                    // LUCENENET TODO: When object fields change, increment serialVersionUID and move the above block here for legacy support...
+                    default:
+                        throw new InvalidDataException($"Version {serialVersion} of {this.GetType().ToString()} deserialization is not supported.");
+                }
             }
         }
 
@@ -252,49 +266,56 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal virtual void Flush(Stream @out)
         {
-            using (var writer = new BinaryWriter(@out, new UTF8Encoding(false, true), true))
+            @out.Write(serialVersionUID); // version of this object to use when deserializing
+            @out.Write(blocks.Count);
+            int currentIndex = 0;
+            for (int i = 0; i < blocks.Count; i++)
             {
-                writer.Write(blocks.Count);
-                int currentIndex = 0;
-                for (int i = 0; i < blocks.Count; i++)
+                var block = blocks[i];
+                block.Serialize(@out);
+                if (block == current)
                 {
-                    var block = blocks[i];
-                    block.Serialize(writer);
-                    if (block == current)
-                    {
-                        currentIndex = i;
-                    }
+                    currentIndex = i;
                 }
-                // Write the index of the current block so we can
-                // set the reference when deserializing
-                writer.Write(currentIndex);
-                writer.Write(blockSize);
-                writer.Write(length);
-                writer.Flush();
             }
+            // Write the index of the current block so we can
+            // set the reference when deserializing
+            @out.Write(currentIndex);
+            @out.Write(blockSize);
+            @out.Write(length);
+            @out.Flush();
         }
 
         // LUCENENET specific
         // Deserialization constructor
-        internal CharBlockArray(BinaryReader reader)
+        internal CharBlockArray(Stream reader)
         {
-            var blocksCount = reader.ReadInt32();
-            this.blocks = new List<Block>(blocksCount);
-            for (int i = 0; i < blocksCount; i++)
+            long serialVersion = reader.ReadInt64();
+
+            switch (serialVersion)
             {
-                blocks.Add(new Block(reader));
+                case serialVersionUID:
+                    var blocksCount = reader.ReadInt32();
+                    this.blocks = new List<Block>(blocksCount);
+                    for (int i = 0; i < blocksCount; i++)
+                    {
+                        blocks.Add(new Block(reader));
+                    }
+                    this.current = blocks[reader.ReadInt32()];
+                    this.blockSize = reader.ReadInt32();
+                    this.length = reader.ReadInt32();
+                    break;
+
+                // case 1L:
+                // LUCENENET TODO: When object fields change, increment serialVersionUID and move the above block here for legacy support...
+                default:
+                    throw new InvalidDataException($"Version {serialVersion} of {this.GetType().ToString()} deserialization is not supported.");
             }
-            this.current = blocks[reader.ReadInt32()];
-            this.blockSize = reader.ReadInt32();
-            this.length = reader.ReadInt32();
         }
 
         public static CharBlockArray Open(Stream @in)
         {
-            using (var writer = new BinaryReader(@in, new UTF8Encoding(false, true), true))
-            {
-                return new CharBlockArray(writer);
-            }
+            return new CharBlockArray(@in);
         }
     }
 }

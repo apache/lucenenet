@@ -35,14 +35,25 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             byte[] buffer = new byte[50];
 
+            // This is essentially the equivalent of
+            // CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder()
+            //     .onUnmappableCharacter(CodingErrorAction.REPLACE)
+            //     .onMalformedInput(CodingErrorAction.REPLACE);
+            // 
+            // Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage, 
+            //     new EncoderReplacementFallback("?"), 
+            //     new DecoderReplacementFallback("?"));
+
             for (int i = 0; i < n; i++)
             {
                 Random().NextBytes(buffer);
                 int size = 1 + Random().Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-
-                string s = Encoding.UTF8.GetString(buffer, 0, size);
+                Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,
+                    new EncoderReplacementFallback("?"),
+                    new DecoderReplacementFallback("?"));
+                string s = decoder.GetString(buffer, 0, size);
                 array.Append(s);
                 builder.Append(s);
             }
@@ -53,7 +64,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int size = 1 + Random().Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                string s = Encoding.UTF8.GetString(buffer, 0, size);
+                Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,
+                    new EncoderReplacementFallback("?"),
+                    new DecoderReplacementFallback("?"));
+                string s = decoder.GetString(buffer, 0, size);
                 array.Append(s);
                 builder.Append(s);
             }
@@ -64,7 +78,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int size = 1 + Random().Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
-                string s = Encoding.UTF8.GetString(buffer, 0, size);
+                Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,
+                    new EncoderReplacementFallback("?"),
+                    new DecoderReplacementFallback("?"));
+                string s = decoder.GetString(buffer, 0, size);
                 for (int j = 0; j < s.Length; j++)
                 {
                     array.Append(s[j]);
