@@ -25,9 +25,6 @@
   <Import Project="$(SolutionDir)Version.proj" />
 
   <PropertyGroup>
-    <!--<TargetFrameworks>netcoreapp1.0;net451</TargetFrameworks>-->
-    <!--<TargetFramework>net451</TargetFramework>
-    <TargetFramework Condition=" '$(Configuration)' == 'Debug_NetCoreApp1_0' OR '$(Configuration)' == 'Release_NetCoreApp1_0' ">netcoreapp1.0</TargetFramework>-->
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
     
     <AssemblyTitle>Lucene.Net.Tests.Analysis.SmartCn</AssemblyTitle>
@@ -35,7 +32,6 @@
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
 
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <!--<Configurations>Debug;Release;Debug_NetCoreApp1_0;Release_NetCoreApp1_0</Configurations>-->
   </PropertyGroup>
 
   <ItemGroup>

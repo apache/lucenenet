@@ -34,7 +34,6 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <!--<Configurations>Debug;Release;Debug_NetCoreApp1_0;Release_NetCoreApp1_0</Configurations>-->
   </PropertyGroup>
 
   <ItemGroup>

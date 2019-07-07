@@ -37,7 +37,6 @@
     <DefineConstants>$(DefineConstants);FEATURE_BREAKITERATOR</DefineConstants>
 
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <!--<Configurations>Debug;Release;Debug_NetCoreApp1_0;Release_NetCoreApp1_0</Configurations>-->
   </PropertyGroup>
 
   <ItemGroup>
