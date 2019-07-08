@@ -29,7 +29,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: CLSCompliant(true)]
 
-// Besides strong naming, we still need InternalsVisibleTo in order to prevent making everything public just for the sake of testing.
+// We need InternalsVisibleTo in order to prevent making everything public just for the sake of testing.
 // This has broad implications because many methods are marked "protected internal", which means other assemblies
 // must update overridden methods to match.
 [assembly: InternalsVisibleTo("Lucene.Net.Tests, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]

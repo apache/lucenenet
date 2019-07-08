@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("5f36e3cf-82ac-4d97-af1a-6dabe60e9180")]
 
-// However, we need InternalsVisibleTo in order to prevent making everything public just for the sake of testing.
+// We need InternalsVisibleTo in order to prevent making everything public just for the sake of testing.
 // This has broad implications, though because many methods are marked "protected internal", which means other assemblies
 // must update overridden methods to match.
 [assembly: InternalsVisibleTo("Lucene.Net.Tests, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
