@@ -47,6 +47,14 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public class DefaultPostingsFormatFactory : NamedServiceFactory<PostingsFormat>, IPostingsFormatFactory, IServiceListable
     {
+        private static Type[] localPostingsFormatTypes = new Type[]
+        {
+            typeof(Lucene41.Lucene41PostingsFormat),
+#pragma warning disable 612, 618
+            typeof(Lucene40.Lucene40PostingsFormat),
+#pragma warning restore 612, 618
+        };
+
         // NOTE: The following 2 dictionaries are static, since this instance is stored in a static
         // variable in the Codec class.
         private readonly IDictionary<string, Type> postingsFormatNameToTypeMap = new Dictionary<string, Type>();
@@ -64,10 +72,11 @@ namespace Lucene.Net.Codecs
         /// </summary>
         protected override void Initialize()
         {
-            ScanForPostingsFormats(new Assembly[] {
-                typeof(Codec).GetTypeInfo().Assembly,
-                this.CodecsAssembly
-            });
+            foreach (var postingsFormatType in localPostingsFormatTypes)
+            {
+                PutPostingsFormatTypeImpl(postingsFormatType);
+            }
+            ScanForPostingsFormats(this.CodecsAssembly);
         }
 
         /// <summary>
@@ -179,9 +188,11 @@ namespace Lucene.Net.Codecs
             Type codecType;
             if (!postingsFormatNameToTypeMap.TryGetValue(name, out codecType) && codecType == null)
             {
-                throw new ArgumentException(string.Format("PostingsFormat '{0}' cannot be loaded. If the format is not " +
-                    "in a Lucene.Net assembly, you must subclass DefaultPostingsFormatFactory and call PutPostingsFormatType() " + 
-                    "or ScanForPostingsFormats() from the Initialize() method.", name));
+                throw new ArgumentException($"PostingsFormat '{name}' cannot be loaded. If the format is not " +
+                    $"in a Lucene.Net assembly, you must subclass {typeof(DefaultPostingsFormatFactory).FullName}, " +
+                    "override the Initialize() method, and call PutPostingsFormatType() or ScanForPostingsFormats() to add " +
+                    $"the type manually. Call {typeof(PostingsFormat).FullName}.SetPostingsFormatFactory() at application " +
+                    "startup to initialize your custom format.");
             }
 
             return codecType;

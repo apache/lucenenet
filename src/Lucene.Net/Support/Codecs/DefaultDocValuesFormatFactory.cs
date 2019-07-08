@@ -47,6 +47,14 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public class DefaultDocValuesFormatFactory : NamedServiceFactory<DocValuesFormat>, IDocValuesFormatFactory, IServiceListable
     {
+        private static Type[] localDocValuesFormatTypes = new Type[] {
+            typeof(Lucene45.Lucene45DocValuesFormat),
+#pragma warning disable 612, 618
+            typeof(Lucene42.Lucene42DocValuesFormat),
+            typeof(Lucene40.Lucene40DocValuesFormat),
+#pragma warning restore 612, 618
+        };
+
         // NOTE: The following 2 dictionaries are static, since this instance is stored in a static
         // variable in the Codec class.
         private readonly IDictionary<string, Type> docValuesFormatNameToTypeMap = new Dictionary<string, Type>();
@@ -64,10 +72,11 @@ namespace Lucene.Net.Codecs
         /// </summary>
         protected override void Initialize()
         {
-            ScanForDocValuesFormats(new Assembly[] {
-                typeof(Codec).GetTypeInfo().Assembly,
-                this.CodecsAssembly
-            });
+            foreach (var docValuesFormatType in localDocValuesFormatTypes)
+            {
+                PutDocValuesFormatTypeImpl(docValuesFormatType);
+            }
+            ScanForDocValuesFormats(this.CodecsAssembly);
         }
 
         /// <summary>
@@ -99,7 +108,7 @@ namespace Lucene.Net.Codecs
             {
                 if (IsServiceType(c))
                 {
-                    PutCodecTypeImpl(c);
+                    PutDocValuesFormatTypeImpl(c);
                 }
             }
         }
@@ -124,10 +133,10 @@ namespace Lucene.Net.Codecs
                 throw new ArgumentException("The supplied docValuesFormat does not subclass DocValuesFormat.");
             }
 
-            PutCodecTypeImpl(docValuesFormat);
+            PutDocValuesFormatTypeImpl(docValuesFormat);
         }
 
-        private void PutCodecTypeImpl(Type docValuesFormat)
+        private void PutDocValuesFormatTypeImpl(Type docValuesFormat)
         {
             string name = GetServiceName(docValuesFormat);
             docValuesFormatNameToTypeMap[name] = docValuesFormat;
@@ -179,9 +188,11 @@ namespace Lucene.Net.Codecs
             Type codecType;
             if (!docValuesFormatNameToTypeMap.TryGetValue(name, out codecType) && codecType == null)
             {
-                throw new ArgumentException(string.Format("DocValuesFormat '{0}' cannot be loaded. If the format is not " +
-                    "in a Lucene.Net assembly, you must subclass DefaultDocValuesFormatFactory and call PutDocValuesFormatType() " + 
-                    "or ScanForDocValuesFormats() from the Initialize() method.", name));
+                throw new ArgumentException($"DocValuesFormat '{name}' cannot be loaded. If the format is not " +
+                    $"in a Lucene.Net assembly, you must subclass {typeof(DefaultDocValuesFormatFactory).FullName}, " +
+                    "override the Initialize() method, and call PutDocValuesFormatType() or ScanForDocValuesFormats() to add " +
+                    $"the type manually. Call {typeof(DocValuesFormat).FullName}.SetDocValuesFormatFactory() at application " +
+                    "startup to initialize your custom format.");
             }
 
             return codecType;

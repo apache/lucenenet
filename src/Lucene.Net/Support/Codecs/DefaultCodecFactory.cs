@@ -47,6 +47,17 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public class DefaultCodecFactory : NamedServiceFactory<Codec>, ICodecFactory, IServiceListable
     {
+        private static Type[] localCodecTypes = new Type[] {
+            typeof(Lucene46.Lucene46Codec),
+#pragma warning disable 612, 618
+            typeof(Lucene3x.Lucene3xCodec), // Optimize 3.x codec over < 4.6 codecs
+            typeof(Lucene45.Lucene45Codec),
+            typeof(Lucene42.Lucene42Codec),
+            typeof(Lucene41.Lucene41Codec),
+            typeof(Lucene40.Lucene40Codec),
+#pragma warning restore 612, 618
+        };
+
         // NOTE: The following 2 dictionaries are static, since this instance is stored in a static
         // variable in the Codec class.
         private readonly IDictionary<string, Type> codecNameToTypeMap = new Dictionary<string, Type>();
@@ -64,10 +75,12 @@ namespace Lucene.Net.Codecs
         /// </summary>
         protected override void Initialize()
         {
-            ScanForCodecs(new Assembly[] {
-                typeof(Codec).GetTypeInfo().Assembly,
-                this.CodecsAssembly
-            });
+            foreach (var codecType in localCodecTypes)
+            {
+                PutCodecTypeImpl(codecType);
+            }
+            ScanForCodecs(this.CodecsAssembly);
+
         }
 
         /// <summary>
@@ -179,9 +192,11 @@ namespace Lucene.Net.Codecs
             Type codecType;
             if (!codecNameToTypeMap.TryGetValue(name, out codecType) && codecType == null)
             {
-                throw new ArgumentException(string.Format("Codec '{0}' cannot be loaded. If the codec is not " +
-                    "in a Lucene.Net assembly, you must subclass DefaultCodecFactory and call PutCodecType() or " + 
-                    "ScanForCodecs() from the Initialize() method.", name));
+                throw new ArgumentException($"Codec '{name}' cannot be loaded. If the codec is not " +
+                    $"in a Lucene.Net assembly, you must subclass {typeof(DefaultCodecFactory).FullName}, " +
+                    "override the Initialize() method, and call PutCodecType() or ScanForCodecs() to add " +
+                    $"the type manually. Call {typeof(Codec).FullName}.SetCodecFactory() at application " + 
+                    "startup to initialize your custom codec.");
             }
 
             return codecType;
