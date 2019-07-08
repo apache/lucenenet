@@ -67,24 +67,25 @@ namespace Lucene.Net.Search
             string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
 
             Small = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Small, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMergePolicy(NewLogMergePolicy()));
-
-            FieldType customType = new FieldType(TextField.TYPE_STORED);
-            customType.IsTokenized = false;
-            for (int i = 0; i < data.Length; i++)
+            using (RandomIndexWriter writer = new RandomIndexWriter(Random(), Small, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMergePolicy(NewLogMergePolicy())))
             {
-                Document doc = new Document();
-                doc.Add(NewField("id", Convert.ToString(i), customType)); // Field.Keyword("id",String.valueOf(i)));
-                doc.Add(NewField("all", "all", customType)); // Field.Keyword("all","all"));
-                if (null != data[i])
-                {
-                    doc.Add(NewTextField("data", data[i], Field.Store.YES)); // Field.Text("data",data[i]));
-                }
-                writer.AddDocument(doc);
-            }
 
-            Reader = writer.Reader;
-            writer.Dispose();
+                FieldType customType = new FieldType(TextField.TYPE_STORED);
+                customType.IsTokenized = false;
+                for (int i = 0; i < data.Length; i++)
+                {
+                    Document doc = new Document();
+                    doc.Add(NewField("id", Convert.ToString(i), customType)); // Field.Keyword("id",String.valueOf(i)));
+                    doc.Add(NewField("all", "all", customType)); // Field.Keyword("all","all"));
+                    if (null != data[i])
+                    {
+                        doc.Add(NewTextField("data", data[i], Field.Store.YES)); // Field.Text("data",data[i]));
+                    }
+                    writer.AddDocument(doc);
+                }
+
+                Reader = writer.Reader;
+            }
         }
 
         [OneTimeTearDown]

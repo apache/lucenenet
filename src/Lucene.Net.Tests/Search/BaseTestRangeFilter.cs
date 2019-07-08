@@ -116,10 +116,10 @@ namespace Lucene.Net.Search
         [OneTimeTearDown]
         public override void AfterClass() // LUCENENET specific: renamed from AfterClassBaseTestRangeFilter() so we can override to control the order of execution
         {
-            SignedIndexReader.Dispose();
-            UnsignedIndexReader.Dispose();
-            SignedIndexDir.Index.Dispose();
-            UnsignedIndexDir.Index.Dispose();
+            SignedIndexReader?.Dispose();
+            UnsignedIndexReader?.Dispose();
+            SignedIndexDir.Index?.Dispose();
+            UnsignedIndexDir.Index?.Dispose();
             SignedIndexReader = null;
             UnsignedIndexReader = null;
             SignedIndexDir = null;
