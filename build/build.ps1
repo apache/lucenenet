@@ -196,7 +196,7 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 
 	try {
 		pushd $base_directory
-		$packages = Get-ChildItem -Path "$source_directory\**\*.csproj" -Recurse | ? { 
+		$packages = Get-ChildItem -Path "$source_directory\**\*.csproj" -Recurse -Exclude LuceneDocsPlugins.csproj | ? { 
 			!$_.Directory.Name.Contains(".Test") -and 
 			!$_.Directory.Name.Contains(".Demo") -and 
 			!$_.Directory.FullName.Contains("\tools\") -and 
