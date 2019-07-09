@@ -107,6 +107,9 @@ namespace Lucene.Net.Support
         public HashMap(IEnumerable<KeyValuePair<TKey, TValue>> other)
             : this(0)
         {
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
             foreach (var kvp in other)
             {
                 Add(kvp.Key, kvp.Value);
@@ -115,8 +118,12 @@ namespace Lucene.Net.Support
 
         internal HashMap(IDictionary<TKey, TValue> wrappedDict, IEqualityComparer<TKey> comparer)
         {
-            // LUCENENET TODO: Is this a bug? Shouldn't we be using the passed in comparer if non-null?
-            _comparer = /* comparer ?? */ EqualityComparer<TKey>.Default;
+            if (wrappedDict == null)
+                throw new ArgumentNullException(nameof(wrappedDict));
+            if (comparer == null)
+                throw new ArgumentNullException(nameof(comparer));
+
+            _comparer = comparer;
             _dict = wrappedDict;
             _hasNullValue = false;
 

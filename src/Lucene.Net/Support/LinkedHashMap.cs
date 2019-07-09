@@ -69,25 +69,27 @@ namespace Lucene.Net.Support
         #region Constructors
 
         public LinkedHashMap()
+            : this(0, EqualityComparer<TKey>.Default)
         {
-            dict = new HashMap<TKey, LinkedListNode<KeyValuePair<TKey, TValue>>>();
-            list = new LinkedList<KeyValuePair<TKey, TValue>>();
         }
 
         public LinkedHashMap(IEqualityComparer<TKey> comparer)
+            : this(0, comparer)
         {
-            dict = new HashMap<TKey, LinkedListNode<KeyValuePair<TKey, TValue>>>(comparer);
-            list = new LinkedList<KeyValuePair<TKey, TValue>>();
         }
 
         public LinkedHashMap(int capacity)
+            : this(capacity, EqualityComparer<TKey>.Default)
         {
-            dict = new HashMap<TKey, LinkedListNode<KeyValuePair<TKey, TValue>>>(capacity);
-            list = new LinkedList<KeyValuePair<TKey, TValue>>();
         }
 
         public LinkedHashMap(int capacity, IEqualityComparer<TKey> comparer)
         {
+            if (capacity < 0)
+                throw new ArgumentOutOfRangeException($"{nameof(capacity)} must be 0 or greater.");
+            if (comparer == null)
+                throw new ArgumentNullException(nameof(comparer));
+
             dict = new HashMap<TKey, LinkedListNode<KeyValuePair<TKey, TValue>>>(capacity, comparer);
             list = new LinkedList<KeyValuePair<TKey, TValue>>();
         }
@@ -95,9 +97,8 @@ namespace Lucene.Net.Support
         public LinkedHashMap(IEnumerable<KeyValuePair<TKey, TValue>> source)
         {
             if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
+                throw new ArgumentNullException(nameof(source));
+
             var countable = source as ICollection;
             if (countable != null)
             {
@@ -117,9 +118,10 @@ namespace Lucene.Net.Support
         public LinkedHashMap(IEnumerable<KeyValuePair<TKey, TValue>> source, IEqualityComparer<TKey> comparer)
         {
             if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
+                throw new ArgumentNullException(nameof(source));
+            if (comparer == null)
+                throw new ArgumentNullException(nameof(comparer));
+
             var countable = source as ICollection;
             if (countable != null)
             {
