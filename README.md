@@ -92,9 +92,11 @@ PM> Install-Package Lucene.Net -Pre
 
 [Lucene.Net WIKI](https://cwiki.apache.org/confluence/display/LUCENENET/Lucene.Net)
 
-We don't yet have API documentation for Lucene.Net 4.8.0, but the API is similar to [Lucene 4.8.0](https://lucene.apache.org/core/4_8_0/). 
+We now have some preliminary documentation for Lucene.Net 4.8.0 [on the Lucene.Net Website](https://lucenenet.apache.org/).
 
-> NOTE: We are working on this, but could use more help since it is a massive project. See [#206](https://github.com/apache/lucenenet/pull/206).
+The API is similar to Java [Lucene 4.8.0](https://lucene.apache.org/core/4_8_0/), which you may also find helpful to review.
+
+> NOTE: We are working on fixing issues with the documentation, but could use more help since it is a massive project. See [#206](https://github.com/apache/lucenenet/pull/206).
 
 ### Legacy Versions
 
