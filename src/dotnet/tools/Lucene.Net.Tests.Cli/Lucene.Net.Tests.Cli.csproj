@@ -22,11 +22,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)Version.proj" />
-  <Import Project="..\..\..\..\Version.proj" />
-  <PropertyGroup>
-    <!-- Override AssemblyOriginatorKeyFile specified in Version.proj because we're deeper from the root -->
-    <AssemblyOriginatorKeyFile>..\..\..\..\Lucene.Net.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>

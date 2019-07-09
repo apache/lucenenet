@@ -26,4 +26,10 @@
       SolutionDir is only available when running in the IDE, so we patch to ensure it also works when using dotnet.exe -->
     <SolutionDir>$(MSBuildThisFileDirectory)../../../</SolutionDir>
   </PropertyGroup>
+
+  <PropertyGroup Label="Assembly Signing">
+    <!-- This is the default location of Lucene.Net.snk relative to the project directory.
+      If the project is further nested from the repo root, override this value in the csproj. -->
+    <AssemblyOriginatorKeyFile>$(SolutionDir)Lucene.Net.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
 </Project>

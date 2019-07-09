@@ -24,11 +24,6 @@
   <Import Project="$(SolutionDir)Version.proj" />
   <!-- For now, we are not deploying this to NuGet.org -->
   <!--<Import Project="$(SolutionDir)build/NuGet.props" />-->
-  <Import Project="..\..\..\Version.proj" />
-  <PropertyGroup>
-    <!-- Override AssemblyOriginatorKeyFile specified in Version.proj because we're deeper from the root -->
-    <AssemblyOriginatorKeyFile>..\..\..\Lucene.Net.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
   
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -32,12 +33,12 @@ using System.Runtime.CompilerServices;
 // We need InternalsVisibleTo in order to prevent making everything public just for the sake of testing.
 // This has broad implications because many methods are marked "protected internal", which means other assemblies
 // must update overridden methods to match.
-[assembly: InternalsVisibleTo("Lucene.Net.Tests, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
-[assembly: InternalsVisibleTo("Lucene.Net.TestFramework, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
-[assembly: InternalsVisibleTo("Lucene.Net.Misc, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.ICU, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)] // For Analysis.Util.TestSegmentingTokenizerBase
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.QueryParser, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Cli, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)] // For lucene-cli
+[assembly: InternalsVisibleTo("Lucene.Net.Tests, PublicKey=" + AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.TestFramework, PublicKey=" + AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Misc, PublicKey=" + AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.ICU, PublicKey=" + AssemblyKeys.PublicKey)] // For Analysis.Util.TestSegmentingTokenizerBase
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc, PublicKey=" + AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.QueryParser, PublicKey=" + AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Cli, PublicKey=" + AssemblyKeys.PublicKey)] // For lucene-cli
 
 // NOTE: Version information is in CommonAssemblyInfo.cs

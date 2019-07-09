@@ -19,6 +19,7 @@
  *
 */
 
+using Lucene.Net.Support;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -41,6 +42,6 @@ using System.Runtime.InteropServices;
 [assembly: Guid("b2a3a8e1-a92a-4bd6-9f87-7747470615c3")]
 
 // for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc, PublicKey=" + AssemblyKeys.PublicKey)]
 
 // NOTE: Version information is in CommonAssemblyInfo.cs

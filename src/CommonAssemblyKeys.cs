@@ -18,11 +18,11 @@
 using System;
 using System.Reflection;
 
-namespace Lucene.Net
+namespace Lucene.Net.Support
 {
     internal static class AssemblyKeys
     {
-        internal const string PublicKey =
+        public const string PublicKey =
             "002400000480000094000000060200000024000052534131000400000100010075a07ce602f88e" +
             "f263c7db8cb342c58ebd49ecdcc210fac874260b0213fb929ac3dcaf4f5b39744b800f99073eca" +
             "72aebfac5f7284e1d5f2c82012a804a140f06d7d043d83e830cdb606a04da2ad5374cc92c0a495" +

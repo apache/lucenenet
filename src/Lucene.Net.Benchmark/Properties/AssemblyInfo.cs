@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-
+using Lucene.Net.Support;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -38,6 +38,6 @@ using System.Runtime.InteropServices;
 [assembly: Guid("edc77cb4-597f-4818-8c83-3c006d12c384")]
 
 // for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Benchmark, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Benchmark, PublicKey=" + AssemblyKeys.PublicKey)]
 
 // NOTE: Version information is in CommonAssemblyInfo.cs

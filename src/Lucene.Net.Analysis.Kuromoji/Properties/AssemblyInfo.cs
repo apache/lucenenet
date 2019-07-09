@@ -15,6 +15,7 @@
 * limitations under the License.
 */
 
+using Lucene.Net.Support;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -37,6 +38,6 @@ using System.Runtime.InteropServices;
 [assembly: Guid("8408625a-2508-46d5-8519-045183c43724")]
 
 // for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Kuromoji, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Kuromoji, PublicKey=" + AssemblyKeys.PublicKey)]
 
 // NOTE: Version information is in CommonAssemblyInfo.cs

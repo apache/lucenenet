@@ -31,11 +31,6 @@
     <!-- .NET enforces AssemblyVersion as the "major" version (when strong-named),
       so AssemblyVersion should only be changed for each major version release. -->
     <AssemblyVersion>4.0.0</AssemblyVersion>
-
-    <!-- This is the default location of Lucene.Net.snk relative to the project directory.
-      If the project is further nested from the repo root, override this value in the csproj. -->
-    <AssemblyOriginatorKeyFile>..\..\Lucene.Net.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
 </Project>

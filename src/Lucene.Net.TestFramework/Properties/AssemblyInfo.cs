@@ -19,6 +19,7 @@
  *
 */
 
+using Lucene.Net.Support;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -40,7 +41,7 @@ using System.Runtime.InteropServices;
 // We need InternalsVisibleTo in order to prevent making everything public just for the sake of testing.
 // This has broad implications, though because many methods are marked "protected internal", which means other assemblies
 // must update overridden methods to match.
-[assembly: InternalsVisibleTo("Lucene.Net.Tests, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc, PublicKey=" + Lucene.Net.AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests, PublicKey=" + AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc, PublicKey=" + AssemblyKeys.PublicKey)]
 
 // NOTE: Version information is in CommonAssemblyInfo.cs

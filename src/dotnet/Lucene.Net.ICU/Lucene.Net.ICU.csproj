@@ -23,12 +23,7 @@
 
   <Import Project="$(SolutionDir)Version.proj" />
   <Import Project="$(SolutionDir)build/NuGet.props" />
-  <Import Project="..\..\..\Version.proj" />
-  <PropertyGroup>
-    <!-- Override AssemblyOriginatorKeyFile specified in Version.proj because we're deeper from the root -->
-    <AssemblyOriginatorKeyFile>..\..\..\Lucene.Net.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  
+
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net45</TargetFrameworks>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
