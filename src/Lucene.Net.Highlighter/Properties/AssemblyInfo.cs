@@ -46,4 +46,4 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Highlighter, PublicKey=" + AssemblyKeys.PublicKey)]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.ICU, PublicKey=" + AssemblyKeys.PublicKey)]
 
-// NOTE: Version information is in CommonAssemblyInfo.cs
+

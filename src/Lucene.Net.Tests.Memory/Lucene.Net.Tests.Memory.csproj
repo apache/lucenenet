@@ -30,12 +30,9 @@
     <AssemblyTitle>Lucene.Net.Tests.Memory</AssemblyTitle>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
-
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
     <EmbeddedResource Include="Index\Memory\testqueries.txt;Index\Memory\testqueries2.txt" />
   </ItemGroup>
 

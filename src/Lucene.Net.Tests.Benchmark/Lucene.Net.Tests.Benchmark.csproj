@@ -30,12 +30,9 @@
     <AssemblyTitle>Lucene.Net.Tests.Benchmark</AssemblyTitle>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
-
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
     <EmbeddedResource Include="ByTask\Feeds\trecdocs.zip;ByTask\conf.zip;ByTask\reuters.first20.lines.txt;ByTask\test-mapping-ISOLatin1Accent-partial.txt;Quality\reuters.578.lines.txt.bz2;Quality\trecQRels.txt;Quality\trecTopics.txt" />
   </ItemGroup>
 

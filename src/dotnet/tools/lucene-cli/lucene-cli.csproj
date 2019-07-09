@@ -37,12 +37,9 @@
     <PackageTags>$(PackageTags);maintenance;utility</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
-
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
     <!--<EmbeddedResource Include="..\..\..\Lucene.Net.Benchmark\ByTask\Programmatic\Sample.cs;..\..\..\Lucene.Net.Demo\*.cs;..\..\..\Lucene.Net.Demo\Facet\*.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />-->
     <EmbeddedResource Include="..\..\..\Lucene.Net.Benchmark\ByTask\Programmatic\Sample.cs" Link="Resources\Sample.cs" />
     <EmbeddedResource Include="..\..\..\Lucene.Net.Demo\*.cs" Exclude="bin\**;obj\**;packages\**;@(EmbeddedResource)" />

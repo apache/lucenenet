@@ -30,12 +30,9 @@
     <AssemblyTitle>Lucene.Net.Tests.QueryParser</AssemblyTitle>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
-
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
     <EmbeddedResource Include="Xml\albumBooleanQuery.xsl;Xml\albumFilteredQuery.xsl;Xml\albumLuceneClassicQuery.xsl;Xml\BooleanFilter.xml;Xml\BooleanQuery.xml;Xml\BoostingQuery.xml;Xml\BoostingTermQuery.xml;Xml\CachedFilter.xml;Xml\ConstantScoreQuery.xml;Xml\DisjunctionMaxQuery.xml;Xml\DuplicateFilterQuery.xml;Xml\FuzzyLikeThisQuery.xml;Xml\LikeThisQuery.xml;Xml\MatchAllDocsQuery.xml;Xml\NestedBooleanQuery.xml;Xml\NumericRangeFilterQuery.xml;Xml\NumericRangeQueryQuery.xml;Xml\RangeFilterQuery.xml;Xml\reuters21578.txt;Xml\SpanQuery.xml;Xml\TermQuery.xml;Xml\TermsFilterQuery.xml;Xml\TermsQuery.xml;Xml\UserInputQuery.xml;Xml\UserInputQueryCustomField.xml" />
   </ItemGroup>
 

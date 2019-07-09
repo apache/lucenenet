@@ -33,12 +33,9 @@
     <PackageTags>$(PackageTags);analysis;soundex;double;metaphone;sounds;like;beider;morse;cologne;caverphone;nysiis;match;rating</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
-
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="..\CommonAssemblyKeys.cs" Link="Properties\CommonAssemblyKeys.cs" />
     <EmbeddedResource Include="Language\Bm\lang.txt;Language\dmrules.txt" />
     <EmbeddedResource Include="Language\Bm\ash_*.txt;Language\Bm\gen_*.txt;Language\Bm\sep_*.txt" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />

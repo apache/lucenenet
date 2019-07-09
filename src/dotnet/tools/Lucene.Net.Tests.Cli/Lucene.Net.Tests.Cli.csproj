@@ -29,13 +29,10 @@
     <AssemblyTitle>Lucene.Net.Tests.Cli</AssemblyTitle>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
-    
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="SourceCode\TestInputForParser.cs" />
-    <Compile Include="..\..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" Exclude="SourceCode\TestInputForParser.cs" />
     <EmbeddedResource Include="SourceCode\TestInputForParser.cs" />
   </ItemGroup>
 

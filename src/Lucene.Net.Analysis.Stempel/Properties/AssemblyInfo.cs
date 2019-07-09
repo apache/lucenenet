@@ -44,4 +44,4 @@ using System.Runtime.InteropServices;
 // for testing
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Stempel, PublicKey=" + AssemblyKeys.PublicKey)]
 
-// NOTE: Version information is in CommonAssemblyInfo.cs
+

@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("39e5e0c8-c1d3-4583-b9f7-8fbd695e5601")]
 
-// NOTE: Version information is in CommonAssemblyInfo.cs
+
 
 
 // LUCENENET specific - only allow tests in this assembly to run one at a time

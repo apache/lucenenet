@@ -33,12 +33,9 @@
     <PackageTags>$(PackageTags);expression</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
-
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
     <None Include="App.config" />
   </ItemGroup>
 
@@ -73,9 +70,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' OR '$(TargetFramework)' == 'netstandard2.0' ">
-    <!-- LUCENENET TODO: Do we really need to remove and re-add CommonAssemblyInfo just to use Exclude? -->
-    <Compile Remove="Properties\Settings.Designer.cs;..\CommonAssemblyInfo.cs" />
-    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" Exclude="Properties\Settings.Designer.cs" />
+    <Compile Remove="Properties\Settings.Designer.cs" />
     <EmbeddedResource Include="JS\JavascriptCompiler.properties" />
   </ItemGroup>
 

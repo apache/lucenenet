@@ -35,12 +35,9 @@
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <DefineConstants>$(DefineConstants);FEATURE_BREAKITERATOR</DefineConstants>
-
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\**\*.cs" LinkBase="Analysis\Th" />
     <EmbeddedResource Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\stopwords.txt" Link="Analysis\Th\stopwords.txt" />
     <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Util\CharArrayIterator.cs" Link="Analysis\Util\CharArrayIterator.cs" />

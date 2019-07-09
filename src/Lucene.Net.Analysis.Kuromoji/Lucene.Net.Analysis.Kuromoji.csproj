@@ -33,12 +33,9 @@
     <PackageTags>$(PackageTags);analysis;japanese</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
-
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="..\CommonAssemblyKeys.cs" Link="Properties\CommonAssemblyKeys.cs" />
     <EmbeddedResource Include="stoptags.txt;stopwords.txt;Dict\CharacterDefinition.dat;Dict\ConnectionCosts.dat;Dict\TokenInfoDictionary$buffer.dat;Dict\TokenInfoDictionary$fst.dat;Dict\TokenInfoDictionary$posDict.dat;Dict\TokenInfoDictionary$targetMap.dat;Dict\UnknownDictionary$buffer.dat;Dict\UnknownDictionary$posDict.dat;Dict\UnknownDictionary$targetMap.dat" />
   </ItemGroup>

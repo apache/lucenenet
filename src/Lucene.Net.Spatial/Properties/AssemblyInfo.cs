@@ -41,4 +41,4 @@ using System.Security;
 // for testing
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Spatial, PublicKey=" + AssemblyKeys.PublicKey)]
 
-// NOTE: Version information is in CommonAssemblyInfo.cs
+

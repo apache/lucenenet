@@ -33,12 +33,9 @@
     <PackageTags>$(PackageTags);analysis;chinese;smart</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
-
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
     <EmbeddedResource Include="stopwords.txt" />
     <EmbeddedResource Include="Hhmm\bigramdict.mem" />
     <EmbeddedResource Include="Hhmm\coredict.mem" />

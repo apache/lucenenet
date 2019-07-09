@@ -41,4 +41,4 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.QueryParser, PublicKey=" + AssemblyKeys.PublicKey)]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Cli, PublicKey=" + AssemblyKeys.PublicKey)] // For lucene-cli
 
-// NOTE: Version information is in CommonAssemblyInfo.cs
+

@@ -29,7 +29,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDefaultAlias("Lucene.Net.Tests")]
 [assembly: AssemblyCulture("")]
 
-// NOTE: Version information is in CommonAssemblyInfo.cs
+
 
 // LUCENENET specific - only allow tests in this assembly to run one at a time
 // to prevent polluting shared state.

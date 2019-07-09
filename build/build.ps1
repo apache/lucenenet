@@ -18,15 +18,15 @@
 # -----------------------------------------------------------------------------------
 
 properties {
-	[string]$base_directory   = Resolve-Path "..\."
-	[string]$release_directory  = "$base_directory\release"
+	[string]$base_directory   = Resolve-Path "../."
+	[string]$release_directory  = "$base_directory/release"
 	[string]$source_directory = "$base_directory"
-	[string]$tools_directory  = "$base_directory\lib"
-	[string]$nuget_package_directory = "$release_directory\NuGetPackages"
-	[string]$test_results_directory = "$release_directory\TestResults"
-	[string]$publish_directory = "$release_directory\Publish"
-	[string]$solutionFile = "$base_directory\Lucene.Net.sln"
-	[string]$versionFile = "$base_directory\Version.proj"
+	[string]$tools_directory  = "$base_directory/lib"
+	[string]$nuget_package_directory = "$release_directory/NuGetPackages"
+	[string]$test_results_directory = "$release_directory/TestResults"
+	[string]$publish_directory = "$release_directory/Publish"
+	[string]$solutionFile = "$base_directory/Lucene.Net.sln"
+	[string]$versionFile = "$base_directory/Version.proj"
 	[string]$sdkPath = "$env:programfiles/dotnet/sdk"
 	[string]$sdkVersion = "2.1.505"
 	[string]$globalJsonFile = "$base_directory/global.json"
@@ -41,8 +41,7 @@ properties {
 	[bool]$prepareForBuild    = $true
 	[bool]$generateBuildBat   = $false
 
-	[string]$common_assembly_info = "$base_directory\src\CommonAssemblyInfo.cs"
-	[string]$build_bat = "$base_directory\build.bat"
+	[string]$build_bat = "$base_directory/build.bat"
 	[string]$copyright_year = [DateTime]::Today.Year.ToString() #Get the current year from the system
 	[string]$copyright = "Copyright " + $([char]0x00A9) + " 2006 - $copyright_year The Apache Software Foundation"
 	[string]$company_name = "The Apache Software Foundation"
@@ -63,7 +62,7 @@ task Clean -description "This task cleans up the build directory" {
 	Get-ChildItem $base_directory -Include *.bak -Recurse | foreach ($_) {Remove-Item $_.FullName}
 }
 
-task UpdateLocalSDKVersion -description "Backs up the project.json file and updates the version" {
+task UpdateLocalSDKVersion -description "Backs up the project.json file and pins the version to $sdkVersion" {
 	Backup-File $globalJsonFile
 	Generate-Global-Json `
 		-sdkVersion $sdkVersion `
@@ -176,6 +175,7 @@ task Compile -depends Clean, Init, Restore -description "This task compiles the 
 			& dotnet.exe msbuild $solutionFile /t:Build `
 				/p:Configuration=$configuration `
 				/p:AssemblyVersion=$assemblyVersion `
+				/p:FileVersion=$version `
 				/p:InformationalVersion=$pv `
 				/p:Product=$product_name `
 				/p:Company=$company_name `
@@ -214,7 +214,7 @@ task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -descri
 	Write-Host "Running tests..." -ForegroundColor DarkCyan
 
 	pushd $base_directory
-	$testProjects = Get-ChildItem -Path "$source_directory\**\*.csproj" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
+	$testProjects = Get-ChildItem -Path "$source_directory/**/*.csproj" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
 	popd
 
 	Write-Host "frameworks_to_test: $frameworks_to_test" -ForegroundColor Yellow
@@ -232,7 +232,7 @@ task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -descri
 				continue
 			}
 
-			$testResultDirectory = "$test_results_directory\$framework\$testName"
+			$testResultDirectory = "$test_results_directory/$framework/$testName"
 			Ensure-Directory-Exists $testResultDirectory
 
 			if ($framework.StartsWith("netcore")) {
@@ -253,18 +253,18 @@ task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -descri
 				$projectDirectory = $testProject.DirectoryName
 				Write-Host "Directory: $projectDirectory" -ForegroundColor Green
 
-				$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
+				$binaryRoot = "$projectDirectory/bin/$configuration/$framework"
 
-				$testBinary = "$binaryRoot\win7-x64\$testName.dll"
+				$testBinary = "$binaryRoot/win7-x64/$testName.dll"
 				if (-not (Test-Path $testBinary)) {
-					$testBinary = "$binaryRoot\win7-x32\$testName.dll"
+					$testBinary = "$binaryRoot/win7-x32/$testName.dll"
 				}
 				if (-not (Test-Path $testBinary)) {
-					$testBinary = "$binaryRoot\$testName.dll"
+					$testBinary = "$binaryRoot/$testName.dll"
 				} 
 
-				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary --teamcity"
-				$testExpression = "$testExpression --result:$testResultDirectory\TestResult.xml"
+				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0/tools/nunit3-console.exe $testBinary --teamcity"
+				$testExpression = "$testExpression --result:$testResultDirectory/TestResult.xml"
 
 				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
 					$testExpression = "$testExpression --where=$where"
@@ -292,7 +292,7 @@ function Get-Package-Version() {
 		return $env:PackageVersion
 	} else {
 		#Get the version info
-		$versionFile = "$base_directory\Version.proj"
+		$versionFile = "$base_directory/Version.proj"
 		$xml = [xml](Get-Content $versionFile)
 
 		$versionPrefix = $xml.Project.PropertyGroup.VersionPrefix
@@ -356,12 +356,6 @@ function Is-Sdk-Version-Installed([string]$sdkVersion) {
 }
 
 function Prepare-For-Build() {
-	Backup-File $common_assembly_info 
-
-	Generate-Assembly-Info `
-		-version $version `
-		-file $common_assembly_info
-
 	Update-Constants-Version $packageVersion
 
 	if ($generateBuildBat -eq $true) {
@@ -371,7 +365,7 @@ function Prepare-For-Build() {
 }
 
 function Update-Constants-Version([string]$version) {
-	$constantsFile = "$base_directory\src\Lucene.Net\Util\Constants.cs"
+	$constantsFile = "$base_directory/src/Lucene.Net/Util/Constants.cs"
 
 	Backup-File $constantsFile
 	(Get-Content $constantsFile) | % {
@@ -396,40 +390,6 @@ $fileText = "{
 
 	Write-Host "Generating global.json file: $file"
 	Out-File -filePath $file -encoding UTF8 -inputObject $fileText
-}
-
-function Generate-Assembly-Info {
-param(
-	[string]$version,
-	[string]$file = $(throw "file is a required parameter.")
-)
-
-  $asmInfo = "/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the ""License""); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an ""AS IS"" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using System;
-using System.Reflection;
-
-[assembly: AssemblyFileVersion(""$version"")]
-"
-	$dir = [System.IO.Path]::GetDirectoryName($file)
-	Ensure-Directory-Exists $dir
-
-	Write-Host "Generating assembly info file: $file"
-	Out-File -filePath $file -encoding UTF8 -inputObject $asmInfo
 }
 
 function Generate-Build-Bat {

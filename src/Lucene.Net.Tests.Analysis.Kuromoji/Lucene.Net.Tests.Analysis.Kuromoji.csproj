@@ -30,12 +30,9 @@
     <AssemblyTitle>Lucene.Net.Tests.Analysis.Kuromoji</AssemblyTitle>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
-
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
     <EmbeddedResource Include="bocchan.utf-8;search-segmentation-tests.txt;userdict.txt;Tools\custom-dictionary-input.zip" />
   </ItemGroup>
 
