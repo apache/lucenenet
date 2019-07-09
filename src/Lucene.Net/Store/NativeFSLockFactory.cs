@@ -90,8 +90,8 @@ namespace Lucene.Net.Store
 
 		// LUCENENET: NativeFSLocks in Java are infact singletons; this is how we mimick that to track instances and make sure
 		// IW.Unlock and IW.IsLocked works correctly
-        private static readonly Dictionary<string, Lock> locks = new Dictionary<string, Lock>();
-        private static readonly object locksSyncLock = new object();
+        internal static readonly Dictionary<string, Lock> locks = new Dictionary<string, Lock>();
+        internal static readonly object syncLock = new object();
 
 		/// <summary>
 		/// Given a lock name, return the full prefixed path of the actual lock file.
@@ -111,7 +111,7 @@ namespace Lucene.Net.Store
         {
             var path = GetCanonicalPathOfLockFile(lockName);
             Lock l;
-			lock (locksSyncLock)
+			lock (syncLock)
 			{
 				if (!locks.TryGetValue(path, out l))
 					locks.Add(path, l = NewLock(path));
@@ -135,7 +135,7 @@ namespace Lucene.Net.Store
             Lock l;
 			// this is the reason why we can't use ConcurrentDictionary: we need the removal and disposal of the lock to be atomic
 			// otherwise it may clash with MakeLock making a lock and ClearLock disposing of it in another thread.
-			lock (locksSyncLock)
+			lock (syncLock)
 			{
 				if (locks.TryGetValue(path, out l))
 				{
@@ -474,7 +474,8 @@ namespace Lucene.Net.Store
                     // the lock instance from the dictionary that tracks them.
                     try
                     {
-						outerInstance?.ClearLock(path);
+                        lock (NativeFSLockFactory.syncLock)
+                            NativeFSLockFactory.locks.Remove(path);
                     }
                     finally
                     {

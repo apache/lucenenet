@@ -199,7 +199,7 @@ namespace Lucene.Net.Store
         }
 
         // Verify: NativeFSLockFactory works correctly
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestNativeFSLockFactory()
         {
             var f = new NativeFSLockFactory(CreateTempDir("testNativeFsLockFactory"));
