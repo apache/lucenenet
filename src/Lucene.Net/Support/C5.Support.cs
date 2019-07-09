@@ -3967,7 +3967,7 @@ namespace Lucene.Net.Support.C5
         /// <item><description>If the actual generic argument T implements 
         /// <see cref="T:C5.ICollection`1"/> for some value W of its generic parameter T,
         /// the equalityComparer will be <see cref="T:C5.UnsequencedCollectionEqualityComparer`2"/></description></item>
-        /// <item><description>Otherwise the Support.EqualityComparer&lt;T&gt;.Default is returned</description></item>
+        /// <item><description>Otherwise the SCG.EqualityComparer&lt;T&gt;.Default is returned</description></item>
         /// </list>   
         /// </summary>
         /// <value>The comparer</value>
@@ -4005,7 +4005,7 @@ namespace Lucene.Net.Support.C5
                     return CreateAndCache(UnsequencedCollectionEqualityComparer.MakeGenericType(new[] { type, icollection.GetGenericArguments()[0] }));
                 }
 
-                return _default = Support.EqualityComparer<T>.Default;
+                return _default = SCG.EqualityComparer<T>.Default;
             }
         }
 

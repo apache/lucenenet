@@ -416,7 +416,7 @@ namespace Lucene.Net.Support.RBTreeSet
         [Test, LuceneNetSpecific]
         public void NullEqualityComparerinConstructor3()
         {
-            Assert.Throws<NullReferenceException>(() => new TreeSet<int>(null, Support.EqualityComparer<int>.Default));
+            Assert.Throws<NullReferenceException>(() => new TreeSet<int>(null, EqualityComparer<int>.Default));
         }
 
         [Test, LuceneNetSpecific]
@@ -2784,9 +2784,9 @@ namespace Lucene.Net.Support.RBTreeSet
             [SetUp]
             public void Init()
             {
-                dit = new TreeSet<int>(SCG.Comparer<int>.Default, Support.EqualityComparer<int>.Default);
-                dat = new TreeSet<int>(SCG.Comparer<int>.Default, Support.EqualityComparer<int>.Default);
-                dut = new TreeSet<int>(new RevIC(), Support.EqualityComparer<int>.Default);
+                dit = new TreeSet<int>(SCG.Comparer<int>.Default, EqualityComparer<int>.Default);
+                dat = new TreeSet<int>(SCG.Comparer<int>.Default, EqualityComparer<int>.Default);
+                dut = new TreeSet<int>(new RevIC(), EqualityComparer<int>.Default);
             }
 
 
@@ -2880,9 +2880,9 @@ namespace Lucene.Net.Support.RBTreeSet
             [SetUp]
             public void Init()
             {
-                dit = new TreeSet<int>(SCG.Comparer<int>.Default, Support.EqualityComparer<int>.Default);
-                dat = new TreeSet<int>(SCG.Comparer<int>.Default, Support.EqualityComparer<int>.Default);
-                dut = new TreeSet<int>(new RevIC(), Support.EqualityComparer<int>.Default);
+                dit = new TreeSet<int>(SCG.Comparer<int>.Default, EqualityComparer<int>.Default);
+                dat = new TreeSet<int>(SCG.Comparer<int>.Default, EqualityComparer<int>.Default);
+                dut = new TreeSet<int>(new RevIC(), EqualityComparer<int>.Default);
             }
 
 

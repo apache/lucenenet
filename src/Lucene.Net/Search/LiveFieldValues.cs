@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
             // First try to get the "live" value:
             T value;
             current.TryGetValue(id, out value);
-            var comparer = Support.EqualityComparer<T>.Default;
+            var comparer = EqualityComparer<T>.Default;
             if (comparer.Equals(value, missingValue))
             {
                 // Deleted but the deletion is not yet reflected in

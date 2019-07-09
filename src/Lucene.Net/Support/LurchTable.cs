@@ -91,7 +91,7 @@ namespace Lucene.Net.Support
         /// <summary>Creates a LurchTable that can store up to <paramref name="capacity"/> items efficiently.</summary>
         /// <param name="capacity">The initial allowable number of items before allocation of more memory</param>
         /// <param name="ordering">The type of linking for the items</param>
-        /// <param name="comparer">The element hash generator for keys, or <c>null</c> to use <see cref="Support.EqualityComparer{TKey}.Default"/></param>
+        /// <param name="comparer">The element hash generator for keys, or <c>null</c> to use <see cref="EqualityComparer{TKey}.Default"/></param>
         public LurchTable(int capacity, LurchTableOrder ordering, IEqualityComparer<TKey> comparer)
             : this(ordering, int.MaxValue, capacity >> 1, capacity >> 4, capacity >> 8, comparer) { }
 
@@ -104,7 +104,7 @@ namespace Lucene.Net.Support
         /// <summary>Creates a LurchTable that orders items by <paramref name="ordering"/> and removes items once the specified <paramref name="limit"/> is reached.</summary>
         /// <param name="ordering">The type of linking for the items</param>
         /// <param name="limit">The maximum allowable number of items, or int.MaxValue for unlimited</param>
-        /// <param name="comparer">The element hash generator for keys, or <c>null</c> to use <see cref="Support.EqualityComparer{TKey}.Default"/></param>
+        /// <param name="comparer">The element hash generator for keys, or <c>null</c> to use <see cref="EqualityComparer{TKey}.Default"/></param>
         public LurchTable(LurchTableOrder ordering, int limit, IEqualityComparer<TKey> comparer)
             : this(ordering, limit, limit >> 1, limit >> 4, limit >> 8, comparer) { }
 
@@ -116,7 +116,7 @@ namespace Lucene.Net.Support
         /// <param name="hashSize">The number of hash buckets to use for the collection, usually 1/2 estimated capacity</param>
         /// <param name="allocSize">The number of entries to allocate at a time, usually 1/16 estimated capacity</param>
         /// <param name="lockSize">The number of concurrency locks to preallocate, usually 1/256 estimated capacity</param>
-        /// <param name="comparer">The element hash generator for keys, or <c>null</c> to use <see cref="Support.EqualityComparer{TKey}.Default"/></param>
+        /// <param name="comparer">The element hash generator for keys, or <c>null</c> to use <see cref="EqualityComparer{TKey}.Default"/></param>
         public LurchTable(LurchTableOrder ordering, int limit, int hashSize, int allocSize, int lockSize, IEqualityComparer<TKey> comparer)
         {
             if (limit <= 0)
@@ -125,7 +125,7 @@ namespace Lucene.Net.Support
                 throw new ArgumentOutOfRangeException("ordering");
 
             _limit = limit <= 0 ? int.MaxValue : limit;
-            _comparer = comparer ?? Support.EqualityComparer<TKey>.Default;
+            _comparer = comparer ?? EqualityComparer<TKey>.Default;
             _ordering = ordering;
 
             allocSize = (int)Math.Min((long)allocSize + OverAlloc, 0x3fffffff);
@@ -470,7 +470,7 @@ namespace Lucene.Net.Support
         {
             TValue test;
             if (TryGetValue(item.Key, out test))
-                return Support.EqualityComparer<TValue>.Default.Equals(item.Value, test);
+                return EqualityComparer<TValue>.Default.Equals(item.Value, test);
             return false;
         }
 
@@ -767,7 +767,7 @@ namespace Lucene.Net.Support
             /// </summary>
             public bool Contains(TValue value)
             {
-                var comparer = Support.EqualityComparer<TValue>.Default;
+                var comparer = EqualityComparer<TValue>.Default;
                 foreach (var item in _owner)
                 {
                     if (comparer.Equals(item.Value, value))
@@ -1426,7 +1426,7 @@ namespace Lucene.Net.Support
             {
                 Value = value;
 
-                if (_hasTestValue && !Support.EqualityComparer<TValue>.Default.Equals(_testValue, value))
+                if (_hasTestValue && !EqualityComparer<TValue>.Default.Equals(_testValue, value))
                     return false;
                 if (Condition != null && !Condition(key, value))
                     return false;
@@ -1521,7 +1521,7 @@ namespace Lucene.Net.Support
             }
             public bool UpdateValue(TKey key, ref TValue value)
             {
-                if (_hasTestValue && !Support.EqualityComparer<TValue>.Default.Equals(_testValue, value))
+                if (_hasTestValue && !EqualityComparer<TValue>.Default.Equals(_testValue, value))
                     return false;
 
                 value = Value;
