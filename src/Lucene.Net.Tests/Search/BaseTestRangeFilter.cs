@@ -118,8 +118,8 @@ namespace Lucene.Net.Search
         {
             SignedIndexReader?.Dispose();
             UnsignedIndexReader?.Dispose();
-            SignedIndexDir.Index?.Dispose();
-            UnsignedIndexDir.Index?.Dispose();
+            SignedIndexDir?.Index?.Dispose();
+            UnsignedIndexDir?.Index?.Dispose();
             SignedIndexReader = null;
             UnsignedIndexReader = null;
             SignedIndexDir = null;
