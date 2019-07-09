@@ -28,6 +28,8 @@ properties {
 	[string]$solutionFile = "$base_directory\Lucene.Net.sln"
 	[string]$versionFile = "$base_directory\Version.proj"
 	[string]$sdkPath = "$env:programfiles/dotnet/sdk"
+	[string]$sdkVersion = "2.1.505"
+	[string]$globalJsonFile = "$base_directory/global.json"
 
 	[string]$buildCounter     = $(if ($buildCounter) { $buildCounter } else { $env:BuildCounter }) #NOTE: Pass in as a parameter (not a property) or environment variable to override
 	[string]$preReleaseCounterPattern = $(if ($preReleaseCounterPattern) { $preReleaseCounterPattern } else { if ($env:PreReleaseCounterPattern) { $env:PreReleaseCounterPattern } else { "00000" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
@@ -61,28 +63,26 @@ task Clean -description "This task cleans up the build directory" {
 	Get-ChildItem $base_directory -Include *.bak -Recurse | foreach ($_) {Remove-Item $_.FullName}
 }
 
-task InstallSDK -description "This task makes sure the correct SDK version is installed to build" {
-	Write-Host "##teamcity[progressMessage 'Installing SDK']"
-	& where.exe dotnet.exe
-	$sdkVersion = "0.0.0.0"
+task UpdateLocalSDKVersion -description "Backs up the project.json file and updates the version" {
+	Backup-File $globalJsonFile
+	Generate-Global-Json `
+		-sdkVersion $sdkVersion `
+		-file $globalJsonFile
+}
 
-	if ($LASTEXITCODE -eq 0) {
-		$sdkVersion = [string]((& dotnet.exe --version) | Out-String).Trim()
-	}
-
-	Write-Host "Current SDK version: $sdkVersion" -ForegroundColor Yellow
-
-	# Make sure framework for .NET Core 2.0.0 is available
-	if (($sdkVersion.Contains("-")) -or ([version]$sdkVersion -lt ([version]"2.0.0")) -or ([version]$sdkVersion -ge ([version]"3.0.0"))) {
-		Write-Host "Requires SDK version 2.0.0 or greater, installing..." -ForegroundColor Red
-		Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 2.0.0"
+task InstallSDK -depends UpdateLocalSDKVersion -description "This task makes sure the correct SDK version is installed to build" {
+	Write-Host "##teamcity[progressMessage 'Installing SDK $sdkVersion']"
+	$installed = Is-Sdk-Version-Installed $sdkVersion
+	if (!$installed) {
+		Write-Host "Requires SDK version $sdkVersion, installing..." -ForegroundColor Red
+		Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version $sdkVersion"
 	}
 
 	# Safety check - this should never happen
 	& where.exe dotnet.exe
 
 	if ($LASTEXITCODE -ne 0) {
-		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 2.0 SDK."
+		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 2.0 SDK, version $sdkVersion."
 	}
 }
 
@@ -94,20 +94,22 @@ task InstallSDK2IfRequired -description "This task installs the .NET Core 2.x SD
 	#}
 }
 
-task InstallSDK1IfRequired -description "This task installs the .NET Core 1.x SDK (required for testing under .NET Core 1.0)" {
-	Write-Host "##teamcity[progressMessage 'Installing SDK']"
+task InstallSDK1IfRequired -depends UpdateLocalSDKVersion -description "This task installs the .NET Core 1.x SDK (required for testing under .NET Core 1.0)" {
+	Write-Host "##teamcity[progressMessage 'Installing SDK 1.x']"
 	if ($frameworks_to_test.Contains("netcoreapp1.")) {
-		# Make sure framework for .NET Core 1.0.4 is available
-		if (((Test-Path "$sdkPath/1.0.4") -eq $false) -and ((Test-Path "$sdkPath/1.1.0") -eq $false)) {
-			Write-Host "Requires SDK version 1.0.4, installing..." -ForegroundColor Red
-			Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 1.0.4"
+
+		# Make sure framework for .NET Core 1.1.14 is available
+		$installed = Is-Sdk-Version-Installed '1.1.14'
+		if (!$installed) {
+			Write-Host "Requires SDK version 1.1.14, installing..." -ForegroundColor Red
+			Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 1.1.14"
 		}
 
 		# Safety check - this should never happen
 		& where.exe dotnet.exe
 
 		if ($LASTEXITCODE -ne 0) {
-			throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.0.4 SDK."
+			throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1.14 SDK."
 		}
 	}
 }
@@ -226,7 +228,7 @@ task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -descri
 			$testName = $testProject.Directory.Name
 
 			# Special case - our CLI tool only supports .NET Core 2.0
-			if ($testName.Contains("Tests.Cli") -and ($framework -ne "netcoreapp2.0")) {
+			if ($testName.Contains("Tests.Cli") -and (!$framework.StartsWith("netcoreapp2."))) {
 				continue
 			}
 
@@ -234,10 +236,10 @@ task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -descri
 			Ensure-Directory-Exists $testResultDirectory
 
 			if ($framework.StartsWith("netcore")) {
-				$testExpression = "dotnet.exe test $testProject --configuration $configuration --framework $framework --no-build"
+				$testExpression = "dotnet.exe test $testProject --configuration $configuration --framework $framework --no-build --logger:trx"
 				#if ($framework -ne "netcoreapp1.0") {
-					$testExpression = "$testExpression --no-restore"
-					$testExpression = "$testExpression --results-directory $testResultDirectory\TestResult.xml"
+					$testExpression = "$testExpression --no-restore --blame"
+					$testExpression = "$testExpression --results-directory $testResultDirectory"
 				#}
 				
 				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
@@ -324,6 +326,35 @@ function Get-Version() {
 	return $version
 }
 
+function Is-Sdk-Version-Installed([string]$sdkVersion) {
+	& where.exe dotnet.exe | Out-Null
+	if ($LASTEXITCODE -eq 0) {
+		pushd $PSScriptRoot
+		$version = ((& dotnet --version 2>&1) | Out-String).Trim()
+		popd
+
+        # May happen if global.json contains a version that
+        # isn't installed, but we have at least one
+		if ($version.Contains('not found')) {
+			return $false
+		} elseif ([version]$version -eq [version]$sdkVersion) {
+            return $true
+        } elseif ([version]$version -gt [version]"2.1.0") {
+            $availableSdks = ((& dotnet --list-sdks) | Out-String)
+            if ($LASTEXITCODE -eq 0) {
+			    if ($availableSdks.Contains($sdkVersion)) {
+                    return $true
+                } else {
+                    return $false
+                }
+            } else {
+			    return (Test-Path "$sdkPath/$sdkVersion")
+		    }
+        }
+	}
+    return $false
+}
+
 function Prepare-For-Build() {
 	Backup-File $common_assembly_info 
 
@@ -346,6 +377,25 @@ function Update-Constants-Version([string]$version) {
 	(Get-Content $constantsFile) | % {
 		$_-replace "(?<=LUCENE_VERSION\s*?=\s*?"")([^""]*)", $version
 	} | Set-Content $constantsFile -Force
+}
+
+function Generate-Global-Json {
+param(
+	[string]$sdkVersion,
+	[string]$file = $(throw "file is a required parameter.")
+)
+
+$fileText = "{
+  ""sources"": [ ""src"" ],
+  ""sdk"": {
+    ""version"": ""$sdkVersion""
+  }
+}"
+	$dir = [System.IO.Path]::GetDirectoryName($file)
+	Ensure-Directory-Exists $dir
+
+	Write-Host "Generating global.json file: $file"
+	Out-File -filePath $file -encoding UTF8 -inputObject $fileText
 }
 
 function Generate-Assembly-Info {
