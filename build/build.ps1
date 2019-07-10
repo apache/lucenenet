@@ -69,7 +69,7 @@ task UpdateLocalSDKVersion -description "Backs up the project.json file and pins
 		-file $globalJsonFile
 }
 
-task InstallSDK -depends UpdateLocalSDKVersion -description "This task makes sure the correct SDK version is installed to build" {
+task InstallSDK -description "This task makes sure the correct SDK version is installed to build" -ContinueOnError {
 	Write-Host "##teamcity[progressMessage 'Installing SDK $sdkVersion']"
 	$installed = Is-Sdk-Version-Installed $sdkVersion
 	if (!$installed) {
@@ -93,7 +93,7 @@ task InstallSDK2IfRequired -description "This task installs the .NET Core 2.x SD
 	#}
 }
 
-task InstallSDK1IfRequired -depends UpdateLocalSDKVersion -description "This task installs the .NET Core 1.x SDK (required for testing under .NET Core 1.0)" {
+task InstallSDK1IfRequired -description "This task installs the .NET Core 1.x SDK (required for testing under .NET Core 1.0)" -ContinueOnError {
 	Write-Host "##teamcity[progressMessage 'Installing SDK 1.x']"
 	if ($frameworks_to_test.Contains("netcoreapp1.")) {
 
@@ -113,7 +113,7 @@ task InstallSDK1IfRequired -depends UpdateLocalSDKVersion -description "This tas
 	}
 }
 
-task Init -depends InstallSDK -description "This task makes sure the build environment is correctly setup" {
+task Init -depends InstallSDK, UpdateLocalSDKVersion -description "This task makes sure the build environment is correctly setup" {
 	#Update TeamCity or MyGet with packageVersion
 	Write-Output "##teamcity[buildNumber '$packageVersion']"
 	Write-Output "##myget[buildNumber '$packageVersion']"
@@ -209,7 +209,7 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 	}
 }
 
-task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -description "This task runs the tests" {
+task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This task runs the tests" {
 	Write-Host "##teamcity[progressMessage 'Testing']"
 	Write-Host "Running tests..." -ForegroundColor DarkCyan
 
