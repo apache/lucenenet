@@ -759,7 +759,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test, Timeout(300000)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         // different options for the same field
         public virtual void TestMixedOptions()
         {

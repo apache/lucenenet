@@ -423,7 +423,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        // [Test, Timeout(300000)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestEmptyDocs()
         {
             Directory dir = NewDirectory();
@@ -452,7 +452,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        // [Test, Timeout(300000)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestConcurrentReads()
         {
             Directory dir = NewDirectory();

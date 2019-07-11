@@ -27,7 +27,7 @@ namespace Lucene.Net
 
     public class TestWorstCaseTestBehavior : LuceneTestCase
     {
-#if !NETSTANDARD
+#if !NETSTANDARD1_6
         [Ignore("Ignored in Lucene")]
         [Test]
         public virtual void TestThreadLeak()
@@ -130,11 +130,7 @@ namespace Lucene.Net
         }
 
         [Ignore("Ignored in Lucene")]
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(500)]
-#endif
-        [Test, HasTimeout]
+        [Test]
         public virtual void TestTimeout()
         {
             Thread.Sleep(5000);
@@ -142,10 +138,6 @@ namespace Lucene.Net
 
 
         [Ignore("Ignored in Lucene")]
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(1000)]
-#endif
         [Test]
         public virtual void TestZombie()
         {

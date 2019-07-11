@@ -56,11 +56,7 @@ namespace Lucene.Net.Codecs.SimpleText
             base.TestLotsOfFields();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test]
         // different options for the same field
         public override void TestMixedOptions()
         {
