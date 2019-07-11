@@ -12,7 +12,7 @@
     <NewtonsoftJsonPackageVersion>10.0.3</NewtonsoftJsonPackageVersion>
     <NUnitPackageVersion>3.8.1</NUnitPackageVersion>
     <NUnit3TestAdapterPackageVersion>3.8.0</NUnit3TestAdapterPackageVersion>
-    <SharpZipLibPackageVersion>0.86.0</SharpZipLibPackageVersion>
+    <SharpZipLibPackageVersion>1.1.0</SharpZipLibPackageVersion>
     <SharpZipLibNETStandardPackageVersion>0.86.0.1</SharpZipLibNETStandardPackageVersion>
     <Spatial4nCorePackageVersion>0.4.1-beta00007</Spatial4nCorePackageVersion>
     <Spatial4nCoreNTSPackageVersion>0.4.1-beta00007</Spatial4nCoreNTSPackageVersion>
