@@ -77,7 +77,7 @@ namespace Lucene.Net.Support
         // LUCENENET TODO: For some reason, this logic depends on the underlying
         // implementation of Guid.NewGuid(), which has changed in .NET Core 2.0.
         // But the functionality of LurchTable seems unaffected by this change.
-#if !NETCOREAPP2_0
+#if !NETCOREAPP2_1
         [Test, LuceneNetSpecific]
         public void TestGuidHashCollision()
         {
@@ -248,7 +248,7 @@ namespace Lucene.Net.Support
             );
 
             Guid result = new Guid(bytes);
-#if !NETCOREAPP2_0
+#if !NETCOREAPP2_1
             Assert.AreEqual(guid.GetHashCode(), result.GetHashCode());
 #endif
             return result;

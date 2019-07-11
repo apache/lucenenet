@@ -40,7 +40,7 @@
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
     <DebugType>portable</DebugType>
   </PropertyGroup>

@@ -48,7 +48,7 @@ properties {
 	[string]$product_name = "Lucene.Net"
 	
 	#test paramters
-	[string]$frameworks_to_test = "netcoreapp2.0,netcoreapp1.0,net451"
+	[string]$frameworks_to_test = "netcoreapp2.1,netcoreapp1.0,net451"
 	[string]$where = ""
 }
 

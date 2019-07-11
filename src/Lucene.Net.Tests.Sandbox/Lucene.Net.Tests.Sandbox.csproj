@@ -44,7 +44,7 @@
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <DebugType>portable</DebugType>
   </PropertyGroup>
 

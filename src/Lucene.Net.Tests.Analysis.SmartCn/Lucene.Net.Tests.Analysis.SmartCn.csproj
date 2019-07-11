@@ -39,11 +39,11 @@
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
   
-  <!--<ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+  <!--<ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
   </ItemGroup>-->
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <DebugType>portable</DebugType>
   </PropertyGroup>
 

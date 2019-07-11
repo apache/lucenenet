@@ -50,7 +50,7 @@
     <PackageReference Include="icu.net" Version="$(IcuNetPackageVersion)" />
   </ItemGroup>
   
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
