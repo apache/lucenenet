@@ -28,7 +28,7 @@ properties {
 	[string]$solutionFile = "$base_directory/Lucene.Net.sln"
 	[string]$versionFile = "$base_directory/Version.proj"
 	[string]$sdkPath = "$env:programfiles/dotnet/sdk"
-	[string]$sdkVersion = "2.1.505"
+	[string]$sdkVersion = "2.2.300"
 	[string]$globalJsonFile = "$base_directory/global.json"
 
 	[string]$buildCounter     = $(if ($buildCounter) { $buildCounter } else { $env:BuildCounter }) #NOTE: Pass in as a parameter (not a property) or environment variable to override
@@ -207,40 +207,24 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 			$testResultDirectory = "$test_results_directory/$framework/$testName"
 			Ensure-Directory-Exists $testResultDirectory
 
-			if ($framework.StartsWith("netcore")) {
-				$testExpression = "dotnet.exe test $testProject --configuration $configuration --framework $framework --no-build --logger:trx"
-				#if ($framework -ne "netcoreapp1.0") {
-					$testExpression = "$testExpression --no-restore --blame"
-					$testExpression = "$testExpression --results-directory $testResultDirectory"
-				#}
-				
-				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
-					$testExpression = "$testExpression --filter $where"
-				}
-			} else {
-				# NOTE: Tried to use dotnet.exe to test .NET Framework, but it produces different test results
-				# (more failures). These failures don't show up in Visual Studio. So the assumption is that
-				# since .NET Core 2.0 tools are brand new they are not yet completely stable, we will continue to
-				# use NUnit3 Console to test with for the time being.
-				$projectDirectory = $testProject.DirectoryName
-				Write-Host "Directory: $projectDirectory" -ForegroundColor Green
+			$testProjectPath = $testProject.FullName
+			$testExpression = "dotnet.exe test $testProjectPath --configuration $configuration --framework $framework --no-build"
+			$testExpression = "$testExpression --no-restore --blame --results-directory $testResultDirectory"
 
-				$binaryRoot = "$projectDirectory/bin/$configuration/$framework"
+			# Breaking change: We need to explicitly set the logger for it to work with TeamCity.
+			# See: https://github.com/microsoft/vstest/issues/1590#issuecomment-393460921
 
-				$testBinary = "$binaryRoot/win7-x64/$testName.dll"
-				if (-not (Test-Path $testBinary)) {
-					$testBinary = "$binaryRoot/win7-x32/$testName.dll"
-				}
-				if (-not (Test-Path $testBinary)) {
-					$testBinary = "$binaryRoot/$testName.dll"
-				} 
+			# Log to the console normal verbosity. With the TeamCity.VSTest.TestAdapter
+			# referenced by the test DLL, this will output teamcity service messages.
+			# Also, it displays pretty user output on the console.
+			$testExpression = "$testExpression --logger:""console;verbosity=normal"""
 
-				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0/tools/nunit3-console.exe $testBinary --teamcity"
-				$testExpression = "$testExpression --result:$testResultDirectory/TestResult.xml"
-
-				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
-					$testExpression = "$testExpression --where=$where"
-				}
+			# Also log to a file in TRX format, so we have a build artifact both when
+			# doing release inspection and on the CI server.
+			$testExpression = "$testExpression --logger:""trx;LogFileName=TestResults.trx"""
+			
+			if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
+				$testExpression = "$testExpression --filter $where"
 			}
 
 			Write-Host $testExpression -ForegroundColor Magenta
