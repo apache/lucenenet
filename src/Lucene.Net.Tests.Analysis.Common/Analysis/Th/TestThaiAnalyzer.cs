@@ -131,32 +131,18 @@ namespace Lucene.Net.Analysis.Th
 
         /// <summary>
         /// blast some random strings through the analyzer </summary>
-#if !NETSTANDARD
-         // LUCENENET: There is no Timeout on NUnit for .NET Core.		
-         [Timeout(120000)] // LUCENENET TODO: Sometimes doesn't finish on .NET 4.5.1		
-#endif
         [Test]
         public virtual void TestRandomStrings()
         {
-#if NETSTANDARD
-            fail("LUCENENET TODO: AccessViolationException being thrown from icu-dotnet");
-#endif
             CheckRandomData(Random(), new ThaiAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
 
         /// <summary>
         /// blast some random large strings through the analyzer </summary>
         /// 
-#if !NETSTANDARD
-         // LUCENENET: There is no Timeout on NUnit for .NET Core.		
-         [Timeout(120000)] // LUCENENET TODO: Sometimes doesn't finish on .NET 4.5.1		
-#endif
         [Test]
         public virtual void TestRandomHugeStrings()
         {
-#if NETSTANDARD
-            fail("LUCENENET TODO: AccessViolationException being thrown from icu-dotnet");
-#endif
             Random random = Random();
             CheckRandomData(random, new ThaiAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
         }

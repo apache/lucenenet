@@ -59,6 +59,10 @@
     <PackageReference Include="icu.net" Version="$(IcuNetPackageVersion)" />
   </ItemGroup>
 
+  <ItemGroup Condition="$([MSBuild]::IsOsPlatform('Windows'))">
+    <PackageReference Include="Icu4c.Win.Full.Lib" Version="$(Icu4cWinFullLibPackageVersion)" />
+  </ItemGroup>
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
     <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
     <PackageReference Include="System.Xml.XmlDocument" Version="$(SystemXmlXmlDocumentPackageVersion)" />

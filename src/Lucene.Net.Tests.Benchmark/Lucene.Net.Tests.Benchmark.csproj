@@ -49,6 +49,10 @@
   <ItemGroup>
     <PackageReference Include="icu.net" Version="$(IcuNetPackageVersion)" />
   </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsOsPlatform('Windows'))">
+    <PackageReference Include="Icu4c.Win.Full.Lib" Version="$(Icu4cWinFullLibPackageVersion)" />
+  </ItemGroup>
   
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <DebugType>portable</DebugType>

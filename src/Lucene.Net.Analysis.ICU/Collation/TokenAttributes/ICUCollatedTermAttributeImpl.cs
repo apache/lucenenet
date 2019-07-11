@@ -3,7 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 #if NETSTANDARD
-using SortKey = Icu.ObjectModel.SortKey;
+using SortKey = Icu.SortKey;
 #else
 using SortKey = System.Globalization.SortKey;
 #endif

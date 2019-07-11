@@ -59,4 +59,8 @@
     <ProjectReference Include="..\..\..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition="$([MSBuild]::IsOsPlatform('Windows'))">
+    <PackageReference Include="Icu4c.Win.Full.Lib" Version="$(Icu4cWinFullLibPackageVersion)" />
+  </ItemGroup>
+
 </Project>

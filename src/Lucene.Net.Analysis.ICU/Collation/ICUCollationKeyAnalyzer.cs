@@ -6,7 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.IO;
 #if NETSTANDARD
-using SortKey = Icu.ObjectModel.SortKey;
+using SortKey = Icu.SortKey;
 #else
 using SortKey = System.Globalization.SortKey;
 #endif

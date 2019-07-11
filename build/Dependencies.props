@@ -1,7 +1,8 @@
 <Project> 
   <PropertyGroup Label="NuGet Package Reference Versions">
     <Antlr3RuntimePackageVersion>3.5.1</Antlr3RuntimePackageVersion>
-    <IcuNetPackageVersion>54.1.1-alpha</IcuNetPackageVersion>
+    <Icu4cWinFullLibPackageVersion>59.1.15</Icu4cWinFullLibPackageVersion>
+    <IcuNetPackageVersion>2.5.4</IcuNetPackageVersion>
     <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>1.0.3</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>1.0.3</MicrosoftAspNetCoreTestHostPackageVersion>
     <MicrosoftCSharpPackageVersion>4.4.0</MicrosoftCSharpPackageVersion>

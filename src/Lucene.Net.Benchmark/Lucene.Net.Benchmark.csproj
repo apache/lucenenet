@@ -31,7 +31,7 @@
     <AssemblyTitle>Lucene.Net.Benchmark</AssemblyTitle>
     <Description>System for benchmarking the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
     <PackageTags>$(PackageTags);benchmark</PackageTags>
-    <PackageReleaseNotes>This package depends on a temporary version of icu.net hosted on MyGet until official .NET Core support is added. To install, copy the NuGet.config file from https://github.com/apache/lucenenet/blob/master/NuGet.config into your project and then install this package via Package Manager Console as usual.</PackageReleaseNotes>
+    <PackageReleaseNotes>This package runs natively on Linux. To run on Windows, install the Icu4c.Win.Full.Lib NuGet package into your application. See: https://github.com/sillsdev/icu-dotnet#windows-1.</PackageReleaseNotes>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
   </PropertyGroup>
