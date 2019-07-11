@@ -122,8 +122,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Compare the content of the set against a <seealso cref="BitSet"/>.
         /// </summary>
-        // [Test, Timeout(150000)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
-        //[LongRunningTest]
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestAgainstBitSet()
         {
             int numBits = TestUtil.NextInt(Random(), 100, 1 << 20);

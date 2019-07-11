@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Search;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
@@ -255,7 +256,7 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestDirectory()
         {
             Store.Directory indexDir = NewDirectory();

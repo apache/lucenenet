@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Attributes;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
@@ -70,7 +71,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestMultipleWriterReader()
         {
             Counter bytesUsed = Util.Counter.NewCounter();

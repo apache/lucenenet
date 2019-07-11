@@ -5,6 +5,7 @@ using Lucene.Net.Analysis.NGram;
 using Lucene.Net.Analysis.Shingle;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Analysis.Wikipedia;
+using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -306,7 +307,7 @@ namespace Lucene.Net.Analysis.Core
         }
 
         // LUCENE-5269
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestUnicodeShinglesAndNgrams()
         {
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper100(this);

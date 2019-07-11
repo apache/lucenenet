@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -59,7 +60,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestTimSort()
         {
             for (int i = 0, c = AtLeast(500); i < c; i++)

@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
         }
 
         [Ignore("Very slow. Enable manually by removing Ignore.")]
-        [Test, LongRunningTest]
+        [Test]
         public virtual void Test2BTerms_Mem([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             if ("Lucene3x".Equals(Codec.Default.Name))

@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
     public class Test4GBStoredFields : LuceneTestCase
     {
         [Ignore("//LUCENENET NOTE: This was marked Nightly in Java")]
-        [Test, LongRunningTest]
+        [Test]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new MMapDirectory(CreateTempDir("4GBStoredFields")));

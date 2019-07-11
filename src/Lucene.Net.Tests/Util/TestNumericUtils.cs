@@ -338,7 +338,7 @@ namespace Lucene.Net.Util
             AssertLongRangeSplit(long.MinValue, long.MinValue + 0x10L, 4, true, Arrays.AsList(0x0000000000000010L, 0x0000000000000010L, 0x000000000000000L, 0x000000000000000L), Arrays.AsList(0, 4));
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestRandomSplit()
         {
             long num = (long)AtLeast(10);

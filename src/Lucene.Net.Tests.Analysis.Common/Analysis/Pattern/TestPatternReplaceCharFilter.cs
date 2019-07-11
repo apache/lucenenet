@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -246,7 +247,7 @@ namespace Lucene.Net.Analysis.Pattern
 
         /// <summary>
         /// blast some random strings through the analyzer </summary>
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestRandomStrings()
         {
             int numPatterns = 10 + Random().Next(20);

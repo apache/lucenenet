@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
+using Lucene.Net.Attributes;
 
 namespace Lucene.Net.Index
 {
@@ -944,7 +945,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestCommandLineArgs()
         {
 

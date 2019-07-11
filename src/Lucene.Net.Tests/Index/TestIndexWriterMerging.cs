@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
 
         // LUCENE-325: test forceMergeDeletes without waiting, when
         // many adjacent merges are required
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestForceMergeDeletes3()
         {
             Directory dir = NewDirectory();
@@ -350,7 +350,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
+        [Test, LongRunningTest]
         public virtual void TestNoWaitClose()
         {
             Directory directory = NewDirectory();

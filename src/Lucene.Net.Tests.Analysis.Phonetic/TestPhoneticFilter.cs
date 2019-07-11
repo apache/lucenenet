@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Phonetic.Language;
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -73,7 +74,7 @@ namespace Lucene.Net.Analysis.Phonetic
         }
 
         /** blast some random strings through the analyzer */
-        [Test]
+        [Test, LongRunningTest]
         public void TestRandomStrings()
         {
             IStringEncoder[] encoders = new IStringEncoder[] {

@@ -542,7 +542,7 @@ namespace Lucene.Net.Codecs.PerField
             base.TestSortedSetFixedLengthVsUninvertedField();
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public override void TestSortedSetVariableLengthVsUninvertedField()
         {
             base.TestSortedSetVariableLengthVsUninvertedField();

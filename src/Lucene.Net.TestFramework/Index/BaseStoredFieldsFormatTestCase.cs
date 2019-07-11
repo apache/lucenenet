@@ -673,7 +673,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        // [Test, LongRunningTest, Timeout(int.MaxValue)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestBigDocuments()
         {
             // "big" as "much bigger than the chunk size"

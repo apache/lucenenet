@@ -340,7 +340,7 @@ namespace Lucene.Net.Analysis.CharFilters
             return builder.Build();
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestRandomMaps2()
         {
             Random random = Random();

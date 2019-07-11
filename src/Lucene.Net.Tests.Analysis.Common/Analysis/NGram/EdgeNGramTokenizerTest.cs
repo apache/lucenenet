@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.IO;
@@ -132,7 +133,7 @@ namespace Lucene.Net.Analysis.NGram
 
         /// <summary>
         /// blast some random strings through the analyzer </summary>
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestRandomStrings()
         {
             for (int i = 0; i < 10; i++)

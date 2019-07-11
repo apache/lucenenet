@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
     // with some codecs needs more heap space as well.
     {
         [Ignore("Very slow. Enable manually by removing Ignore.")]
-        [Test, LongRunningTest]
+        [Test]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostingsBytes1"));

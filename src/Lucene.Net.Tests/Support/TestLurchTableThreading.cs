@@ -164,7 +164,7 @@ namespace Lucene.Net.Support
                 Assert.IsTrue(!Map.TryGetValue(id, out test));
         }
 
-        [Test, LuceneNetSpecific]
+        [Test, LongRunningTest, LuceneNetSpecific]
         public void CompareTest()
         {
             const int size = 1000000;

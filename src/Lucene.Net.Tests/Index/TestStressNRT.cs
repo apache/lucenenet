@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
@@ -71,7 +72,7 @@ namespace Lucene.Net.Index
             CommittedModel.PutAll(Model);
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void Test()
         {
             // update variables

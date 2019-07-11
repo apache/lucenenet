@@ -741,7 +741,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test, LongRunningTest, Timeout(int.MaxValue)] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestLotsOfFields()
         {
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 500, 10);

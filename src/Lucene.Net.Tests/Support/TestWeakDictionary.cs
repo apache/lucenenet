@@ -118,7 +118,7 @@ namespace Lucene.Net.Support
             return System.Diagnostics.Process.GetCurrentProcess().WorkingSet64 / 1024;
         }
 
-        [Test, LuceneNetSpecific]
+        [Test, LongRunningTest, LuceneNetSpecific]
         public void C_TestMemLeakage()
         {
 

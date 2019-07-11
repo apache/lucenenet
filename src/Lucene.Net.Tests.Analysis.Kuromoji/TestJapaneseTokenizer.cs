@@ -205,7 +205,7 @@ namespace Lucene.Net.Analysis.Ja
         }
 
         /** blast some random large strings through the analyzer */
-        [Test]
+        [Test, LongRunningTest]
         public void TestRandomHugeStrings()
         {
             Random random = Random();
@@ -705,7 +705,7 @@ namespace Lucene.Net.Analysis.Ja
             doTestBocchan(1);
         }
 
-        [Test, LongRunningTest]//@Nightly
+        [Test]//@Nightly
         [Ignore("This test takes a long time to run - do it manually")]
         public void TestBocchanBig()
         {

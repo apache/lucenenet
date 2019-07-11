@@ -487,7 +487,7 @@ namespace Lucene.Net.Index
 
         // LUCENE-1130: make sure initial IOException, and then 2nd
         // IOException during rollback(), with multiple threads, is OK:
-        [Test, LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
+        [Test] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
         public virtual void TestIOExceptionDuringAbortWithThreads([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             TestMultipleThreadsFailure(newScheduler, new FailOnlyOnAbortOrFlush(false));
@@ -495,7 +495,7 @@ namespace Lucene.Net.Index
 
         // LUCENE-1130: make sure initial IOException, and then 2nd
         // IOException during rollback(), with multiple threads, is OK:
-        [Test, LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
+        [Test] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
         public virtual void TestIOExceptionDuringAbortWithThreadsOnlyOnce([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             TestMultipleThreadsFailure(newScheduler, new FailOnlyOnAbortOrFlush(true));

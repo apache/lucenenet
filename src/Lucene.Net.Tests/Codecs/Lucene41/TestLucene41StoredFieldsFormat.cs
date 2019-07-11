@@ -83,13 +83,13 @@ namespace Lucene.Net.Codecs.Lucene41
             base.TestReadSkip();
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public override void TestEmptyDocs()
         {
             base.TestEmptyDocs();
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public override void TestConcurrentReads()
         {
             base.TestConcurrentReads();

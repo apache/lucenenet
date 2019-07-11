@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
     public class Test2BNumericDocValues : LuceneTestCase
     {
         // indexes Integer.MAX_VALUE docs with an increasing dv field
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestNumerics([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BNumerics"));

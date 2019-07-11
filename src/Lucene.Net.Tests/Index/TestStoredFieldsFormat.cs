@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
             base.TestConcurrentReads();
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public override void TestBigDocuments()
         {
             base.TestBigDocuments();

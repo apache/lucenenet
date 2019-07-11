@@ -250,7 +250,7 @@ namespace Lucene.Net.Support
             Assert.IsNotNull(key2);
         }
 
-        [Test, LuceneNetSpecific]
+        [Test, LongRunningTest, LuceneNetSpecific]
         public void Test_Weak_ForEach()
         {
             BigObject[] keys1 = new BigObject[20];

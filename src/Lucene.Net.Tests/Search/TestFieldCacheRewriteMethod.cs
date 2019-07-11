@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// test a bunch of random regular expressions </summary>
-        [Test, LongRunningTest]
+        [Test]
         public override void TestRegexps()
         {
             base.TestRegexps();

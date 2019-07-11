@@ -742,7 +742,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestMergeWarmer([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
@@ -857,7 +857,7 @@ namespace Lucene.Net.Index
         }
 
         // Stress test reopen during addIndexes
-        [Test, LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
+        [Test]
         public virtual void TestDuringAddIndexes()
         {
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
@@ -1400,7 +1400,7 @@ namespace Lucene.Net.Index
         /// Make sure if all we do is open NRT reader against
         ///  writer, we don't see merge starvation.
         /// </summary>
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestTooManySegments()
         {
             Directory dir = GetAssertNoDeletesDirectory(NewDirectory());

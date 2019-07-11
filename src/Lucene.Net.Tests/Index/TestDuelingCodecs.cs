@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// checks the two indexes are equivalent
         /// </summary>
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestEquals()
         {
             AssertReaderEquals(Info, LeftReader, RightReader);

@@ -193,7 +193,7 @@ namespace Lucene.Net.Analysis.Snowball
             }
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestRandomStrings()
         {
             foreach (string lang in SNOWBALL_LANGS)

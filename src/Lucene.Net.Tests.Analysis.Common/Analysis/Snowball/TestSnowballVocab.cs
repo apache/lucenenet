@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -32,7 +33,7 @@ namespace Lucene.Net.Analysis.Snowball
         /// <summary>
         /// Run all languages against their snowball vocabulary tests.
         /// </summary>
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestStemmers()
         {
             AssertCorrectOutput("Danish", "danish");

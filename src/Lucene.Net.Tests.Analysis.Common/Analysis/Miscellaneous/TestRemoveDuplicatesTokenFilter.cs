@@ -10,6 +10,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Core;
+using Lucene.Net.Attributes;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -136,7 +137,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// blast some random strings through the analyzer </summary>
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestRandomStrings()
         {
             int numIters = AtLeast(10);

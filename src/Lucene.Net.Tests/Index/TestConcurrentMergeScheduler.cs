@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     bool isDoFlush = Util.StackTraceHelper.DoesStackTraceContainMethod("Flush");
                     bool isClose = Util.StackTraceHelper.DoesStackTraceContainMethod("Close") ||
-                        Util.StackTraceHelper.DoesStackTraceContainMethod("Dispose");    
+                        Util.StackTraceHelper.DoesStackTraceContainMethod("Dispose");
 
                     if (isDoFlush && !isClose && Random().NextBoolean())
                     {
@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestNoExtraFiles()
         {
             Directory directory = NewDirectory();
@@ -234,7 +234,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestNoWaitClose()
         {
             Directory directory = NewDirectory();
@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestTotalBytesSize()
         {
             Directory d = NewDirectory();
@@ -431,6 +431,7 @@ namespace Lucene.Net.Index
             w.Dispose();
             d.Dispose();
         }
+
 
         // LUCENENET specific
         private class FailOnlyOnMerge : MockDirectoryWrapper.Failure

@@ -223,7 +223,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-510
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestAllUnicodeChars()
         {
             BytesRef utf8 = new BytesRef(10);

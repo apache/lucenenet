@@ -363,7 +363,7 @@ namespace Lucene.Net.Util.Packed
             TstEFS(values, expHighBits, expLowBits);
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestAdvanceToAndBackToMultiples()
         {
             for (int s = 2; s < 130; s++)

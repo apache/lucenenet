@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestByteSlices : LuceneTestCase
     {
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestBasic()
         {
             // LUCENENET specific: NUnit will crash with an OOM if we do the full test

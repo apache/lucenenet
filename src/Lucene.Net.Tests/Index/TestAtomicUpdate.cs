@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
           FSDirectory.
         */
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestAtomicUpdates()
         {
             Directory directory;

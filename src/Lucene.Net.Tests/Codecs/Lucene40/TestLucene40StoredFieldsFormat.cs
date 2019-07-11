@@ -83,13 +83,13 @@ namespace Lucene.Net.Codecs.Lucene40
             base.TestReadSkip();
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public override void TestEmptyDocs()
         {
             base.TestEmptyDocs();
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public override void TestConcurrentReads()
         {
             base.TestConcurrentReads();
@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs.Lucene40
             base.TestWriteReadMerge();
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public override void TestBigDocuments()
         {
             base.TestBigDocuments();

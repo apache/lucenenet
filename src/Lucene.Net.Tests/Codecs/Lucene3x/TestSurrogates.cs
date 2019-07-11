@@ -340,7 +340,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestSurrogatesOrder()
         {
             Directory dir = NewDirectory();

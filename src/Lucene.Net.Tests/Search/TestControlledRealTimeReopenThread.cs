@@ -381,7 +381,7 @@ namespace Lucene.Net.Search
         /*
          * LUCENE-3528 - NRTManager hangs in certain situations 
          */
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestThreadStarvationNoDeleteNRTReader()
         {
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Index;
 using NUnit.Framework;
 
 namespace Lucene.Net.Codecs.SimpleText
@@ -59,13 +60,13 @@ namespace Lucene.Net.Codecs.SimpleText
             base.TestDocsAndFreqsAndPositions();
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public override void TestDocsAndFreqsAndPositionsAndPayloads()
         {
             base.TestDocsAndFreqsAndPositionsAndPayloads();
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public override void TestDocsAndFreqsAndPositionsAndOffsets()
         {
             base.TestDocsAndFreqsAndPositionsAndOffsets();

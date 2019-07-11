@@ -317,7 +317,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestSeeking()
         {
             for (int i = 0; i < 10; i++)
@@ -349,7 +349,7 @@ namespace Lucene.Net.Store
 
         // note instead of seeking to offset and reading length, this opens slices at the
         // the various offset+length and just does readBytes.
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestSlicedSeeking()
         {
             for (int i = 0; i < 10; i++)

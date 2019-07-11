@@ -174,7 +174,7 @@ namespace Lucene.Net.Store
 
         // Test that different instances of FSDirectory can coexist on the same
         // path, can read, write, and lock files.
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestDirectInstantiation()
         {
             DirectoryInfo path = CreateTempDir("testDirectInstantiation");
@@ -423,7 +423,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        [Test]
+        [Test, LongRunningTest]
         [LuceneNetSpecific]
         public virtual void ConcurrentIndexAccessThrowsWithoutSynchronizedStaleFiles()
         {

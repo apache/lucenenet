@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 
@@ -104,7 +105,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestPerfSelectAllBitsBroad()
         {
             for (int j = 0; j < 100000; j++) // 1000000 for real perf test

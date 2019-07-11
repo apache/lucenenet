@@ -711,7 +711,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestSorting_8bit()
         {
             TestSorting(8);

@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -462,7 +463,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// blast some enormous random strings through the analyzer </summary>
-        [Test]
+        [Test, LongRunningTest]
         public virtual void TestRandomHugeStrings()
         {
             int numIterations = AtLeast(5);

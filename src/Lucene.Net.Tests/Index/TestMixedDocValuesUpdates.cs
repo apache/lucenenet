@@ -491,7 +491,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
+        [Test, LongRunningTest]
         public virtual void TestTonsOfUpdates()
         {
             // LUCENE-5248: make sure that when there are many updates, we don't use too much RAM

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Attributes;
+using NUnit.Framework;
 using System;
 using Console = Lucene.Net.Support.SystemConsole;
 
@@ -125,7 +126,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
     {
         private static readonly int LOOP = 80000;
 
-        [Test]
+        [Test, LongRunningTest]
         public void Test()
         {
             PhoneticEngine engine = new PhoneticEngine(NameType.GENERIC, RuleType.APPROX, true);

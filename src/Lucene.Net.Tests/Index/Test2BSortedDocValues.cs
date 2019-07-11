@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
     public class Test2BSortedDocValues : LuceneTestCase
     {
         // indexes Integer.MAX_VALUE docs with a fixed binary field
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestFixedSorted([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BFixedSorted"));
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
         }
 
         // indexes Integer.MAX_VALUE docs with a fixed binary field
-        [Test, LongRunningTest]
+        [Test]
         public virtual void Test2BOrds([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BOrds"));

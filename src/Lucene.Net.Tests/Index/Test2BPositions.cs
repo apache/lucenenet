@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
     // uses lots of space and takes a few minutes
     {
         [Ignore("Very slow. Enable manually by removing Ignore.")]
-        [Test, LongRunningTest]
+        [Test]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPositions"));

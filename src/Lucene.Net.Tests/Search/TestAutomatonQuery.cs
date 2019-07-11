@@ -224,7 +224,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, AutomatonQueryNrHits(aq));
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestHashCodeWithThreads()
         {
             AutomatonQuery[] queries = new AutomatonQuery[1000];
