@@ -36,6 +36,6 @@
     <SystemThreadingThreadPackageVersion>4.3.0</SystemThreadingThreadPackageVersion>
     <SystemThreadingThreadPoolPackageVersion>4.3.0</SystemThreadingThreadPoolPackageVersion>
     <SystemXmlXmlDocumentPackageVersion>4.3.0</SystemXmlXmlDocumentPackageVersion>
-    <TeamCityVSTestTestAdapterPackageVersion>1.0.5</TeamCityVSTestTestAdapterPackageVersion>
+    <TeamCityVSTestTestAdapterPackageVersion>1.0.15</TeamCityVSTestTestAdapterPackageVersion>
   </PropertyGroup>
 </Project>
