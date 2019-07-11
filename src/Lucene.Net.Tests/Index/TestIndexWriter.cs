@@ -28,6 +28,7 @@ namespace Lucene.Net.Index
      */
 
     using Lucene.Net.Analysis;
+    using Lucene.Net.Attributes;
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using Lucene.Net.Util;
@@ -1143,7 +1144,6 @@ namespace Lucene.Net.Index
 
             internal volatile bool Failed;
             internal volatile bool Finish;
-            internal volatile Exception Exception;
 
             internal volatile bool AllowInterrupt = false;
             internal readonly Random Random;
@@ -1324,8 +1324,7 @@ namespace Lucene.Net.Index
                         // LUCENENET NOTE: Since our original exception is ThreadInterruptException instead of InterruptException
                         // in .NET, our expectation is typically that the InnerException is null (but it doesn't have to be).
                         // So, this assertion is not needed in .NET. And if we get to this catch block, we already know we have
-                        // the right exception type, so there is nothing to test here. Besides, this throws an assertion that would
-                        // crash the test framework anyway.
+                        // the right exception type, so there is nothing to test here.
                         //Exception e = re.InnerException;
                         //Assert.IsTrue(e is ThreadInterruptedException);
                         if (Finish)
@@ -1371,11 +1370,7 @@ namespace Lucene.Net.Index
 #endif
                         catch (IOException ioe)
                         {
-                            //throw new Exception(ioe.ToString(), ioe);
-                            // LUCENENET specific - throwing the exception on
-                            // a background thread will crash the runner, so we
-                            // need to store and throw it from the test.
-                            this.Exception = ioe;
+                            throw new Exception(ioe.ToString(), ioe);
                         }
                     }
 
@@ -1408,11 +1403,7 @@ namespace Lucene.Net.Index
                 }
                 catch (IOException e)
                 {
-                    //throw new Exception(e.ToString(), e);
-                    // LUCENENET specific - throwing the exception on
-                    // a background thread will crash the runner, so we
-                    // need to store and throw it from the test.
-                    this.Exception = e;
+                    throw new Exception(e.ToString(), e);
                 }
                 try
                 {
@@ -1420,24 +1411,14 @@ namespace Lucene.Net.Index
                 }
                 catch (IOException e)
                 {
-                    //throw new Exception(e.ToString(), e);
-                    // LUCENENET specific - throwing the exception on
-                    // a background thread will crash the runner, so we
-                    // need to store and throw it from the test.
-                    this.Exception = e;
+                    throw new Exception(e.ToString(), e);
                 }
             }
         }
 
-        [Test]
+        [Test, LongRunningTest, Repeat(10)] // LUCENENET TODO: Remove the Repeat attribute after the test is fixed. We are only using this because it is failing intermittently and don't want to let it fall off our radar.
         public virtual void TestThreadInterruptDeadlock()
         {
-#if DEBUG
-#if NETSTANDARD1_6
-            fail("LUCENENET TODO: Uncaught exceptions on background thread causing test runner crash");
-#endif
-#endif
-
             IndexerThreadInterrupt t = new IndexerThreadInterrupt(this);
             t.SetDaemon(true);
             t.Start();
@@ -1469,15 +1450,12 @@ namespace Lucene.Net.Index
             t.Finish = true;
             t.Join();
 
-            // LUCENENET specific - if our background thread had an exception,
-            // we need to report it here on the main thread.
-            Assert.IsNull(t.Exception, t.Exception?.ToString());
             Assert.IsFalse(t.Failed);
         }
 
         /// <summary>
         /// testThreadInterruptDeadlock but with 2 indexer threads </summary>
-        [Test]
+        [Test, LongRunningTest, Repeat(10)] // LUCENENET TODO: Remove the Repeat attribute after the test is fixed. We are only using this because it is failing intermittently and don't want to let it fall off our radar.
         public virtual void TestTwoThreadsInterruptDeadlock()
         {
             IndexerThreadInterrupt t1 = new IndexerThreadInterrupt(this);
@@ -1519,14 +1497,7 @@ namespace Lucene.Net.Index
             t1.Join();
             t2.Join();
 
-            // LUCENENET specific - if our background thread had an exception,
-            // we need to report it here on the main thread.
-            Assert.IsNull(t1.Exception, t1.Exception?.ToString());
             Assert.IsFalse(t1.Failed);
-
-            // LUCENENET specific - if our background thread had an exception,
-            // we need to report it here on the main thread.
-            Assert.IsNull(t2.Exception, t2.Exception?.ToString());
             Assert.IsFalse(t2.Failed);
         }
 
