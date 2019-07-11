@@ -85,34 +85,6 @@ task InstallSDK -description "This task makes sure the correct SDK version is in
 	}
 }
 
-task InstallSDK2IfRequired -description "This task installs the .NET Core 2.x SDK (required for testing under .NET Core 2.0 or .NET Framework)" {
-	Write-Host "##teamcity[progressMessage 'Installing SDK']"
-	# netcoreapp1.0 requires the .NET Core SDK 2.0 or there is an 'illegal characters in path' error
-	#if ($frameworks_to_test.Contains("netcoreapp2.") -or $frameworks_to_test.Contains("net45")) {
-		Invoke-Task InstallSDK
-	#}
-}
-
-task InstallSDK1IfRequired -description "This task installs the .NET Core 1.x SDK (required for testing under .NET Core 1.0)" -ContinueOnError {
-	Write-Host "##teamcity[progressMessage 'Installing SDK 1.x']"
-	if ($frameworks_to_test.Contains("netcoreapp1.")) {
-
-		# Make sure framework for .NET Core 1.1.14 is available
-		$installed = Is-Sdk-Version-Installed '1.1.14'
-		if (!$installed) {
-			Write-Host "Requires SDK version 1.1.14, installing..." -ForegroundColor Red
-			Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 1.1.14"
-		}
-
-		# Safety check - this should never happen
-		& where.exe dotnet.exe
-
-		if ($LASTEXITCODE -ne 0) {
-			throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1.14 SDK."
-		}
-	}
-}
-
 task Init -depends InstallSDK, UpdateLocalSDKVersion -description "This task makes sure the build environment is correctly setup" {
 	#Update TeamCity or MyGet with packageVersion
 	Write-Output "##teamcity[buildNumber '$packageVersion']"
