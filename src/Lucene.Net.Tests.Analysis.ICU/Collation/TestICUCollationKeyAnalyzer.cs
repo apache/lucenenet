@@ -102,9 +102,6 @@ namespace Lucene.Net.Collation
         [Test]
         public void TestThreadSafe()
         {
-//#if NETSTANDARD
-//            fail("LUCENENET TODO: Fatal crash on NETSTANDARD");
-//#endif
             int iters = 20 * RANDOM_MULTIPLIER;
             for (int i = 0; i < iters; i++)
             {
