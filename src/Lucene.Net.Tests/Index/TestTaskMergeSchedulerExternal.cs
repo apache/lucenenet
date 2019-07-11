@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Documents;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -46,26 +47,26 @@ namespace Lucene.Net.Tests
     /// </summary>
     public class TestTaskMergeSchedulerExternal : LuceneTestCase
     {
-        internal volatile bool MergeCalled;
-        internal volatile bool ExcCalled;
+        internal volatile bool mergeCalled;
+        internal volatile bool excCalled;
 
         private class MyMergeScheduler : TaskMergeScheduler
         {
-            private readonly TestTaskMergeSchedulerExternal OuterInstance;
+            private readonly TestTaskMergeSchedulerExternal outerInstance;
 
             public MyMergeScheduler(TestTaskMergeSchedulerExternal outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected override void HandleMergeException(Exception t)
             {
-                OuterInstance.ExcCalled = true;
+                outerInstance.excCalled = true;
             }
 
             public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
             {
-                OuterInstance.MergeCalled = true;
+                outerInstance.mergeCalled = true;
                 base.Merge(writer, trigger, newMergesFound);
             }
         }
@@ -104,7 +105,7 @@ namespace Lucene.Net.Tests
             ((MyMergeScheduler)writer.Config.MergeScheduler).Sync();
             writer.Dispose();
 
-            Assert.IsTrue(MergeCalled);
+            assertTrue(mergeCalled);
             dir.Dispose();
         }
 
@@ -145,6 +146,43 @@ namespace Lucene.Net.Tests
             writer.ForceMerge(1);
             writer.Dispose();
             dir.Dispose();
+        }
+
+        // LUCENENET-603
+        [Test, LuceneNetSpecific]
+        public void TestExceptionOnBackgroundThreadIsPropagatedToCallingThread()
+        {
+            using (MockDirectoryWrapper dir = NewMockDirectory())
+            {
+                dir.FailOn(new FailOnlyOnMerge());
+
+                Document doc = new Document();
+                Field idField = NewStringField("id", "", Field.Store.YES);
+                doc.Add(idField);
+
+                var mergeScheduler = new TaskMergeScheduler();
+                using (IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(mergeScheduler).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy())))
+                {
+                    LogMergePolicy logMP = (LogMergePolicy)writer.Config.MergePolicy;
+                    logMP.MergeFactor = 10;
+                    for (int i = 0; i < 20; i++)
+                    {
+                        writer.AddDocument(doc);
+                    }
+
+                    bool exceptionHit = false;
+                    try
+                    {
+                        mergeScheduler.Sync();
+                    }
+                    catch (MergePolicy.MergeException)
+                    {
+                        exceptionHit = true;
+                    }
+
+                    assertTrue(exceptionHit);
+                }
+            }
         }
     }
 }

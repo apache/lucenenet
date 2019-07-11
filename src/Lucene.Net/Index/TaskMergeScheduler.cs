@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
         private Directory _directory;
 
         /// <summary>
-        /// <seea cref="IndexWriter"/> that owns this instance.
+        /// <see cref="IndexWriter"/> that owns this instance.
         /// </summary>
         private IndexWriter _writer;
 
@@ -203,12 +203,16 @@ namespace Lucene.Net.Index
                 }
                 catch (AggregateException ae)
                 {
-                    ae.Handle(x => x is OperationCanceledException);
-
-                    foreach (var exception in ae.InnerExceptions)
+                    ae.Handle(ex =>
                     {
-                        HandleMergeException(ae);
-                    }
+                        if (!(ex is OperationCanceledException))
+                        {
+                            HandleMergeException(ex);
+                            return true;
+                        }
+
+                        return false;
+                    });
                 }
             }
         }
@@ -328,6 +332,14 @@ namespace Lucene.Net.Index
             }
         }
 
+        /// <summary>
+        /// Does the actual merge, by calling <see cref="IndexWriter.Merge(MergePolicy.OneMerge)"/> </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        protected virtual void DoMerge(MergePolicy.OneMerge merge)
+        {
+            _writer.Merge(merge);
+        }
+
         private void OnMergeThreadCompleted(object sender, EventArgs e)
         {
             var mergeThread = sender as MergeThread;
@@ -352,7 +364,7 @@ namespace Lucene.Net.Index
             var count = Interlocked.Increment(ref _mergeThreadCount);
             var name = string.Format("Lucene Merge Task #{0}", count);
 
-            return new MergeThread(name, writer, merge, writer.infoStream, Verbose, _manualResetEvent, HandleMergeException);
+            return new MergeThread(name, writer, merge, writer.infoStream, Verbose, _manualResetEvent, HandleMergeException, DoMerge);
         }
 
         /// <summary>
@@ -433,6 +445,7 @@ namespace Lucene.Net.Index
             private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
             private readonly ManualResetEventSlim _resetEvent;
             private readonly Action<Exception> _exceptionHandler;
+            private readonly Action<MergePolicy.OneMerge> _doMerge;
             private readonly InfoStream _logger;
             private readonly IndexWriter _writer;
             private readonly MergePolicy.OneMerge _startingMerge;
@@ -447,7 +460,7 @@ namespace Lucene.Net.Index
             /// Sole constructor. </summary>
             public MergeThread(string name, IndexWriter writer, MergePolicy.OneMerge startMerge,
                 InfoStream logger, bool isLoggingEnabled,
-                ManualResetEventSlim resetEvent, Action<Exception> exceptionHandler)
+                ManualResetEventSlim resetEvent, Action<Exception> exceptionHandler, Action<MergePolicy.OneMerge> doMerge)
             {
                 Name = name;
                 _cancellationTokenSource = new CancellationTokenSource();
@@ -457,6 +470,7 @@ namespace Lucene.Net.Index
                 _isLoggingEnabled = isLoggingEnabled;
                 _resetEvent = resetEvent;
                 _exceptionHandler = exceptionHandler;
+                _doMerge = doMerge;
             }
 
             public string Name { get; private set; }
@@ -581,7 +595,10 @@ namespace Lucene.Net.Index
                     while (true && !cancellationToken.IsCancellationRequested)
                     {
                         RunningMerge = merge;
-                        _writer.Merge(merge);
+                        // LUCENENET NOTE: We MUST call DoMerge(merge) instead of 
+                        // _writer.Merge(merge) because the tests specifically look
+                        // for the method name DoMerge in the stack trace. 
+                        _doMerge(merge);
 
                         // Subsequent times through the loop we do any new
                         // merge that writer says is necessary:

@@ -19,13 +19,19 @@
  *
 */
 
+using Lucene.Net.Util;
 using System;
 using System.Threading;
 
 namespace Lucene.Net.Support.Threading
 {
     /// <summary>
-    /// Support class used to handle threads
+    /// Support class used to handle threads that is
+    /// inheritable just like the Thread type in Java.
+    /// This class also ensures that when an error is thrown
+    /// on a background thread, it will be properly re-thrown
+    /// on the calling thread, which is the same behavior
+    /// as we see in Lucene.
     /// </summary>
     public class ThreadClass : IThreadRunnable
     {
@@ -35,11 +41,19 @@ namespace Lucene.Net.Support.Threading
         private Thread _threadField;
 
         /// <summary>
+        /// The exception (if any) caught on the running thread
+        /// that will be re-thrown on the calling thread after
+        /// calling <see cref="Join()"/>, <see cref="Join(long)"/>, 
+        /// or <see cref="Join(long, int)"/>.
+        /// </summary>
+        private Exception _exception;
+
+        /// <summary>
         /// Initializes a new instance of the ThreadClass class
         /// </summary>
         public ThreadClass()
         {
-            _threadField = new Thread(Run);
+            _threadField = new Thread(() => SafeRun(Run));
         }
 
         /// <summary>
@@ -48,7 +62,7 @@ namespace Lucene.Net.Support.Threading
         /// <param name="name">The name of the thread</param>
         public ThreadClass(string name)
         {
-            _threadField = new Thread(Run);
+            _threadField = new Thread(() => SafeRun(Run));
             this.Name = name;
         }
 
@@ -58,7 +72,7 @@ namespace Lucene.Net.Support.Threading
         /// <param name="start">A ThreadStart delegate that references the methods to be invoked when this thread begins executing</param>
         public ThreadClass(ThreadStart start)
         {
-            _threadField = new Thread(start);
+            _threadField = new Thread(() => SafeRun(start));
         }
 
         /// <summary>
@@ -68,8 +82,42 @@ namespace Lucene.Net.Support.Threading
         /// <param name="name">The name of the thread</param>
         public ThreadClass(ThreadStart start, string name)
         {
-            _threadField = new Thread(start);
+            _threadField = new Thread(() => SafeRun(start));
             this.Name = name;
+        }
+
+        /// <summary>
+        /// Safely starts the method passed to <paramref name="start"/> and stores any exception that is
+        /// thrown. The first exception will stop execution of the method passed to <paramref name="start"/>
+        /// and it will be re-thrown on the calling thread after it calls <see cref="Join()"/>,
+        /// <see cref="Join(long)"/>, or <see cref="Join(long, int)"/>.
+        /// </summary>
+        /// <param name="start">A <see cref="ThreadStart"/> delegate that references the methods to be invoked when this thread begins executing</param>
+        protected virtual void SafeRun(ThreadStart start)
+        {
+            try
+            {
+                start.Invoke();
+            }
+            catch (Exception ex) when (!IsThreadingException(ex))
+            {
+                // LUCENENET NOTE: We are intentionally not using an
+                // AggregateException type here because we want to make
+                // sure that the unwrapped exception type is caught by Lucene.Net
+                // so it can handle the control flow accordingly.
+                _exception = ex;
+            }
+        }
+
+        private bool IsThreadingException(Exception e)
+        {
+            return
+#if !NETSTANDARD1_6
+                e.GetType().Equals(typeof(ThreadInterruptedException)) ||
+                e.GetType().Equals(typeof(ThreadAbortException));
+#else
+                false;
+#endif
         }
 
         /// <summary>
@@ -193,6 +241,7 @@ namespace Lucene.Net.Support.Threading
         public void Join()
         {
             _threadField.Join();
+            IOUtils.ReThrowUnchecked(_exception);
         }
 
         /// <summary>
@@ -202,6 +251,7 @@ namespace Lucene.Net.Support.Threading
         public void Join(long milliSeconds)
         {
             _threadField.Join(Convert.ToInt32(milliSeconds));
+            IOUtils.ReThrowUnchecked(_exception);
         }
 
         /// <summary>
@@ -214,6 +264,7 @@ namespace Lucene.Net.Support.Threading
             int totalTime = Convert.ToInt32(milliSeconds + (nanoSeconds*0.000001));
 
             _threadField.Join(totalTime);
+            IOUtils.ReThrowUnchecked(_exception);
         }
 
         /// <summary>
