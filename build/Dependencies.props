@@ -11,7 +11,7 @@
     <NETStandardLibrary16PackageVersion>1.6.1</NETStandardLibrary16PackageVersion>
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
     <NewtonsoftJsonPackageVersion>10.0.3</NewtonsoftJsonPackageVersion>
-    <NUnit3TestAdapterPackageVersion>3.8.0</NUnit3TestAdapterPackageVersion>
+    <NUnit3TestAdapterPackageVersion>3.13.0</NUnit3TestAdapterPackageVersion>
     <NUnitPackageVersion>3.8.1</NUnitPackageVersion>
     <NUnitExtensionTeamCityEventListenerPackageVersion>1.0.6</NUnitExtensionTeamCityEventListenerPackageVersion>
     <SharpZipLibPackageVersion>1.1.0</SharpZipLibPackageVersion>
