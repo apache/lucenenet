@@ -3,6 +3,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkPackageVersion)" />
     <PackageReference Include="NUnit" Version="$(NUnitPackageVersion)" />
     <PackageReference Include="NUnit3TestAdapter" Version="$(NUnit3TestAdapterPackageVersion)" />
+    <PackageReference Include="NUnit.Extension.TeamCityEventListener" Version="$(NUnitExtensionTeamCityEventListenerPackageVersion)" />
     <!-- Required by NUnit3TestAdapter on .NET Core -->
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="$(SystemRuntimeInteropServicesRuntimeInformationPackageVersion)" />
     <PackageReference Include="TeamCity.VSTest.TestAdapter" Version="$(TeamCityVSTestTestAdapterPackageVersion)" />
