@@ -365,13 +365,26 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Frees persistent resources used by this <see cref="Analyzer"/> </summary>
-        public virtual void Dispose()
+        /// Frees persistent resources used by this <see cref="Analyzer"/> 
+        /// </summary>
+        public void Dispose()
         {
-            if (storedValue != null)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Frees persistent resources used by this <see cref="Analyzer"/> 
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                storedValue.Dispose();
-                storedValue = null;
+                if (storedValue != null)
+                {
+                    storedValue.Dispose();
+                    storedValue = null;
+                }
             }
         }
 
