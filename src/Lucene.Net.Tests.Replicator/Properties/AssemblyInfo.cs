@@ -36,8 +36,11 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("418e9d8e-2369-4b52-8d2f-5a987213999b")]
 
-// LUCENENET TODO: 2019-07-14 - Had a hanging test in Lucene.Net.Tests.Replicator (not sure which one),
+#if !NETSTANDARD1_6
+// LUCENENET TODO: 2019-07-14 - Had a hanging test in Lucene.Net.Tests.Replicator 
+// on .NET Framwork 4.5 (not sure which one),
 // but unable to repeat. Adding this timeout (with at least 10x the time it usually takes
 // to run all of these tests) to ensure if we get a hang again, the hanging test will fail
 // so we know which test to investigate.
 [assembly: NUnit.Framework.Timeout(120000)]
+#endif
