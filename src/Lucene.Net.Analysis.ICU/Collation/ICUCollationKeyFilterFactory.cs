@@ -64,7 +64,7 @@ namespace Lucene.Net.Collation
     /// LUCENENET NOTE: variableTop is not supported by icu.net
     [Obsolete("Use ICUCollationKeyAnalyzer instead.")]
     [ExceptionToClassNameConvention]
-    public class ICUCollationKeyFilterFactory : TokenFilterFactory, IMultiTermAwareComponent, IResourceLoaderAware
+    public class ICUCollationKeyFilterFactory : TokenFilterFactory, IMultiTermAwareComponent, IResourceLoaderAware, IDisposable
     {
         private Collator collator;
         private readonly string custom;
@@ -257,6 +257,21 @@ namespace Lucene.Net.Collation
                 sb.Append(buffer, 0, len);
             }
             return sb.ToString();
+        }
+
+        // LUCENENET specific - must dispose collator
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                collator?.Dispose();
+            }
         }
     }
 }

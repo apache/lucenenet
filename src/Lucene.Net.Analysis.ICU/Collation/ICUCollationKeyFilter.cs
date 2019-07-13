@@ -103,5 +103,8 @@ namespace Lucene.Net.Collation
                 return false;
             }
         }
+
+        // LUCENENET-611 - Dispose is being called and then IncrementToken() is called afterward, so we cannot dispose our
+        // disposable collator instance here. Need to fix the bug, then override Dispose(bool).
     }
 }

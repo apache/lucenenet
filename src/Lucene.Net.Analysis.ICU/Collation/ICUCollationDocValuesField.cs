@@ -2,6 +2,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 #if NETSTANDARD
 using SortKey = Icu.SortKey;
 #else
@@ -39,7 +40,7 @@ namespace Lucene.Net.Collation
     /// and use less memory than FieldCache.
     /// </remarks>
     [ExceptionToClassNameConvention]
-    public sealed class ICUCollationDocValuesField : Field
+    public sealed class ICUCollationDocValuesField : Field, IDisposable
     {
         private readonly string name;
         private readonly Collator collator;
@@ -79,6 +80,12 @@ namespace Lucene.Net.Collation
             bytes.Bytes = key.KeyData;
             bytes.Offset = 0;
             bytes.Length = key.KeyData.Length;
+        }
+
+        // LUCENENET specific - need to dispose collator
+        public void Dispose()
+        {
+            this.collator.Dispose();
         }
     }
 }

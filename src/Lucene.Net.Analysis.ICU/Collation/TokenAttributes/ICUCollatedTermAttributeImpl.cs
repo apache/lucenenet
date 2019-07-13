@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 #if NETSTANDARD
 using SortKey = Icu.SortKey;
 #else
@@ -32,11 +33,9 @@ namespace Lucene.Net.Collation.TokenAttributes
     /// text as a binary Unicode collation key instead of as UTF-8 bytes.
     /// </summary>
     [ExceptionToClassNameConvention]
-    public class ICUCollatedTermAttribute : CharTermAttribute
+    public sealed class ICUCollatedTermAttribute : CharTermAttribute, IDisposable
     {
         private readonly Collator collator;
-        //private readonly RawCollationKey key = new RawCollationKey();
-        private SortKey key;
 
         /// <summary>
         /// Create a new ICUCollatedTermAttribute
@@ -51,10 +50,16 @@ namespace Lucene.Net.Collation.TokenAttributes
         public override void FillBytesRef()
         {
             BytesRef bytes = this.BytesRef;
-            key = collator.GetSortKey(ToString());
+            SortKey key = collator.GetSortKey(ToString());
             bytes.Bytes = key.KeyData;
             bytes.Offset = 0;
             bytes.Length = key.KeyData.Length;
+        }
+
+        // LUCENENET specific - must dispose collator
+        public void Dispose()
+        {
+            collator.Dispose();
         }
     }
 }
