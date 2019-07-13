@@ -236,6 +236,8 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 			}
 		}
 	}
+
+	Summarize-Test-Results
 }
 
 function Get-Package-Version() {
@@ -422,6 +424,116 @@ endlocal
 	#Out-File -filePath $file -encoding UTF8 -inputObject $buildBat -Force
 	$Utf8EncodingNoBom = New-Object System.Text.UTF8Encoding $false
 	[System.IO.File]::WriteAllLines($file, $buildBat, $Utf8EncodingNoBom)
+}
+
+function New-CountersObject ([string]$project, [string]$outcome, [int]$total, [int]$executed, [int]$passed, [int]$failed, [int]$warning, [int]$inconclusive) {
+    $counters = New-Object -TypeName PSObject
+    $fields = [ordered]@{Project=$project;Outcome=$outcome;Total=$total;Executed=$executed;Passed=$passed;Failed=$failed;Warning=$warning;Inconclusive=$inconclusive}
+    $counters | Add-Member -NotePropertyMembers $fields -TypeName Counters
+    return $counters
+}
+
+function Summarize-Test-Results() {
+    Write-Host "frameworks_to_test: $frameworks_to_test" -ForegroundColor Gray
+    $frameworksToTest = $frameworks_to_test -split "\s*?,\s*?"
+
+    foreach ($framework in $frameworksToTest) {
+        pushd $base_directory
+	    $testReports = Get-ChildItem -Path "$test_results_directory/$framework" -Recurse -File -Filter "*.trx" | ForEach-Object {
+            $_.FullName
+        }
+	    popd
+        
+        [int]$totalCountForFramework = 0
+        [int]$executedCountForFramework = 0
+        [int]$passedCountForFramework = 0
+        [int]$failedCountForFramework = 0
+        [int]$warningCountForFramework = 0
+        [int]$inconclusiveCountForFramework = 0
+        [string]$outcomeForFramework = 'Completed'
+
+        # HEADER FOR FRAMEWORK
+
+        Write-Host ""
+        Write-Host ""
+        Write-Host "************************************************************************************************************" -ForegroundColor Yellow
+        Write-Host "*                                                                                                          *" -ForegroundColor Yellow
+        Write-Host "*                                        Test Summary For $framework"  -ForegroundColor Yellow
+        Write-Host "*                                                                                                          *" -ForegroundColor Yellow
+        Write-Host "************************************************************************************************************" -ForegroundColor Yellow
+
+        foreach ($testReport in $testReports) {
+            $testName = [System.IO.Path]::GetFileName([System.IO.Path]::GetDirectoryName($testReport))
+            $reader = [System.Xml.XmlReader]::Create($testReport)
+            try {
+                while ($reader.Read()) {
+                    
+                    if ($reader.NodeType -eq [System.Xml.XmlNodeType]::Element -and $reader.Name -eq 'ResultSummary') {
+                        $outcome = $reader.GetAttribute('outcome')
+                        if ($outcomeForFramework -eq 'Completed') {
+                            $outcomeForFramework = $outcome
+                        }
+                    }
+                    if ($reader.NodeType -eq [System.Xml.XmlNodeType]::Element -and $reader.Name -eq 'Counters') {
+                        $counters = New-CountersObject `
+                            -Project $testName `
+                            -Outcome $outcome `
+                            -Total $reader.GetAttribute('total') `
+                            -Executed $reader.GetAttribute('executed') `
+                            -Passed $reader.GetAttribute('passed') `
+                            -Failed $reader.GetAttribute('failed') `
+                            -Warning $reader.GetAttribute('warning') `
+                            -Inconclusive $reader.GetAttribute('inconclusive')
+
+                        $totalCountForFramework += $counters.Total
+                        $executedCountForFramework += $counters.Executed
+                        $passedCountForFramework += $counters.Passed
+                        $failedCountForFramework += $counters.Failed
+                        $warningCountForFramework += $counters.Warning
+                        $inconclusiveCountForFramework += $counters.Inconclusive
+                        $skippedCountForFramework += $counters.Skipped
+
+                        $format = @{Expression={$_.Project};Label='Project';Width=35},
+                            @{Expression={$_.Outcome};Label='Outcome';Width=9},
+                            @{Expression={$_.Total};Label='Total';Width=8},
+                            @{Expression={$_.Executed};Label='Executed';Width=10},
+                            @{Expression={$_.Passed};Label='Passed';Width=8},
+                            @{Expression={$_.Failed};Label='Failed';Width=8},
+                            @{Expression={$_.Warning};Label='Warning';Width=9},
+                            @{Expression={$_.Inconclusive};Label='Inconclusive';Width=14}
+
+                        $Counters | Format-Table $format
+                    }
+                }
+
+            } finally {
+                $reader.Dispose()
+            }
+
+        }
+
+        # FOOTER FOR FRAMEWORK
+
+        Write-Host "************************************************************************************************************" -ForegroundColor Magenta
+        Write-Host "*                                                                                                          *" -ForegroundColor Magenta
+        Write-Host "*                                        Totals For $framework"  -ForegroundColor Magenta
+        Write-Host "*                                                                                                          *" -ForegroundColor Magenta
+        Write-Host "************************************************************************************************************" -ForegroundColor Magenta
+        Write-Host ""
+        $foreground = if ($outcomeForFramework -eq 'Failed') { 'Red' } else { 'Green' }
+        Write-Host "Result: " -NoNewline; Write-Host "$outcomeForFramework" -ForegroundColor $foreground
+        Write-Host ""
+        Write-Host "Total: $totalCountForFramework"
+        Write-Host "Executed: $executedCountForFramework"
+        $foreground = if ($failedCountForFramework -gt 0) { 'Green' } else { (Get-Host).UI.RawUI.ForegroundColor }
+        Write-Host "Passed: " -NoNewline; Write-Host "$passedCountForFramework" -ForegroundColor $foreground
+        $foreground = if ($failedCountForFramework -gt 0) { 'Red' } else { (Get-Host).UI.RawUI.ForegroundColor }
+        Write-Host "Failed: " -NoNewline; Write-Host "$failedCountForFramework" -ForegroundColor $foreground
+        $foreground = if ($failedCountForFramework -gt 0) { 'Yellow' } else { (Get-Host).UI.RawUI.ForegroundColor }
+        Write-Host "Warning: " -NoNewline; Write-Host "$warningCountForFramework" -ForegroundColor $foreground
+        $foreground = if ($failedCountForFramework -gt 0) { 'Cyan' } else { (Get-Host).UI.RawUI.ForegroundColor }
+        Write-Host "Inconclusive: " -NoNewline; Write-Host "$inconclusiveCountForFramework" -ForegroundColor $foreground
+    }
 }
 
 function Backup-Files([string[]]$paths) {
