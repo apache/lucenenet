@@ -21,7 +21,7 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\Version.proj" />
+  <!--<Import Project="..\..\Version.proj" />-->
   
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard1.6;net46</TargetFrameworks>

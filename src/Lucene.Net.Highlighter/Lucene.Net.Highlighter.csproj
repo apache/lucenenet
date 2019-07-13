@@ -21,7 +21,7 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\Version.proj" />
+  <!--<Import Project="..\..\Version.proj" />-->
   
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net46</TargetFrameworks>
@@ -57,7 +57,7 @@
   </PropertyGroup>-->
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Net.Primitives" Version="4.3.1" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
