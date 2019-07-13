@@ -1,0 +1,282 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,-with-title
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+# Runs Publish Test Results task for all Lucene.Net test projects
+
+# The tasks can be easily re-generated (except for any special cases) using the following powershell script
+
+#$source_directory = "F:/Projects/lucenenet" # Change to your repo location
+#
+#$testProjects = Get-ChildItem -Path "$source_directory/**/*.csproj" -Recurse | ? { $_.Directory.Name.Contains(".Tests") } | Sort-Object -Property FullName
+#
+#[string]$output = ''
+#
+#foreach ($testProject in $testProjects) {
+#    $projectName = [System.IO.Path]::GetFileNameWithoutExtension($testProject)
+#
+#    $block = `
+#        "- template: publish-test-results-for-target-frameworks.yml`n" + `
+#        "  parameters:`n" + `
+#        "    testProjectName: '$projectName'`n" + `
+#        "    osName: '$`{`{ parameters.osName `}`}'`n" + `
+#        "    testResultsFormat: '$`{`{ parameters.testResultsFormat `}`}'`n" + `
+#        "    testResultsArtifactName: '$`{`{ parameters.testResultsArtifactName `}`}'`n" + `
+#        "    testResultsFileName: '$`{`{ parameters.testResultsFileName `}`}'`n" + `
+#        "`n"
+#
+#    $output = "$output$block"
+#}
+#
+#Set-Clipboard -Value $output
+
+parameters:
+  osName: '' # The name of the operating system for display purposes.
+  testResultsFormat: VSTest # Specify the format of the results files you want to publish. The following formats are supported: JUnit, NUnit, VSTest, XUnit, CTest
+  testResultsArtifactName: 'testresults' # The name of the Azure DevOps build artifact where the test results will be published. Default 'testresults'.
+  testResultsFileName: 'TestResults.trx' # The name of the file (not path) of the test results. Default 'TestResults.trx'.
+
+steps:
+- powershell: |
+    function EnsureNotNullOrEmpty([string]$param, [string]$nameOfParam) {
+        if ([string]::IsNullOrEmpty($param)) {
+            Write-Host "##vso[task.logissue type=error;]Missing template parameter \"$nameOfParam\""
+            Write-Host "##vso[task.complete result=Failed;]"
+        }
+    }
+    EnsureNotNullOrEmpty('${{ parameters.osName }}', 'osName')
+    EnsureNotNullOrEmpty('${{ parameters.testResultsFormat }}', 'testResultsFormat')
+    EnsureNotNullOrEmpty('${{ parameters.testResultsArtifactName }}', 'testResultsArtifactName')
+    EnsureNotNullOrEmpty('${{ parameters.testResultsFileName }}', 'testResultsFileName')
+  displayName: 'Validate Template Parameters'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.ICU'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+# Special case: Only supports .netcoreapp2.1
+- template: publish-test-results.yml
+  parameters:
+    framework: 'netcoreapp2.1'
+    testProjectName: 'Lucene.Net.Tests.Cli'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests._A-I'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests._J-U'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests._U-Z'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Analysis.Common'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Analysis.Kuromoji'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Analysis.Phonetic'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Analysis.SmartCn'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Analysis.Stempel'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Benchmark'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Classification'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Codecs'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Demo'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Expressions'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Facet'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Grouping'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Highlighter'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Join'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Memory'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Misc'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Queries'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.QueryParser'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Replicator'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Sandbox'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Spatial'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.Suggest'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'

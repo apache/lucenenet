@@ -29,22 +29,23 @@ properties {
 	[string]$sdkPath = "$env:programfiles/dotnet/sdk"
 	[string]$sdkVersion = "2.2.300"
 	[string]$globalJsonFile = "$base_directory/global.json"
+	[string]$versionPropsFile = "$base_directory/Version.props"
+	[string]$build_bat = "$base_directory/build.bat"
 
 	[string]$buildCounter     = $(if ($buildCounter) { $buildCounter } else { $env:BuildCounter }) #NOTE: Pass in as a parameter (not a property) or environment variable to override
-	[string]$preReleaseCounterPattern = $(if ($preReleaseCounterPattern) { $preReleaseCounterPattern } else { if ($env:PreReleaseCounterPattern) { $env:PreReleaseCounterPattern } else { "00000" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
-	[string]$versionSuffix    = $(if ($versionSuffix) { $versionSuffix } else { $env:VersionSuffix })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
+	[string]$preReleaseCounterPattern = $(if ($preReleaseCounterPattern) { $preReleaseCounterPattern } else { if ($env:PreReleaseCounterPattern) { $env:PreReleaseCounterPattern } else { "0000000000" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
+	[string]$versionSuffix    = $(if ($versionSuffix -ne $null) { $versionSuffix } else { if ($env:VersionSuffix -ne $null) { $env:VersionSuffix } else { 'ci' }}) #NOTE: Pass in as a parameter (not a property) or environment variable to override
 	[string]$packageVersion   = Get-Package-Version #NOTE: Pass in as a parameter (not a property) or environment variable to override
 	[string]$version          = Get-Version
-	[string]$configuration    = "Release"
+	[string]$configuration    = $(if ($configuration) { $configuration } else { if ($env:BuildConfiguration) { $env:BuildConfiguration } else { "Release" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
+	[string]$platform   = $(if ($platform) { $platform } else { if ($env:BuildPlatform) { $env:BuildPlatform } else { "Any CPU" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
 	[bool]$backup_files       = $true
 	[bool]$prepareForBuild    = $true
 	[bool]$generateBuildBat   = $false
+	[bool]$zipPublishedArtifacts = $false
+	[string]$publishedArtifactZipFileName = "artifact.zip"
 
-	[string]$build_bat = "$base_directory/build.bat"
-	[string]$copyright_year = [DateTime]::Today.Year.ToString() #Get the current year from the system
-	[string]$copyright = "Copyright " + $([char]0x00A9) + " 2006 - $copyright_year The Apache Software Foundation"
-	[string]$company_name = "The Apache Software Foundation"
-	[string]$product_name = "Lucene.Net"
+	[int]$maximumParalellJobs = 8
 	
 	#test paramters
 	[string]$frameworks_to_test = "netcoreapp2.1,netcoreapp1.0,net451"
@@ -56,11 +57,11 @@ if ($IsWindows -eq $null) {
 	$IsWindows = $Env:OS.StartsWith('Windows')
 }
 
-
 task default -depends Pack
 
 task Clean -description "This task cleans up the build directory" {
 	Write-Host "##teamcity[progressMessage 'Cleaning']"
+	Write-Host "##vso[task.setprogress]'Cleaning'"
 	Remove-Item $release_directory -Force -Recurse -ErrorAction SilentlyContinue
 	Get-ChildItem $base_directory -Include *.bak -Recurse | foreach ($_) {Remove-Item $_.FullName}
 }
@@ -74,6 +75,7 @@ task UpdateLocalSDKVersion -description "Backs up the project.json file and pins
 
 task InstallSDK -description "This task makes sure the correct SDK version is installed to build" -ContinueOnError {
 	Write-Host "##teamcity[progressMessage 'Installing SDK $sdkVersion']"
+	Write-Host "##vso[task.setprogress]'Installing SDK $sdkVersion'"
 	$installed = Is-Sdk-Version-Installed $sdkVersion
 	if (!$installed) {
 		Write-Host "Requires SDK version $sdkVersion, installing..." -ForegroundColor Red
@@ -89,9 +91,11 @@ task InstallSDK -description "This task makes sure the correct SDK version is in
 }
 
 task Init -depends InstallSDK, UpdateLocalSDKVersion -description "This task makes sure the build environment is correctly setup" {
-	#Update TeamCity or MyGet with packageVersion
+	#Update TeamCity, MyGet, or Azure Pipelines with packageVersion
 	Write-Output "##teamcity[buildNumber '$packageVersion']"
 	Write-Output "##myget[buildNumber '$packageVersion']"
+	Write-Host "##vso[task.setvariable variable=Build.BuildNumber;]$packageVersion"
+	Write-Host "##vso[build.updatebuildnumber]$packageVersion"
 
 	& dotnet.exe --version
 	& dotnet.exe --info
@@ -106,12 +110,14 @@ task Init -depends InstallSDK, UpdateLocalSDKVersion -description "This task mak
 	Write-Host "Package Version: $packageVersion"
 	Write-Host "Version: $version"
 	Write-Host "Configuration: $configuration"
+	Write-Host "Platform: $platform"
 
 	Ensure-Directory-Exists "$release_directory"
 }
 
 task Restore -description "This task restores the dependencies" {
 	Write-Host "##teamcity[progressMessage 'Restoring']"
+	Write-Host "##vso[task.setprogress]'Restoring'"
 	Exec { 
 		& dotnet.exe restore $solutionFile --no-dependencies /p:TestFrameworks=true
 	}
@@ -119,42 +125,25 @@ task Restore -description "This task restores the dependencies" {
 
 task Compile -depends Clean, Init, Restore -description "This task compiles the solution" {
 	Write-Host "##teamcity[progressMessage 'Compiling']"
+	Write-Host "##vso[task.setprogress]'Compiling'"
 	try {
 		if ($prepareForBuild -eq $true) {
 			Prepare-For-Build
 		}
 
-		#Use only the major version as the assembly version.
-		#This ensures binary compatibility unless the major version changes.
-		$version-match "(^\d+)"
-		$assemblyVersion = $Matches[0]
-		$assemblyVersion = "$assemblyVersion.0.0"
-
-		Write-Host "Assembly version set to: $assemblyVersion" -ForegroundColor Green
-
-		$pv = $packageVersion
-		#check for presense of Git
-		& where.exe git.exe
-		if ($LASTEXITCODE -eq 0) {
-			$gitCommit = ((git rev-parse --verify --short=10 head) | Out-String).Trim()
-			$pv = "$packageVersion commit:[$gitCommit]"
-		}
-
-		Write-Host "Assembly informational version set to: $pv" -ForegroundColor Green
-
-		$testFrameworks = $frameworks_to_test.Replace(',', ';')
+		$testFrameworks = [string]::Join(';', (Get-FrameworksToTest))
 
 		Write-Host "TestFrameworks set to: $testFrameworks" -ForegroundColor Green
 
 		Exec {
+			# NOTE: Version information is not passed in at the command line,
+			# instead it is output to the Version.props file. This file is then
+			# used during a release to "freeze" the build at a specific version
+			# so it is always a constant in release distributions.
 			& dotnet.exe msbuild $solutionFile /t:Build `
 				/p:Configuration=$configuration `
-				/p:AssemblyVersion=$assemblyVersion `
-				/p:FileVersion=$version `
-				/p:InformationalVersion=$pv `
-				/p:Product=$product_name `
-				/p:Company=$company_name `
-				/p:Copyright=$copyright `
+				/p:Platform=$platform `
+				/p:PortableDebugTypeOnly=true `
 				/p:TestFrameworks=true # workaround for parsing issue: https://github.com/Microsoft/msbuild/issues/471#issuecomment-181963350
 		}
 
@@ -168,18 +157,27 @@ task Compile -depends Clean, Init, Restore -description "This task compiles the 
 
 task Pack -depends Compile -description "This task creates the NuGet packages" {
 	Write-Host "##teamcity[progressMessage 'Packing']"
+	Write-Host "##vso[task.setprogress]'Packing'"
 	#create the nuget package output directory
 	Ensure-Directory-Exists "$nuget_package_directory"
 
 	try {
 		Exec {
-			& dotnet.exe pack $solutionFile --configuration $Configuration --output $nuget_package_directory --no-build --include-symbols /p:PackageVersion=$packageVersion
+			# NOTE: Package version information is not passed in at the command line,
+			# instead it is output to the Version.props file. This file is then
+			# used during a release to "freeze" the build at a specific version
+			# so it is always a constant in release distributions.
+			& dotnet.exe pack $solutionFile --configuration $configuration --output $nuget_package_directory --no-build
 		}
 
 		$success = $true
 	} finally {
 		#if ($success -ne $true) {
 			Restore-Files $backedUpFiles
+			#Remove Version.props, as we don't want it to be committed to the repository
+			if ($backup_files -eq $true -and (Test-Path -Path "$versionPropsFile") -eq $true) {
+				Remove-Item -Path "$versionPropsFile" -Force
+			}
 		#}
 	}
 }
@@ -192,11 +190,23 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 	Write-Host "##vso[task.setprogress]'Publishing'"
 
 	try {
-		$frameworksToTest = $frameworks_to_test -split "\s*?,\s*?"
+		$frameworksToTest = Get-FrameworksToTest
+
+		if ($zipPublishedArtifacts) {
+			$outDirectory = New-TemporaryDirectory
+		} else {
+			$outDirectory = $publish_directory
+		}
 		
 		foreach ($framework in $frameworksToTest) {
-			$testProjects = Get-ChildItem -Path "$source_directory/**/*.csproj" -Recurse | ? { $_.Directory.Name.Contains(".Tests") } | ForEach-Object { $_.FullName }
+			$testProjects = Get-ChildItem -Path "$source_directory/**/*.csproj" -Recurse | ? { $_.Directory.Name.Contains(".Tests") } | Select -ExpandProperty FullName
 			foreach ($testProject in $testProjects) {
+				# Pause if we have queued too many parallel jobs
+				$running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
+				if ($running.Count -ge $maximumParalellJobs) {
+					$running | Wait-Job -Any | Out-Null
+				}
+
 				$projectName = [System.IO.Path]::GetFileNameWithoutExtension($testProject)
 
 				# Special case - our CLI tool only supports .NET Core 2.1
@@ -204,35 +214,42 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 					continue
 				}
 
+				$logPath = "$outDirectory/$framework"
+				$outputPath = "$logPath/$projectName"
+
 				# Do this first so there is no conflict
-				$outputPath = "$publish_directory/$framework/$projectName"
 				Ensure-Directory-Exists $outputPath
 
 				$scriptBlock = {
-					param([string]$testProject, [string]$publish_directory, [string]$framework, [string]$configuration, [string]$projectName)
-					$logPath = "$publish_directory/$framework"
-					$outputPath = "$logPath/$projectName"
+					param([string]$testProject, [string]$outputPath, [string]$logPath, [string]$framework, [string]$configuration, [string]$projectName)
 					Write-Host "Publishing '$testProject' on '$framework' to '$outputPath'..."
 					# Note: Cannot use Psake Exec in background
-					dotnet publish "$testProject" --output "$outputPath" --framework "$framework" --configuration "$configuration" --no-build --verbosity Detailed /p:TestFrameworks=true > "$logPath/$projectName-dotnet-publish.log" 2> "$logPath/$projectName-dotnet-publish-error.log"
+					dotnet publish "$testProject" --output "$outputPath" --framework "$framework" --configuration "$configuration" --no-build --verbosity Detailed /p:TestFrameworks=true /p:Platform="$platform" > "$logPath/$projectName-dotnet-publish.log" 2> "$logPath/$projectName-dotnet-publish-error.log"
 				}
 
 				# Execute the jobs in parallel
-				Start-Job $scriptBlock -ArgumentList $testProject,$publish_directory,$framework,$configuration,$projectName
+				Start-Job $scriptBlock -ArgumentList $testProject,$outputPath,$logPath,$framework,$configuration,$projectName
 			}
 		}
 
-		Write-Host "Executing dotnet publish of all projects in parallel. This will take a bit, please wait..."
-
-		Get-Job
-
 		# Wait for it all to complete
-        While (Get-Job -State "Running") {
-			Start-Sleep 10
-		}
+		do {
+			$running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
+			if ($running.Count -gt 0) {
+				Write-Host ""
+				Write-Host "  Almost finished, only $($running.Count) projects left to publish..." -ForegroundColor Cyan
+				$running | Wait-Job -Any | Out-Null
+			}
+		} until ($running.Count -eq 0)
 
 		# Getting the information back from the jobs (time consuming)
 		#Get-Job | Receive-Job
+
+		if ($zipPublishedArtifacts) {
+			Ensure-Directory-Exists $publish_directory
+			Add-Type -assembly "System.IO.Compression.Filesystem"
+			[System.IO.Compression.ZipFile]::CreateFromDirectory($outDirectory, "$publish_directory/$publishedArtifactZipFileName")
+		}
 
 		$success = $true
 	} finally {
@@ -244,26 +261,47 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 
 task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This task runs the tests" {
 	Write-Host "##teamcity[progressMessage 'Testing']"
+	Write-Host "##vso[task.setprogress]'Testing'"
 	Write-Host "Running tests..." -ForegroundColor DarkCyan
 
 	pushd $base_directory
 	$testProjects = Get-ChildItem -Path "$source_directory/**/*.csproj" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
 	popd
 
-	Write-Host "frameworks_to_test: $frameworks_to_test" -ForegroundColor Yellow
+	$testProjects = $testProjects | Sort-Object -Property FullName
 
-	$frameworksToTest = $frameworks_to_test -split "\s*?,\s*?"
+	$frameworksToTest = Get-FrameworksToTest
+	
+	Write-Host "frameworksToTest: $frameworksToTest" -ForegroundColor Yellow
 
-	foreach ($framework in $frameworksToTest) {
-		Write-Host "Framework: $framework" -ForegroundColor Blue
+	[int]$totalProjects = $testProjects.Length * $frameworksToTest.Length
+	[int]$remainingProjects = $totalProjects
 
-		foreach ($testProject in $testProjects) {
+	Ensure-Directory-Exists $test_results_directory
+
+	foreach ($testProject in $testProjects) {
+
+		foreach ($framework in $frameworksToTest) {
 			$testName = $testProject.Directory.Name
 
 			# Special case - our CLI tool only supports .NET Core 2.1
 			if ($testName.Contains("Tests.Cli") -and (!$framework.StartsWith("netcoreapp2."))) {
+				$totalProjects--
+				$remainingProjects--
 				continue
 			}
+
+			Write-Host "  Next Project in Queue: $testName, Framework: $framework" -ForegroundColor Yellow
+
+			# Pause if we have queued too many parallel jobs
+			$running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
+			if ($running.Count -ge $maximumParalellJobs) {
+				Write-Host ""
+				Write-Host "  Running tests in parallel on $($running.Count) projects out of approximately $totalProjects total." -ForegroundColor Cyan
+				Write-Host "  $remainingProjects projects are waiting in the queue to run. This will take a bit, please wait..." -ForegroundColor Cyan
+				$running | Wait-Job -Any | Out-Null
+			}
+			$remainingProjects -= 1
 
 			$testResultDirectory = "$test_results_directory/$framework/$testName"
 			Ensure-Directory-Exists $testResultDirectory
@@ -290,15 +328,33 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 
 			Write-Host $testExpression -ForegroundColor Magenta
 
-			Invoke-Expression $testExpression
-			# fail the build on negative exit codes (NUnit errors - if positive it is a test count or, if 1, it could be a dotnet error)
-			if ($LASTEXITCODE -lt 0) {
-				throw "Test execution failed"
+			$scriptBlock = {
+				param([string]$testExpression, [string]$testResultDirectory)
+				$testExpression = "$testExpression > '$testResultDirectory/dotnet-test.log' 2> '$testResultDirectory/dotnet-test-error.log'"
+				Invoke-Expression $testExpression
 			}
+
+			# Execute the jobs in parallel
+			Start-Job $scriptBlock -ArgumentList $testExpression,$testResultDirectory
+
+			#Invoke-Expression $testExpression
+			## fail the build on negative exit codes (NUnit errors - if positive it is a test count or, if 1, it could be a dotnet error)
+			#if ($LASTEXITCODE -lt 0) {
+			#	throw "Test execution failed"
+			#}
 		}
 	}
 
-	Summarize-Test-Results
+	do {
+		$running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
+		if ($running.Count -gt 0) {
+			Write-Host ""
+			Write-Host "  Almost finished, only $($running.Count) test projects left..." -ForegroundColor Cyan
+			$running | Wait-Job -Any
+		}
+	} until ($running.Count -eq 0)
+
+	Summarize-Test-Results -FrameworksToTest $frameworksToTest
 }
 
 function Get-Package-Version() {
@@ -345,6 +401,19 @@ function Get-Version() {
 	return $version
 }
 
+function Get-FrameworksToTest() {
+    $frameworksToTest = New-Object Collections.Generic.List[string]
+    $frameworks = $frameworks_to_test -split "\s*?,\s*?"
+    foreach ($framework in $frameworks) {
+        if ($IsWindows) {
+            $frameworksToTest.Add($framework)
+        } elseif ($framework.StartsWith('netcore')) {
+            $frameworksToTest.Add($framework)
+        }
+    }
+    return [System.Linq.Enumerable]::ToArray($frameworksToTest)
+}
+
 function Is-Sdk-Version-Installed([string]$sdkVersion) {
 	& where.exe dotnet.exe | Out-Null
 	if ($LASTEXITCODE -eq 0) {
@@ -375,6 +444,35 @@ function Is-Sdk-Version-Installed([string]$sdkVersion) {
 }
 
 function Prepare-For-Build() {
+	#Use only the major version as the assembly version.
+	#This ensures binary compatibility unless the major version changes.
+	$version -match "(^\d+)"
+	$assemblyVersion = $Matches[0]
+	$assemblyVersion = "$assemblyVersion.0.0"
+
+	Write-Host "Assembly version set to: $assemblyVersion" -ForegroundColor Green
+
+	$informationalVersion = $packageVersion
+	#check for presense of Git
+	& where.exe git.exe
+	if ($LASTEXITCODE -eq 0) {
+		$gitCommit = ((git rev-parse --verify --short=10 head) | Out-String).Trim()
+		$informationalVersion = "$packageVersion commit:[$gitCommit]"
+	}
+
+	Write-Host "##vso[task.setvariable variable=AssemblyVersion;]$assemblyVersion"
+	Write-Host "##vso[task.setvariable variable=FileVersion;]$version"
+	Write-Host "##vso[task.setvariable variable=InformationalVersion;]$informationalVersion"
+	Write-Host "##vso[task.setvariable variable=PackageVersion;]$packageVersion"
+
+	Write-Host "Assembly informational version set to: $informationalVersion" -ForegroundColor Green
+
+	Generate-Version-Props `
+		-AssemblyVersion $assemblyVersion `
+		-FileVersion $version `
+		-InformationalVersion $informationalVersion `
+		-PackageVersion $packageVersion `
+		-File $versionPropsFile
 	Update-Constants-Version $packageVersion
 
 	if ($generateBuildBat -eq $true) {
@@ -408,6 +506,50 @@ $fileText = "{
 	Ensure-Directory-Exists $dir
 
 	Write-Host "Generating global.json file: $file"
+	Out-File -filePath $file -encoding UTF8 -inputObject $fileText
+}
+
+function Generate-Version-Props {
+param(
+	[string]$assemblyVersion,
+	[string]$fileVersion,
+	[string]$informationalVersion,
+	[string]$packageVersion,
+	[string]$file = $(throw "file is a required parameter.")
+)
+
+$fileText = "<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ ""License""); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ ""AS IS"" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<Project>
+  <PropertyGroup Label=""Version Override Properties"">
+    <AssemblyVersion>$assemblyVersion</AssemblyVersion>
+    <FileVersion>$fileVersion</FileVersion>
+    <InformationalVersion>$informationalVersion</InformationalVersion>
+    <PackageVersion>$packageVersion</PackageVersion>
+  </PropertyGroup>
+</Project>"
+	$dir = [System.IO.Path]::GetDirectoryName($file)
+	Ensure-Directory-Exists $dir
+
+	Write-Host "Generating Version.props file: $file"
 	Out-File -filePath $file -encoding UTF8 -inputObject $fileText
 }
 
@@ -494,9 +636,7 @@ function New-CountersObject ([string]$project, [string]$outcome, [int]$total, [i
     return $counters
 }
 
-function Summarize-Test-Results() {
-    Write-Host "frameworks_to_test: $frameworks_to_test" -ForegroundColor Gray
-    $frameworksToTest = $frameworks_to_test -split "\s*?,\s*?"
+function Summarize-Test-Results([string[]]$frameworksToTest) {
 
     foreach ($framework in $frameworksToTest) {
         pushd $base_directory
@@ -517,11 +657,11 @@ function Summarize-Test-Results() {
 
         Write-Host ""
         Write-Host ""
-        Write-Host "************************************************************************************************************" -ForegroundColor Yellow
-        Write-Host "*                                                                                                          *" -ForegroundColor Yellow
-        Write-Host "*                                        Test Summary For $framework"  -ForegroundColor Yellow
-        Write-Host "*                                                                                                          *" -ForegroundColor Yellow
-        Write-Host "************************************************************************************************************" -ForegroundColor Yellow
+        Write-Host "**********************************************************************" -ForegroundColor Yellow
+        Write-Host "*                                                                    *" -ForegroundColor Yellow
+        Write-Host "*                        Test Summary For $framework"  -ForegroundColor Yellow
+        Write-Host "*                                                                    *" -ForegroundColor Yellow
+        Write-Host "**********************************************************************" -ForegroundColor Yellow
 
         foreach ($testReport in $testReports) {
             $testName = [System.IO.Path]::GetFileName([System.IO.Path]::GetDirectoryName($testReport))
@@ -555,15 +695,17 @@ function Summarize-Test-Results() {
                         $skippedCountForFramework += $counters.Skipped
 
                         $format = @{Expression={$_.Project};Label='Project';Width=35},
-                            @{Expression={$_.Outcome};Label='Outcome';Width=9},
-                            @{Expression={$_.Total};Label='Total';Width=8},
-                            @{Expression={$_.Executed};Label='Executed';Width=10},
-                            @{Expression={$_.Passed};Label='Passed';Width=8},
-                            @{Expression={$_.Failed};Label='Failed';Width=8},
-                            @{Expression={$_.Warning};Label='Warning';Width=9},
+                            @{Expression={$_.Outcome};Label='Outcome';Width=7},
+                            @{Expression={$_.Total};Label='Total';Width=6},
+                            @{Expression={$_.Executed};Label='Executed';Width=8},
+                            @{Expression={$_.Passed};Label='Passed';Width=6},
+                            @{Expression={$_.Failed};Label='Failed';Width=6},
+                            @{Expression={$_.Warning};Label='Warning';Width=7},
                             @{Expression={$_.Inconclusive};Label='Inconclusive';Width=14}
 
-                        $Counters | Format-Table $format
+						if ($counters.Failed -gt 0) {
+							$Counters | Format-Table $format
+						}
                     }
                 }
 
@@ -575,12 +717,12 @@ function Summarize-Test-Results() {
 
         # FOOTER FOR FRAMEWORK
 
-        Write-Host "************************************************************************************************************" -ForegroundColor Magenta
-        Write-Host "*                                                                                                          *" -ForegroundColor Magenta
-        Write-Host "*                                        Totals For $framework"  -ForegroundColor Magenta
-        Write-Host "*                                                                                                          *" -ForegroundColor Magenta
-        Write-Host "************************************************************************************************************" -ForegroundColor Magenta
-        Write-Host ""
+        #Write-Host "**********************************************************************" -ForegroundColor Magenta
+        #Write-Host "*                                                                    *" -ForegroundColor Magenta
+        #Write-Host "*                           Totals For $framework"  -ForegroundColor Magenta
+        #Write-Host "*                                                                    *" -ForegroundColor Magenta
+        #Write-Host "**********************************************************************" -ForegroundColor Magenta
+        #Write-Host ""
         $foreground = if ($outcomeForFramework -eq 'Failed') { 'Red' } else { 'Green' }
         Write-Host "Result: " -NoNewline; Write-Host "$outcomeForFramework" -ForegroundColor $foreground
         Write-Host ""
@@ -594,6 +736,8 @@ function Summarize-Test-Results() {
         Write-Host "Warning: " -NoNewline; Write-Host "$warningCountForFramework" -ForegroundColor $foreground
         $foreground = if ($failedCountForFramework -gt 0) { 'Cyan' } else { (Get-Host).UI.RawUI.ForegroundColor }
         Write-Host "Inconclusive: " -NoNewline; Write-Host "$inconclusiveCountForFramework" -ForegroundColor $foreground
+		Write-Host ""
+		Write-Host "See the .trx logs in $test_results_directory/$framework for more details." -ForegroundColor DarkCyan
     }
 }
 
@@ -631,4 +775,10 @@ function Ensure-Directory-Exists([string] $path) {
 	if (!(Test-Path $path)) {
 		New-Item $path -ItemType Directory
 	}
+}
+
+function New-TemporaryDirectory {
+    $parent = [System.IO.Path]::GetTempPath()
+    [string] $name = [System.Guid]::NewGuid()
+    New-Item -ItemType Directory -Path (Join-Path $parent $name)
 }

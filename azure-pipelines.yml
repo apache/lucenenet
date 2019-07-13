@@ -1,0 +1,377 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
+
+# DevOps Setup: Define the following pipeline level variables in Azure DevOps build pipeline
+#
+# ArtifactFeedID: (Optional - set to your Azure DevOps Artifact (NuGet) feed. If not provided, publish job will be skipped.)
+# BuildConfiguration: (Optional. Defaults to 'Release')
+# BuildPlatform: (Optional. Defaults to 'Any CPU')
+# IsRelease: (Optional. By default the Release job is disabled, setting this to 'true' will enable it)
+# RunTests: 'true' (Optional - set to 'false' to disable test jobs - useful for debugging. If not provided, tests will be run.)
+
+# Versioning Variables
+
+# BuildCounterSeed: (Optional - Set in conjunction with VersionSuffix, will cause the build counter to begin at this value. Note that it is set once, to reset is an API call.)
+# PackageVersion: (Optional - This can be used to explicitly set the whole version number to a specific version, i.e. 4.8.0-beta00005. It overrides all other version settings.)
+# PreReleaseCounterPattern: (Optional. Set to '0000000000' in ci pipeline or '00000' in release pipeline. The default is '0000000000'. This setting has no effect if VersionSuffix is ''.)
+# VersionSuffix: (Optional. Defaults to 'ci'. Set to 'beta' or 'rc' or '' in production pipeline.)
+
+variables:
+- name: BuildCounter
+  value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
+- name: BinaryArtifactName
+  value: 'testbinaries'
+- name: NuGetArtifactName
+  value: 'nuget'
+- name: ReleaseArtifactName
+  value: 'release'
+- name: TestResultsArtifactName
+  value: 'testresults'
+- name: VersionArtifactName
+  value: 'version'
+- name: BuildNumberFileName
+  value: 'buildNumber.txt'
+- name: PackageVersionFileName
+  value: 'packageVersion.txt'
+- name: FileVersionFileName
+  value: 'fileVersion.txt'
+- name: BuildDirectory # Where the build scripts and configs are
+  value: '$(System.DefaultWorkingDirectory)/build'
+- name: PublishDirectory # Test binaries directory
+  value: '$(Build.ArtifactStagingDirectory)/$(BinaryArtifactName)'
+- name: NuGetArtifactDirectory # NuGet binaries directory
+  value: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+- name: PublishedArtifactZipFileName
+  value: 'published.zip'
+
+stages:
+- stage: Build_Stage
+  displayName: 'Build Stage:'
+  jobs:
+
+  - job: Build
+    pool:
+      vmImage: 'windows-2019'
+
+    variables:
+      PublishTempDirectory: '$(Build.BinariesDirectory)/publish'
+
+    steps:
+    - powershell: |
+        $configuration = if ($env:BUILDCONFIGURATION) { $env:BUILDCONFIGURATION } else { "Release" }
+        Write-Host "##vso[task.setvariable variable=BuildConfiguration;]$configuration"
+      displayName: 'Setup Default Variable Values'
+
+    - task: DotNetCoreInstaller@0
+      displayName: 'Use .NET Core sdk 2.2.300'
+      inputs:
+        version: 2.2.300
+
+    - powershell: |
+        Import-Module "$(BuildDirectory)/psake.psm1"
+        $generateBuildBat = if ($Env:ISRELEASE -eq 'true') { 'true' } else { 'false' }
+        $parameters = @{}
+        $properties = @{
+            backup_files='false';
+            publish_directory='$(PublishTempDirectory)';
+            nuget_package_directory='$(NuGetArtifactDirectory)'
+            # Lock the build.bat so it only builds this version in the release distribution
+            generateBuildBat=$generateBuildBat
+        }
+        [string[]]$tasks = 'Pack'
+        if ($Env:RunTests -ne 'false') {
+            [string[]]$tasks = 'Pack','Publish'
+        }
+        Invoke-psake $(BuildDirectory)/build.ps1 -Task $tasks -properties $properties -parameters $parameters
+        exit !($psake.build_success)
+      displayName: 'PSake Build, Pack, and Publish'
+
+    - template: 'build/azure-templates/show-all-environment-variables.yml'
+
+    - task: ArchiveFiles@2
+      displayName: 'Zip $(PublishTempDirectory)'
+      inputs:
+        rootFolderOrFile: '$(PublishTempDirectory)'
+        includeRootFolder: false
+        archiveFile: '$(PublishDirectory)/$(PublishedArtifactZipFileName)'
+      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+
+    - powershell: |
+        $dir = '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
+        if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path "$dir" -Force }
+        '$(PackageVersion)' | Out-File -FilePath "$dir/$(PackageVersionFileName)" -Force
+        '$(FileVersion)' | Out-File -FilePath "$dir/$(FileVersionFileName)" -Force
+        '$(Build.BuildNumber)' | Out-File -FilePath "$dir/$(BuildNumberFileName)" -Force
+      displayName: 'Write Versions to Files'
+
+    # If this is a release pipeline, copy the build.bat and Version.props files as version artifacts, which will 
+    # overwrite the build.bat and Version.props files of the release.
+    - task: CopyFiles@2
+      displayName: 'Copy build.bat and Version.props Files to: /$(VersionArtifactName)'
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)'
+        Contents: |
+          build.bat
+          Version.props
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
+      condition: and(succeeded(), eq(variables['IsRelease'], 'true'))
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: $(VersionArtifactName)'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
+        ArtifactName: '$(VersionArtifactName)'
+
+    # Copy the .pdb files as build artifacts, which will 
+    # later be used to push to the Azure Artifacts symbol server.
+    - task: CopyFiles@2
+      displayName: 'Copy .pdb Files to: /$(NuGetArtifactName)'
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)'
+        Contents: '**/bin/$(BuildConfiguration)/**/*.pdb'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: $(BinaryArtifactName)'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(BinaryArtifactName)'
+        ArtifactName: '$(BinaryArtifactName)'
+      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: $(NuGetArtifactName)'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+        ArtifactName: '$(NuGetArtifactName)'
+
+
+- stage: Test_Stage
+  displayName: 'Test Stage:'
+  jobs:
+  - job: Test_netcoreapp2_1
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+    strategy:
+      matrix:
+        Windows:
+          osName: 'Windows'
+          imageName: 'windows-2019'
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+        Linux:
+          osName: 'Linux'
+          imageName: 'ubuntu-16.04'
+          maximumAllowedFailures: 30 # Maximum allowed failures for a successful build
+        macOS:
+          osName: 'macOS'
+          imageName: 'macOS-10.14'
+          maximumAllowedFailures: 30 # Maximum allowed failures for a successful build
+    displayName: 'Test netcoreapp2.1 on'
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - template: 'build/azure-templates/run-tests-on-os.yml'
+      parameters:
+        osName: $(osName)
+        testTargetFrameworks: 'netcoreapp2.1'
+        testResultsArtifactName: '$(TestResultsArtifactName)'
+        publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
+        maximumParallelJobs: 8
+        maximumAllowedFailures: $(maximumAllowedFailures)
+
+  - job: Test_netcoreapp1_0
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+    strategy:
+      matrix:
+        Windows:
+          osName: 'Windows'
+          imageName: 'windows-2019'
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+        Linux:
+          osName: 'Linux'
+          imageName: 'ubuntu-16.04'
+          maximumAllowedFailures: 30 # Maximum allowed failures for a successful build
+        macOS:
+          osName: 'macOS'
+          imageName: 'macOS-10.14'
+          maximumAllowedFailures: 30 # Maximum allowed failures for a successful build
+    displayName: 'Test netcoreapp1.0 on'
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - template: 'build/azure-templates/run-tests-on-os.yml'
+      parameters:
+        osName: $(osName)
+        testTargetFrameworks: 'netcoreapp1.0'
+        testResultsArtifactName: '$(TestResultsArtifactName)'
+        publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
+        maximumParallelJobs: 8
+        maximumAllowedFailures: $(maximumAllowedFailures)
+
+  - job: Test_net451
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+    displayName: 'Test net451 on Windows'
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - template: 'build/azure-templates/run-tests-on-os.yml'
+      parameters:
+        osName: 'Windows'
+        testTargetFrameworks: 'net451'
+        testResultsArtifactName: '$(TestResultsArtifactName)'
+        publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
+        maximumParallelJobs: 8
+        maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+
+
+- stage: Publish_Stage
+  displayName: 'Publish Stage:'
+  jobs:
+
+  # Optional job to push to Azure Artifact feed. Just pass in
+  # the GUID of the artifact feed as ArtifactFeedID to enable.
+  - job: Publish_Azure_Artifacts
+    condition: and(succeeded(), ne(variables['ArtifactFeedID'], ''))
+    pool:
+      vmImage: 'windows-2019'
+
+    steps:
+    - template: 'build/azure-templates/show-all-environment-variables.yml'
+
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Artifacts: $(VersionArtifactName)'
+      inputs:
+        artifactName: '$(VersionArtifactName)'
+        downloadPath: '$(Build.ArtifactStagingDirectory)'
+
+      # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
+      # the version cannot be passed to the Index Sources & Publish Symbols task.
+    - powershell: |
+        $version = Get-Content '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
+        Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
+        Write-Host "##vso[task.setvariable variable=Build.BuildNumber;]$version"
+      displayName: 'Read PackageVersion from File to Build.BuildNumber'
+
+    - template: 'build/azure-templates/show-all-environment-variables.yml'
+
+    - template: 'build/azure-templates/publish-nuget-packages.yml'
+      parameters:
+        artifactFeedID: '$(ArtifactFeedID)'
+        nugetArtifactName: '$(NuGetArtifactName)'
+
+
+- stage: Release_Stage
+  displayName: 'Release Stage:'
+  jobs:
+  - job: Release
+    condition: and(succeeded(), eq(variables['IsRelease'], 'true'))
+    displayName: 'Build Release Artifacts for [VOTE]'
+    pool:
+      vmImage: 'windows-2019'
+
+    steps:
+    - template: 'build/azure-templates/show-all-environment-variables.yml'
+
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Artifacts: $(NuGetArtifactName)'
+      inputs:
+        artifactName: '$(NuGetArtifactName)'
+        downloadPath: '$(Build.ArtifactStagingDirectory)'
+
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Artifacts: $(VersionArtifactName)'
+      inputs:
+        artifactName: '$(VersionArtifactName)'
+        downloadPath: '$(Build.ArtifactStagingDirectory)'
+
+    - template: 'build/azure-templates/show-all-files.yml' # Uncomment for debugging
+
+      # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
+      # the version cannot be passed to the Index Sources & Publish Symbols task.
+    - powershell: |
+        $version = Get-Content '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
+        $vcsLabel = 'Lucene.Net_' + $version.Replace('.', '_').Replace('-', '_')
+        Write-Host "##vso[task.setvariable variable=VCSLabel;]$vcsLabel"
+        Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
+        Write-Host "##vso[task.setvariable variable=Build.BuildNumber;]$version"
+      displayName: 'Build VCS Label and Rehydrate Version Variables'
+
+    - powershell: |
+        $files = 'build.bat','Version.props'
+        foreach ($file in $files) {
+            Copy-Item -Path "$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$file" -Destination "$(Build.SourcesDirectory)/$file" -Force -ErrorAction Continue
+        }
+      displayName: 'Update build.bat and Version.props to build only version $(PackageVersion)'
+
+    - template: 'build/azure-templates/show-all-environment-variables.yml'
+
+    - task: CopyFiles@2
+      displayName: 'Copy Source Code Files to: $(Build.ArtifactStagingDirectory)/srctemp'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: |
+         **
+         !.git/**/*
+         !branding/**/*
+         !release/**/*
+         !src/**/bin/**/*
+         !src/**/obj/**/*
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/srctemp'
+
+    - task: ArchiveFiles@2
+      displayName: 'Archive Source Code Files'
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/srctemp'
+        includeRootFolder: false
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)/Apache-Lucene.Net-$(PackageVersion).src.zip'
+
+    - task: CopyFiles@2
+      displayName: 'Copy License/Notice Files to: $(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: |
+         LICENSE.txt
+         NOTICE.txt
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+
+    - task: ArchiveFiles@2
+      displayName: 'Archive Binary Files'
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+        includeRootFolder: false
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)/Apache-Lucene.Net-$(PackageVersion).bin.zip'
+
+    - powershell: |
+        $dir = '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)'
+        if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path "$dir" -Force }
+        $nl = [Environment]::NewLine
+        "TODO: Review: http://www.apache.org/legal/release-policy.html" + $nl + `
+        "TODO: Tag Repository" + $nl + `
+        "  commit: $(Build.SourceVersion)" + $nl + `
+        "  tag: $(VCSLabel)" + $nl + `
+        "TODO: Sign release artifacts (see https://www.apache.org/dev/release-signing.html)" + $nl + `
+        "TODO: Push release artifacts to dev (https://dist.apache.org/repos/dist/dev/lucenenet/)" + $nl + `
+        "TODO: Start release [VOTE] (see https://www.apache.org/foundation/voting.html)" + $nl | Out-File -FilePath "$dir/RELEASE-TODO.txt" -Force
+      displayName: 'Write RELEASE-TODO.txt'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: $(ReleaseArtifactName)'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)'
+        ArtifactName: '$(ReleaseArtifactName)'
+
+# LUCENENET TODO: Write VCS Label (git tag) automatically

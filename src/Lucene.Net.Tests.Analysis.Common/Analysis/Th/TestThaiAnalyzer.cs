@@ -92,6 +92,48 @@ namespace Lucene.Net.Analysis.Th
             AssertAnalyzesTo(analyzer, "ประโยคว่า The quick brown fox jumped over the lazy dogs", new string[] { "ประโยค", "ว่า", "quick", "brown", "fox", "jumped", "over", "lazy", "dogs" });
         }
 
+        // Ellision character
+        private static readonly char THAI_PAIYANNOI = (char)0x0E2F;
+        // Repeat character
+        private static readonly char THAI_MAIYAMOK = (char)0x0E46;
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestThaiBreakEngineInitializerCode()
+        {
+            // Initialize UnicodeSets
+            var fThaiWordSet = new ICU4N.Text.UnicodeSet();
+            var fMarkSet = new ICU4N.Text.UnicodeSet();
+            var fBeginWordSet = new ICU4N.Text.UnicodeSet();
+            var fSuffixSet = new ICU4N.Text.UnicodeSet();
+
+            fThaiWordSet.ApplyPattern("[[:Thai:]&[:LineBreak=SA:]]");
+            fThaiWordSet.Compact();
+
+            fMarkSet.ApplyPattern("[[:Thai:]&[:LineBreak=SA:]&[:M:]]");
+            fMarkSet.Add(0x0020);
+            var fEndWordSet = new ICU4N.Text.UnicodeSet(fThaiWordSet);
+            fEndWordSet.Remove(0x0E31); // MAI HAN-AKAT
+            fEndWordSet.Remove(0x0E40, 0x0E44); // SARA E through SARA AI MAIMALAI
+            fBeginWordSet.Add(0x0E01, 0x0E2E); //KO KAI through HO NOKHUK
+            fBeginWordSet.Add(0x0E40, 0x0E44); // SARA E through SARA AI MAIMALAI
+            fSuffixSet.Add(THAI_PAIYANNOI);
+            fSuffixSet.Add(THAI_MAIYAMOK);
+
+            // Compact for caching
+            fMarkSet.Compact();
+            fEndWordSet.Compact();
+            fBeginWordSet.Compact();
+            fSuffixSet.Compact();
+
+            // Freeze the static UnicodeSet
+            fThaiWordSet.Freeze();
+            fMarkSet.Freeze();
+            fEndWordSet.Freeze();
+            fBeginWordSet.Freeze();
+            fSuffixSet.Freeze();
+        }
+
         /*
          * Test that position increments are adjusted correctly for stopwords.
          */
