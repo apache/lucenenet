@@ -44,15 +44,15 @@ using System.Runtime.InteropServices;
 // so we know which test to investigate.
 [assembly: NUnit.Framework.Timeout(120000)]
 
-All we know for certain is that it wasn't any of these tests
+//All we know for certain is that it wasn't any of these tests
 
-√ TestBasic [1s 220ms]
-√ TestNoUpdateThread [313ms]
-√ TestRecreateTaxonomy [233ms]
-√ TestRestart [380ms]
-√ TestUpdateThread [314ms]
-√ TestNoCommit [26ms]
-√ TestOpen [31ms]
-√ TestRevisionRelease [5ms]
-√ TestSegmentsFileLast [3ms]
+//√ TestBasic [1s 220ms]
+//√ TestNoUpdateThread [313ms]
+//√ TestRecreateTaxonomy [233ms]
+//√ TestRestart [380ms]
+//√ TestUpdateThread [314ms]
+//√ TestNoCommit [26ms]
+//√ TestOpen [31ms]
+//√ TestRevisionRelease [5ms]
+//√ TestSegmentsFileLast [3ms]
 #endif
