@@ -25,8 +25,8 @@
   <!--<Import Project="$(SolutionDir)build/NuGet.props" />-->
   
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6</TargetFrameworks>
-	<TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net451</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.6</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net451</TargetFrameworks>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
 
     <AssemblyTitle>Lucene.Net.Replicator.AspNetCore</AssemblyTitle>
@@ -44,9 +44,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="$(MicrosoftAspNetCoreHttpAbstractionsPackageVersion)" />
   </ItemGroup>
 
-  <!--<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <DebugType>portable</DebugType>
-  </PropertyGroup>-->
+  </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <DebugType>portable</DebugType>

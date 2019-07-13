@@ -24,8 +24,8 @@
   <Import Project="$(SolutionDir)build/NuGet.props" />
   
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6</TargetFrameworks>
-	<TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.6</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net45</TargetFrameworks>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
 
     <AssemblyTitle>Lucene.Net.Highlighter</AssemblyTitle>
@@ -44,9 +44,9 @@
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
   </ItemGroup>
 
-  <!--<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <DebugType>portable</DebugType>
-  </PropertyGroup>-->
+  </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
