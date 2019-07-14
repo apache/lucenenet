@@ -52,6 +52,9 @@ properties {
 }
 
 $backedUpFiles = New-Object System.Collections.ArrayList
+if ($IsWindows -eq $null) {
+	$IsWindows = $Env:OS.StartsWith('Windows')
+}
 
 
 task default -depends Pack
@@ -181,6 +184,64 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 	}
 }
 
+# Loops through each framework in the TestTargetFrameworks variable and
+# publishes the project in the artifact staging directory with the framework
+# and project name as part of the folder structure.
+task Publish -depends Compile -description "This task uses dotnet publish to package the binaries with all of their dependencies so they can be run xplat" {
+	Write-Host "##teamcity[progressMessage 'Publishing']"
+	Write-Host "##vso[task.setprogress]'Publishing'"
+
+	try {
+		$frameworksToTest = $frameworks_to_test -split "\s*?,\s*?"
+		
+		foreach ($framework in $frameworksToTest) {
+			$testProjects = Get-ChildItem -Path "$source_directory/**/*.csproj" -Recurse | ? { $_.Directory.Name.Contains(".Tests") } | ForEach-Object { $_.FullName }
+			foreach ($testProject in $testProjects) {
+				$projectName = [System.IO.Path]::GetFileNameWithoutExtension($testProject)
+
+				# Special case - our CLI tool only supports .NET Core 2.1
+				if ($projectName.Contains("Tests.Cli") -and (!$framework.StartsWith("netcoreapp2."))) {
+					continue
+				}
+
+				# Do this first so there is no conflict
+				$outputPath = "$publish_directory/$framework/$projectName"
+				Ensure-Directory-Exists $outputPath
+
+				$scriptBlock = {
+					param([string]$testProject, [string]$publish_directory, [string]$framework, [string]$configuration, [string]$projectName)
+					$logPath = "$publish_directory/$framework"
+					$outputPath = "$logPath/$projectName"
+					Write-Host "Publishing '$testProject' on '$framework' to '$outputPath'..."
+					# Note: Cannot use Psake Exec in background
+					dotnet publish "$testProject" --output "$outputPath" --framework "$framework" --configuration "$configuration" --no-build --verbosity Detailed /p:TestFrameworks=true > "$logPath/$projectName-dotnet-publish.log" 2> "$logPath/$projectName-dotnet-publish-error.log"
+				}
+
+				# Execute the jobs in parallel
+				Start-Job $scriptBlock -ArgumentList $testProject,$publish_directory,$framework,$configuration,$projectName
+			}
+		}
+
+		Write-Host "Executing dotnet publish of all projects in parallel. This will take a bit, please wait..."
+
+		Get-Job
+
+		# Wait for it all to complete
+        While (Get-Job -State "Running") {
+			Start-Sleep 10
+		}
+
+		# Getting the information back from the jobs (time consuming)
+		#Get-Job | Receive-Job
+
+		$success = $true
+	} finally {
+		#if ($success -ne $true) {
+			Restore-Files $backedUpFiles
+		#}
+	}
+}
+
 task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This task runs the tests" {
 	Write-Host "##teamcity[progressMessage 'Testing']"
 	Write-Host "Running tests..." -ForegroundColor DarkCyan
@@ -199,7 +260,7 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 		foreach ($testProject in $testProjects) {
 			$testName = $testProject.Directory.Name
 
-			# Special case - our CLI tool only supports .NET Core 2.0
+			# Special case - our CLI tool only supports .NET Core 2.1
 			if ($testName.Contains("Tests.Cli") -and (!$framework.StartsWith("netcoreapp2."))) {
 				continue
 			}
