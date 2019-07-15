@@ -26,7 +26,6 @@ properties {
 	[string]$test_results_directory = "$release_directory/TestResults"
 	[string]$publish_directory = "$release_directory/Publish"
 	[string]$solutionFile = "$base_directory/Lucene.Net.sln"
-	[string]$versionFile = "$base_directory/Version.proj"
 	[string]$sdkPath = "$env:programfiles/dotnet/sdk"
 	[string]$sdkVersion = "2.2.300"
 	[string]$globalJsonFile = "$base_directory/global.json"
@@ -53,6 +52,7 @@ properties {
 }
 
 $backedUpFiles = New-Object System.Collections.ArrayList
+
 
 task default -depends Pack
 
@@ -250,10 +250,10 @@ function Get-Package-Version() {
 		return $env:PackageVersion
 	} else {
 		#Get the version info
-		$versionFile = "$base_directory/Version.proj"
+		$versionFile = "$base_directory/Directory.Build.props"
 		$xml = [xml](Get-Content $versionFile)
 
-		$versionPrefix = $xml.Project.PropertyGroup.VersionPrefix
+		$versionPrefix = ([string]$xml.Project.PropertyGroup.VersionPrefix).Trim()
 
 		if ([string]::IsNullOrWhiteSpace($versionSuffix)) {
 			# this is a production release - use 4 segment version number 0.0.0.0

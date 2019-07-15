@@ -21,6 +21,20 @@
 <Project>
   <Import Project="build\Dependencies.props" />
 
+  <!-- IMPORTANT: When these values are changed, the CI counter number should also be reset. -->
+  <PropertyGroup Label="Version of Builds">
+    <!-- IMPORTANT: VersionPrefix must always be the same as the Lucene version this is based on.
+      Never increment it for an individual build - only increment this when an entire version's changes
+      are ported over from Lucene. This is what determines the version of all of the NuGet packages and binaries. 
+      For patching a production build, we will add a 4th segment (4.8.0.1) since it would be confusing to increment to 
+      4.8.1 if we haven't actually ported over the changes from Lucene 4.8.1. -->
+    <VersionPrefix>4.8.0</VersionPrefix>
+
+    <!-- .NET enforces AssemblyVersion as the "major" version (when strong-named),
+      so AssemblyVersion should only be changed for each major version release. -->
+    <AssemblyVersion>4.0.0</AssemblyVersion>
+  </PropertyGroup>
+
   <PropertyGroup Label="NuGet Package Defaults">
     <IsPackable>false</IsPackable>
   </PropertyGroup>

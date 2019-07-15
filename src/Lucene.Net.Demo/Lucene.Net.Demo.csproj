@@ -21,7 +21,6 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)Version.proj" />
   <!-- Demo is deployed through the dotnet/tools/lucene-cli package -->
   
   <PropertyGroup>

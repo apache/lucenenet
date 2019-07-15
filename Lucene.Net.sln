@@ -34,7 +34,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{4016BDAB
 		build\NuGet.props = build\NuGet.props
 		build\TestReferences.Common.targets = build\TestReferences.Common.targets
 		TestTargetFramework.proj = TestTargetFramework.proj
-		Version.proj = Version.proj
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4DF7EACE-2B25-43F6-B558-8520BF20BD76}"

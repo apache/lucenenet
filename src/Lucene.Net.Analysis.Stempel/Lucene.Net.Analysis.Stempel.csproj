@@ -21,7 +21,6 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)Version.proj" />
   <Import Project="$(SolutionDir)build/NuGet.props" />
   
   <PropertyGroup>

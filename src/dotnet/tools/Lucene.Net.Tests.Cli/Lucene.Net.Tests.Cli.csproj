@@ -21,8 +21,6 @@
 -->  
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)Version.proj" />
-
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     

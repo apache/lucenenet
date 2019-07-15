@@ -21,7 +21,6 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)Version.proj" />
   <!-- For now, we are not deploying this to NuGet.org -->
   <!--<Import Project="$(SolutionDir)build/NuGet.props" />-->
   
