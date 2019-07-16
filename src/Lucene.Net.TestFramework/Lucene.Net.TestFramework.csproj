@@ -43,6 +43,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Util\europarl.lines.txt.gz" />
+    <EmbeddedResource Include="Util\europarl.lines.txt.gz" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
     <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj" />
   </ItemGroup>

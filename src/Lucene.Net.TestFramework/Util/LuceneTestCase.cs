@@ -200,13 +200,9 @@ namespace Lucene.Net.Util
     [TestFixture]
     public abstract partial class LuceneTestCase : Assert // Wait long for leaked threads to complete before failure. zk needs this. -  See LUCENE-3995 for rationale.
     {
-        public static System.IO.FileInfo TEMP_DIR;
-
         public LuceneTestCase()
         {
             ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
-            String directory = Paths.TempDirectory;
-            TEMP_DIR = new System.IO.FileInfo(directory);
         }
 
         // --------------------------------------------------------------------

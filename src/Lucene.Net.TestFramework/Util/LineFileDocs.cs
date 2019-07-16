@@ -54,7 +54,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public LineFileDocs(Random random, string path, bool useDocValues)
         {
-            this.Path = Paths.ResolveTestArtifactPath(path);
+            this.Path = path;
             this.UseDocValues = useDocValues;
             Open(random);
         }
@@ -100,7 +100,16 @@ namespace Lucene.Net.Util
 
                 try
                 {
-                    @is = new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    // LUCENENET: We have embedded the default file, so if that filename is passed,
+                    // open the local resource instead of an external file.
+                    if (Path == LuceneTestCase.DEFAULT_LINE_DOCS_FILE)
+                    {
+                        @is = this.GetType().getResourceAsStream(Path);
+                    }
+                    else
+                    {
+                        @is = new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    }
                 }
                 catch (Exception)
                 {
