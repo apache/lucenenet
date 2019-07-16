@@ -507,18 +507,32 @@ namespace Lucene.Net.Index
             }
         }
 
+        // LUCENENET specific: Implemented dispose pattern
+
         /// <summary>
-        /// Close this writer. </summary>
-        /// <seealso cref= IndexWriter#close() </seealso>
+        /// Dispose this writer. </summary>
+        /// <seealso cref="IndexWriter.Dispose()"/>
         public void Dispose()
         {
-            // if someone isn't using getReader() API, we want to be sure to
-            // forceMerge since presumably they might open a reader on the dir.
-            if (GetReaderCalled == false && r.Next(8) == 2)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose this writer. </summary>
+        /// <seealso cref="IndexWriter.Dispose(bool)"/>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                DoRandomForceMerge();
+                // if someone isn't using getReader() API, we want to be sure to
+                // forceMerge since presumably they might open a reader on the dir.
+                if (GetReaderCalled == false && r.Next(8) == 2)
+                {
+                    DoRandomForceMerge();
+                }
+                w.Dispose();
             }
-            w.Dispose();
         }
 
         /// <summary>

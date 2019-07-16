@@ -71,12 +71,23 @@ namespace Lucene.Net.Util
 
         public void Dispose()
         {
-            lock (this)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // LUCENENET specific: Implemented dispose pattern
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                if (Reader != null)
+                lock (this)
                 {
-                    Reader.Dispose();
-                    Reader = null;
+                    ThreadDocs?.Dispose();
+                    if (Reader != null)
+                    {
+                        Reader.Dispose();
+                        Reader = null;
+                    }
                 }
             }
         }

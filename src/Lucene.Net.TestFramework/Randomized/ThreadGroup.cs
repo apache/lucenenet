@@ -121,11 +121,21 @@ namespace Lucene.Net.Randomized
             return this.threads.GetEnumerator();
         }
 
+        // LUCENENET specific: Implemented dispose pattern
         public void Dispose()
         {
-            lock (GroupLock)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                Groups.Remove(this);
+                lock (GroupLock)
+                {
+                    Groups.Remove(this);
+                }
             }
         }
     }

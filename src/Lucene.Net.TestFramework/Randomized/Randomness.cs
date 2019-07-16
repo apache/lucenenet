@@ -87,10 +87,19 @@ namespace Lucene.Net.Randomized
             return result;
         }
 
+        // LUCENENET specific: Implemented dispose pattern
         public void Dispose()
         {
-            if (this.SingleThreadedRandom != null)
-                this.SingleThreadedRandom.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                SingleThreadedRandom?.Dispose();
+            }
         }
     }
 }

@@ -107,14 +107,15 @@ namespace Lucene.Net.Randomized
             }
         }
 
+        // LUCENENET specific: Implemented dispose pattern
+
         public void Dispose()
         {
             this.Dispose(true);
-
             GC.SuppressFinalize(this);
         }
 
-        protected void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!this.isDisposed)
             {
