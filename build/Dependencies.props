@@ -1,7 +1,7 @@
 <Project> 
   <PropertyGroup Label="NuGet Package Reference Versions">
     <Antlr3RuntimePackageVersion>3.5.1</Antlr3RuntimePackageVersion>
-    <ICU4NPackageVersion>60.1.0-alpha.19.ga158055102</ICU4NPackageVersion>
+    <ICU4NPackageVersion>60.1.0-alpha.46</ICU4NPackageVersion>
     <ICU4NCollationPackageVersion>$(ICU4NPackageVersion)</ICU4NCollationPackageVersion>
     <ICU4NCurrencyDataPackageVersion>$(ICU4NPackageVersion)</ICU4NCurrencyDataPackageVersion>
     <ICU4NLanguageDataPackageVersion>$(ICU4NPackageVersion)</ICU4NLanguageDataPackageVersion>

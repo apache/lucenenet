@@ -1,5 +1,5 @@
 ﻿// Lucene version compatibility level 7.1.0
-using ICU4N.Lang;
+using ICU4N.Globalization;
 using ICU4N.Text;
 using ICU4N.Util;
 using Lucene.Net.Analysis.Standard;

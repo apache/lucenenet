@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Icu.TokenAttributes
         /// <summary>
         /// Gets or Sets the numeric code for this script value.
         /// <para/>
-        /// This is the constant value from <see cref="ICU4N.Lang.UScript"/>.
+        /// This is the constant value from <see cref="ICU4N.Globalization.UScript"/>.
         /// </summary>
         int Code { get; set; }
 

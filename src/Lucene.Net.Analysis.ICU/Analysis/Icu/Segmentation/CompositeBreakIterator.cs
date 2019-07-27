@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 7.1.0
-using ICU4N.Lang;
+using ICU4N;
+using ICU4N.Globalization;
 using ICU4N.Text;
 
 namespace Lucene.Net.Analysis.Icu.Segmentation
@@ -20,7 +21,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// An internal <see cref="BreakIterator"/> for multilingual text, following recommendations
     /// from: UAX #29: Unicode Text Segmentation. (http://unicode.org/reports/tr29/)
@@ -41,7 +42,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
     internal sealed class CompositeBreakIterator
     {
         private readonly ICUTokenizerConfig config;
-        private readonly BreakIteratorWrapper[] wordBreakers = new BreakIteratorWrapper[1 + UCharacter.GetIntPropertyMaxValue(UProperty.Script)];
+        private readonly BreakIteratorWrapper[] wordBreakers = new BreakIteratorWrapper[1 + UChar.GetIntPropertyMaxValue(UProperty.Script)];
 
         private BreakIteratorWrapper rbbi;
         private readonly ScriptIterator scriptIterator;

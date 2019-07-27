@@ -1,5 +1,5 @@
 ﻿// Lucene version compatibility level 7.1.0
-using ICU4N.Lang;
+using ICU4N;
 using ICU4N.Support.Text;
 using ICU4N.Text;
 
@@ -157,9 +157,9 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                 {
                     codepoint = UTF16.CharAt(m_text, 0, end, begin);
 
-                    if (UCharacter.IsDigit(codepoint))
+                    if (UChar.IsDigit(codepoint))
                         return ICU4N.Text.RuleStatus.WordNumber;
-                    else if (UCharacter.IsLetter(codepoint))
+                    else if (UChar.IsLetter(codepoint))
                     {
                         // TODO: try to separately specify ideographic, kana? 
                         // [currently all bundled as letter for this case]

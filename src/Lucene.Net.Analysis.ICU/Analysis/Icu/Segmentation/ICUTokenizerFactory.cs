@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level < 7.1.0
-using ICU4N.Lang;
+using ICU4N;
+using ICU4N.Globalization;
 using ICU4N.Text;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
@@ -87,7 +88,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                     int colonPos = scriptAndResourcePath.IndexOf(":");
                     string scriptCode = scriptAndResourcePath.Substring(0, colonPos - 0).Trim();
                     string resourcePath = scriptAndResourcePath.Substring(colonPos + 1).Trim();
-                    tailored[UCharacter.GetPropertyValueEnum(UProperty.Script, scriptCode)] = resourcePath;
+                    tailored[UChar.GetPropertyValueEnum(UProperty.Script, scriptCode)] = resourcePath;
                 }
             }
             cjkAsWords = GetBoolean(args, "cjkAsWords", true);
@@ -117,7 +118,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             public DefaultICUTokenizerConfigAnonymousHelper(bool cjkAsWords, bool myanmarAsWords, IDictionary<int, string> tailored, IResourceLoader loader)
                 : base(cjkAsWords, myanmarAsWords)
             {
-                breakers = new BreakIterator[1 + UCharacter.GetIntPropertyMaxValue(UProperty.Script)];
+                breakers = new BreakIterator[1 + UChar.GetIntPropertyMaxValue(UProperty.Script)];
                 foreach (var entry in tailored)
                 {
                     int code = entry.Key;

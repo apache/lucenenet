@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 7.1.0
-using ICU4N.Lang;
+using ICU4N;
+using ICU4N.Globalization;
 using ICU4N.Text;
 
 namespace Lucene.Net.Analysis.Icu.Segmentation
@@ -112,7 +113,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                  * value — should inherit the script value of its base character.
                  */
                 if (IsSameScript(scriptCode, sc)
-                    || UCharacter.GetType(ch) == UCharacterCategory.NonSpacingMark)
+                    || UChar.GetUnicodeCategory(ch) == UUnicodeCategory.NonSpacingMark)
                 {
                     index += UTF16.GetCharCount(ch);
 
