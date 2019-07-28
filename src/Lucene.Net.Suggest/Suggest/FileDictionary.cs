@@ -2,6 +2,7 @@
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -255,14 +256,20 @@ namespace Lucene.Net.Search.Suggest
 
             internal void ReadWeight(string weight)
             {
-                // keep reading floats for bw compat
-                try
+                // LUCENENET specific - don't use exception, use TryParse
+                if (!long.TryParse(weight, NumberStyles.Integer, CultureInfo.InvariantCulture, out curWeight))
                 {
-                    curWeight = Convert.ToInt64(weight);
-                }
-                catch (FormatException)
-                {
-                    curWeight = (long)Convert.ToDouble(weight);
+                    try
+                    {
+                        // keep reading floats for bw compat
+                        curWeight = (long)double.Parse(weight, NumberStyles.Float, CultureInfo.InvariantCulture);
+                    }
+                    catch (FormatException e)
+                    {
+                        // LUCENENET TODO: This is just so we can see what string and what culture was being tested when parsing failed,
+                        // to try to reproduce the conditions of the failure.
+                        throw new FormatException($"Weight '{weight}' could not be parsed to long or double in culture '{CultureInfo.CurrentCulture.Name}'.", e);
+                    }
                 }
             }
 

@@ -32,24 +32,26 @@ namespace Lucene.Net.Search.Suggest
             List<string> entryValues = new List<string>();
             StringBuilder sb = new StringBuilder();
             string term = TestUtil.RandomSimpleString(Random(), 1, 300);
-            sb.append(term);
+            sb.Append(term);
             entryValues.Add(term);
             if (hasWeight)
             {
-                sb.append(fieldDelimiter);
+                sb.Append(fieldDelimiter);
                 long weight = TestUtil.NextLong(Random(), long.MinValue, long.MaxValue);
-                sb.append(weight);
-                entryValues.Add(weight.ToString());
+                // LUCENENET: We need to explicitly use invariant culture here,
+                // as that is what is expected in Java
+                sb.Append(weight.ToString(CultureInfo.InvariantCulture));
+                entryValues.Add(weight.ToString(CultureInfo.InvariantCulture));
             }
             if (hasPayload)
             {
-                sb.append(fieldDelimiter);
+                sb.Append(fieldDelimiter);
                 string payload = TestUtil.RandomSimpleString(Random(), 1, 300);
-                sb.append(payload);
+                sb.Append(payload);
                 entryValues.Add(payload);
             }
             sb.append("\n");
-            return new KeyValuePair<List<string>, string>(entryValues, sb.toString());
+            return new KeyValuePair<List<string>, string>(entryValues, sb.ToString());
         }
 
         private KeyValuePair<List<List<string>>, string> generateFileInput(int count, string fieldDelimiter, bool hasWeights, bool hasPayloads)
@@ -65,9 +67,9 @@ namespace Lucene.Net.Search.Suggest
                 }
                 KeyValuePair<List<string>, string> entrySet = GenerateFileEntry(fieldDelimiter, (!hasPayloads && hasWeights) ? Random().nextBoolean() : hasWeights, hasPayload);
                 entries.Add(entrySet.Key);
-                sb.append(entrySet.Value);
+                sb.Append(entrySet.Value);
             }
-            return new KeyValuePair<List<List<string>>, string>(entries, sb.toString());
+            return new KeyValuePair<List<List<string>>, string>(entries, sb.ToString());
         }
 
         [Test]
@@ -198,7 +200,7 @@ namespace Lucene.Net.Search.Suggest
                 List<string> entry = entries[count];
                 assertTrue(entry.size() >= 2); // at least term and weight
                 assertEquals(entry[0], term.Utf8ToString());
-                assertEquals(long.Parse(entry[1]), inputIter.Weight);
+                assertEquals(long.Parse(entry[1], CultureInfo.InvariantCulture), inputIter.Weight);
                 if (entry.size() == 3)
                 {
                     assertEquals(entry[2], inputIter.Payload.Utf8ToString());
