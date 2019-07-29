@@ -26,7 +26,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Test;
 using NUnit.Framework;
 using Version = Lucene.Net.Util.LuceneVersion;
 using Lucene.Net.Codecs;
