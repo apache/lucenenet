@@ -72,6 +72,8 @@ namespace Lucene.Net.Index
             return count;
         }
 
+#if FEATURE_INDEXWRITER_TESTS
+
         [Test]
         public virtual void TestAddCloseOpen()
         {
@@ -697,6 +699,8 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
+#endif
+
         /*
          * Delete a document by term and return the doc id
          *
@@ -731,6 +735,8 @@ namespace Lucene.Net.Index
                 w.ForceMerge(1);
             }
         }
+
+#if FEATURE_INDEXWRITER_TESTS
 
         private class MyWarmer : IndexWriter.IndexReaderWarmer
         {
@@ -1422,5 +1428,6 @@ namespace Lucene.Net.Index
             w.Dispose();
             dir.Dispose();
         }
+#endif
     }
 }

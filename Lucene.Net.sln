@@ -21,6 +21,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 
 VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 15.0.26730.8
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "azure-templates", "azure-templates", "{05CE3A39-40D4-452D-AFE0-E57E536A08C6}"
+	ProjectSection(SolutionItems) = preProject
+		build\azure-templates\publish-nuget-packages.yml = build\azure-templates\publish-nuget-packages.yml
+		build\azure-templates\publish-test-results-for-target-frameworks.yml = build\azure-templates\publish-test-results-for-target-frameworks.yml
+		build\azure-templates\publish-test-results-for-test-projects.yml = build\azure-templates\publish-test-results-for-test-projects.yml
+		build\azure-templates\publish-test-results.yml = build\azure-templates\publish-test-results.yml
+		build\azure-templates\run-tests-on-os.yml = build\azure-templates\run-tests-on-os.yml
+		build\azure-templates\show-all-environment-variables.yml = build\azure-templates\show-all-environment-variables.yml
+		build\azure-templates\show-all-files.yml = build\azure-templates\show-all-files.yml
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{8CA61D33-3590-4024-A304-7B1F75B50653}"
 	ProjectSection(SolutionItems) = preProject
 		src\dotnet\Directory.Build.props = src\dotnet\Directory.Build.props
@@ -39,6 +50,20 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4DF7EACE-2B25-43F6-B558-8520BF20BD76}"
 	ProjectSection(SolutionItems) = preProject
 		src\dotnet\tools\Directory.Build.props = src\dotnet\tools\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apidocs", "apidocs", "{58FD6E39-F30F-4566-90E5-B7C9D6BC0660}"
+	ProjectSection(SolutionItems) = preProject
+		apidocs\docfx.filter.yml = apidocs\docfx.filter.yml
+		apidocs\docfx.json = apidocs\docfx.json
+		apidocs\docs.ps1 = apidocs\docs.ps1
+		apidocs\index.md = apidocs\index.md
+		apidocs\toc.yml = apidocs\toc.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4DF0A2A1-B9C7-4EE5-BAF0-BEEF53E34220}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net", "src\Lucene.Net\Lucene.Net.csproj", "{3A0AA37E-2B7B-4416-B528-DA4E0E6A6706}"
@@ -87,8 +112,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Suggest", "src\L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.TestFramework", "src\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj", "{AA0B6851-A597-47B5-A2F8-2A3E28C2B5A2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests", "src\Lucene.Net.Tests\Lucene.Net.Tests.csproj", "{0922288F-57EE-43D2-B8E9-2692289D6DBC}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Analysis.Common", "src\Lucene.Net.Tests.Analysis.Common\Lucene.Net.Tests.Analysis.Common.csproj", "{258BB6A8-A23A-42CE-A3C2-2B577CEC3F5A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Analysis.Kuromoji", "src\Lucene.Net.Tests.Analysis.Kuromoji\Lucene.Net.Tests.Analysis.Kuromoji.csproj", "{8DA818F6-1E5E-4DCF-B152-A0E0A817A42C}"
@@ -119,15 +142,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Join", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Memory", "src\Lucene.Net.Tests.Memory\Lucene.Net.Tests.Memory.csproj", "{3BE7B6EA-8DBC-45E2-947C-1CA7E63B5603}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apidocs", "apidocs", "{58FD6E39-F30F-4566-90E5-B7C9D6BC0660}"
-	ProjectSection(SolutionItems) = preProject
-		apidocs\docfx.filter.yml = apidocs\docfx.filter.yml
-		apidocs\docfx.json = apidocs\docfx.json
-		apidocs\docs.ps1 = apidocs\docs.ps1
-		apidocs\index.md = apidocs\index.md
-		apidocs\toc.yml = apidocs\toc.yml
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Misc", "src\Lucene.Net.Tests.Misc\Lucene.Net.Tests.Misc.csproj", "{F8DDC5B7-A621-4B67-AB4B-BBE083C05BB8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Queries", "src\Lucene.Net.Tests.Queries\Lucene.Net.Tests.Queries.csproj", "{AC750DC0-05A3-4F96-8CC5-CFC8FD01D4CF}"
@@ -154,10 +168,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.ICU", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Cli", "src\dotnet\tools\Lucene.Net.Tests.Cli\Lucene.Net.Tests.Cli.csproj", "{1F5574FE-19F7-4F10-9B88-76A938621F5B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4DF0A2A1-B9C7-4EE5-BAF0-BEEF53E34220}"
-	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props = Directory.Build.props
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._A-I", "src\Lucene.Net.Tests._A-I\Lucene.Net.Tests._A-I.csproj", "{86FADACC-57EC-4AA3-8BBE-C6ED526EE596}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._J-S", "src\Lucene.Net.Tests._J-U\Lucene.Net.Tests._J-U.csproj", "{5BE1EBA7-876C-4E9D-A78C-46A0D6F588C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._U-Z", "src\Lucene.Net.Tests._U-Z\Lucene.Net.Tests._U-Z.csproj", "{083EEC05-D092-4F84-8004-41F0C7192ABD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -257,10 +272,6 @@ Global
 		{AA0B6851-A597-47B5-A2F8-2A3E28C2B5A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA0B6851-A597-47B5-A2F8-2A3E28C2B5A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA0B6851-A597-47B5-A2F8-2A3E28C2B5A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0922288F-57EE-43D2-B8E9-2692289D6DBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0922288F-57EE-43D2-B8E9-2692289D6DBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0922288F-57EE-43D2-B8E9-2692289D6DBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0922288F-57EE-43D2-B8E9-2692289D6DBC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{258BB6A8-A23A-42CE-A3C2-2B577CEC3F5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{258BB6A8-A23A-42CE-A3C2-2B577CEC3F5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{258BB6A8-A23A-42CE-A3C2-2B577CEC3F5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -373,6 +384,18 @@ Global
 		{1F5574FE-19F7-4F10-9B88-76A938621F5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F5574FE-19F7-4F10-9B88-76A938621F5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F5574FE-19F7-4F10-9B88-76A938621F5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86FADACC-57EC-4AA3-8BBE-C6ED526EE596}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86FADACC-57EC-4AA3-8BBE-C6ED526EE596}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86FADACC-57EC-4AA3-8BBE-C6ED526EE596}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86FADACC-57EC-4AA3-8BBE-C6ED526EE596}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BE1EBA7-876C-4E9D-A78C-46A0D6F588C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BE1EBA7-876C-4E9D-A78C-46A0D6F588C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BE1EBA7-876C-4E9D-A78C-46A0D6F588C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BE1EBA7-876C-4E9D-A78C-46A0D6F588C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{083EEC05-D092-4F84-8004-41F0C7192ABD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{083EEC05-D092-4F84-8004-41F0C7192ABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{083EEC05-D092-4F84-8004-41F0C7192ABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{083EEC05-D092-4F84-8004-41F0C7192ABD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

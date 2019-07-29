@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(SolutionDir)TestTargetFramework.props" />
+  
+  <PropertyGroup>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+
+    <AssemblyTitle>Lucene.Net.Tests._J-U</AssemblyTitle>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Include="..\Lucene.Net.Tests\Index\TestIndexWriterReader.cs" Link="Index\TestIndexWriterReader.cs" />
+    <Compile Include="..\Lucene.Net.Tests\Search\**\*.cs" LinkBase="Search" />
+    <Compile Include="..\Lucene.Net.Tests\Store\**\*.cs" LinkBase="Store" />
+    <Compile Include="..\Lucene.Net.Tests\Support\**\*.cs" LinkBase="Support" />
+    <Compile Include="..\Lucene.Net.Tests\Util\*.cs" LinkBase="Util" />
+    <Compile Remove="..\Lucene.Net.Tests\Util\TestOfflineSorter.cs" Link="Util\TestOfflineSorter.cs" />
+    <Compile Remove="..\Lucene.Net.Tests\Util\JunitCompat\**\*;..\Lucene.Net.Tests\Util\TestMaxFailuresRule.cs" />
+    <EmbeddedResource Include="..\Lucene.Net.Tests\Store\LUCENENET521.zip" Link="Store\LUCENENET521.zip" />
+    <EmbeddedResource Include="..\Lucene.Net.Tests\Support\IO\ReadFully.txt" Link="Support\IO\ReadFully.txt" />
+    <EmbeddedResource Include="..\Lucene.Net.Tests\Support\hyts_PropertiesTest.properties" Link="Support\hyts_PropertiesTest.properties" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
+    <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+  </ItemGroup>
+  
+  <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
+  
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD;FEATURE_CONCURRENTMERGESCHEDULER;FEATURE_SERIALIZABLE</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD;NETSTANDARD1_6</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <DefineConstants>$(DefineConstants);FEATURE_CONCURRENTMERGESCHEDULER;FEATURE_SERIALIZABLE;FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <Compile Remove="..\Lucene.Net.Tests\Support\TestCase.cs" />
+  </ItemGroup>
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+</Project>

@@ -22,22 +22,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)TestTargetFramework.props" />
-
+  
   <PropertyGroup>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    
-    <AssemblyTitle>Lucene.Net.Tests</AssemblyTitle>
+
+    <AssemblyTitle>Lucene.Net.Tests._U-Z</AssemblyTitle>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
   </PropertyGroup>
-
+  
   <ItemGroup>
-    <Compile Remove="Util\JunitCompat\**\*;Util\TestMaxFailuresRule.cs" />
-    <!--<Compile Exclude="Util\TestMaxFailuresRule.cs" />-->
-    <EmbeddedResource Include="Index\bogus24.upgraded.to.36.zip;Index\index.30.cfs.zip;Index\index.30.nocfs.zip;Index\index.31.cfs.zip;Index\index.31.nocfs.zip;Index\index.31.optimized.cfs.zip;Index\index.31.optimized.nocfs.zip;Index\index.32.cfs.zip;Index\index.32.nocfs.zip;Index\index.34.cfs.zip;Index\index.34.nocfs.zip;Index\index.36.surrogates.zip;Index\index.40.cfs.zip;Index\index.40.nocfs.zip;Index\index.40.optimized.cfs.zip;Index\index.40.optimized.nocfs.zip;Index\index.41.cfs.zip;Index\index.41.nocfs.zip;Index\index.42.cfs.zip;Index\index.42.nocfs.zip;Index\index.45.cfs.zip;Index\index.45.nocfs.zip;Index\index.461.cfs.zip;Index\index.461.nocfs.zip;Index\index.48.w-binary-doc-values.zip;Index\moreterms.40.zip;Index\taxo.48.w-binary-doc-values.zip;Index\unsupported.19.cfs.zip;Index\unsupported.19.nocfs.zip;Index\unsupported.20.cfs.zip;Index\unsupported.20.nocfs.zip;Index\unsupported.21.cfs.zip;Index\unsupported.21.nocfs.zip;Index\unsupported.22.cfs.zip;Index\unsupported.22.nocfs.zip;Index\unsupported.23.cfs.zip;Index\unsupported.23.nocfs.zip;Index\unsupported.24.cfs.zip;Index\unsupported.24.nocfs.zip;Index\unsupported.29.cfs.zip;Index\unsupported.29.nocfs.zip;Store\LUCENENET521.zip;Support\IO\ReadFully.txt;Support\hyts_PropertiesTest.properties" />
-    <None Include="App.config" />
+    <Compile Include="..\Lucene.Net.Tests\Util\TestOfflineSorter.cs" Link="Util\TestOfflineSorter.cs" />
+    <Compile Include="..\Lucene.Net.Tests\Util\Automaton\**\*.cs" LinkBase="Util\Automaton" />
+    <Compile Include="..\Lucene.Net.Tests\Util\Fst\**\*.cs" LinkBase="Util\Fst" />
+    <Compile Include="..\Lucene.Net.Tests\Util\Packed\**\*.cs" LinkBase="Util\Packed" />
+    <Compile Remove="..\Lucene.Net.Tests\Util\JunitCompat\**\*;..\Lucene.Net.Tests\Util\TestMaxFailuresRule.cs" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj" />
     <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj" />
@@ -45,9 +46,13 @@
     <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
     <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
   </ItemGroup>
-
+  
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
 
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);FEATURE_UTIL_TESTS</DefineConstants>
+  </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <DefineConstants>$(DefineConstants);NETSTANDARD;FEATURE_CONCURRENTMERGESCHEDULER;FEATURE_SERIALIZABLE</DefineConstants>
     <DebugType>portable</DebugType>
@@ -57,23 +62,18 @@
     <DefineConstants>$(DefineConstants);NETSTANDARD;NETSTANDARD1_6</DefineConstants>
     <DebugType>portable</DebugType>
   </PropertyGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
-    <Compile Remove="Util\JunitCompat\**\*;Support\TestCase.cs;Util\TestMaxFailuresRule.cs" />
-  </ItemGroup>
-
+  
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <DefineConstants>$(DefineConstants);FEATURE_CONCURRENTMERGESCHEDULER;FEATURE_SERIALIZABLE;FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
+  
   <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
-
 </Project>
