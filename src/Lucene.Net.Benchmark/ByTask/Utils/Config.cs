@@ -234,7 +234,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             string sval;
             if (!props.TryGetValue(name, out sval))
             {
-                sval = "" + dflt;
+                sval = dflt.ToString(CultureInfo.InvariantCulture);
             }
             if (sval.IndexOf(":") < 0)
             {
@@ -274,7 +274,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             string sval;
             if (!props.TryGetValue(name, out sval))
             {
-                sval = "" + dflt;
+                sval = dflt.ToString(CultureInfo.InvariantCulture);
             }
             if (sval.IndexOf(":") < 0)
             {
@@ -313,7 +313,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             string sval;
             if (!props.TryGetValue(name, out sval))
             {
-                sval = "" + dflt;
+                sval = dflt.ToString(); // LUCENENET NOTE: bool ignores the IFormatProvider argument, it returns the values of constants
             }
             if (sval.IndexOf(":") < 0)
             {
