@@ -26,6 +26,8 @@ namespace Lucene.Net.Cli.Commands
 
     public abstract class CommandTestCase : LuceneTestCase
     {
+        protected readonly string RootDirectory = Util.Constants.WINDOWS ? @"C:\" : (Constants.LINUX ? "/home" : /*macOS*/ "/");
+
         protected abstract ConfigurationBase CreateConfiguration(MockConsoleApp app);
 
         protected abstract IList<Arg[]> GetRequiredArgs();

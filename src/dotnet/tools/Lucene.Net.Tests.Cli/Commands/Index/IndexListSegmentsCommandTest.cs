@@ -52,8 +52,8 @@ namespace Lucene.Net.Cli.Commands
         [LuceneNetSpecific]
         public virtual void TestNoArguments()
         {
-            System.IO.Directory.SetCurrentDirectory(@"C:\");
-            AssertCommandTranslation("", new string[] { @"C:\", "-l" });
+            System.IO.Directory.SetCurrentDirectory(RootDirectory);
+            AssertCommandTranslation("", new string[] { RootDirectory, "-l" });
         }
 
         [Test]
