@@ -1261,14 +1261,13 @@ namespace Lucene.Net.Util
                 fsdirClass = RandomInts.RandomFrom(Random(), FS_DIRECTORIES);
             }
 
-            Type clazz;
-            try
-            {
-                clazz = CommandLineUtil.LoadFSDirectoryClass(fsdirClass);
-            }
-#pragma warning disable 168
-            catch (System.InvalidCastException e)
-#pragma warning restore 168
+            // LUCENENET specific - .NET will not throw an exception if the
+            // class does not inherit FSDirectory. We get a null if the name
+            // cannot be resolved, not an exception.
+            // We need to do an explicit check to determine if this type
+            // is not a subclass of FSDirectory.
+            Type clazz = CommandLineUtil.LoadFSDirectoryClass(fsdirClass);
+            if (clazz == null || !(typeof(FSDirectory).IsAssignableFrom(clazz)))
             {
                 // TEST_DIRECTORY is not a sub-class of FSDirectory, so draw one at random
                 fsdirClass = RandomInts.RandomFrom(Random(), FS_DIRECTORIES);
