@@ -89,9 +89,13 @@ namespace Lucene.Net.Util
                 throw new System.ArgumentException("The " + typeof(FSDirectory).Name + " implementation cannot be null or empty");
             }
 
-            if (clazzName.IndexOf(".") == -1) // if not fully qualified, assume .store
+            // LUCENENET specific: Changed to use char rather than string so we get StringComparison.Ordinal,
+            // otherwise this could fail on some operating systems in certain cultures.
+            if (clazzName.IndexOf('.') == -1) // if not fully qualified, assume .store
             {
-                clazzName = typeof(Directory).Namespace + "." + clazzName;
+                // LUCENENET NOTE: .NET expects the type to be in the currently executing assembly or mscorlib
+                // if not fully qualified. This fails on macOS if called from LuceneTestCase.NewFSDirectory() without the AssemblyQualifiedName.
+                clazzName = typeof(Directory).AssemblyQualifiedName.Replace(nameof(Directory), clazzName);
             }
             return clazzName;
         }
