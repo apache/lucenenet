@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lucene.Net.Util
 {
@@ -114,10 +115,10 @@ namespace Lucene.Net.Util
 
                 while (aTokens.HasMoreTokens())
                 {
-                    int aToken = Convert.ToInt32(aTokens.NextToken());
+                    int aToken = Convert.ToInt32(aTokens.NextToken(), CultureInfo.InvariantCulture);
                     if (bTokens.HasMoreTokens())
                     {
-                        int bToken = Convert.ToInt32(bTokens.NextToken());
+                        int bToken = Convert.ToInt32(bTokens.NextToken(), CultureInfo.InvariantCulture);
                         if (aToken != bToken)
                         {
                             return aToken < bToken ? -1 : 1;
@@ -136,7 +137,7 @@ namespace Lucene.Net.Util
                 // b has some extra trailing tokens. if these are all zeroes, thats ok.
                 while (bTokens.HasMoreTokens())
                 {
-                    if (Convert.ToInt32(bTokens.NextToken()) != 0)
+                    if (Convert.ToInt32(bTokens.NextToken(), CultureInfo.InvariantCulture) != 0)
                     {
                         return -1;
                     }
