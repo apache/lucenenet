@@ -1515,8 +1515,10 @@ namespace Lucene.Net.Util
             }
 
             Type clazz = CommandLineUtil.LoadDirectoryClass(clazzName);
+            if (clazz == null)
+                throw new InvalidOperationException($"Type '{clazzName}' could not be instantiated.");
             // If it is a FSDirectory type, try its ctor(File)
-            if (clazz.GetTypeInfo().IsSubclassOf(typeof(FSDirectory)))
+            if (typeof(FSDirectory).IsAssignableFrom(clazz))
             {
                 DirectoryInfo dir = CreateTempDir("index-" + clazzName);
                 dir.Create(); // ensure it's created so we 'have' it.
