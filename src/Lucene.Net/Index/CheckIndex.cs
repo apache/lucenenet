@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
             }
 
             // find the oldest and newest segment versions
-            string oldest = Convert.ToString(int.MaxValue), newest = Convert.ToString(int.MinValue);
+            string oldest = Convert.ToString(int.MaxValue, CultureInfo.InvariantCulture), newest = Convert.ToString(int.MinValue, CultureInfo.InvariantCulture);
             string oldSegs = null;
             bool foundNonNullVersion = false;
             IComparer<string> versionComparer = StringHelper.VersionComparer;
