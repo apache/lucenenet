@@ -198,7 +198,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         protected int RequireInt32(IDictionary<string, string> args, string name)
         {
-            return int.Parse(Require(args, name));
+            return int.Parse(Require(args, name), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace Lucene.Net.Analysis.Util
             if (args.TryGetValue(name, out s))
             {
                 args.Remove(name);
-                return int.Parse(s);
+                return int.Parse(s, CultureInfo.InvariantCulture);
             }
             return defaultVal;
         }
