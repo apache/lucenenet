@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using System.IO;
 using BaseTokenStreamFactoryTestCase = Lucene.Net.Analysis.Util.BaseTokenStreamFactoryTestCase;
 
