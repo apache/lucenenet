@@ -39,6 +39,9 @@ GOTO endcommentblock
 ::   --Test
 ::   -t - Run the tests.
 ::
+::   --MaximumParallelJobs
+::   -mp - Set the maxumum number of parallel jobs to run during testing. If not supplied, the default is 8.
+::
 ::   All options are case insensitive.
 ::
 ::   To escape any of the options, put double quotes around the entire value, like this:
@@ -63,6 +66,7 @@ IF NOT "%config%" == "" (
  	set configuration=%config%
 )
 set runtests=false
+set maximumParallelJobs=8
 
 FOR %%a IN (%*) DO (
 	FOR /f "useback tokens=*" %%a in ('%%a') do (
@@ -107,6 +111,16 @@ FOR %%a IN (%*) DO (
 		IF /I !test!==--test (
 			set runtests=true
 		)
+
+		set test=!value:~0,4!
+		IF /I !test!==-mp: (
+			set maximumParallelJobs=!value:~4!
+		)
+
+		set test=!value:~0,22!
+		IF /I !test!==--maximumparalleljobs: (
+			set maximumParallelJobs=!value:~22!
+		)
 	)
 )
 
@@ -115,6 +129,6 @@ if "!runtests!"=="true" (
 	set tasks="Default,Test"
 )
 
-powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 %tasks% -properties @{configuration='%configuration%'} -parameters @{ packageVersion='%PackageVersion%';version='%version%' } }"
+powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 %tasks% -properties @{configuration='%configuration%';maximumParalellJobs=%maximumParallelJobs%} -parameters @{ packageVersion='%PackageVersion%';version='%version%' } }"
 
 endlocal

@@ -111,6 +111,7 @@ task Init -depends InstallSDK, UpdateLocalSDKVersion -description "This task mak
 	Write-Host "Version: $version"
 	Write-Host "Configuration: $configuration"
 	Write-Host "Platform: $platform"
+	Write-Host "MaximumParallelJobs: $($maximumParalellJobs.ToString())"
 
 	Ensure-Directory-Exists "$release_directory"
 }
@@ -589,11 +590,15 @@ GOTO endcommentblock
 ::   --Test
 ::   -t - Run the tests.
 ::
+::   --MaximumParallelJobs
+::   -mp - Set the maxumum number of parallel jobs to run during testing. If not supplied, the default is 8.
+::
 :: -----------------------------------------------------------------------------------
 :endcommentblock
 setlocal enabledelayedexpansion enableextensions
 
 set runtests=false
+set maximumParallelJobs=8
 
 FOR %%a IN (%*) DO (
 	FOR /f ""useback tokens=*"" %%a in ('%%a') do (
@@ -608,6 +613,16 @@ FOR %%a IN (%*) DO (
 		IF /I !test!==--test (
 			set runtests=true
 		)
+
+		set test=!value:~0,4!
+		IF /I !test!==-mp: (
+			set maximumParallelJobs=!value:~4!
+		)
+
+		set test=!value:~0,22!
+		IF /I !test!==--maximumparalleljobs: (
+			set maximumParallelJobs=!value:~22!
+		)
 	)
 )
 
@@ -616,7 +631,7 @@ if ""!runtests!""==""true"" (
 	set tasks=""Default,Test""
 )
 
-powershell -ExecutionPolicy Bypass -Command ""& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -Task %tasks% -properties @{prepareForBuild='false';backup_files='false'} }""
+powershell -ExecutionPolicy Bypass -Command ""& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -Task %tasks% -properties @{prepareForBuild='false';backup_files='false';maximumParalellJobs=%maximumParallelJobs%} }""
 
 endlocal
 "

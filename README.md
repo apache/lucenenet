@@ -180,6 +180,12 @@ To build the source, clone or download and unzip the repository. From the reposi
 		<td>build&nbsp;&#8209;&#8209;Configuration:Debug</td>
 	</tr>
 	<tr>
+		<td>&#8209;mp</td>
+		<td>&#8209;&#8209;MaximumParallelJobs</td>
+		<td>The maximum number of parallel jobs to run during testing. If not supplied, the default is 8.</td>
+		<td>build&nbsp;&#8209;mp:10</td>
+	</tr>
+	<tr>
 		<td>&#8209;pv</td>
 		<td>&#8209;&#8209;PackageVersion</td>
 		<td>The NuGet package version. If not supplied, will use the version from the Version.proj file.</td>
@@ -188,7 +194,7 @@ To build the source, clone or download and unzip the repository. From the reposi
 	<tr>
 		<td>&#8209;t</td>
 		<td>&#8209;&#8209;Test</td>
-		<td>Runs the tests after building. Note that testing typically takes upwards of 2 hours.</td>
+		<td>Runs the tests after building. Note that testing typically takes around 40 minutes with 8 parallel jobs.</td>
 		<td>build&nbsp;&#8209;t</td>
 	</tr>
 	<tr>
