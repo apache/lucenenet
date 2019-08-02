@@ -53,7 +53,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         protected override Query[] PrepareQueries()
         {
             Analyzer anlzr = NewAnalyzerTask.CreateAnalyzer(m_config.Get("analyzer",
-            "Lucene.Net.Analysis.Standard.StandardAnalyzer, Lucene.Net.Analysis.Common"));
+            typeof(Lucene.Net.Analysis.Standard.StandardAnalyzer).AssemblyQualifiedName));
             string defaultField = m_config.Get("file.query.maker.default.field", DocMaker.BODY_FIELD);
             QueryParser qp = new QueryParser(
 #pragma warning disable 612, 618

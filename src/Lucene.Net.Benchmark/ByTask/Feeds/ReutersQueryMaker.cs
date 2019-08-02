@@ -116,7 +116,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             // analyzer (default is standard analyzer)
             Analyzer anlzr = NewAnalyzerTask.CreateAnalyzer(m_config.Get("analyzer",
-                "Lucene.Net.Analysis.Standard.StandardAnalyzer, Lucene.Net.Analysis.Common"));
+                typeof(Lucene.Net.Analysis.Standard.StandardAnalyzer).AssemblyQualifiedName));
 
             List<object> queryList = new List<object>(20);
             queryList.AddRange(STANDARD_QUERIES);

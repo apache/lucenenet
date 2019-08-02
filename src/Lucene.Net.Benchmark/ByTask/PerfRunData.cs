@@ -97,7 +97,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             this.config = config;
             // analyzer (default is standard analyzer)
             analyzer = NewAnalyzerTask.CreateAnalyzer(config.Get("analyzer",
-                "Lucene.Net.Analysis.Standard.StandardAnalyzer, Lucene.Net.Analysis.Common"));
+                typeof(Lucene.Net.Analysis.Standard.StandardAnalyzer).AssemblyQualifiedName));
 
             // content source
             string sourceClass = config.Get("content.source", typeof(SingleDocSource).AssemblyQualifiedName);

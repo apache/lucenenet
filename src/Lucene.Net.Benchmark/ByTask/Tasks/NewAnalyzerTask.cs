@@ -70,7 +70,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 Analyzer analyzer = null;
                 if (null == analyzerName || 0 == analyzerName.Length)
                 {
-                    analyzerName = "Lucene.Net.Analysis.Standard.StandardAnalyzer, Lucene.Net.Analysis.Common";
+                    analyzerName = typeof(Lucene.Net.Analysis.Standard.StandardAnalyzer).AssemblyQualifiedName;
                 }
                 // First, lookup analyzerName as a named analyzer factory
                 AnalyzerFactory factory;
