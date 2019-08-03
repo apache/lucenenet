@@ -20,6 +20,7 @@
 */
 
 using System;
+using System.Globalization;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support.C5;
 using NUnit.Framework;
@@ -67,9 +68,14 @@ namespace Lucene.Net.Support.RBTreeSet
         {
             Assert.AreEqual("{  }", coll.ToString());
             coll.AddAll(new int[] { -4, 28, 129, 65530 });
-            Assert.AreEqual("{ -4, 28, 129, 65530 }", coll.ToString());
+            // LUCENENET specific - LuceneTestCase swaps cultures at random, therefore
+            // we require the IFormatProvider to be passed to make this test stable.
+            Assert.AreEqual("{ -4, 28, 129, 65530 }", coll.ToString(null, CultureInfo.InvariantCulture));
             Assert.AreEqual("{ -4, 1C, 81, FFFA }", coll.ToString(null, rad16));
-            Assert.AreEqual("{ -4, 28, 129... }", coll.ToString("L14", null));
+            // LUCENENET specific - LuceneTestCase swaps cultures at random, therefore
+            // passing a null here will have random results, making the comparison fail under
+            // certain cultures. We fix this by passing CultureInfo.InvariantCulture instead of null.
+            Assert.AreEqual("{ -4, 28, 129... }", coll.ToString("L14", CultureInfo.InvariantCulture));
             Assert.AreEqual("{ -4, 1C, 81... }", coll.ToString("L14", rad16));
         }
     }
