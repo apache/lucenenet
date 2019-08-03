@@ -1,0 +1,7 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/docs": true
+    },
+    "dotnet-test-explorer.testProjectPath": "src/**/*.Tests.*.csproj"
+}
