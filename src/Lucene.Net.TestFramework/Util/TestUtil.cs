@@ -288,8 +288,31 @@ namespace Lucene.Net.Util
             else
             {
                 // probably not evenly distributed when range is large, but OK for tests
-                BigInteger augend = new BigInteger(end + 1 - start) * (BigInteger)(r.NextDouble());
-                long result = start + (long)augend;
+                //BigInteger augend = BigInteger.Multiply(range,  new BigInteger(r.NextDouble()));
+                //long result = start + (long)augend;
+
+                // LUCENENET NOTE: Using BigInteger/Decimal doesn't work because r.NextDouble() is always
+                // rounded down to 0, which makes the result always the same as start. This alternative solution was
+                // snagged from https://stackoverflow.com/a/13095144. All we really care about here is that we get
+                // a pretty good random distribution of values between start and end.
+
+                //Working with ulong so that modulo works correctly with values > long.MaxValue
+                ulong uRange = (ulong)unchecked(end - start);
+
+                //Prevent a modolo bias; see https://stackoverflow.com/a/10984975/238419
+                //for more information.
+                //In the worst case, the expected number of calls is 2 (though usually it's
+                //much closer to 1) so this loop doesn't really hurt performance at all.
+                ulong ulongRand;
+                do
+                {
+                    byte[] buf = new byte[8];
+                    r.NextBytes(buf);
+                    ulongRand = (ulong)BitConverter.ToInt64(buf, 0);
+                } while (ulongRand > ulong.MaxValue - ((ulong.MaxValue % uRange) + 1) % uRange);
+
+                long result = (long)(ulongRand % uRange) + start + r.Next(0, 1); // Randomly decide whether to increment by 1 to make the second parameter "inclusive"
+
                 Assert.True(result >= start);
                 Assert.True(result <= end);
                 return result;
