@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.Linq;
 
 namespace Lucene.Net.Index
@@ -39,43 +38,40 @@ namespace Lucene.Net.Index
     /// </summary>
     public class AlcoholicMergePolicy : LogMergePolicy
     {
-        private readonly Random Random;
-        private readonly DateTime Calendar;
+        private readonly Random random;
+        private readonly DateTime calendar;
 
         public AlcoholicMergePolicy(Random random)
         {
-            this.Calendar = new GregorianCalendar().ToDateTime(1970, 1, 1, 0, 0, 0, (int)TestUtil.NextLong(random, 0, long.MaxValue));
-            this.Random = random;
+            // LUCENENET NOTE: All we care about here is that we have a random distribution of "Hour", picking any valid
+            // date at random achives this. We have no actual need to create a Calendar object in .NET.
+            this.calendar = new DateTime(TestUtil.NextLong(random, DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks));
+            this.random = random;
             m_maxMergeSize = TestUtil.NextInt(random, 1024 * 1024, int.MaxValue);
         }
 
         protected override long Size(SegmentCommitInfo info)
         {
-            int hourOfDay = Calendar.Hour;
-            if (hourOfDay < 6 || hourOfDay > 20 || Random.Next(23) == 5)
+            int hourOfDay = calendar.Hour;
+            if (hourOfDay < 6 || hourOfDay > 20 || random.Next(23) == 5)
             // its 5 o'clock somewhere
             {
-                Drink.Drink_e[] values = Enum.GetValues(typeof(Drink.Drink_e)).Cast<Drink.Drink_e>().ToArray();
+                Drink[] values = Enum.GetValues(typeof(Drink)).Cast<Drink>().ToArray();
                 // pick a random drink during the day
-                Drink.Drink_e drink = values[Random.Next(values.Length - 1)];
+                Drink drink = values[random.Next(values.Length - 1)];
                 return (long)drink * info.GetSizeInBytes();
             }
 
             return info.GetSizeInBytes();
         }
 
-        private class Drink
+        private enum Drink
         {
-            private const int NumDrinks = 5;
-
-            internal enum Drink_e
-            {
-                Beer = 15,
-                Wine = 17,
-                Champagne = 21,
-                WhiteRussian = 22,
-                SingleMalt = 30
-            }
+            Beer = 15,
+            Wine = 17,
+            Champagne = 21,
+            WhiteRussian = 22,
+            SingleMalt = 30
         }
     }
 }
