@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
@@ -72,7 +73,7 @@ namespace Lucene.Net.Index
 
             IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new RollbackDeletionPolicy(this, id)).SetIndexCommit(last));
             IDictionary<string, string> data = new Dictionary<string, string>();
-            data["index"] = "Rolled back to 1-" + id;
+            data["index"] = "Rolled back to 1-" + id.ToString(CultureInfo.InvariantCulture);
             w.SetCommitData(data);
             w.Dispose();
         }
@@ -145,13 +146,13 @@ namespace Lucene.Net.Index
             for (int currentRecordId = 1; currentRecordId <= 100; currentRecordId++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField(FIELD_RECORD_ID, "" + currentRecordId, Field.Store.YES));
+                doc.Add(NewTextField(FIELD_RECORD_ID, currentRecordId.ToString(CultureInfo.InvariantCulture), Field.Store.YES));
                 w.AddDocument(doc);
 
                 if (currentRecordId % 10 == 0)
                 {
                     IDictionary<string, string> data = new Dictionary<string, string>();
-                    data["index"] = "records 1-" + currentRecordId;
+                    data["index"] = "records 1-" + currentRecordId.ToString(CultureInfo.InvariantCulture);
                     w.SetCommitData(data);
                     w.Commit();
                 }
@@ -195,12 +196,8 @@ namespace Lucene.Net.Index
                         // this code reads the last id ("30" in this example) and deletes it
                         // if it is after the desired rollback point
                         string x = userData["index"];
-
-                        // LUCENENET specific - Bug in the original when "-" is the last character in
-                        // the string, it tries to match one larger than what is available.
-                        int lastIndex = x.LastIndexOf("-");
-                        string lastVal = x.Substring(lastIndex + 1 == x.Length ? lastIndex : lastIndex + 1);
-                        int last = Convert.ToInt32(lastVal);
+                        string lastVal = x.Substring(x.LastIndexOf('-') + 1);
+                        int last = Convert.ToInt32(lastVal, CultureInfo.InvariantCulture);
                         if (last > RollbackPoint)
                         {
                             /*
