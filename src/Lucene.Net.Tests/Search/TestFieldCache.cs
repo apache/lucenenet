@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
                     cache.GetDoubles(Reader, "theDouble", false);
                     cache.GetSingles(Reader, "theDouble", false);
                 }
-                Assert.IsTrue(sb.ToString(/*IOUtils.UTF_8*/).IndexOf("WARNING") != -1);
+                Assert.IsTrue(sb.ToString(/*IOUtils.UTF_8*/).IndexOf("WARNING", StringComparison.Ordinal) != -1);
             }
             finally
             {

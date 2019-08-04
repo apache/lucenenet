@@ -702,7 +702,7 @@ namespace Lucene.Net.Analysis
             TokenStream ts = new CannedTokenStream(new Token[] { Token("abc", 1, 1, 0, 4) });
             StringWriter w = new StringWriter();
             (new TokenStreamToDot("abcd", ts, (TextWriter)(w))).ToDot();
-            Assert.IsTrue(w.ToString().IndexOf("abc / abcd") != -1);
+            Assert.IsTrue(w.ToString().IndexOf("abc / abcd", StringComparison.Ordinal) != -1);
         }
 
         [Test]

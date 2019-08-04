@@ -386,11 +386,11 @@ namespace Lucene.Net.Search
                     if (!(productOf || sumOf || maxOf))
                     {
                         // maybe 'max plus x times others'
-                        int k1 = descr.IndexOf("max plus ");
+                        int k1 = descr.IndexOf("max plus ", StringComparison.Ordinal);
                         if (k1 >= 0)
                         {
                             k1 += "max plus ".Length;
-                            int k2 = descr.IndexOf(" ", k1);
+                            int k2 = descr.IndexOf(" ", k1, StringComparison.Ordinal);
                             try
                             {
                                 // LUCENENET NOTE: Using current culture here is intentional because

@@ -57,11 +57,11 @@ namespace Lucene.Net.Search.VectorHighlight
             BreakIterator bi = JdkBreakIterator.GetWordInstance(CultureInfo.InvariantCulture);
             IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
 
-            int start = TEXT.IndexOf("formance");
-            int expected = TEXT.IndexOf("high-performance");
+            int start = TEXT.IndexOf("formance", StringComparison.Ordinal);
+            int expected = TEXT.IndexOf("high-performance", StringComparison.Ordinal);
             TestFindStartOffset(text, start, expected, scanner);
 
-            expected = TEXT.IndexOf(", full");
+            expected = TEXT.IndexOf(", full", StringComparison.Ordinal);
             TestFindEndOffset(text, start, expected, scanner);
         }
 
@@ -73,11 +73,11 @@ namespace Lucene.Net.Search.VectorHighlight
             BreakIterator bi = JdkBreakIterator.GetSentenceInstance(CultureInfo.CurrentCulture);
             IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
 
-            int start = TEXT.IndexOf("any application");
-            int expected = TEXT.IndexOf("It is a");
+            int start = TEXT.IndexOf("any application", StringComparison.Ordinal);
+            int expected = TEXT.IndexOf("It is a", StringComparison.Ordinal);
             TestFindStartOffset(text, start, expected, scanner);
 
-            expected = TEXT.IndexOf("Apache Lucene is an open source");
+            expected = TEXT.IndexOf("Apache Lucene is an open source", StringComparison.Ordinal);
             TestFindEndOffset(text, start, expected, scanner);
         }
 
@@ -89,11 +89,11 @@ namespace Lucene.Net.Search.VectorHighlight
             BreakIterator bi = BreakIterator.GetLineInstance(CultureInfo.CurrentCulture);
             IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
 
-            int start = TEXT.IndexOf("any application");
-            int expected = TEXT.IndexOf("nearly");
+            int start = TEXT.IndexOf("any application", StringComparison.Ordinal);
+            int expected = TEXT.IndexOf("nearly", StringComparison.Ordinal);
             TestFindStartOffset(text, start, expected, scanner);
 
-            expected = TEXT.IndexOf("application that requires");
+            expected = TEXT.IndexOf("application that requires", StringComparison.Ordinal);
             TestFindEndOffset(text, start, expected, scanner);
         }
 

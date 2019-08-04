@@ -346,7 +346,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private static Phoneme ParsePhoneme(string ph)
         {
-            int open = ph.IndexOf("[");
+            int open = ph.IndexOf('[');
             if (open >= 0)
             {
                 if (!ph.EndsWith("]", StringComparison.Ordinal))
@@ -446,7 +446,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                         else
                         {
                             // discard comments
-                            int cmtI = line.IndexOf(ResourceConstants.CMT);
+                            int cmtI = line.IndexOf(ResourceConstants.CMT, StringComparison.Ordinal);
                             if (cmtI >= 0)
                             {
                                 line = line.Substring(0, cmtI);

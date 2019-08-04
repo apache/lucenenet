@@ -234,7 +234,7 @@ namespace Lucene.Net.Search.Payloads
                 Assert.AreEqual(3, doc.Score, doc.Score + " does not equal: " + 3);
                 Explanation explain = Searcher.Explain(query, hits.ScoreDocs[j].Doc);
                 string exp = explain.ToString();
-                Assert.IsTrue(exp.IndexOf("AveragePayloadFunction") > -1, exp);
+                Assert.IsTrue(exp.IndexOf("AveragePayloadFunction", StringComparison.Ordinal) > -1, exp);
                 Assert.AreEqual(3f, explain.Value, hits.ScoreDocs[j].Score + " explain value does not equal: " + 3);
             }
         }
@@ -257,7 +257,7 @@ namespace Lucene.Net.Search.Payloads
                 Assert.AreEqual(4, doc.Score, doc.Score + " does not equal: " + 4);
                 Explanation explain = Searcher.Explain(query, hits.ScoreDocs[j].Doc);
                 string exp = explain.ToString();
-                Assert.IsTrue(exp.IndexOf("MaxPayloadFunction") > -1, exp);
+                Assert.IsTrue(exp.IndexOf("MaxPayloadFunction", StringComparison.Ordinal) > -1, exp);
                 Assert.AreEqual(4f, explain.Value, hits.ScoreDocs[j].Score + " explain value does not equal: " + 4);
             }
         }
@@ -280,7 +280,7 @@ namespace Lucene.Net.Search.Payloads
                 Assert.AreEqual(2, doc.Score, doc.Score + " does not equal: " + 2);
                 Explanation explain = Searcher.Explain(query, hits.ScoreDocs[j].Doc);
                 string exp = explain.ToString();
-                Assert.IsTrue(exp.IndexOf("MinPayloadFunction") > -1, exp);
+                Assert.IsTrue(exp.IndexOf("MinPayloadFunction", StringComparison.Ordinal) > -1, exp);
                 Assert.AreEqual(2f, explain.Value, hits.ScoreDocs[j].Score + " explain value does not equal: " + 2);
             }
         }

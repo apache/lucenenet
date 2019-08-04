@@ -3017,7 +3017,7 @@ namespace Lucene.Net.Index
                 }
                 catch (System.ArgumentException iae)
                 {
-                    if (iae.Message.IndexOf("is too large") == -1)
+                    if (iae.Message.IndexOf("is too large", StringComparison.Ordinal) == -1)
                     {
                         throw iae;
                     }
@@ -3039,7 +3039,7 @@ namespace Lucene.Net.Index
             }
             catch (System.ArgumentException iae)
             {
-                if (iae.Message.IndexOf("is too large") == -1)
+                if (iae.Message.IndexOf("is too large", StringComparison.Ordinal) == -1)
                 {
                     throw iae;
                 }

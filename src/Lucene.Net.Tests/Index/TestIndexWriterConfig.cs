@@ -264,7 +264,7 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
-                Assert.IsTrue(str.IndexOf(f.Name) != -1, f.Name + " not found in toString");
+                Assert.IsTrue(str.IndexOf(f.Name, StringComparison.Ordinal) != -1, f.Name + " not found in toString");
             }
         }
 

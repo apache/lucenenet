@@ -175,7 +175,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                         else
                         {
                             // discard comments
-                            int cmtI = line.IndexOf(ResourceConstants.CMT);
+                            int cmtI = line.IndexOf(ResourceConstants.CMT, StringComparison.Ordinal);
                             if (cmtI >= 0)
                             {
                                 line = line.Substring(0, cmtI - 0);

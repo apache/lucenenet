@@ -204,7 +204,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(1, fpl.PhraseList.size());
-            assertTrue(fpl.PhraseList[0].toString().IndexOf("(1.0)((3,5))") > 0);
+            assertTrue(fpl.PhraseList[0].toString().IndexOf("(1.0)((3,5))", StringComparison.Ordinal) > 0);
             assertEquals(3, fpl.PhraseList[0].StartOffset);
             assertEquals(5, fpl.PhraseList[0].EndOffset);
         }
@@ -263,7 +263,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldTermStack stack = new FieldTermStack(reader, 0, F, fq);
             FieldPhraseList fpl = new FieldPhraseList(stack, fq);
             assertEquals(1, fpl.PhraseList.size());
-            assertTrue(fpl.PhraseList[0].toString().IndexOf("(1.0)((3,20))") > 0);
+            assertTrue(fpl.PhraseList[0].toString().IndexOf("(1.0)((3,20))", StringComparison.Ordinal) > 0);
             assertEquals(3, fpl.PhraseList[0].StartOffset);
             assertEquals(20, fpl.PhraseList[0].EndOffset);
         }

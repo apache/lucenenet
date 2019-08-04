@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                 IList<string> scriptAndResourcePaths = SplitFileNames(rulefilesArg);
                 foreach (string scriptAndResourcePath in scriptAndResourcePaths)
                 {
-                    int colonPos = scriptAndResourcePath.IndexOf(":");
+                    int colonPos = scriptAndResourcePath.IndexOf(':');
                     string scriptCode = scriptAndResourcePath.Substring(0, colonPos - 0).Trim();
                     string resourcePath = scriptAndResourcePath.Substring(colonPos + 1).Trim();
                     tailored[UChar.GetPropertyValueEnum(UProperty.Script, scriptCode)] = resourcePath;

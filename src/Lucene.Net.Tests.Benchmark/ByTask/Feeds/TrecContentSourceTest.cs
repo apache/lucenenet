@@ -69,7 +69,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             assertNotNull(dd);
             assertEquals(expName, dd.Name);
             assertEquals(expTitle, dd.Title);
-            assertTrue(dd.Body.IndexOf(expBody) != -1);
+            assertTrue(dd.Body.IndexOf(expBody, StringComparison.Ordinal) != -1);
             DateTime? date = dd.Date != null ? DateTools.StringToDate(dd.Date) : (DateTime?)null;
             assertEquals(expDate, date);
         }

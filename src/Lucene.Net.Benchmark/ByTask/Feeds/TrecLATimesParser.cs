@@ -44,7 +44,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             string dateStr = Extract(docBuf, DATE, DATE_END, -1, null);
             if (dateStr != null)
             {
-                int d2a = dateStr.IndexOf(DATE_NOISE);
+                int d2a = dateStr.IndexOf(DATE_NOISE, StringComparison.Ordinal);
                 if (d2a > 0)
                 {
                     dateStr = dateStr.Substring(0, (d2a + 3) - 0); // we need the "day" part

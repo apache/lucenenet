@@ -1354,7 +1354,7 @@ namespace Lucene.Net.Util.Fst
             Util.ToDot(fst, w, false, false);
             w.Dispose();
             //System.out.println(w.toString());
-            Assert.IsTrue(w.ToString().IndexOf("label=\"t/[7]\"") != -1);
+            Assert.IsTrue(w.ToString().IndexOf("label=\"t/[7]\"", StringComparison.Ordinal) != -1);
         }
 
         [Test]
@@ -1373,9 +1373,9 @@ namespace Lucene.Net.Util.Fst
             //System.out.println(w.toString());
 
             // check for accept state at label t
-            Assert.IsTrue(w.ToString().IndexOf("[label=\"t\" style=\"bold\"") != -1);
+            Assert.IsTrue(w.ToString().IndexOf("[label=\"t\" style=\"bold\"", StringComparison.Ordinal) != -1);
             // check for accept state at label n
-            Assert.IsTrue(w.ToString().IndexOf("[label=\"n\" style=\"bold\"") != -1);
+            Assert.IsTrue(w.ToString().IndexOf("[label=\"n\" style=\"bold\"", StringComparison.Ordinal) != -1);
         }
 
         // Make sure raw FST can differentiate between final vs

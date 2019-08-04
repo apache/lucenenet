@@ -125,7 +125,7 @@ namespace Lucene.Net.Util
         {
             string name = type.Name;
             string genericSuffix = string.Empty;
-            int genericIndex = name.IndexOf("`");
+            int genericIndex = name.IndexOf('`');
             if (genericIndex > -1)
             {
                 genericSuffix = "Generic" + name.Substring(genericIndex + 1);

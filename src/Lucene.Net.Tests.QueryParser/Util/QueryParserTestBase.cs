@@ -656,7 +656,7 @@ namespace Lucene.Net.QueryParsers.Util
 
         private string EscapeDateString(string s)
         {
-            if (s.IndexOf(" ") > -1)
+            if (s.IndexOf(' ') > -1)
             {
                 return "\"" + s + "\"";
             }

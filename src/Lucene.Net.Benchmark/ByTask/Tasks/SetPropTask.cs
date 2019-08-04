@@ -57,7 +57,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public override void SetParams(string @params)
         {
             base.SetParams(@params);
-            int k = @params.IndexOf(",");
+            int k = @params.IndexOf(',');
             name = @params.Substring(0, k - 0).Trim();
             value = @params.Substring(k + 1).Trim();
         }

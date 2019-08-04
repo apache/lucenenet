@@ -439,7 +439,7 @@ namespace Lucene.Net.Analysis.Ja
                              surfaceForms);
 
 
-            assertTrue(gv2.Finish().IndexOf("22.0") != -1);
+            assertTrue(gv2.Finish().IndexOf("22.0", StringComparison.Ordinal) != -1);
         }
 
         private void assertReadings(String input, params String[] readings)

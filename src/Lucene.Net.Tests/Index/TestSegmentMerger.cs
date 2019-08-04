@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 namespace Lucene.Net.Index
 {
     using NUnit.Framework;
+    using System;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
@@ -139,7 +140,7 @@ namespace Lucene.Net.Index
                 string term = termsEnum.Term.Utf8ToString();
                 int freq = (int)termsEnum.TotalTermFreq;
                 //System.out.println("Term: " + term + " Freq: " + freq);
-                Assert.IsTrue(DocHelper.FIELD_2_TEXT.IndexOf(term) != -1);
+                Assert.IsTrue(DocHelper.FIELD_2_TEXT.IndexOf(term, StringComparison.Ordinal) != -1);
                 Assert.IsTrue(DocHelper.FIELD_2_FREQS[i] == freq);
                 i++;
             }

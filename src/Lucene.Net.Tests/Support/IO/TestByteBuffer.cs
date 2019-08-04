@@ -4,6 +4,7 @@
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Support.IO
 {
@@ -1087,10 +1088,10 @@ namespace Lucene.Net.Support.IO
         public virtual void TestToString()
         {
             String str = buf.toString();
-            assertTrue(str.IndexOf("Byte") >= 0 || str.IndexOf("byte") >= 0);
-            assertTrue(str.IndexOf("" + buf.Position) >= 0);
-            assertTrue(str.IndexOf("" + buf.Limit) >= 0);
-            assertTrue(str.IndexOf("" + buf.Capacity) >= 0);
+            assertTrue(str.IndexOf("Byte", StringComparison.Ordinal) >= 0 || str.IndexOf("byte", StringComparison.Ordinal) >= 0);
+            assertTrue(str.IndexOf("" + buf.Position.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal) >= 0);
+            assertTrue(str.IndexOf("" + buf.Limit.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal) >= 0);
+            assertTrue(str.IndexOf("" + buf.Capacity.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal) >= 0);
         }
 
         // LUCENENET NOTE: Not supported

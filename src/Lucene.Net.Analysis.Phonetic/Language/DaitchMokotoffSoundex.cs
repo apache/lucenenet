@@ -299,7 +299,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 else
                 {
                     // discard comments
-                    int cmtI = line.IndexOf(COMMENT);
+                    int cmtI = line.IndexOf(COMMENT, StringComparison.Ordinal);
                     if (cmtI >= 0)
                     {
                         line = line.Substring(0, cmtI - 0);

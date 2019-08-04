@@ -404,7 +404,7 @@ namespace Lucene.Net.Search
 
             protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)
             {
-                Assert.AreEqual(-1, collector.GetType().Name.IndexOf("OutOfOrder"));
+                Assert.AreEqual(-1, collector.GetType().Name.IndexOf("OutOfOrder", StringComparison.Ordinal));
                 base.Search(leaves, weight, collector);
             }
         }

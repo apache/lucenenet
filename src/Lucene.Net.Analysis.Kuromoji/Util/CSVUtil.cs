@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -94,7 +95,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                 }
 
                 // Unescape
-                if (result.IndexOf(ESCAPED_QUOTE) >= 0)
+                if (result.IndexOf(ESCAPED_QUOTE, StringComparison.Ordinal) >= 0)
                 {
                     result = result.Replace(ESCAPED_QUOTE, "\"");
                 }

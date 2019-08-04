@@ -55,7 +55,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             bool foundAdd = false;
             foreach (PerfTask task in algTasks)
             {
-                if (task.toString().IndexOf(taskStr) >= 0)
+                if (task.toString().IndexOf(taskStr, StringComparison.Ordinal) >= 0)
                 {
                     foundAdd = true;
                 }
@@ -80,7 +80,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             bool foundAdd = false;
             foreach (PerfTask task in algTasks)
             {
-                if (task.toString().IndexOf(taskStr) >= 0)
+                if (task.toString().IndexOf(taskStr, StringComparison.Ordinal) >= 0)
                 {
                     foundAdd = true;
                 }

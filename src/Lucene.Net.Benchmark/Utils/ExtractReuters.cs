@@ -84,7 +84,7 @@ namespace Lucene.Net.Benchmarks.Utils
                     {
                         // when we see a closing reuters tag, flush the file
 
-                        if (line.IndexOf("</REUTERS") == -1)
+                        if (line.IndexOf("</REUTERS", StringComparison.Ordinal) == -1)
                         {
                             // Replace the SGM escape sequences
 

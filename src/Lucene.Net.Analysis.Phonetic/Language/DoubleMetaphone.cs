@@ -1088,7 +1088,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         private bool IsSlavoGermanic(string value)
         {
             return value.IndexOf('W') > -1 || value.IndexOf('K') > -1 ||
-                value.IndexOf("CZ") > -1 || value.IndexOf("WITZ") > -1;
+                value.IndexOf("CZ", StringComparison.Ordinal) > -1 || value.IndexOf("WITZ", StringComparison.Ordinal) > -1;
         }
 
         /// <summary>

@@ -315,7 +315,7 @@ namespace Lucene.Net.Store
                     }
                     catch (IOException e)
                     {
-                        if (e.ToString().IndexOf(" timed out:") == -1)
+                        if (e.ToString().IndexOf(" timed out:", StringComparison.Ordinal) == -1)
                         {
                             HitException = true;
                             Console.WriteLine("Stress Test Index Writer: creation hit unexpected IOException: " + e.ToString());

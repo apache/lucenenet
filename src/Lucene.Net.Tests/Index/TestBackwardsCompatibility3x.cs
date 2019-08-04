@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine(e.StackTrace);
                     }
                     // Make sure exc message includes a path=
-                    Assert.IsTrue(e.Message.IndexOf("path=\"") != -1, "got exc message: " + e.Message);
+                    Assert.IsTrue(e.Message.IndexOf("path=\"", StringComparison.Ordinal) != -1, "got exc message: " + e.Message);
                 }
                 finally
                 {

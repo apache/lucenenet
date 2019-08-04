@@ -39,12 +39,12 @@ namespace Lucene.Net.Search.VectorHighlight
             start = 0;
             assertEquals(start, scanner.FindStartOffset(text, start));
 
-            start = TEXT.IndexOf("formance");
-            int expected = TEXT.IndexOf("high-performance");
+            start = TEXT.IndexOf("formance", StringComparison.Ordinal);
+            int expected = TEXT.IndexOf("high-performance", StringComparison.Ordinal);
             assertEquals(expected, scanner.FindStartOffset(text, start));
 
-            start = TEXT.IndexOf("che");
-            expected = TEXT.IndexOf("Apache");
+            start = TEXT.IndexOf("che", StringComparison.Ordinal);
+            expected = TEXT.IndexOf("Apache", StringComparison.Ordinal);
             assertEquals(expected, scanner.FindStartOffset(text, start));
         }
 
@@ -60,8 +60,8 @@ namespace Lucene.Net.Search.VectorHighlight
             start = -1;
             assertEquals(start, scanner.FindEndOffset(text, start));
 
-            start = TEXT.IndexOf("full-");
-            int expected = TEXT.IndexOf("\ntext");
+            start = TEXT.IndexOf("full-", StringComparison.Ordinal);
+            int expected = TEXT.IndexOf("\ntext", StringComparison.Ordinal);
             assertEquals(expected, scanner.FindEndOffset(text, start));
         }
     }

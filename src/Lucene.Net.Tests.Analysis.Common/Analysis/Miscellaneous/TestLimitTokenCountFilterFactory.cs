@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
             catch (System.ArgumentException e)
             {
-                assertTrue("exception doesn't mention param: " + e.Message, 0 < e.Message.IndexOf(LimitTokenCountFilterFactory.MAX_TOKEN_COUNT_KEY));
+                assertTrue("exception doesn't mention param: " + e.Message, 0 < e.Message.IndexOf(LimitTokenCountFilterFactory.MAX_TOKEN_COUNT_KEY, StringComparison.Ordinal));
             }
         }
 

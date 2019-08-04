@@ -622,7 +622,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 seqName += "_" + rate + (perMin ? "/min" : "/sec");
             }
-            if (parallel && seqName.ToLowerInvariant().IndexOf("par") < 0)
+            if (parallel && seqName.ToLowerInvariant().IndexOf("par", StringComparison.Ordinal) < 0)
             {
                 seqName += "_Par";
             }

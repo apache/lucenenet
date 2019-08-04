@@ -53,7 +53,7 @@ namespace Lucene.Net.Support
         //    Lucene.Net.Index.IndexReader reader = writer.GetReader();
         //    Lucene.Net.Index.TermPositionVector tpv = reader.GetTermFreqVector(0, "contents") as Lucene.Net.Index.TermPositionVector;
         //    //Console.WriteLine("tpv: " + tpv);
-        //    int index = tpv.IndexOf("a_");
+        //    int index = tpv.IndexOf("a_", StringComparison.Ordinal);
         //    Assert.AreEqual(index, 1, "See the issue: LUCENENET-183");
         //}
 

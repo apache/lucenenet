@@ -173,18 +173,18 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             {
                 return null;
             }
-            if (sval.IndexOf(":") < 0)
+            if (sval.IndexOf(':') < 0)
             {
                 return sval;
             }
-            else if (sval.IndexOf(":\\") >= 0 || sval.IndexOf(":/") >= 0)
+            else if (sval.IndexOf(":\\", StringComparison.Ordinal) >= 0 || sval.IndexOf(":/", StringComparison.Ordinal) >= 0)
             {
                 // this previously messed up absolute path names on Windows. Assuming
                 // there is no real value that starts with \ or /
                 return sval;
             }
             // first time this prop is extracted by round
-            int k = sval.IndexOf(":");
+            int k = sval.IndexOf(':');
             string colName = sval.Substring(0, k - 0);
             sval = sval.Substring(k + 1);
             colForValByRound[name] = colName;
@@ -236,12 +236,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             {
                 sval = dflt.ToString(CultureInfo.InvariantCulture);
             }
-            if (sval.IndexOf(":") < 0)
+            if (sval.IndexOf(':') < 0)
             {
                 return int.Parse(sval, CultureInfo.InvariantCulture);
             }
             // first time this prop is extracted by round
-            int k = sval.IndexOf(":");
+            int k = sval.IndexOf(':');
             string colName = sval.Substring(0, k - 0);
             sval = sval.Substring(k + 1);
             colForValByRound[name] = colName;
@@ -276,12 +276,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             {
                 sval = dflt.ToString(CultureInfo.InvariantCulture);
             }
-            if (sval.IndexOf(":") < 0)
+            if (sval.IndexOf(':') < 0)
             {
                 return double.Parse(sval, CultureInfo.InvariantCulture);
             }
             // first time this prop is extracted by round
-            int k = sval.IndexOf(":");
+            int k = sval.IndexOf(':');
             string colName = sval.Substring(0, k - 0);
             sval = sval.Substring(k + 1);
             colForValByRound[name] = colName;
@@ -315,12 +315,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             {
                 sval = dflt.ToString(); // LUCENENET NOTE: bool ignores the IFormatProvider argument, it returns the values of constants
             }
-            if (sval.IndexOf(":") < 0)
+            if (sval.IndexOf(':') < 0)
             {
                 return bool.Parse(sval);
             }
             // first time this prop is extracted by round 
-            int k = sval.IndexOf(":");
+            int k = sval.IndexOf(':');
             string colName = sval.Substring(0, k - 0);
             sval = sval.Substring(k + 1);
             colForValByRound[name] = colName;
@@ -386,7 +386,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
         private string[] PropToStringArray(string s)
         {
-            if (s.IndexOf(":") < 0)
+            if (s.IndexOf(':') < 0)
             {
                 return new string[] { s };
             }
@@ -404,7 +404,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         // extract properties to array, e.g. for "10:100:5" return int[]{10,100,5}. 
         private int[] PropToInt32Array(string s)
         {
-            if (s.IndexOf(":") < 0)
+            if (s.IndexOf(':') < 0)
             {
                 return new int[] { int.Parse(s, CultureInfo.InvariantCulture) };
             }
@@ -427,7 +427,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         // extract properties to array, e.g. for "10.7:100.4:-2.3" return int[]{10.7,100.4,-2.3}. 
         private double[] PropToDoubleArray(string s)
         {
-            if (s.IndexOf(":") < 0)
+            if (s.IndexOf(':') < 0)
             {
                 return new double[] { double.Parse(s, CultureInfo.InvariantCulture) };
             }
@@ -450,7 +450,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         // extract properties to array, e.g. for "true:true:false" return boolean[]{true,false,false}. 
         private bool[] PropToBooleanArray(string s)
         {
-            if (s.IndexOf(":") < 0)
+            if (s.IndexOf(':') < 0)
             {
                 return new bool[] { bool.Parse(s) };
             }
