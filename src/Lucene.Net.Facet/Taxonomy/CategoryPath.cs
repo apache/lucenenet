@@ -223,7 +223,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // from last-first
             for (int i = Length - 1; i >= 0; i--)
             {
-                if (!Components[i].Equals(other.Components[i]))
+                if (!Components[i].Equals(other.Components[i], StringComparison.Ordinal))
                 {
                     return false;
                 }

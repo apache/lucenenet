@@ -141,15 +141,15 @@ namespace Lucene.Net.Index
                 bool seq = false;
                 for (int i = 0; i < args.Length; i++)
                 {
-                    if (args[i].Equals("-out"))
+                    if (args[i].Equals("-out", StringComparison.Ordinal))
                     {
                         outDir = args[++i];
                     }
-                    else if (args[i].Equals("-num"))
+                    else if (args[i].Equals("-num", StringComparison.Ordinal))
                     {
                         numParts = Convert.ToInt32(args[++i]);
                     }
-                    else if (args[i].Equals("-seq"))
+                    else if (args[i].Equals("-seq", StringComparison.Ordinal))
                     {
                         seq = true;
                     }

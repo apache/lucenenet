@@ -271,7 +271,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             protected override TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
             {
-                if (fieldName.Equals("textgrams") && outerInstance.minPrefixChars > 0)
+                if (fieldName.Equals("textgrams", StringComparison.Ordinal) && outerInstance.minPrefixChars > 0)
                 {
                     return new TokenStreamComponents(components.Tokenizer, 
                         new EdgeNGramTokenFilter(

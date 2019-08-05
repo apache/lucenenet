@@ -576,7 +576,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     bool ischild = true;
                     for (int k = 0; k < ExpectedCategories[i].Length; k++)
                     {
-                        if (!ExpectedCategories[j][k].Equals(ExpectedCategories[i][k]))
+                        if (!ExpectedCategories[j][k].Equals(ExpectedCategories[i][k], StringComparison.Ordinal))
                         {
                             ischild = false;
                             break;

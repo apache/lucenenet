@@ -238,7 +238,7 @@ namespace Lucene.Net.Util.Automaton
                 sb.Append(s[i]);
                 sb.Append(s.Substring(i + 2, s.Length - (i + 2)));
                 string st = sb.ToString();
-                if (!st.Equals(s))
+                if (!st.Equals(s, StringComparison.Ordinal))
                 {
                     list.Add(BasicAutomata.MakeString(st));
                 }

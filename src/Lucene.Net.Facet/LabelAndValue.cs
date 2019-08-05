@@ -76,7 +76,7 @@ namespace Lucene.Net.Facet
                 return false;
             }
             LabelAndValue _other = (LabelAndValue)other;
-            return Label.Equals(_other.Label) && Value.Equals(_other.Value);
+            return Label.Equals(_other.Label, StringComparison.Ordinal) && Value.Equals(_other.Value);
         }
 
         public override int GetHashCode()

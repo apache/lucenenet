@@ -207,11 +207,11 @@ namespace Lucene.Net.Codecs.PerField
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-                if (field.Equals("id"))
+                if (field.Equals("id", StringComparison.Ordinal))
                 {
                     return SimpleText;
                 }
-                else if (field.Equals("content"))
+                else if (field.Equals("content", StringComparison.Ordinal))
                 {
                     return MockSep;
                 }
@@ -229,7 +229,7 @@ namespace Lucene.Net.Codecs.PerField
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-                if (field.Equals("id"))
+                if (field.Equals("id", StringComparison.Ordinal))
                 {
                     return SimpleText;
                 }
@@ -297,11 +297,11 @@ namespace Lucene.Net.Codecs.PerField
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-                if ("id".Equals(field))
+                if ("id".Equals(field, StringComparison.Ordinal))
                 {
                     return new Pulsing41PostingsFormat(1);
                 }
-                else if ("date".Equals(field))
+                else if ("date".Equals(field, StringComparison.Ordinal))
                 {
                     return new Pulsing41PostingsFormat(1);
                 }
@@ -330,11 +330,11 @@ namespace Lucene.Net.Codecs.PerField
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-                if ("id".Equals(field))
+                if ("id".Equals(field, StringComparison.Ordinal))
                 {
                     return new Pulsing41PostingsFormat(1);
                 }
-                else if ("date".Equals(field))
+                else if ("date".Equals(field, StringComparison.Ordinal))
                 {
                     return new Pulsing41PostingsFormat(2);
                 }

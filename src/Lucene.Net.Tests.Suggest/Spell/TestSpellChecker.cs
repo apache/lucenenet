@@ -268,7 +268,7 @@ namespace Lucene.Net.Search.Spell
             similar = spellChecker.SuggestSimilar("five", 2);
             if (similar.Length > 0)
             {
-                assertFalse(similar[0].equals("five")); // don't suggest a word for itself
+                assertFalse(similar[0].Equals("five", StringComparison.Ordinal)); // don't suggest a word for itself
             }
 
             similar = spellChecker.SuggestSimilar("fiv", 2);

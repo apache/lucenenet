@@ -49,7 +49,7 @@ namespace Lucene.Net.Index.Sorter
 
             public override long ComputeNorm(FieldInvertState state)
             {
-                if (state.Name.Equals(NORMS_FIELD))
+                if (state.Name.Equals(NORMS_FIELD, StringComparison.Ordinal))
                 {
                     return Number.SingleToInt32Bits(state.Boost);
                 }

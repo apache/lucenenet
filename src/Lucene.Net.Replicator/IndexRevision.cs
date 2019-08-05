@@ -65,7 +65,7 @@ namespace Lucene.Net.Replicator
         public static IDictionary<string, IList<RevisionFile>> RevisionFiles(IndexCommit commit)
         {
             List<RevisionFile> revisionFiles = commit.FileNames
-                .Where(file => !string.Equals(file, commit.SegmentsFileName))
+                .Where(file => !string.Equals(file, commit.SegmentsFileName, StringComparison.Ordinal))
                 .Select(file => CreateRevisionFile(file, commit.Directory))
                 //Note: segments_N must be last
                 .Union(new[] {CreateRevisionFile(commit.SegmentsFileName, commit.Directory)})
@@ -125,7 +125,7 @@ namespace Lucene.Net.Replicator
 
         public virtual Stream Open(string source, string fileName)
         {
-            Debug.Assert(source.Equals(SOURCE), string.Format("invalid source; expected={0} got={1}", SOURCE, source));
+            Debug.Assert(source.Equals(SOURCE, StringComparison.Ordinal), string.Format("invalid source; expected={0} got={1}", SOURCE, source));
             return new IndexInputStream(commit.Directory.OpenInput(fileName, IOContext.READ_ONCE));
         }
 

@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.SortedSet
@@ -79,7 +80,7 @@ namespace Lucene.Net.Facet.SortedSet
                 {
                     throw new System.ArgumentException("this class can only handle 2 level hierarchy (dim/value); got: " + Arrays.ToString(components) + " " + term.Utf8ToString());
                 }
-                if (!components[0].Equals(lastDim))
+                if (!components[0].Equals(lastDim, StringComparison.Ordinal))
                 {
                     if (lastDim != null)
                     {

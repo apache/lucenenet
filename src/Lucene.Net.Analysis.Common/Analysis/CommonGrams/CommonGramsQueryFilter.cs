@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using System;
 
 namespace Lucene.Net.Analysis.CommonGrams
 {
@@ -112,7 +113,7 @@ namespace Lucene.Net.Analysis.CommonGrams
 
             exhausted = true;
 
-            if (previous == null || CommonGramsFilter.GRAM_TYPE.Equals(previousType))
+            if (previous == null || CommonGramsFilter.GRAM_TYPE.Equals(previousType, StringComparison.Ordinal))
             {
                 return false;
             }
@@ -137,7 +138,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         {
             get
             {
-                return CommonGramsFilter.GRAM_TYPE.Equals(typeAttribute.Type);
+                return CommonGramsFilter.GRAM_TYPE.Equals(typeAttribute.Type, StringComparison.Ordinal);
             }
         }
     }

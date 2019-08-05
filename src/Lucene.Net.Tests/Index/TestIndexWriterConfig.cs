@@ -254,13 +254,13 @@ namespace Lucene.Net.Index
                     // Skip static final fields, they are only constants
                     continue;
                 }
-                else if ("indexingChain".Equals(f.Name))
+                else if ("indexingChain".Equals(f.Name, StringComparison.Ordinal))
                 {
                     // indexingChain is a package-private setting and thus is not output by
                     // toString.
                     continue;
                 }
-                if (f.Name.Equals("inUseByIndexWriter"))
+                if (f.Name.Equals("inUseByIndexWriter", StringComparison.Ordinal))
                 {
                     continue;
                 }

@@ -27,6 +27,7 @@
 // 
 // PYX Scanner
 
+using System;
 using System.IO;
 
 namespace TagSoup
@@ -94,7 +95,7 @@ namespace TagSoup
                             h.STagC(buff, 0, 0);
                             instag = false;
                         }
-                        if (s.Equals("-\\n"))
+                        if (s.Equals("-\\n", StringComparison.Ordinal))
                         {
                             buff[0] = '\n';
                             h.PCDATA(buff, 0, 1);

@@ -119,7 +119,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 return false;
             if (!GetType().Equals(obj.GetType()))
                 return false;
-            return ToString().Equals(obj.ToString());
+            return ToString().Equals(obj.ToString(), StringComparison.Ordinal);
         }
 
         /// <summary> An empty Lucene query  </summary>

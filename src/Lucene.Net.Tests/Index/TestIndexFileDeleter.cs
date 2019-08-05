@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
             */
 
             // TODO: fix this test better
-            string ext = Codec.Default.Name.Equals("SimpleText") ? ".liv" : ".del";
+            string ext = Codec.Default.Name.Equals("SimpleText", StringComparison.Ordinal) ? ".liv" : ".del";
 
             // Create a bogus separate del file for a
             // segment that already has a separate del file:

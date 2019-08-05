@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Sinks
@@ -40,14 +41,14 @@ namespace Lucene.Net.Analysis.Sinks
             ttf.Reset();
             while (ttf.IncrementToken())
             {
-                if (termAtt.ToString().Equals("dogs"))
+                if (termAtt.ToString().Equals("dogs", StringComparison.Ordinal))
                 {
                     seenDogs = true;
-                    assertTrue(typeAtt.Type + " is not equal to " + "D", typeAtt.Type.Equals("D") == true);
+                    assertTrue(typeAtt.Type + " is not equal to " + "D", typeAtt.Type.Equals("D", StringComparison.Ordinal) == true);
                 }
                 else
                 {
-                    assertTrue(typeAtt.Type + " is not null and it should be", typeAtt.Type.Equals("word"));
+                    assertTrue(typeAtt.Type + " is not null and it should be", typeAtt.Type.Equals("word", StringComparison.Ordinal));
                 }
             }
             assertTrue(seenDogs + " does not equal: " + true, seenDogs == true);
@@ -83,7 +84,7 @@ namespace Lucene.Net.Analysis.Sinks
                     return false;
                 }
 
-                if (termAtt.ToString().Equals("dogs"))
+                if (termAtt.ToString().Equals("dogs", StringComparison.Ordinal))
                 {
                     typeAtt.Type = "D";
                 }

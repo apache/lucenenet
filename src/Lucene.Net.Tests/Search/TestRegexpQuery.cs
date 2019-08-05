@@ -2,6 +2,7 @@ using Lucene.Net.Util.Automaton;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -136,7 +137,7 @@ namespace Lucene.Net.Search
 
             public Automaton GetAutomaton(string name)
             {
-                if (name.Equals("quickBrown"))
+                if (name.Equals("quickBrown", StringComparison.Ordinal))
                 {
                     return quickBrownAutomaton;
                 }

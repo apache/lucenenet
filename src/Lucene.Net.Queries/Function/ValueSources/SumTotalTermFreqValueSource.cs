@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
+using System;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -115,7 +116,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as SumTotalTermFreqValueSource;
             if (other == null)
                 return false;
-            return this.m_indexedField.Equals(other.m_indexedField);
+            return this.m_indexedField.Equals(other.m_indexedField, StringComparison.Ordinal);
         }
     }
 }

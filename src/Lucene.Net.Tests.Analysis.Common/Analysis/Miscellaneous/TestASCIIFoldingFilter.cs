@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -33,7 +34,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             assertTrue(filter.IncrementToken());
             assertEquals(expectedFolded, termAtt.ToString());
-            if (filter.PreserveOriginal && !expectedUnfolded.Equals(expectedFolded))
+            if (filter.PreserveOriginal && !expectedUnfolded.Equals(expectedFolded, StringComparison.Ordinal))
             {
                 assertTrue(filter.IncrementToken());
                 assertEquals(expectedUnfolded, termAtt.ToString());

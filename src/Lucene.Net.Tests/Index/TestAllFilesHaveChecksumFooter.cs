@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
         {
             foreach (string file in dir.ListAll())
             {
-                if (file.Equals(IndexWriter.WRITE_LOCK_NAME))
+                if (file.Equals(IndexWriter.WRITE_LOCK_NAME, StringComparison.Ordinal))
                 {
                     continue; // write.lock has no footer, thats ok
                 }

@@ -48,7 +48,7 @@ namespace Lucene.Net.Spatial
             SpatialTestQuery sf = tests[0];
             // assert
             assertEquals(1, sf.ids.size());
-            assertTrue(sf.ids[0].equals("G5391959"));
+            assertTrue(sf.ids[0].Equals("G5391959", StringComparison.Ordinal));
             assertTrue(sf.args.Shape is IRectangle);
             assertEquals(SpatialOperation.Intersects, sf.args.Operation);
         }

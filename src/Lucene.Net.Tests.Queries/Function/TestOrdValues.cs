@@ -25,6 +25,7 @@ using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Tests.Queries.Function
 {
@@ -160,7 +161,7 @@ namespace Lucene.Net.Tests.Queries.Function
                 float expectedScore = N_DOCS - i - 1;
                 assertEquals("score of result " + i + " shuould be " + expectedScore + " != " + score, expectedScore, score, TEST_SCORE_TOLERANCE_DELTA);
                 string expectedId = inOrder ? Id2String(N_DOCS - i) : Id2String(i + 1); // reverse  ==> smaller values first -  in-order ==> larger  values first
-                assertTrue("id of result " + i + " shuould be " + expectedId + " != " + score, expectedId.Equals(id));
+                assertTrue("id of result " + i + " shuould be " + expectedId + " != " + score, expectedId.Equals(id, StringComparison.Ordinal));
             }
             r.Dispose();
         }

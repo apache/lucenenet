@@ -342,7 +342,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
             protected internal override System.IO.TextReader InitReader(string fieldName, TextReader reader)
             {
-                if ("f1".equals(fieldName))
+                if ("f1".Equals(fieldName, StringComparison.Ordinal))
                 {
                     // we don't use the reader, so close it:
                     IOUtils.DisposeWhileHandlingException(reader);

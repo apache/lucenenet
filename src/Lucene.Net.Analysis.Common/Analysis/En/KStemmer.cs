@@ -2059,7 +2059,7 @@ namespace Lucene.Net.Analysis.En
             // **
 
             //*
-            // if (entry == null) { if (!word.toString().equals(new String(term,0,len)))
+            // if (entry == null) { if (!word.toString().equals(new String(term,0,len), StringComparison.Ordinal))
             // { System.out.println("CASE:" + word.toString() + "," + new
             // String(term,0,len));
             // 

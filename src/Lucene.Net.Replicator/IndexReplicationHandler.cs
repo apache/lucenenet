@@ -115,7 +115,7 @@ namespace Lucene.Net.Replicator
             string segmentsFile = files.Last();
             //NOTE: Relying on side-effects outside?
             files.RemoveAt(files.Count - 1);
-            if (!segmentsFile.StartsWith(IndexFileNames.SEGMENTS) || segmentsFile.Equals(IndexFileNames.SEGMENTS_GEN))
+            if (!segmentsFile.StartsWith(IndexFileNames.SEGMENTS) || segmentsFile.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal))
             {
                 throw new InvalidOperationException(
                     string.Format("last file to copy+sync must be segments_N but got {0}; check your Revision implementation!", segmentsFile));
@@ -163,7 +163,7 @@ namespace Lucene.Net.Replicator
                 // if there were any IO errors reading the expected commit point (i.e.
                 // segments files mismatch), then ignore that commit either.
 
-                if (commit != null && commit.SegmentsFileName.Equals(segmentsFile))
+                if (commit != null && commit.SegmentsFileName.Equals(segmentsFile, StringComparison.Ordinal))
                 {
                     HashSet<string> commitFiles = new HashSet<string>( commit.FileNames
                         .Union(new[] {IndexFileNames.SEGMENTS_GEN}));

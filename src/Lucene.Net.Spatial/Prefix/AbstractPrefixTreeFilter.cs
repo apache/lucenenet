@@ -3,6 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Spatial.Prefix
@@ -58,7 +59,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 return false;
             }
-            if (!m_fieldName.Equals(that.m_fieldName))
+            if (!m_fieldName.Equals(that.m_fieldName, StringComparison.Ordinal))
             {
                 return false;
             }

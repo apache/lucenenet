@@ -293,7 +293,7 @@ namespace Lucene.Net.Index
 
             public void Apply(string name)
             {
-                if (OuterInstance.DoFail.Value != null && !name.Equals("startDoFlush") && r.Next(40) == 17)
+                if (OuterInstance.DoFail.Value != null && !name.Equals("startDoFlush", StringComparison.Ordinal) && r.Next(40) == 17)
                 {
                     if (VERBOSE)
                     {
@@ -453,7 +453,7 @@ namespace Lucene.Net.Index
 
             public void Apply(string name)
             {
-                if (DoFail && name.Equals("DocumentsWriterPerThread addDocument start"))
+                if (DoFail && name.Equals("DocumentsWriterPerThread addDocument start", StringComparison.Ordinal))
                 {
                     throw new Exception("intentionally failing");
                 }
@@ -478,7 +478,7 @@ namespace Lucene.Net.Index
 
             public sealed override bool IncrementToken()
             {
-                if (this.FieldName.Equals("crash") && Count++ >= 4)
+                if (this.FieldName.Equals("crash", StringComparison.Ordinal) && Count++ >= 4)
                 {
                     throw new IOException(CRASH_FAIL_MESSAGE);
                 }
@@ -572,7 +572,7 @@ namespace Lucene.Net.Index
 
             public void Apply(string name)
             {
-                if (DoFail && name.Equals("startMergeInit"))
+                if (DoFail && name.Equals("startMergeInit", StringComparison.Ordinal))
                 {
                     Failed = true;
                     throw new Exception("intentionally failing");
@@ -1340,7 +1340,7 @@ namespace Lucene.Net.Index
 
             public void Apply(string name)
             {
-                if (DoFail && name.Equals("rollback before checkpoint"))
+                if (DoFail && name.Equals("rollback before checkpoint", StringComparison.Ordinal))
                 {
                     throw new Exception("intentionally failing");
                 }
@@ -2583,7 +2583,7 @@ namespace Lucene.Net.Index
 
             public override void Message(string component, string message)
             {
-                if (MessageToFailOn.Equals(message))
+                if (MessageToFailOn.Equals(message, StringComparison.Ordinal))
                 {
                     throw new Exception("BOOM!");
                 }

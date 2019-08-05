@@ -106,7 +106,7 @@ namespace Lucene.Net.Support.IO
                    .NextToken() == StreamTokenizer.TT_NUMBER
                    && st.NumberValue == 8.0);
             assertTrue("the next token returned should be the quote character",
-                   st.NextToken() == 39 && st.StringValue.equals("h"));
+                   st.NextToken() == 39 && st.StringValue.Equals("h", StringComparison.Ordinal));
         }
 
         /**
@@ -119,7 +119,7 @@ namespace Lucene.Net.Support.IO
             // by default end of line characters are not significant
             assertTrue("nextToken did not return d",
                    st.NextToken() == StreamTokenizer.TT_WORD
-                   && st.StringValue.equals("d"));
+                   && st.StringValue.Equals("d", StringComparison.Ordinal));
             assertTrue("nextToken did not return 8",
                    st.NextToken() == StreamTokenizer.TT_NUMBER
                    && st.NumberValue == 8.0);
@@ -130,7 +130,7 @@ namespace Lucene.Net.Support.IO
             // end of line characters are significant
             assertTrue("nextToken did not return d",
                    st.NextToken() == StreamTokenizer.TT_WORD
-                   && st.StringValue.equals("d"));
+                   && st.StringValue.Equals("d", StringComparison.Ordinal));
             assertTrue("nextToken is the end of line",
                    st.NextToken() == StreamTokenizer.TT_EOL);
         }
@@ -199,7 +199,7 @@ namespace Lucene.Net.Support.IO
             st.NextToken();
             assertTrue("Wrong Token type6: " + st.TokenType, st.TokenType == '\'');
             assertTrue("Wrong Token type7: " + st.TokenType, st.StringValue
-                   .equals("Hello World"));
+                   .Equals("Hello World", StringComparison.Ordinal));
             st.NextToken();
             assertTrue("Wrong Token type8: " + st.TokenType, st.TokenType == -1);
 
@@ -212,7 +212,7 @@ namespace Lucene.Net.Support.IO
 
                 assertTrue("Wrong token 1,1",
                        s.NextToken() == StreamTokenizer.TT_WORD
-                       && s.StringValue.equals("hello"));
+                       && s.StringValue.Equals("hello", StringComparison.Ordinal));
 
                 assertTrue("Wrong token 1,2", s.NextToken() == '\n');
 
@@ -445,8 +445,8 @@ namespace Lucene.Net.Support.IO
             setTest("ABC Hello World");
             st.NextToken();
             assertTrue("toString failed." + st.toString(),
-                       st.toString().equals(
-                                "Token[ABC], line 1"));
+                       st.toString().Equals(
+                                "Token[ABC], line 1", StringComparison.Ordinal));
 
             // Regression test for HARMONY-4070
             byte[] data = new byte[] { (byte)'-' };
@@ -498,10 +498,10 @@ namespace Lucene.Net.Support.IO
             st.WordChars('\'', '\'');
             st.NextToken();
             assertTrue("WordChars failed for whitespace: " + st.StringValue, st.StringValue
-                       .equals("Hello World"));
+                       .Equals("Hello World", StringComparison.Ordinal));
             st.NextToken();
             assertTrue("WordChars failed for quote1: " + st.StringValue, st.StringValue
-                       .equals("\'Hello World\' Hello\' World"));
+                       .Equals("\'Hello World\' Hello\' World", StringComparison.Ordinal));
         }
 
         private void setTest(string s)

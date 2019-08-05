@@ -244,7 +244,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns><c>true</c> if the encoded <see cref="string"/>s are equal; <c>false</c> otherwise.</returns>
         public virtual bool IsDoubleMetaphoneEqual(string value1, string value2, bool alternate)
         {
-            return GetDoubleMetaphone(value1, alternate).Equals(GetDoubleMetaphone(value2, alternate));
+            return GetDoubleMetaphone(value1, alternate).Equals(GetDoubleMetaphone(value2, alternate), StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -1163,7 +1163,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
                 foreach (string element in criteria)
                 {
-                    if (target.Equals(element))
+                    if (target.Equals(element, StringComparison.Ordinal))
                     {
                         result = true;
                         break;

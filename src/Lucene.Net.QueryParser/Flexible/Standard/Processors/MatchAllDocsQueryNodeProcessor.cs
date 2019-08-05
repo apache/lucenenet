@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Processors;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
@@ -40,8 +41,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             {
                 FieldQueryNode fqn = (FieldQueryNode)node;
 
-                if (fqn.Field.ToString().Equals("*")
-                    && fqn.Text.ToString().Equals("*"))
+                if (fqn.Field.ToString().Equals("*", StringComparison.Ordinal)
+                    && fqn.Text.ToString().Equals("*", StringComparison.Ordinal))
                 {
                     return new MatchAllDocsQueryNode();
                 }

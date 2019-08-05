@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 using System.IO;
 using System.Text;
 
@@ -71,10 +72,10 @@ namespace Lucene.Net.Documents
             Assert.IsFalse(binaryFld.IndexableFieldType.IsIndexed);
 
             string binaryTest = doc.GetBinaryValue("binary").Utf8ToString();
-            Assert.IsTrue(binaryTest.Equals(BinaryVal));
+            Assert.IsTrue(binaryTest.Equals(BinaryVal, StringComparison.Ordinal));
 
             string stringTest = doc.Get("string");
-            Assert.IsTrue(binaryTest.Equals(stringTest));
+            Assert.IsTrue(binaryTest.Equals(stringTest, StringComparison.Ordinal));
 
             doc.Add(binaryFld2);
 
@@ -87,10 +88,10 @@ namespace Lucene.Net.Documents
             binaryTest = binaryTests[0].Utf8ToString();
             string binaryTest2 = binaryTests[1].Utf8ToString();
 
-            Assert.IsFalse(binaryTest.Equals(binaryTest2));
+            Assert.IsFalse(binaryTest.Equals(binaryTest2, StringComparison.Ordinal));
 
-            Assert.IsTrue(binaryTest.Equals(BinaryVal));
-            Assert.IsTrue(binaryTest2.Equals(BinaryVal2));
+            Assert.IsTrue(binaryTest.Equals(BinaryVal, StringComparison.Ordinal));
+            Assert.IsTrue(binaryTest2.Equals(BinaryVal2, StringComparison.Ordinal));
 
             doc.RemoveField("string");
             Assert.AreEqual(2, doc.Fields.Count);
@@ -281,18 +282,18 @@ namespace Lucene.Net.Documents
                 Assert.IsTrue(unstoredFieldValues.Length == 2);
             }
 
-            Assert.IsTrue(keywordFieldValues[0].GetStringValue().Equals("test1"));
-            Assert.IsTrue(keywordFieldValues[1].GetStringValue().Equals("test2"));
-            Assert.IsTrue(textFieldValues[0].GetStringValue().Equals("test1"));
-            Assert.IsTrue(textFieldValues[1].GetStringValue().Equals("test2"));
-            Assert.IsTrue(unindexedFieldValues[0].GetStringValue().Equals("test1"));
-            Assert.IsTrue(unindexedFieldValues[1].GetStringValue().Equals("test2"));
+            Assert.IsTrue(keywordFieldValues[0].GetStringValue().Equals("test1", StringComparison.Ordinal));
+            Assert.IsTrue(keywordFieldValues[1].GetStringValue().Equals("test2", StringComparison.Ordinal));
+            Assert.IsTrue(textFieldValues[0].GetStringValue().Equals("test1", StringComparison.Ordinal));
+            Assert.IsTrue(textFieldValues[1].GetStringValue().Equals("test2", StringComparison.Ordinal));
+            Assert.IsTrue(unindexedFieldValues[0].GetStringValue().Equals("test1", StringComparison.Ordinal));
+            Assert.IsTrue(unindexedFieldValues[1].GetStringValue().Equals("test2", StringComparison.Ordinal));
             // this test cannot work for documents retrieved from the index
             // since unstored fields will obviously not be returned
             if (!fromIndex)
             {
-                Assert.IsTrue(unstoredFieldValues[0].GetStringValue().Equals("test1"));
-                Assert.IsTrue(unstoredFieldValues[1].GetStringValue().Equals("test2"));
+                Assert.IsTrue(unstoredFieldValues[0].GetStringValue().Equals("test1", StringComparison.Ordinal));
+                Assert.IsTrue(unstoredFieldValues[1].GetStringValue().Equals("test2", StringComparison.Ordinal));
             }
         }
 
@@ -325,15 +326,15 @@ namespace Lucene.Net.Documents
             {
                 Documents.Document doc2 = searcher.Doc(hits[i].Doc);
                 Field f = (Field)doc2.GetField("id");
-                if (f.GetStringValue().Equals("id1"))
+                if (f.GetStringValue().Equals("id1", StringComparison.Ordinal))
                 {
                     result |= 1;
                 }
-                else if (f.GetStringValue().Equals("id2"))
+                else if (f.GetStringValue().Equals("id2", StringComparison.Ordinal))
                 {
                     result |= 2;
                 }
-                else if (f.GetStringValue().Equals("id3"))
+                else if (f.GetStringValue().Equals("id3", StringComparison.Ordinal))
                 {
                     result |= 4;
                 }
@@ -412,7 +413,7 @@ namespace Lucene.Net.Documents
                 TermsEnum tvsEnum = tvs.GetIterator(null);
                 Assert.AreEqual(new BytesRef("abc"), tvsEnum.Next());
                 DocsAndPositionsEnum dpEnum = tvsEnum.DocsAndPositions(null, null);
-                if (field.Equals("tv"))
+                if (field.Equals("tv", StringComparison.Ordinal))
                 {
                     Assert.IsNull(dpEnum);
                 }

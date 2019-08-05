@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             else if (query is AutomatonQuery)
             {
                 AutomatonQuery aq = (AutomatonQuery)query;
-                if (aq.Field.Equals(field))
+                if (aq.Field.Equals(field, StringComparison.Ordinal))
                 {
                     list.Add(new CharacterRunAutomatonToStringAnonymousHelper(aq.Automaton, () => aq.ToString()));
                 }
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 PrefixQuery pq = (PrefixQuery)query;
                 Term prefix = pq.Prefix;
-                if (prefix.Field.Equals(field))
+                if (prefix.Field.Equals(field, StringComparison.Ordinal))
                 {
                     list.Add(new CharacterRunAutomatonToStringAnonymousHelper(
                         BasicOperations.Concatenate(BasicAutomata.MakeString(prefix.Text()), BasicAutomata.MakeAnyString()), 
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             else if (query is FuzzyQuery)
             {
                 FuzzyQuery fq = (FuzzyQuery)query;
-                if (fq.Field.Equals(field))
+                if (fq.Field.Equals(field, StringComparison.Ordinal))
                 {
                     string utf16 = fq.Term.Text();
                     int[] termText = new int[utf16.CodePointCount(0, utf16.Length)];
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             else if (query is TermRangeQuery)
             {
                 TermRangeQuery tq = (TermRangeQuery)query;
-                if (tq.Field.Equals(field))
+                if (tq.Field.Equals(field, StringComparison.Ordinal))
                 {
                     // this is *not* an automaton, but its very simple
                     list.Add(new SimpleCharacterRunAutomatonAnonymousHelper(BasicAutomata.MakeEmpty(), tq));

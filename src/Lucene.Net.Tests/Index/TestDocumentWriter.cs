@@ -22,6 +22,7 @@ namespace Lucene.Net.Index
 
     using Lucene.Net.Analysis;
     using NUnit.Framework;
+    using System;
     using System.IO;
     using AttributeSource = Lucene.Net.Util.AttributeSource;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -79,25 +80,25 @@ namespace Lucene.Net.Index
             //System.out.println("Document: " + doc);
             IIndexableField[] fields = doc.GetFields("textField2");
             Assert.IsTrue(fields != null && fields.Length == 1);
-            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.FIELD_2_TEXT));
+            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.FIELD_2_TEXT, StringComparison.Ordinal));
             Assert.IsTrue(fields[0].IndexableFieldType.StoreTermVectors);
 
             fields = doc.GetFields("textField1");
             Assert.IsTrue(fields != null && fields.Length == 1);
-            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.FIELD_1_TEXT));
+            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.FIELD_1_TEXT, StringComparison.Ordinal));
             Assert.IsFalse(fields[0].IndexableFieldType.StoreTermVectors);
 
             fields = doc.GetFields("keyField");
             Assert.IsTrue(fields != null && fields.Length == 1);
-            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.KEYWORD_TEXT));
+            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.KEYWORD_TEXT, StringComparison.Ordinal));
 
             fields = doc.GetFields(DocHelper.NO_NORMS_KEY);
             Assert.IsTrue(fields != null && fields.Length == 1);
-            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.NO_NORMS_TEXT));
+            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.NO_NORMS_TEXT, StringComparison.Ordinal));
 
             fields = doc.GetFields(DocHelper.TEXT_FIELD_3_KEY);
             Assert.IsTrue(fields != null && fields.Length == 1);
-            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.FIELD_3_TEXT));
+            Assert.IsTrue(fields[0].GetStringValue().Equals(DocHelper.FIELD_3_TEXT, StringComparison.Ordinal));
 
             // test that the norms are not present in the segment if
             // omitNorms is true

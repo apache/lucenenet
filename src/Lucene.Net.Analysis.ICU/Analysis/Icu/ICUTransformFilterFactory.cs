@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Icu
         {
             string id = Require(args, "id");
             string direction = Get(args, "direction", new string[] { "forward", "reverse" }, "forward", false);
-            TransliterationDirection dir = "forward".Equals(direction) ? Transliterator.Forward : Transliterator.Reverse;
+            TransliterationDirection dir = "forward".Equals(direction, StringComparison.Ordinal) ? Transliterator.Forward : Transliterator.Reverse;
             transliterator = Transliterator.GetInstance(id, dir);
             if (args.Count != 0)
             {

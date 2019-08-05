@@ -106,7 +106,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return false;
             }
             var other = (JoinDocFreqValueSource)o;
-            if (!m_qfield.Equals(other.m_qfield))
+            if (!m_qfield.Equals(other.m_qfield, StringComparison.Ordinal))
             {
                 return false;
             }

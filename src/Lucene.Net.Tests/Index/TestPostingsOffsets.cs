@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
                         int end = dp.EndOffset;
                         Debug.Assert(end >= 0 && end >= start);
                         // check that the offsets correspond to the term in the src text
-                        Assert.IsTrue(storedNumbers.Substring(start, end - start).Equals(term));
+                        Assert.IsTrue(storedNumbers.Substring(start, end - start).Equals(term, StringComparison.Ordinal));
                         if (withPayloads)
                         {
                             // check that we have a payload and it starts with "pos"
@@ -212,7 +212,7 @@ namespace Lucene.Net.Index
                     int end = dp.EndOffset;
                     Debug.Assert(end >= 0 && end >= start);
                     // check that the offsets correspond to the term in the src text
-                    Assert.IsTrue(storedNumbers.Substring(start, end - start).Equals("hundred"));
+                    Assert.IsTrue(storedNumbers.Substring(start, end - start).Equals("hundred", StringComparison.Ordinal));
                     if (withPayloads)
                     {
                         // check that we have a payload and it starts with "pos"

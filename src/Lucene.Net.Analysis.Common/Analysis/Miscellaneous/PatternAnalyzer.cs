@@ -295,7 +295,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// assumes p1 and p2 are not null </summary>
         private static bool EqPattern(Regex p1, Regex p2)
         {
-            return p1 == p2 || (p1.Options == p2.Options && p1.ToString().Equals(p2.ToString()));
+            return p1 == p2 || (p1.Options == p2.Options && p1.ToString().Equals(p2.ToString(), StringComparison.Ordinal));
         }
 
         /// <summary>

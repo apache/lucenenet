@@ -120,7 +120,7 @@ namespace Lucene.Net.Replicator
                 foreach (var files in sourceFiles.Values)
                 {
                     string lastFile = files.Last().FileName;
-                    assertTrue(lastFile.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal) && !lastFile.Equals(IndexFileNames.SEGMENTS_GEN));
+                    assertTrue(lastFile.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal) && !lastFile.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal));
                 }
             }
             finally
@@ -148,7 +148,7 @@ namespace Lucene.Net.Replicator
                 foreach (var e in rev.SourceFiles)
                 {
                     string source = e.Key;
-                    Directory dir = source.Equals(IndexAndTaxonomyRevision.INDEX_SOURCE) ? indexDir : taxoDir;
+                    Directory dir = source.Equals(IndexAndTaxonomyRevision.INDEX_SOURCE, StringComparison.Ordinal) ? indexDir : taxoDir;
                     foreach (RevisionFile file in e.Value)
                     {
                         IndexInput src = dir.OpenInput(file.FileName, IOContext.READ_ONCE);

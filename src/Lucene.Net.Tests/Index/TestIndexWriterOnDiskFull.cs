@@ -192,7 +192,7 @@ namespace Lucene.Net.Index
 
             string idFormat = TestUtil.GetPostingsFormat("id");
             string contentFormat = TestUtil.GetPostingsFormat("content");
-            AssumeFalse("this test cannot run with Memory codec", idFormat.Equals("Memory") || contentFormat.Equals("Memory"));
+            AssumeFalse("this test cannot run with Memory codec", idFormat.Equals("Memory", StringComparison.Ordinal) || contentFormat.Equals("Memory", StringComparison.Ordinal));
 
             int START_COUNT = 57;
             int NUM_DIR = TEST_NIGHTLY ? 50 : 5;

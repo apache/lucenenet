@@ -286,7 +286,7 @@ namespace Lucene.Net.Analysis
                     {
                         return false;
                     }
-                    else if (TermAtt.ToString().Equals("a"))
+                    else if (TermAtt.ToString().Equals("a", StringComparison.Ordinal))
                     {
                         PendingPosInc += PosIncAtt.PositionIncrement;
                     }

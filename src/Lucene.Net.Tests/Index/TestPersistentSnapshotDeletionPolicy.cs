@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
             }
             catch (IOException ioe)
             {
-                if (ioe.Message.Equals("now fail on purpose"))
+                if (ioe.Message.Equals("now fail on purpose", StringComparison.Ordinal))
                 {
                     // ok
                 }

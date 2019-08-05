@@ -67,11 +67,11 @@ namespace Lucene.Net.Index
             {
                 throw new Exception("srcdir:" + srcDir.FullName + " doesn't exist");
             }
-            if (args[1].Equals("-l"))
+            if (args[1].Equals("-l", StringComparison.Ordinal))
             {
                 @is.ListSegments();
             }
-            else if (args[1].Equals("-d"))
+            else if (args[1].Equals("-d", StringComparison.Ordinal))
             {
                 IList<string> segs = new List<string>();
                 for (int x = 2; x < args.Length; x++)
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
         {
             for (int x = 0; x < Infos.Count; x++)
             {
-                if (name.Equals(Infos.Info(x).Info.Name))
+                if (name.Equals(Infos.Info(x).Info.Name, StringComparison.Ordinal))
                 {
                     return x;
                 }
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
         {
             for (int x = 0; x < Infos.Count; x++)
             {
-                if (name.Equals(Infos.Info(x).Info.Name))
+                if (name.Equals(Infos.Info(x).Info.Name, StringComparison.Ordinal))
                 {
                     return Infos.Info(x);
                 }

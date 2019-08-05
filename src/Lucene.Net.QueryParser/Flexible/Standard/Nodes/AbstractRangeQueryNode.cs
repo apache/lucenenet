@@ -142,8 +142,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                 string upperField = StringUtils.ToString(upper.Field);
 
                 if ((upperField != null || lowerField != null)
-                    && ((upperField != null && !upperField.Equals(lowerField)) || !lowerField
-                        .Equals(upperField)))
+                    && ((upperField != null && !upperField.Equals(lowerField, StringComparison.Ordinal)) || !lowerField
+                        .Equals(upperField, StringComparison.Ordinal)))
                 {
                     throw new ArgumentException(
                         "lower and upper bounds should have the same field name!");

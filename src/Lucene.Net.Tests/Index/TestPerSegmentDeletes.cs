@@ -223,7 +223,7 @@ namespace Lucene.Net.Index
         {
             foreach (SegmentCommitInfo si in infos.Segments)
             {
-                if (si.Info.Name.Equals(info.Info.Name))
+                if (si.Info.Name.Equals(info.Info.Name, StringComparison.Ordinal))
                 {
                     return true;
                 }

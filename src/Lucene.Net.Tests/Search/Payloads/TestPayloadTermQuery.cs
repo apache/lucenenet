@@ -23,6 +23,7 @@ namespace Lucene.Net.Search.Payloads
 
     using Lucene.Net.Analysis;
     using NUnit.Framework;
+    using System;
     using System.IO;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
@@ -85,11 +86,11 @@ namespace Lucene.Net.Search.Payloads
                 bool hasNext = m_input.IncrementToken();
                 if (hasNext)
                 {
-                    if (FieldName.Equals("field"))
+                    if (FieldName.Equals("field", StringComparison.Ordinal))
                     {
                         PayloadAtt.Payload = new BytesRef(PayloadField);
                     }
-                    else if (FieldName.Equals("multiField"))
+                    else if (FieldName.Equals("multiField", StringComparison.Ordinal))
                     {
                         if (NumSeen % 2 == 0)
                         {

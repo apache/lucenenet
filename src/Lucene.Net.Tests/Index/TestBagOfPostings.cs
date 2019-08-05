@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
             int numTerms = AtLeast(300);
             int maxTermsPerDoc = TestUtil.NextInt(Random(), 10, 20);
 
-            bool isSimpleText = "SimpleText".Equals(TestUtil.GetPostingsFormat("field"));
+            bool isSimpleText = "SimpleText".Equals(TestUtil.GetPostingsFormat("field"), StringComparison.Ordinal);
 
             IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 

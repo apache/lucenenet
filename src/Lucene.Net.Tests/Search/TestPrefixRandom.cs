@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -65,7 +66,7 @@ namespace Lucene.Net.Search
             // we generate aweful prefixes: good for testing.
             // but for preflex codec, the test can be very slow, so use less iterations.
             string codec = Codec.Default.Name;
-            int num = codec.Equals("Lucene3x") ? 200 * RANDOM_MULTIPLIER : AtLeast(1000);
+            int num = codec.Equals("Lucene3x", StringComparison.Ordinal) ? 200 * RANDOM_MULTIPLIER : AtLeast(1000);
             for (int i = 0; i < num; i++)
             {
                 field.SetStringValue(TestUtil.RandomUnicodeString(Random(), 10));

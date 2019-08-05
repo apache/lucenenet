@@ -375,7 +375,7 @@ namespace Lucene.Net.Facet
                     {
                         assocDimTypes[indexFieldName] = type;
                     }
-                    else if (!curType.Equals(type))
+                    else if (!curType.Equals(type, StringComparison.Ordinal))
                     {
                         throw new System.ArgumentException("mixing incompatible types of AssocationFacetField (" + curType + " and " + type + ") in indexed field \"" + indexFieldName + "\"; use FacetsConfig to change the indexFieldName for each dimension");
                     }

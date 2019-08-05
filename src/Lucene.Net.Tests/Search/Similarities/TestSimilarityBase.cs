@@ -610,7 +610,7 @@ namespace Lucene.Net.Search.Similarities
         [Test]
         public virtual void TestHeartRanking()
         {
-            AssumeFalse("PreFlex codec does not support the stats necessary for this test!", "Lucene3x".Equals(Codec.Default.Name));
+            AssumeFalse("PreFlex codec does not support the stats necessary for this test!", "Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal));
 
             Query q = new TermQuery(new Term(FIELD_BODY, "heart"));
 

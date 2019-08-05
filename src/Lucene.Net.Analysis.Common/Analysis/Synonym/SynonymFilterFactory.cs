@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 // check if you use the new optional arg "format". this makes no sense for the old one, 
                 // as its wired to solr's synonyms format only.
-                if (args.ContainsKey("format") && !args["format"].Equals("solr"))
+                if (args.ContainsKey("format") && !args["format"].Equals("solr", StringComparison.Ordinal))
                 {
                     throw new System.ArgumentException("You must specify luceneMatchVersion >= 3.4 to use alternate synonyms formats");
                 }

@@ -80,11 +80,11 @@ namespace Lucene.Net.Analysis.Synonym
             try
             {
                 string formatClass = format;
-                if (format == null || format.Equals("solr"))
+                if (format == null || format.Equals("solr", StringComparison.Ordinal))
                 {
                     formatClass = typeof(SolrSynonymParser).AssemblyQualifiedName;
                 }
-                else if (format.Equals("wordnet"))
+                else if (format.Equals("wordnet", StringComparison.Ordinal))
                 {
                     formatClass = typeof(WordnetSynonymParser).AssemblyQualifiedName;
                 }

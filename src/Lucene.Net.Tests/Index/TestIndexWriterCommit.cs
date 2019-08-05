@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
 
             string idFormat = TestUtil.GetPostingsFormat("id");
             string contentFormat = TestUtil.GetPostingsFormat("content");
-            AssumeFalse("this test cannot run with Memory codec", idFormat.Equals("Memory") || contentFormat.Equals("Memory"));
+            AssumeFalse("this test cannot run with Memory codec", idFormat.Equals("Memory", StringComparison.Ordinal) || contentFormat.Equals("Memory", StringComparison.Ordinal));
             MockDirectoryWrapper dir = NewMockDirectory();
             Analyzer analyzer;
             if (Random().NextBoolean())
@@ -514,7 +514,7 @@ namespace Lucene.Net.Index
             IndexCommit commit = null;
             foreach (IndexCommit c in DirectoryReader.ListCommits(dir))
             {
-                if (c.UserData["tag"].Equals("first"))
+                if (c.UserData["tag"].Equals("first", StringComparison.Ordinal))
                 {
                     commit = c;
                     break;
@@ -537,7 +537,7 @@ namespace Lucene.Net.Index
             commit = null;
             foreach (IndexCommit c in DirectoryReader.ListCommits(dir))
             {
-                if (c.UserData["tag"].Equals("second"))
+                if (c.UserData["tag"].Equals("second", StringComparison.Ordinal))
                 {
                     commit = c;
                     break;

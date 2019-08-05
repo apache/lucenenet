@@ -140,7 +140,7 @@ namespace TagSoup
                 return attribute ? "" : schema.Uri;
             }
             string prefix = name.Substring(0, colon);
-            if (prefix.Equals("xml"))
+            if (prefix.Equals("xml", StringComparison.Ordinal))
             {
                 return "http://www.w3.org/XML/1998/namespace";
             }
@@ -184,7 +184,7 @@ namespace TagSoup
         /// <param name="value">The value of the attribute</param>
         public virtual void SetAttribute(Attributes atts, string name, string type, string value)
         {
-            if (name.Equals("xmlns") || name.StartsWith("xmlns:"))
+            if (name.Equals("xmlns", StringComparison.Ordinal) || name.StartsWith("xmlns:", StringComparison.Ordinal))
             {
                 return;
             }
@@ -199,7 +199,7 @@ namespace TagSoup
                 {
                     type = "CDATA";
                 }
-                if (!type.Equals("CDATA"))
+                if (!type.Equals("CDATA", StringComparison.Ordinal))
                 {
                     value = Normalize(value);
                 }
@@ -211,7 +211,7 @@ namespace TagSoup
                 {
                     type = atts.GetType(i);
                 }
-                if (!type.Equals("CDATA"))
+                if (!type.Equals("CDATA", StringComparison.Ordinal))
                 {
                     value = Normalize(value);
                 }

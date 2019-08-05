@@ -120,7 +120,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             // init sufficient fields
             sufficientFields = new bool[fieldsToWrite.Length];
             string suff = config.Get("sufficient.fields", DEFAULT_SUFFICIENT_FIELDS);
-            if (",".Equals(suff))
+            if (",".Equals(suff, StringComparison.Ordinal))
             {
                 checkSufficientFields = false;
             }

@@ -1,6 +1,7 @@
 ﻿// lucene version compatibility level: 4.8.1
 using Lucene.Net.Analysis.Phonetic.Language;
 using Lucene.Net.Analysis.TokenAttributes;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Phonetic
@@ -77,7 +78,7 @@ namespace Lucene.Net.Analysis.Phonetic
                 // one token will be generated.
                 bool saveState = inject;
 
-                if (primaryPhoneticValue != null && primaryPhoneticValue.Length > 0 && !primaryPhoneticValue.Equals(v))
+                if (primaryPhoneticValue != null && primaryPhoneticValue.Length > 0 && !primaryPhoneticValue.Equals(v, StringComparison.Ordinal))
                 {
                     if (saveState)
                     {
@@ -90,8 +91,8 @@ namespace Lucene.Net.Analysis.Phonetic
                 }
 
                 if (alternatePhoneticValue != null && alternatePhoneticValue.Length > 0
-                        && !alternatePhoneticValue.Equals(primaryPhoneticValue)
-                        && !primaryPhoneticValue.Equals(v))
+                        && !alternatePhoneticValue.Equals(primaryPhoneticValue, StringComparison.Ordinal)
+                        && !primaryPhoneticValue.Equals(v, StringComparison.Ordinal))
                 {
                     if (saveState)
                     {

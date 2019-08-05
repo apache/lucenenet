@@ -195,7 +195,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return false;
             }
             var other = (DocFreqValueSource)o;
-            return this.m_indexedField.Equals(other.m_indexedField) && this.m_indexedBytes.Equals(other.m_indexedBytes);
+            return this.m_indexedField.Equals(other.m_indexedField, StringComparison.Ordinal) && this.m_indexedBytes.Equals(other.m_indexedBytes);
         }
     }
 }

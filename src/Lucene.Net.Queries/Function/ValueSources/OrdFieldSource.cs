@@ -2,6 +2,7 @@
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using Lucene.Net.Util.Mutable;
+using System;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -144,7 +145,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            return o != null && o.GetType() == typeof(OrdFieldSource) && this.m_field.Equals(((OrdFieldSource)o).m_field);
+            return o != null && o.GetType() == typeof(OrdFieldSource) && this.m_field.Equals(((OrdFieldSource)o).m_field, StringComparison.Ordinal);
         }
 
         private static readonly int hcode = typeof(OrdFieldSource).GetHashCode();

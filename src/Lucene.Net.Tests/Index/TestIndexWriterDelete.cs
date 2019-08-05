@@ -1145,9 +1145,9 @@ namespace Lucene.Net.Index
             // TODO: move this test to its own class and just @SuppressCodecs?
             // TODO: is it enough to just use newFSDirectory?
             string fieldFormat = TestUtil.GetPostingsFormat("field");
-            AssumeFalse("this test cannot run with Memory codec", fieldFormat.Equals("Memory"));
-            AssumeFalse("this test cannot run with SimpleText codec", fieldFormat.Equals("SimpleText"));
-            AssumeFalse("this test cannot run with Direct codec", fieldFormat.Equals("Direct"));
+            AssumeFalse("this test cannot run with Memory codec", fieldFormat.Equals("Memory", StringComparison.Ordinal));
+            AssumeFalse("this test cannot run with SimpleText codec", fieldFormat.Equals("SimpleText", StringComparison.Ordinal));
+            AssumeFalse("this test cannot run with Direct codec", fieldFormat.Equals("Direct", StringComparison.Ordinal));
             Random r = Random();
             Directory dir = NewDirectory();
             // note this test explicitly disables payloads

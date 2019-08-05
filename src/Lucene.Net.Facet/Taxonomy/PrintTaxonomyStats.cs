@@ -48,7 +48,7 @@ namespace Lucene.Net.Facet.Taxonomy
             string path = null;
             for (int i = 0; i < args.Length; i++)
             {
-                if (args[i].Equals("-printTree"))
+                if (args[i].Equals("-printTree", StringComparison.Ordinal))
                 {
                     printTree = true;
                 }

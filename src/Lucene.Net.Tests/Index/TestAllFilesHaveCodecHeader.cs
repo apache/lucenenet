@@ -80,11 +80,11 @@ namespace Lucene.Net.Index
         {
             foreach (string file in dir.ListAll())
             {
-                if (file.Equals(IndexWriter.WRITE_LOCK_NAME))
+                if (file.Equals(IndexWriter.WRITE_LOCK_NAME, StringComparison.Ordinal))
                 {
                     continue; // write.lock has no header, thats ok
                 }
-                if (file.Equals(IndexFileNames.SEGMENTS_GEN))
+                if (file.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal))
                 {
                     continue; // segments.gen has no header, thats ok
                 }

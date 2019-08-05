@@ -79,7 +79,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 }
                 else
                 {
-                    if (("should".Equals(occs, StringComparison.OrdinalIgnoreCase)) || ("".Equals(occs)))
+                    if (("should".Equals(occs, StringComparison.OrdinalIgnoreCase)) || ("".Equals(occs, StringComparison.Ordinal)))
                     {
                         occurs = Occur.SHOULD;
                     }

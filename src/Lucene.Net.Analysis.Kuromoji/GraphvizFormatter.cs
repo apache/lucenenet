@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Ja.Dict;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -133,7 +134,7 @@ namespace Lucene.Net.Analysis.Ja
                     string attrs;
                     string path;
                     bestPathMap.TryGetValue(fromNodeID, out path);
-                    if (toNodeID.Equals(path))
+                    if (toNodeID.Equals(path, StringComparison.Ordinal))
                     {
                         // This arc is on best path
                         attrs = " color=\"#40e050\" fontcolor=\"#40a050\" penwidth=3 fontsize=20";

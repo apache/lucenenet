@@ -153,15 +153,15 @@ namespace Lucene.Net.Tests.Support
             Dictionary<string, string> prop = null;
             prop = new Dictionary<string, string>();
             prop.Load(new MemoryStream("=".getBytes()));
-            assertTrue("Failed to add empty key", prop.get("").equals(""));
+            assertTrue("Failed to add empty key", prop.get("").Equals("", StringComparison.Ordinal));
 
             prop = new Dictionary<string, string>();
             prop.Load(new MemoryStream("=\r\n".getBytes()));
-            assertTrue("Failed to add empty key", prop.get("").equals(""));
+            assertTrue("Failed to add empty key", prop.get("").Equals("", StringComparison.Ordinal));
 
             prop = new Dictionary<string, string>();
             prop.Load(new MemoryStream("=\n\r".getBytes()));
-            assertTrue("Failed to add empty key", prop.get("").equals(""));
+            assertTrue("Failed to add empty key", prop.get("").Equals("", StringComparison.Ordinal));
         }
 
         /**
@@ -216,7 +216,7 @@ namespace Lucene.Net.Tests.Support
                 {
                     nextKey = e.Current;
                     assertTrue("Stored property list not equal to original", myProps2
-                        .getProperty(nextKey).equals(myProps.getProperty(nextKey)));
+                        .getProperty(nextKey).Equals(myProps.getProperty(nextKey), StringComparison.Ordinal));
                 }
             }
         }

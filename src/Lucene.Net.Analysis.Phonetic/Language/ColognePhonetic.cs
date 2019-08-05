@@ -1,4 +1,5 @@
 ﻿// commons-codec version compatibility level: 1.9
+using System;
 using System.Globalization;
 
 namespace Lucene.Net.Analysis.Phonetic.Language
@@ -469,7 +470,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
         public virtual bool IsEncodeEqual(string text1, string text2)
         {
-            return GetColognePhonetic(text1).Equals(GetColognePhonetic(text2));
+            return GetColognePhonetic(text1).Equals(GetColognePhonetic(text2), StringComparison.Ordinal);
         }
 
         /// <summary>

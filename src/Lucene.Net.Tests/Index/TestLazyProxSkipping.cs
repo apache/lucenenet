@@ -157,9 +157,9 @@ namespace Lucene.Net.Index
         public virtual void TestLazySkipping()
         {
             string fieldFormat = TestUtil.GetPostingsFormat(this.Field);
-            AssumeFalse("this test cannot run with Memory postings format", fieldFormat.Equals("Memory"));
-            AssumeFalse("this test cannot run with Direct postings format", fieldFormat.Equals("Direct"));
-            AssumeFalse("this test cannot run with SimpleText postings format", fieldFormat.Equals("SimpleText"));
+            AssumeFalse("this test cannot run with Memory postings format", fieldFormat.Equals("Memory", StringComparison.Ordinal));
+            AssumeFalse("this test cannot run with Direct postings format", fieldFormat.Equals("Direct", StringComparison.Ordinal));
+            AssumeFalse("this test cannot run with SimpleText postings format", fieldFormat.Equals("SimpleText", StringComparison.Ordinal));
 
             // test whether only the minimum amount of seeks()
             // are performed

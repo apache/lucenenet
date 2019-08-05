@@ -2,6 +2,7 @@
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using System;
 using System.Collections;
 using System.Text;
 
@@ -139,7 +140,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as MultiSingleFunction;
             if (other == null)
                 return false;
-            return Name.Equals(other.Name) && Arrays.Equals(this.m_sources, other.m_sources);
+            return Name.Equals(other.Name, StringComparison.Ordinal) && Arrays.Equals(this.m_sources, other.m_sources);
         }
     }
 }

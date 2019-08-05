@@ -48,7 +48,7 @@ namespace Lucene.Net.Support
             // java.lang.String)
             StringTokenizer st = new StringTokenizer("This:is:a:test:String", ":");
             assertTrue("Created incorrect tokenizer", st.CountTokens() == 5
-                    && (st.NextToken().equals("This")));
+                    && (st.NextToken().Equals("This", StringComparison.Ordinal)));
         }
 
         /**
@@ -64,7 +64,7 @@ namespace Lucene.Net.Support
                     true);
             st.NextToken();
             assertTrue("Created incorrect tokenizer", st.CountTokens() == 8
-                    && (st.NextToken().equals(":")));
+                    && (st.NextToken().Equals(":", StringComparison.Ordinal)));
         }
 
         /**

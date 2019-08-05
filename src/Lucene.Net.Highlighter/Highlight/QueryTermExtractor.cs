@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Highlight
                     query.ExtractTerms(nonWeightedTerms);
                     foreach (var term in nonWeightedTerms)
                     {
-                        if ((fieldName == null) || (term.Field.Equals(fieldName)))
+                        if ((fieldName == null) || (term.Field.Equals(fieldName, StringComparison.Ordinal)))
                         {
                             terms.Add(new WeightedTerm(query.Boost, term.Text()));
                         }

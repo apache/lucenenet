@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -55,7 +56,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public override string ToString()
         {
-            if (NoBreak == null && PostBreak == null && PreBreak != null && PreBreak.Equals("-"))
+            if (NoBreak == null && PostBreak == null && PreBreak != null && PreBreak.Equals("-", StringComparison.Ordinal))
             {
                 return "-";
             }

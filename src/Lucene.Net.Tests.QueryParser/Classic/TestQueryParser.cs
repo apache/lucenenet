@@ -420,7 +420,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
                 if (m_input.IncrementToken())
                 {
-                    AddSynonym = TermAtt.ToString().Equals("国");
+                    AddSynonym = TermAtt.ToString().Equals("国", StringComparison.Ordinal);
                     return true;
                 }
                 else

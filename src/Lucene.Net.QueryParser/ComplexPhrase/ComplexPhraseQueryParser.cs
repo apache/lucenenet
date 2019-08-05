@@ -152,7 +152,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
         // Helper method used to report on any clauses that appear in query syntax
         private void CheckPhraseClauseIsForSameField(string field)
         {
-            if (!field.Equals(currentPhraseQuery.Field))
+            if (!field.Equals(currentPhraseQuery.Field, StringComparison.Ordinal))
             {
                 throw new ParseException("Cannot have clause for field \"" + field
                     + "\" nested in phrase " + " for field \"" + currentPhraseQuery.Field
@@ -449,7 +449,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                     if (other.field != null)
                         return false;
                 }
-                else if (!field.Equals(other.field))
+                else if (!field.Equals(other.field, StringComparison.Ordinal))
                     return false;
                 if (phrasedQueryStringContents == null)
                 {
@@ -457,7 +457,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                         return false;
                 }
                 else if (!phrasedQueryStringContents
-                  .Equals(other.phrasedQueryStringContents))
+                  .Equals(other.phrasedQueryStringContents, StringComparison.Ordinal))
                     return false;
                 if (slopFactor != other.slopFactor)
                     return false;

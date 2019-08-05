@@ -303,7 +303,7 @@ namespace Lucene.Net.Facet.Range
                     for (int i = 0; i < drillSideways.Length; i++)
                     {
                         string dim = drillSidewaysDims[i];
-                        if (dim.Equals("field"))
+                        if (dim.Equals("field", StringComparison.Ordinal))
                         {
                             fieldFC = drillSideways[i];
                         }

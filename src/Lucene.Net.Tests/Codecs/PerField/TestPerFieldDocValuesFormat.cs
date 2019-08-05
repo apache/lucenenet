@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.PerField
 
             public override DocValuesFormat GetDocValuesFormatForField(string field)
             {
-                if ("dv1".Equals(field))
+                if ("dv1".Equals(field, StringComparison.Ordinal))
                 {
                     return Fast;
                 }

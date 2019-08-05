@@ -89,7 +89,7 @@ namespace Lucene.Net.QueryParsers.Xml
         {
             for (XmlNode kid = e.FirstChild; kid != null; kid = kid.NextSibling)
             {
-                if ((kid.NodeType == XmlNodeType.Element) && (name.Equals(kid.Name)))
+                if ((kid.NodeType == XmlNodeType.Element) && (name.Equals(kid.Name, StringComparison.Ordinal)))
                 {
                     return (XmlElement)kid;
                 }
@@ -106,7 +106,7 @@ namespace Lucene.Net.QueryParsers.Xml
         public static string GetAttributeWithInheritance(XmlElement element, string attributeName)
         {
             string result = element.GetAttribute(attributeName);
-            if ((result == null) || ("".Equals(result)))
+            if ((result == null) || ("".Equals(result, StringComparison.Ordinal)))
             {
                 XmlNode n = element.ParentNode;
                 if ((n == element) || (n == null))
@@ -146,26 +146,26 @@ namespace Lucene.Net.QueryParsers.Xml
         public static string GetAttribute(XmlElement element, string attributeName, string deflt)
         {
             string result = element.GetAttribute(attributeName);
-            return (result == null) || ("".Equals(result)) ? deflt : result;
+            return (result == null) || ("".Equals(result, StringComparison.Ordinal)) ? deflt : result;
         }
 
         public static float GetAttribute(XmlElement element, string attributeName, float deflt)
         {
             string result = element.GetAttribute(attributeName);
-            return (result == null) || ("".Equals(result)) ? deflt : Convert.ToSingle(result, CultureInfo.InvariantCulture);
+            return (result == null) || ("".Equals(result, StringComparison.Ordinal)) ? deflt : Convert.ToSingle(result, CultureInfo.InvariantCulture);
         }
 
         public static int GetAttribute(XmlElement element, string attributeName, int deflt)
         {
             string result = element.GetAttribute(attributeName);
-            return (result == null) || ("".Equals(result)) ? deflt : Convert.ToInt32(result, CultureInfo.InvariantCulture);
+            return (result == null) || ("".Equals(result, StringComparison.Ordinal)) ? deflt : Convert.ToInt32(result, CultureInfo.InvariantCulture);
         }
 
         public static bool GetAttribute(XmlElement element, string attributeName,
                                            bool deflt)
         {
             string result = element.GetAttribute(attributeName);
-            return (result == null) || ("".Equals(result)) ? deflt : Convert.ToBoolean(result, CultureInfo.InvariantCulture);
+            return (result == null) || ("".Equals(result, StringComparison.Ordinal)) ? deflt : Convert.ToBoolean(result, CultureInfo.InvariantCulture);
         }
 
         /* Returns text of node and all child nodes - without markup */

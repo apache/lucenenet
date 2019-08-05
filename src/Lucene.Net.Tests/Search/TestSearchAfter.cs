@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
         private IndexSearcher Searcher;
 
         // LUCENENET specific - need to execute this AFTER the base setup, or it won't be right
-        //internal bool supportsDocValues = Codec.Default.Name.Equals("Lucene3x") == false;
+        //internal bool supportsDocValues = Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal) == false;
         private int Iter;
         private IList<SortField> AllSortFields;
 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 
             // LUCENENET specific: Moved this logic here to ensure that it is executed
             // after the class is setup - a field is way to early to execute this.
-            bool supportsDocValues = Codec.Default.Name.Equals("Lucene3x") == false;
+            bool supportsDocValues = Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal) == false;
 
             AllSortFields = new List<SortField>(Arrays.AsList(new SortField[] {
 #pragma warning disable 612,618

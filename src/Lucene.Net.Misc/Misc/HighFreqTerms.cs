@@ -61,7 +61,7 @@ namespace Lucene.Net.Misc
 
             for (int i = 1; i < args.Length; i++)
             {
-                if (args[i].Equals("-t"))
+                if (args[i].Equals("-t", StringComparison.Ordinal))
                 {
                     comparer = new TotalTermFreqComparer();
                 }

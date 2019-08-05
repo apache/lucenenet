@@ -129,7 +129,7 @@ namespace Lucene.Net.Analysis.Util
             br.Read(buf, 0, 500);
 
             assertTrue("Failed to set mark properly", testString.Substring(500,
-                    1000 - 500).equals(new string(buf, 0, 500)));
+                    1000 - 500).Equals(new string(buf, 0, 500), StringComparison.Ordinal));
 
             try
             {
@@ -246,8 +246,8 @@ namespace Lucene.Net.Analysis.Util
                 char[] buf = new char[14];
                 @in.Read(buf, 0, 14); // Read greater than the buffer
 
-                assertTrue("Wrong block read data", new String(buf)
-                        .equals(new String(chars, 1, 14)));
+                assertTrue("Wrong block read data", new string(buf)
+                        .Equals(new string(chars, 1, 14), StringComparison.Ordinal));
 
                 assertEquals("Wrong chars", 15, @in.Read()); // Check next byte
             }
@@ -424,8 +424,8 @@ namespace Lucene.Net.Analysis.Util
                 br = new BufferedCharFilter(new StringReader(testString));
                 br.Read(buf, 50, 500);
 
-                assertTrue("Chars read improperly", new String(buf, 50, 500)
-                        .equals(testString.Substring(0, 500 - 0)));
+                assertTrue("Chars read improperly", new string(buf, 50, 500)
+                        .Equals(testString.Substring(0, 500 - 0), StringComparison.Ordinal));
             }
 #pragma warning disable 168
             catch (IOException e)
@@ -768,7 +768,7 @@ namespace Lucene.Net.Analysis.Util
                 char[] buf = new char[testString.Length];
                 br.Read(buf, 0, 500);
                 assertTrue("Failed to reset properly", testString.Substring(500,
-                        1000 - 500).equals(new String(buf, 0, 500)));
+                        1000 - 500).Equals(new string(buf, 0, 500), StringComparison.Ordinal));
             }
 #pragma warning disable 168
             catch (IOException e)
@@ -847,7 +847,7 @@ namespace Lucene.Net.Analysis.Util
                 char[] buf = new char[testString.Length];
                 br.Read(buf, 0, 500);
                 assertTrue("Failed to set skip properly", testString.Substring(500,
-                        1000 - 500).equals(new String(buf, 0, 500)));
+                        1000 - 500).Equals(new string(buf, 0, 500), StringComparison.Ordinal));
             }
 #pragma warning disable 168
             catch (IOException e)

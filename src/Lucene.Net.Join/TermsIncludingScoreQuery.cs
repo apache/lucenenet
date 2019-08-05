@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Join
@@ -89,7 +90,7 @@ namespace Lucene.Net.Join
             if (obj.GetType() != GetType()) return false;
 
             var other = (TermsIncludingScoreQuery)obj;
-            if (!_field.Equals(other._field))
+            if (!_field.Equals(other._field, StringComparison.Ordinal))
             {
                 return false;
             }

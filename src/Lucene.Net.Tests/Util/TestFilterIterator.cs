@@ -77,7 +77,7 @@ namespace Lucene.Net.Util
 
             protected override bool PredicateFunction(string s)
             {
-                return "a".Equals(s);
+                return "a".Equals(s, StringComparison.Ordinal);
             }
         }
 
@@ -103,7 +103,7 @@ namespace Lucene.Net.Util
 
             protected override bool PredicateFunction(string s)
             {
-                return "a".Equals(s);
+                return "a".Equals(s, StringComparison.Ordinal);
             }
         }
 
@@ -128,7 +128,7 @@ namespace Lucene.Net.Util
 
             protected override bool PredicateFunction(string s)
             {
-                return "b".Equals(s);
+                return "b".Equals(s, StringComparison.Ordinal);
             }
         }
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Util
 
             protected override bool PredicateFunction(string s)
             {
-                return "b".Equals(s);
+                return "b".Equals(s, StringComparison.Ordinal);
             }
         }
 

@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns <c>true</c> if the given segment should be upgraded. The default implementation
-        /// will return <c>!Constants.LUCENE_MAIN_VERSION.Equals(si.Version)</c>,
+        /// will return <c>!Constants.LUCENE_MAIN_VERSION.Equals(si.Info.Version, StringComparison.Ordinal)</c>,
         /// so all segments created with a different version number than this Lucene version will
         /// get upgraded.
         /// </summary>

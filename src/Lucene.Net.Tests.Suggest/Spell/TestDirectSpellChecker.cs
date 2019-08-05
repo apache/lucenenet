@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.Spell
                     SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
             if (similar.Length > 0)
             {
-                assertFalse(similar[0].String.equals("five")); // don't suggest a word for itself
+                assertFalse(similar[0].String.Equals("five", StringComparison.Ordinal)); // don't suggest a word for itself
             }
 
             similar = spellChecker.SuggestSimilar(new Term("numbers", "fvie"), 2, ir,

@@ -751,9 +751,9 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <returns>Resulting <see cref="Query"/> built for the term</returns>
         protected internal virtual Query GetWildcardQuery(string field, string termStr)
         {
-            if ("*".Equals(field))
+            if ("*".Equals(field, StringComparison.Ordinal))
             {
-                if ("*".Equals(termStr)) return NewMatchAllDocsQuery();
+                if ("*".Equals(termStr, StringComparison.Ordinal)) return NewMatchAllDocsQuery();
             }
             if (!AllowLeadingWildcard && (termStr.StartsWith("*", StringComparison.Ordinal) || termStr.StartsWith("?", StringComparison.Ordinal)))
                 throw new ParseException("'*' or '?' not allowed as first character in WildcardQuery");

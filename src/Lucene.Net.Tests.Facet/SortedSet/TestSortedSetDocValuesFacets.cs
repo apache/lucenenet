@@ -339,7 +339,7 @@ namespace Lucene.Net.Facet.SortedSet
 
                 foreach (TestDoc doc in testDocs)
                 {
-                    if (doc.content.Equals(searchToken))
+                    if (doc.content.Equals(searchToken, StringComparison.Ordinal))
                     {
                         for (int j = 0; j < numDims; j++)
                         {

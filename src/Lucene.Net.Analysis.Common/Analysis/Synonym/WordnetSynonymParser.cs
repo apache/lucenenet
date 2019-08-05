@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Synonym
                     lineNumber++;
                     string synSetID = line.Substring(2, 9);
 
-                    if (!synSetID.Equals(lastSynSetID))
+                    if (!synSetID.Equals(lastSynSetID, StringComparison.Ordinal))
                     {
                         AddInternal(synset, synsetSize);
                         synsetSize = 0;

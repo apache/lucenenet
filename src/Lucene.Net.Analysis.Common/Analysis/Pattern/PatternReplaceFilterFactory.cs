@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -46,7 +47,7 @@ namespace Lucene.Net.Analysis.Pattern
         {
             pattern = GetPattern(args, "pattern");
             replacement = Get(args, "replacement");
-            replaceAll = "all".Equals(Get(args, "replace", Arrays.AsList("all", "first"), "all"));
+            replaceAll = "all".Equals(Get(args, "replace", Arrays.AsList("all", "first"), "all"), StringComparison.Ordinal);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);

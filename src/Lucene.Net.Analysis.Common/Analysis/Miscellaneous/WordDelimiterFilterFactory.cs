@@ -179,27 +179,27 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         private byte ParseType(string s)
         {
-            if (s.Equals("LOWER"))
+            if (s.Equals("LOWER", StringComparison.Ordinal))
             {
                 return WordDelimiterFilter.LOWER;
             }
-            else if (s.Equals("UPPER"))
+            else if (s.Equals("UPPER", StringComparison.Ordinal))
             {
                 return WordDelimiterFilter.UPPER;
             }
-            else if (s.Equals("ALPHA"))
+            else if (s.Equals("ALPHA", StringComparison.Ordinal))
             {
                 return WordDelimiterFilter.ALPHA;
             }
-            else if (s.Equals("DIGIT"))
+            else if (s.Equals("DIGIT", StringComparison.Ordinal))
             {
                 return WordDelimiterFilter.DIGIT;
             }
-            else if (s.Equals("ALPHANUM"))
+            else if (s.Equals("ALPHANUM", StringComparison.Ordinal))
             {
                 return WordDelimiterFilter.ALPHANUM;
             }
-            else if (s.Equals("SUBWORD_DELIM"))
+            else if (s.Equals("SUBWORD_DELIM", StringComparison.Ordinal))
             {
                 return WordDelimiterFilter.SUBWORD_DELIM;
             }

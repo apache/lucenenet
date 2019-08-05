@@ -139,7 +139,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     throw new Exception("unable to instantiate class '" + mergeScheduler + "' as merge scheduler", e);
                 }
 
-                if (mergeScheduler.Equals("Lucene.Net.Index.ConcurrentMergeScheduler"))
+                if (mergeScheduler.Equals("Lucene.Net.Index.ConcurrentMergeScheduler", StringComparison.Ordinal))
                 {
 #if FEATURE_CONCURRENTMERGESCHEDULER
                     ConcurrentMergeScheduler cms = (ConcurrentMergeScheduler)iwConf.MergeScheduler;

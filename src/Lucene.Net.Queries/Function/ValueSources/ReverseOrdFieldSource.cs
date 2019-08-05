@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
+using System;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -109,7 +110,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as ReverseOrdFieldSource;
             if (other == null)
                 return false;
-            return this.field.Equals(other.field);
+            return this.field.Equals(other.field, StringComparison.Ordinal);
         }
 
         private static readonly int hcode = typeof(ReverseOrdFieldSource).GetHashCode();

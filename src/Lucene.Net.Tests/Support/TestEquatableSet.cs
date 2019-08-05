@@ -108,7 +108,7 @@ namespace Lucene.Net.Support
             var val1 = "\uA0A2\uA0A2";
             var val2 = string.Empty;
 
-            Assert.IsFalse(val1.Equals(val2));
+            Assert.IsFalse(val1.Equals(val2, StringComparison.Ordinal));
 
             var hash1 = val1.GetHashCode();
             var hash2 = val2.GetHashCode();

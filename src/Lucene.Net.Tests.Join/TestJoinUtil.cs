@@ -591,7 +591,7 @@ namespace Lucene.Net.Tests.Join
                 {
                     uniqueRandomValue = TestUtil.RandomRealisticUnicodeString(Random());
                     //        uniqueRandomValue = TestUtil.randomSimpleString(random);
-                } while ("".Equals(uniqueRandomValue) || trackSet.Contains(uniqueRandomValue));
+                } while ("".Equals(uniqueRandomValue, StringComparison.Ordinal) || trackSet.Contains(uniqueRandomValue));
                 // Generate unique values and empty strings aren't allowed.
                 trackSet.Add(uniqueRandomValue);
                 context.RandomFrom[i] = Random().NextBoolean();

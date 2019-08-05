@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                     return false;
                 }
 
-                return ToString().Equals(((Branch)other).ToString());
+                return ToString().Equals(((Branch)other).ToString(), StringComparison.Ordinal);
             }
 
             /// <summary>

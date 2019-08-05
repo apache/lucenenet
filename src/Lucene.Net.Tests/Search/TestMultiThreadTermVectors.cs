@@ -237,7 +237,7 @@ namespace Lucene.Net.Search
             {
                 temp.Append(vector.Term.Utf8ToString());
             }
-            if (!English.IntToEnglish(num).Trim().Equals(temp.ToString().Trim()))
+            if (!English.IntToEnglish(num).Trim().Equals(temp.ToString().Trim(), StringComparison.Ordinal))
             {
                 Console.WriteLine("wrong term result");
             }

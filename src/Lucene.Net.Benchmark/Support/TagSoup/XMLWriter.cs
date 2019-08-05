@@ -324,7 +324,7 @@ namespace TagSoup
             {
                 publicid = overridePublic;
             }
-            if (!(publicid == null || "".Equals(publicid)))
+            if (!(publicid == null || "".Equals(publicid, StringComparison.Ordinal)))
             {
                 char pubquote = (publicid.IndexOf('"') != -1) ? '\'' : '"';
                 Write(" PUBLIC ");
@@ -530,7 +530,7 @@ namespace TagSoup
         public override void StartDocument()
         {
             Reset();
-            if (!("yes".Equals(outputProperties[OMIT_XML_DECLARATION] ?? "no")))
+            if (!("yes".Equals(outputProperties[OMIT_XML_DECLARATION] ?? "no", StringComparison.Ordinal)))
             {
                 Write("<?xml");
                 if (version == null)
@@ -632,7 +632,7 @@ namespace TagSoup
             WriteNSDecls();
             Write('>');
             //	System.out.println("%%%% startElement [" + qName + "] htmlMode = " + htmlMode);
-            if (htmlMode && (qName.Equals("script") || qName.Equals("style")))
+            if (htmlMode && (qName.Equals("script", StringComparison.Ordinal) || qName.Equals("style", StringComparison.Ordinal)))
             {
                 cdataElement = true;
                 //		System.out.println("%%%% CDATA element");
@@ -667,11 +667,11 @@ namespace TagSoup
         public override void EndElement(string uri, string localName, string qName)
         {
             if (
-              !(htmlMode && (uri.Equals("http://www.w3.org/1999/xhtml") || uri.Equals(""))
-                && (qName.Equals("area") || qName.Equals("base") || qName.Equals("basefont") || qName.Equals("br")
-                    || qName.Equals("col") || qName.Equals("frame") || qName.Equals("hr") || qName.Equals("img")
-                    || qName.Equals("input") || qName.Equals("isindex") || qName.Equals("link") || qName.Equals("meta")
-                    || qName.Equals("param"))))
+              !(htmlMode && (uri.Equals("http://www.w3.org/1999/xhtml", StringComparison.Ordinal) || uri.Equals("", StringComparison.Ordinal))
+                && (qName.Equals("area", StringComparison.Ordinal) || qName.Equals("base", StringComparison.Ordinal) || qName.Equals("basefont", StringComparison.Ordinal) || qName.Equals("br", StringComparison.Ordinal)
+                    || qName.Equals("col", StringComparison.Ordinal) || qName.Equals("frame", StringComparison.Ordinal) || qName.Equals("hr", StringComparison.Ordinal) || qName.Equals("img", StringComparison.Ordinal)
+                    || qName.Equals("input", StringComparison.Ordinal) || qName.Equals("isindex", StringComparison.Ordinal) || qName.Equals("link", StringComparison.Ordinal) || qName.Equals("meta", StringComparison.Ordinal)
+                    || qName.Equals("param", StringComparison.Ordinal))))
             {
                 Write("</");
                 WriteName(uri, localName, qName, true);
@@ -1152,7 +1152,7 @@ namespace TagSoup
         private string DoPrefix(string uri, string qName, bool isElement)
         {
             string defaultNS = nsSupport.GetUri("");
-            if ("".Equals(uri))
+            if ("".Equals(uri, StringComparison.Ordinal))
             {
                 if (isElement && defaultNS != null)
                 {
@@ -1161,7 +1161,7 @@ namespace TagSoup
                 return null;
             }
             string prefix;
-            if (isElement && defaultNS != null && uri.Equals(defaultNS))
+            if (isElement && defaultNS != null && uri.Equals(defaultNS, StringComparison.Ordinal))
             {
                 prefix = "";
             }
@@ -1175,7 +1175,7 @@ namespace TagSoup
             }
             bool containsPrefix = doneDeclTable.ContainsKey(uri);
             prefix = (string)(containsPrefix ? doneDeclTable[uri] : null);
-            if (containsPrefix && ((!isElement || defaultNS != null) && "".Equals(prefix) || nsSupport.GetUri(prefix) != null))
+            if (containsPrefix && ((!isElement || defaultNS != null) && "".Equals(prefix, StringComparison.Ordinal) || nsSupport.GetUri(prefix) != null))
             {
                 prefix = null;
             }
@@ -1184,12 +1184,12 @@ namespace TagSoup
                 containsPrefix = prefixTable.ContainsKey(uri);
                 prefix = (string)(containsPrefix ? prefixTable[uri] : null);
                 if (containsPrefix
-                    && ((!isElement || defaultNS != null) && "".Equals(prefix) || nsSupport.GetUri(prefix) != null))
+                    && ((!isElement || defaultNS != null) && "".Equals(prefix, StringComparison.Ordinal) || nsSupport.GetUri(prefix) != null))
                 {
                     prefix = null;
                 }
             }
-            if (prefix == null && qName != null && !"".Equals(qName))
+            if (prefix == null && qName != null && !"".Equals(qName, StringComparison.Ordinal))
             {
                 int i = qName.IndexOf(':');
                 if (i == -1)
@@ -1297,13 +1297,13 @@ namespace TagSoup
                     name = qName.Substring(i + 1, qName.Length);
                 }
             }
-            if (!name.Equals(value))
+            if (!name.Equals(value, StringComparison.Ordinal))
             {
                 return false;
             }
             for (int j = 0; j < _bools.Length; j++)
             {
-                if (name.Equals(_bools[j]))
+                if (name.Equals(_bools[j], StringComparison.Ordinal))
                 {
                     return true;
                 }
@@ -1393,7 +1393,7 @@ namespace TagSoup
                 }
                 char[] ch = uri.ToCharArray();
                 Write(' ');
-                if ("".Equals(prefix))
+                if ("".Equals(prefix, StringComparison.Ordinal))
                 {
                     Write("xmlns=\"");
                 }
@@ -1432,12 +1432,12 @@ namespace TagSoup
         private void WriteName(string uri, string localName, string qName, bool isElement)
         {
             string prefix = DoPrefix(uri, qName, isElement);
-            if (prefix != null && !"".Equals(prefix))
+            if (prefix != null && !"".Equals(prefix, StringComparison.Ordinal))
             {
                 Write(prefix);
                 Write(':');
             }
-            if (localName != null && !"".Equals(localName))
+            if (localName != null && !"".Equals(localName, StringComparison.Ordinal))
             {
                 Write(localName);
             }
@@ -1480,31 +1480,31 @@ namespace TagSoup
         {
             outputProperties[key] = value;
             //	System.out.println("%%%% key = [" + key + "] value = [" + value +"]");
-            if (key.Equals(ENCODING))
+            if (key.Equals(ENCODING, StringComparison.Ordinal))
             {
                 outputEncoding = value;
                 unicodeMode = value.Substring(0, 3).Equals("utf", StringComparison.OrdinalIgnoreCase);
                 //                System.out.println("%%%% unicodeMode = " + unicodeMode);
             }
-            else if (key.Equals(METHOD))
+            else if (key.Equals(METHOD, StringComparison.Ordinal))
             {
-                htmlMode = value.Equals("html");
+                htmlMode = value.Equals("html", StringComparison.Ordinal);
             }
-            else if (key.Equals(DOCTYPE_PUBLIC))
+            else if (key.Equals(DOCTYPE_PUBLIC, StringComparison.Ordinal))
             {
                 overridePublic = value;
                 forceDTD = true;
             }
-            else if (key.Equals(DOCTYPE_SYSTEM))
+            else if (key.Equals(DOCTYPE_SYSTEM, StringComparison.Ordinal))
             {
                 overrideSystem = value;
                 forceDTD = true;
             }
-            else if (key.Equals(VERSION))
+            else if (key.Equals(VERSION, StringComparison.Ordinal))
             {
                 version = value;
             }
-            else if (key.Equals(STANDALONE))
+            else if (key.Equals(STANDALONE, StringComparison.Ordinal))
             {
                 standalone = value;
             }

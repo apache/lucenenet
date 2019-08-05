@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
@@ -110,7 +111,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
             var actualChecksum =
                 (new BytesRef(scratch.Bytes, CHECKSUM.Length, scratch.Length - CHECKSUM.Length)).Utf8ToString();
-            if (!expectedChecksum.Equals(actualChecksum))
+            if (!expectedChecksum.Equals(actualChecksum, StringComparison.Ordinal))
             {
                 throw new CorruptIndexException("SimpleText checksum failure: " + actualChecksum + " != " +
                                                 expectedChecksum + " (resource=" + input + ")");

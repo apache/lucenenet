@@ -69,7 +69,7 @@ namespace Lucene.Net.Spatial
                 return false;
             }
             var that = (DisjointSpatialFilter)o;
-            if (field != null ? !field.Equals(that.field) : that.field != null)
+            if (field != null ? !field.Equals(that.field, StringComparison.Ordinal) : that.field != null)
             {
                 return false;
             }

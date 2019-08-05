@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using System;
 using System.Reflection;
 using Attribute = Lucene.Net.Util.Attribute;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
@@ -432,7 +433,7 @@ namespace Lucene.Net.Analysis
                     endOffset == other.endOffset && 
                     flags == other.flags && 
                     positionIncrement == other.positionIncrement && 
-                    (type == null ? other.type == null : type.Equals(other.type, System.StringComparison.Ordinal)) && 
+                    (type == null ? other.type == null : type.Equals(other.type, StringComparison.Ordinal)) && 
                     (payload == null ? other.payload == null : payload.Equals(other.payload)) && 
                     base.Equals(obj)
                 );

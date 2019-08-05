@@ -312,7 +312,7 @@ namespace Lucene.Net.Search
             {
                 string s = Encoding.UTF8.GetString(bytes);
                 //System.out.println(s);
-                sawZero |= s.Equals("pos: 0");
+                sawZero |= s.Equals("pos: 0", StringComparison.Ordinal);
             }
             Assert.AreEqual(5, count);
             Assert.IsTrue(sawZero);

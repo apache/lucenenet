@@ -673,7 +673,7 @@ namespace Lucene.Net.Index.Memory
                 }
                 NumericDocValues norms = cachedNormValues;
                 Similarity sim = Similarity;
-                if (!field.Equals(cachedFieldName) || sim != cachedSimilarity) // not cached?
+                if (!field.Equals(cachedFieldName, StringComparison.Ordinal) || sim != cachedSimilarity) // not cached?
                 {
                     Info info = GetInfo(field);
                     int numTokens = info != null ? info.numTokens : 0;

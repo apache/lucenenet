@@ -200,7 +200,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
                             Regex pattern = new Regex(parts[0], RegexOptions.Compiled);
                             string[] langs = TOKEN.Split(parts[1]).TrimEnd();
-                            bool accept = parts[2].Equals("true");
+                            bool accept = parts[2].Equals("true", StringComparison.Ordinal);
 
                             rules.Add(new LangRule(pattern, new HashSet<string>(langs), accept));
                         }

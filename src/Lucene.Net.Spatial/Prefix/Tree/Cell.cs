@@ -288,7 +288,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         public override bool Equals(object obj)
         {
             return !(obj == null || !(obj is Cell)) &&
-                   TokenString.Equals(((Cell)obj).TokenString);
+                   TokenString.Equals(((Cell)obj).TokenString, StringComparison.Ordinal);
         }
 
         public override int GetHashCode()

@@ -877,7 +877,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     string s = Regex.Replace(analyzedKey, "(^| )\u0000$", "");
                     s = Regex.Replace(s, "\\s+$", "");
-                    if (s.Equals(analyzedKey))
+                    if (s.Equals(analyzedKey, StringComparison.Ordinal))
                     {
                         break;
                     }

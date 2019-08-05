@@ -220,8 +220,8 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             IList<Lookup.LookupResult> result = lookup.DoLookup(StringToCharSequence("wit").ToString(), true, 5);
             assertEquals(5, result.size());
-            assertTrue(result[0].Key.toString().equals("wit"));  // exact match.
-            assertTrue(result[1].Key.toString().equals("with")); // highest count.
+            assertTrue(result[0].Key.toString().Equals("wit", StringComparison.Ordinal));  // exact match.
+            assertTrue(result[1].Key.toString().Equals("with", StringComparison.Ordinal)); // highest count.
         }
 
         [Test]

@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.Sinks
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Analysis.Sinks
             }
 
             //check to see if this is a Category
-            return (typeToMatch.Equals(typeAtt.Type));
+            return (typeToMatch.Equals(typeAtt.Type, StringComparison.Ordinal));
         }
     }
 }

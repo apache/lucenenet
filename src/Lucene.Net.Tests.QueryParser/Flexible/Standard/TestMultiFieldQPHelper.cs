@@ -409,7 +409,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             protected internal override TextReader InitReader(String fieldName, TextReader reader)
             {
-                if ("f1".equals(fieldName))
+                if ("f1".Equals(fieldName, StringComparison.Ordinal))
                 {
                     // we don't use the reader, so close it:
                     IOUtils.DisposeWhileHandlingException(reader);

@@ -494,7 +494,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     {
                         goop1.Image = goop1.Image.Substring(1, goop1.Image.Length - 2);
                     }
-                    else if ("*".Equals(goop1.Image))
+                    else if ("*".Equals(goop1.Image, StringComparison.Ordinal))
                     {
                         startOpen = true;
                     }
@@ -502,7 +502,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     {
                         goop2.Image = goop2.Image.Substring(1, goop2.Image.Length - 2);
                     }
-                    else if ("*".Equals(goop2.Image))
+                    else if ("*".Equals(goop2.Image, StringComparison.Ordinal))
                     {
                         endOpen = true;
                     }

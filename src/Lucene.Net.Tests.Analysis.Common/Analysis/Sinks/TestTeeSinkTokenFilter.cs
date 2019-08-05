@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Sinks
             public override bool Accept(AttributeSource a)
             {
                 ICharTermAttribute termAtt = a.GetAttribute<ICharTermAttribute>();
-                return termAtt.ToString().Equals("The", StringComparison.CurrentCultureIgnoreCase);
+                return termAtt.ToString().Equals("The", StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Sinks
             public override bool Accept(AttributeSource a)
             {
                 ICharTermAttribute termAtt = a.GetAttribute<ICharTermAttribute>();
-                return termAtt.ToString().Equals("Dogs", StringComparison.CurrentCultureIgnoreCase);
+                return termAtt.ToString().Equals("Dogs", StringComparison.OrdinalIgnoreCase);
             }
         }
 

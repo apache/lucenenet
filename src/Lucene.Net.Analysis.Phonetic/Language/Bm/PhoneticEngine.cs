@@ -445,7 +445,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
             if (this.nameType == NameType.GENERIC)
             {
-                if (input.Length >= 2 && input.Substring(0, 2 - 0).Equals("d'"))
+                if (input.Length >= 2 && input.Substring(0, 2 - 0).Equals("d'", StringComparison.Ordinal))
                 { // check for d'
                     string remainder = input.Substring(2);
                     string combined = "d" + remainder;

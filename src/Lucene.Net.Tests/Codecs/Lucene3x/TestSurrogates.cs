@@ -109,7 +109,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public int Compare(Term term1, Term term2)
             {
-                if (term1.Field.Equals(term2.Field))
+                if (term1.Field.Equals(term2.Field, StringComparison.Ordinal))
                 {
                     return LegacyComparer.Compare(term1.Bytes, term2.Bytes);
                 }
@@ -225,7 +225,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         break;
                     }
                     term = fieldTerms[1 + spot + i];
-                    if (!term.Field.Equals(field))
+                    if (!term.Field.Equals(field, StringComparison.Ordinal))
                     {
                         Assert.IsNull(te.Next());
                         break;
@@ -287,7 +287,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                         spot = -spot - 1;
 
-                        if (spot == fieldTerms.Count || !fieldTerms[spot].Field.Equals(field))
+                        if (spot == fieldTerms.Count || !fieldTerms[spot].Field.Equals(field, StringComparison.Ordinal))
                         {
                             Assert.AreEqual(TermsEnum.SeekStatus.END, te.SeekCeil(tx.Bytes));
                         }
@@ -316,7 +316,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                                     break;
                                 }
                                 Term term = fieldTerms[1 + spot + i];
-                                if (!term.Field.Equals(field))
+                                if (!term.Field.Equals(field, StringComparison.Ordinal))
                                 {
                                     Assert.IsNull(te.Next());
                                     break;

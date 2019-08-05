@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
 
 namespace Lucene.Net.Analysis.Payloads
@@ -60,15 +61,15 @@ namespace Lucene.Net.Analysis.Payloads
 
         public virtual void Inform(IResourceLoader loader)
         {
-            if (encoderClass.Equals("float"))
+            if (encoderClass.Equals("float", StringComparison.Ordinal))
             {
                 encoder = new SingleEncoder();
             }
-            else if (encoderClass.Equals("integer"))
+            else if (encoderClass.Equals("integer", StringComparison.Ordinal))
             {
                 encoder = new IntegerEncoder();
             }
-            else if (encoderClass.Equals("identity"))
+            else if (encoderClass.Equals("identity", StringComparison.Ordinal))
             {
                 encoder = new IdentityEncoder();
             }

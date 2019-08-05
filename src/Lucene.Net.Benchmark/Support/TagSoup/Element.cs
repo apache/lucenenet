@@ -12,6 +12,7 @@
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 using Sax.Helpers;
+using System;
 
 namespace TagSoup
 {
@@ -178,7 +179,7 @@ namespace TagSoup
         {
             for (int i = _atts.Length - 1; i >= 0; i--)
             {
-                if (_atts.GetType(i).Equals("ID") || _atts.GetQName(i).Equals("name"))
+                if (_atts.GetType(i).Equals("ID", StringComparison.Ordinal) || _atts.GetQName(i).Equals("name", StringComparison.Ordinal))
                 {
                     _atts.RemoveAttribute(i);
                 }

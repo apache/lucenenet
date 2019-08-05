@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void Test2BTerms_Mem([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
-            if ("Lucene3x".Equals(Codec.Default.Name))
+            if ("Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal))
             {
                 throw new Exception("this test cannot run with PreFlex codec");
             }

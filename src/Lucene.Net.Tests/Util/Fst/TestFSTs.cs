@@ -721,41 +721,41 @@ namespace Lucene.Net.Util.Fst
             int idx = 0;
             while (idx < args.Length)
             {
-                if (args[idx].Equals("-prune"))
+                if (args[idx].Equals("-prune", StringComparison.Ordinal))
                 {
                     prune = Convert.ToInt32(args[1 + idx]);
                     idx++;
                 }
-                else if (args[idx].Equals("-limit"))
+                else if (args[idx].Equals("-limit", StringComparison.Ordinal))
                 {
                     limit = Convert.ToInt32(args[1 + idx]);
                     idx++;
                 }
-                else if (args[idx].Equals("-utf8"))
+                else if (args[idx].Equals("-utf8", StringComparison.Ordinal))
                 {
                     inputMode = 0;
                 }
-                else if (args[idx].Equals("-utf32"))
+                else if (args[idx].Equals("-utf32", StringComparison.Ordinal))
                 {
                     inputMode = 1;
                 }
-                else if (args[idx].Equals("-docFreq"))
+                else if (args[idx].Equals("-docFreq", StringComparison.Ordinal))
                 {
                     storeDocFreqs = true;
                 }
-                else if (args[idx].Equals("-noArcArrays"))
+                else if (args[idx].Equals("-noArcArrays", StringComparison.Ordinal))
                 {
                     noArcArrays = true;
                 }
-                else if (args[idx].Equals("-ords"))
+                else if (args[idx].Equals("-ords", StringComparison.Ordinal))
                 {
                     storeOrds = true;
                 }
-                else if (args[idx].Equals("-noverify"))
+                else if (args[idx].Equals("-noverify", StringComparison.Ordinal))
                 {
                     verify = false;
                 }
-                else if (args[idx].Equals("-pack"))
+                else if (args[idx].Equals("-pack", StringComparison.Ordinal))
                 {
                     doPack = true;
                 }

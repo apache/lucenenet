@@ -1112,7 +1112,7 @@ namespace Lucene.Net.Tests.Join
                     while (true)
                     {
                         assertTrue(resultUpto < hits.Length);
-                        if (!parentID.Equals(r.Document(hits[resultUpto].Doc).Get("parentID")))
+                        if (!parentID.Equals(r.Document(hits[resultUpto].Doc).Get("parentID"), StringComparison.Ordinal))
                         {
                             break;
                         }

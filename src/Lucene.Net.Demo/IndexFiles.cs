@@ -67,7 +67,7 @@ namespace Lucene.Net.Demo
 
             for (int i = 0; i < args.Length; i++)
             {
-                if ("-u".Equals(args[i]) || "--update".Equals(args[i]))
+                if ("-u".Equals(args[i], StringComparison.Ordinal) || "--update".Equals(args[i], StringComparison.Ordinal))
                 {
                     create = false;
                 }

@@ -181,7 +181,7 @@ namespace Lucene.Net.Queries
                 if (previousField != null)
                 {
                     // deduplicate
-                    if (previousField.Equals(currentField))
+                    if (previousField.Equals(currentField, StringComparison.Ordinal))
                     {
                         if (previousTerm.BytesEquals(currentTerm))
                         {
@@ -365,7 +365,7 @@ namespace Lucene.Net.Queries
                         return false;
                     }
                 }
-                else if (!field.Equals(other.field))
+                else if (!field.Equals(other.field, StringComparison.Ordinal))
                 {
                     return false;
                 }

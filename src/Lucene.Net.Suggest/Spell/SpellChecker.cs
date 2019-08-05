@@ -375,7 +375,7 @@ namespace Lucene.Net.Search.Spell
                     sugWord.String = indexSearcher.Doc(hits[i].Doc).Get(F_WORD); // get orig word
 
                     // don't suggest a word for itself, that would be silly
-                    if (sugWord.String.Equals(word))
+                    if (sugWord.String.Equals(word, StringComparison.Ordinal))
                     {
                         continue;
                     }

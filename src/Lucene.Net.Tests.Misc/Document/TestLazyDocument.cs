@@ -114,15 +114,15 @@ namespace Lucene.Net.Documents
                 foreach (IIndexableField f in d)
                 {
                     numFieldValues++;
-                    if (f.Name.equals("never_load"))
+                    if (f.Name.Equals("never_load", StringComparison.Ordinal))
                     {
                         fail("never_load was loaded");
                     }
-                    if (f.Name.equals("load_later"))
+                    if (f.Name.Equals("load_later", StringComparison.Ordinal))
                     {
                         fail("load_later was loaded on first pass");
                     }
-                    if (f.Name.equals("docid"))
+                    if (f.Name.Equals("docid", StringComparison.Ordinal))
                     {
                         assertFalse(f.Name, f is LazyDocument.LazyField);
                     }
@@ -160,15 +160,15 @@ namespace Lucene.Net.Documents
                 // now every value of fieldName should be loaded
                 foreach (IIndexableField f in d)
                 {
-                    if (f.Name.equals("never_load"))
+                    if (f.Name.Equals("never_load", StringComparison.Ordinal))
                     {
                         fail("never_load was loaded");
                     }
-                    if (f.Name.equals("load_later"))
+                    if (f.Name.Equals("load_later", StringComparison.Ordinal))
                     {
                         fail("load_later was loaded too soon");
                     }
-                    if (f.Name.equals("docid"))
+                    if (f.Name.Equals("docid", StringComparison.Ordinal))
                     {
                         assertFalse(f.Name, f is LazyDocument.LazyField);
                     }
@@ -178,7 +178,7 @@ namespace Lucene.Net.Documents
                                    f is LazyDocument.LazyField);
                         LazyDocument.LazyField lf = (LazyDocument.LazyField)f;
                         assertEquals(f.Name + " is loaded?",
-                                     lf.Name.equals(fieldName), lf.HasBeenLoaded);
+                                     lf.Name.Equals(fieldName, StringComparison.Ordinal), lf.HasBeenLoaded);
                     }
                 }
 
@@ -193,11 +193,11 @@ namespace Lucene.Net.Documents
                 // we already loaded.
                 foreach (IIndexableField f in d)
                 {
-                    if (f.Name.equals("never_load"))
+                    if (f.Name.Equals("never_load", StringComparison.Ordinal))
                     {
                         fail("never_load was loaded");
                     }
-                    if (f.Name.equals("docid"))
+                    if (f.Name.Equals("docid", StringComparison.Ordinal))
                     {
                         assertFalse(f.Name, f is LazyDocument.LazyField);
                     }
@@ -207,7 +207,7 @@ namespace Lucene.Net.Documents
                                    f is LazyDocument.LazyField);
                         LazyDocument.LazyField lf = (LazyDocument.LazyField)f;
                         assertEquals(f.Name + " is loaded?",
-                                     lf.Name.equals(fieldName), lf.HasBeenLoaded);
+                                     lf.Name.Equals(fieldName, StringComparison.Ordinal), lf.HasBeenLoaded);
                     }
                 }
 
@@ -237,11 +237,11 @@ namespace Lucene.Net.Documents
 
             public override Status NeedsField(FieldInfo fieldInfo)
             {
-                if (fieldInfo.Name.equals("docid"))
+                if (fieldInfo.Name.Equals("docid", StringComparison.Ordinal))
                 {
                     return Status.YES;
                 }
-                else if (fieldInfo.Name.equals("never_load"))
+                else if (fieldInfo.Name.Equals("never_load", StringComparison.Ordinal))
                 {
                     return Status.NO;
                 }

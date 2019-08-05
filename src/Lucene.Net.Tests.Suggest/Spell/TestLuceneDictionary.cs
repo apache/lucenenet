@@ -4,6 +4,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -107,7 +108,7 @@ namespace Lucene.Net.Search.Spell
                 ld = new LuceneDictionary(indexReader, "aaa");
                 it = ld.GetEntryIterator();
                 assertNotNull("First element doesn't exist.", spare = it.Next());
-                assertTrue("First element isn't correct", spare.Utf8ToString().equals("foo"));
+                assertTrue("First element isn't correct", spare.Utf8ToString().Equals("foo", StringComparison.Ordinal));
                 assertNull("More elements than expected", it.Next());
             }
             finally
@@ -127,9 +128,9 @@ namespace Lucene.Net.Search.Spell
                 it = ld.GetEntryIterator();
 
                 assertNotNull("First element doesn't exist.", spare = it.Next());
-                assertTrue("First element isn't correct", spare.Utf8ToString().equals("Jerry"));
+                assertTrue("First element isn't correct", spare.Utf8ToString().Equals("Jerry", StringComparison.Ordinal));
                 assertNotNull("Second element doesn't exist.", spare = it.Next());
-                assertTrue("Second element isn't correct", spare.Utf8ToString().equals("Tom"));
+                assertTrue("Second element isn't correct", spare.Utf8ToString().Equals("Tom", StringComparison.Ordinal));
                 assertNull("More elements than expected", it.Next());
 
                 ld = new LuceneDictionary(indexReader, "contents");

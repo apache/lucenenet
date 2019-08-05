@@ -2,6 +2,7 @@
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -114,7 +115,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return false;
             }
             var other = (TotalTermFreqValueSource)o;
-            return this.m_indexedField.Equals(other.m_indexedField) && this.m_indexedBytes.Equals(other.m_indexedBytes);
+            return this.m_indexedField.Equals(other.m_indexedField, StringComparison.Ordinal) && this.m_indexedBytes.Equals(other.m_indexedBytes);
         }
     }
 }

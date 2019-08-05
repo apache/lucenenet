@@ -35,6 +35,7 @@ namespace Lucene.Net.Search
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using Term = Lucene.Net.Index.Term;
+    using System;
 
     /// <summary>
     /// Tests the use of indexdocvalues in scoring.
@@ -140,7 +141,7 @@ namespace Lucene.Net.Search
 
             public override Similarity Get(string field)
             {
-                return "foo".Equals(field) ? fooSim : @base;
+                return "foo".Equals(field, StringComparison.Ordinal) ? fooSim : @base;
             }
 
             public override float Coord(int overlap, int maxOverlap)

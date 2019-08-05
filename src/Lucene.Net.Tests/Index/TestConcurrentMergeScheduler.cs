@@ -410,7 +410,7 @@ namespace Lucene.Net.Index
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             iwc.SetMaxBufferedDocs(5);
             iwc.SetMergeScheduler(new TrackingCMS());
-            if (TestUtil.GetPostingsFormat("id").Equals("SimpleText"))
+            if (TestUtil.GetPostingsFormat("id").Equals("SimpleText", StringComparison.Ordinal))
             {
                 // no
                 iwc.SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()));

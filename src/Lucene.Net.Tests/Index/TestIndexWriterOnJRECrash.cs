@@ -76,7 +76,7 @@
 //            else
 //            {
 //                // TODO: the non-fork code could simply enable impersonation?
-//                AssumeFalse("does not support PreFlex, see LUCENE-3992", Codec.Default.Name.Equals("Lucene3x"));
+//                AssumeFalse("does not support PreFlex, see LUCENE-3992", Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal));
 //                // we are the fork, setup a crashing thread
 //                int crashTime = TestUtil.NextInt(Random(), 3000, 4000);
 //                ThreadClass t = new ThreadAnonymousInnerClassHelper(this, crashTime);

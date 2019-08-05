@@ -1216,7 +1216,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragment(tokenStream, texts[0]).Trim();
                 assertTrue("Failed to find best section using weighted terms. Found: [" + result + "]",
-                    "<B>Hello</B>".equals(result));
+                    "<B>Hello</B>".Equals(result, StringComparison.Ordinal));
 
                 // readjust weights
                 wTerms[1].Weight = (50f);
@@ -1226,7 +1226,7 @@ namespace Lucene.Net.Search.Highlight
 
                 result = highlighter.GetBestFragment(tokenStream, texts[0]).Trim();
                 assertTrue("Failed to find best section using weighted terms. Found: " + result,
-                    "<B>kennedy</B>".equals(result));
+                    "<B>kennedy</B>".Equals(result, StringComparison.Ordinal));
             });
 
             helper.Start();
@@ -1259,7 +1259,7 @@ namespace Lucene.Net.Search.Highlight
                 String result = highlighter.GetBestFragments(tokenStream, s, 3, "...");
                 String expectedResult = "<B>football</B>-<B>soccer</B> in the euro 2004 <B>footie</B> competition";
                 assertTrue("overlapping analyzer should handle highlights OK, expected:" + expectedResult
-                    + " actual:" + result, expectedResult.equals(result));
+                    + " actual:" + result, expectedResult.Equals(result, StringComparison.Ordinal));
             });
 
             helper.Start();
@@ -1319,7 +1319,7 @@ namespace Lucene.Net.Search.Highlight
                     {
                         if (VERBOSE) Console.WriteLine(fragmentResults[j]);
                         assertTrue("Failed to find same text Fragments: " + fragmentResults[j] + " found",
-                            fragmentResults[j].toString().equals(stringResults[j]));
+                            fragmentResults[j].toString().Equals(stringResults[j], StringComparison.Ordinal));
 
                     }
                 }

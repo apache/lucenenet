@@ -362,8 +362,8 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         protected virtual bool FieldNameComparer(string fieldNameToCheck)
         {
-            bool rv = fieldName == null || fieldName.Equals(fieldNameToCheck)
-                      || fieldNameToCheck.Equals(defaultField);
+            bool rv = fieldName == null || fieldName.Equals(fieldNameToCheck, StringComparison.Ordinal)
+                      || fieldNameToCheck.Equals(defaultField, StringComparison.Ordinal);
             return rv;
         }
 

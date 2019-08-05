@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -118,7 +119,7 @@ namespace Lucene.Net.Search
 
             public override Similarity Get(string field)
             {
-                if (field.Equals("foo"))
+                if (field.Equals("foo", StringComparison.Ordinal))
                 {
                     return Sim1;
                 }

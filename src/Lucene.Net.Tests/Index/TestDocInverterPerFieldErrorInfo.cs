@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader input)
             {
                 Tokenizer tokenizer = new MockTokenizer(input);
-                if (fieldName.Equals("distinctiveFieldName"))
+                if (fieldName.Equals("distinctiveFieldName", StringComparison.Ordinal))
                 {
                     TokenFilter tosser = new TokenFilterAnonymousInnerClassHelper(this, tokenizer);
                     return new TokenStreamComponents(tokenizer, tosser);

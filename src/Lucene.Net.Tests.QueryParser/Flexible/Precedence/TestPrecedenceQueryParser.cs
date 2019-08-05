@@ -94,7 +94,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
                 }
                 else
                     while (m_input.IncrementToken())
-                        if (termAtt.toString().equals("phrase"))
+                        if (termAtt.toString().Equals("phrase", StringComparison.Ordinal))
                         {
                             inPhrase = true;
                             savedStart = offsetAtt.StartOffset;
@@ -103,7 +103,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
                             offsetAtt.SetOffset(savedStart, savedEnd);
                             return true;
                         }
-                        else if (!termAtt.toString().equals("stop"))
+                        else if (!termAtt.toString().Equals("stop", StringComparison.Ordinal))
                             return true;
                 return false;
             }
@@ -158,7 +158,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         {
             Query q = GetQuery(query, a);
             String s = q.ToString("field");
-            if (!s.equals(result))
+            if (!s.Equals(result, StringComparison.Ordinal))
             {
                 fail("Query /" + query + "/ yielded /" + s + "/, expecting /" + result
                     + "/");
@@ -172,7 +172,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             qp.LowercaseExpandedTerms = (lowercase);
             Query q = qp.Parse(query, "field");
             String s = q.ToString("field");
-            if (!s.equals(result))
+            if (!s.Equals(result, StringComparison.Ordinal))
             {
                 fail("WildcardQuery /" + query + "/ yielded /" + s + "/, expecting /"
                     + result + "/");
@@ -184,7 +184,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             PrecedenceQueryParser qp = GetParser(null);
             Query q = qp.Parse(query, "field");
             String s = q.ToString("field");
-            if (!s.equals(result))
+            if (!s.Equals(result, StringComparison.Ordinal))
             {
                 fail("WildcardQuery /" + query + "/ yielded /" + s + "/, expecting /"
                     + result + "/");
@@ -205,7 +205,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         {
             Query q = getQueryDOA(query, a);
             String s = q.ToString("field");
-            if (!s.equals(result))
+            if (!s.Equals(result, StringComparison.Ordinal))
             {
                 fail("Query /" + query + "/ yielded /" + s + "/, expecting /" + result
                     + "/");
@@ -531,7 +531,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
         {
             Query q = qp.Parse(query, field);
             String s = q.ToString(field);
-            if (!s.equals(result))
+            if (!s.Equals(result, StringComparison.Ordinal))
             {
                 fail("Query /" + query + "/ yielded /" + s + "/, expecting /" + result
                     + "/");

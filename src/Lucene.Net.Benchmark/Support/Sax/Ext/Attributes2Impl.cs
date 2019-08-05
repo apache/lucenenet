@@ -188,7 +188,7 @@ namespace Sax.Ext
             } else {
                 for (int i = 0; i < length; i++)
                 {
-                    declared[i] = !"CDATA".Equals(atts.GetType(i));
+                    declared[i] = !"CDATA".Equals(atts.GetType(i), StringComparison.Ordinal);
                     specified[i] = true;
                 }
             }
@@ -225,7 +225,7 @@ namespace Sax.Ext
             }
 
             specified[length - 1] = true;
-            declared[length - 1] = !"CDATA".Equals(type);
+            declared[length - 1] = !"CDATA".Equals(type, StringComparison.Ordinal);
         }
 
         // javadoc entirely from superclass

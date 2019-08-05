@@ -5,6 +5,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -184,7 +185,7 @@ namespace Lucene.Net.Queries.Mlt
                     return false;
                 }
             }
-            else if (!fieldName.Equals(other.fieldName))
+            else if (!fieldName.Equals(other.fieldName, StringComparison.Ordinal))
             {
                 return false;
             }
@@ -195,7 +196,7 @@ namespace Lucene.Net.Queries.Mlt
                     return false;
                 }
             }
-            else if (!likeText.Equals(other.likeText))
+            else if (!likeText.Equals(other.likeText, StringComparison.Ordinal))
             {
                 return false;
             }

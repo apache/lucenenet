@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text;
 
 namespace Lucene.Net.Analysis.De
@@ -98,15 +99,15 @@ namespace Lucene.Net.Analysis.De
             bool doMore = true;
             while (doMore && buffer.Length > 3)
             {
-                if ((buffer.Length + substCount > 5) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("nd"))
+                if ((buffer.Length + substCount > 5) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("nd", StringComparison.Ordinal))
                 {
                     buffer.Remove(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
                 }
-                else if ((buffer.Length + substCount > 4) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("em"))
+                else if ((buffer.Length + substCount > 4) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("em", StringComparison.Ordinal))
                 {
                     buffer.Remove(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
                 }
-                else if ((buffer.Length + substCount > 4) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("er"))
+                else if ((buffer.Length + substCount > 4) && buffer.ToString(buffer.Length - 2, buffer.Length - (buffer.Length - 2)).Equals("er", StringComparison.Ordinal))
                 {
                     buffer.Remove(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
                 }
@@ -141,7 +142,7 @@ namespace Lucene.Net.Analysis.De
         private void Optimize(StringBuilder buffer)
         {
             // Additional step for female plurals of professions and inhabitants.
-            if (buffer.Length > 5 && buffer.ToString(buffer.Length - 5, buffer.Length - (buffer.Length - 5)).Equals("erin*"))
+            if (buffer.Length > 5 && buffer.ToString(buffer.Length - 5, buffer.Length - (buffer.Length - 5)).Equals("erin*", StringComparison.Ordinal))
             {
                 buffer.Remove(buffer.Length - 1, 1);
                 Strip(buffer);
@@ -163,7 +164,7 @@ namespace Lucene.Net.Analysis.De
             {
                 for (int c = 0; c < buffer.Length - 3; c++)
                 {
-                    if (buffer.ToString(c, 4).Equals("gege"))
+                    if (buffer.ToString(c, 4).Equals("gege", StringComparison.Ordinal))
                     {
                         buffer.Remove(c, (c + 2) - c);
                         return;

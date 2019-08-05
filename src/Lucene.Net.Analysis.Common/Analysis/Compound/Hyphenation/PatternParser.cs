@@ -402,7 +402,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
             {
                 string dtdFilename = "hyphenation.dtd";
-                if (dtdFilename.Equals(absoluteUri.Segments.LastOrDefault()))
+                if (dtdFilename.Equals(absoluteUri.Segments.LastOrDefault(), StringComparison.Ordinal))
                 {
                     return GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(PatternParser), dtdFilename);
                 }
@@ -430,7 +430,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <param name="attrs"> the attributes attached to the element. If there are no attributes, it shall be an empty Attributes object. The value of this object after startElement returns is undefined</param>
         public virtual void StartElement(string uri, string local, string raw, IDictionary<string, string> attrs)
         {
-            if (local.Equals("hyphen-char"))
+            if (local.Equals("hyphen-char", StringComparison.Ordinal))
             {
                 string h = attrs.ContainsKey("value") ? attrs["value"] : null;
                 if (h != null && h.Length == 1)
@@ -438,20 +438,20 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     hyphenChar = h[0];
                 }
             }
-            else if (local.Equals("classes"))
+            else if (local.Equals("classes", StringComparison.Ordinal))
             {
                 currElement = ELEM_CLASSES;
             }
-            else if (local.Equals("patterns"))
+            else if (local.Equals("patterns", StringComparison.Ordinal))
             {
                 currElement = ELEM_PATTERNS;
             }
-            else if (local.Equals("exceptions"))
+            else if (local.Equals("exceptions", StringComparison.Ordinal))
             {
                 currElement = ELEM_EXCEPTIONS;
                 exception = new List<object>();
             }
-            else if (local.Equals("hyphen"))
+            else if (local.Equals("hyphen", StringComparison.Ordinal))
             {
                 if (token.Length > 0)
                 {

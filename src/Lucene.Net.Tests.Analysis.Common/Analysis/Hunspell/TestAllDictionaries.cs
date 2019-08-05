@@ -206,7 +206,7 @@ namespace Lucene.Net.Analysis.Hunspell
             string toTest = "hu_HU.zip";
             for (int i = 0; i < tests.Length; i++)
             {
-                if (tests[i].Equals(toTest))
+                if (tests[i].Equals(toTest, StringComparison.Ordinal))
                 {
                     FileInfo f = new FileInfo(System.IO.Path.Combine(DICTIONARY_HOME.FullName, tests[i]));
                     Debug.Assert(f.Exists);

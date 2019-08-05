@@ -1,4 +1,5 @@
 ﻿// commons-codec version compatibility level: 1.9
+using System;
 using System.Globalization;
 using System.Text;
 
@@ -429,7 +430,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 index + test.Length - 1 < sb.Length)
             {
                 string substring = sb.ToString(index, test.Length);
-                matches = substring.Equals(test);
+                matches = substring.Equals(test, StringComparison.Ordinal);
             }
             return matches;
         }
@@ -479,7 +480,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns><c>true</c> if the metaphones of these strings are identical, <c>false</c> otherwise.</returns>
         public virtual bool IsMetaphoneEqual(string str1, string str2)
         {
-            return GetMetaphone(str1).Equals(GetMetaphone(str2));
+            return GetMetaphone(str1).Equals(GetMetaphone(str2), StringComparison.Ordinal);
         }
 
         /// <summary>

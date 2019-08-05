@@ -895,7 +895,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
             // evaluate the pattern, left context and right context
             // fail early if any of the evaluations is not successful
-            if (!input.Substring(i, (ipl - i)).Equals(this.pattern))
+            if (!input.Substring(i, (ipl - i)).Equals(this.pattern, StringComparison.Ordinal))
             {
                 return false;
             }
@@ -933,7 +933,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
             // evaluate the pattern, left context and right context
             // fail early if any of the evaluations is not successful
-            if (!input.ToString(i, (ipl - i)).Equals(this.pattern))
+            if (!input.ToString(i, (ipl - i)).Equals(this.pattern, StringComparison.Ordinal))
             {
                 return false;
             }

@@ -112,7 +112,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             var r = DirectoryReader.Open(dir);
             Assert.AreEqual(3, r.NumDocs, "2 categories plus root should have been committed to the underlying directory");
             var readUserCommitData = r.IndexCommit.UserData;
-            Assert.True("1 2 3".Equals(readUserCommitData["testing"]), "wrong value extracted from commit data");
+            Assert.True("1 2 3".Equals(readUserCommitData["testing"], StringComparison.Ordinal), "wrong value extracted from commit data");
             Assert.NotNull(DirectoryTaxonomyWriter.INDEX_EPOCH + " not found in commitData", readUserCommitData[DirectoryTaxonomyWriter.INDEX_EPOCH]);
             r.Dispose();
 

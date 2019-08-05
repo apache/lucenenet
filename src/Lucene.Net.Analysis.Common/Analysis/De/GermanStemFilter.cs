@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using System;
 
 namespace Lucene.Net.Analysis.De
 {
@@ -63,7 +64,7 @@ namespace Lucene.Net.Analysis.De
                 {
                     string s = stemmer.Stem(term);
                     // If not stemmed, don't waste the time adjusting the token.
-                    if ((s != null) && !s.Equals(term))
+                    if ((s != null) && !s.Equals(term, StringComparison.Ordinal))
                     {
                         termAtt.SetEmpty().Append(s);
                     }

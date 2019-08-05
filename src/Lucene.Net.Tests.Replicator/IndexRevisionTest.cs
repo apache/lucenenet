@@ -118,7 +118,7 @@ namespace Lucene.Net.Replicator
                 assertEquals(1, sourceFiles.Count);
                 var files = sourceFiles.Values.First();
                 string lastFile = files.Last().FileName;
-                assertTrue(lastFile.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal) && !lastFile.Equals(IndexFileNames.SEGMENTS_GEN));
+                assertTrue(lastFile.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal) && !lastFile.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal));
             }
             finally
             {

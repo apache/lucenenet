@@ -417,7 +417,8 @@ namespace Lucene.Net.Tartarus.Snowball
                     try
                     {
                         object resobj = w.Method.Invoke(w.MethodObject, EMPTY_ARGS);
-                        res = resobj.ToString().Equals("true");
+                        // LUCENENET-542: Fixed case-sensitivity problem
+                        res = resobj.ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
                     }
                     catch (TargetInvocationException /*e*/)
                     {

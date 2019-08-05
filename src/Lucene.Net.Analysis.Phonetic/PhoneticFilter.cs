@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Phonetic
             try
             {
                 string v = encoder.Encode(value);
-                if (v.Length > 0 && !value.Equals(v))
+                if (v.Length > 0 && !value.Equals(v, StringComparison.Ordinal))
                 {
                     phonetic = v;
                 }

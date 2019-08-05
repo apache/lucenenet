@@ -216,13 +216,13 @@ namespace Lucene.Net.Misc
 
             public override Similarity Get(string field)
             {
-                if (field.Equals("bar"))
+                if (field.Equals("bar", StringComparison.Ordinal))
                     return ssBar;
-                else if (field.Equals("yak"))
+                else if (field.Equals("yak", StringComparison.Ordinal))
                     return ssYak;
-                else if (field.Equals("a"))
+                else if (field.Equals("a", StringComparison.Ordinal))
                     return ssA;
-                else if (field.Equals("b"))
+                else if (field.Equals("b", StringComparison.Ordinal))
                     return ssB;
                 else
                     return ss;

@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
                 Document temp = reader.Document(i);
                 //System.out.println("doc "+i+"="+temp.GetField("count").StringValue);
                 //compare the index doc number to the value that it should be
-                if (!temp.GetField("count").GetStringValue().Equals((i + startAt) + ""))
+                if (!temp.GetField("count").GetStringValue().Equals((i + startAt) + "", StringComparison.Ordinal))
                 {
                     fail = true;
                     Console.WriteLine("Document " + (i + startAt) + " is returning document " + temp.GetField("count").GetStringValue());

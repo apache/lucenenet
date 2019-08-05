@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Search;
+using System;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -51,7 +52,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var other = o as SingularFunction;
             if (other == null)
                 return false;
-            return Name.Equals(other.Name) 
+            return Name.Equals(other.Name, StringComparison.Ordinal) 
                 && m_source.Equals(other.m_source);
         }
 

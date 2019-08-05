@@ -93,7 +93,7 @@ namespace Lucene.Net.QueryParsers.Util
                 else
                     while (m_input.IncrementToken())
                     {
-                        if (termAtt.toString().Equals("phrase"))
+                        if (termAtt.toString().Equals("phrase", StringComparison.Ordinal))
                         {
                             inPhrase = true;
                             savedStart = offsetAtt.StartOffset;
@@ -102,7 +102,7 @@ namespace Lucene.Net.QueryParsers.Util
                             offsetAtt.SetOffset(savedStart, savedEnd);
                             return true;
                         }
-                        else if (!termAtt.toString().equals("stop"))
+                        else if (!termAtt.toString().Equals("stop", StringComparison.Ordinal))
                             return true;
                     }
                 return false;
@@ -159,7 +159,7 @@ namespace Lucene.Net.QueryParsers.Util
         {
             Query q = GetQuery(query, a);
             string s = q.ToString("field");
-            if (!s.equals(result))
+            if (!s.Equals(result, StringComparison.Ordinal))
             {
                 fail("Query /" + query + "/ yielded /" + s
                      + "/, expecting /" + result + "/");
@@ -170,7 +170,7 @@ namespace Lucene.Net.QueryParsers.Util
         {
             Query q = GetQuery(query, cqpC);
             string s = q.ToString(field);
-            if (!s.Equals(result))
+            if (!s.Equals(result, StringComparison.Ordinal))
             {
                 fail("Query /" + query + "/ yielded /" + s
                      + "/, expecting /" + result + "/");
@@ -180,7 +180,7 @@ namespace Lucene.Net.QueryParsers.Util
         public void AssertEscapedQueryEquals(string query, Analyzer a, string result)
         {
             string escapedQuery = QueryParserBase.Escape(query);
-            if (!escapedQuery.Equals(result))
+            if (!escapedQuery.Equals(result, StringComparison.Ordinal))
             {
                 fail("Query /" + query + "/ yielded /" + escapedQuery
                     + "/, expecting /" + result + "/");
@@ -194,7 +194,7 @@ namespace Lucene.Net.QueryParsers.Util
             cqpC.AllowLeadingWildcard = allowLeadingWildcard;
             Query q = GetQuery(query, cqpC);
             string s = q.ToString("field");
-            if (!s.equals(result))
+            if (!s.Equals(result, StringComparison.Ordinal))
             {
                 fail("WildcardQuery /" + query + "/ yielded /" + s
                      + "/, expecting /" + result + "/");
@@ -210,7 +210,7 @@ namespace Lucene.Net.QueryParsers.Util
         {
             Query q = GetQuery(query);
             string s = q.ToString("field");
-            if (!s.Equals(result))
+            if (!s.Equals(result, StringComparison.Ordinal))
             {
                 fail("WildcardQuery /" + query + "/ yielded /" + s + "/, expecting /"
                     + result + "/");
@@ -230,7 +230,7 @@ namespace Lucene.Net.QueryParsers.Util
         {
             Query q = GetQueryDOA(query, a);
             string s = q.ToString("field");
-            if (!s.Equals(result))
+            if (!s.Equals(result, StringComparison.Ordinal))
             {
                 fail("Query /" + query + "/ yielded /" + s
                      + "/, expecting /" + result + "/");
@@ -1235,7 +1235,7 @@ namespace Lucene.Net.QueryParsers.Util
 
                 if (m_input.IncrementToken())
                 {
-                    addSynonym = termAtt.toString().equals("dogs");
+                    addSynonym = termAtt.toString().Equals("dogs", StringComparison.Ordinal);
                     return true;
                 }
                 else

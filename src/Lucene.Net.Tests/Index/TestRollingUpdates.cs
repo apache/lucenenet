@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
 
             //provider.register(new MemoryCodec());
-            if ((!"Lucene3x".Equals(Codec.Default.Name)) && Random().NextBoolean())
+            if ((!"Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal)) && Random().NextBoolean())
             {
                 Codec.Default =
                     TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(Random().nextBoolean(), random.NextFloat()));

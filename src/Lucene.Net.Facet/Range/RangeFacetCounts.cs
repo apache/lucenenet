@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Range
 {
@@ -64,7 +65,7 @@ namespace Lucene.Net.Facet.Range
 
         public override FacetResult GetTopChildren(int topN, string dim, params string[] path)
         {
-            if (dim.Equals(m_field) == false)
+            if (dim.Equals(m_field, StringComparison.Ordinal) == false)
             {
                 throw new System.ArgumentException("invalid dim \"" + dim + "\"; should be \"" + m_field + "\"");
             }

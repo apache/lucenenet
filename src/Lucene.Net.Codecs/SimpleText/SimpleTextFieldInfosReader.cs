@@ -160,7 +160,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public virtual Index.DocValuesType DocValuesType(string dvType)
         {
-            return "false".Equals(dvType) ? Index.DocValuesType.NONE : (Index.DocValuesType)Enum.Parse(typeof(Index.DocValuesType), dvType, true);
+            return "false".Equals(dvType, StringComparison.Ordinal) ? Index.DocValuesType.NONE : (Index.DocValuesType)Enum.Parse(typeof(Index.DocValuesType), dvType, true);
         }
 
         private string ReadString(int offset, BytesRef scratch)

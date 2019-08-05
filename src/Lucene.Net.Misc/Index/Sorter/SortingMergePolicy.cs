@@ -199,7 +199,7 @@ namespace Lucene.Net.Index.Sorter
                 string diagnosticsSort;
                 if (diagnostics != null 
                     && diagnostics.TryGetValue(SORTER_ID_PROP, out diagnosticsSort)
-                    && sort.ToString().Equals(diagnosticsSort))
+                    && sort.ToString().Equals(diagnosticsSort, StringComparison.Ordinal))
                 {
                     return true;
                 }

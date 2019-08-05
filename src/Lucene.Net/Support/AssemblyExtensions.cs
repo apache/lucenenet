@@ -60,7 +60,7 @@ namespace Lucene.Net.Support
             if (!resourceCache.TryGetValue(key, out resourceName))
             {
                 string[] resourceNames = assembly.GetManifestResourceNames();
-                resourceName = resourceNames.Where(x => x.Equals(name)).FirstOrDefault();
+                resourceName = resourceNames.Where(x => x.Equals(name, StringComparison.Ordinal)).FirstOrDefault();
 
                 // If resourceName is not null, we have an exact match, don't search
                 if (resourceName == null)
@@ -101,7 +101,7 @@ namespace Lucene.Net.Support
             if (!resourceNames.Contains(resourceName))
             {
                 string nameToFind = null;
-                while (resourceName.Length > 0 && resourceName.Contains('.') && (!(string.IsNullOrEmpty(prefix)) || resourceName.Equals(exactResourceName)))
+                while (resourceName.Length > 0 && resourceName.Contains('.') && (!(string.IsNullOrEmpty(prefix)) || resourceName.Equals(exactResourceName, StringComparison.Ordinal)))
                 {
                     nameToFind = string.IsNullOrEmpty(prefix)
                         ? resourceName
@@ -148,7 +148,7 @@ namespace Lucene.Net.Support
 
                 var other = obj as TypeAndResource;
                 return this.type.Equals(other.type)
-                    && this.name.Equals(other.name);
+                    && this.name.Equals(other.name, StringComparison.Ordinal);
             }
 
             public override int GetHashCode()

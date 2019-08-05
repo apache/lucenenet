@@ -721,7 +721,7 @@ namespace Lucene.Net.Analysis.CharFilters
             }
             catch (Exception e)
             {
-                if (gold.Equals(builder.ToString()))
+                if (gold.Equals(builder.ToString(), StringComparison.Ordinal))
                 {
                     throw e;
                 }

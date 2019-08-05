@@ -303,7 +303,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     // Store the strategy so it can be used when parsing the dic file
                     flagParsingStrategy = GetFlagParsingStrategy(line);
                 }
-                else if (line.Equals(COMPLEXPREFIXES_KEY))
+                else if (line.Equals(COMPLEXPREFIXES_KEY, StringComparison.Ordinal))
                 {
                     complexPrefixes = true; // 2-stage prefix+1-stage suffix instead of 2-stage suffix+1-stage prefix
                 }
@@ -337,7 +337,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     }
                     int num = int.Parse(parts[1], CultureInfo.InvariantCulture);
                     FST<CharsRef> res = ParseConversions(reader, num);
-                    if (type.Equals("ICONV"))
+                    if (type.Equals("ICONV", StringComparison.Ordinal))
                     {
                         iconv = res;
                         needsInputCleaning |= iconv != null;
@@ -409,7 +409,7 @@ namespace Lucene.Net.Analysis.Hunspell
             StringBuilder sb = new StringBuilder();
             string[] args = whitespacePattern.Split(header).TrimEnd();
 
-            bool crossProduct = args[2].Equals("Y");
+            bool crossProduct = args[2].Equals("Y", StringComparison.Ordinal);
 
             int numLines = int.Parse(args[3], CultureInfo.InvariantCulture);
             affixData = ArrayUtil.Grow(affixData, (currentAffix << 3) + (numLines << 3));
@@ -429,7 +429,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
 
                 char flag = flagParsingStrategy.ParseFlag(ruleArgs[1]);
-                string strip = ruleArgs[2].Equals("0") ? "" : ruleArgs[2];
+                string strip = ruleArgs[2].Equals("0", StringComparison.Ordinal) ? "" : ruleArgs[2];
                 string affixArg = ruleArgs[3];
                 char[] appendFlags = null;
 
@@ -464,11 +464,11 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
 
                 string regex;
-                if (".".Equals(condition))
+                if (".".Equals(condition, StringComparison.Ordinal))
                 {
                     regex = ".*"; // Zero condition is indicated by dot
                 }
-                else if (condition.Equals(strip))
+                else if (condition.Equals(strip, StringComparison.Ordinal))
                 {
                     regex = ".*"; // TODO: optimize this better:
                                   // if we remove 'strip' from condition, we don't have to append 'strip' to check it...!
@@ -690,15 +690,15 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             string flagType = parts[1];
 
-            if (NUM_FLAG_TYPE.Equals(flagType))
+            if (NUM_FLAG_TYPE.Equals(flagType, StringComparison.Ordinal))
             {
                 return new NumFlagParsingStrategy();
             }
-            else if (UTF8_FLAG_TYPE.Equals(flagType))
+            else if (UTF8_FLAG_TYPE.Equals(flagType, StringComparison.Ordinal))
             {
                 return new SimpleFlagParsingStrategy();
             }
-            else if (LONG_FLAG_TYPE.Equals(flagType))
+            else if (LONG_FLAG_TYPE.Equals(flagType, StringComparison.Ordinal))
             {
                 return new DoubleASCIIFlagParsingStrategy();
             }

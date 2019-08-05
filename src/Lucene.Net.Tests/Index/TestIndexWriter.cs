@@ -2825,11 +2825,11 @@ namespace Lucene.Net.Index
 
             public void Apply(string message)
             {
-                if ("startCommitMerge".Equals(message))
+                if ("startCommitMerge".Equals(message, StringComparison.Ordinal))
                 {
                     IwRef.Get().KeepFullyDeletedSegments = false;
                 }
-                else if ("startMergeInit".Equals(message))
+                else if ("startMergeInit".Equals(message, StringComparison.Ordinal))
                 {
                     IwRef.Get().KeepFullyDeletedSegments = true;
                 }

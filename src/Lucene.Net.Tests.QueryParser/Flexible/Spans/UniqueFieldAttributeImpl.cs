@@ -65,7 +65,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
             {
 
                 return ((UniqueFieldAttribute)other).uniqueField
-                    .equals(this.uniqueField);
+                    .Equals(this.uniqueField, System.StringComparison.Ordinal);
             }
 
             return false;

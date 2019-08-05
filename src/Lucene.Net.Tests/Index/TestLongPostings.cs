@@ -3,6 +3,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 using System.Diagnostics;
 using System.IO;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -53,7 +54,7 @@ namespace Lucene.Net.Index
             while (true)
             {
                 string s = TestUtil.RandomRealisticUnicodeString(Random());
-                if (other != null && s.Equals(other))
+                if (other != null && s.Equals(other, StringComparison.Ordinal))
                 {
                     continue;
                 }
@@ -71,7 +72,7 @@ namespace Lucene.Net.Index
                     while (ts.IncrementToken())
                     {
                         termAtt.FillBytesRef();
-                        if (count == 0 && !termBytes.Utf8ToString().Equals(s))
+                        if (count == 0 && !termBytes.Utf8ToString().Equals(s, StringComparison.Ordinal))
                         {
                             // The value was changed during analysis.  Keep iterating so the
                             // tokenStream is exhausted.

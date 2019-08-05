@@ -74,12 +74,12 @@ namespace Lucene.Net.Analysis.Snowball
             Tokenizer tokenizer = new StandardTokenizer(matchVersion, reader);
             TokenStream result = new StandardFilter(matchVersion, tokenizer);
             // remove the possessive 's for english stemmers
-            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) && (name.Equals("English") || name.Equals("Porter") || name.Equals("Lovins")))
+            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) && (name.Equals("English", StringComparison.Ordinal) || name.Equals("Porter", StringComparison.Ordinal) || name.Equals("Lovins", StringComparison.Ordinal)))
             {
                 result = new EnglishPossessiveFilter(result);
             }
             // Use a special lowercase filter for turkish, the stemmer expects it.
-            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) && name.Equals("Turkish"))
+            if (matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) && name.Equals("Turkish", StringComparison.Ordinal))
             {
                 result = new TurkishLowerCaseFilter(result);
             }

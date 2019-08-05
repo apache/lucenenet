@@ -1150,7 +1150,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             protected override char GetMultiValuedSeparator(string field)
             {
-                Debug.Assert( field.equals("body"));
+                Debug.Assert( field.Equals("body", StringComparison.Ordinal));
                 return '\u2029';
             }
         }

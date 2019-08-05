@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Search;
+using System;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -61,7 +62,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            return m_field.Equals(other.m_field) && m_cache == other.m_cache;
+            return m_field.Equals(other.m_field, StringComparison.Ordinal) && m_cache == other.m_cache;
         }
 
         public override int GetHashCode()

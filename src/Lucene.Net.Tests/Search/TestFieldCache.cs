@@ -292,7 +292,7 @@ namespace Lucene.Net.Search
                     term = br;
                 }
                 string s = term == null ? null : term.Utf8ToString();
-                Assert.IsTrue(UnicodeStrings[i] == null || UnicodeStrings[i].Equals(s), "for doc " + i + ": " + s + " does not equal: " + UnicodeStrings[i]);
+                Assert.IsTrue(UnicodeStrings[i] == null || UnicodeStrings[i].Equals(s, StringComparison.Ordinal), "for doc " + i + ": " + s + " does not equal: " + UnicodeStrings[i]);
             }
 
             int nTerms = termsIndex.ValueCount;
@@ -344,7 +344,7 @@ namespace Lucene.Net.Search
                     term = br;
                 }
                 string s = term == null ? null : term.Utf8ToString();
-                Assert.IsTrue(UnicodeStrings[i] == null || UnicodeStrings[i].Equals(s), "for doc " + i + ": " + s + " does not equal: " + UnicodeStrings[i]);
+                Assert.IsTrue(UnicodeStrings[i] == null || UnicodeStrings[i].Equals(s, StringComparison.Ordinal), "for doc " + i + ": " + s + " does not equal: " + UnicodeStrings[i]);
             }
 
             // test bad field

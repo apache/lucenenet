@@ -270,7 +270,7 @@ namespace Lucene.Net.Facet
             var clone = q.Clone() as DrillDownQuery;
             Assert.NotNull(clone);
             clone.Add("b");
-            Assert.False(q.ToString().Equals(clone.ToString()), "query wasn't cloned: source=" + q + " clone=" + clone);
+            Assert.False(q.ToString().Equals(clone.ToString(), StringComparison.Ordinal), "query wasn't cloned: source=" + q + " clone=" + clone);
         }
 
         [Test]

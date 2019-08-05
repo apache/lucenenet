@@ -242,7 +242,7 @@ namespace Lucene.Net.Search.VectorHighlight
             if (a.Slop != b.Slop) return;
             Term[] ats = a.GetTerms();
             Term[] bts = b.GetTerms();
-            if (fieldMatch && !ats[0].Field.Equals(bts[0].Field)) return;
+            if (fieldMatch && !ats[0].Field.Equals(bts[0].Field, StringComparison.Ordinal)) return;
             CheckOverlap(expandQueries, ats, bts, a.Slop, a.Boost);
             CheckOverlap(expandQueries, bts, ats, b.Slop, b.Boost);
         }
@@ -272,7 +272,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 bool overlap = true;
                 for (int j = i; j < src.Length; j++)
                 {
-                    if ((j - i) < dest.Length && !src[j].Text().Equals(dest[j - i].Text()))
+                    if ((j - i) < dest.Length && !src[j].Text().Equals(dest[j - i].Text(), StringComparison.Ordinal))
                     {
                         overlap = false;
                         break;

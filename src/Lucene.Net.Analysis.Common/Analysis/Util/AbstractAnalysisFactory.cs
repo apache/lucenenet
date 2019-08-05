@@ -334,7 +334,7 @@ namespace Lucene.Net.Analysis.Util
                 args.Remove(name);
                 try
                 {
-                    if (culture.Equals("invariant"))
+                    if (culture.Equals("invariant", StringComparison.Ordinal))
                     {
                         return CultureInfo.InvariantCulture;
                     }

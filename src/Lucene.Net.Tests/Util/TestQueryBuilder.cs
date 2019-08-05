@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Util
@@ -173,7 +174,7 @@ namespace Lucene.Net.Util
 
                 if (m_input.IncrementToken())
                 {
-                    AddSynonym = TermAtt.ToString().Equals("dogs");
+                    AddSynonym = TermAtt.ToString().Equals("dogs", StringComparison.Ordinal);
                     return true;
                 }
                 else
@@ -320,7 +321,7 @@ namespace Lucene.Net.Util
 
                 if (m_input.IncrementToken())
                 {
-                    AddSynonym = TermAtt.ToString().Equals("国");
+                    AddSynonym = TermAtt.ToString().Equals("国", StringComparison.Ordinal);
                     return true;
                 }
                 else

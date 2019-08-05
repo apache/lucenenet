@@ -211,7 +211,7 @@ namespace Lucene.Net.Documents
                 TimeZone.Default = TimeZone.getTimeZone("Europe/London"); // "GMT"
                 string d1 = DateTools.DateToString(new DateTime(time * 1000), DateTools.Resolution.MINUTE);
                 string d2 = DateTools.DateToString(new DateTime((time+3600) * 1000), DateTools.Resolution.MINUTE);
-                Assert.IsFalse(d1.Equals(d2), "different times");
+                Assert.IsFalse(d1.Equals(d2, StringComparison.Ordinal), "different times");
                 Assert.AreEqual(DateTools.StringToTime(d1), time * 1000, "midnight");
                 Assert.AreEqual(DateTools.StringToTime(d2), (time+3600) * 1000, "later");
             }
@@ -231,7 +231,7 @@ namespace Lucene.Net.Documents
                 System.String d1 = DateTools.DateToString(tempAux, DateTools.Resolution.MINUTE);
                 System.DateTime tempAux2 = time2;
                 System.String d2 = DateTools.DateToString(tempAux2, DateTools.Resolution.MINUTE);
-                Assert.IsFalse(d1.Equals(d2), "different times");
+                Assert.IsFalse(d1.Equals(d2, StringComparison.Ordinal), "different times");
                 Assert.AreEqual(DateTools.StringToTime(d1), time1.Ticks, "midnight");
                 Assert.AreEqual(DateTools.StringToTime(d2), time2.Ticks, "later");
             }

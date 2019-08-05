@@ -56,7 +56,7 @@ namespace Lucene.Net.Demo
                 "Use no --query or --queries-file option for interactive mode.\n\n" +
                 "See http://lucene.apache.org/core/4_8_0/demo/ for details.";
             if (args.Length < 1 || args.Length > 0 && 
-                ("?".Equals(args[0]) || "-h".Equals(args[0]) || "--help".Equals(args[0])))
+                ("?".Equals(args[0], StringComparison.Ordinal) || "-h".Equals(args[0], StringComparison.Ordinal) || "--help".Equals(args[0], StringComparison.Ordinal)))
             {
                 Console.WriteLine(usage);
                 Environment.Exit(0);
@@ -72,31 +72,31 @@ namespace Lucene.Net.Demo
 
             for (int i = 0; i < args.Length; i++)
             {
-                if ("-f".Equals(args[i]) || "-field".Equals(args[i]))
+                if ("-f".Equals(args[i], StringComparison.Ordinal) || "-field".Equals(args[i], StringComparison.Ordinal))
                 {
                     field = args[i + 1];
                     i++;
                 }
-                else if ("-qf".Equals(args[i]) || "--queries-file".Equals(args[i]))
+                else if ("-qf".Equals(args[i], StringComparison.Ordinal) || "--queries-file".Equals(args[i], StringComparison.Ordinal))
                 {
                     queries = args[i + 1];
                     i++;
                 }
-                else if ("-q".Equals(args[i]) || "--query".Equals(args[i]))
+                else if ("-q".Equals(args[i], StringComparison.Ordinal) || "--query".Equals(args[i], StringComparison.Ordinal))
                 {
                     queryString = args[i + 1];
                     i++;
                 }
-                else if ("-r".Equals(args[i]) || "--repeat".Equals(args[i]))
+                else if ("-r".Equals(args[i], StringComparison.Ordinal) || "--repeat".Equals(args[i], StringComparison.Ordinal))
                 {
                     repeat = int.Parse(args[i + 1], CultureInfo.InvariantCulture);
                     i++;
                 }
-                else if ("--raw".Equals(args[i]))
+                else if ("--raw".Equals(args[i], StringComparison.Ordinal))
                 {
                     raw = true;
                 }
-                else if ("-p".Equals(args[i]) || "--paging".Equals(args[i]))
+                else if ("-p".Equals(args[i], StringComparison.Ordinal) || "--paging".Equals(args[i], StringComparison.Ordinal))
                 {
                     hitsPerPage = int.Parse(args[i + 1], CultureInfo.InvariantCulture);
                     if (hitsPerPage <= 0)

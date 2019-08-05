@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 
 namespace Lucene.Net.Analysis.Br
 {
@@ -331,7 +332,7 @@ namespace Lucene.Net.Analysis.Br
                 return false;
             }
 
-            return value.Substring(value.Length - suffix.Length).Equals(suffix);
+            return value.Substring(value.Length - suffix.Length).Equals(suffix, StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -350,7 +351,7 @@ namespace Lucene.Net.Analysis.Br
 
             vvalue = RemoveSuffix(value, toReplace);
 
-            if (value.Equals(vvalue))
+            if (value.Equals(vvalue, StringComparison.Ordinal))
             {
                 return value;
             }

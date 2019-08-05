@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Util;
+using System;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -93,7 +94,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var that = o as LiteralValueSource;
             if (that == null)
                 return false;
-            return m_str.Equals(that.m_str);
+            return m_str.Equals(that.m_str, StringComparison.Ordinal);
 
         }
 

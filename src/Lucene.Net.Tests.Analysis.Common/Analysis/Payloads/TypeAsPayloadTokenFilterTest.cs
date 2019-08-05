@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Payloads
@@ -38,10 +39,10 @@ namespace Lucene.Net.Analysis.Payloads
             nptf.Reset();
             while (nptf.IncrementToken())
             {
-                assertTrue(typeAtt.Type + " is not null and it should be", typeAtt.Type.Equals(char.ToUpper(termAtt.Buffer[0]).ToString()));
+                assertTrue(typeAtt.Type + " is not null and it should be", typeAtt.Type.Equals(char.ToUpper(termAtt.Buffer[0]).ToString(), StringComparison.Ordinal));
                 assertTrue("nextToken.getPayload() is null and it shouldn't be", payloadAtt.Payload != null);
                 string type = payloadAtt.Payload.Utf8ToString();
-                assertTrue(type + " is not equal to " + typeAtt.Type, type.Equals(typeAtt.Type));
+                assertTrue(type + " is not equal to " + typeAtt.Type, type.Equals(typeAtt.Type, StringComparison.Ordinal));
                 count++;
             }
 

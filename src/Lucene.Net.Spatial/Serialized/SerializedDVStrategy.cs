@@ -330,7 +330,7 @@ namespace Lucene.Net.Spatial.Serialized
 
                 ShapeDocValueSource that = (ShapeDocValueSource)o;
 
-                if (!fieldName.Equals(that.fieldName)) return false;
+                if (!fieldName.Equals(that.fieldName, StringComparison.Ordinal)) return false;
 
                 return true;
             }

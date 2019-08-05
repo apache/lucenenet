@@ -296,39 +296,39 @@ namespace TagSoup
             }
             features[name] = value;
 
-            if (name.Equals(NAMESPACES_FEATURE))
+            if (name.Equals(NAMESPACES_FEATURE, StringComparison.Ordinal))
             {
                 namespaces = value;
             }
-            else if (name.Equals(IGNORE_BOGONS_FEATURE))
+            else if (name.Equals(IGNORE_BOGONS_FEATURE, StringComparison.Ordinal))
             {
                 ignoreBogons = value;
             }
-            else if (name.Equals(BOGONS_EMPTY_FEATURE))
+            else if (name.Equals(BOGONS_EMPTY_FEATURE, StringComparison.Ordinal))
             {
                 bogonsEmpty = value;
             }
-            else if (name.Equals(ROOT_BOGONS_FEATURE))
+            else if (name.Equals(ROOT_BOGONS_FEATURE, StringComparison.Ordinal))
             {
                 rootBogons = value;
             }
-            else if (name.Equals(DEFAULT_ATTRIBUTES_FEATURE))
+            else if (name.Equals(DEFAULT_ATTRIBUTES_FEATURE, StringComparison.Ordinal))
             {
                 defaultAttributes = value;
             }
-            else if (name.Equals(TRANSLATE_COLONS_FEATURE))
+            else if (name.Equals(TRANSLATE_COLONS_FEATURE, StringComparison.Ordinal))
             {
                 translateColons = value;
             }
-            else if (name.Equals(RESTART_ELEMENTS_FEATURE))
+            else if (name.Equals(RESTART_ELEMENTS_FEATURE, StringComparison.Ordinal))
             {
                 restartElements = value;
             }
-            else if (name.Equals(IGNORABLE_WHITESPACE_FEATURE))
+            else if (name.Equals(IGNORABLE_WHITESPACE_FEATURE, StringComparison.Ordinal))
             {
                 ignorableWhitespace = value;
             }
-            else if (name.Equals(CDATA_ELEMENTS_FEATURE))
+            else if (name.Equals(CDATA_ELEMENTS_FEATURE, StringComparison.Ordinal))
             {
                 cDataElements = value;
             }
@@ -336,19 +336,19 @@ namespace TagSoup
 
         public virtual object GetProperty(string name)
         {
-            if (name.Equals(LEXICAL_HANDLER_PROPERTY))
+            if (name.Equals(LEXICAL_HANDLER_PROPERTY, StringComparison.Ordinal))
             {
                 return theLexicalHandler == this ? null : theLexicalHandler;
             }
-            if (name.Equals(SCANNER_PROPERTY))
+            if (name.Equals(SCANNER_PROPERTY, StringComparison.Ordinal))
             {
                 return theScanner;
             }
-            if (name.Equals(SCHEMA_PROPERTY))
+            if (name.Equals(SCHEMA_PROPERTY, StringComparison.Ordinal))
             {
                 return theSchema;
             }
-            if (name.Equals(AUTO_DETECTOR_PROPERTY))
+            if (name.Equals(AUTO_DETECTOR_PROPERTY, StringComparison.Ordinal))
             {
                 return theAutoDetector;
             }
@@ -357,7 +357,7 @@ namespace TagSoup
 
         public virtual void SetProperty(string name, object value)
         {
-            if (name.Equals(LEXICAL_HANDLER_PROPERTY))
+            if (name.Equals(LEXICAL_HANDLER_PROPERTY, StringComparison.Ordinal))
             {
                 if (value == null)
                 {
@@ -376,7 +376,7 @@ namespace TagSoup
                     }
                 }
             }
-            else if (name.Equals(SCANNER_PROPERTY))
+            else if (name.Equals(SCANNER_PROPERTY, StringComparison.Ordinal))
             {
                 var scanner = value as IScanner;
                 if (scanner != null)
@@ -388,7 +388,7 @@ namespace TagSoup
                     throw new SAXNotSupportedException("Your scanner is not a IScanner");
                 }
             }
-            else if (name.Equals(SCHEMA_PROPERTY))
+            else if (name.Equals(SCHEMA_PROPERTY, StringComparison.Ordinal))
             {
                 var schema = value as Schema;
                 if (schema != null)
@@ -400,7 +400,7 @@ namespace TagSoup
                     throw new SAXNotSupportedException("Your schema is not a Schema");
                 }
             }
-            else if (name.Equals(AUTO_DETECTOR_PROPERTY))
+            else if (name.Equals(AUTO_DETECTOR_PROPERTY, StringComparison.Ordinal))
             {
                 var detector = value as IAutoDetector;
                 if (detector != null)
@@ -453,7 +453,7 @@ namespace TagSoup
             {
                 theContentHandler.SetDocumentLocator(locator);
             }
-            if (!(theSchema.Uri.Equals("")))
+            if (!(theSchema.Uri.Equals("", StringComparison.Ordinal)))
             {
                 theContentHandler.StartPrefixMapping(theSchema.Prefix, theSchema.Uri);
             }
@@ -719,7 +719,7 @@ namespace TagSoup
             {
                 Pop();
             }
-            if (!(theSchema.Uri.Equals("")))
+            if (!(theSchema.Uri.Equals("", StringComparison.Ordinal)))
             {
                 theContentHandler.EndPrefixMapping(theSchema.Prefix);
             }
@@ -794,7 +794,7 @@ namespace TagSoup
             bool inNoforce = false;
             for (sp = theStack; sp != null; sp = sp.Next)
             {
-                if (sp.Name.Equals(name))
+                if (sp.Name.Equals(name, StringComparison.Ordinal))
                 {
                     break;
                 }
@@ -981,7 +981,7 @@ namespace TagSoup
         private bool Foreign(string prefix, string ns)
         {
             //		System.err.print("%% Testing " + prefix + " and " + namespace + " for foreignness -- ");
-            bool foreign = !(prefix.Equals("") || ns.Equals("") || ns.Equals(theSchema.Uri));
+            bool foreign = !(prefix.Equals("", StringComparison.Ordinal) || ns.Equals("", StringComparison.Ordinal) || ns.Equals(theSchema.Uri, StringComparison.Ordinal));
             //		System.err.println(foreign);
             return foreign;
         }
@@ -1015,11 +1015,11 @@ namespace TagSoup
                 if (v.Length > 1)
                 {
                     name = v[1];
-                    if (v.Length > 3 && "SYSTEM".Equals(v[2]))
+                    if (v.Length > 3 && "SYSTEM".Equals(v[2], StringComparison.Ordinal))
                     {
                         systemid = v[3];
                     }
-                    else if (v.Length > 3 && "PUBLIC".Equals(v[2]))
+                    else if (v.Length > 3 && "PUBLIC".Equals(v[2], StringComparison.Ordinal))
                     {
                         publicid = v[3];
                         if (v.Length > 4)
@@ -1356,7 +1356,7 @@ namespace TagSoup
             while (e != null)
             {
                 Element nexte = e.Next;
-                if (!e.Name.Equals("<pcdata>"))
+                if (!e.Name.Equals("<pcdata>", StringComparison.Ordinal))
                 {
                     Push(e);
                 }

@@ -64,7 +64,7 @@ namespace Lucene.Net.Replicator
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(FileName, other.FileName) && Length == other.Length;
+            return string.Equals(FileName, other.FileName, StringComparison.Ordinal) && Length == other.Length;
         }
 
         public override int GetHashCode()

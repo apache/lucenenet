@@ -192,7 +192,7 @@ namespace Egothor.Stemmer
                         while (st.HasMoreTokens())
                         {
                             string token = st.NextToken();
-                            if (token.Equals(stem))
+                            if (token.Equals(stem, StringComparison.Ordinal))
                             {
                                 continue;
                             }

@@ -495,7 +495,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             int totalTokenCount1 = 0;
             foreach (TaskStats stat in stats)
             {
-                if (stat.Task.GetName().Equals("ReadTokens"))
+                if (stat.Task.GetName().Equals("ReadTokens", StringComparison.Ordinal))
                 {
                     totalTokenCount1 += stat.Count;
                 }
@@ -511,7 +511,7 @@ namespace Lucene.Net.Benchmarks.ByTask
 
             foreach (String fieldName in fields)
             {
-                if (fieldName.Equals(DocMaker.ID_FIELD) || fieldName.Equals(DocMaker.DATE_MSEC_FIELD) || fieldName.Equals(DocMaker.TIME_SEC_FIELD))
+                if (fieldName.Equals(DocMaker.ID_FIELD, StringComparison.Ordinal) || fieldName.Equals(DocMaker.DATE_MSEC_FIELD, StringComparison.Ordinal) || fieldName.Equals(DocMaker.TIME_SEC_FIELD, StringComparison.Ordinal))
                 {
                     continue;
                 }
@@ -908,17 +908,17 @@ namespace Lucene.Net.Benchmarks.ByTask
             foreach (TaskStats stats in benchmark.RunData.Points.TaskStats)
             {
                 String taskName = stats.Task.GetName();
-                if (taskName.equals("Rounds"))
+                if (taskName.Equals("Rounds", StringComparison.Ordinal))
                 {
                     assertEquals("Wrong total count!", 20 + 2 * n, stats.Count);
                     nChecked++;
                 }
-                else if (taskName.equals("CreateIndex"))
+                else if (taskName.Equals("CreateIndex", StringComparison.Ordinal))
                 {
                     assertEquals("Wrong count for CreateIndex!", n, stats.Count);
                     nChecked++;
                 }
-                else if (taskName.equals("CloseIndex"))
+                else if (taskName.Equals("CloseIndex", StringComparison.Ordinal))
                 {
                     assertEquals("Wrong count for CloseIndex!", n, stats.Count);
                     nChecked++;

@@ -304,7 +304,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             public Stream OpenResource(string resource)
             {
-                if (!"something.txt".Equals(resource))
+                if (!"something.txt".Equals(resource, StringComparison.Ordinal))
                 {
                     throw new Exception("should not get a differnt resource");
                 }
@@ -321,7 +321,7 @@ namespace Lucene.Net.Analysis.Synonym
             bool inc = false;
             foreach (Token token in tokens)
             {
-                if (exp.Equals(new string(token.Buffer, 0, token.Length)))
+                if (exp.Equals(new string(token.Buffer, 0, token.Length), StringComparison.Ordinal))
                 {
                     inc = true;
                 }

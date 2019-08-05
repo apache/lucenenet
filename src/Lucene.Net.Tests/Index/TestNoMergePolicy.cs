@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 using System.Reflection;
 
 namespace Lucene.Net.Index
@@ -69,7 +70,7 @@ namespace Lucene.Net.Index
                 // context, including ones from Object. So just filter out Object. If in
                 // the future MergePolicy will extend a different class than Object, this
                 // will need to change.
-                if (m.Name.Equals("Clone"))
+                if (m.Name.Equals("Clone", StringComparison.Ordinal))
                 {
                     continue;
                 }

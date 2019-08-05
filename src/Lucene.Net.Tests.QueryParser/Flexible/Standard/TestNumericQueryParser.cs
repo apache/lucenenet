@@ -276,23 +276,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     /*Number*/
                     object number = RANDOM_NUMBER_MAP[fieldName];
 
-                    if (NumericType.INT64.ToString().equals(fieldName)
-                        || DATE_FIELD_NAME.equals(fieldName))
+                    if (NumericType.INT64.ToString().Equals(fieldName, StringComparison.Ordinal)
+                        || DATE_FIELD_NAME.Equals(fieldName, StringComparison.Ordinal))
                     {
                         number = -Convert.ToInt64(number);
 
                     }
-                    else if (NumericType.DOUBLE.ToString().equals(fieldName))
+                    else if (NumericType.DOUBLE.ToString().Equals(fieldName, StringComparison.Ordinal))
                     {
                         number = -Convert.ToDouble(number);
 
                     }
-                    else if (NumericType.SINGLE.ToString().equals(fieldName))
+                    else if (NumericType.SINGLE.ToString().Equals(fieldName, StringComparison.Ordinal))
                     {
                         number = -Convert.ToSingle(number);
 
                     }
-                    else if (NumericType.INT32.ToString().equals(fieldName))
+                    else if (NumericType.INT32.ToString().Equals(fieldName, StringComparison.Ordinal))
                     {
                         number = -Convert.ToInt32(number);
 

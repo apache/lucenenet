@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
 
             public override Similarity Get(string field)
             {
-                if (OuterInstance.ByteTestField.Equals(field))
+                if (OuterInstance.ByteTestField.Equals(field, StringComparison.Ordinal))
                 {
                     return new ByteEncodingBoostSimilarity();
                 }

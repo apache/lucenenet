@@ -44,11 +44,11 @@ namespace Lucene.Net.Index
             while (j < args.Length)
             {
                 string arg = args[j];
-                if ("-extract".Equals(arg))
+                if ("-extract".Equals(arg, StringComparison.Ordinal))
                 {
                     extract = true;
                 }
-                else if ("-dir-impl".Equals(arg))
+                else if ("-dir-impl".Equals(arg, StringComparison.Ordinal))
                 {
                     if (j == args.Length - 1)
                     {

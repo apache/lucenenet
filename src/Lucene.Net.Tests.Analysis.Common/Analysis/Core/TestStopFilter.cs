@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis.Core
                 }
                 else if (m_input.IncrementToken())
                 {
-                    if (termAtt.ToString().Equals("the"))
+                    if (termAtt.ToString().Equals("the", StringComparison.Ordinal))
                     {
                         bufferedState = CaptureState();
                     }

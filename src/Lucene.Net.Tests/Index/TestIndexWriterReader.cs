@@ -1244,7 +1244,7 @@ namespace Lucene.Net.Index
 
             public override void Message(string component, string message)
             {
-                if ("SMSW".Equals(component))
+                if ("SMSW".Equals(component, StringComparison.Ordinal))
                 {
                     DidWarm.Set(true);
                 }
@@ -1261,13 +1261,21 @@ namespace Lucene.Net.Index
         {
             // Some Codecs don't honor the ReaderTermsIndexDivisor, so skip the test if
             // they're picked.
-            AssumeFalse("PreFlex codec does not support ReaderTermsIndexDivisor!", "Lucene3x".Equals(Codec.Default.Name));
+            AssumeFalse("PreFlex codec does not support ReaderTermsIndexDivisor!", "Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal));
 
             IndexWriterConfig conf = (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetReaderTermsIndexDivisor(-1);
 
             // Don't proceed if picked Codec is in the list of illegal ones.
             string format = TestUtil.GetPostingsFormat("f");
-            AssumeFalse("Format: " + format + " does not support ReaderTermsIndexDivisor!", (format.Equals("FSTPulsing41") || format.Equals("FSTOrdPulsing41") || format.Equals("FST41") || format.Equals("FSTOrd41") || format.Equals("SimpleText") || format.Equals("Memory") || format.Equals("MockRandom") || format.Equals("Direct")));
+            AssumeFalse("Format: " + format + " does not support ReaderTermsIndexDivisor!", 
+                (format.Equals("FSTPulsing41", StringComparison.Ordinal) || 
+                format.Equals("FSTOrdPulsing41", StringComparison.Ordinal) || 
+                format.Equals("FST41", StringComparison.Ordinal) || 
+                format.Equals("FSTOrd41", StringComparison.Ordinal) || 
+                format.Equals("SimpleText", StringComparison.Ordinal) || 
+                format.Equals("Memory", StringComparison.Ordinal) || 
+                format.Equals("MockRandom", StringComparison.Ordinal) || 
+                format.Equals("Direct", StringComparison.Ordinal)));
 
             Directory dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, conf);

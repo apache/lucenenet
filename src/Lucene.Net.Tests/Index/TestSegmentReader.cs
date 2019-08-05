@@ -118,13 +118,13 @@ namespace Lucene.Net.Index
             Assert.IsTrue(allFieldNames.Count == DocHelper.All.Count);
             foreach (string s in allFieldNames)
             {
-                Assert.IsTrue(DocHelper.NameValues.ContainsKey(s) == true || s.Equals(""));
+                Assert.IsTrue(DocHelper.NameValues.ContainsKey(s) == true || s.Equals("", StringComparison.Ordinal));
             }
 
             Assert.IsTrue(indexedFieldNames.Count == DocHelper.Indexed.Count);
             foreach (string s in indexedFieldNames)
             {
-                Assert.IsTrue(DocHelper.Indexed.ContainsKey(s) == true || s.Equals(""));
+                Assert.IsTrue(DocHelper.Indexed.ContainsKey(s) == true || s.Equals("", StringComparison.Ordinal));
             }
 
             Assert.IsTrue(notIndexedFieldNames.Count == DocHelper.Unindexed.Count);

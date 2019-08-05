@@ -120,7 +120,7 @@ namespace Egothor.Stemmer
             // command line argument overrides environment variable or default, if supplied
             for (int i = 1; i < args.Length; i++)
             {
-                if ("-e".Equals(args[i]) || "--encoding".Equals(args[i]))
+                if ("-e".Equals(args[i], StringComparison.Ordinal) || "--encoding".Equals(args[i], StringComparison.Ordinal))
                 {
                     charset = args[i];
                 }
@@ -166,7 +166,7 @@ namespace Egothor.Stemmer
                             while (st.HasMoreTokens())
                             {
                                 string token = st.NextToken();
-                                if (token.Equals(stem) == false)
+                                if (token.Equals(stem, StringComparison.Ordinal) == false)
                                 {
                                     trie.Add(token, diff.Exec(token, stem));
                                     words++;

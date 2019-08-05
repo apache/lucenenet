@@ -77,12 +77,12 @@ namespace Lucene.Net.Analysis.Ja.Util
             sb.Length = 0;
             sb.Append(CSVUtil.QuoteEscape(posData));
             sb.Append(',');
-            if (!"*".Equals(entry[8]))
+            if (!"*".Equals(entry[8], StringComparison.Ordinal))
             {
                 sb.Append(CSVUtil.QuoteEscape(entry[8]));
             }
             sb.Append(',');
-            if (!"*".Equals(entry[9]))
+            if (!"*".Equals(entry[9], StringComparison.Ordinal))
             {
                 sb.Append(CSVUtil.QuoteEscape(entry[9]));
             }
@@ -105,15 +105,15 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
 
             int flags = 0;
-            if (!("*".Equals(baseForm) || baseForm.Equals(entry[0])))
+            if (!("*".Equals(baseForm, StringComparison.Ordinal) || baseForm.Equals(entry[0], StringComparison.Ordinal)))
             {
                 flags |= BinaryDictionary.HAS_BASEFORM;
             }
-            if (!reading.Equals(ToKatakana(entry[0])))
+            if (!reading.Equals(ToKatakana(entry[0]), StringComparison.Ordinal))
             {
                 flags |= BinaryDictionary.HAS_READING;
             }
-            if (!pronunciation.Equals(reading))
+            if (!pronunciation.Equals(reading, StringComparison.Ordinal))
             {
                 flags |= BinaryDictionary.HAS_PRONUNCIATION;
             }
@@ -128,7 +128,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
 
             string existing = posDict[leftId];
-            Debug.Assert(existing == null || existing.Equals(fullPOSData));
+            Debug.Assert(existing == null || existing.Equals(fullPOSData, StringComparison.Ordinal));
             posDict[leftId] = fullPOSData;
 
             m_buffer.PutInt16((short)(leftId << 3 | flags));

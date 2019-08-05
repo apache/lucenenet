@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
             public override IndexOutput CreateOutput(string name, IOContext cxt)
             {
                 IndexOutput indexOutput = m_input.CreateOutput(name, cxt);
-                if (null != CrashAfterCreateOutput_Renamed && name.Equals(CrashAfterCreateOutput_Renamed))
+                if (null != CrashAfterCreateOutput_Renamed && name.Equals(CrashAfterCreateOutput_Renamed, StringComparison.Ordinal))
                 {
                     // CRASH!
                     indexOutput.Dispose();

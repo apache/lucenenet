@@ -1147,11 +1147,11 @@ namespace Lucene.Net.Index
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-                if (field.Equals("id"))
+                if (field.Equals("id", StringComparison.Ordinal))
                 {
                     return SimpleTextFormat;
                 }
-                else if (field.Equals("content"))
+                else if (field.Equals("content", StringComparison.Ordinal))
                 {
                     return MockSepFormat;
                 }
@@ -1306,7 +1306,7 @@ namespace Lucene.Net.Index
             for (int docID = 0; docID < 2; docID++)
             {
                 Document d = r3.Document(docID);
-                if (d.Get("id").Equals("1"))
+                if (d.Get("id").Equals("1", StringComparison.Ordinal))
                 {
                     Assert.AreEqual("doc1 field1", d.Get("f1"));
                 }

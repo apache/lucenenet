@@ -91,11 +91,11 @@ namespace Lucene.Net.Search.Payloads
             {
                 if (m_input.IncrementToken())
                 {
-                    if (FieldName.Equals(FIELD))
+                    if (FieldName.Equals(FIELD, StringComparison.Ordinal))
                     {
                         PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadField);
                     }
-                    else if (FieldName.Equals(MULTI_FIELD))
+                    else if (FieldName.Equals(MULTI_FIELD, StringComparison.Ordinal))
                     {
                         if (NumSeen % 2 == 0)
                         {

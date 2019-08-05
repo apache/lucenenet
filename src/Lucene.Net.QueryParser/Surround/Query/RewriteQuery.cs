@@ -68,7 +68,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             if (!GetType().Equals(obj.GetType()))
                 return false;
             RewriteQuery<SQ> other = (RewriteQuery<SQ>)obj;
-            return m_fieldName.Equals(other.m_fieldName)
+            return m_fieldName.Equals(other.m_fieldName, StringComparison.Ordinal)
                 && m_qf.Equals(other.m_qf)
                 && m_srndQuery.Equals(other.m_srndQuery);
         }

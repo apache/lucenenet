@@ -38,10 +38,10 @@ namespace Lucene.Net.Analysis.Payloads
             nptf.Reset();
             while (nptf.IncrementToken())
             {
-                if (termAtt.ToString().Equals("dogs"))
+                if (termAtt.ToString().Equals("dogs", StringComparison.Ordinal))
                 {
                     seenDogs = true;
-                    assertTrue(typeAtt.Type + " is not equal to " + "D", typeAtt.Type.Equals("D") == true);
+                    assertTrue(typeAtt.Type + " is not equal to " + "D", typeAtt.Type.Equals("D", StringComparison.Ordinal) == true);
                     assertTrue("payloadAtt.getPayload() is null and it shouldn't be", payloadAtt.Payload != null);
                     byte[] bytes = payloadAtt.Payload.Bytes; //safe here to just use the bytes, otherwise we should use offset, length
                     assertTrue(bytes.Length + " does not equal: " + payloadAtt.Payload.Length, bytes.Length == payloadAtt.Payload.Length);
@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Payloads
                 }
                 else
                 {
-                    assertTrue(typeAtt.Type + " is not null and it should be", typeAtt.Type.Equals("word"));
+                    assertTrue(typeAtt.Type + " is not null and it should be", typeAtt.Type.Equals("word", StringComparison.Ordinal));
                 }
             }
             assertTrue(seenDogs + " does not equal: " + true, seenDogs == true);
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Payloads
             {
                 if (m_input.IncrementToken())
                 {
-                    if (termAtt.ToString().Equals("dogs"))
+                    if (termAtt.ToString().Equals("dogs", StringComparison.Ordinal))
                     {
                         typeAtt.Type = "D";
                     }

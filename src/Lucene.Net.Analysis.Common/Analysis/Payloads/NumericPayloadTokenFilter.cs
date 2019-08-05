@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Payloads
         {
             if (m_input.IncrementToken())
             {
-                if (typeAtt.Type.Equals(typeMatch))
+                if (typeAtt.Type.Equals(typeMatch, StringComparison.Ordinal))
                 {
                     payloadAtt.Payload = thePayload;
                 }

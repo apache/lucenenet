@@ -962,7 +962,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 while (true)
                 {
                     string s = Regex.Replace(analyzedKey, SEP + "$", "");
-                    if (s.equals(analyzedKey))
+                    if (s.Equals(analyzedKey, StringComparison.Ordinal))
                     {
                         break;
                     }

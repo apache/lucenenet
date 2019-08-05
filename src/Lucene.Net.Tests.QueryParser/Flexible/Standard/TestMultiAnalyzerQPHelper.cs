@@ -201,12 +201,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     prevStartOffset = offsetAtt.StartOffset;
                     prevEndOffset = offsetAtt.EndOffset;
                     String text = termAtt.toString();
-                    if (text.equals("triplemulti"))
+                    if (text.Equals("triplemulti", StringComparison.Ordinal))
                     {
                         multiToken = 2;
                         return true;
                     }
-                    else if (text.equals("multi"))
+                    else if (text.Equals("multi", StringComparison.Ordinal))
                     {
                         multiToken = 1;
                         return true;
@@ -261,11 +261,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             {
                 while (m_input.IncrementToken())
                 {
-                    if (termAtt.toString().equals("the"))
+                    if (termAtt.toString().Equals("the", StringComparison.Ordinal))
                     {
                         // stopword, do nothing
                     }
-                    else if (termAtt.toString().equals("quick"))
+                    else if (termAtt.toString().Equals("quick", StringComparison.Ordinal))
                     {
                         posIncrAtt.PositionIncrement = (2);
                         return true;

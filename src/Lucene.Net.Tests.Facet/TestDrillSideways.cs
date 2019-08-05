@@ -682,7 +682,7 @@ namespace Lucene.Net.Facet
                                     string value = dimValues[dim][Random().Next(dimValues[dim].Length)];
                                     for (int j = 0; j < i; j++)
                                     {
-                                        if (value.Equals(drillDowns[dim][j]))
+                                        if (value.Equals(drillDowns[dim][j], StringComparison.Ordinal))
                                         {
                                             value = null;
                                             break;
@@ -1072,7 +1072,7 @@ namespace Lucene.Net.Facet
                 {
                     continue;
                 }
-                if (contentToken == null || doc.contentToken.Equals(contentToken))
+                if (contentToken == null || doc.contentToken.Equals(contentToken, StringComparison.Ordinal))
                 {
                     int failDim = -1;
                     for (int dim = 0; dim < numDims; dim++)
@@ -1084,7 +1084,7 @@ namespace Lucene.Net.Facet
                             bool matches = false;
                             foreach (string value in drillDowns[dim])
                             {
-                                if (value.Equals(docValue) || value.Equals(docValue2))
+                                if (value.Equals(docValue, StringComparison.Ordinal) || value.Equals(docValue2, StringComparison.Ordinal))
                                 {
                                     matches = true;
                                     break;

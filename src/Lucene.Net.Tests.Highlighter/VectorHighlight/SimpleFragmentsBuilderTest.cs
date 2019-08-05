@@ -244,7 +244,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 do
                 {
                     randomValue = TestUtil.RandomSimpleString(Random());
-                } while ("".equals(randomValue));
+                } while ("".Equals(randomValue, StringComparison.Ordinal));
                 randomValues[i] = randomValue;
             }
 
@@ -306,7 +306,7 @@ namespace Lucene.Net.Search.VectorHighlight
                         bool hit = false;
                         for (int i = 0; i < fieldValues.Length; i++)
                         {
-                            if (queryTerm.equals(fieldValues[i]))
+                            if (queryTerm.Equals(fieldValues[i], StringComparison.Ordinal))
                             {
                                 builder.append("<b>").append(queryTerm).append("</b>");
                                 hit = true;

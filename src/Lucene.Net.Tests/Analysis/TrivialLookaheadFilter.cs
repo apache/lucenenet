@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis
@@ -87,7 +88,7 @@ namespace Lucene.Net.Analysis
                 {
                     string term = new string(TermAtt.Buffer, 0, TermAtt.Length);
                     facts.Add(term + "-huh?");
-                    if (".".Equals(term))
+                    if (".".Equals(term, StringComparison.Ordinal))
                     {
                         haveSentence = true;
                     }

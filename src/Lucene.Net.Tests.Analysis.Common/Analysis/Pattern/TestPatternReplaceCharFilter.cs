@@ -79,8 +79,8 @@ namespace Lucene.Net.Analysis.Pattern
                 }
             }
 
-            bool outputGood = expectedOutput.Equals(output.ToString());
-            bool indexMatchedGood = expectedIndexMatchedOutput.Equals(indexMatched.ToString());
+            bool outputGood = expectedOutput.Equals(output.ToString(), StringComparison.Ordinal);
+            bool indexMatchedGood = expectedIndexMatchedOutput.Equals(indexMatched.ToString(), StringComparison.Ordinal);
 
             if (!outputGood || !indexMatchedGood || false)
             {

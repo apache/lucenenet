@@ -203,7 +203,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             // LanguageSet: defaults to automagic, otherwise a comma-separated list.
             String languageSetArg;
             args.TryGetValue("languageSet", out languageSetArg);
-            if (languageSetArg == null || languageSetArg.equals("auto"))
+            if (languageSetArg == null || languageSetArg.Equals("auto", StringComparison.Ordinal))
             {
                 languageSet = null;
             }

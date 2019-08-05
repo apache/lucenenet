@@ -192,7 +192,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                             recreated = true;
                         }
                     }
-                    else if (!t1.Equals(t2))
+                    else if (!t1.Equals(t2, StringComparison.Ordinal))
                     {
                         // t1 != null and t2 cannot be null b/c DirTaxoWriter always puts the commit data.
                         // it's ok to use String.equals because we require the two epoch values to be the same.

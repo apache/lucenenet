@@ -299,7 +299,7 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestSumTotalTermFreq()
         {
-            if (Codec.Default.Name.Equals("Lucene3x"))
+            if (Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal))
             {
                 AssertHits(new FunctionQuery(new SumTotalTermFreqValueSource("text")), new[] { -1f, -1f });
             }
@@ -336,7 +336,7 @@ namespace Lucene.Net.Tests.Queries.Function
         [Test]
         public void TestTotalTermFreq()
         {
-            if (Codec.Default.Name.Equals("Lucene3x"))
+            if (Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal))
             {
                 AssertHits(new FunctionQuery(new TotalTermFreqValueSource("bogus", "bogus", "text", new BytesRef("test"))), new[] { -1f, -1f });
             }

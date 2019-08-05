@@ -216,7 +216,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 if (m_input.IncrementToken())
                 {
-                    if (termAtt.ToString().Equals("largegap") || termAtt.ToString().Equals("/"))
+                    if (termAtt.ToString().Equals("largegap", StringComparison.Ordinal) || termAtt.ToString().Equals("/", StringComparison.Ordinal))
                     {
                         posIncAtt.PositionIncrement = 10;
                     }

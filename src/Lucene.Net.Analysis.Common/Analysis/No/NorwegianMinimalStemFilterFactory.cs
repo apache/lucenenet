@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.No
@@ -41,15 +42,15 @@ namespace Lucene.Net.Analysis.No
             : base(args)
         {
             string variant = Get(args, "variant");
-            if (variant == null || "nb".Equals(variant))
+            if (variant == null || "nb".Equals(variant, StringComparison.Ordinal))
             {
                 flags = NorwegianStandard.BOKMAAL;
             }
-            else if ("nn".Equals(variant))
+            else if ("nn".Equals(variant, StringComparison.Ordinal))
             {
                 flags = NorwegianStandard.NYNORSK;
             }
-            else if ("no".Equals(variant))
+            else if ("no".Equals(variant, StringComparison.Ordinal))
             {
                 flags = NorwegianStandard.BOKMAAL | NorwegianStandard.NYNORSK;
             }

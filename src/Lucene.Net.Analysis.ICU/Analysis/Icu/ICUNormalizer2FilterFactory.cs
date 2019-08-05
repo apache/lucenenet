@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Icu
             string mode = Get(args, "mode", new string[] { "compose", "decompose" }, "compose");
 
             Normalizer2 normalizer = Normalizer2.GetInstance
-                (null, name, "compose".Equals(mode) ? Normalizer2Mode.Compose : Normalizer2Mode.Decompose);
+                (null, name, "compose".Equals(mode, StringComparison.Ordinal) ? Normalizer2Mode.Compose : Normalizer2Mode.Decompose);
 
             string filter = Get(args, "filter");
             if (filter != null)

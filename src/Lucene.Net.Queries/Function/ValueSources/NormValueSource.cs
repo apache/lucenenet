@@ -2,6 +2,7 @@
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
+using System;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -103,7 +104,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            return this.m_field.Equals(((NormValueSource)o).m_field);
+            return this.m_field.Equals(((NormValueSource)o).m_field, StringComparison.Ordinal);
         }
 
         public override int GetHashCode()

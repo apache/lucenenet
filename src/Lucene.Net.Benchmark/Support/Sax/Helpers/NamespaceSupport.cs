@@ -251,7 +251,7 @@ namespace Sax.Helpers
         /// <seealso cref="GetPrefix(string)" />
         public bool DeclarePrefix(string prefix, string uri)
         {
-            if (prefix.Equals("xml") || prefix.Equals("xmlns"))
+            if (prefix.Equals("xml", StringComparison.Ordinal) || prefix.Equals("xmlns", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -428,7 +428,7 @@ namespace Sax.Helpers
             while (allPrefixes.MoveNext())
             {
                 var prefix = (string)allPrefixes.Current;
-                if (uri.Equals(GetUri(prefix)))
+                if (uri.Equals(GetUri(prefix), StringComparison.Ordinal))
                 {
                     prefixes.Add(prefix);
                 }
@@ -593,9 +593,9 @@ namespace Sax.Helpers
 
                 prefix = prefix.Intern();
                 uri = uri.Intern();
-                if ("".Equals(prefix))
+                if ("".Equals(prefix, StringComparison.Ordinal))
                 {
-                    if ("".Equals(uri))
+                    if ("".Equals(uri, StringComparison.Ordinal))
                     {
                         defaultNs = null;
                     }
@@ -687,7 +687,7 @@ namespace Sax.Helpers
                     string prefix = qName.Substring(0, index);
                     string local = qName.Substring(index + 1);
                     string uri = null;
-                    if ("".Equals(prefix))
+                    if ("".Equals(prefix, StringComparison.Ordinal))
                     {
                         uri = defaultNs;
                     }
@@ -695,7 +695,7 @@ namespace Sax.Helpers
                     {
                         uri = (string)prefixTable[prefix];
                     }
-                    if (uri == null || (!isAttribute && "xmlns".Equals(prefix)))
+                    if (uri == null || (!isAttribute && "xmlns".Equals(prefix, StringComparison.Ordinal)))
                     {
                         return null;
                     }
@@ -717,7 +717,7 @@ namespace Sax.Helpers
             /// <seealso cref="NamespaceSupport.GetUri(string)"/>
             internal string GetURI(string prefix)
             {
-                if ("".Equals(prefix))
+                if ("".Equals(prefix, StringComparison.Ordinal))
                 {
                     return defaultNs;
                 }

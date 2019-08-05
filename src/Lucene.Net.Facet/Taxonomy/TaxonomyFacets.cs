@@ -102,7 +102,7 @@ namespace Lucene.Net.Facet.Taxonomy
         protected virtual DimConfig VerifyDim(string dim)
         {
             DimConfig dimConfig = m_config.GetDimConfig(dim);
-            if (!dimConfig.IndexFieldName.Equals(m_indexFieldName))
+            if (!dimConfig.IndexFieldName.Equals(m_indexFieldName, StringComparison.Ordinal))
             {
                 throw new System.ArgumentException("dimension \"" + dim + "\" was not indexed into field \"" + m_indexFieldName);
             }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 string dim = m_taxoReader.GetPath(ord).Components[0];
                 DimConfig dimConfig = m_config.GetDimConfig(dim);
-                if (dimConfig.IndexFieldName.Equals(m_indexFieldName))
+                if (dimConfig.IndexFieldName.Equals(m_indexFieldName, StringComparison.Ordinal))
                 {
                     FacetResult result = GetTopChildren(topN, dim);
                     if (result != null)

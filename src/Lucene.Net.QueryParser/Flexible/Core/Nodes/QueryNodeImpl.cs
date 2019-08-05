@@ -236,7 +236,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 return true;
             if (fld == null)
                 return true;
-            if (QueryNode.PLAINTEXT_FIELD_NAME.Equals(StringUtils.ToString(fld)))
+            if (QueryNode.PLAINTEXT_FIELD_NAME.Equals(StringUtils.ToString(fld), StringComparison.Ordinal))
                 return true;
             return false;
         }

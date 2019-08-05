@@ -103,19 +103,19 @@ namespace Lucene.Net.Search.Spell
                     assertTrue(cs[0].OriginalTermIndexes.Length == 2);
                     assertTrue(cs[0].OriginalTermIndexes[0] == 1);
                     assertTrue(cs[0].OriginalTermIndexes[1] == 2);
-                    assertTrue(cs[0].Suggestion.String.equals("hundred"));
+                    assertTrue(cs[0].Suggestion.String.Equals("hundred", StringComparison.Ordinal));
                     assertTrue(cs[0].Suggestion.Score == 1);
 
                     assertTrue(cs[1].OriginalTermIndexes.Length == 2);
                     assertTrue(cs[1].OriginalTermIndexes[0] == 3);
                     assertTrue(cs[1].OriginalTermIndexes[1] == 4);
-                    assertTrue(cs[1].Suggestion.String.equals("eighty"));
+                    assertTrue(cs[1].Suggestion.String.Equals("eighty", StringComparison.Ordinal));
                     assertTrue(cs[1].Suggestion.Score == 1);
 
                     assertTrue(cs[2].OriginalTermIndexes.Length == 2);
                     assertTrue(cs[2].OriginalTermIndexes[0] == 4);
                     assertTrue(cs[2].OriginalTermIndexes[1] == 5);
-                    assertTrue(cs[2].Suggestion.String.equals("yeight"));
+                    assertTrue(cs[2].Suggestion.String.Equals("yeight", StringComparison.Ordinal));
                     assertTrue(cs[2].Suggestion.Score == 1);
 
                     for (int i = 3; i < 5; i++)
@@ -126,11 +126,11 @@ namespace Lucene.Net.Search.Spell
                             (cs[i].OriginalTermIndexes[0] == 1 &&
                              cs[i].OriginalTermIndexes[1] == 2 &&
                              cs[i].OriginalTermIndexes[2] == 3 &&
-                             cs[i].Suggestion.String.equals("hundredeight")) ||
+                             cs[i].Suggestion.String.Equals("hundredeight", StringComparison.Ordinal)) ||
                             (cs[i].OriginalTermIndexes[0] == 3 &&
                              cs[i].OriginalTermIndexes[1] == 4 &&
                              cs[i].OriginalTermIndexes[2] == 5 &&
-                             cs[i].Suggestion.String.equals("eightyeight"))
+                             cs[i].Suggestion.String.Equals("eightyeight", StringComparison.Ordinal))
                  );
                     }
 
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Spell
                     assertTrue(cs[0].Suggestion.Score == 1);
                     assertTrue(cs[0].OriginalTermIndexes[0] == 1);
                     assertTrue(cs[0].OriginalTermIndexes[1] == 2);
-                    assertTrue(cs[0].Suggestion.String.equals("hundred"));
+                    assertTrue(cs[0].Suggestion.String.Equals("hundred", StringComparison.Ordinal));
                     assertTrue(cs[0].Suggestion.Score == 1);
 
                     assertTrue(cs[1].OriginalTermIndexes.Length == 3);
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search.Spell
                     assertTrue(cs[1].OriginalTermIndexes[0] == 1);
                     assertTrue(cs[1].OriginalTermIndexes[1] == 2);
                     assertTrue(cs[1].OriginalTermIndexes[2] == 3);
-                    assertTrue(cs[1].Suggestion.String.equals("hundredeight"));
+                    assertTrue(cs[1].Suggestion.String.Equals("hundredeight", StringComparison.Ordinal));
                 }
             }
             catch (Exception e)
@@ -178,8 +178,8 @@ namespace Lucene.Net.Search.Spell
                     SuggestWord[][] sw = wbsp.SuggestWordBreaks(term, 5, ir, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX, WordBreakSpellChecker.BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY);
                     assertTrue(sw.Length == 1);
                     assertTrue(sw[0].Length == 2);
-                    assertTrue(sw[0][0].String.equals("ninety"));
-                    assertTrue(sw[0][1].String.equals("nine"));
+                    assertTrue(sw[0][0].String.Equals("ninety", StringComparison.Ordinal));
+                    assertTrue(sw[0][1].String.Equals("nine", StringComparison.Ordinal));
                     assertTrue(sw[0][0].Score == 1);
                     assertTrue(sw[0][1].Score == 1);
                 }
@@ -191,8 +191,8 @@ namespace Lucene.Net.Search.Spell
                     SuggestWord[][] sw = wbsp.SuggestWordBreaks(term, 2, ir, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX, WordBreakSpellChecker.BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY);
                     assertTrue(sw.Length == 1);
                     assertTrue(sw[0].Length == 2);
-                    assertTrue(sw[0][0].String.equals("one"));
-                    assertTrue(sw[0][1].String.equals("thousand"));
+                    assertTrue(sw[0][0].String.Equals("one", StringComparison.Ordinal));
+                    assertTrue(sw[0][1].String.Equals("thousand", StringComparison.Ordinal));
                     assertTrue(sw[0][0].Score == 1);
                     assertTrue(sw[0][1].Score == 1);
 
@@ -213,16 +213,16 @@ namespace Lucene.Net.Search.Spell
                     sw = wbsp.SuggestWordBreaks(term, 2, ir, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX, WordBreakSpellChecker.BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY);
                     assertTrue(sw.Length == 2);
                     assertTrue(sw[0].Length == 2);
-                    assertTrue(sw[0][0].String.equals("one"));
-                    assertTrue(sw[0][1].String.equals("thousand"));
+                    assertTrue(sw[0][0].String.Equals("one", StringComparison.Ordinal));
+                    assertTrue(sw[0][1].String.Equals("thousand", StringComparison.Ordinal));
                     assertTrue(sw[0][0].Score == 1);
                     assertTrue(sw[0][1].Score == 1);
                     assertTrue(sw[0][1].Freq > 1);
                     assertTrue(sw[0][0].Freq > sw[0][1].Freq);
                     assertTrue(sw[1].Length == 3);
-                    assertTrue(sw[1][0].String.equals("one"));
-                    assertTrue(sw[1][1].String.equals("thou"));
-                    assertTrue(sw[1][2].String.equals("sand"));
+                    assertTrue(sw[1][0].String.Equals("one", StringComparison.Ordinal));
+                    assertTrue(sw[1][1].String.Equals("thou", StringComparison.Ordinal));
+                    assertTrue(sw[1][2].String.Equals("sand", StringComparison.Ordinal));
                     assertTrue(sw[1][0].Score == 2);
                     assertTrue(sw[1][1].Score == 2);
                     assertTrue(sw[1][2].Score == 2);
@@ -247,10 +247,10 @@ namespace Lucene.Net.Search.Spell
                     sw = wbsp.SuggestWordBreaks(term, 5, ir, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX, WordBreakSpellChecker.BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY);
                     assertTrue(sw.Length == 2);
                     assertTrue(sw[0].Length == 5);
-                    assertTrue(sw[0][1].String.equals("thousand"));
+                    assertTrue(sw[0][1].String.Equals("thousand", StringComparison.Ordinal));
                     assertTrue(sw[1].Length == 6);
-                    assertTrue(sw[1][1].String.equals("thou"));
-                    assertTrue(sw[1][2].String.equals("sand"));
+                    assertTrue(sw[1][1].String.Equals("thou", StringComparison.Ordinal));
+                    assertTrue(sw[1][2].String.Equals("sand", StringComparison.Ordinal));
                 }
                 {
                     //make sure we can handle 2-char codepoints
@@ -344,7 +344,7 @@ namespace Lucene.Net.Search.Spell
                         foreach (SuggestWord[] sw1 in sw)
                         {
                             assertTrue(sw1.Length == 2);
-                            if (sw1[0].String.equals(left) && sw1[1].String.equals(right))
+                            if (sw1[0].String.Equals(left, StringComparison.Ordinal) && sw1[1].String.Equals(right, StringComparison.Ordinal))
                             {
                                 failed = false;
                             }
@@ -361,7 +361,7 @@ namespace Lucene.Net.Search.Spell
                         foreach (CombineSuggestion cs1 in cs)
                         {
                             assertTrue(cs1.OriginalTermIndexes.Length == 2);
-                            if (cs1.Suggestion.String.equals(left + right))
+                            if (cs1.Suggestion.String.Equals(left + right, StringComparison.Ordinal))
                             {
                                 failed = false;
                             }

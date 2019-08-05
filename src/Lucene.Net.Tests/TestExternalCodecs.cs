@@ -52,11 +52,11 @@ namespace Lucene.Net
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-                if (field.Equals("field2") || field.Equals("id"))
+                if (field.Equals("field2", StringComparison.Ordinal) || field.Equals("id", StringComparison.Ordinal))
                 {
                     return PulsingFormat;
                 }
-                else if (field.Equals("field1"))
+                else if (field.Equals("field1", StringComparison.Ordinal))
                 {
                     return DefaultFormat;
                 }
