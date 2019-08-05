@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -144,6 +145,10 @@ namespace Lucene.Net.Search.Grouping
                 return null;
             }
 
+            // LUCENENET specific - store whether T is value type
+            // for optimization of GetHashCode() and Equals()
+            bool shardGroupsIsValueType = typeof(T).GetTypeInfo().IsValueType;
+
             int totalHitCount = 0;
             int totalGroupedHitCount = 0;
             // Optionally merge the totalGroupCount.
@@ -193,7 +198,9 @@ namespace Lucene.Net.Search.Grouping
                             throw new ArgumentException("group values differ across shards; you must pass same top groups to all shards' second-pass collector");
                         }
                     }
-                    else if (!groupValue.Equals(shardGroupDocs.GroupValue))
+                    // LUCENENET specific - use Collections.Equals() if we have a reference type
+                    // to ensure if it is a collection its contents are compared
+                    else if (!(shardGroupsIsValueType ? groupValue.Equals(shardGroupDocs.GroupValue) : Collections.Equals(groupValue, shardGroupDocs.GroupValue)))
                     {
                         throw new ArgumentException("group values differ across shards; you must pass same top groups to all shards' second-pass collector");
                     }
