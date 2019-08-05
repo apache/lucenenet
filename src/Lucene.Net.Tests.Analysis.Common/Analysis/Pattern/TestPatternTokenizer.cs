@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -45,7 +46,7 @@ namespace Lucene.Net.Analysis.Pattern
 
             foreach (string[] test in tests)
             {
-                TokenStream stream = new PatternTokenizer(new StringReader(test[2]), new Regex(test[1], RegexOptions.Compiled), int.Parse(test[0]));
+                TokenStream stream = new PatternTokenizer(new StringReader(test[2]), new Regex(test[1], RegexOptions.Compiled), int.Parse(test[0], CultureInfo.InvariantCulture));
                 string @out = tsToString(stream);
                 // System.out.println( test[2] + " ==> " + out );
 
