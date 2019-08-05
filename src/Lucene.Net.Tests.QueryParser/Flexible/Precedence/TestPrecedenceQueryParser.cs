@@ -414,7 +414,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
 
         private String escapeDateString(String s)
         {
-            if (s.Contains(" "))
+            if (s.IndexOf(' ') > -1)
             {
                 return "\"" + s + "\"";
             }
@@ -517,7 +517,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             // we use the default Locale since LuceneTestCase randomizes it
             //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
             //return getDate(df.parse(s), resolution);
-            return getDate(DateTime.Parse(s), resolution);
+            return getDate(DateTime.ParseExact(s, "d", CultureInfo.CurrentCulture), resolution);
         }
 
         /** for testing DateTools support */
