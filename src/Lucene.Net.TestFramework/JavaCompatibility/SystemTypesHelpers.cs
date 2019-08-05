@@ -23,6 +23,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -91,7 +92,9 @@ namespace Lucene.Net
 
         public static StringBuilder append(this StringBuilder sb, byte value)
         {
-            sb.Append(value);
+            // LUCENENET NOTE: .NET uses the current culture by default, and any
+            // Java code that calls this is expecting invariant culture
+            sb.Append(value.ToString(CultureInfo.InvariantCulture));
             return sb;
         }
 
@@ -107,33 +110,41 @@ namespace Lucene.Net
             return sb;
         }
 
-        public static StringBuilder append(this StringBuilder sb, decimal value)
-        {
-            sb.Append(value);
-            return sb;
-        }
+        // LUCENENET: These would only work if we copied the format from Java,
+        // which is probably not something we want to do anyway.
+        // Instead of calling a centralized method, we should be converting the
+        // code on a case by case basis.
+        //public static StringBuilder append(this StringBuilder sb, decimal value)
+        //{
+        //    sb.Append(value);
+        //    return sb;
+        //}
 
-        public static StringBuilder append(this StringBuilder sb, double value)
-        {
-            sb.Append(value);
-            return sb;
-        }
+        //public static StringBuilder append(this StringBuilder sb, double value)
+        //{
+        //    sb.Append(value);
+        //    return sb;
+        //}
 
-        public static StringBuilder append(this StringBuilder sb, float value)
-        {
-            sb.Append(value);
-            return sb;
-        }
+        //public static StringBuilder append(this StringBuilder sb, float value)
+        //{
+        //    sb.Append(value);
+        //    return sb;
+        //}
 
         public static StringBuilder append(this StringBuilder sb, int value)
         {
-            sb.Append(value);
+            // LUCENENET NOTE: .NET uses the current culture by default, and any
+            // Java code that calls this is expecting invariant culture
+            sb.Append(value.ToString(CultureInfo.InvariantCulture));
             return sb;
         }
 
         public static StringBuilder append(this StringBuilder sb, long value)
         {
-            sb.Append(value);
+            // LUCENENET NOTE: .NET uses the current culture by default, and any
+            // Java code that calls this is expecting invariant culture
+            sb.Append(value.ToString(CultureInfo.InvariantCulture));
             return sb;
         }
 
@@ -145,13 +156,17 @@ namespace Lucene.Net
 
         public static StringBuilder append(this StringBuilder sb, sbyte value)
         {
-            sb.Append(value);
+            // LUCENENET NOTE: .NET uses the current culture by default, and any
+            // Java code that calls this is expecting invariant culture
+            sb.Append(value.ToString(CultureInfo.InvariantCulture));
             return sb;
         }
 
         public static StringBuilder append(this StringBuilder sb, short value)
         {
-            sb.Append(value);
+            // LUCENENET NOTE: .NET uses the current culture by default, and any
+            // Java code that calls this is expecting invariant culture
+            sb.Append(value.ToString(CultureInfo.InvariantCulture));
             return sb;
         }
 
@@ -163,19 +178,25 @@ namespace Lucene.Net
 
         public static StringBuilder append(this StringBuilder sb, uint value)
         {
-            sb.Append(value);
+            // LUCENENET NOTE: .NET uses the current culture by default, and any
+            // Java code that calls this is expecting invariant culture
+            sb.Append(value.ToString(CultureInfo.InvariantCulture));
             return sb;
         }
 
         public static StringBuilder append(this StringBuilder sb, ulong value)
         {
-            sb.Append(value);
+            // LUCENENET NOTE: .NET uses the current culture by default, and any
+            // Java code that calls this is expecting invariant culture
+            sb.Append(value.ToString(CultureInfo.InvariantCulture));
             return sb;
         }
 
         public static StringBuilder append(this StringBuilder sb, ushort value)
         {
-            sb.Append(value);
+            // LUCENENET NOTE: .NET uses the current culture by default, and any
+            // Java code that calls this is expecting invariant culture
+            sb.Append(value.ToString(CultureInfo.InvariantCulture));
             return sb;
         }
 
