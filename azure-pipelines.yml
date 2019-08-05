@@ -175,11 +175,11 @@ stages:
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-16.04'
-          maximumAllowedFailures: 30 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-10.14'
-          maximumAllowedFailures: 30 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp2.1 on'
     pool:
       vmImage: $(imageName)
@@ -204,11 +204,11 @@ stages:
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-16.04'
-          maximumAllowedFailures: 30 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-10.14'
-          maximumAllowedFailures: 30 # Maximum allowed failures for a successful build
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp1.0 on'
     pool:
       vmImage: $(imageName)
