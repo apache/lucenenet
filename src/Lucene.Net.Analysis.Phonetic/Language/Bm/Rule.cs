@@ -432,14 +432,14 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
                     if (inMultilineComment)
                     {
-                        if (line.EndsWith(ResourceConstants.EXT_CMT_END))
+                        if (line.EndsWith(ResourceConstants.EXT_CMT_END, StringComparison.Ordinal))
                         {
                             inMultilineComment = false;
                         }
                     }
                     else
                     {
-                        if (line.StartsWith(ResourceConstants.EXT_CMT_START))
+                        if (line.StartsWith(ResourceConstants.EXT_CMT_START, StringComparison.Ordinal))
                         {
                             inMultilineComment = true;
                         }
@@ -558,8 +558,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         /// <returns>An RPattern that will match this regex.</returns>
         private static IRPattern GetPattern(string regex)
         {
-            bool startsWith = regex.StartsWith("^");
-            bool endsWith = regex.EndsWith("$");
+            bool startsWith = regex.StartsWith("^", StringComparison.Ordinal);
+            bool endsWith = regex.EndsWith("$", StringComparison.Ordinal);
             string content = regex.Substring(startsWith ? 1 : 0, (endsWith ? regex.Length - 1 : regex.Length) - (startsWith ? 1 : 0));
             bool boxes = content.Contains("[");
 

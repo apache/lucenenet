@@ -155,11 +155,11 @@ namespace Lucene.Net.Cli.CommandLine
                     string[] longOption = null;
                     string[] shortOption = null;
 
-                    if (arg.StartsWith("--"))
+                    if (arg.StartsWith("--", StringComparison.Ordinal))
                     {
                         longOption = arg.Substring(2).Split(new[] { ':', '=' }, 2);
                     }
-                    else if (arg.StartsWith("-"))
+                    else if (arg.StartsWith("-", StringComparison.Ordinal))
                     {
                         shortOption = arg.Substring(1).Split(new[] { ':', '=' }, 2);
                     }

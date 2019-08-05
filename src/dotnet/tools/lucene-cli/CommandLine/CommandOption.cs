@@ -34,11 +34,11 @@ namespace Lucene.Net.Cli.CommandLine
 
             foreach (var part in Template.Split(new[] { ' ', '|' }, StringSplitOptions.RemoveEmptyEntries))
             {
-                if (part.StartsWith("--"))
+                if (part.StartsWith("--", StringComparison.Ordinal))
                 {
                     LongName = part.Substring(2);
                 }
-                else if (part.StartsWith("-"))
+                else if (part.StartsWith("-", StringComparison.Ordinal))
                 {
                     var optName = part.Substring(1);
 
@@ -52,7 +52,7 @@ namespace Lucene.Net.Cli.CommandLine
                         ShortName = optName;
                     }
                 }
-                else if (part.StartsWith("<") && part.EndsWith(">"))
+                else if (part.StartsWith("<", StringComparison.Ordinal) && part.EndsWith(">", StringComparison.Ordinal))
                 {
                     ValueName = part.Substring(1, part.Length - 2);
                 }

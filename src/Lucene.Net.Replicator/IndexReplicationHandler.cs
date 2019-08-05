@@ -115,7 +115,7 @@ namespace Lucene.Net.Replicator
             string segmentsFile = files.Last();
             //NOTE: Relying on side-effects outside?
             files.RemoveAt(files.Count - 1);
-            if (!segmentsFile.StartsWith(IndexFileNames.SEGMENTS) || segmentsFile.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal))
+            if (!segmentsFile.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal) || segmentsFile.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal))
             {
                 throw new InvalidOperationException(
                     string.Format("last file to copy+sync must be segments_N but got {0}; check your Revision implementation!", segmentsFile));
@@ -170,7 +170,7 @@ namespace Lucene.Net.Replicator
 
                     Regex matcher = IndexFileNames.CODEC_FILE_PATTERN;
                     foreach (string file in directory.ListAll()
-                        .Where(file => !commitFiles.Contains(file) && (matcher.IsMatch(file) || file.StartsWith(IndexFileNames.SEGMENTS))))
+                        .Where(file => !commitFiles.Contains(file) && (matcher.IsMatch(file) || file.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal))))
                     {
                         try
                         {

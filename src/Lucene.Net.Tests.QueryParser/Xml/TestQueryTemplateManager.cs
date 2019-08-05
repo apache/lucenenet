@@ -74,9 +74,9 @@ namespace Lucene.Net.QueryParsers.Xml
         public void TestFormTransforms()
         {
             //// Sun 1.5 suffers from http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6240963
-            //if (Constants.JAVA_VENDOR.StartsWith("Sun") && Constants.JAVA_VERSION.StartsWith("1.5")) {
+            //if (Constants.JAVA_VENDOR.StartsWith("Sun", StringComparison.Ordinal) && Constants.JAVA_VERSION.StartsWith("1.5", StringComparison.Ordinal)) {
             //  String defLang = Locale.getDefault().getLanguage();
-            //  assumeFalse("Sun JRE 1.5 suffers from http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6240963 under Turkish locale", defLang.equals("tr") || defLang.equals("az"));
+            //  assumeFalse("Sun JRE 1.5 suffers from http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6240963 under Turkish locale", defLang.equals("tr", StringComparison.Ordinal) || defLang.equals("az", StringComparison.Ordinal));
             //}
             //Cache all the query templates we will be referring to.
             QueryTemplateManager qtm = new QueryTemplateManager();

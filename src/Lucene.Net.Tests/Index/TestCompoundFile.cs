@@ -887,7 +887,7 @@ namespace Lucene.Net.Index
         {
             foreach (string file in dir.ListAll())
             {
-                if (file.EndsWith(IndexFileNames.COMPOUND_FILE_EXTENSION))
+                if (file.EndsWith(IndexFileNames.COMPOUND_FILE_EXTENSION, StringComparison.Ordinal))
                 {
                     CompoundFileDirectory cfsDir = new CompoundFileDirectory(dir, file, NewIOContext(Random()), false);
                     CheckFiles(cfsDir); // recurse into cfs

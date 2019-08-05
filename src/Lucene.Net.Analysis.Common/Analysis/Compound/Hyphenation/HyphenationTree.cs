@@ -281,7 +281,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <code>
         /// for (i=0; i&lt;patterns.Length; i++) 
         /// {
-        ///     if (word.Substring(index).StartsWith(patterns[i]))
+        ///     if (word.Substring(index).StartsWith(patterns[i], StringComparison.Ordinal))
         ///         update_interletter_values(patterns[i]);
         /// }
         /// </code>
