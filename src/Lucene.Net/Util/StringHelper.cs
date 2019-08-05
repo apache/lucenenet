@@ -169,7 +169,7 @@ namespace Lucene.Net.Util
         ///          The expected prefix </param>
         /// <returns> Returns <c>true</c> if the <paramref name="ref"/> starts with the given <paramref name="prefix"/>.
         ///         Otherwise <c>false</c>. </returns>
-        public static bool StartsWith(BytesRef @ref, BytesRef prefix)
+        public static bool StartsWith(BytesRef @ref, BytesRef prefix) // LUCENENET TODO: API - convert to extension method
         {
             return SliceEquals(@ref, prefix, 0);
         }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Util
         ///          The expected suffix </param>
         /// <returns> Returns <c>true</c> if the <paramref name="ref"/> ends with the given <paramref name="suffix"/>.
         ///         Otherwise <c>false</c>. </returns>
-        public static bool EndsWith(BytesRef @ref, BytesRef suffix)
+        public static bool EndsWith(BytesRef @ref, BytesRef suffix) // LUCENENET TODO: API - convert to extension method
         {
             return SliceEquals(@ref, suffix, @ref.Length - suffix.Length);
         }
