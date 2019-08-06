@@ -630,19 +630,40 @@ namespace Lucene.Net.Util
         [OneTimeSetUp]
         public virtual void BeforeClass()
         {
-            // Setup the factories
-            Codec.SetCodecFactory(TEST_CODEC_FACTORY);
-            DocValuesFormat.SetDocValuesFormatFactory(TEST_DOCVALUES_FORMAT_FACTORY);
-            PostingsFormat.SetPostingsFormatFactory(TEST_POSTINGS_FORMAT_FACTORY);
+            
+            try
+            {
+                // Setup the factories
+                Codec.SetCodecFactory(TEST_CODEC_FACTORY);
+                DocValuesFormat.SetDocValuesFormatFactory(TEST_DOCVALUES_FORMAT_FACTORY);
+                PostingsFormat.SetPostingsFormatFactory(TEST_POSTINGS_FORMAT_FACTORY);
 
-            ClassEnvRule.Before(this);
+                ClassEnvRule.Before(this);
+            }
+            catch (Exception ex)
+            {
+                // Print the stack trace so we have something to go on if an error occurs here.
+                Console.Write("An exception occurred during BeforeClass: ");
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
         }
 
         [OneTimeTearDown]
         public virtual void AfterClass()
         {
-            ClassEnvRule.After(this);
-            CleanupTemporaryFiles();
+            try
+            {
+                ClassEnvRule.After(this);
+                CleanupTemporaryFiles();
+            }
+            catch (Exception ex)
+            {
+                // Print the stack trace so we have something to go on if an error occurs here.
+                Console.Write("An exception occurred during AfterClass: ");
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
         }
 
         // -----------------------------------------------------------------
