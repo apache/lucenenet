@@ -271,10 +271,11 @@ namespace Lucene.Net.Index
                                 Assert.IsTrue(Sync.await());
 #if !NETSTANDARD1_6
                             }
-                            catch (ThreadInterruptedException e)
+                            catch (ThreadInterruptedException /*e*/)
                             {
                                 Console.WriteLine("[Waiter] got interrupted - wait count: " + Sync.Waiter.CurrentCount);
-                                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
+                                //throw new ThreadInterruptedException("Thread Interrupted Exception", e);
+                                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
 #endif
                         }
@@ -328,16 +329,17 @@ namespace Lucene.Net.Index
                                 Assert.IsTrue(Sync.await());
                             }
 #if !NETSTANDARD1_6
-                            catch (ThreadInterruptedException e)
+                            catch (ThreadInterruptedException /*e*/)
                             {
                                 Console.WriteLine("[Updater] got interrupted - wait count: " + Sync.Waiter.CurrentCount);
-                                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
+                                //throw new ThreadInterruptedException("Thread Interrupted Exception", e);
+                                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
 #endif
                             catch (Exception e)
                             {
                                 Console.Write("signal failed with : " + e);
-                                throw e;
+                                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
 
                             Sync.LeftCheckpoint.Signal();

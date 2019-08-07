@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Core
                         if (e.InnerException is MissingMethodException)
                         {
                             // there is no corresponding ctor available
-                            throw e;
+                            throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                         }
                         // TODO: For now pass because some factories have not yet a default config that always works
                     }
@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis.Core
                         if (e.InnerException is MissingMethodException)
                         {
                             // there is no corresponding ctor available
-                            throw e;
+                            throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                         }
                         // TODO: For now pass because some factories have not yet a default config that always works
                     }
@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis.Core
                         if (e.InnerException is MissingMethodException)
                         {
                             // there is no corresponding ctor available
-                            throw e;
+                            throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                         }
                         // TODO: For now pass because some factories have not yet a default config that always works
                     }

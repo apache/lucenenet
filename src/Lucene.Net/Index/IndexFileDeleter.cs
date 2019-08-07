@@ -238,11 +238,11 @@ namespace Lucene.Net.Index
                                 }
                                 sis = null;
                             }
-                            catch (IOException e)
+                            catch (IOException /*e*/)
                             {
                                 if (SegmentInfos.GenerationFromSegmentsFileName(fileName) <= currentGen && directory.FileLength(fileName) > 0)
                                 {
-                                    throw e;
+                                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                                 }
                                 else
                                 {

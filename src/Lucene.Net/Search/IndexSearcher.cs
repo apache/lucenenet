@@ -911,9 +911,10 @@ namespace Lucene.Net.Search
                         return true;
                     }
 #if !NETSTANDARD1_6
-                    catch (ThreadInterruptedException e)
+                    catch (ThreadInterruptedException /*e*/)
                     {
-                        throw new ThreadInterruptedException(e.ToString(), e);
+                        //throw new ThreadInterruptedException(e.ToString(), e);
+                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
 #endif
                     catch (Exception e)

@@ -801,10 +801,10 @@ namespace Lucene.Net.Util
                 {
                     insanity = FieldCacheSanityChecker.CheckSanity(entries);
                 }
-                catch (Exception e)
+                catch (Exception /*e*/)
                 {
                     DumpArray(msg + ": FieldCache", entries, Console.Error);
-                    throw e;
+                    throw;  // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
 
                 Assert.AreEqual(0, insanity.Length, msg + ": Insane FieldCache usage(s) found");

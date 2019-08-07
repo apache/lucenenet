@@ -442,12 +442,12 @@ namespace Lucene.Net.Index
                 {
                     VerifyEquals(r1.Document(id1), r2.Document(id2));
                 }
-                catch (Exception t)
+                catch (Exception /*t*/)
                 {
                     Console.WriteLine("FAILED id=" + term + " id1=" + id1 + " id2=" + id2 + " term=" + term);
                     Console.WriteLine("  d1=" + r1.Document(id1));
                     Console.WriteLine("  d2=" + r2.Document(id2));
-                    throw t;
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
 
                 try
@@ -455,7 +455,7 @@ namespace Lucene.Net.Index
                     // verify term vectors are equivalent
                     VerifyEquals(r1.GetTermVectors(id1), r2.GetTermVectors(id2));
                 }
-                catch (Exception e)
+                catch (Exception /*e*/)
                 {
                     Console.WriteLine("FAILED id=" + term + " id1=" + id1 + " id2=" + id2);
                     Fields tv1 = r1.GetTermVectors(id1);
@@ -536,7 +536,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    throw e;
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
             }
 

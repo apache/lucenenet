@@ -2713,14 +2713,14 @@ namespace Lucene.Net.Index
                         Assert.Fail("expected exception");
                     }
                 }
-                catch (IOException ioe)
+                catch (IOException /*ioe*/)
                 {
                     // OpenMode_e.APPEND should throw an exception since no
                     // index exists:
                     if (mode == 0)
                     {
                         // Unexpected
-                        throw ioe;
+                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                 }
 

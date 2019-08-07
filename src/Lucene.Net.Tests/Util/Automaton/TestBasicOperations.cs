@@ -161,7 +161,7 @@ namespace Lucene.Net.Util.Automaton
                         string s = UnicodeUtil.NewString(acc, 0, acc.Length);
                         Assert.IsTrue(BasicOperations.Run(a, s));
                     }
-                    catch (Exception t)
+                    catch (Exception /*t*/)
                     {
                         Console.WriteLine("regexp: " + re);
                         if (acc != null)
@@ -172,7 +172,7 @@ namespace Lucene.Net.Util.Automaton
                                 Console.WriteLine("  " + acc[k].ToString("x"));
                             }
                         }
-                        throw t;
+                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                 }
             }

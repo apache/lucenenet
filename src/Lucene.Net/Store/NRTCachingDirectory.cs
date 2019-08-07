@@ -150,13 +150,13 @@ namespace Lucene.Net.Store
                         files.Add(f);
                     }
                 }
-                catch (DirectoryNotFoundException ex)
+                catch (DirectoryNotFoundException /*ex*/)
                 {
                     // however, if there are no cached files, then the directory truly
                     // does not "exist"
                     if (files.Count == 0)
                     {
-                        throw ex;
+                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                 }
                 return files.ToArray();

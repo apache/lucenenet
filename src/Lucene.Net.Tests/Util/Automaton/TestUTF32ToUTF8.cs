@@ -270,14 +270,14 @@ namespace Lucene.Net.Util.Automaton
                     {
                         s = UnicodeUtil.NewString(codepoints, 0, codepoints.Length);
                     }
-                    catch (Exception e)
+                    catch (Exception /*e*/)
                     {
                         Console.WriteLine(codepoints.Length + " codepoints:");
                         for (int j = 0; j < codepoints.Length; j++)
                         {
                             Console.WriteLine("  " + codepoints[j].ToString("x"));
                         }
-                        throw e;
+                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                 }
                 var bytes = s.GetBytes(Encoding.UTF8);

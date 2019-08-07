@@ -151,10 +151,10 @@ namespace Lucene.Net.Search.Spell
                     assertTrue(cs[1].Suggestion.String.Equals("hundredeight", StringComparison.Ordinal));
                 }
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            //catch (Exception e) // LUCENENET: Senseless to catch and rethrow here
+            //{
+            //    throw e;
+            //}
             finally
             {
                 try { ir.Dispose(); } catch (Exception /*e1*/) { }
@@ -263,10 +263,10 @@ namespace Lucene.Net.Search.Spell
                 }
 
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            //catch (Exception e) // LUCENENET: Senseless to catch and rethrow here
+            //{
+            //    throw e;
+            //}
             finally
             {
                 try { ir.Dispose(); } catch (Exception /*e1*/) { }
@@ -372,10 +372,10 @@ namespace Lucene.Net.Search.Spell
                 }
 
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            //catch (Exception e) // LUCENENET: Senseless to catch and rethrow here
+            //{
+            //    throw e;
+            //}
             finally
             {
                 try

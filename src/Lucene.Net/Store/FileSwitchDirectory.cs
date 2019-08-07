@@ -113,7 +113,7 @@ namespace Lucene.Net.Store
                     files.Add(f);
                 }
             }
-            catch (DirectoryNotFoundException e)
+            catch (DirectoryNotFoundException /*e*/)
             {
                 // we got NoSuchDirectoryException from both dirs
                 // rethrow the first.
@@ -125,7 +125,7 @@ namespace Lucene.Net.Store
                 // and the primary is empty.
                 if (files.Count == 0)
                 {
-                    throw e;
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
             }
             // we got NoSuchDirectoryException from the primary,

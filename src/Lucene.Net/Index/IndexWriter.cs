@@ -594,7 +594,8 @@ namespace Lucene.Net.Index
                                 // elements we have iterated over so far
                                 // before throwing an exception.
                                 readerMap.RemoveAll(toDelete);
-                                IOUtils.ReThrow(t);
+                                //IOUtils.ReThrow(t);
+                                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
                             else if (priorE == null)
                             {
@@ -629,7 +630,8 @@ namespace Lucene.Net.Index
                                 // elements we have iterated over so far
                                 // before throwing an exception.
                                 readerMap.RemoveAll(toDelete);
-                                IOUtils.ReThrow(t);
+                                //IOUtils.ReThrow(t);
+                                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
                             else if (priorE == null)
                             {
@@ -3418,7 +3420,7 @@ namespace Lucene.Net.Index
             {
                 currentCodec.SegmentInfoFormat.SegmentInfoWriter.Write(trackingDir, newInfo, fis, context);
             }
-            catch (System.NotSupportedException uoe)
+            catch (System.NotSupportedException /*uoe*/)
             {
 #pragma warning disable 612, 618
                 if (currentCodec is Lucene3xCodec)
@@ -3429,7 +3431,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    throw uoe;
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
             }
 

@@ -289,11 +289,11 @@ namespace Lucene.Net.Index
                     int docid = @in.DocID;
                     Debug.Assert(docid == -1, @in.GetType() + ": invalid initial doc id: " + docid);
                 }
-                catch (System.NotSupportedException e)
+                catch (System.NotSupportedException /*e*/)
                 {
                     if (failOnUnsupportedDocID)
                     {
-                        throw e;
+                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                 }
                 Doc = -1;

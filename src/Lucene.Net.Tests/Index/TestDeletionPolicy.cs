@@ -645,11 +645,11 @@ namespace Lucene.Net.Index
                             Assert.Fail("should have failed on commits prior to last " + N);
                         }
                     }
-                    catch (IOException e)
+                    catch (IOException /*e*/)
                     {
                         if (i != N)
                         {
-                            throw e;
+                            throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                         }
                     }
                     if (i < N)
@@ -765,11 +765,11 @@ namespace Lucene.Net.Index
                             Assert.Fail("should have failed on commits before last " + N);
                         }
                     }
-                    catch (IOException e)
+                    catch (IOException /*e*/)
                     {
                         if (i != N)
                         {
-                            throw e;
+                            throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                         }
                     }
                     if (i < N)

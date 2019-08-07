@@ -233,10 +233,10 @@ namespace Lucene.Net.Search
                     Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
                 }
             }
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
                 PrintHits("testSimpleEqualScores1", h, s);
-                throw e;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
         }
 
@@ -259,10 +259,10 @@ namespace Lucene.Net.Search
                     Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
                 }
             }
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
                 PrintHits("testSimpleEqualScores2", h, s);
-                throw e;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
         }
 
@@ -287,10 +287,10 @@ namespace Lucene.Net.Search
                     Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
                 }
             }
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
                 PrintHits("testSimpleEqualScores3", h, s);
-                throw e;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
         }
 
@@ -314,10 +314,10 @@ namespace Lucene.Net.Search
                 Assert.IsTrue(score0 > score1, "d2 does not have better score then others: " + score0 + " >? " + score1);
                 Assert.AreEqual(score1, score2, SCORE_COMP_THRESH, "d4 and d1 don't have equal scores");
             }
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
                 PrintHits("testSimpleTiebreaker", h, s);
-                throw e;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
         }
 
@@ -353,10 +353,10 @@ namespace Lucene.Net.Search
                     Assert.AreEqual(score, h[i].Score, SCORE_COMP_THRESH, "score #" + i + " is not the same");
                 }
             }
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
                 PrintHits("testBooleanRequiredEqualScores1", h, s);
-                throw e;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
         }
 
@@ -392,10 +392,10 @@ namespace Lucene.Net.Search
                 float score1 = h[h.Length - 1].Score;
                 Assert.IsTrue(score > score1, "d1 does not have worse score then others: " + score + " >? " + score1);
             }
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
                 PrintHits("testBooleanOptionalNoTiebreaker", h, s);
-                throw e;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
         }
 
@@ -442,10 +442,10 @@ namespace Lucene.Net.Search
                 Assert.AreEqual("d1", doc3, "wrong fourth");
                 Assert.IsTrue(score2 > score3, "d1 does not have worse score then d3: " + score2 + " >? " + score3);
             }
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
                 PrintHits("testBooleanOptionalWithTiebreaker", h, s);
-                throw e;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
         }
 
@@ -492,10 +492,10 @@ namespace Lucene.Net.Search
                 Assert.IsTrue(score1 > score2, "d3 does not have a better score then d2: " + score1 + " >? " + score2);
                 Assert.IsTrue(score2 > score3, "d3 does not have a better score then d1: " + score2 + " >? " + score3);
             }
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
                 PrintHits("TestBooleanOptionalWithTiebreakerAndBoost", h, s);
-                throw e;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
         }
 

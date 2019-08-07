@@ -279,7 +279,7 @@ namespace Lucene.Net.Util
             catch (Exception e)
             {
                 Console.Error.WriteLine("NOTE: " + e.Message + " Suppressed codecs: " + Arrays.ToString(avoidCodecs.ToArray()));
-                throw e;
+                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
         }
 

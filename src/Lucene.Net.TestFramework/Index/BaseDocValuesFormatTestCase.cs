@@ -3019,7 +3019,7 @@ namespace Lucene.Net.Index
                 {
                     if (iae.Message.IndexOf("is too large", StringComparison.Ordinal) == -1)
                     {
-                        throw iae;
+                        throw /*iae*/; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                     else
                     {
@@ -3041,7 +3041,7 @@ namespace Lucene.Net.Index
             {
                 if (iae.Message.IndexOf("is too large", StringComparison.Ordinal) == -1)
                 {
-                    throw iae;
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
                 else
                 {

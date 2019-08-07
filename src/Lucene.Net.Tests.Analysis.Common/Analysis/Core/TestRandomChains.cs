@@ -525,9 +525,9 @@ namespace Lucene.Net.Analysis.Core
                         {
                             return new Dictionary(affixStream, dictStream);
                         }
-                        catch (Exception ex)
+                        catch (Exception /*ex*/)
                         {
-                            throw ex;
+                            throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
                             return null; // unreachable code
 #pragma warning restore 162
@@ -574,9 +574,9 @@ namespace Lucene.Net.Analysis.Core
                         return hyphenator;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception /*ex*/)
                 {
-                    throw ex;
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
                     return null; // unreachable code
 #pragma warning restore 162
@@ -594,9 +594,9 @@ namespace Lucene.Net.Analysis.Core
                     Type clazz = Type.GetType("Lucene.Net.Tartarus.Snowball.Ext." + lang + "Stemmer, Lucene.Net.Analysis.Common");
                     return clazz.GetConstructor(new Type[0]).Invoke(new object[0]);
                 }
-                catch (Exception ex)
+                catch (Exception /*ex*/)
                 {
-                    throw ex;
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
                     return null; // unreachable code
 #pragma warning restore 162
@@ -700,9 +700,9 @@ namespace Lucene.Net.Analysis.Core
                 {
                     return builder.Build();
                 }
-                catch (Exception ex)
+                catch (Exception /*ex*/)
                 {
-                    throw ex;
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
                     return null; // unreachable code
 #pragma warning restore 162
@@ -724,9 +724,9 @@ namespace Lucene.Net.Analysis.Core
                 {
                     return b.Build();
                 }
-                catch (Exception ex)
+                catch (Exception /*ex*/)
                 {
-                    throw ex;
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
                     return null; // unreachable code
 #pragma warning restore 162
@@ -927,7 +927,7 @@ namespace Lucene.Net.Analysis.Core
                     }
                     else
                     {
-                        throw ite;
+                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                 }
                 //catch (IllegalAccessException iae)
@@ -1167,10 +1167,10 @@ namespace Lucene.Net.Analysis.Core
                     CheckRandomData(random, a, 500 * RANDOM_MULTIPLIER, 20, false,
                                     false /* We already validate our own offsets... */);
                 }
-                catch (Exception e)
+                catch (Exception /*e*/)
                 {
                     Console.WriteLine("Exception from random analyzer: " + a);
-                    throw e;
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
             }
         }
@@ -1193,10 +1193,10 @@ namespace Lucene.Net.Analysis.Core
                     CheckRandomData(random, a, 50 * RANDOM_MULTIPLIER, 128, false,
                                     false /* We already validate our own offsets... */);
                 }
-                catch (Exception e)
+                catch (Exception /*e*/)
                 {
                     Console.WriteLine("Exception from random analyzer: " + a);
-                    throw e;
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
             }
         }

@@ -209,7 +209,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                                 // To work around a bug in XERCES (XERCESJ-1257), we assume the XML is always UTF8, so we simply provide reader.
                                 reader.Parse(new InputSource(IOUtils.GetDecodingReader(localFileIS, Encoding.UTF8)));
                             }
-                            catch (IOException ioe)
+                            catch (IOException /*ioe*/)
                             {
                                 lock (outerInstance)
                                 {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                                     }
                                     else
                                         // Exception is real
-                                        throw ioe;
+                                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                                 }
                             }
                         }

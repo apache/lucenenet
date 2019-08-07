@@ -2359,7 +2359,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        throw ioe;
+                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                 }
                 shouldFail.Set(false);
