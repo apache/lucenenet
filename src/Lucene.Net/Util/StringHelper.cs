@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                return DateTime.Now.Millisecond;
+                return (int)Time.CurrentTimeMilliseconds();
             }
         }
 
