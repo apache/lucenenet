@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.VectorHighlight
             }
             else if (sourceQuery is PhraseQuery)
             {
-                if (!flatQueries.Contains(sourceQuery))
+                if (!flatQueries.Contains(sourceQuery)) // LUCENENET - set semantics, but this is a list. The original logic was already correct.
                 {
                     PhraseQuery pq = (PhraseQuery)sourceQuery;
                     if (pq.GetTerms().Length > 1)
@@ -119,7 +119,8 @@ namespace Lucene.Net.Search.VectorHighlight
                     {
                         Query flat = new TermQuery(pq.GetTerms()[0]);
                         flat.Boost = pq.Boost;
-                        flatQueries.Add(flat);
+                        if (!flatQueries.Contains(flat)) // LUCENENET specific - set semantics, but this is a list
+                            flatQueries.Add(flat);
                     }
                 }
             }
@@ -202,13 +203,17 @@ namespace Lucene.Net.Search.VectorHighlight
                 {
                     i++;
                 }
-                expandQueries.Add(query);
+                if (!expandQueries.Contains(query)) // LUCENENET specific - set semantics, but this is a list
+                    expandQueries.Add(query);
                 if (!(query is PhraseQuery)) continue;
-                for (IEnumerator<Query> j = flatQueries.GetEnumerator(); j.MoveNext();)
+                using (IEnumerator<Query> j = flatQueries.GetEnumerator())
                 {
-                    Query qj = j.Current;
-                    if (!(qj is PhraseQuery)) continue;
-                    CheckOverlap(expandQueries, (PhraseQuery)query, (PhraseQuery)qj);
+                    while (j.MoveNext())
+                    {
+                        Query qj = j.Current;
+                        if (!(qj is PhraseQuery)) continue;
+                        CheckOverlap(expandQueries, (PhraseQuery)query, (PhraseQuery)qj);
+                    }
                 }
             }
 
@@ -289,7 +294,7 @@ namespace Lucene.Net.Search.VectorHighlight
                     }
                     pq.Slop = slop;
                     pq.Boost = boost;
-                    if (!expandQueries.Contains(pq))
+                    if (!expandQueries.Contains(pq)) // LUCENENET specific - set semantics, but this is a list
                         expandQueries.Add(pq);
                 }
             }
