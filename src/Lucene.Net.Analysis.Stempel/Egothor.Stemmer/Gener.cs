@@ -106,9 +106,8 @@ namespace Egothor.Stemmer
         public bool Eat(Row @in, int[] remap)
         {
             int sum = 0;
-            for (IEnumerator<Cell> i = @in.cells.Values.GetEnumerator(); i.MoveNext();)
+            foreach (Cell c in @in.cells.Values)
             {
-                Cell c = i.Current;
                 sum += c.cnt;
                 if (c.@ref >= 0)
                 {
@@ -120,9 +119,8 @@ namespace Egothor.Stemmer
             }
             int frame = sum / 10;
             bool live = false;
-            for (IEnumerator<Cell> i = @in.cells.Values.GetEnumerator(); i.MoveNext();)
+            foreach (Cell c in @in.cells.Values)
             {
-                Cell c = i.Current;
                 if (c.cnt < frame && c.cmd >= 0)
                 {
                     c.cnt = 0;

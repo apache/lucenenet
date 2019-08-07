@@ -62,16 +62,18 @@ namespace Lucene.Net.Search.Spans
                 if (candidate.Count == m_payloadToMatch.Count)
                 {
                     //TODO: check the byte arrays are the same
-                    var toMatchIter = m_payloadToMatch.GetEnumerator();
-                    //check each of the byte arrays, in order
-                    //hmm, can't rely on order here
-                    foreach (var candBytes in candidate)
+                    using (var toMatchIter = m_payloadToMatch.GetEnumerator())
                     {
-                        toMatchIter.MoveNext();
-                        //if one is a mismatch, then return false
-                        if (Arrays.Equals(candBytes, toMatchIter.Current) == false)
+                        //check each of the byte arrays, in order
+                        //hmm, can't rely on order here
+                        foreach (var candBytes in candidate)
                         {
-                            return AcceptStatus.NO;
+                            toMatchIter.MoveNext();
+                            //if one is a mismatch, then return false
+                            if (Arrays.Equals(candBytes, toMatchIter.Current) == false)
+                            {
+                                return AcceptStatus.NO;
+                            }
                         }
                     }
                     //we've verified all the bytes

@@ -189,36 +189,38 @@ namespace Lucene.Net.Analysis.Synonym
             }
 
             int pos = 0;
-            var iter1 = lst1.GetEnumerator();
-            var iter2 = lst2.GetEnumerator();
-            var tok1 = iter1.MoveNext() ? iter1.Current : null;
-            var tok2 = iter2.MoveNext() ? iter2.Current : null;
-            int pos1 = tok1 != null ? tok1.PositionIncrement : 0;
-            int pos2 = tok2 != null ? tok2.PositionIncrement : 0;
-            while (tok1 != null || tok2 != null)
+            using (var iter1 = lst1.GetEnumerator())
+            using (var iter2 = lst2.GetEnumerator())
             {
-                while (tok1 != null && (pos1 <= pos2 || tok2 == null))
+                var tok1 = iter1.MoveNext() ? iter1.Current : null;
+                var tok2 = iter2.MoveNext() ? iter2.Current : null;
+                int pos1 = tok1 != null ? tok1.PositionIncrement : 0;
+                int pos2 = tok2 != null ? tok2.PositionIncrement : 0;
+                while (tok1 != null || tok2 != null)
                 {
-                    var tok = new Token(tok1.StartOffset, tok1.EndOffset, tok1.Type);
-                    tok.CopyBuffer(tok1.Buffer, 0, tok1.Length);
-                    tok.PositionIncrement = pos1 - pos;
-                    result.Add(tok);
-                    pos = pos1;
-                    tok1 = iter1.MoveNext() ? iter1.Current : null;
-                    pos1 += tok1 != null ? tok1.PositionIncrement : 0;
+                    while (tok1 != null && (pos1 <= pos2 || tok2 == null))
+                    {
+                        var tok = new Token(tok1.StartOffset, tok1.EndOffset, tok1.Type);
+                        tok.CopyBuffer(tok1.Buffer, 0, tok1.Length);
+                        tok.PositionIncrement = pos1 - pos;
+                        result.Add(tok);
+                        pos = pos1;
+                        tok1 = iter1.MoveNext() ? iter1.Current : null;
+                        pos1 += tok1 != null ? tok1.PositionIncrement : 0;
+                    }
+                    while (tok2 != null && (pos2 <= pos1 || tok1 == null))
+                    {
+                        var tok = new Token(tok2.StartOffset, tok2.EndOffset, tok2.Type);
+                        tok.CopyBuffer(tok2.Buffer, 0, tok2.Length);
+                        tok.PositionIncrement = pos2 - pos;
+                        result.Add(tok);
+                        pos = pos2;
+                        tok2 = iter2.MoveNext() ? iter2.Current : null;
+                        pos2 += tok2 != null ? tok2.PositionIncrement : 0;
+                    }
                 }
-                while (tok2 != null && (pos2 <= pos1 || tok1 == null))
-                {
-                    var tok = new Token(tok2.StartOffset, tok2.EndOffset, tok2.Type);
-                    tok.CopyBuffer(tok2.Buffer, 0, tok2.Length);
-                    tok.PositionIncrement = pos2 - pos;
-                    result.Add(tok);
-                    pos = pos2;
-                    tok2 = iter2.MoveNext() ? iter2.Current : null;
-                    pos2 += tok2 != null ? tok2.PositionIncrement : 0;
-                }
+                return result;
             }
-            return result;
         }
     }
 }

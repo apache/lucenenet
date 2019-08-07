@@ -506,7 +506,8 @@ namespace Lucene.Net.Codecs.Memory
 
             public void Dispose()
             {
-                // nothing to do
+                this.counts.Dispose();
+                this.ords.Dispose();
             }
 
             public void Reset()

@@ -326,29 +326,31 @@ namespace Lucene.Net.Analysis.Shingle
             {
                 bool isAllFiller = true;
                 InputWindowToken nextToken = null;
-                IEnumerator<InputWindowToken> iter = inputWindow.GetEnumerator();
-                for (int gramNum = 1; iter.MoveNext() && builtGramSize < gramSize.Value; ++gramNum)
+                using (IEnumerator<InputWindowToken> iter = inputWindow.GetEnumerator())
                 {
-                    nextToken = iter.Current;
-                    if (builtGramSize < gramNum)
+                    for (int gramNum = 1; iter.MoveNext() && builtGramSize < gramSize.Value; ++gramNum)
                     {
-                        if (builtGramSize > 0)
+                        nextToken = iter.Current;
+                        if (builtGramSize < gramNum)
                         {
-                            gramBuilder.Append(tokenSeparator);
+                            if (builtGramSize > 0)
+                            {
+                                gramBuilder.Append(tokenSeparator);
+                            }
+                            gramBuilder.Append(nextToken.termAtt.Buffer, 0, nextToken.termAtt.Length);
+                            ++builtGramSize;
                         }
-                        gramBuilder.Append(nextToken.termAtt.Buffer, 0, nextToken.termAtt.Length);
-                        ++builtGramSize;
-                    }
-                    if (isAllFiller && nextToken.isFiller)
-                    {
-                        if (gramNum == gramSize.Value)
+                        if (isAllFiller && nextToken.isFiller)
                         {
-                            gramSize.Advance();
+                            if (gramNum == gramSize.Value)
+                            {
+                                gramSize.Advance();
+                            }
                         }
-                    }
-                    else
-                    {
-                        isAllFiller = false;
+                        else
+                        {
+                            isAllFiller = false;
+                        }
                     }
                 }
                 if (!isAllFiller && builtGramSize == gramSize.Value)

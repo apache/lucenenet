@@ -341,49 +341,50 @@ namespace Lucene.Net.Search
                 float sum = 0.0f;
                 bool fail = false;
                 int shouldMatchCount = 0;
-                IEnumerator<BooleanClause> cIter = outerInstance.clauses.GetEnumerator();
-                for (IEnumerator<Weight> wIter = m_weights.GetEnumerator(); wIter.MoveNext(); )
+                using (IEnumerator<BooleanClause> cIter = outerInstance.clauses.GetEnumerator())
                 {
-                    Weight w = wIter.Current;
-                    cIter.MoveNext();
-                    BooleanClause c = cIter.Current;
-                    if (w.GetScorer(context, context.AtomicReader.LiveDocs) == null)
+                    foreach (Weight w in m_weights)
                     {
-                        if (c.IsRequired)
+                        cIter.MoveNext();
+                        BooleanClause c = cIter.Current;
+                        if (w.GetScorer(context, context.AtomicReader.LiveDocs) == null)
                         {
-                            fail = true;
+                            if (c.IsRequired)
+                            {
+                                fail = true;
+                                Explanation r = new Explanation(0.0f, "no match on required clause (" + c.Query.ToString() + ")");
+                                sumExpl.AddDetail(r);
+                            }
+                            continue;
+                        }
+                        Explanation e = w.Explain(context, doc);
+                        if (e.IsMatch)
+                        {
+                            if (!c.IsProhibited)
+                            {
+                                sumExpl.AddDetail(e);
+                                sum += e.Value;
+                                coord++;
+                            }
+                            else
+                            {
+                                Explanation r = new Explanation(0.0f, "match on prohibited clause (" + c.Query.ToString() + ")");
+                                r.AddDetail(e);
+                                sumExpl.AddDetail(r);
+                                fail = true;
+                            }
+                            if (c.Occur == Occur_e.SHOULD)
+                            {
+                                shouldMatchCount++;
+                            }
+                        }
+                        else if (c.IsRequired)
+                        {
                             Explanation r = new Explanation(0.0f, "no match on required clause (" + c.Query.ToString() + ")");
-                            sumExpl.AddDetail(r);
-                        }
-                        continue;
-                    }
-                    Explanation e = w.Explain(context, doc);
-                    if (e.IsMatch)
-                    {
-                        if (!c.IsProhibited)
-                        {
-                            sumExpl.AddDetail(e);
-                            sum += e.Value;
-                            coord++;
-                        }
-                        else
-                        {
-                            Explanation r = new Explanation(0.0f, "match on prohibited clause (" + c.Query.ToString() + ")");
                             r.AddDetail(e);
                             sumExpl.AddDetail(r);
                             fail = true;
                         }
-                        if (c.Occur == Occur_e.SHOULD)
-                        {
-                            shouldMatchCount++;
-                        }
-                    }
-                    else if (c.IsRequired)
-                    {
-                        Explanation r = new Explanation(0.0f, "no match on required clause (" + c.Query.ToString() + ")");
-                        r.AddDetail(e);
-                        sumExpl.AddDetail(r);
-                        fail = true;
                     }
                 }
                 if (fail)
@@ -429,33 +430,35 @@ namespace Lucene.Net.Search
 
                 IList<BulkScorer> prohibited = new List<BulkScorer>();
                 IList<BulkScorer> optional = new List<BulkScorer>();
-                IEnumerator<BooleanClause> cIter = outerInstance.clauses.GetEnumerator();
-                foreach (Weight w in m_weights)
-                {
-                    cIter.MoveNext();
-                    BooleanClause c = cIter.Current;
-                    BulkScorer subScorer = w.GetBulkScorer(context, false, acceptDocs);
-                    if (subScorer == null)
+                using (IEnumerator<BooleanClause> cIter = outerInstance.clauses.GetEnumerator())
+                { 
+                    foreach (Weight w in m_weights)
                     {
-                        if (c.IsRequired)
+                        cIter.MoveNext();
+                        BooleanClause c = cIter.Current;
+                        BulkScorer subScorer = w.GetBulkScorer(context, false, acceptDocs);
+                        if (subScorer == null)
                         {
-                            return null;
+                            if (c.IsRequired)
+                            {
+                                return null;
+                            }
                         }
-                    }
-                    else if (c.IsRequired)
-                    {
-                        // TODO: there are some cases where BooleanScorer
-                        // would handle conjunctions faster than
-                        // BooleanScorer2...
-                        return base.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
-                    }
-                    else if (c.IsProhibited)
-                    {
-                        prohibited.Add(subScorer);
-                    }
-                    else
-                    {
-                        optional.Add(subScorer);
+                        else if (c.IsRequired)
+                        {
+                            // TODO: there are some cases where BooleanScorer
+                            // would handle conjunctions faster than
+                            // BooleanScorer2...
+                            return base.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
+                        }
+                        else if (c.IsProhibited)
+                        {
+                            prohibited.Add(subScorer);
+                        }
+                        else
+                        {
+                            optional.Add(subScorer);
+                        }
                     }
                 }
 

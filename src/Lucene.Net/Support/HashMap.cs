@@ -166,21 +166,23 @@ namespace Lucene.Net.Support
 
             try
             {
-                var i = GetEnumerator();
-                while (i.MoveNext())
+                using (var i = GetEnumerator())
                 {
-                    KeyValuePair<TKey, TValue> e = i.Current;
-                    TKey key = e.Key;
-                    TValue value = e.Value;
-                    if (value == null)
+                    while (i.MoveNext())
                     {
-                        if (!(m[key] == null && m.ContainsKey(key)))
-                            return false;
-                    }
-                    else
-                    {
-                        if (!value.Equals(m[key]))
-                            return false;
+                        KeyValuePair<TKey, TValue> e = i.Current;
+                        TKey key = e.Key;
+                        TValue value = e.Value;
+                        if (value == null)
+                        {
+                            if (!(m[key] == null && m.ContainsKey(key)))
+                                return false;
+                        }
+                        else
+                        {
+                            if (!value.Equals(m[key]))
+                                return false;
+                        }
                     }
                 }
             }
@@ -199,31 +201,35 @@ namespace Lucene.Net.Support
         public override int GetHashCode()
         {
             int h = 0;
-            var i = GetEnumerator();
-            while (i.MoveNext())
-                h += i.Current.GetHashCode();
+            using (var i = GetEnumerator())
+            {
+                while (i.MoveNext())
+                    h += i.Current.GetHashCode();
+            }
             return h;
         }
 
         public override string ToString()
         {
-            var i = GetEnumerator();
-            if (!i.MoveNext())
-                return "{}";
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append('{');
-            for (;;)
+            using (var i = GetEnumerator())
             {
-                var e = i.Current;
-                TKey key = e.Key;
-                TValue value = e.Value;
-                sb.Append(key);
-                sb.Append('=');
-                sb.Append(value);
                 if (!i.MoveNext())
-                    return sb.Append('}').ToString();
-                sb.Append(',').Append(' ');
+                    return "{}";
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append('{');
+                for (; ; )
+                {
+                    var e = i.Current;
+                    TKey key = e.Key;
+                    TValue value = e.Value;
+                    sb.Append(key);
+                    sb.Append('=');
+                    sb.Append(value);
+                    if (!i.MoveNext())
+                        return sb.Append('}').ToString();
+                    sb.Append(',').Append(' ');
+                }
             }
         }
 

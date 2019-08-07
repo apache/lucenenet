@@ -60,10 +60,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                 {
                     removeBoolean = true;
 
-                    for (IEnumerator<IQueryNode> it = children.GetEnumerator(); it.MoveNext();)
+                    foreach (var child in children)
                     {
 
-                        if (!(it.Current is DeletedQueryNode))
+                        if (!(child is DeletedQueryNode))
                         {
                             removeBoolean = false;
                             break;

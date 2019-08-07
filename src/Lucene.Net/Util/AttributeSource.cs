@@ -407,16 +407,18 @@ namespace Lucene.Net.Util
                 return s;
             }
             var c = s = currentState[0] = new State();
-            var it = attributeImpls.Values().GetEnumerator();
-            it.MoveNext();
-            c.attribute = it.Current.Value;
-            while (it.MoveNext())
+            using (var it = attributeImpls.Values().GetEnumerator())
             {
-                c.next = new State();
-                c = c.next;
+                it.MoveNext();
                 c.attribute = it.Current.Value;
+                while (it.MoveNext())
+                {
+                    c.next = new State();
+                    c = c.next;
+                    c.attribute = it.Current.Value;
+                }
+                return s;
             }
-            return s;
         }
 
         /// <summary>

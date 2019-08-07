@@ -151,11 +151,9 @@ namespace Egothor.Stemmer
         /// <returns>the number of cells in use</returns>
         public int GetCells()
         {
-            IEnumerator<char> i = cells.Keys.GetEnumerator();
             int size = 0;
-            for (; i.MoveNext();)
+            foreach (char c in cells.Keys)
             {
-                char c = i.Current;
                 Cell e = At(c);
                 if (e.cmd >= 0 || e.@ref >= 0)
                 {
@@ -171,11 +169,9 @@ namespace Egothor.Stemmer
         /// <returns>the number of references</returns>
         public int GetCellsPnt()
         {
-            IEnumerator<char> i = cells.Keys.GetEnumerator();
             int size = 0;
-            for (; i.MoveNext();)
+            foreach (char c in cells.Keys)
             {
-                char c = i.Current;
                 Cell e = At(c);
                 if (e.@ref >= 0)
                 {
@@ -191,11 +187,9 @@ namespace Egothor.Stemmer
         /// <returns>the number of patch commands</returns>
         public int GetCellsVal()
         {
-            IEnumerator<char> i = cells.Keys.GetEnumerator();
             int size = 0;
-            for (; i.MoveNext();)
+            foreach (char c in cells.Keys)
             {
-                char c = i.Current;
                 Cell e = At(c);
                 if (e.cmd >= 0)
                 {
@@ -248,10 +242,8 @@ namespace Egothor.Stemmer
         public virtual void Store(IDataOutput os)
         {
             os.WriteInt32(cells.Count);
-            IEnumerator<char> i = cells.Keys.GetEnumerator();
-            for (; i.MoveNext();)
+            foreach (char c in cells.Keys)
             {
-                char c = i.Current;
                 Cell e = At(c);
                 if (e.cmd < 0 && e.@ref < 0)
                 {
@@ -274,13 +266,11 @@ namespace Egothor.Stemmer
         /// <returns>the number of identical <see cref="Cell"/>s, or -1 if there are (at least) two different <see cref="Cell"/>s</returns>
         public int UniformCmd(bool eqSkip)
         {
-            IEnumerator<Cell> i = cells.Values.GetEnumerator();
             int ret = -1;
             uniformCnt = 1;
             uniformSkip = 0;
-            for (; i.MoveNext();)
+            foreach (Cell c in cells.Values)
             {
-                Cell c = i.Current;
                 if (c.@ref >= 0)
                 {
                     return -1;
@@ -325,9 +315,8 @@ namespace Egothor.Stemmer
         /// <param name="out"></param>
         public virtual void Print(TextWriter @out)
         {
-            for (IEnumerator<char> i = cells.Keys.GetEnumerator(); i.MoveNext();)
+            foreach (char ch in cells.Keys)
             {
-                char ch = i.Current;
                 Cell c = At(ch);
                 @out.Write("[" + ch + ":" + c + "]");
             }

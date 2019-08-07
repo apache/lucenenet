@@ -87,11 +87,9 @@ namespace Lucene.Net.Search.Payloads
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("payloadNear([");
-            IEnumerator<SpanQuery> i = m_clauses.GetEnumerator();
             bool hasCommaSpace = false;
-            while (i.MoveNext())
+            foreach (SpanQuery clause in m_clauses)
             {
-                SpanQuery clause = i.Current;
                 buffer.Append(clause.ToString(field));
                 buffer.Append(", ");
                 hasCommaSpace = true;

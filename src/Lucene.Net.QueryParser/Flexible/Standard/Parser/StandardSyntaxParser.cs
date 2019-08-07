@@ -1180,25 +1180,28 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 {
                     jj_expentry[i] = jj_lasttokens[i];
                 }
-                 for (var it = jj_expentries.GetEnumerator(); it.MoveNext();)
+                using (var it = jj_expentries.GetEnumerator())
                 {
-                    int[] oldentry = (int[])(it.Current);
-                    if (oldentry.Length == jj_expentry.Length)
+                    while (it.MoveNext())
                     {
-                        for (int i = 0; i < jj_expentry.Length; i++)
+                        int[] oldentry = (int[])(it.Current);
+                        if (oldentry.Length == jj_expentry.Length)
                         {
-                            if (oldentry[i] != jj_expentry[i])
+                            for (int i = 0; i < jj_expentry.Length; i++)
                             {
-                                goto jj_entries_loop_continue;
+                                if (oldentry[i] != jj_expentry[i])
+                                {
+                                    goto jj_entries_loop_continue;
+                                }
                             }
+                            jj_expentries.Add(jj_expentry);
+                            goto jj_entries_loop_break;
                         }
-                        jj_expentries.Add(jj_expentry);
-                        goto jj_entries_loop_break;
+                        jj_entries_loop_continue: { }
                     }
-                    jj_entries_loop_continue: { }
+                    jj_entries_loop_break:
+                        if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
                 }
-                jj_entries_loop_break:
-                if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
             }
         }
 

@@ -396,12 +396,10 @@ namespace Lucene.Net.Search
 
             buffer.Append("\"");
             int k = 0;
-            IEnumerator<Term[]> i = termArrays.GetEnumerator();
             int? lastPos = -1;
             bool first = true;
-            while (i.MoveNext())
+            foreach (Term[] terms in termArrays)
             {
-                Term[] terms = i.Current;
                 int? position = positions[k];
                 if (first)
                 {
@@ -546,10 +544,8 @@ namespace Lucene.Net.Search
             internal DocsQueue(ICollection<DocsAndPositionsEnum> docsEnums)
                 : base(docsEnums.Count)
             {
-                IEnumerator<DocsAndPositionsEnum> i = docsEnums.GetEnumerator();
-                while (i.MoveNext())
+                foreach (DocsAndPositionsEnum postings in docsEnums)
                 {
-                    DocsAndPositionsEnum postings = i.Current;
                     if (postings.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         Add(postings);

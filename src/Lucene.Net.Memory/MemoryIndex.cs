@@ -629,10 +629,12 @@ namespace Lucene.Net.Index.Memory
             int size = map.Count;
             KeyValuePair<K, V>[] entries = new KeyValuePair<K, V>[size];
 
-            IEnumerator<KeyValuePair<K, V>> iter = map.GetEnumerator();
-            for (int i = 0; i < size && iter.MoveNext(); i++)
+            using (IEnumerator<KeyValuePair<K, V>> iter = map.GetEnumerator())
             {
-                entries[i] = iter.Current;
+                for (int i = 0; i < size && iter.MoveNext(); i++)
+                {
+                    entries[i] = iter.Current;
+                }
             }
 
             if (size > 1)

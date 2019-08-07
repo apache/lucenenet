@@ -250,7 +250,6 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldQuery fieldQuery, IndexReader reader, int docId,
             ISet<string> matchedFields, int fragCharSize)
         {
-            IEnumerator<string> matchedFieldsItr = matchedFields.GetEnumerator();
             if (!matchedFields.Any())
             {
                 throw new ArgumentException("matchedFields must contain at least on field name.");
@@ -258,9 +257,9 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldPhraseList[]
             toMerge = new FieldPhraseList[matchedFields.Count];
             int i = 0;
-            while (matchedFieldsItr.MoveNext())
+            foreach (var matchedField in matchedFields)
             {
-                FieldTermStack stack = new FieldTermStack(reader, docId, matchedFieldsItr.Current, fieldQuery);
+                FieldTermStack stack = new FieldTermStack(reader, docId, matchedField, fieldQuery);
                 toMerge[i++] = new FieldPhraseList(stack, fieldQuery, phraseLimit);
             }
             return fragListBuilder.CreateFieldFragList(new FieldPhraseList(toMerge), fragCharSize);

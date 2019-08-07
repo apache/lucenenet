@@ -558,7 +558,6 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     Exception priorE = null;
-                    IEnumerator<KeyValuePair<SegmentCommitInfo, ReadersAndUpdates>> it = readerMap.GetEnumerator();
 
                     // LUCENENET specific - Since an enumerator doesn't allow you to delete 
                     // immediately, keep track of which elements we have iterated over so
@@ -566,9 +565,9 @@ namespace Lucene.Net.Index
                     // end of the block.
                     IList<KeyValuePair<SegmentCommitInfo, ReadersAndUpdates>> toDelete = new List<KeyValuePair<SegmentCommitInfo, ReadersAndUpdates>>();
 
-                    while (it.MoveNext())
+                    foreach (var pair in readerMap)
                     {
-                        ReadersAndUpdates rld = it.Current.Value;
+                        ReadersAndUpdates rld = pair.Value;
 
                         try
                         {
@@ -612,7 +611,7 @@ namespace Lucene.Net.Index
                         // so we store the elements that are iterated over and
                         // delete as soon as we are done iterating (whether
                         // that is because of an exception or not).
-                        toDelete.Add(it.Current);
+                        toDelete.Add(pair);
 
                         // NOTE: it is allowed that these decRefs do not
                         // actually close the SRs; this happens when a

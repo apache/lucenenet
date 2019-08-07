@@ -124,9 +124,7 @@ namespace Lucene.Net.Util.Automaton
                 visited.Add(s);
                 if (!s.accept && s.NumTransitions == 1)
                 {
-                    var iter = s.GetTransitions().GetEnumerator();
-                    iter.MoveNext();
-                    Transition t = iter.Current;
+                    Transition t = s.GetTransitions().First();
                     if (t.min == t.max && !visited.Contains(t.to))
                     {
                         b.AppendCodePoint(t.min);
@@ -157,9 +155,7 @@ namespace Lucene.Net.Util.Automaton
                 visited.Add(s);
                 if (!s.accept && s.NumTransitions == 1)
                 {
-                    var iter = s.GetTransitions().GetEnumerator();
-                    iter.MoveNext();
-                    Transition t = iter.Current;
+                    Transition t = s.GetTransitions().First();
 
                     if (t.min == t.max && !visited.Contains(t.to))
                     {

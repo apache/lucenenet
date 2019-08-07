@@ -214,10 +214,12 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="arrayIndex">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
         public virtual void CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex)
         {
-            var iter = (EntryIterator)EntrySet().GetEnumerator();
-            for (int i = arrayIndex; iter.MoveNext(); i++)
+            using (var iter = (EntryIterator)EntrySet().GetEnumerator())
             {
-                array[i] = new KeyValuePair<string, TValue>(iter.Current.Key, iter.CurrentValue);
+                for (int i = arrayIndex; iter.MoveNext(); i++)
+                {
+                    array[i] = new KeyValuePair<string, TValue>(iter.Current.Key, iter.CurrentValue);
+                }
             }
         }
 
@@ -228,10 +230,12 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="map"></param>
         public virtual void CopyTo(CharArrayMap<TValue> map)
         {
-            var iter = (EntryIterator)EntrySet().GetEnumerator();
-            while(iter.MoveNext())
+            using (var iter = (EntryIterator)EntrySet().GetEnumerator())
             {
-                map.Put(iter.Current.Key, iter.CurrentValue);
+                while (iter.MoveNext())
+                {
+                    map.Put(iter.Current.Key, iter.CurrentValue);
+                }
             }
         }
 
@@ -758,14 +762,16 @@ namespace Lucene.Net.Analysis.Util
             if (this.Count != other.Count)
                 return false;
 
-            var iter = other.GetEnumerator();
-            while (iter.MoveNext())
+            using (var iter = other.GetEnumerator())
             {
-                if (!this.ContainsKey(iter.Current.Key))
-                    return false;
+                while (iter.MoveNext())
+                {
+                    if (!this.ContainsKey(iter.Current.Key))
+                        return false;
 
-                if (!EqualityComparer<TValue>.Default.Equals(this[iter.Current.Key], iter.Current.Value))
-                    return false;
+                    if (!EqualityComparer<TValue>.Default.Equals(this[iter.Current.Key], iter.Current.Value))
+                        return false;
+                }
             }
 
             return true;
@@ -1155,10 +1161,12 @@ namespace Lucene.Net.Analysis.Util
 
             public void CopyTo(string[] array, int arrayIndex)
             {
-                var iter = GetEnumerator();
-                for (int i = arrayIndex; iter.MoveNext(); i++)
+                using (var iter = GetEnumerator())
                 {
-                    array[i] = iter.Current;
+                    for (int i = arrayIndex; iter.MoveNext(); i++)
+                    {
+                        array[i] = iter.Current;
+                    }
                 }
             }
 
@@ -1289,23 +1297,25 @@ namespace Lucene.Net.Analysis.Util
 
             public override string ToString()
             {
-                var i = (ValueEnumerator)GetEnumerator();
-                if (!i.HasNext)
-                    return "[]";
-
-                StringBuilder sb = new StringBuilder();
-                sb.Append('[');
-                while(i.MoveNext())
+                using (var i = (ValueEnumerator)GetEnumerator())
                 {
-                    TValue value = i.Current;
-                    if (sb.Length > 1)
-                    {
-                        sb.Append(',').Append(' ');
-                    }
-                    sb.Append(value.ToString());
-                }
+                    if (!i.HasNext)
+                        return "[]";
 
-                return sb.Append(']').ToString();
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append('[');
+                    while (i.MoveNext())
+                    {
+                        TValue value = i.Current;
+                        if (sb.Length > 1)
+                        {
+                            sb.Append(',').Append(' ');
+                        }
+                        sb.Append(value.ToString());
+                    }
+
+                    return sb.Append(']').ToString();
+                }
             }
 
             /// <summary>
@@ -1340,7 +1350,7 @@ namespace Lucene.Net.Analysis.Util
 
                 public void Dispose()
                 {
-                    // nothing to do
+                    entryIterator.Dispose();
                 }
 
                 public bool MoveNext()
@@ -1414,17 +1424,19 @@ namespace Lucene.Net.Analysis.Util
         {
             var sb = new StringBuilder("{");
 
-            IEnumerator<KeyValuePair<string, TValue>> iter1 = DictionaryExtensions.EntrySet(this).GetEnumerator();
-            while (iter1.MoveNext())
+            using (IEnumerator<KeyValuePair<string, TValue>> iter1 = DictionaryExtensions.EntrySet(this).GetEnumerator())
             {
-                KeyValuePair<string, TValue> entry = iter1.Current;
-                if (sb.Length > 1)
+                while (iter1.MoveNext())
                 {
-                    sb.Append(", ");
+                    KeyValuePair<string, TValue> entry = iter1.Current;
+                    if (sb.Length > 1)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(entry.Key);
+                    sb.Append("=");
+                    sb.Append(entry.Value);
                 }
-                sb.Append(entry.Key);
-                sb.Append("=");
-                sb.Append(entry.Value);
             }
 
             return sb.Append('}').ToString();

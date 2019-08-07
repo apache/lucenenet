@@ -58,59 +58,61 @@ namespace Lucene.Net.Search.VectorHighlight
                 throw new ArgumentException("fragCharSize(" + fragCharSize + ") is too small. It must be " + minFragCharSize + " or higher.");
 
             List<WeightedPhraseInfo> wpil = new List<WeightedPhraseInfo>();
-            IteratorQueue<WeightedPhraseInfo> queue = new IteratorQueue<WeightedPhraseInfo>(fieldPhraseList.PhraseList.GetEnumerator());
-            WeightedPhraseInfo phraseInfo = null;
-            int startOffset = 0;
-            while ((phraseInfo = queue.Top()) != null)
+            using (IteratorQueue<WeightedPhraseInfo> queue = new IteratorQueue<WeightedPhraseInfo>(fieldPhraseList.PhraseList.GetEnumerator()))
             {
-                // if the phrase violates the border of previous fragment, discard it and try next phrase
-                if (phraseInfo.StartOffset < startOffset)
-                {
-                    queue.RemoveTop();
-                    continue;
-                }
-
-                wpil.Clear();
-                int currentPhraseStartOffset = phraseInfo.StartOffset;
-                int currentPhraseEndOffset = phraseInfo.EndOffset;
-                int spanStart = Math.Max(currentPhraseStartOffset - margin, startOffset);
-                int spanEnd = Math.Max(currentPhraseEndOffset, spanStart + fragCharSize);
-                if (AcceptPhrase(queue.RemoveTop(), currentPhraseEndOffset - currentPhraseStartOffset, fragCharSize))
-                {
-                    wpil.Add(phraseInfo);
-                }
+                WeightedPhraseInfo phraseInfo = null;
+                int startOffset = 0;
                 while ((phraseInfo = queue.Top()) != null)
-                { // pull until we crossed the current spanEnd
-                    if (phraseInfo.EndOffset <= spanEnd)
+                {
+                    // if the phrase violates the border of previous fragment, discard it and try next phrase
+                    if (phraseInfo.StartOffset < startOffset)
                     {
-                        currentPhraseEndOffset = phraseInfo.EndOffset;
-                        if (AcceptPhrase(queue.RemoveTop(), currentPhraseEndOffset - currentPhraseStartOffset, fragCharSize))
+                        queue.RemoveTop();
+                        continue;
+                    }
+
+                    wpil.Clear();
+                    int currentPhraseStartOffset = phraseInfo.StartOffset;
+                    int currentPhraseEndOffset = phraseInfo.EndOffset;
+                    int spanStart = Math.Max(currentPhraseStartOffset - margin, startOffset);
+                    int spanEnd = Math.Max(currentPhraseEndOffset, spanStart + fragCharSize);
+                    if (AcceptPhrase(queue.RemoveTop(), currentPhraseEndOffset - currentPhraseStartOffset, fragCharSize))
+                    {
+                        wpil.Add(phraseInfo);
+                    }
+                    while ((phraseInfo = queue.Top()) != null)
+                    { // pull until we crossed the current spanEnd
+                        if (phraseInfo.EndOffset <= spanEnd)
                         {
-                            wpil.Add(phraseInfo);
+                            currentPhraseEndOffset = phraseInfo.EndOffset;
+                            if (AcceptPhrase(queue.RemoveTop(), currentPhraseEndOffset - currentPhraseStartOffset, fragCharSize))
+                            {
+                                wpil.Add(phraseInfo);
+                            }
+                        }
+                        else
+                        {
+                            break;
                         }
                     }
-                    else
+                    if (!wpil.Any())
                     {
-                        break;
+                        continue;
                     }
-                }
-                if (!wpil.Any())
-                {
-                    continue;
-                }
 
-                int matchLen = currentPhraseEndOffset - currentPhraseStartOffset;
-                // now recalculate the start and end position to "center" the result
-                int newMargin = Math.Max(0, (fragCharSize - matchLen) / 2); // matchLen can be > fragCharSize prevent IAOOB here
-                spanStart = currentPhraseStartOffset - newMargin;
-                if (spanStart < startOffset)
-                {
-                    spanStart = startOffset;
+                    int matchLen = currentPhraseEndOffset - currentPhraseStartOffset;
+                    // now recalculate the start and end position to "center" the result
+                    int newMargin = Math.Max(0, (fragCharSize - matchLen) / 2); // matchLen can be > fragCharSize prevent IAOOB here
+                    spanStart = currentPhraseStartOffset - newMargin;
+                    if (spanStart < startOffset)
+                    {
+                        spanStart = startOffset;
+                    }
+                    // whatever is bigger here we grow this out
+                    spanEnd = spanStart + Math.Max(matchLen, fragCharSize);
+                    startOffset = spanEnd;
+                    fieldFragList.Add(spanStart, spanEnd, wpil);
                 }
-                // whatever is bigger here we grow this out
-                spanEnd = spanStart + Math.Max(matchLen, fragCharSize);
-                startOffset = spanEnd;
-                fieldFragList.Add(spanStart, spanEnd, wpil);
             }
             return fieldFragList;
         }
@@ -131,7 +133,7 @@ namespace Lucene.Net.Search.VectorHighlight
             return info.TermsOffsets.Count <= 1 || matchLength <= fragCharSize;
         }
 
-        private sealed class IteratorQueue<T>
+        private sealed class IteratorQueue<T> : IDisposable // LUCENENET specific - implemented IDisposable to dispose the IEnumerator<T>
         {
             private readonly IEnumerator<T> iter;
             private T top;
@@ -160,6 +162,11 @@ namespace Lucene.Net.Search.VectorHighlight
                     top = default(T);
                 }
                 return currentTop;
+            }
+
+            public void Dispose()
+            {
+                iter.Dispose();
             }
         }
     }

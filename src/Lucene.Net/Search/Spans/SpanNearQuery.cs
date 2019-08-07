@@ -129,11 +129,9 @@ namespace Lucene.Net.Search.Spans
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("SpanNear([");
-            IEnumerator<SpanQuery> i = m_clauses.GetEnumerator();
             bool isFirst = true;
-            while (i.MoveNext())
+            foreach (SpanQuery clause in m_clauses)
             {
-                SpanQuery clause = i.Current;
                 if (!isFirst)
                 {
                     buffer.Append(", ");

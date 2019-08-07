@@ -74,7 +74,8 @@ namespace Lucene.Net.Index
             f = new FieldFilterFields(this, f);
             // we need to check for emptyness, so we can return
             // null:
-            return f.GetEnumerator().MoveNext() ? f : null;
+            using (var iter = f.GetEnumerator())
+                return iter.MoveNext() ? f : null;
         }
 
         public override void Document(int docID, StoredFieldVisitor visitor)

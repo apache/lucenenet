@@ -159,36 +159,38 @@ namespace Lucene.Net.Codecs.Asserting
                 int docCount = 0;
                 long ordCount = 0;
                 Int64BitSet seenOrds = new Int64BitSet(valueCount);
-                IEnumerator<long?> ordIterator = ords.GetEnumerator();
-                foreach (long? v in docToOrdCount)
+                using (IEnumerator<long?> ordIterator = ords.GetEnumerator())
                 {
-                    Debug.Assert(v != null);
-                    int count = (int)v.Value;
-                    Debug.Assert(count >= 0);
-                    docCount++;
-                    ordCount += count;
-
-                    long lastOrd = -1;
-                    for (int i = 0; i < count; i++)
+                    foreach (long? v in docToOrdCount)
                     {
-                        ordIterator.MoveNext();
-                        long? o = ordIterator.Current;
-                        Debug.Assert(o != null);
-                        long ord = o.Value;
-                        Debug.Assert(ord >= 0 && ord < valueCount);
-                        Debug.Assert(ord > lastOrd, "ord=" + ord + ",lastOrd=" + lastOrd);
-                        seenOrds.Set(ord);
-                        lastOrd = ord;
-                    }
-                }
-                Debug.Assert(ordIterator.MoveNext() == false);
+                        Debug.Assert(v != null);
+                        int count = (int)v.Value;
+                        Debug.Assert(count >= 0);
+                        docCount++;
+                        ordCount += count;
 
-                Debug.Assert(docCount == MaxDoc);
-                Debug.Assert(seenOrds.Cardinality() == valueCount);
-                CheckIterator(values.GetEnumerator(), valueCount, false);
-                CheckIterator(docToOrdCount.GetEnumerator(), MaxDoc, false);
-                CheckIterator(ords.GetEnumerator(), ordCount, false);
-                @in.AddSortedSetField(field, values, docToOrdCount, ords);
+                        long lastOrd = -1;
+                        for (int i = 0; i < count; i++)
+                        {
+                            ordIterator.MoveNext();
+                            long? o = ordIterator.Current;
+                            Debug.Assert(o != null);
+                            long ord = o.Value;
+                            Debug.Assert(ord >= 0 && ord < valueCount);
+                            Debug.Assert(ord > lastOrd, "ord=" + ord + ",lastOrd=" + lastOrd);
+                            seenOrds.Set(ord);
+                            lastOrd = ord;
+                        }
+                    }
+                    Debug.Assert(ordIterator.MoveNext() == false);
+
+                    Debug.Assert(docCount == MaxDoc);
+                    Debug.Assert(seenOrds.Cardinality() == valueCount);
+                    CheckIterator(values.GetEnumerator(), valueCount, false);
+                    CheckIterator(docToOrdCount.GetEnumerator(), MaxDoc, false);
+                    CheckIterator(ords.GetEnumerator(), ordCount, false);
+                    @in.AddSortedSetField(field, values, docToOrdCount, ords);
+                }
             }
 
             protected override void Dispose(bool disposing)
@@ -246,32 +248,39 @@ namespace Lucene.Net.Codecs.Asserting
 
         private static void CheckIterator<T>(IEnumerator<T> iterator, long expectedSize, bool allowNull)
         {
-            for (long i = 0; i < expectedSize; i++)
+            try
             {
-                bool hasNext = iterator.MoveNext();
-                Debug.Assert(hasNext);
-                T v = iterator.Current;
-                Debug.Assert(allowNull || v != null);
-                try
+                for (long i = 0; i < expectedSize; i++)
                 {
-                    iterator.Reset();
-                    throw new InvalidOperationException("broken iterator (supports remove): " + iterator);
+                    bool hasNext = iterator.MoveNext();
+                    Debug.Assert(hasNext);
+                    T v = iterator.Current;
+                    Debug.Assert(allowNull || v != null);
+                    try
+                    {
+                        iterator.Reset();
+                        throw new InvalidOperationException("broken iterator (supports remove): " + iterator);
+                    }
+                    catch (System.NotSupportedException)
+                    {
+                        // ok
+                    }
                 }
-                catch (System.NotSupportedException)
+                Debug.Assert(!iterator.MoveNext());
+                /*try
                 {
-                    // ok
+                  //iterator.next();
+                  throw new InvalidOperationException("broken iterator (allows next() when hasNext==false) " + iterator);
                 }
+                catch (Exception)
+                {
+                  // ok
+                }*/
             }
-            Debug.Assert(!iterator.MoveNext());
-            /*try
+            finally
             {
-              //iterator.next();
-              throw new InvalidOperationException("broken iterator (allows next() when hasNext==false) " + iterator);
+                iterator.Dispose();
             }
-            catch (Exception)
-            {
-              // ok
-            }*/
         }
 
         internal class AssertingDocValuesProducer : DocValuesProducer

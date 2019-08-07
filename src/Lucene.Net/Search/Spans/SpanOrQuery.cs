@@ -134,11 +134,9 @@ namespace Lucene.Net.Search.Spans
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("spanOr([");
-            IEnumerator<SpanQuery> i = clauses.GetEnumerator();
             bool first = true;
-            while (i.MoveNext())
+            foreach (SpanQuery clause in clauses)
             {
-                SpanQuery clause = i.Current;
                 if (!first) buffer.Append(", ");
                 buffer.Append(clause.ToString(field));
                 first = false;
@@ -241,10 +239,9 @@ namespace Lucene.Net.Search.Spans
             private bool InitSpanQueue(int target)
             {
                 queue = new SpanQueue(outerInstance, outerInstance.clauses.Count);
-                IEnumerator<SpanQuery> i = outerInstance.clauses.GetEnumerator();
-                while (i.MoveNext())
+                foreach (var clause in outerInstance.clauses)
                 {
-                    Spans spans = i.Current.GetSpans(context, acceptDocs, termContexts);
+                    Spans spans = clause.GetSpans(context, acceptDocs, termContexts);
                     cost += spans.GetCost();
                     if (((target == -1) && spans.Next()) || ((target != -1) && spans.SkipTo(target)))
                     {

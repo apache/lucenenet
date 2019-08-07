@@ -38,19 +38,21 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldFragList ffl = new SimpleFieldFragList(fragCharSize);
 
             List<WeightedPhraseInfo> wpil = new List<WeightedPhraseInfo>();
-            IEnumerator<WeightedPhraseInfo> ite = fieldPhraseList.PhraseList.GetEnumerator();
-            WeightedPhraseInfo phraseInfo = null;
-            while (true)
+            using (IEnumerator<WeightedPhraseInfo> ite = fieldPhraseList.PhraseList.GetEnumerator())
             {
-                if (!ite.MoveNext()) break;
-                phraseInfo = ite.Current;
-                if (phraseInfo == null) break;
+                WeightedPhraseInfo phraseInfo = null;
+                while (true)
+                {
+                    if (!ite.MoveNext()) break;
+                    phraseInfo = ite.Current;
+                    if (phraseInfo == null) break;
 
-                wpil.Add(phraseInfo);
+                    wpil.Add(phraseInfo);
+                }
+                if (wpil.Count > 0)
+                    ffl.Add(0, int.MaxValue, wpil);
+                return ffl;
             }
-            if (wpil.Count > 0)
-                ffl.Add(0, int.MaxValue, wpil);
-            return ffl;
         }
     }
 }

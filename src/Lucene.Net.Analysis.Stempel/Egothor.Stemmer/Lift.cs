@@ -116,10 +116,8 @@ namespace Egothor.Stemmer
         /// <param name="nodes">contains the patch commands</param>
         public void LiftUp(Row @in, IList<Row> nodes)
         {
-            IEnumerator<Cell> i = @in.cells.Values.GetEnumerator();
-            for (; i.MoveNext();)
+            foreach (Cell c in @in.cells.Values)
             {
-                Cell c = i.Current;
                 if (c.@ref >= 0)
                 {
                     Row to = nodes[c.@ref];

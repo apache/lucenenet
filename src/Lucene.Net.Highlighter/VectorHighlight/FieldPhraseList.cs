@@ -149,54 +149,66 @@ namespace Lucene.Net.Search.VectorHighlight
             // Step 1.  Sort by startOffset, endOffset, and boost, in that order.
 
             IEnumerator<WeightedPhraseInfo>[] allInfos = new IEnumerator<WeightedPhraseInfo>[toMerge.Length];
-            int index = 0;
-            foreach (FieldPhraseList fplToMerge in toMerge)
+            try
             {
-                allInfos[index++] = fplToMerge.phraseList.GetEnumerator();
-            }
-            MergedIterator<WeightedPhraseInfo> itr = new MergedIterator<WeightedPhraseInfo>(false, allInfos);
-            // Step 2.  Walk the sorted list merging infos that overlap
-            phraseList = new List<WeightedPhraseInfo>();
-            if (!itr.MoveNext())
-            {
-                return;
-            }
-            List<WeightedPhraseInfo> work = new List<WeightedPhraseInfo>();
-            WeightedPhraseInfo first = itr.Current;
-            work.Add(first);
-            int workEndOffset = first.EndOffset;
-            while (itr.MoveNext())
-            {
-                WeightedPhraseInfo current = itr.Current;
-                if (current.StartOffset <= workEndOffset)
+                int index = 0;
+                foreach (FieldPhraseList fplToMerge in toMerge)
                 {
-                    workEndOffset = Math.Max(workEndOffset, current.EndOffset);
-                    work.Add(current);
+                    allInfos[index++] = fplToMerge.phraseList.GetEnumerator();
                 }
-                else
+                using (MergedIterator<WeightedPhraseInfo> itr = new MergedIterator<WeightedPhraseInfo>(false, allInfos))
                 {
+                    // Step 2.  Walk the sorted list merging infos that overlap
+                    phraseList = new List<WeightedPhraseInfo>();
+                    if (!itr.MoveNext())
+                    {
+                        return;
+                    }
+                    List<WeightedPhraseInfo> work = new List<WeightedPhraseInfo>();
+                    WeightedPhraseInfo first = itr.Current;
+                    work.Add(first);
+                    int workEndOffset = first.EndOffset;
+                    while (itr.MoveNext())
+                    {
+                        WeightedPhraseInfo current = itr.Current;
+                        if (current.StartOffset <= workEndOffset)
+                        {
+                            workEndOffset = Math.Max(workEndOffset, current.EndOffset);
+                            work.Add(current);
+                        }
+                        else
+                        {
+                            if (work.Count == 1)
+                            {
+                                phraseList.Add(work[0]);
+                                work[0] = current;
+                            }
+                            else
+                            {
+                                phraseList.Add(new WeightedPhraseInfo(work));
+                                work.Clear();
+                                work.Add(current);
+                            }
+                            workEndOffset = current.EndOffset;
+                        }
+                    }
                     if (work.Count == 1)
                     {
                         phraseList.Add(work[0]);
-                        work[0] = current;
                     }
                     else
                     {
                         phraseList.Add(new WeightedPhraseInfo(work));
                         work.Clear();
-                        work.Add(current);
                     }
-                    workEndOffset = current.EndOffset;
                 }
             }
-            if (work.Count == 1)
+            finally
             {
-                phraseList.Add(work[0]);
-            }
-            else
-            {
-                phraseList.Add(new WeightedPhraseInfo(work));
-                work.Clear();
+                foreach (var allInfo in allInfos)
+                {
+                    allInfo.Dispose();
+                }
             }
         }
 
@@ -307,50 +319,67 @@ namespace Lucene.Net.Search.VectorHighlight
             /// </summary>
             public WeightedPhraseInfo(ICollection<WeightedPhraseInfo> toMerge)
             {
-                // Pretty much the same idea as merging FieldPhraseLists:
-                // Step 1.  Sort by startOffset, endOffset
-                //          While we are here merge the boosts and termInfos
-                IEnumerator<WeightedPhraseInfo> toMergeItr = toMerge.GetEnumerator();
-                if (!toMergeItr.MoveNext())
-                {
-                    throw new ArgumentException("toMerge must contain at least one WeightedPhraseInfo.");
-                }
-                WeightedPhraseInfo first = toMergeItr.Current;
                 IEnumerator<Toffs>[] allToffs = new IEnumerator<Toffs>[toMerge.Count];
-                termsInfos = new List<TermInfo>();
-                seqnum = first.seqnum;
-                boost = first.boost;
-                allToffs[0] = first.termsOffsets.GetEnumerator();
-                int index = 1;
-                while (toMergeItr.MoveNext())
+                try
                 {
-                    WeightedPhraseInfo info = toMergeItr.Current;
-                    boost += info.boost;
-                    termsInfos.AddAll(info.termsInfos);
-                    allToffs[index++] = info.termsOffsets.GetEnumerator();
-                }
-                // Step 2.  Walk the sorted list merging overlaps
-                MergedIterator<Toffs> itr = new MergedIterator<Toffs>(false, allToffs);
-                termsOffsets = new List<Toffs>();
-                if (!itr.MoveNext())
-                {
-                    return;
-                }
-                Toffs work = itr.Current;
-                while (itr.MoveNext())
-                {
-                    Toffs current = itr.Current;
-                    if (current.StartOffset <= work.EndOffset)
+
+                    // Pretty much the same idea as merging FieldPhraseLists:
+                    // Step 1.  Sort by startOffset, endOffset
+                    //          While we are here merge the boosts and termInfos
+                    using (IEnumerator<WeightedPhraseInfo> toMergeItr = toMerge.GetEnumerator())
                     {
-                        work.EndOffset = Math.Max(work.EndOffset, current.EndOffset);
-                    }
-                    else
-                    {
-                        termsOffsets.Add(work);
-                        work = current;
+                        if (!toMergeItr.MoveNext())
+                        {
+                            throw new ArgumentException("toMerge must contain at least one WeightedPhraseInfo.");
+                        }
+                        WeightedPhraseInfo first = toMergeItr.Current;
+
+                        termsInfos = new List<TermInfo>();
+                        seqnum = first.seqnum;
+                        boost = first.boost;
+                        allToffs[0] = first.termsOffsets.GetEnumerator();
+                        int index = 1;
+                        while (toMergeItr.MoveNext())
+                        {
+                            WeightedPhraseInfo info = toMergeItr.Current;
+                            boost += info.boost;
+                            termsInfos.AddAll(info.termsInfos);
+                            allToffs[index++] = info.termsOffsets.GetEnumerator();
+                        }
+
+                        // Step 2.  Walk the sorted list merging overlaps
+                        using (MergedIterator<Toffs> itr = new MergedIterator<Toffs>(false, allToffs))
+                        {
+                            termsOffsets = new List<Toffs>();
+                            if (!itr.MoveNext())
+                            {
+                                return;
+                            }
+                            Toffs work = itr.Current;
+                            while (itr.MoveNext())
+                            {
+                                Toffs current = itr.Current;
+                                if (current.StartOffset <= work.EndOffset)
+                                {
+                                    work.EndOffset = Math.Max(work.EndOffset, current.EndOffset);
+                                }
+                                else
+                                {
+                                    termsOffsets.Add(work);
+                                    work = current;
+                                }
+                            }
+                            termsOffsets.Add(work);
+                        }
                     }
                 }
-                termsOffsets.Add(work);
+                finally
+                {
+                    foreach (var allToff in allToffs)
+                    {
+                        allToff.Dispose();
+                    }
+                }
             }
 
             public virtual int StartOffset

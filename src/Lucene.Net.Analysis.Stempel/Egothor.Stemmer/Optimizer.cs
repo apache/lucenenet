@@ -124,11 +124,9 @@ namespace Egothor.Stemmer
         /// <returns>the resulting <see cref="Row"/>, or <c>null</c> if the operation cannot be realized</returns>
         public Row Merge(Row master, Row existing)
         {
-            var i = master.cells.Keys.GetEnumerator();
             Row n = new Row();
-            for (; i.MoveNext();)
+            foreach (char ch in master.cells.Keys)
             {
-                char ch = i.Current;
                 // XXX also must handle Cnt and Skip !!
                 Cell a = master.cells.ContainsKey(ch) ? master.cells[ch] : null;
                 Cell b = existing.cells.ContainsKey(ch) ? existing.cells[ch] : null;
@@ -140,10 +138,8 @@ namespace Egothor.Stemmer
                 }
                 n.cells[ch] = s;
             }
-            i = existing.cells.Keys.GetEnumerator();
-            for (; i.MoveNext();)
+            foreach (char ch in existing.cells.Keys)
             {
-                char ch = i.Current;
                 if (master.At(ch) != null)
                 {
                     continue;

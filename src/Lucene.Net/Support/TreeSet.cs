@@ -1150,65 +1150,68 @@ namespace Lucene.Net.Support
 
         void addSorted(SCG.IEnumerable<T> items, bool safe, bool raise)
         {
-            SCG.IEnumerator<T> e = items.GetEnumerator(); ;
-            if (size > 0)
-                throw new InternalException("This can't happen");
+            using (SCG.IEnumerator<T> e = items.GetEnumerator())
+            {
+                if (size > 0)
+                    throw new InternalException("This can't happen");
 
-            if (!e.MoveNext())
+                if (!e.MoveNext())
+                    return;
+
+                //To count theCollect 
+                Node head = new Node(), tail = head;
+                int z = 1;
+                T lastitem = tail.item = e.Current;
+
+
+                while (e.MoveNext())
+                {
+
+                    z++;
+                    tail.right = new Node();
+                    tail = tail.right;
+                    tail.item = e.Current;
+                    if (safe)
+                    {
+                        if (comparer.Compare(lastitem, tail.item) >= 0)
+                            throw new ArgumentException("Argument not sorted");
+
+                        lastitem = tail.item;
+                    }
+                    tail.generation = generation;
+
+                }
+
+
+                int blackheight = 0, red = z, maxred = 1;
+
+                while (maxred <= red)
+                {
+                    red -= maxred;
+                    maxred <<= 1;
+                    blackheight++;
+                }
+
+                root = TreeSet<T>.maketreer(ref head, blackheight, maxred, red);
+                blackdepth = blackheight;
+                size = z;
+
+
+                if (raise)
+                {
+                    if ((ActiveEvents & EventTypeEnum.Added) != 0)
+                    {
+                        CircularQueue<T> wasAdded = new CircularQueue<T>();
+                        foreach (T item in this)
+                            wasAdded.Enqueue(item);
+                        foreach (T item in wasAdded)
+                            raiseItemsAdded(item, 1);
+                    }
+                    if ((ActiveEvents & EventTypeEnum.Changed) != 0)
+                        raiseCollectionChanged();
+                }
                 return;
-
-            //To count theCollect 
-            Node head = new Node(), tail = head;
-            int z = 1;
-            T lastitem = tail.item = e.Current;
-
-
-            while (e.MoveNext())
-            {
-
-                z++;
-                tail.right = new Node();
-                tail = tail.right;
-                tail.item = e.Current;
-                if (safe)
-                {
-                    if (comparer.Compare(lastitem, tail.item) >= 0)
-                        throw new ArgumentException("Argument not sorted");
-
-                    lastitem = tail.item;
-                }
-                tail.generation = generation;
-
             }
-
-            int blackheight = 0, red = z, maxred = 1;
-
-            while (maxred <= red)
-            {
-                red -= maxred;
-                maxred <<= 1;
-                blackheight++;
-            }
-
-            root = TreeSet<T>.maketreer(ref head, blackheight, maxred, red);
-            blackdepth = blackheight;
-            size = z;
-
-
-            if (raise)
-            {
-                if ((ActiveEvents & EventTypeEnum.Added) != 0)
-                {
-                    CircularQueue<T> wasAdded = new CircularQueue<T>();
-                    foreach (T item in this)
-                        wasAdded.Enqueue(item);
-                    foreach (T item in wasAdded)
-                        raiseItemsAdded(item, 1);
-                }
-                if ((ActiveEvents & EventTypeEnum.Changed) != 0)
-                    raiseCollectionChanged();
-            }
-            return;
         }
 
         #endregion
@@ -1909,23 +1912,25 @@ namespace Lucene.Net.Support
             if ((ActiveEvents & EventTypeEnum.Removed) != 0)
             {
                 wasRemoved = new CircularQueue<KeyValuePair<T, int>>();
-                SCG.IEnumerator<KeyValuePair<T, int>> ie = ItemMultiplicities().GetEnumerator();
-                foreach (KeyValuePair<T, int> p in t.ItemMultiplicities())
+                using (SCG.IEnumerator<KeyValuePair<T, int>> ie = ItemMultiplicities().GetEnumerator())
                 {
-                    //We know p.Key is in this!
-                    while (ie.MoveNext())
+                    foreach (KeyValuePair<T, int> p in t.ItemMultiplicities())
                     {
-                        if (comparer.Compare(ie.Current.Key, p.Key) == 0)
+                        //We know p.Key is in this!
+                        while (ie.MoveNext())
                         {
+                            if (comparer.Compare(ie.Current.Key, p.Key) == 0)
+                            {
 
-                            break;
+                                break;
+                            }
+                            else
+                                wasRemoved.Enqueue(ie.Current);
                         }
-                        else
-                            wasRemoved.Enqueue(ie.Current);
                     }
+                    while (ie.MoveNext())
+                        wasRemoved.Enqueue(ie.Current);
                 }
-                while (ie.MoveNext())
-                    wasRemoved.Enqueue(ie.Current);
             }
 
             root = t.root;
@@ -1971,50 +1976,52 @@ namespace Lucene.Net.Support
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
             TreeSet<T> res = new TreeSet<T>(comparer);
-            SCG.IEnumerator<T> e = GetEnumerator();
-            Node head = null, tail = null;
-            int z = 0;
-
-            while (e.MoveNext())
+            using (SCG.IEnumerator<T> e = GetEnumerator())
             {
-                T thisitem = e.Current;
+                Node head = null, tail = null;
+                int z = 0;
 
-                if (filter(thisitem))
+                while (e.MoveNext())
                 {
-                    if (head == null)
-                    {
-                        head = tail = new Node();
-                    }
-                    else
-                    {
+                    T thisitem = e.Current;
 
-                        tail.right = new Node();
-                        tail = tail.right;
-                    }
+                    if (filter(thisitem))
+                    {
+                        if (head == null)
+                        {
+                            head = tail = new Node();
+                        }
+                        else
+                        {
 
-                    tail.item = thisitem;
-                    z++;
+                            tail.right = new Node();
+                            tail = tail.right;
+                        }
+
+                        tail.item = thisitem;
+                        z++;
+                    }
                 }
-            }
 
 
-            if (z == 0)
+                if (z == 0)
+                    return res;
+
+                int blackheight = 0, red = z, maxred = 1;
+
+                while (maxred <= red)
+                {
+                    red -= maxred;
+                    maxred <<= 1;
+                    blackheight++;
+                }
+
+                res.root = TreeSet<T>.maketreer(ref head, blackheight, maxred, red);
+                res.blackdepth = blackheight;
+                res.size = z;
+
                 return res;
-
-            int blackheight = 0, red = z, maxred = 1;
-
-            while (maxred <= red)
-            {
-                red -= maxred;
-                maxred <<= 1;
-                blackheight++;
             }
-
-            res.root = TreeSet<T>.maketreer(ref head, blackheight, maxred, red);
-            res.blackdepth = blackheight;
-            res.size = z;
-
-            return res;
         }
 
 
@@ -2037,52 +2044,55 @@ namespace Lucene.Net.Support
             if (size == 0)
                 return res;
 
-            SCG.IEnumerator<T> e = GetEnumerator();
-            TreeSet<V>.Node head = null, tail = null;
-            V oldv = default(V);
-            int z = 0;
-
-            while (e.MoveNext())
+            using (SCG.IEnumerator<T> e = GetEnumerator())
             {
-                T thisitem = e.Current;
+                TreeSet<V>.Node head = null, tail = null;
+                V oldv = default(V);
+                int z = 0;
 
-                V newv = mapper(thisitem);
-
-                if (head == null)
+                while (e.MoveNext())
                 {
-                    head = tail = new TreeSet<V>.Node();
-                    z++;
+                    T thisitem = e.Current;
+
+                    V newv = mapper(thisitem);
+
+                    if (head == null)
+                    {
+                        head = tail = new TreeSet<V>.Node();
+                        z++;
+                    }
+                    else
+                    {
+                        int comp = c.Compare(oldv, newv);
+
+                        if (comp >= 0)
+
+                            throw new ArgumentException("mapper not monotonic");
+
+                        tail.right = new TreeSet<V>.Node();
+                        tail = tail.right;
+                        z++;
+                    }
+
+                    tail.item = oldv = newv;
                 }
-                else
+
+
+
+                int blackheight = 0, red = z, maxred = 1;
+
+                while (maxred <= red)
                 {
-                    int comp = c.Compare(oldv, newv);
-
-                    if (comp >= 0)
-
-                        throw new ArgumentException("mapper not monotonic");
-
-                    tail.right = new TreeSet<V>.Node();
-                    tail = tail.right;
-                    z++;
+                    red -= maxred;
+                    maxred <<= 1;
+                    blackheight++;
                 }
 
-                tail.item = oldv = newv;
+                res.root = TreeSet<V>.maketreer(ref head, blackheight, maxred, red);
+                res.blackdepth = blackheight;
+                res.size = size;
+                return res;
             }
-
-
-            int blackheight = 0, red = z, maxred = 1;
-
-            while (maxred <= red)
-            {
-                red -= maxred;
-                maxred <<= 1;
-                blackheight++;
-            }
-
-            res.root = TreeSet<V>.maketreer(ref head, blackheight, maxred, red);
-            res.blackdepth = blackheight;
-            res.size = size;
-            return res;
         }
 
 

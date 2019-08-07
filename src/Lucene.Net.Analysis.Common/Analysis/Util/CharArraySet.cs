@@ -366,10 +366,12 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         public void CopyTo(string[] array, int arrayIndex)
         {
-            var iter = map.OriginalKeySet.GetEnumerator();
-            for (int i = arrayIndex; iter.MoveNext(); i++)
+            using (var iter = map.OriginalKeySet.GetEnumerator())
             {
-                array[i] = iter.Current;
+                for (int i = arrayIndex; iter.MoveNext(); i++)
+                {
+                    array[i] = iter.Current;
+                }
             }
         }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 /*
@@ -1034,9 +1035,7 @@ namespace Lucene.Net.Util.Automaton
             }
             if (a.initial.accept && a.initial.NumTransitions == 1)
             {
-                var iter = a.initial.GetTransitions().GetEnumerator();
-                iter.MoveNext();
-                Transition t = iter.Current; ;
+                Transition t = a.initial.GetTransitions().First();
                 return t.to == a.initial && t.min == Character.MIN_CODE_POINT && t.max == Character.MAX_CODE_POINT;
             }
             return false;

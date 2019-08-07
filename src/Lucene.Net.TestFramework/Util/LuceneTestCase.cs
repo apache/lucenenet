@@ -1946,17 +1946,18 @@ namespace Lucene.Net.Util
             }
             AssertFieldStatisticsEquals(info, leftFields, rightFields);
 
-            IEnumerator<string> leftEnum = leftFields.GetEnumerator();
-            IEnumerator<string> rightEnum = rightFields.GetEnumerator();
-
-            while (leftEnum.MoveNext())
+            using (IEnumerator<string> leftEnum = leftFields.GetEnumerator())
+            using (IEnumerator<string> rightEnum = rightFields.GetEnumerator())
             {
-                string field = leftEnum.Current;
-                rightEnum.MoveNext();
-                Assert.AreEqual(field, rightEnum.Current, info);
-                AssertTermsEquals(info, leftReader, leftFields.GetTerms(field), rightFields.GetTerms(field), deep);
+                while (leftEnum.MoveNext())
+                {
+                    string field = leftEnum.Current;
+                    rightEnum.MoveNext();
+                    Assert.AreEqual(field, rightEnum.Current, info);
+                    AssertTermsEquals(info, leftReader, leftFields.GetTerms(field), rightFields.GetTerms(field), deep);
+                }
+                Assert.IsFalse(rightEnum.MoveNext());
             }
-            Assert.IsFalse(rightEnum.MoveNext());
         }
 
         /// <summary>
@@ -2410,14 +2411,16 @@ namespace Lucene.Net.Util
                 leftDoc.Fields.Sort(comp);
                 rightDoc.Fields.Sort(comp);
 
-                var leftIterator = leftDoc.GetEnumerator();
-                var rightIterator = rightDoc.GetEnumerator();
-                while (leftIterator.MoveNext())
+                using (var leftIterator = leftDoc.GetEnumerator())
+                using (var rightIterator = rightDoc.GetEnumerator())
                 {
-                    Assert.IsTrue(rightIterator.MoveNext(), info);
-                    AssertStoredFieldEquals(info, leftIterator.Current, rightIterator.Current);
+                    while (leftIterator.MoveNext())
+                    {
+                        Assert.IsTrue(rightIterator.MoveNext(), info);
+                        AssertStoredFieldEquals(info, leftIterator.Current, rightIterator.Current);
+                    }
+                    Assert.IsFalse(rightIterator.MoveNext(), info);
                 }
-                Assert.IsFalse(rightIterator.MoveNext(), info);
             }
         }
 

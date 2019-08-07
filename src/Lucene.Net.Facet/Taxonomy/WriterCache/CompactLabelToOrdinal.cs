@@ -212,12 +212,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             this.collisionMap = new CollisionMap(oldCollisionMap.Capacity, this.labelRepository);
             this.threshold = (int)(this.capacity * this.loadFactor);
 
-            var it = oldCollisionMap.GetEnumerator();
-
-            while (it.MoveNext())
+            using (var it = oldCollisionMap.GetEnumerator())
             {
-                var e = it.Current;
-                AddLabelOffset(StringHashCode(this.labelRepository, e.offset), e.cid, e.offset);
+                while (it.MoveNext())
+                {
+                    var e = it.Current;
+                    AddLabelOffset(StringHashCode(this.labelRepository, e.offset), e.cid, e.offset);
+                }
             }
         }
 

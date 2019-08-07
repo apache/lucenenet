@@ -292,107 +292,109 @@ namespace Lucene.Net.Store
                 OpenFiles = new Dictionary<string, int>();
                 OpenFilesForWrite = new HashSet<string>();
                 OpenFilesDeleted = new HashSet<string>();
-                IEnumerator<string> it = UnSyncedFiles.GetEnumerator();
-                UnSyncedFiles = new HashSet<string>();
-                // first force-close all files, so we can corrupt on windows etc.
-                // clone the file map, as these guys want to remove themselves on close.
-                var m = new IdentityHashMap<IDisposable, Exception>(OpenFileHandles);
-                foreach (IDisposable f in m.Keys)
+                using (IEnumerator<string> it = UnSyncedFiles.GetEnumerator())
                 {
-                    try
+                    UnSyncedFiles = new HashSet<string>();
+                    // first force-close all files, so we can corrupt on windows etc.
+                    // clone the file map, as these guys want to remove themselves on close.
+                    var m = new IdentityHashMap<IDisposable, Exception>(OpenFileHandles);
+                    foreach (IDisposable f in m.Keys)
                     {
-                        f.Dispose();
-                    }
+                        try
+                        {
+                            f.Dispose();
+                        }
 #pragma warning disable 168
-                    catch (Exception ignored)
+                        catch (Exception ignored)
 #pragma warning restore 168
-                    {
-                        //Debug.WriteLine("Crash(): f.Dispose() FAILED for {0}:\n{1}", f.ToString(), ignored.ToString());
-                    }
-                }
-
-                while (it.MoveNext())
-                {
-                    string name = it.Current;
-                    int damage = RandomState.Next(5);
-                    string action = null;
-
-                    if (damage == 0)
-                    {
-                        action = "deleted";
-                        DeleteFile(name, true);
-                    }
-                    else if (damage == 1)
-                    {
-                        action = "zeroed";
-                        // Zero out file entirely
-                        long length = FileLength(name);
-                        var zeroes = new byte[256];
-                        long upto = 0;
-                        using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState)))
                         {
-                            while (upto < length)
+                            //Debug.WriteLine("Crash(): f.Dispose() FAILED for {0}:\n{1}", f.ToString(), ignored.ToString());
+                        }
+                    }
+
+                    while (it.MoveNext())
+                    {
+                        string name = it.Current;
+                        int damage = RandomState.Next(5);
+                        string action = null;
+
+                        if (damage == 0)
+                        {
+                            action = "deleted";
+                            DeleteFile(name, true);
+                        }
+                        else if (damage == 1)
+                        {
+                            action = "zeroed";
+                            // Zero out file entirely
+                            long length = FileLength(name);
+                            var zeroes = new byte[256];
+                            long upto = 0;
+                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState)))
                             {
-                                var limit = (int)Math.Min(length - upto, zeroes.Length);
-                                @out.WriteBytes(zeroes, 0, limit);
-                                upto += limit;
+                                while (upto < length)
+                                {
+                                    var limit = (int)Math.Min(length - upto, zeroes.Length);
+                                    @out.WriteBytes(zeroes, 0, limit);
+                                    upto += limit;
+                                }
                             }
                         }
-                    }
-                    else if (damage == 2)
-                    {
-                        action = "partially truncated";
-                        // Partially Truncate the file:
-
-                        // First, make temp file and copy only half this
-                        // file over:
-                        string tempFileName;
-                        while (true)
+                        else if (damage == 2)
                         {
-                            tempFileName = "" + RandomState.Next();
-                            if (!LuceneTestCase.SlowFileExists(m_input, tempFileName))
+                            action = "partially truncated";
+                            // Partially Truncate the file:
+
+                            // First, make temp file and copy only half this
+                            // file over:
+                            string tempFileName;
+                            while (true)
                             {
-                                break;
+                                tempFileName = "" + RandomState.Next();
+                                if (!LuceneTestCase.SlowFileExists(m_input, tempFileName))
+                                {
+                                    break;
+                                }
+                            }
+                            using (IndexOutput tempOut = m_input.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(RandomState)))
+                            {
+                                using (IndexInput ii = m_input.OpenInput(name, LuceneTestCase.NewIOContext(RandomState)))
+                                {
+                                    tempOut.CopyBytes(ii, ii.Length / 2);
+                                }
+                            }
+
+                            // Delete original and copy bytes back:
+                            DeleteFile(name, true);
+
+                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState)))
+                            {
+                                using (IndexInput ii = m_input.OpenInput(tempFileName, LuceneTestCase.NewIOContext(RandomState)))
+                                {
+                                    @out.CopyBytes(ii, ii.Length);
+                                }
+                            }
+                            DeleteFile(tempFileName, true);
+                        }
+                        else if (damage == 3)
+                        {
+                            // The file survived intact:
+                            action = "didn't change";
+                        }
+                        else
+                        {
+                            action = "fully truncated";
+                            // Totally truncate the file to zero bytes
+                            DeleteFile(name, true);
+                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState)))
+                            {
+                                @out.Length = 0;
                             }
                         }
-                        using (IndexOutput tempOut = m_input.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(RandomState)))
+                        if (LuceneTestCase.VERBOSE)
                         {
-                            using (IndexInput ii = m_input.OpenInput(name, LuceneTestCase.NewIOContext(RandomState)))
-                            {
-                                tempOut.CopyBytes(ii, ii.Length / 2);
-                            }
+                            Console.WriteLine("MockDirectoryWrapper: " + action + " unsynced file: " + name);
                         }
-
-                        // Delete original and copy bytes back:
-                        DeleteFile(name, true);
-
-                        using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState)))
-                        {
-                            using (IndexInput ii = m_input.OpenInput(tempFileName, LuceneTestCase.NewIOContext(RandomState)))
-                            {
-                                @out.CopyBytes(ii, ii.Length);
-                            }
-                        }
-                        DeleteFile(tempFileName, true);
-                    }
-                    else if (damage == 3)
-                    {
-                        // The file survived intact:
-                        action = "didn't change";
-                    }
-                    else
-                    {
-                        action = "fully truncated";
-                        // Totally truncate the file to zero bytes
-                        DeleteFile(name, true);
-                        using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState)))
-                        {
-                            @out.Length = 0;
-                        }
-                    }
-                    if (LuceneTestCase.VERBOSE)
-                    {
-                        Console.WriteLine("MockDirectoryWrapper: " + action + " unsynced file: " + name);
                     }
                 }
             }
@@ -928,12 +930,7 @@ namespace Lucene.Net.Store
                     if (OpenFiles.Count > 0)
                     {
                         // print the first one as its very verbose otherwise
-                        Exception cause = null;
-                        IEnumerator<Exception> stacktraces = OpenFileHandles.Values.GetEnumerator();
-                        if (stacktraces.MoveNext())
-                        {
-                            cause = stacktraces.Current;
-                        }
+                        Exception cause = OpenFileHandles.Values.FirstOrDefault();
 
                         // RuntimeException instead ofSystem.IO.IOException because
                         // super() does not throwSystem.IO.IOException currently:

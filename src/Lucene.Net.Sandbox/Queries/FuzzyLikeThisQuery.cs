@@ -305,9 +305,8 @@ namespace Lucene.Net.Sandbox.Queries
                 l.Add(st);
             }
             //Step 2: Organize the sorted termqueries into zero-coord scoring boolean queries
-            for (var iter = variantQueries.Values.GetEnumerator(); iter.MoveNext();)
+            foreach (List<ScoreTerm> variants in variantQueries.Values)
             {
-                List<ScoreTerm> variants = iter.Current;
                 if (variants.Count == 1)
                 {
                     //optimize where only one selected variant
@@ -319,10 +318,8 @@ namespace Lucene.Net.Sandbox.Queries
                 else
                 {
                     BooleanQuery termVariants = new BooleanQuery(true); //disable coord and IDF for these term variants
-                    for (IEnumerator<ScoreTerm> iterator2 = variants.GetEnumerator(); iterator2
-                            .MoveNext();)
+                    foreach (ScoreTerm st in variants)
                     {
-                        ScoreTerm st = iterator2.Current;
                         // found a match
                         Query tq = ignoreTF ? (Query)new ConstantScoreQuery(new TermQuery(st.Term)) : new TermQuery(st.Term, 1);
                         tq.Boost = st.Score; // set the boost using the ScoreTerm's score

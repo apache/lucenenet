@@ -67,9 +67,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             StringBuilder sb = new StringBuilder();
             string filler = "";
-            for (IEnumerator<IQueryNode> it = children.GetEnumerator(); it.MoveNext();)
+            foreach (var child in children)
             {
-                sb.Append(filler).Append(it.Current.ToQueryString(escapeSyntaxParser));
+                sb.Append(filler).Append(child.ToQueryString(escapeSyntaxParser));
                 filler = " OR ";
             }
 

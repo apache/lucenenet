@@ -323,23 +323,25 @@ namespace Lucene.Net.Codecs.SimpleText
             // compute ord pattern: this is funny, we encode all values for all docs to find the maximum length
             var maxOrdListLength = 0;
             var sb2 = new StringBuilder();
-            var ordStream = ords.GetEnumerator();
-            foreach (var n in docToOrdCount)
+            using (var ordStream = ords.GetEnumerator())
             {
-                sb2.Length = 0;
-                var count = (int) n;
-                for (int i = 0; i < count; i++)
+                foreach (var n in docToOrdCount)
                 {
-                    ordStream.MoveNext();
-
-                    var ord = ordStream.Current;
-                    if (sb2.Length > 0)
+                    sb2.Length = 0;
+                    var count = (int)n;
+                    for (int i = 0; i < count; i++)
                     {
-                        sb2.Append(",");
+                        ordStream.MoveNext();
+
+                        var ord = ordStream.Current;
+                        if (sb2.Length > 0)
+                        {
+                            sb2.Append(",");
+                        }
+                        sb2.Append(ord.GetValueOrDefault().ToString(CultureInfo.InvariantCulture));
                     }
-                    sb2.Append(ord.GetValueOrDefault().ToString(CultureInfo.InvariantCulture));
+                    maxOrdListLength = Math.Max(maxOrdListLength, sb2.Length);
                 }
-                maxOrdListLength = Math.Max(maxOrdListLength, sb2.Length);
             }
 
             sb2.Length = 0;
@@ -379,30 +381,31 @@ namespace Lucene.Net.Codecs.SimpleText
 
             Debug.Assert(valuesSeen == valueCount);
 
-            ordStream = ords.GetEnumerator();
-
-            // write the ords for each doc comma-separated
-            foreach (var n in docToOrdCount)
+            using (var ordStream = ords.GetEnumerator())
             {
-                sb2.Length = 0;
-                var count = (int) n;
-                for (var i = 0; i < count; i++)
+                // write the ords for each doc comma-separated
+                foreach (var n in docToOrdCount)
                 {
-                    ordStream.MoveNext();
-                    var ord = ordStream.Current;
-                    if (sb2.Length > 0)
-                        sb2.Append(",");
-                    
-                    sb2.Append(ord);
+                    sb2.Length = 0;
+                    var count = (int)n;
+                    for (var i = 0; i < count; i++)
+                    {
+                        ordStream.MoveNext();
+                        var ord = ordStream.Current;
+                        if (sb2.Length > 0)
+                            sb2.Append(",");
+
+                        sb2.Append(ord);
+                    }
+                    // now pad to fit: these are numbers so spaces work well. reader calls trim()
+                    var numPadding = maxOrdListLength - sb2.Length;
+                    for (var i = 0; i < numPadding; i++)
+                    {
+                        sb2.Append(' ');
+                    }
+                    SimpleTextUtil.Write(data, sb2.ToString(), scratch);
+                    SimpleTextUtil.WriteNewline(data);
                 }
-                // now pad to fit: these are numbers so spaces work well. reader calls trim()
-                var numPadding = maxOrdListLength - sb2.Length;
-                for (var i = 0; i < numPadding; i++)
-                {
-                    sb2.Append(' ');
-                }
-                SimpleTextUtil.Write(data, sb2.ToString(), scratch);
-                SimpleTextUtil.WriteNewline(data);
             }
         }
 

@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Util
 {
@@ -127,9 +128,7 @@ namespace Lucene.Net.Util
                 case 0:
                     throw new System.ArgumentException("There must be at least one set to intersect");
                 case 1:
-                    var iter = docIdSets.GetEnumerator();
-                    iter.MoveNext();
-                    return iter.Current;
+                    return docIdSets.First();
             }
             // The logic below is similar to ConjunctionScorer
             int numSets = docIdSets.Count;
@@ -202,9 +201,7 @@ namespace Lucene.Net.Util
                     return EMPTY;
 
                 case 1:
-                    var iter = docIdSets.GetEnumerator();
-                    iter.MoveNext();
-                    return iter.Current;
+                    return docIdSets.First();
             }
             // The logic below is very similar to DisjunctionScorer
             int numSets = docIdSets.Count;

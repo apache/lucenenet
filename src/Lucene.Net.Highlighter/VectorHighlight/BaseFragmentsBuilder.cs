@@ -293,39 +293,43 @@ namespace Lucene.Net.Search.VectorHighlight
                     List<SubInfo> fragInfo_SubInfos_ToDelete = new List<SubInfo>();
 
                     List<SubInfo> subInfos = new List<SubInfo>();
-                    IEnumerator<SubInfo> subInfoIterator = fragInfo.SubInfos.GetEnumerator();
                     float boost = 0.0f;  //  The boost of the new info will be the sum of the boosts of its SubInfos
-                    while (subInfoIterator.MoveNext())
+                    using (IEnumerator<SubInfo> subInfoIterator = fragInfo.SubInfos.GetEnumerator())
                     {
-                        SubInfo subInfo = subInfoIterator.Current;
-                        List<Toffs> toffsList = new List<Toffs>();
-
-
-                        IEnumerator<Toffs> toffsIterator = subInfo.TermsOffsets.GetEnumerator();
-                        while (toffsIterator.MoveNext())
+                        while (subInfoIterator.MoveNext())
                         {
-                            Toffs toffs = toffsIterator.Current;
-                            if (toffs.StartOffset >= fieldStart && toffs.EndOffset <= fieldEnd)
+                            SubInfo subInfo = subInfoIterator.Current;
+                            List<Toffs> toffsList = new List<Toffs>();
+
+
+                            using (IEnumerator<Toffs> toffsIterator = subInfo.TermsOffsets.GetEnumerator())
                             {
+                                while (toffsIterator.MoveNext())
+                                {
+                                    Toffs toffs = toffsIterator.Current;
+                                    if (toffs.StartOffset >= fieldStart && toffs.EndOffset <= fieldEnd)
+                                    {
 
-                                toffsList.Add(toffs);
-                                //toffsIterator.Remove();
+                                        toffsList.Add(toffs);
+                                        //toffsIterator.Remove();
+                                    }
+                                }
                             }
-                        }
-                        if (toffsList.Any())
-                        {
-                            // LUCENENET NOTE: Instead of removing during iteration (which isn't allowed in .NET when using an IEnumerator), 
-                            // we just remove the items at this point. We only get here if there are items to remove.
-                            subInfo.TermsOffsets.RemoveAll(toffsList);
+                            if (toffsList.Any())
+                            {
+                                // LUCENENET NOTE: Instead of removing during iteration (which isn't allowed in .NET when using an IEnumerator), 
+                                // we just remove the items at this point. We only get here if there are items to remove.
+                                subInfo.TermsOffsets.RemoveAll(toffsList);
 
-                            subInfos.Add(new SubInfo(subInfo.Text, toffsList, subInfo.Seqnum, subInfo.Boost));
-                            boost += subInfo.Boost;
-                        }
+                                subInfos.Add(new SubInfo(subInfo.Text, toffsList, subInfo.Seqnum, subInfo.Boost));
+                                boost += subInfo.Boost;
+                            }
 
-                        if (!subInfo.TermsOffsets.Any())
-                        {
-                            //subInfoIterator.Remove();
-                            fragInfo_SubInfos_ToDelete.Add(subInfo);
+                            if (!subInfo.TermsOffsets.Any())
+                            {
+                                //subInfoIterator.Remove();
+                                fragInfo_SubInfos_ToDelete.Add(subInfo);
+                            }
                         }
                     }
 

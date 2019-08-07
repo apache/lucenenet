@@ -424,6 +424,7 @@ namespace Sax.Helpers
         public IEnumerable GetPrefixes(string uri)
         {
             var prefixes = new ArrayList();
+            // LUCENENET NOTE: IEnumerator is not disposable
             IEnumerator allPrefixes = GetPrefixes().GetEnumerator();
             while (allPrefixes.MoveNext())
             {

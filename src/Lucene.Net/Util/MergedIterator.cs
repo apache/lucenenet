@@ -43,9 +43,12 @@ namespace Lucene.Net.Util
     ///       are returned isn't defined.</description></item>
     /// </list>
     /// <para/>
+    /// The caller is responsible for disposing the <see cref="IEnumerator{T}"/> instances that are passed
+    /// into the constructor, <see cref="MergedIterator{T}"/> doesn't do it automatically.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
-    public sealed class MergedIterator<T> : IEnumerator<T>
+    public sealed class MergedIterator<T> : IEnumerator<T> // LUCENENET TODO: API - rename MergedEnumerator
         where T : IComparable<T>
     {
         private readonly TermMergeQueue<T> queue;

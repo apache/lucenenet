@@ -93,10 +93,8 @@ namespace Egothor.Stemmer
 
             Row now = old[ind];
             to.Add(now);
-            IEnumerator<Cell> i = now.cells.Values.GetEnumerator();
-            for (; i.MoveNext();)
+            foreach (Cell c in now.cells.Values)
             {
-                Cell c = i.Current;
                 if (c.@ref >= 0 && remap[c.@ref] < 0)
                 {
                     RemoveGaps(c.@ref, old, to, remap);
@@ -111,19 +109,16 @@ namespace Egothor.Stemmer
         /// </summary>
         internal class Remap : Row
         {
-            /**
-             * Constructor for the <see cref="Remap"/> object
-             * 
-             * @param old Description of the Parameter
-             * @param remap Description of the Parameter
-             */
+            /// <summary>
+            /// Constructor for the <see cref="Remap"/> object
+            /// </summary>
+            /// <param name="old">Description of the Parameter</param>
+            /// <param name="remap">Description of the Parameter</param>
             public Remap(Row old, int[] remap)
-                        : base()
+                : base()
             {
-                var i = old.cells.Keys.GetEnumerator();
-                for (; i.MoveNext();)
+                foreach (char ch in old.cells.Keys)
                 {
-                    char ch = i.Current;
                     Cell c = old.At(ch);
                     Cell nc;
                     if (c.@ref >= 0)

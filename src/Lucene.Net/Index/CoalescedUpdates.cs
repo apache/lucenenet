@@ -134,6 +134,7 @@ namespace Lucene.Net.Index
 
                 public void Dispose()
                 {
+                    iter.Dispose();
                 }
 
                 public bool MoveNext()

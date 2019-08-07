@@ -80,11 +80,13 @@ namespace Lucene.Net.Util.Automaton
                 set.Add(v);
             }
             alphabet = new int[set.Count];
-            IEnumerator<int> iterator = set.GetEnumerator();
-            for (int i = 0; i < alphabet.Length; i++)
+            using (IEnumerator<int> iterator = set.GetEnumerator())
             {
-                iterator.MoveNext();
-                alphabet[i] = iterator.Current;
+                for (int i = 0; i < alphabet.Length; i++)
+                {
+                    iterator.MoveNext();
+                    alphabet[i] = iterator.Current;
+                }
             }
 
             rangeLower = new int[alphabet.Length + 2];

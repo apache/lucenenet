@@ -251,18 +251,18 @@ namespace Lucene.Net
 
             if (s.Count > list.Count())
             {
-                for (var i = list.GetEnumerator(); i.MoveNext();)
-                    modified |= s.Remove(i.Current);
+                foreach (var item in list)
+                    modified |= s.Remove(item);
             }
             else
             {
                 List<T> toRemove = new List<T>();
 
-                for (var i = s.GetEnumerator(); i.MoveNext();)
+                foreach (var item in s)
                 {
-                    if (list.Contains(i.Current))
+                    if (list.Contains(item))
                     {
-                        toRemove.Add(i.Current);
+                        toRemove.Add(item);
                     }
                 }
 

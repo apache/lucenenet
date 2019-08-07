@@ -122,9 +122,8 @@ namespace Lucene.Net.Util
                 List<Thread> Removed = new List<Thread>();
                 try
                 {
-                    for (IEnumerator<Thread> it = hardRefs.Keys.GetEnumerator(); it.MoveNext(); )
+                    foreach (Thread t in hardRefs.Keys)
                     {
-                        Thread t = it.Current;
                         if (!t.IsAlive)
                         {
                             Removed.Add(t);
