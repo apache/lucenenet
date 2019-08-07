@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
+using System.Globalization;
 using System.IO;
 
 namespace Lucene.Net.Search
@@ -559,7 +560,7 @@ namespace Lucene.Net.Search
             for (int d = -20; d <= 20; d++)
             {
                 Document doc = new Document();
-                doc.Add(NewStringField("id", Convert.ToString(d), Field.Store.NO));
+                doc.Add(NewStringField("id", Convert.ToString(d, CultureInfo.InvariantCulture), Field.Store.NO));
                 doc.Add(NewStringField("body", "body", Field.Store.NO));
                 writer.AddDocument(doc);
             }
