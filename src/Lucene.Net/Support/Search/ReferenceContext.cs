@@ -28,7 +28,7 @@ namespace Lucene.Net.Search
     /// LUCENENET specific
     /// </summary>
     /// <typeparam name="T">The reference type</typeparam>
-    public class ReferenceContext<T> : IDisposable
+    public sealed class ReferenceContext<T> : IDisposable
         where T : class
     {
         private readonly ReferenceManager<T> referenceManager;
