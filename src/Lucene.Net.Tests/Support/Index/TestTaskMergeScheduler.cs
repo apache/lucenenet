@@ -45,16 +45,16 @@ namespace Lucene.Net.Tests
     /// Holds tests cases to verify external APIs are accessible
     /// while not being in Lucene.Net.Index package.
     /// </summary>
-    public class TestTaskMergeSchedulerExternal : LuceneTestCase
+    public class TestTaskMergeScheduler : LuceneTestCase
     {
         internal volatile bool mergeCalled;
         internal volatile bool excCalled;
 
         private class MyMergeScheduler : TaskMergeScheduler
         {
-            private readonly TestTaskMergeSchedulerExternal outerInstance;
+            private readonly TestTaskMergeScheduler outerInstance;
 
-            public MyMergeScheduler(TestTaskMergeSchedulerExternal outerInstance)
+            public MyMergeScheduler(TestTaskMergeScheduler outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
