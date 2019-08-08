@@ -71,6 +71,12 @@
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <!-- SharpZipLib.NETStandard is not strong named - we don't really care.
+        Odds are very slim we will have any downloaders of the benchmark library on this
+        platform and even slimmer that they will require strong naming. 
+        We would just drop support for .NET Standard 1.6 for this library if
+        it didn't mean adding a special case to the build/tests. -->
+    <NoWarn>$(NoWarn);8002</NoWarn>
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
