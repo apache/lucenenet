@@ -40,8 +40,8 @@
     <NUnitExtensionTeamCityEventListenerPackageVersion>1.0.6</NUnitExtensionTeamCityEventListenerPackageVersion>
     <SharpZipLibPackageVersion>1.1.0</SharpZipLibPackageVersion>
     <SharpZipLibNETStandardPackageVersion>0.86.0.1</SharpZipLibNETStandardPackageVersion>
-    <Spatial4nCorePackageVersion>0.4.1-beta00007</Spatial4nCorePackageVersion>
-    <Spatial4nCoreNTSPackageVersion>0.4.1-beta00007</Spatial4nCoreNTSPackageVersion>
+    <Spatial4nCorePackageVersion>0.4.1</Spatial4nCorePackageVersion>
+    <Spatial4nCoreNTSPackageVersion>$(Spatial4nCorePackageVersion)</Spatial4nCoreNTSPackageVersion>
     <SystemCollectionsNonGenericPackageVersion>4.3.0</SystemCollectionsNonGenericPackageVersion>
     <SystemCollectionsSpecializedPackageVersion>4.3.0</SystemCollectionsSpecializedPackageVersion>
     <SystemComponentModelPrimitivesPackageVersion>4.3.0</SystemComponentModelPrimitivesPackageVersion>
