@@ -132,7 +132,7 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 parser = (SynonymMap.Parser)Activator.CreateInstance(clazz, new object[] { dedup, expand, analyzer });
             }
-            catch (Exception e)
+            catch (Exception /*e*/)
             {
                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
