@@ -1,4 +1,4 @@
-﻿# Lucene.Net command line interface (CLI) tools
+# Lucene.Net command line interface (CLI) tools
 
 The Lucene.Net command line interface (CLI) is a new cross-platform toolchain with utilities for maintaining Lucene.Net and demos for learning basic Lucene.Net functionality.
 
@@ -11,7 +11,7 @@ The Lucene.Net command line interface (CLI) is a new cross-platform toolchain wi
 Perform a one-time install of the lucene-cli tool using the following dotnet CLI command:
 
 ```
-dotnet tool install -g lucene-cli
+dotnet tool install lucene-cli -g --version 4.8.0-beta00006
 ```
 
 You may then use the lucene-cli tool to analyze and update Lucene.Net indexes and use its demos.

@@ -86,11 +86,9 @@ PM> Install-Package Lucene.Net -Pre
 - [Lucene.Net.Replicator](https://www.nuget.org/packages/Lucene.Net.Replicator/)  Files replication utility
 - [Lucene.Net.Sandbox](https://www.nuget.org/packages/Lucene.Net.Sandbox/) - Various third party contributions and new ideas
 - [Lucene.Net.Spatial](https://www.nuget.org/packages/Lucene.Net.Spatial/) - Geospatial search
-- [Lucene.Net.Suggest](https://www.nuget.org/packages/Lucene.Net.Suggest/) - Auto-suggest and Spellchecking support
+- [Lucene.Net.Suggest](https://www.nuget.org/packages/Lucene.Net.Suggest/) - Auto-suggest and Spell-checking support
 
 ## Documentation
-
-[Lucene.Net WIKI](https://cwiki.apache.org/confluence/display/LUCENENET/Lucene.Net)
 
 We now have some preliminary documentation for Lucene.Net 4.8.0 [on the Lucene.Net Website](https://lucenenet.apache.org/).
 
@@ -103,9 +101,22 @@ The API is similar to Java [Lucene 4.8.0](https://lucene.apache.org/core/4_8_0/)
 - [Lucene.Net 3.0.3 API Documentation](http://incubator.apache.org/lucene.net/docs/3.0.3/Index.html)
 - [Lucene.Net 2.9.4 API Documentation](http://incubator.apache.org/lucene.net/docs/2.9.4/Index.html)
 
-## Demos
+## Demos & Tools
 
 There are several demos implemented as simple console applications that can be copied and pasted into Visual Studio or compiled on the command line in the [Lucene.Net.Demo project](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Demo).
+
+<!-- TO BE ADDED WHEN RELEASED
+
+There is also a dotnet command line tool available on NuGet. It contains all of the demos as well as tools maintaining your Lucene.Net index, containing such operations as splitting, merging, listing segment info, fixing, deleting segments, upgrading, etc. Always be sure to back up your index before running any commands against it!
+
+```
+dotnet tool install lucene-cli -g --version 4.8.0-beta00006
+```
+
+Once installed, you can explore what commands and options are available by entering the command `lucene`.
+
+[lucene-cli Documentation](https://github.com/apache/lucenenet/blob/master/src/dotnet/tools/lucene-cli/docs/index.md)
+-->
 
 ## How to Contribute
 
@@ -149,7 +160,7 @@ If you plan to submit multiple pull requests, please submit an [Individual Contr
 
 ### Command Line
 
-Building on the Command Line is only supported on Windows.
+Building on the Command Line is currently only supported on Windows.
 
 ##### Prerequisites
 
