@@ -1,5 +1,6 @@
 ﻿#if FEATURE_BREAKITERATOR
 using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -31,25 +32,23 @@ namespace Lucene.Net.Search.PostingsHighlight
 	 */
 
     /// <summary>
-    /// LUCENENET specific - These are the original tests from Lucene. They are only here as proof that we 
-    /// can customize the <see cref="ICUPostingsHighlighter"/> to act like the PostingsHighlighter in Lucene,
-    /// which has slightly different default behavior than that of ICU because Lucene uses
-    /// the RuleBasedBreakIterator from the JDK, not that of ICU4J.
+    /// LUCENENET specific - Modified the behavior of the PostingsHighlighter in Java to return the
+    /// org.ibm.icu.BreakIterator version 60.1 instead of java.text.BreakIterator and modified the original Lucene
+    /// tests to pass, then ported to .NET. There are no changes in this class from that of Lucene 4.8.1.
     /// <para/>
-    /// These tests use a mock <see cref="PostingsHighlighter"/>, which is backed by an ICU 
-    /// <see cref="ICU4N.Text.RuleBasedBreakIterator"/> that is customized a bit to act (sort of)
-    /// like the one in the JDK. However, this customized implementation is not a logical default for
-    /// the <see cref="ICUPostingsHighlighter"/>.
+    /// Although the ICU <see cref="ICU4N.Text.BreakIterator"/> acts slightly different than the JDK's verision, using the default 
+    /// behavior of the ICU <see cref="ICU4N.Text.BreakIterator"/> is the most logical default to use in .NET. It is the same
+    /// default that was chosen in Apache Harmony.
     /// </summary>
     [SuppressCodecs("MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom", "Lucene3x")]
-    public class TestPostingsHighlighterRanking : LuceneTestCase
+    public class TestICUPostingsHighlighterRanking : LuceneTestCase
     {
         /// <summary>
         /// indexes a bunch of gibberish, and then highlights top(n).
         /// asserts that top(n) highlights is a subset of top(n+1) up to some max N
         /// </summary>
         // TODO: this only tests single-valued fields. we should also index multiple values per field!
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestRanking()
         {
             // number of documents: we will check each one
@@ -111,7 +110,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-        internal class CheckQueryPostingsHighlighter : PostingsHighlighter
+        internal class CheckQueryPostingsHighlighter : ICUPostingsHighlighter
         {
             internal FakePassageFormatter f = new FakePassageFormatter();
 
@@ -269,7 +268,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         }
 
         /** sets b=0 to disable passage length normalization */
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestCustomB()
         {
             Directory dir = NewDirectory();
@@ -291,7 +290,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new CustomBPostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new CustomBPostingsHighlighter();
             Query query = new TermQuery(new Term("body", "test"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(1, topDocs.TotalHits);
@@ -303,7 +302,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        internal class CustomBPostingsHighlighter : PostingsHighlighter
+        internal class CustomBPostingsHighlighter : ICUPostingsHighlighter
         {
             protected override PassageScorer GetScorer(string field)
             {
@@ -312,7 +311,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         }
 
         /** sets k1=0 for simple coordinate-level match (# of query terms present) */
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestCustomK1()
         {
             Directory dir = NewDirectory();
@@ -335,7 +334,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new CustomK1PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new CustomK1PostingsHighlighter();
             BooleanQuery query = new BooleanQuery();
             query.Add(new TermQuery(new Term("body", "foo")), Occur.SHOULD);
             query.Add(new TermQuery(new Term("body", "bar")), Occur.SHOULD);
@@ -349,7 +348,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        internal class CustomK1PostingsHighlighter : PostingsHighlighter
+        internal class CustomK1PostingsHighlighter : ICUPostingsHighlighter
         {
             public CustomK1PostingsHighlighter()
                 : base(10000)

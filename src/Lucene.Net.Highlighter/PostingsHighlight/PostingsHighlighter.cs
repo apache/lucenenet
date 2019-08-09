@@ -1,7 +1,6 @@
 ﻿#if FEATURE_BREAKITERATOR
 using ICU4N.Text;
 using Lucene.Net.Analysis;
-using Lucene.Net.ICU.Support;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -37,10 +36,11 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// Simple highlighter that does not analyze fields nor use
     /// term vectors. Instead it requires 
     /// <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS"/>.
-    /// <para/>
+    /// </summary>
+    /// <remarks>
     /// PostingsHighlighter treats the single original document as the whole corpus, and then scores individual
     /// passages as if they were documents in this corpus. It uses a <see cref="BreakIterator"/> to find 
-    /// passages in the text; by default it breaks using <see cref="JdkBreakIterator.GetSentenceInstance(CultureInfo)"/> (for sentence breaking). 
+    /// passages in the text; by default it breaks using <see cref="BreakIterator.GetSentenceInstance(CultureInfo)"/> (for sentence breaking). 
     /// It then iterates in parallel (merge sorting by offset) through
     /// the positions of all terms from the query, coalescing those hits that occur in a single passage
     /// into a <see cref="Passage"/>, and then scores each Passage using a separate <see cref="PassageScorer"/>.
@@ -64,16 +64,25 @@ namespace Lucene.Net.Search.PostingsHighlight
     ///     Field body = new Field("body", "foobar", offsetsType);
     ///     
     ///     // retrieve highlights at query time 
-    ///     PostingsHighlighter highlighter = new PostingsHighlighter();
+    ///     ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
     ///     Query query = new TermQuery(new Term("body", "highlighting"));
     ///     TopDocs topDocs = searcher.Search(query, n);
     ///     string highlights[] = highlighter.Highlight("body", query, searcher, topDocs);
     /// </code>
     /// <para/>
     /// This is thread-safe, and can be used across different readers.
+    /// <para/>
+    /// Note that the .NET implementation differs from the <c>PostingsHighlighter</c> in Lucene in
+    /// that it is backed by an ICU <see cref="RuleBasedBreakIterator"/>, which differs slightly in default behavior
+    /// than the one in the JDK. However, the ICU <see cref="RuleBasedBreakIterator"/> behavior can be customized
+    /// to meet a lot of scenarios that the one in the JDK cannot. See the ICU documentation at
+    /// <a href="http://userguide.icu-project.org/boundaryanalysis/break-rules">http://userguide.icu-project.org/boundaryanalysis/break-rules</a>
+    /// for more information how to pass custom rules to an ICU <see cref="RuleBasedBreakIterator"/>.
+    /// <para/>
     /// @lucene.experimental
-    /// </summary>
-    public class PostingsHighlighter
+    /// </remarks>
+    [ExceptionToClassNameConvention]
+    public class ICUPostingsHighlighter // LUCENENET specific - renamed ICUPostingsHighlighter to reflect the change in default behavior
     {
         // TODO: maybe allow re-analysis for tiny fields? currently we require offsets,
         // but if the analyzer is really fast and the field is tiny, this might really be
@@ -104,7 +113,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <summary>
         /// Creates a new highlighter with <see cref="DEFAULT_MAX_LENGTH"/>.
         /// </summary>
-        public PostingsHighlighter()
+        public ICUPostingsHighlighter()
             : this(DEFAULT_MAX_LENGTH)
         {
         }
@@ -114,7 +123,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// </summary>
         /// <param name="maxLength">maximum content size to process.</param>
         /// <exception cref="ArgumentException">if <paramref name="maxLength"/> is negative or <c>int.MaxValue</c></exception>
-        public PostingsHighlighter(int maxLength)
+        public ICUPostingsHighlighter(int maxLength)
         {
             if (maxLength < 0 || maxLength == int.MaxValue)
             {
@@ -133,7 +142,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// </summary>
         protected virtual BreakIterator GetBreakIterator(string field)
         {
-            return JdkBreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
+            return BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
         }
 
         /// <summary>

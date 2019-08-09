@@ -1,10 +1,9 @@
 ﻿using ICU4N.Text;
-using Lucene.Net.Support;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 
-namespace Lucene.Net.ICU.Support
+namespace Lucene.Net.Support
 {
     /// <summary>
     /// Static methods to create <see cref="BreakIterator"/> instances that behave (somewhat) like the JDK.

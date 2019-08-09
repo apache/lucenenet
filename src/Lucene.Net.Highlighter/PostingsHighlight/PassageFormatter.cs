@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <param name="content">content for the field.</param>
         /// <returns>
         /// formatted highlight.  Note that for the
-        /// non-expert APIs in <see cref="PostingsHighlighter"/> that
+        /// non-expert APIs in <see cref="ICUPostingsHighlighter"/> that
         /// return <see cref="string"/>, the <see cref="object.ToString()"/> method on the <see cref="object"/>
         /// returned by this method is used to compute the string.
         /// </returns>

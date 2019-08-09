@@ -221,7 +221,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// Returns a "fake" <see cref="DocsAndPositionsEnum"/> over the tokenstream, returning offsets where <paramref name="matchers"/>
         /// matches tokens.
         /// <para/>
-        /// This is solely used internally by <see cref="PostingsHighlighter"/>: <b>DO NOT USE THIS METHOD!</b>
+        /// This is solely used internally by <see cref="ICUPostingsHighlighter"/>: <b>DO NOT USE THIS METHOD!</b>
         /// </summary>
         internal static DocsAndPositionsEnum GetDocsEnum(TokenStream ts, CharacterRunAutomaton[] matchers)
         {

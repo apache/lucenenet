@@ -1,6 +1,7 @@
 ﻿#if FEATURE_BREAKITERATOR
 using ICU4N.Text;
 using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
@@ -34,20 +35,19 @@ namespace Lucene.Net.Search.PostingsHighlight
 	 */
 
     /// <summary>
-    /// LUCENENET specific - These are the original tests from Lucene. They are only here as proof that we 
-    /// can customize the <see cref="ICUPostingsHighlighter"/> to act like the PostingsHighlighter in Lucene,
-    /// which has slightly different default behavior than that of ICU because Lucene uses
-    /// the RuleBasedBreakIterator from the JDK, not that of ICU4J.
+    /// LUCENENET specific - Modified the behavior of the PostingsHighlighter in Java to return the
+    /// org.ibm.icu.BreakIterator version 60.1 instead of java.text.BreakIterator and modified the original Lucene
+    /// tests to pass, then ported to .NET. The only change required was that of the TestEmptyHighlights method
+    /// which breaks the sentence in a different place than in the JDK.
     /// <para/>
-    /// These tests use a mock <see cref="PostingsHighlighter"/>, which is backed by an ICU 
-    /// <see cref="ICU4N.Text.RuleBasedBreakIterator"/> that is customized a bit to act (sort of)
-    /// like the one in the JDK. However, this customized implementation is not a logical default for
-    /// the <see cref="ICUPostingsHighlighter"/>.
+    /// Although the ICU <see cref="BreakIterator"/> acts slightly different than the JDK's verision, using the default 
+    /// behavior of the ICU <see cref="BreakIterator"/> is the most logical default to use in .NET. It is the same
+    /// default that was chosen in Apache Harmony.
     /// </summary>
     [SuppressCodecs("MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom", "Lucene3x")]
-    public class TestPostingsHighlighter : LuceneTestCase
+    public class TestICUPostingsHighlighter : LuceneTestCase
     {
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestBasics()
         {
             Directory dir = NewDirectory();
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             Query query = new TermQuery(new Term("body", "highlighting"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestFormatWithMatchExceedingContentLength2()
         {
 
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             assertEquals("123 <b>TEST</b> 01234 TE", snippets[0]);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestFormatWithMatchExceedingContentLength3()
         {
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             assertEquals("123 5678 01234 TE", snippets[0]);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestFormatWithMatchExceedingContentLength()
         {
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(1, topDocs.TotalHits);
 
-            PostingsHighlighter highlighter = new PostingsHighlighter(maxLength);
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter(maxLength);
             String[] snippets = highlighter.Highlight("body", query, searcher, topDocs);
 
 
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         }
 
         // simple test highlighting last word.
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestHighlightLastWord()
         {
             Directory dir = NewDirectory();
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             Query query = new TermQuery(new Term("body", "test"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(1, topDocs.TotalHits);
@@ -198,7 +198,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         }
 
         // simple test with one sentence documents.
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestOneSentence()
         {
             Directory dir = NewDirectory();
@@ -222,7 +222,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             Query query = new TermQuery(new Term("body", "test"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         }
 
         // simple test with multiple values that make a result longer than maxLength.
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestMaxLengthWithMultivalue()
         {
             Directory dir = NewDirectory();
@@ -262,7 +262,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter(40);
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter(40);
             Query query = new TermQuery(new Term("body", "field"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(1, topDocs.TotalHits);
@@ -275,7 +275,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestMultipleFields()
         {
             Directory dir = NewDirectory();
@@ -302,7 +302,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             BooleanQuery query = new BooleanQuery();
             query.Add(new TermQuery(new Term("body", "highlighting")), Occur.SHOULD);
             query.Add(new TermQuery(new Term("title", "best")), Occur.SHOULD);
@@ -318,7 +318,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestMultipleTerms()
         {
             Directory dir = NewDirectory();
@@ -341,7 +341,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             BooleanQuery query = new BooleanQuery();
             query.Add(new TermQuery(new Term("body", "highlighting")), Occur.SHOULD);
             query.Add(new TermQuery(new Term("body", "just")), Occur.SHOULD);
@@ -357,7 +357,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestMultiplePassages()
         {
             Directory dir = NewDirectory();
@@ -380,7 +380,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             Query query = new TermQuery(new Term("body", "test"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
@@ -393,7 +393,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestUserFailedToIndexOffsets()
         {
             Directory dir = NewDirectory();
@@ -420,7 +420,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             Query query = new TermQuery(new Term("body", "test"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
@@ -451,7 +451,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestBuddhism()
         {
             String text = "This eight-volume set brings together seminal papers in Buddhist studies from a vast " +
@@ -481,7 +481,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             query.Add(new Term("body", "origins"));
             TopDocs topDocs = searcher.Search(query, 10);
             assertEquals(1, topDocs.TotalHits);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             String[] snippets = highlighter.Highlight("body", query, searcher, topDocs, 2);
             assertEquals(1, snippets.Length);
             assertTrue(snippets[0].Contains("<b>Buddhist</b> <b>origins</b>"));
@@ -489,7 +489,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestCuriousGeorge()
         {
             String text = "It’s the formula for success for preschoolers—Curious George and fire trucks! " +
@@ -513,7 +513,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             query.Add(new Term("body", "george"));
             TopDocs topDocs = searcher.Search(query, 10);
             assertEquals(1, topDocs.TotalHits);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             String[] snippets = highlighter.Highlight("body", query, searcher, topDocs, 2);
             assertEquals(1, snippets.Length);
             assertFalse(snippets[0].Contains("<b>Curious</b>Curious"));
@@ -521,7 +521,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestCambridgeMA()
         {
             String text;
@@ -548,7 +548,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             query.Add(new TermQuery(new Term("body", "massachusetts")), Occur.SHOULD);
             TopDocs topDocs = searcher.Search(query, 10);
             assertEquals(1, topDocs.TotalHits);
-            PostingsHighlighter highlighter = new PostingsHighlighter(int.MaxValue - 1);
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter(int.MaxValue - 1);
             String[] snippets = highlighter.Highlight("body", query, searcher, topDocs, 2);
             assertEquals(1, snippets.Length);
             assertTrue(snippets[0].Contains("<b>Square</b>"));
@@ -557,7 +557,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestPassageRanking()
         {
             Directory dir = NewDirectory();
@@ -578,7 +578,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             Query query = new TermQuery(new Term("body", "test"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(1, topDocs.TotalHits);
@@ -590,7 +590,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestBooleanMustNot()
         {
             Directory dir = NewDirectory();
@@ -612,7 +612,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             query2.Add(new TermQuery(new Term("body", "both")), Occur.MUST_NOT);
             TopDocs topDocs = searcher.Search(query, 10);
             assertEquals(1, topDocs.TotalHits);
-            PostingsHighlighter highlighter = new PostingsHighlighter(int.MaxValue - 1);
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter(int.MaxValue - 1);
             String[] snippets = highlighter.Highlight("body", query, searcher, topDocs, 2);
             assertEquals(1, snippets.Length);
             assertFalse(snippets[0].Contains("<b>both</b>"));
@@ -620,7 +620,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestHighlightAllText()
         {
             Directory dir = NewDirectory();
@@ -641,7 +641,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new WholeBreakIteratorPostingsHighlighter(10000);
+            ICUPostingsHighlighter highlighter = new WholeBreakIteratorPostingsHighlighter(10000);
             Query query = new TermQuery(new Term("body", "test"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(1, topDocs.TotalHits);
@@ -653,7 +653,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        internal class WholeBreakIteratorPostingsHighlighter : PostingsHighlighter
+        internal class WholeBreakIteratorPostingsHighlighter : ICUPostingsHighlighter
         {
             public WholeBreakIteratorPostingsHighlighter()
                 : base()
@@ -671,7 +671,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestSpecificDocIDs()
         {
             Directory dir = NewDirectory();
@@ -694,7 +694,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             Query query = new TermQuery(new Term("body", "highlighting"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
@@ -711,7 +711,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestCustomFieldValueSource()
         {
             Directory dir = NewDirectory();
@@ -732,7 +732,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new LoadFieldValuesPostingsHighlighter(10000, text);
+            ICUPostingsHighlighter highlighter = new LoadFieldValuesPostingsHighlighter(10000, text);
 
             Query query = new TermQuery(new Term("body", "test"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
@@ -757,8 +757,8 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             protected override string[][] LoadFieldValues(IndexSearcher searcher, string[] fields, int[] docids, int maxLength)
             {
-                Debug.Assert(fields.Length == 1);
-                Debug.Assert(docids.Length == 1);
+                Debug.Assert( fields.Length == 1);
+                Debug.Assert( docids.Length == 1);
                 String[][] contents = RectangularArrays.ReturnRectangularArray<string>(1, 1); //= new String[1][1];
                 contents[0][0] = text;
                 return contents;
@@ -767,7 +767,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
         /** Make sure highlighter returns first N sentences if
          *  there were no hits. */
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestEmptyHighlights()
         {
             Directory dir = NewDirectory();
@@ -787,12 +787,12 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             Query query = new TermQuery(new Term("body", "highlighting"));
             int[] docIDs = new int[] { 0 };
             String[] snippets = highlighter.HighlightFields(new String[] { "body" }, query, searcher, docIDs, new int[] { 2 })["body"];
             assertEquals(1, snippets.Length);
-            assertEquals("test this is.  another sentence this test has.  ", snippets[0]);
+            assertEquals("test this is.  another sentence this test has.  far away is that planet.", snippets[0]);
 
             ir.Dispose();
             dir.Dispose();
@@ -800,7 +800,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
         /** Make sure highlighter we can customize how emtpy
          *  highlight is returned. */
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestCustomEmptyHighlights()
         {
             Directory dir = NewDirectory();
@@ -820,7 +820,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new GetEmptyHighlightPostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new GetEmptyHighlightPostingsHighlighter();
             Query query = new TermQuery(new Term("body", "highlighting"));
             int[] docIDs = new int[] { 0 };
             String[] snippets = highlighter.HighlightFields(new String[] { "body" }, query, searcher, docIDs, new int[] { 2 })["body"];
@@ -831,7 +831,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        internal class GetEmptyHighlightPostingsHighlighter : PostingsHighlighter
+        internal class GetEmptyHighlightPostingsHighlighter : ICUPostingsHighlighter
         {
             protected override Passage[] GetEmptyHighlight(string fieldName, BreakIterator bi, int maxPassages)
             {
@@ -841,7 +841,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
         /** Make sure highlighter returns whole text when there
          *  are no hits and BreakIterator is null. */
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestEmptyHighlightsWhole()
         {
             Directory dir = NewDirectory();
@@ -861,7 +861,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new WholeBreakIteratorPostingsHighlighter(10000);
+            ICUPostingsHighlighter highlighter = new WholeBreakIteratorPostingsHighlighter(10000);
             Query query = new TermQuery(new Term("body", "highlighting"));
             int[] docIDs = new int[] { 0 };
             String[] snippets = highlighter.HighlightFields(new String[] { "body" }, query, searcher, docIDs, new int[] { 2 })["body"];
@@ -874,7 +874,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
         /** Make sure highlighter is OK with entirely missing
          *  field. */
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestFieldIsMissing()
         {
             Directory dir = NewDirectory();
@@ -894,7 +894,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             Query query = new TermQuery(new Term("bogus", "highlighting"));
             int[] docIDs = new int[] { 0 };
             String[] snippets = highlighter.HighlightFields(new String[] { "bogus" }, query, searcher, docIDs, new int[] { 2 })["bogus"];
@@ -905,7 +905,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestFieldIsJustSpace()
         {
             Directory dir = NewDirectory();
@@ -929,7 +929,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             int docID = searcher.Search(new TermQuery(new Term("id", "id")), 1).ScoreDocs[0].Doc;
 
             Query query = new TermQuery(new Term("body", "highlighting"));
@@ -943,7 +943,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestFieldIsEmptyString()
         {
             Directory dir = NewDirectory();
@@ -967,7 +967,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             int docID = searcher.Search(new TermQuery(new Term("id", "id")), 1).ScoreDocs[0].Doc;
 
             Query query = new TermQuery(new Term("body", "highlighting"));
@@ -981,7 +981,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestMultipleDocs()
         {
             Directory dir = NewDirectory();
@@ -1015,7 +1015,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             Query query = new TermQuery(new Term("body", "answer"));
             TopDocs hits = searcher.Search(query, numDocs);
             assertEquals(numDocs, hits.TotalHits);
@@ -1038,7 +1038,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestMultipleSnippetSizes()
         {
             Directory dir = NewDirectory();
@@ -1062,7 +1062,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ICUPostingsHighlighter();
             BooleanQuery query = new BooleanQuery();
             query.Add(new TermQuery(new Term("body", "test")), Occur.SHOULD);
             query.Add(new TermQuery(new Term("title", "test")), Occur.SHOULD);
@@ -1075,7 +1075,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestEncode()
         {
             Directory dir = NewDirectory();
@@ -1096,7 +1096,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new GetFormatterPostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new GetFormatterPostingsHighlighter();
             Query query = new TermQuery(new Term("body", "highlighting"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(1, topDocs.TotalHits);
@@ -1108,7 +1108,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        internal class GetFormatterPostingsHighlighter : PostingsHighlighter
+        internal class GetFormatterPostingsHighlighter : ICUPostingsHighlighter
         {
             protected override PassageFormatter GetFormatter(string field)
             {
@@ -1117,7 +1117,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         }
 
         /** customizing the gap separator to force a sentence break */
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestGapSeparator()
         {
             Directory dir = NewDirectory();
@@ -1144,7 +1144,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new GetMultiValuedSeparatorPostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new GetMultiValuedSeparatorPostingsHighlighter();
 
             Query query = new TermQuery(new Term("body", "field"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
@@ -1157,17 +1157,17 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        internal class GetMultiValuedSeparatorPostingsHighlighter : PostingsHighlighter
+        internal class GetMultiValuedSeparatorPostingsHighlighter : ICUPostingsHighlighter
         {
             protected override char GetMultiValuedSeparator(string field)
             {
-                Debug.Assert(field.Equals("body", StringComparison.Ordinal));
+                Debug.Assert( field.Equals("body", StringComparison.Ordinal));
                 return '\u2029';
             }
         }
 
         // LUCENE-4906
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestObjectFormatter()
         {
             Directory dir = NewDirectory();
@@ -1188,7 +1188,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new ObjectFormatterPostingsHighlighter();
+            ICUPostingsHighlighter highlighter = new ObjectFormatterPostingsHighlighter();
 
             Query query = new TermQuery(new Term("body", "highlighting"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
@@ -1204,7 +1204,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        internal class ObjectFormatterPostingsHighlighter : PostingsHighlighter
+        internal class ObjectFormatterPostingsHighlighter : ICUPostingsHighlighter
         {
             protected override PassageFormatter GetFormatter(string field)
             {

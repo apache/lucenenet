@@ -1,18 +1,15 @@
 ﻿#if FEATURE_BREAKITERATOR
 using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.Search;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using IndexOptions = Lucene.Net.Index.IndexOptions;
 
 namespace Lucene.Net.Search.PostingsHighlight
@@ -35,24 +32,22 @@ namespace Lucene.Net.Search.PostingsHighlight
 	 */
 
     /// <summary>
-    /// Some tests that override <see cref="PostingsHighlighter.GetIndexAnalyzer(string)"/> to
+    /// Some tests that override <see cref="ICUPostingsHighlighter.GetIndexAnalyzer(string)"/> to
     /// highlight wilcard, fuzzy, etc queries.
     /// </summary>
     /// <remarks>
-    /// LUCENENET specific - These are the original tests from Lucene. They are only here as proof that we 
-    /// can customize the <see cref="ICUPostingsHighlighter"/> to act like the PostingsHighlighter in Lucene,
-    /// which has slightly different default behavior than that of ICU because Lucene uses
-    /// the RuleBasedBreakIterator from the JDK, not that of ICU4J.
+    /// LUCENENET specific - Modified the behavior of the PostingsHighlighter in Java to return the
+    /// org.ibm.icu.BreakIterator version 60.1 instead of java.text.BreakIterator and modified the original Lucene
+    /// tests to pass, then ported to .NET. There are no changes in this class from that of Lucene 4.8.1.
     /// <para/>
-    /// These tests use a mock <see cref="PostingsHighlighter"/>, which is backed by an ICU 
-    /// <see cref="ICU4N.Text.RuleBasedBreakIterator"/> that is customized a bit to act (sort of)
-    /// like the one in the JDK. However, this customized implementation is not a logical default for
-    /// the <see cref="ICUPostingsHighlighter"/>.
+    /// Although the ICU <see cref="ICU4N.Text.BreakIterator"/> acts slightly different than the JDK's verision, using the default 
+    /// behavior of the ICU <see cref="ICU4N.Text.BreakIterator"/> is the most logical default to use in .NET. It is the same
+    /// default that was chosen in Apache Harmony.
     /// </remarks>
     [SuppressCodecs("MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom", "Lucene3x")]
-    public class TestMultiTermHighlighting : LuceneTestCase
+    public class TestICUMultiTermHighlighting : LuceneTestCase
     {
-        internal class PostingsHighlighterAnalyzerHelper : PostingsHighlighter
+        internal class PostingsHighlighterAnalyzerHelper : ICUPostingsHighlighter
         {
             private readonly Analyzer analyzer;
 
@@ -67,7 +62,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestWildcards()
         {
             Directory dir = NewDirectory();
@@ -92,7 +87,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             Query query = new WildcardQuery(new Term("body", "te*"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
@@ -116,7 +111,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestOnePrefix()
         {
             Directory dir = NewDirectory();
@@ -141,7 +136,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             Query query = new PrefixQuery(new Term("body", "te"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
@@ -165,7 +160,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestOneRegexp()
         {
             Directory dir = NewDirectory();
@@ -190,7 +185,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             Query query = new RegexpQuery(new Term("body", "te.*"));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
@@ -214,7 +209,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestOneFuzzy()
         {
             Directory dir = NewDirectory();
@@ -239,7 +234,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             Query query = new FuzzyQuery(new Term("body", "tets"), 1);
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
@@ -272,7 +267,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestRanges()
         {
             Directory dir = NewDirectory();
@@ -297,7 +292,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             Query query = TermRangeQuery.NewStringRange("body", "ta", "tf", true, true);
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
@@ -379,7 +374,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestWildcardInBoolean()
         {
             Directory dir = NewDirectory();
@@ -404,7 +399,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             BooleanQuery query = new BooleanQuery();
             query.Add(new WildcardQuery(new Term("body", "te*")), Occur.SHOULD);
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
@@ -429,7 +424,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestWildcardInDisjunctionMax()
         {
             Directory dir = NewDirectory();
@@ -454,7 +449,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             DisjunctionMaxQuery query = new DisjunctionMaxQuery(0);
             query.Add(new WildcardQuery(new Term("body", "te*")));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
@@ -468,7 +463,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestSpanWildcard()
         {
             Directory dir = NewDirectory();
@@ -493,7 +488,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             Query query = new SpanMultiTermQueryWrapper<WildcardQuery>(new WildcardQuery(new Term("body", "te*")));
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
             assertEquals(2, topDocs.TotalHits);
@@ -506,7 +501,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestSpanOr()
         {
             Directory dir = NewDirectory();
@@ -531,7 +526,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             SpanQuery childQuery = new SpanMultiTermQueryWrapper<WildcardQuery>(new WildcardQuery(new Term("body", "te*")));
             Query query = new SpanOrQuery(new SpanQuery[] { childQuery });
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
@@ -545,7 +540,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestSpanNear()
         {
             Directory dir = NewDirectory();
@@ -570,7 +565,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             SpanQuery childQuery = new SpanMultiTermQueryWrapper<WildcardQuery>(new WildcardQuery(new Term("body", "te*")));
             Query query = new SpanNearQuery(new SpanQuery[] { childQuery }, 0, true);
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
@@ -584,7 +579,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestSpanNot()
         {
             Directory dir = NewDirectory();
@@ -609,7 +604,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             SpanQuery include = new SpanMultiTermQueryWrapper<WildcardQuery>(new WildcardQuery(new Term("body", "te*")));
             SpanQuery exclude = new SpanTermQuery(new Term("body", "bogus"));
             Query query = new SpanNotQuery(include, exclude);
@@ -624,7 +619,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestSpanPositionCheck()
         {
             Directory dir = NewDirectory();
@@ -649,7 +644,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             SpanQuery childQuery = new SpanMultiTermQueryWrapper<WildcardQuery>(new WildcardQuery(new Term("body", "te*")));
             Query query = new SpanFirstQuery(childQuery, 1000000);
             TopDocs topDocs = searcher.Search(query, null, 10, Sort.INDEXORDER);
@@ -726,7 +721,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
         /** Runs a query with two MTQs and confirms the formatter
          *  can tell which query matched which hit. */
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestWhichMTQMatched()
         {
             Directory dir = NewDirectory();
@@ -749,7 +744,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            PostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
+            ICUPostingsHighlighter highlighter = new PostingsHighlighterAnalyzerHelper(analyzer);
             BooleanQuery query = new BooleanQuery();
             query.Add(new WildcardQuery(new Term("body", "te*")), Occur.SHOULD);
             query.Add(new WildcardQuery(new Term("body", "one")), Occur.SHOULD);

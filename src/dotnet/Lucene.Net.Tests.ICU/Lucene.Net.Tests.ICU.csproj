@@ -40,7 +40,11 @@
     <EmbeddedResource Include="..\..\Lucene.Net.Tests.Analysis.ICU\Analysis\Icu\Segmentation\*.rbbi" LinkBase="Analysis\Icu\Segmentation" />
     <Compile Include="..\..\Lucene.Net.Tests.Analysis.ICU\Collation\**\*.cs" LinkBase="Collation" />
     <Compile Include="..\..\Lucene.Net.Tests.Highlighter\PostingsHighlight\**\*.cs" LinkBase="Search\PostingsHighlight" />
+    <None Remove="Support\jdksent.brk" />
+    <None Remove="Support\jdkword.brk" />
     <EmbeddedResource Include="..\..\Lucene.Net.Tests.Highlighter\PostingsHighlight\CambridgeMA.utf8" Link="Search\PostingsHighlight\CambridgeMA.utf8" />
+    <EmbeddedResource Include="Support\jdksent.brk" />
+    <EmbeddedResource Include="Support\jdkword.brk" />
     <Compile Include="..\..\Lucene.Net.Tests.Highlighter\VectorHighlight\BreakIteratorBoundaryScannerTest.cs" Link="Search\VectorHighlight\BreakIteratorBoundaryScannerTest.cs" />
   </ItemGroup>
 

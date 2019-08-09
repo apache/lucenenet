@@ -21,7 +21,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 	 */
 
     /// <summary>
-    /// Ranks passages found by <see cref="PostingsHighlighter"/>.
+    /// Ranks passages found by <see cref="ICUPostingsHighlighter"/>.
     /// <para/>
     /// Each passage is scored as a miniature document within the document.
     /// The final score is computed as <c>norm</c> * ∑ (<c>weight</c> * <c>tf</c>).

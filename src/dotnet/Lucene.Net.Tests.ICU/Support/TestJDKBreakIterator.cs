@@ -1,6 +1,6 @@
 ﻿using ICU4N.Text;
 using Lucene.Net.Attributes;
-using Lucene.Net.ICU.Support;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 
