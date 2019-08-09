@@ -27,8 +27,10 @@
     <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
     <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageNoticeFile>NOTICE.txt</PackageNoticeFile>
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(SolutionDir)LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
+    <None Include="$(SolutionDir)NOTICE.txt" Pack="true" PackagePath="$(PackageNoticeFile)"/>
   </ItemGroup>
 </Project>
