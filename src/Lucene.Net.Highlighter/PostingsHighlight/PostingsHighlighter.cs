@@ -408,7 +408,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             new InPlaceMergeSorterAnonymousHelper(fields, maxPassages).Sort(0, fields.Length);
 
             // pull stored data:
-            string[][] contents = LoadFieldValues(searcher, fields, docids, maxLength);
+            IList<string[]> contents = LoadFieldValues(searcher, fields, docids, maxLength);
 
             IDictionary<string, object[]> highlights = new Dictionary<string, object[]>();
             for (int i = 0; i < fields.Length; i++)
@@ -447,7 +447,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// and fill all values.  The returned strings must be
         /// identical to what was indexed.
         /// </summary>
-        protected virtual string[][] LoadFieldValues(IndexSearcher searcher, string[] fields, int[] docids, int maxLength)
+        protected virtual IList<string[]> LoadFieldValues(IndexSearcher searcher, string[] fields, int[] docids, int maxLength)
         {
             string[][] contents = RectangularArrays.ReturnRectangularArray<string>(fields.Length, docids.Length);
             char[] valueSeparators = new char[fields.Length];
@@ -461,7 +461,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 searcher.Doc(docids[i], visitor);
                 for (int j = 0; j < fields.Length; j++)
                 {
-                    contents[j][i] = visitor.GetValue(j).ToString();
+                    contents[j][i] = visitor.GetValue(j); // LUCENENET: No point in doing ToString() on a string
                 }
                 visitor.Reset();
             }

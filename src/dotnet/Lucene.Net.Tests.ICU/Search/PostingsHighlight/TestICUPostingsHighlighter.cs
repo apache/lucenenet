@@ -755,7 +755,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 this.text = text;
             }
 
-            protected override string[][] LoadFieldValues(IndexSearcher searcher, string[] fields, int[] docids, int maxLength)
+            protected override IList<string[]> LoadFieldValues(IndexSearcher searcher, string[] fields, int[] docids, int maxLength)
             {
                 Debug.Assert( fields.Length == 1);
                 Debug.Assert( docids.Length == 1);
