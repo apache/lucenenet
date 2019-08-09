@@ -262,9 +262,9 @@ namespace Lucene.Net.Tests.ICU.Support
             Assert.AreEqual(400, bi.Last());
         }
 
-        // LUCENENET TODO: This test doesn't pass. We need to customize line iteration in order to get it to. However,
-        // none of the defaults set in lucene use line iteration, so this is low priority. Hopefully, someone works it
-        // out and makes a contribution.
+        // NOTE: This test doesn't pass. We need to customize line iteration in order to get it to. However,
+        // none of the defaults set in lucene use line iteration, so this is low priority. Leaving in place
+        // in case we need to make JDK style line breaks in the future.
         static readonly String LINE_TEXT =
             "Apache\tLucene(TM) is a high-\nperformance, full-featured text search engine library written entirely in Java.";
 
@@ -274,7 +274,7 @@ namespace Lucene.Net.Tests.ICU.Support
         }
 
         [Test]
-        [Ignore("LUCENENET TODO: Setup JDK style line iteration (see jdksent.rbbi and jdkword.rbbi)")]
+        [Ignore("Not required to confirm compatibility with Java, as this is not required by Lucene's tests.")]
         public void TestLineIteration()
         {
             BreakIterator bi = GetLineInstance(System.Globalization.CultureInfo.InvariantCulture);

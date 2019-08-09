@@ -1,6 +1,6 @@
 ﻿#if FEATURE_BREAKITERATOR
 using ICU4N.Text;
-using Lucene.Net.ICU.Support;
+using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -50,10 +50,30 @@ namespace Lucene.Net.Search.VectorHighlight
             assertEquals(start, scanner.FindEndOffset(text, start));
         }
 
+        // LUCENENET specific - Confirmed that ICU4J 60.1 behaves like this by default...
+        [Test, LuceneNetSpecific]
+        public void TestICUWordBoundary()
+        {
+            StringBuilder text = new StringBuilder(TEXT);
+            BreakIterator bi = BreakIterator.GetWordInstance(CultureInfo.InvariantCulture);
+            IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
+
+            int start = TEXT.IndexOf("formance", StringComparison.Ordinal);
+            int expected = TEXT.IndexOf("performance", StringComparison.Ordinal);
+            TestFindStartOffset(text, start, expected, scanner);
+
+            expected = TEXT.IndexOf(", full", StringComparison.Ordinal);
+            TestFindEndOffset(text, start, expected, scanner);
+        }
+
+        // LUCENENET specific - this is the original Lucene test with a mock BreakIterator that
+        // is intended to act (sort of) like the JDK
         [Test]
         public void TestWordBoundary()
         {
             StringBuilder text = new StringBuilder(TEXT);
+            // LUCENENET specific - using a mock of the JDK BreakIterator class, which is just
+            // an ICU BreakIterator with custom rules applied.
             BreakIterator bi = JdkBreakIterator.GetWordInstance(CultureInfo.InvariantCulture);
             IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
 
@@ -65,11 +85,49 @@ namespace Lucene.Net.Search.VectorHighlight
             TestFindEndOffset(text, start, expected, scanner);
         }
 
-        [Test]
-        public void TestSentenceBoundary()
+        // LUCENENET specific - Confirmed that ICU4J 60.1 behaves like this by default...
+        [Test, LuceneNetSpecific]
+        public void TestICUSentenceBoundary()
         {
             StringBuilder text = new StringBuilder(TEXT);
             // we test this with default locale, its randomized by LuceneTestCase
+            BreakIterator bi = BreakIterator.GetSentenceInstance(CultureInfo.CurrentCulture);
+            IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
+
+            int start = TEXT.IndexOf("any application");
+            int expected = TEXT.IndexOf("It is a");
+            TestFindStartOffset(text, start, expected, scanner);
+
+            expected = TEXT.IndexOf("application that requires") + "application that requires\n".Length;
+            TestFindEndOffset(text, start, expected, scanner);
+        }
+
+        // LUCENENET specific - this is the original Lucene test with a mock BreakIterator that
+        // is intended to act (sort of) like the JDK
+        [Test]
+        public void TestSentenceBoundary()
+        {
+            // LUCENENET specific - using a mock of the JDK BreakIterator class, which is just
+            // an ICU BreakIterator with custom rules applied. East Asian
+            // languages are skipped because the DictionaryBasedBreakIterator is not overridden by the rules.
+            switch (CultureInfo.CurrentCulture.TwoLetterISOLanguageName)
+            {
+                case "th": // Thai
+                case "lo": // Lao
+                case "my": // Burmese
+                case "km": // Khmer
+                case "ja": // Japanese
+                case "ko": // Korean
+                case "zh": // Chinese
+                    Assume.That(false, "This test does not apply to East Asian languages.");
+                    break;
+            }
+
+            StringBuilder text = new StringBuilder(TEXT);
+            // we test this with default locale, its randomized by LuceneTestCase
+
+            // LUCENENET specific - using a mock of the JDK BreakIterator class, which is just
+            // an ICU BreakIterator with custom rules applied.
             BreakIterator bi = JdkBreakIterator.GetSentenceInstance(CultureInfo.CurrentCulture);
             IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
 
