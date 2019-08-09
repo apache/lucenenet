@@ -32,7 +32,7 @@
         https://github.com/apache/lucene-solr/tree/31d7ec7bbfdcd2c4cc61d9d35e962165410b65fe/lucene/analysis/icu/src/data/utr30
         Just make sure they are adjusted to the right version of ICU/Lucene.
     <ICU4NPackageVersion>[60.1,60.2)</ICU4NPackageVersion> -->
-    <ICU4NPackageVersion>60.1.0-alpha.52</ICU4NPackageVersion>
+    <ICU4NPackageVersion>60.1.0-alpha.53</ICU4NPackageVersion>
     <ICU4NCollationPackageVersion>$(ICU4NPackageVersion)</ICU4NCollationPackageVersion>
     <ICU4NCurrencyDataPackageVersion>$(ICU4NPackageVersion)</ICU4NCurrencyDataPackageVersion>
     <ICU4NLanguageDataPackageVersion>$(ICU4NPackageVersion)</ICU4NLanguageDataPackageVersion>
