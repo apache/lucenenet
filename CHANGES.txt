@@ -1,4 +1,149 @@
-﻿=================== Release 4.8.0-beta00005 =====================
+﻿=================== Release 4.8.0-beta00006 =====================
+
+Bug
+•	Lucene.Net.Support.Collections::Equals<T>(): Fixed comparison to include a check whether Count
+	matches.
+•[Pull Request #215] - Lucene.Net.Analysis.Common.Analysis.Core.UpperCaseFilter::UpperCaseFilter():
+	Removed redundant termAtt initialization in UpperCaseFilter constructor
+•[LUCENENET-597] - Lucene.Net.Search.Spans.SpanNearQuery::ToString(): Fixed ordering problem when appending
+	statements to StringBuilder.
+•[Pull Request #224] - GOOD_FAST_HASH_SEED thread safety - avoid static constructor
+•	Intermittent failures of Lucene.Net.Facet.Taxonomy.WriterCache.TestCharBlockArray.TestArray().
+	The test was not setup to with encoders that fallback to '?' for unmapped/invalid characters.
+	Also, the BinaryReader/BinaryWriter was too strict with regard to validating surrogate pairs
+	for this type of serialization, so implemented custom extension methods over Stream that do
+	not use encoding.
+•[LUCENENET-602] - Some platforms fail to load codecs seemingly because their types are discovered 
+	by using reflection. Changed to using hard-coded codec lists rather than reflection to load the
+	internal codec types.
+	regression test to show it is no longer an issue).
+•	Lucene.Net.Tests.Search.TestMultiTermContsantScore: Safely call Dispose by ensuring the 
+	reference variable is not null
+•	Lucene.Net.Tests.Search.BaseTestRangeFilter: Safely call Dispose by ensuring the 
+	reference variable is not null
+•	Lucene.Net.Support.IO.FileSupport::fileCanonPathCache changed to ConcurrentDictionary
+	to make it thread-safe
+•	Lucene.Net.Store.NativeFSLockFactory: Fixed locking/disposal of lock instances to be thread-safe
+•[Pull Request #225] - Changed "Improve this doc" button to point to the GitHub repo
+•	Fixed constructor of Lucene.Net.Support.HashMap to use the passed in comparer rather than 
+	EqualityComparer<TKey>.Default.
+•[LUCENENET-603] - Fixed ConcurrentMergeScheduler and TaskMergeScheduler so they don't throw exceptions
+	on background threads and properly throw exceptions on the calling thread during merge failures.
+•	Lucene.Net.TestFramework: Removed dependency on local file path location of 
+	europarl.lines.txt.gz and embedded the file.
+•	Lucene.Net.Suggest.Suggest.FileDictionary - Fixed conversion of string to number to be
+	culture insensitive (it caused the tests in FileDictionaryTest to fail randomly)
+•	Lucene.Net.Tests.Cli - Fixed issue with xplat root directory specification 
+	(all platforms were trying to set the directory to C:\)
+•	Lucene.Net.Benchmark.ByTask.Utils.Config: Fixed FormatException caused by converting
+	number to string in ambient culture and parsing it back to a number in invariant culture
+•	Lucene.Net.Analysis.Common.Analysis.Util.AbstractAnalysisFactory: Fixed parsing issue 
+	converting string to int in ambient culture
+•	Lucene.Net.Analysis.Common.Analysis.Miscellaneous.TruncateTokenFilterFactory - Fixed
+	issue converting string to sbyte in ambient culture
+•	Lucene.Net.Util.CommandLineUtil.AdjustDirectoryName - IndexOf comparison must be 
+	StringComparison.Ordinal (or in this case, a single char) to be compatible with all
+	cultures/platforms.
+•	Lucene.Net.TestFramework.Util.LuceneTestCase.NewFSDirectory - When resolving a type, 
+	we were expecting an exception if the type does not subclass FSDirectory, however, in .NET this
+	won't happen. We need to explicitly check whether the resolved type is assignable from FSDirectory
+	or if the type name is nonsense.
+•	Lucene.Net.Util.StringHelper: - Fixed parsing issue converting string to int in ambient culture
+•	Lucene.Net.Index.CheckIndex - Fixed issue with converting int to string using ambient context 
+	on VersionInfo comparison
+•	Lucene.Net.Expressions: Corrected casing on app.config to lower (xplat problem)
+•	Lucene.Net.Analysis.SmartCn: Corrected casing of folder paths on bigramdict.mem, coredict.mem, 
+	and package.md (xplat problem)
+•	Lucene.Net.Tests.Support.TestTreeSet: Passing null instead of CultureInfo.InvariantCulture causes
+	the test to randomly fail depending on the culture of the current thread (which is
+	randomly selected by LuceneTestCase).
+•	Lucene.Net.TestFramework.Util.TestUtil.NextLong: The result of the method was always the value of
+	start when start == long.MinValue and end == long.MaxValue. As a result, many tests
+	were not actually random.
+•	Lucene.Net.TestFramework.Index.AlcoholicMergePolicy: The value chosen for Hour was supposed to be
+	random, but it was setup to be a constant by a mistranslation from Java to .NET
+•	Lucene.Net.Tests.Index.TestTransactionRollback: Number was failing due to the fact the data that was
+	being populated wasn't being converted from int to string in invariant culture. Switched back to
+	original logic, using LastIndexOf(char) rather than LastIndexOf(string).
+•	Lucene.Net.Grouping.TopGroups - check collection equality if the generic type is a reference
+	type (as is the default behavior in Java)
+•	SWEEP: Added StringComparison.Ordinal to all of the string.StartsWith() and string.EndsWith()
+	methods where it was missing
+•	Lucene.Net.Tests.QueryParser.Flexible.Precedence.TestPrecedenceQueryParser: Specify short date
+	format by using DateTime.ParseExact instead of DateTime.Parse
+•	Lucene.Net.Support.CultureContext: Fixed minor issue with unused variable
+•	Lucene.Net.TestFramework.JavaCompatibility.SystemTypesHelpers: Overloads of append that take
+	numeric types need to be converted to the invariant culture. Removed the overloads for
+	decimal, double, and float, as those need to be dealt with on a case by case basis.
+•	Lucene.Net.Tests.Analysis.Common.Analysis.Pattern.TestPatternTokenizer.TestSplitting: int.Parse
+	must be setup in the invariant culture to consistently recognize inputs
+•	SWEEP: Ensure all enumerators are disposed of properly (except in some cases where enumerators
+	are set to field variables, see LUCENENET-611)
+•	Lucene.Net.Highlighter.VectorHighlight.FieldQuery: List<T> replacement for LinkedHashSet<T> preserves insertion
+	order, but we need to explicitly check to ensure no duplicate values are added
+•	Lucene.Net.Tests.Search.TestFieldCacheRangeFilter.TestSparseIndex: formatting value must be done in invariant culture
+•	Lucene.Net.Util.StringHelper - Use Time.CurrentTimeMilliseconds() instead of DateTime.Now.Millisecond. The latter is 
+•	a mis-translation from Java which contains only numbers 0 to 999, the former returns a long based on
+	Stopwatch.GetTimestamp() that has several orders of magnitude more possible values.
+•	SWEEP: Ensure all enumerators are disposed of properly (except in some cases where enumerators are set 
+	to field variables, see LUCENENET-611)
+•	Lucene.Net.TestFramework.Codecs.RAMOnly.RAMOnlyPostingsFormat - string comparison must be done using ordinal to match Java
+
+Improvement
+•[Pull Request #206] - Website & API Doc site generator using DocFx script
+•[Pull Request #223] - Website updates - DOAP file and copy changes
+•[LUCENENET-588] - Made lucene-cli into a dotnet tool NuGet package and updated the documentation on how to install and use it
+•	Fixed solution and project files so builds can be done cross-platform (in the IDE or via dotnet build)
+•	Switched to the .snupkg debugy symbols format
+•	Changed build.ps1 script to install and use only version 2.2.300 of the .NET Core SDK to prevent
+	build failures due to version drift
+•[Pull Request #227 & LUCENENET-608] - Added strong naming to Lucene.Net assemblies to comply with Microsoft guidelines
+•	Added missing guard clauses for Lucene.Net.Support.HashMap and Lucene.Net.Support.LinkedHashMap constructors
+•	Upgraded build script to latest dotnet-install.ps1
+•	Changed NuGet dependency from the unofficial SharpZipLib.NETStandard to the official SharpZipLib
+	and upgraded to version 1.1.0 from 0.86.0
+•	Removed hard-coded failure, since we are no longer getting crashes due to background threads 
+	throwing exceptions
+•	SWEEP: Re-evaluated test times and decorated all tests 5 seconds or over with the LongRunningTestAttribute,
+	removing the attribute where it was no longer necessary
+•	SWEEP: Removed the TimeoutAttribute from all tests that are known to run in a short duration
+•	Upgraded test projects to use Microsoft.NET.Test.Sdk version 16.2.0
+•	Upgraded test projects to use NUnit3TestAdapter version 3.13.0
+•	Upgraded test projects to use NUnit version 3.9.0
+•	Lucene.Net.Analysis.Analyzer: Implemented dispose pattern
+•	Lucene.Net.Benchmark.ByTask.Tasks.PerfTask: added IDisposable so the
+	class can be used with a using block (it already had Dispose())
+•	Setup build.ps1 to run tests in parallel using background jobs
+•	build.ps1: Added function to summarize the test results on the console
+•	Removed Version.proj file and moved the version properties into the root Directory.Build.props file
+•	Renamed TestTargetFramework.proj to TestTargetFramework.props (Some editions of VS2019 don't seem 
+	to like the .proj extension)
+•	Lucene.Net.TestFramework: Implemented dispose pattern where applicable
+•	Broke Lucene.Net.Tests project into Lucene.Net.Tests._A-I, Lucene.Net.Tests._J-U, and 
+	Lucene.Net.Tests._U-Z to cut the time it takes to run the tests in the project by about 2/3, running
+	in parallel
+•[Pull Request #216] - Added .NET Standard 2.0 target to projects where it was missing
+•	Lucene.Net.TestFramework.Util.LuceneTestCase: Throw explicit exception if Directory type cannot be resolved
+•	Lucene.Net.Benchmark: Use AssemblyQualifiedName for StandardAnalyzer for better reliability with .NET Reflection
+•	build.ps1: Added option to specify maximum number of parallel jobs to use during testing
+•	Added .vscode/settings.json file to locate tests and ignore docs path in Visual Studio Code
+•	SWEEP: Added StringComparison.Ordinal to all string.Equals() calls, as per 
+	https://docs.microsoft.com/en-us/dotnet/standard/base-types/best-practices-strings#recommendations-for-string-usage
+•	Lucene.Net.TestFramework.Util.LuceneTestCase: Added try catch blocks to write stack traces to the
+	console if exceptions occur during OneTimeSetUp or OneTimeTearDown
+•[LUCENENET-435] SWEEP: CA2200: Rethrow to preserve stack details
+	(https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+•	Lucene.Net.Support.Search.ReferenceContext: Sealed the class, as none of its
+	members are virtual anyway.
+•	Moved TaskMergeScheduler/TestTaskMergeScheduler to the Support folders
+•	Upgraded NuGet package dependency of Spatial4n to version 0.4.1
+
+New Feature
+•[LUCENENET-566 & LUCENENET-573] - Lucene.Net.ICU: Added all missing functionality and tests (100% passing) and changed the NuGet 
+	package dependency from icu.net to ICU4N.
+•	Created azure-pipelines.yml for Azure DevOps that anybody can use.
+
+=================== Release 4.8.0-beta00005 =====================
 
 Bug
 •	Added [Obsolete] attribute to Lucene.Net.Field extension methods that are only for
