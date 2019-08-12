@@ -35,6 +35,7 @@ This is an another highlighter implementation.
 
 To explain the algorithm, let's use the following sample text (to be highlighted) and user query:
 
+
 <table border="1">
 <tr>
 <td>**Sample Text**</td>
@@ -78,8 +79,8 @@ From the sample user query, the following `QueryPhraseMap` will be generated:
     +--------+-+  +-------+-+
     |"Lucene"|o+->|boost=2|*|  * : terminal
     +--------+-+  +-------+-+
-
-    +--------+-+  +---------+-+  +-------+------+-+
+    
++--------+-+  +---------+-+  +-------+------+-+
     |"search"|o+->|"library"|o+->|boost=1|slop=1|*|
     +--------+-+  +---------+-+  +-------+------+-+
 

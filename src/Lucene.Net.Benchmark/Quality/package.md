@@ -36,13 +36,13 @@ Here is a sample code used to run the TREC 2006 queries 701-850 on the .Gov2 col
         File qrelsFile = new File("qrels-701-850.txt");
         IndexReader ir = DirectoryReader.open(directory):
         IndexSearcher searcher = new IndexSearcher(ir);
-
-        int maxResults = 1000;
+    
+    int maxResults = 1000;
         String docNameField = "docname"; 
 
         PrintWriter logger = new PrintWriter(System.out,true); 
-
-        // use trec utilities to read trec topics into quality queries
+    
+    // use trec utilities to read trec topics into quality queries
         TrecTopicsReader qReader = new TrecTopicsReader();
         QualityQuery qqs[] = qReader.readQueries(new BufferedReader(new FileReader(topicsFile)));
 

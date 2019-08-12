@@ -16,8 +16,10 @@
  limitations under the License.
 -->
 
+
 Messages usually used by query parser implementations.
 
 ## Query Parser Messages
+
 
 Messages for the Flexible Query Parser, they use <tt>org.apache.lucene.messages.NLS</tt> API.

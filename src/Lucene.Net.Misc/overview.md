@@ -24,6 +24,7 @@ summary: *content
 
 ## Misc Tools
 
+
 The misc package has various tools for splitting/merging indices,
 changing norms, finding high freq terms, and others.
 
@@ -43,15 +44,15 @@ for details.
 
 Steps to build:
 
-*   <tt>cd lucene/misc/</tt>
+*   <tt>cd lucene/misc/</tt>
 
-   To compile NativePosixUtil.cpp -> libNativePosixUtil.so, run<tt> ant build-native-unix</tt>.
+       To compile NativePosixUtil.cpp -> libNativePosixUtil.so, run<tt> ant build-native-unix</tt>.
 
-  <tt>libNativePosixUtil.so</tt> will be located in the <tt>lucene/build/native/</tt> folder
+  <tt>libNativePosixUtil.so</tt> will be located in the <tt>lucene/build/native/</tt> folder
 
-   Make sure libNativePosixUtil.so is on your LD_LIBRARY_PATH so java can find it (something like <tt>export LD_LIBRARY_PATH=/path/to/dir:$LD_LIBRARY_PATH</tt>, where /path/to/dir contains libNativePosixUtil.so)
+       Make sure libNativePosixUtil.so is on your LD_LIBRARY_PATH so java can find it (something like <tt>export LD_LIBRARY_PATH=/path/to/dir:$LD_LIBRARY_PATH</tt>, where /path/to/dir contains libNativePosixUtil.so)
 
-   <tt>ant jar</tt> to compile the java source and put that JAR on your CLASSPATH
+       <tt>ant jar</tt> to compile the java source and put that JAR on your CLASSPATH
 
 NativePosixUtil.cpp/java also expose access to the posix_madvise,
 madvise, posix_fadvise functions, which are somewhat more cross

@@ -25,6 +25,7 @@ Benchmarking Lucene By Tasks.
 
  Contained packages: 
 
+
 <table border="1" cellpadding="4">
  <tr>
    <td>**Package**</td>
@@ -490,6 +491,7 @@ Example: max.buffered=buf:10:10:100:100 -
  The traverse and retrieve tasks "count" more: a traverse task would add 1 for each traversed result (hit), and a retrieve task would additionally add 1 for each retrieved doc. So, regular Search would count 1, SearchTrav that traverses 10 hits would count 11, and a SearchTravRet task that retrieves (and traverses) 10, would count 21. 
 
  Confusing? this might help: always examine the `elapsedSec` column, and always compare "apples to apples", .i.e. it is interesting to check how the `rec/s` changed for the same task (or sequence) between two different runs, but it is not very useful to know how the `rec/s` differs between `Search` and `SearchTrav` tasks. For the latter, `elapsedSec` would bring more insight. 
+
 
 </div>
 <div> </div>

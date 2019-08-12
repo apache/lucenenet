@@ -32,6 +32,7 @@ Three analyzers are provided for Chinese, each of which treats Chinese text in a
 	CJKAnalyzer (in the analyzers/cjk package): Index bigrams (overlapping groups of two adjacent Chinese characters) as tokens.
 	SmartChineseAnalyzer (in this package): Index words (attempt to segment Chinese text into words) as tokens.
 
+
 Example phrase： "我是中国人"
 
 1.  StandardAnalyzer: 我－是－中－国－人

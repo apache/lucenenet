@@ -21,6 +21,7 @@ summary: *content
  limitations under the License.
 -->
 
+
 A simple query parser implemented with JavaCC.
 
 Note that JavaCC defines lots of public classes, methods and fields
@@ -34,6 +35,7 @@ must always be fully qualified in source code in this package.
 enabling substantial customization to how a query is created.
 
 ## Query Parser Syntax
+
 
 <div id="minitoc-area">
 

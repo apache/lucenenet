@@ -16,6 +16,7 @@
  limitations under the License.
 -->
 
+
 For Native Language Support (NLS), system of software internationalization.
 
 ## NLS message API

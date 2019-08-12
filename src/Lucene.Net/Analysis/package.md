@@ -151,8 +151,8 @@ and proximity searches (though sentence identification is not provided by Lucene
             // Use [#reflectAsString(boolean)](xref:Lucene.Net.Util.AttributeSource)
             // for token stream debugging.
             System.out.println("token: " + ts.reflectAsString(true));
-
-            System.out.println("token start offset: " + offsetAtt.startOffset());
+    
+        System.out.println("token start offset: " + offsetAtt.startOffset());
             System.out.println("  token end offset: " + offsetAtt.endOffset());
           }
           ts.end();   // Perform end-of-stream operations, e.g. set the final offset.
@@ -202,8 +202,8 @@ and proximity searches (though sentence identification is not provided by Lucene
         TokenStream res = new TokenStream() {
           CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
           PositionIncrementAttribute posIncrAtt = addAttribute(PositionIncrementAttribute.class);
-
-          public boolean incrementToken() throws IOException {
+    
+      public boolean incrementToken() throws IOException {
             int extraIncrement = 0;
             while (true) {
               boolean hasNext = ts.incrementToken();
@@ -450,14 +450,14 @@ extra performance.
 #### Whitespace tokenization
 
     public class MyAnalyzer extends Analyzer {
-
-      private Version matchVersion;
+    
+  private Version matchVersion;
 
       public MyAnalyzer(Version matchVersion) {
         this.matchVersion = matchVersion;
       }
-
-      {@literal @Override}
+    
+  {@literal @Override}
       protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
         return new TokenStreamComponents(new WhitespaceTokenizer(matchVersion, reader));
       }
@@ -472,8 +472,8 @@ extra performance.
 
         // get the CharTermAttribute from the TokenStream
         CharTermAttribute termAtt = stream.addAttribute(CharTermAttribute.class);
-
-        try {
+    
+    try {
           stream.reset();
 
           // print all tokens until stream is exhausted
@@ -527,13 +527,13 @@ Note how now only words with 3 or more characters are contained in the output:
 Now let's take a look how the LengthFilter is implemented:
 
     public final class LengthFilter extends FilteringTokenFilter {
-
-      private final int min;
+    
+  private final int min;
       private final int max;
 
       private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
-
-      /**
+    
+  /**
        * Create a new LengthFilter. This will filter out tokens whose
        * CharTermAttribute is either too short
        * (< min) or too long (> max).
@@ -547,8 +547,8 @@ Now let's take a look how the LengthFilter is implemented:
         this.min = min;
         this.max = max;
       }
-
-      {@literal @Override}
+    
+  {@literal @Override}
       public boolean accept() {
         final int len = termAtt.length();
         return (len >= min && len <= max);="" }="" }=""></=>
@@ -560,21 +560,21 @@ Now let's take a look how the LengthFilter is implemented:
  LengthFilter extends FilteringTokenFilter: 
 
     public abstract class FilteringTokenFilter extends TokenFilter {
-
-      private final PositionIncrementAttribute posIncrAtt = addAttribute(PositionIncrementAttribute.class);
-
-      /**
+    
+  private final PositionIncrementAttribute posIncrAtt = addAttribute(PositionIncrementAttribute.class);
+    
+  /**
        * Create a new FilteringTokenFilter.
        * @param in      the TokenStream to consume
        */
       public FilteringTokenFilter(Version version, TokenStream in) {
         super(in);
       }
-
-      /** Override this method and return if the current input token should be returned by incrementToken. */
+    
+  /** Override this method and return if the current input token should be returned by incrementToken. */
       protected abstract boolean accept() throws IOException;
-
-      {@literal @Override}
+    
+  {@literal @Override}
       public final boolean incrementToken() throws IOException {
         int skippedPositions = 0;
         while (input.incrementToken()) {
@@ -589,13 +589,13 @@ Now let's take a look how the LengthFilter is implemented:
         // reached EOS -- return false
         return false;
       }
-
-      {@literal @Override}
+    
+  {@literal @Override}
       public void reset() throws IOException {
         super.reset();
       }
-
-    }
+    
+}
 
 #### Adding a custom Attribute
 
@@ -630,13 +630,13 @@ Now we're going to implement our own custom Attribute for part-of-speech tagging
       public PartOfSpeech getPartOfSpeech() {
         return pos;
       }
-
-      {@literal @Override}
+    
+  {@literal @Override}
       public void clear() {
         pos = PartOfSpeech.Unknown;
       }
-
-      {@literal @Override}
+    
+  {@literal @Override}
       public void copyTo(AttributeImpl target) {
         ((PartOfSpeechAttribute) target).setPartOfSpeech(pos);
       }
@@ -705,11 +705,11 @@ to make use of the new PartOfSpeechAttribute and print it out:
 
         // get the PartOfSpeechAttribute from the TokenStream
         PartOfSpeechAttribute posAtt = stream.addAttribute(PartOfSpeechAttribute.class);
-
-        try {
+    
+    try {
           stream.reset();
-
-          // print all tokens until stream is exhausted
+    
+      // print all tokens until stream is exhausted
           while (stream.incrementToken()) {
             System.out.println(termAtt.toString() + ": " + posAtt.getPartOfSpeech());
           }
@@ -750,13 +750,13 @@ As a small hint, this is how the new Attribute class could begin:
         public boolean getFirstToken() {
           return firstToken;
         }
-
-        {@literal @Override}
+    
+    {@literal @Override}
         public void clear() {
           firstToken = false;
         }
-
-      ...
+    
+  ...
 
 #### Adding a CharFilter chain
 
@@ -771,8 +771,8 @@ CharFilters can be chained.
 Example:
 
     public class MyAnalyzer extends Analyzer {
-
-      {@literal @Override}
+    
+  {@literal @Override}
       protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
         return new TokenStreamComponents(new MyTokenizer(reader));
       }
