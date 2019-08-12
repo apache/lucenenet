@@ -25,6 +25,7 @@
     <!-- Ensure this doesn't inherit the strong naming since this tool will no work with a signed assembly due to it's references -->
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
