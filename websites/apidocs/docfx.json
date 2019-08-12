@@ -333,11 +333,16 @@
       "_appFaviconPath": "logo/favicon.ico",
       "_enableSearch": true,
       "_appLogoPath": "logo/lucene-net-color.png",
-      "_appFooter": "Copyright © 2019 Licensed to the Apache Software Foundation (ASF)"
+      "_appFooter": "Copyright © 2019 Licensed to the Apache Software Foundation (ASF)",
+      "_gitContribute": {
+        "repo": "https://github.com/apache/lucenenet",
+        "branch": "master",
+        "apiSpecFolder": "websites/apidocs/apiSpec"
+      }
     },
     "overwrite": [
       {
-        "files": ["**/package.md","**/overview.md"],
+        "files": ["**/package.md","**/overview.md", "apiSpec/**/*.md"],
         "src": "../../src",
         "exclude": ["Lucene.Net/overview.md"]
       }
