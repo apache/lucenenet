@@ -41,8 +41,8 @@ on some of the conceptual or inner details of Lucene:
 
 * [Lucene.Net](xref:Lucene.Net): Lucene core library
 * [Lucene.Net.Analysis.Common](xref:Lucene.Net.Analysis): Analyzers for indexing content in different languages and domains.
-* [Lucene.Net.ICU](xref:Lucene.Net.Analysis.Icu): Analysis integration with ICU (International Components for Unicode).
-* [Lucene.Net.Analysis.Kuromoji](xref:Lucene.Net.Analysis.Ja): Japanese Morphological Analyzer
+* __To be completed__:analyzers-icu: Analysis integration with ICU (International Components for Unicode).
+* [analyzers-kuromoji](xref:Lucene.Net.Analysis.Jn): Japanese Morphological Analyzer
 * [Lucene.Net.Analysis.Phonetic](xref:Lucene.Net.Analysis.Phonetic): Analyzer for indexing phonetic signatures (for sounds-alike search)
 * [Lucene.Net.Analysis.SmartCn](xref:Lucene.Net.Analysis.Cn.Smart): Analyzer for indexing Chinese
 * [Lucene.Net.Analysis.Stempel](xref:Lucene.Net.Analysis.Stempel): Analyzer for indexing Polish

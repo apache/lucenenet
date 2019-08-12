@@ -108,13 +108,17 @@ New-Item $PluginsFolder -type directory -force
 # https://github.com/dotnet/docfx/issues/1969
 # Then it turns out we also need 2017 build tools installed, wat!? 
 # https://www.microsoft.com/en-us/download/details.aspx?id=48159
-# I have tried the latest docfx version https://github.com/dotnet/docfx/releases/download/v2.44/docfx.zip but it cannot build,
-# this is supposed to be fixed in the latest docfx, but alas it's still broken: https://github.com/dotnet/docfx/issues/4869
+# NOTE: There's a ton of Lucene docs that we want to copy and re-format. I'm not sure if we can really automate this 
+# in a great way since the docs seem to be in many places, for example:
+# https://github.com/dotnet/docfx/issues/1969
+# Then it turns out we also need 2015 build tools installed, wat!? 
+# https://www.microsoft.com/en-us/download/details.aspx?id=48159
+# Home page - 	https://github.com/apache/lucene-solr/blob/branch_4x/lucene/site/xsl/index.xsl
+# Wiki docs - 	https://wiki.apache.org/lucene-java/FrontPage?action=show&redirect=FrontPageEN - not sure where the source is for this
 # The only way i can get this building currently is to have the VS2017 build tools installed.
 # UPDATE: Interestingly it now works by passing in the most recent msbuild target...
 # TODO: Need to upgrade to latest docfx and figure out why there are issues.
 
-[Environment]::SetEnvironmentVariable("VSINSTALLDIR", $msbuild)
 [Environment]::SetEnvironmentVariable("VisualStudioVersion", "15.0")
 
 $DocFxJson = Join-Path -Path $ApiDocsFolder "docfx.json"
