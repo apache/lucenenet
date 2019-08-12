@@ -1,5 +1,5 @@
 ﻿---
-uid: Lucene.Net.Analysis.Kuromoji
+uid: Lucene.Net.Analysis.Ja
 summary: *content
 ---
 

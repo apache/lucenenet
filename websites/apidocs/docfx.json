@@ -127,7 +127,6 @@
           "files": [
             "Lucene.Net.Analysis.Common/Lucene.Net.Analysis.Common.csproj",
             "Lucene.Net.Analysis.Stempel/Lucene.Net.Analysis.Stempel.csproj",
-            "Lucene.Net.Analysis.SmartCn/Lucene.Net.Analysis.SmartCn.csproj",
             "Lucene.Net.Analysis.Phonetic/Lucene.Net.Analysis.Phonetic.csproj",
             "Lucene.Net.Analysis.Kuromoji/Lucene.Net.Analysis.Kuromoji.csproj"
           ],
@@ -136,6 +135,36 @@
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis",
+      "properties": {
+          "TargetFramework": "netstandard1.6"
+      }
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Analysis.SmartCn/Lucene.Net.Analysis.SmartCn.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../../src"
+        }
+      ],
+      "dest": "obj/docfx/api/Lucene.Net.Analysis.SmartCn",
+      "properties": {
+          "TargetFramework": "netstandard1.6"
+      }
+    },    
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Analysis.Kuromoji/Lucene.Net.Analysis.Kuromoji.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../../src"
+        }
+      ],
+      "dest": "obj/docfx/api/Lucene.Net.Analysis.Kuromoji",
       "properties": {
           "TargetFramework": "netstandard1.6"
       }
