@@ -1,7 +1,10 @@
 ﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Analysis.En;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -67,6 +70,22 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 IOUtils.DisposeWhileHandlingException(tokenStream);
             }
+        }
+
+        [Test, LuceneNetSpecific]
+        public virtual void TestLUCENENET615()
+        {
+            var english = new EnglishAnalyzer(Lucene.Net.Util.LuceneVersion.LUCENE_48);
+
+            var whitespace = new WhitespaceAnalyzer(Lucene.Net.Util.LuceneVersion.LUCENE_48);
+
+            var pf = new PerFieldAnalyzerWrapper(english, new Lucene.Net.Support.HashMap<string, Analyzer>() { { "foo", whitespace } });
+
+            var test1 = english.GetTokenStream(null, "test"); // Does not throw
+
+            var test2 = pf.GetTokenStream("", "test"); // works
+
+            Assert.DoesNotThrow(() => pf.GetTokenStream(null, "test"), "GetTokenStream should not throw NullReferenceException with a null key");
         }
 
         [Test]

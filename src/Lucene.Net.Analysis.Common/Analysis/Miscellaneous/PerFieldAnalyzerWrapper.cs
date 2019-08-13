@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Support;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -71,14 +72,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
             : base(PER_FIELD_REUSE_STRATEGY)
         {
             this.defaultAnalyzer = defaultAnalyzer;
-            this.fieldAnalyzers = fieldAnalyzers ?? new Dictionary<string, Analyzer>();
+            this.fieldAnalyzers = fieldAnalyzers ?? new HashMap<string, Analyzer>(); // LUCENENET-615: Must support nullable keys
         }
 
         protected override Analyzer GetWrappedAnalyzer(string fieldName)
         {
-            Analyzer analyzer = fieldAnalyzers.ContainsKey(fieldName) ?
-                fieldAnalyzers[fieldName] :
-                null;
+            fieldAnalyzers.TryGetValue(fieldName, out Analyzer analyzer);
             return analyzer ?? defaultAnalyzer;
         }
 

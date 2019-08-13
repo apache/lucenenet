@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -464,7 +465,8 @@ namespace Lucene.Net.Analysis
                 var componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
                 if (componentsPerField == null)
                 {
-                    componentsPerField = new Dictionary<string, TokenStreamComponents>();
+                    // LUCENENET-615: This needs to support nullable keys
+                    componentsPerField = new HashMap<string, TokenStreamComponents>();
                     SetStoredValue(analyzer, componentsPerField);
                 }
                 componentsPerField[fieldName] = components;
