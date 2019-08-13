@@ -105,9 +105,7 @@ The API is similar to Java [Lucene 4.8.0](https://lucene.apache.org/core/4_8_0/)
 
 There are several demos implemented as simple console applications that can be copied and pasted into Visual Studio or compiled on the command line in the [Lucene.Net.Demo project](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Demo).
 
-<!-- TO BE ADDED WHEN RELEASED
-
-There is also a dotnet command line tool available on NuGet. It contains all of the demos as well as tools maintaining your Lucene.Net index, containing such operations as splitting, merging, listing segment info, fixing, deleting segments, upgrading, etc. Always be sure to back up your index before running any commands against it!
+There is also a dotnet command line tool available on NuGet. It contains all of the demos as well as tools maintaining your Lucene.Net index, featuring operations such as splitting, merging, listing segment info, fixing, deleting segments, upgrading, etc. Always be sure to back up your index before running any commands against it!
 
 ```
 dotnet tool install lucene-cli -g --version 4.8.0-beta00006
@@ -116,7 +114,6 @@ dotnet tool install lucene-cli -g --version 4.8.0-beta00006
 Once installed, you can explore what commands and options are available by entering the command `lucene`.
 
 [lucene-cli Documentation](https://github.com/apache/lucenenet/blob/master/src/dotnet/tools/lucene-cli/docs/index.md)
--->
 
 ## How to Contribute
 
@@ -194,7 +191,7 @@ To build the source, clone or download and unzip the repository. From the reposi
 		<td>&#8209;mp</td>
 		<td>&#8209;&#8209;MaximumParallelJobs</td>
 		<td>The maximum number of parallel jobs to run during testing. If not supplied, the default is 8.</td>
-		<td>build&nbsp;&#8209;mp:10</td>
+		<td>build&nbsp;&#8209;t&nbsp;&#8209;mp:10</td>
 	</tr>
 	<tr>
 		<td>&#8209;pv</td>
