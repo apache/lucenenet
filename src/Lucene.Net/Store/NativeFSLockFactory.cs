@@ -88,17 +88,16 @@ namespace Lucene.Net.Store
             SetLockDir(lockDir);
         }
 
-		// LUCENENET: NativeFSLocks in Java are infact singletons; this is how we mimick that to track instances and make sure
-		// IW.Unlock and IW.IsLocked works correctly
-        internal static readonly Dictionary<string, Lock> locks = new Dictionary<string, Lock>();
-        internal static readonly object syncLock = new object();
+        // LUCENENET: NativeFSLocks in Java are infact singletons; this is how we mimick that to track instances and make sure
+        // IW.Unlock and IW.IsLocked works correctly
+        internal static readonly Dictionary<string, Lock> _locks = new Dictionary<string, Lock>();
 
-		/// <summary>
-		/// Given a lock name, return the full prefixed path of the actual lock file.
-		/// </summary>
-		/// <param name="lockName"></param>
-		/// <returns></returns>
-		private string GetCanonicalPathOfLockFile(string lockName)
+        /// <summary>
+        /// Given a lock name, return the full prefixed path of the actual lock file.
+        /// </summary>
+        /// <param name="lockName"></param>
+        /// <returns></returns>
+        private string GetCanonicalPathOfLockFile(string lockName)
         {
             if (m_lockPrefix != null)
             {
@@ -111,11 +110,9 @@ namespace Lucene.Net.Store
         {
             var path = GetCanonicalPathOfLockFile(lockName);
             Lock l;
-			lock (syncLock)
-			{
-				if (!locks.TryGetValue(path, out l))
-					locks.Add(path, l = NewLock(path));
-			}
+            lock (_locks)
+                if (!_locks.TryGetValue(path, out l))
+                    _locks.Add(path, l = NewLock(path));
             return l;
         }
 
@@ -133,16 +130,14 @@ namespace Lucene.Net.Store
         {
             var path = GetCanonicalPathOfLockFile(lockName);
             Lock l;
-			// this is the reason why we can't use ConcurrentDictionary: we need the removal and disposal of the lock to be atomic
-			// otherwise it may clash with MakeLock making a lock and ClearLock disposing of it in another thread.
-			lock (syncLock)
-			{
-				if (locks.TryGetValue(path, out l))
-				{
-					locks.Remove(path);
-					l.Dispose();
-				}
-			}
+            // this is the reason why we can't use ConcurrentDictionary: we need the removal and disposal of the lock to be atomic
+            // otherwise it may clash with MakeLock making a lock and ClearLock disposing of it in another thread.
+            lock (_locks)
+                if (_locks.TryGetValue(path, out l))
+                {
+                    _locks.Remove(path);
+                    l.Dispose();
+                }
         }
     }
 
@@ -169,7 +164,6 @@ namespace Lucene.Net.Store
         private FileStream channel;
         private readonly string path;
         private readonly DirectoryInfo lockDir;
-		private readonly object syncLock = new object(); // avoid lock(this)
 
         public NativeFSLock(NativeFSLockFactory outerInstance, DirectoryInfo lockDir, string path)
         {
@@ -180,7 +174,7 @@ namespace Lucene.Net.Store
 
         public override bool Obtain()
         {
-            lock (syncLock)
+            lock (this)
             {
                 FailureReason = null;
 
@@ -248,15 +242,15 @@ namespace Lucene.Net.Store
         {
             if (disposing)
             {
-                lock (syncLock)
+                lock (this)
                 {
                     // whether or not we have created a file, we need to remove
                     // the lock instance from the dictionary that tracks them.
                     try
                     {
-						outerInstance?.ClearLock(path);
-
-					}
+                        lock (NativeFSLockFactory._locks)
+                            NativeFSLockFactory._locks.Remove(path);
+                    }
                     finally
                     {
                         if (channel != null)
@@ -291,7 +285,7 @@ namespace Lucene.Net.Store
 
         public override bool IsLocked()
         {
-            lock (syncLock)
+            lock (this)
             {
                 // The test for is isLocked is not directly possible with native file locks:
 
@@ -342,9 +336,8 @@ namespace Lucene.Net.Store
         private FileStream channel;
         private readonly string path;
         private readonly DirectoryInfo lockDir;
-		private readonly object syncLock = new object(); // avoid lock(this)
 
-		public SharingAwareNativeFSLock(NativeFSLockFactory outerInstance, DirectoryInfo lockDir, string path)
+        public SharingAwareNativeFSLock(NativeFSLockFactory outerInstance, DirectoryInfo lockDir, string path)
         {
             this.outerInstance = outerInstance;
             this.lockDir = lockDir;
@@ -383,7 +376,7 @@ namespace Lucene.Net.Store
 
         public override bool Obtain()
         {
-            lock (syncLock)
+            lock (this)
             {
                 FailureReason = null;
 
@@ -468,14 +461,14 @@ namespace Lucene.Net.Store
         {
             if (disposing)
             {
-                lock (syncLock)
+                lock (this)
                 {
                     // whether or not we have created a file, we need to remove
                     // the lock instance from the dictionary that tracks them.
                     try
                     {
-                        lock (NativeFSLockFactory.syncLock)
-                            NativeFSLockFactory.locks.Remove(path);
+                        lock (NativeFSLockFactory._locks)
+                            NativeFSLockFactory._locks.Remove(path);
                     }
                     finally
                     {
@@ -507,7 +500,7 @@ namespace Lucene.Net.Store
 
         public override bool IsLocked()
         {
-            lock (syncLock)
+            lock (this)
             {
                 // First a shortcut, if a lock reference in this instance is available
                 if (channel != null)
