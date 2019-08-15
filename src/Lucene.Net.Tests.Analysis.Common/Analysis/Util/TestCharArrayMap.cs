@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Util
                     key[j] = (char)Random().Next(127);
                 }
                 string keyStr = new string(key);
-                string hmapKey = ignoreCase ? keyStr.ToLower() : keyStr;
+                string hmapKey = ignoreCase ? keyStr.ToLowerInvariant() : keyStr;
 
                 int val = Random().Next();
 
