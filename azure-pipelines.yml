@@ -22,6 +22,7 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 # ArtifactFeedID: (Optional - set to your Azure DevOps Artifact (NuGet) feed. If not provided, publish job will be skipped.)
 # BuildConfiguration: (Optional. Defaults to 'Release')
 # BuildPlatform: (Optional. Defaults to 'Any CPU')
+# GenerateDocs: (Optional. Only builds documentation website if set to 'true'.)
 # IsRelease: (Optional. By default the Release job is disabled, setting this to 'true' will enable it)
 # RunTests: 'true' (Optional - set to 'false' to disable test jobs - useful for debugging. If not provided, tests will be run.)
 
@@ -35,6 +36,10 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 variables:
 - name: BuildCounter
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
+- name: DocumenationArtifactName
+  value: 'docs'
+- name: DocumentationArtifactZipFileName
+  value: 'documentation.zip'
 - name: BinaryArtifactName
   value: 'testbinaries'
 - name: NuGetArtifactName
@@ -159,6 +164,32 @@ stages:
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
         ArtifactName: '$(NuGetArtifactName)'
+
+  - job: Docs
+    condition: and(succeeded(), eq(variables['GenerateDocs'], 'true'))
+    pool:
+      vmImage: 'windows-2019'
+
+    steps:
+    - powershell: |
+         $(Build.SourcesDirectory)/websites/apidocs/docs.ps1 0 1
+      errorActionPreference: 'continue'
+      ignoreLASTEXITCODE: true
+      failOnStderr: false
+      displayName: 'Generate Documentation'
+
+    - task: ArchiveFiles@2
+      displayName: 'Zip Documenation Files'
+      inputs:
+        rootFolderOrFile: '$(Build.SourcesDirectory)/websites/apidocs/_site'
+        includeRootFolder: false
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(DocumenationArtifactName)/$(DocumentationArtifactZipFileName)'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: $(DocumenationArtifactName)'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(DocumenationArtifactName)'
+        ArtifactName: '$(DocumenationArtifactName)'
 
 
 - stage: Test_Stage
