@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene index upgrade [<INDEX_DIRECTORY>] [-d|--delete-prior-commits] [-v|--verbose] [-dir|--directory-type] [?|-h|--help]</code>
+<code>lucene index upgrade [\<INDEX_DIRECTORY>] [-d|--delete-prior-commits] [-v|--verbose] [-dir|--directory-type] [?|-h|--help]</code>
 
 ### Description
 

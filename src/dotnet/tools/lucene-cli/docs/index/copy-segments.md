@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene index copy-segments <INPUT_DIRECTORY> <OUTPUT_DIRECTORY> <SEGMENT>[ <SEGMENT_2>...] [?|-h|--help]</code>
+<code>lucene index copy-segments \<INPUT_DIRECTORY> \<OUTPUT_DIRECTORY> \<SEGMENT>[ \<SEGMENT_2>...] [?|-h|--help]</code>
 
 ### Description
 

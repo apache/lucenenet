@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene index merge <OUTPUT_DIRECTORY> <INPUT_DIRECTORY> <INPUT_DIRECTORY_2>[ <INPUT_DIRECTORY_N>...] [?|-h|--help]</code>
+<code>lucene index merge \<OUTPUT_DIRECTORY> \<INPUT_DIRECTORY> \<INPUT_DIRECTORY_2>[ \<INPUT_DIRECTORY_N>...] [?|-h|--help]</code>
 
 ### Description
 

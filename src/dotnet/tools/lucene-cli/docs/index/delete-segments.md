@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene index delete-segments <INDEX_DIRECTORY> <SEGMENT>[ <SEGMENT_2>...] [?|-h|--help]</code>
+<code>lucene index delete-segments \<INDEX_DIRECTORY> \<SEGMENT>[ \<SEGMENT_2>...] [?|-h|--help]</code>
 
 ### Description
 

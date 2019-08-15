@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene index list-term-info <INDEX_DIRECTORY> <FIELD> <TERM> [?|-h|--help]</code>
+<code>lucene index list-term-info \<INDEX_DIRECTORY> \<FIELD> \<TERM> [?|-h|--help]</code>
 
 ### Description
 

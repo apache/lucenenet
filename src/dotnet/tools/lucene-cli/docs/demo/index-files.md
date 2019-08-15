@@ -7,7 +7,7 @@
 ### Synopsis
 
 ```
-lucene demo index-files <INDEX_DIRECTORY> <SOURCE_DIRECTORY> [-u|--update] [?|-h|--help]
+lucene demo index-files \<INDEX_DIRECTORY> \<SOURCE_DIRECTORY> [-u|--update] [?|-h|--help]
 lucene demo index-files [-src|--view-source-code] [-out|--output-source-code]
 ```
 

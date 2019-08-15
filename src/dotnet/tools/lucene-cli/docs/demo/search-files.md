@@ -7,7 +7,7 @@
 ### Synopsis
 
 ```
-lucene demo search-files <INDEX_DIRECTORY> [-f|--field] [-r|--repeat] [-qf|--queries-file] [-q|--query] [--raw] [-p|--page-size] [?|-h|--help]
+lucene demo search-files \<INDEX_DIRECTORY> [-f|--field] [-r|--repeat] [-qf|--queries-file] [-q|--query] [--raw] [-p|--page-size] [?|-h|--help]
 lucene demo search-files [-src|--view-source-code] [-out|--output-source-code]
 ```
 

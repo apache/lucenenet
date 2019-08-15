@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene lock stress-test <ID> <VERIFIER_HOST> <VERIFIER_PORT> <LOCK_FACTORY_TYPE> <LOCK_DIRECTORY> <SLEEP_TIME_MS> <TRIES> [?|-h|--help]</code>
+<code>lucene lock stress-test \<ID> \<VERIFIER_HOST> \<VERIFIER_PORT> \<LOCK_FACTORY_TYPE> \<LOCK_DIRECTORY> \<SLEEP_TIME_MS> \<TRIES> [?|-h|--help]</code>
 
 ### Description
 

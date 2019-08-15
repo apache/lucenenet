@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene benchmark run-trec-eval [?|-h|--help]</code>
+<code>lucene benchmark run-trec-eval \<INPUT_TOPICS_FILE> \<INPUT_QUERY_RELEVANCE_FILE> \<OUTPUT_SUBMISSION_FILE> \<INDEX_DIRECTORY> [-t|--query-on-title] [-d|--query-on-description] [-n|--query-on-narrative] [?|-h|--help]</code>
 
 ### Arguments
 
