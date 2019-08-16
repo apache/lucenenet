@@ -37,21 +37,21 @@ namespace Lucene.Net.Index
         /// Returns the codec to run tests against </summary>
         protected abstract Codec Codec { get; }
 
-        private Codec SavedCodec;
+        private Codec savedCodec;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
             // set the default codec, so adding test cases to this isn't fragile
-            SavedCodec = Codec.Default;
+            savedCodec = Codec.Default;
             Codec.Default = Codec;
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Codec.Default = SavedCodec; // restore
+            Codec.Default = savedCodec; // restore
             base.TearDown();
         }
 

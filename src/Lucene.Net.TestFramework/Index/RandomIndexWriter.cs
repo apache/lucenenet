@@ -47,11 +47,11 @@ namespace Lucene.Net.Index
     {
         public IndexWriter w;
         private readonly Random r;
-        internal int DocCount;
-        internal int FlushAt;
-        private double FlushAtFactor = 1.0;
-        private bool GetReaderCalled;
-        private readonly Codec Codec; // sugar
+        internal int docCount;
+        internal int flushAt;
+        private double flushAtFactor = 1.0;
+        private bool getReaderCalled;
+        private readonly Codec codec; // sugar
 
         public static IndexWriter MockIndexWriter(Directory dir, IndexWriterConfig conf, Random r)
         {
@@ -60,25 +60,25 @@ namespace Lucene.Net.Index
             return MockIndexWriter(dir, conf, new TestPointAnonymousInnerClassHelper(random));
         }
 
-        private class TestPointAnonymousInnerClassHelper : TestPoint
+        private class TestPointAnonymousInnerClassHelper : ITestPoint
         {
-            private Random Random;
+            private Random random;
 
             public TestPointAnonymousInnerClassHelper(Random random)
             {
-                this.Random = random;
+                this.random = random;
             }
 
             public virtual void Apply(string message)
             {
-                if (Random.Next(4) == 2)
+                if (random.Next(4) == 2)
                 {
                     System.Threading.Thread.Sleep(0);
                 }
             }
         }
 
-        public static IndexWriter MockIndexWriter(Directory dir, IndexWriterConfig conf, TestPoint testPoint)
+        public static IndexWriter MockIndexWriter(Directory dir, IndexWriterConfig conf, ITestPoint testPoint)
         {
             conf.SetInfoStream(new TestPointInfoStream(conf.InfoStream, testPoint));
             return new IndexWriter(dir, conf);
@@ -133,17 +133,17 @@ namespace Lucene.Net.Index
             // TODO: this should be solved in a different way; Random should not be shared (!).
             this.r = new Random(r.Next());
             w = MockIndexWriter(dir, c, r);
-            FlushAt = TestUtil.NextInt(r, 10, 1000);
-            Codec = w.Config.Codec;
+            flushAt = TestUtil.NextInt(r, 10, 1000);
+            codec = w.Config.Codec;
             if (LuceneTestCase.VERBOSE)
             {
                 Console.WriteLine("RIW dir=" + dir + " config=" + w.Config);
-                Console.WriteLine("codec default=" + Codec.Name);
+                Console.WriteLine("codec default=" + codec.Name);
             }
 
             // Make sure we sometimes test indices that don't get
             // any forced merges:
-            DoRandomForceMerge_Renamed = !(c.MergePolicy is NoMergePolicy) && r.NextBoolean();
+            doRandomForceMerge = !(c.MergePolicy is NoMergePolicy) && r.NextBoolean();
         }
 
         /// <summary>
@@ -174,14 +174,14 @@ namespace Lucene.Net.Index
 
         private class IterableAnonymousInnerClassHelper<IndexableField> : IEnumerable<IEnumerable<IndexableField>>
         {
-            private readonly RandomIndexWriter OuterInstance;
+            private readonly RandomIndexWriter outerInstance;
 
-            private IEnumerable<IndexableField> Doc;
+            private IEnumerable<IndexableField> doc;
 
             public IterableAnonymousInnerClassHelper(RandomIndexWriter outerInstance, IEnumerable<IndexableField> doc)
             {
-                this.OuterInstance = outerInstance;
-                this.Doc = doc;
+                this.outerInstance = outerInstance;
+                this.doc = doc;
             }
 
             public IEnumerator<IEnumerable<IndexableField>> GetEnumerator()
@@ -196,11 +196,11 @@ namespace Lucene.Net.Index
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<IEnumerable<IndexableField>>
             {
-                private readonly IterableAnonymousInnerClassHelper<IndexableField> OuterInstance;
+                private readonly IterableAnonymousInnerClassHelper<IndexableField> outerInstance;
 
                 public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper<IndexableField> outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 internal bool done;
@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
                     }
 
                     done = true;
-                    current = OuterInstance.Doc;
+                    current = outerInstance.doc;
                     return true;
                 }
 
@@ -241,18 +241,18 @@ namespace Lucene.Net.Index
 
         private void MaybeCommit()
         {
-            if (DocCount++ == FlushAt)
+            if (docCount++ == flushAt)
             {
                 if (LuceneTestCase.VERBOSE)
                 {
-                    Console.WriteLine("RIW.add/updateDocument: now doing a commit at docCount=" + DocCount);
+                    Console.WriteLine("RIW.add/updateDocument: now doing a commit at docCount=" + docCount);
                 }
                 w.Commit();
-                FlushAt += TestUtil.NextInt(r, (int)(FlushAtFactor * 10), (int)(FlushAtFactor * 1000));
-                if (FlushAtFactor < 2e6)
+                flushAt += TestUtil.NextInt(r, (int)(flushAtFactor * 10), (int)(flushAtFactor * 1000));
+                if (flushAtFactor < 2e6)
                 {
                     // gradually but exponentially increase time b/w flushes
-                    FlushAtFactor *= 1.05;
+                    flushAtFactor *= 1.05;
                 }
             }
         }
@@ -287,14 +287,14 @@ namespace Lucene.Net.Index
 
         private class IterableAnonymousInnerClassHelper2 : IEnumerable<IEnumerable<IIndexableField>>
         {
-            private readonly RandomIndexWriter OuterInstance;
+            private readonly RandomIndexWriter outerInstance;
 
-            private IEnumerable<IIndexableField> Doc;
+            private IEnumerable<IIndexableField> doc;
 
             public IterableAnonymousInnerClassHelper2(RandomIndexWriter outerInstance, IEnumerable<IIndexableField> doc)
             {
-                this.OuterInstance = outerInstance;
-                this.Doc = doc;
+                this.outerInstance = outerInstance;
+                this.doc = doc;
             }
 
             public IEnumerator<IEnumerable<IIndexableField>> GetEnumerator()
@@ -309,11 +309,11 @@ namespace Lucene.Net.Index
 
             private class IteratorAnonymousInnerClassHelper2 : IEnumerator<IEnumerable<IIndexableField>>
             {
-                private readonly IterableAnonymousInnerClassHelper2 OuterInstance;
+                private readonly IterableAnonymousInnerClassHelper2 outerInstance;
 
                 public IteratorAnonymousInnerClassHelper2(IterableAnonymousInnerClassHelper2 outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 internal bool done;
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
                     }
 
                     done = true;
-                    current = OuterInstance.Doc;
+                    current = outerInstance.doc;
                     return true;
                 }
 
@@ -410,8 +410,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        private bool DoRandomForceMerge_Renamed = true;
-        private bool DoRandomForceMergeAssert_Renamed = true;
+        private bool doRandomForceMerge = true;
+        private bool doRandomForceMergeAssert = true;
 
         public virtual void ForceMergeDeletes(bool doWait)
         {
@@ -427,7 +427,7 @@ namespace Lucene.Net.Index
         {
             set
             {
-                DoRandomForceMerge_Renamed = value;
+                doRandomForceMerge = value;
             }
         }
 
@@ -435,13 +435,13 @@ namespace Lucene.Net.Index
         {
             set
             {
-                DoRandomForceMergeAssert_Renamed = value;
+                doRandomForceMergeAssert = value;
             }
         }
 
         private void DoRandomForceMerge()
         {
-            if (DoRandomForceMerge_Renamed)
+            if (doRandomForceMerge)
             {
                 int segCount = w.SegmentCount;
                 if (r.NextBoolean() || segCount == 0)
@@ -462,14 +462,14 @@ namespace Lucene.Net.Index
                         Console.WriteLine("RIW: doRandomForceMerge(" + limit + ")");
                     }
                     w.ForceMerge(limit);
-                    Debug.Assert(!DoRandomForceMergeAssert_Renamed || w.SegmentCount <= limit, "limit=" + limit + " actual=" + w.SegmentCount);
+                    Debug.Assert(!doRandomForceMergeAssert || w.SegmentCount <= limit, "limit=" + limit + " actual=" + w.SegmentCount);
                 }
             }
         }
 
         public virtual DirectoryReader GetReader(bool applyDeletions)
         {
-            GetReaderCalled = true;
+            getReaderCalled = true;
             if (r.Next(20) == 2)
             {
                 DoRandomForceMerge();
@@ -477,7 +477,7 @@ namespace Lucene.Net.Index
             // If we are writing with PreFlexRW, force a full
             // IndexReader.open so terms are sorted in codepoint
             // order during searching:
-            if (!applyDeletions || !Codec.Name.Equals("Lucene3x", StringComparison.Ordinal) && r.NextBoolean())
+            if (!applyDeletions || !codec.Name.Equals("Lucene3x", StringComparison.Ordinal) && r.NextBoolean())
             {
                 if (LuceneTestCase.VERBOSE)
                 {
@@ -527,7 +527,7 @@ namespace Lucene.Net.Index
             {
                 // if someone isn't using getReader() API, we want to be sure to
                 // forceMerge since presumably they might open a reader on the dir.
-                if (GetReaderCalled == false && r.Next(8) == 2)
+                if (getReaderCalled == false && r.Next(8) == 2)
                 {
                     DoRandomForceMerge();
                 }
@@ -549,12 +549,12 @@ namespace Lucene.Net.Index
         public sealed class TestPointInfoStream : InfoStream
         {
             internal readonly InfoStream @delegate;
-            internal readonly TestPoint TestPoint;
+            internal readonly ITestPoint testPoint;
 
-            public TestPointInfoStream(InfoStream @delegate, TestPoint testPoint)
+            public TestPointInfoStream(InfoStream @delegate, ITestPoint testPoint)
             {
                 this.@delegate = @delegate ?? new NullInfoStream();
-                this.TestPoint = testPoint;
+                this.testPoint = testPoint;
             }
 
             protected override void Dispose(bool disposing)
@@ -569,7 +569,7 @@ namespace Lucene.Net.Index
             {
                 if ("TP".Equals(component, StringComparison.Ordinal))
                 {
-                    TestPoint.Apply(message);
+                    testPoint.Apply(message);
                 }
                 if (@delegate.IsEnabled(component))
                 {
@@ -587,7 +587,7 @@ namespace Lucene.Net.Index
         /// Simple interface that is executed for each <tt>TP</tt> <seealso cref="InfoStream"/> component
         /// message. See also <seealso cref="RandomIndexWriter#mockIndexWriter(Directory, IndexWriterConfig, TestPoint)"/>
         /// </summary>
-        public interface TestPoint
+        public interface ITestPoint // LUCENENET TODO: API de-nest
         {
             void Apply(string message);
         }

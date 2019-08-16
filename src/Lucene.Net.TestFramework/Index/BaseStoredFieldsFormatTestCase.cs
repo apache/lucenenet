@@ -503,27 +503,27 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
-            private int NumDocs;
-            private readonly DirectoryReader Rd;
-            private readonly IndexSearcher Searcher;
-            private int ReadsPerThread;
-            private AtomicObject<Exception> Ex;
+            private int numDocs;
+            private readonly DirectoryReader rd;
+            private readonly IndexSearcher searcher;
+            private int readsPerThread;
+            private AtomicObject<Exception> ex;
             private int i;
             private readonly int[] queries;
 
             public ThreadAnonymousInnerClassHelper(int numDocs, DirectoryReader rd, IndexSearcher searcher, int readsPerThread, AtomicObject<Exception> ex, int i)
             {
-                this.NumDocs = numDocs;
-                this.Rd = rd;
-                this.Searcher = searcher;
-                this.ReadsPerThread = readsPerThread;
-                this.Ex = ex;
+                this.numDocs = numDocs;
+                this.rd = rd;
+                this.searcher = searcher;
+                this.readsPerThread = readsPerThread;
+                this.ex = ex;
                 this.i = i;
 
-                queries = new int[ReadsPerThread];
+                queries = new int[this.readsPerThread];
                 for (int j = 0; j < queries.Length; ++j)
                 {
-                    queries[j] = Random().Next(NumDocs);
+                    queries[j] = Random().Next(this.numDocs);
                 }
             }
 
@@ -534,13 +534,13 @@ namespace Lucene.Net.Index
                     Query query = new TermQuery(new Term("fld", "" + q));
                     try
                     {
-                        TopDocs topDocs = Searcher.Search(query, 1);
+                        TopDocs topDocs = searcher.Search(query, 1);
                         if (topDocs.TotalHits != 1)
                         {
                             Console.WriteLine(query);
                             throw new InvalidOperationException("Expected 1 hit, got " + topDocs.TotalHits);
                         }
-                        Document sdoc = Rd.Document(topDocs.ScoreDocs[0].Doc);
+                        Document sdoc = rd.Document(topDocs.ScoreDocs[0].Doc);
                         if (sdoc == null || sdoc.Get("fld") == null)
                         {
                             throw new InvalidOperationException("Could not find document " + q);
@@ -552,7 +552,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception e)
                     {
-                        Ex.Value = e;
+                        ex.Value = e;
                     }
                 }
             }

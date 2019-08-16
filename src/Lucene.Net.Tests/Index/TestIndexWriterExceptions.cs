@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
 
         internal ThreadLocal<Thread> DoFail = new ThreadLocal<Thread>();
 
-        private class TestPoint1 : RandomIndexWriter.TestPoint
+        private class TestPoint1 : RandomIndexWriter.ITestPoint
         {
             private readonly TestIndexWriterExceptions OuterInstance;
 
@@ -447,7 +447,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-1198
-        private sealed class TestPoint2 : RandomIndexWriter.TestPoint
+        private sealed class TestPoint2 : RandomIndexWriter.ITestPoint
         {
             internal bool DoFail;
 
@@ -565,7 +565,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private sealed class TestPoint3 : RandomIndexWriter.TestPoint
+        private sealed class TestPoint3 : RandomIndexWriter.ITestPoint
         {
             internal bool DoFail;
             internal bool Failed;
@@ -1334,7 +1334,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-1347
-        private sealed class TestPoint4 : RandomIndexWriter.TestPoint
+        private sealed class TestPoint4 : RandomIndexWriter.ITestPoint
         {
             internal bool DoFail;
 

@@ -30,17 +30,17 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class RandomDocumentsWriterPerThreadPool : DocumentsWriterPerThreadPool
     {
-        private readonly ThreadState[] States;
-        private readonly Random Random;
-        private readonly int MaxRetry;
+        private readonly ThreadState[] states;
+        private readonly Random random;
+        private readonly int maxRetry;
 
         public RandomDocumentsWriterPerThreadPool(int maxNumPerThreads, Random random)
             : base(maxNumPerThreads)
         {
             Debug.Assert(MaxThreadStates >= 1);
-            States = new ThreadState[maxNumPerThreads];
-            this.Random = new Random(random.Next());
-            this.MaxRetry = 1 + random.Next(10);
+            states = new ThreadState[maxNumPerThreads];
+            this.random = new Random(random.Next());
+            this.maxRetry = 1 + random.Next(10);
         }
 
         public override ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
@@ -52,18 +52,18 @@ namespace Lucene.Net.Index
                 {
                     if (NumThreadStatesActive == 0)
                     {
-                        threadState = States[0] = NewThreadState();
+                        threadState = states[0] = NewThreadState();
                         return threadState;
                     }
                 }
             }
             Debug.Assert(NumThreadStatesActive > 0);
-            for (int i = 0; i < MaxRetry; i++)
+            for (int i = 0; i < maxRetry; i++)
             {
-                int ord = Random.Next(NumThreadStatesActive);
+                int ord = random.Next(NumThreadStatesActive);
                 lock (this)
                 {
-                    threadState = States[ord];
+                    threadState = states[ord];
                     Debug.Assert(threadState != null);
                 }
 
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
                 {
                     return threadState;
                 }
-                if (Random.Next(20) == 0)
+                if (random.Next(20) == 0)
                 {
                     break;
                 }
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                 ThreadState newThreadState = NewThreadState();
                 if (newThreadState != null) // did we get a new state?
                 {
-                    threadState = States[NumThreadStatesActive - 1] = newThreadState;
+                    threadState = states[NumThreadStatesActive - 1] = newThreadState;
                     //Debug.Assert(threadState.HeldByCurrentThread);
                     return threadState;
                 }

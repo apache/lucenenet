@@ -176,7 +176,7 @@ namespace Lucene.Net.Search
                         Console.WriteLine("TEST: reopen thread hit exc");
                         Console.Out.Write(t.StackTrace);
                     }
-                    outerInstance.failed.Set(true);
+                    outerInstance.m_failed.Set(true);
                     throw new Exception(t.ToString(), t);
                 }
             }

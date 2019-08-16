@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Create a new <seealso cref="MergePolicy"/> instance. </summary>
-        protected internal abstract MergePolicy MergePolicy();
+        protected internal abstract MergePolicy MergePolicy(); // LUCENENET TODO: API - property ?
 
         [Test]
         public virtual void TestForceMergeNotNeeded()
@@ -69,21 +69,21 @@ namespace Lucene.Net.Index
 
         private class SerialMergeSchedulerAnonymousInnerClassHelper : SerialMergeScheduler
         {
-            private readonly BaseMergePolicyTestCase OuterInstance;
+            private readonly BaseMergePolicyTestCase outerInstance;
 
-            private AtomicBoolean MayMerge;
+            private AtomicBoolean mayMerge;
 
             public SerialMergeSchedulerAnonymousInnerClassHelper(BaseMergePolicyTestCase outerInstance, AtomicBoolean mayMerge)
             {
-                this.OuterInstance = outerInstance;
-                this.MayMerge = mayMerge;
+                this.outerInstance = outerInstance;
+                this.mayMerge = mayMerge;
             }
 
             public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
             {
                 lock (this)
                 {
-                    if (!MayMerge.Get() && writer.NextMerge() != null)
+                    if (!mayMerge.Get() && writer.NextMerge() != null)
                     {
                         throw new InvalidOperationException();
                     }

@@ -31,15 +31,15 @@ namespace Lucene.Net.Index
     /// </summary>
     public sealed class FieldFilterAtomicReader : FilterAtomicReader
     {
-        private readonly ISet<string> Fields_Renamed;
-        private readonly bool Negate;
-        private readonly FieldInfos FieldInfos_Renamed;
+        private readonly ISet<string> fields;
+        private readonly bool negate;
+        private readonly FieldInfos fieldInfos;
 
         public FieldFilterAtomicReader(AtomicReader @in, ISet<string> fields, bool negate)
             : base(@in)
         {
-            this.Fields_Renamed = fields;
-            this.Negate = negate;
+            this.fields = fields;
+            this.negate = negate;
             List<FieldInfo> filteredInfos = new List<FieldInfo>();
             foreach (FieldInfo fi in @in.FieldInfos)
             {
@@ -48,19 +48,19 @@ namespace Lucene.Net.Index
                     filteredInfos.Add(fi);
                 }
             }
-            FieldInfos_Renamed = new FieldInfos(filteredInfos.ToArray());
+            fieldInfos = new FieldInfos(filteredInfos.ToArray());
         }
 
         internal bool HasField(string field)
         {
-            return Negate ^ Fields_Renamed.Contains(field);
+            return negate ^ fields.Contains(field);
         }
 
         public override FieldInfos FieldInfos
         {
             get
             {
-                return FieldInfos_Renamed;
+                return fieldInfos;
             }
         }
 
@@ -85,49 +85,49 @@ namespace Lucene.Net.Index
 
         private class StoredFieldVisitorAnonymousInnerClassHelper : StoredFieldVisitor
         {
-            private readonly FieldFilterAtomicReader OuterInstance;
+            private readonly FieldFilterAtomicReader outerInstance;
 
-            private readonly StoredFieldVisitor Visitor;
+            private readonly StoredFieldVisitor visitor;
 
             public StoredFieldVisitorAnonymousInnerClassHelper(FieldFilterAtomicReader outerInstance, StoredFieldVisitor visitor)
             {
-                this.OuterInstance = outerInstance;
-                this.Visitor = visitor;
+                this.outerInstance = outerInstance;
+                this.visitor = visitor;
             }
 
             public override void BinaryField(FieldInfo fieldInfo, byte[] value)
             {
-                Visitor.BinaryField(fieldInfo, value);
+                visitor.BinaryField(fieldInfo, value);
             }
 
             public override void StringField(FieldInfo fieldInfo, string value)
             {
-                Visitor.StringField(fieldInfo, value);
+                visitor.StringField(fieldInfo, value);
             }
 
             public override void Int32Field(FieldInfo fieldInfo, int value)
             {
-                Visitor.Int32Field(fieldInfo, value);
+                visitor.Int32Field(fieldInfo, value);
             }
 
             public override void Int64Field(FieldInfo fieldInfo, long value)
             {
-                Visitor.Int64Field(fieldInfo, value);
+                visitor.Int64Field(fieldInfo, value);
             }
 
             public override void SingleField(FieldInfo fieldInfo, float value)
             {
-                Visitor.SingleField(fieldInfo, value);
+                visitor.SingleField(fieldInfo, value);
             }
 
             public override void DoubleField(FieldInfo fieldInfo, double value)
             {
-                Visitor.DoubleField(fieldInfo, value);
+                visitor.DoubleField(fieldInfo, value);
             }
 
             public override Status NeedsField(FieldInfo fieldInfo)
             {
-                return OuterInstance.HasField(fieldInfo.Name) ? Visitor.NeedsField(fieldInfo) : Status.NO;
+                return outerInstance.HasField(fieldInfo.Name) ? visitor.NeedsField(fieldInfo) : Status.NO;
             }
         }
 
@@ -169,21 +169,21 @@ namespace Lucene.Net.Index
         {
             StringBuilder sb = new StringBuilder("FieldFilterAtomicReader(reader=");
             sb.Append(m_input).Append(", fields=");
-            if (Negate)
+            if (negate)
             {
                 sb.Append('!');
             }
-            return sb.Append(Fields_Renamed).Append(')').ToString();
+            return sb.Append(fields).Append(')').ToString();
         }
 
         private class FieldFilterFields : FilterFields
         {
-            private readonly FieldFilterAtomicReader OuterInstance;
+            private readonly FieldFilterAtomicReader outerInstance;
 
             public FieldFilterFields(FieldFilterAtomicReader outerInstance, Fields @in)
                 : base(@in)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override int Count
@@ -202,23 +202,23 @@ namespace Lucene.Net.Index
 
             private class FilterIteratorAnonymousInnerClassHelper : FilterIterator<string>
             {
-                private readonly FieldFilterFields OuterInstance;
+                private readonly FieldFilterFields outerInstance;
 
                 public FilterIteratorAnonymousInnerClassHelper(FieldFilterFields outerInstance, IEnumerator<string> iterator)
                     : base(iterator)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 protected override bool PredicateFunction(string field)
                 {
-                    return OuterInstance.OuterInstance.HasField(field);
+                    return outerInstance.outerInstance.HasField(field);
                 }
             }
 
             public override Terms GetTerms(string field)
             {
-                return OuterInstance.HasField(field) ? base.GetTerms(field) : null;
+                return outerInstance.HasField(field) ? base.GetTerms(field) : null;
             }
         }
     }

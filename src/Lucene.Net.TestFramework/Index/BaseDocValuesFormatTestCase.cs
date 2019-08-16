@@ -1322,21 +1322,21 @@ namespace Lucene.Net.Index
 
         private class LongProducerAnonymousInnerClassHelper : LongProducer
         {
-            private readonly BaseDocValuesFormatTestCase OuterInstance;
+            private readonly BaseDocValuesFormatTestCase outerInstance;
 
-            private long MinValue;
-            private long MaxValue;
+            private long minValue;
+            private long maxValue;
 
             public LongProducerAnonymousInnerClassHelper(BaseDocValuesFormatTestCase outerInstance, long minValue, long maxValue)
             {
-                this.OuterInstance = outerInstance;
-                this.MinValue = minValue;
-                this.MaxValue = maxValue;
+                this.outerInstance = outerInstance;
+                this.minValue = minValue;
+                this.maxValue = maxValue;
             }
 
             internal override long Next()
             {
-                return TestUtil.NextLong(Random(), MinValue, MaxValue);
+                return TestUtil.NextLong(Random(), minValue, maxValue);
             }
         }
 
@@ -1408,21 +1408,21 @@ namespace Lucene.Net.Index
 
         private class LongProducerAnonymousInnerClassHelper2 : LongProducer
         {
-            private readonly BaseDocValuesFormatTestCase OuterInstance;
+            private readonly BaseDocValuesFormatTestCase outerInstance;
 
-            private long MinValue;
-            private long MaxValue;
+            private long minValue;
+            private long maxValue;
 
             public LongProducerAnonymousInnerClassHelper2(BaseDocValuesFormatTestCase outerInstance, long minValue, long maxValue)
             {
-                this.OuterInstance = outerInstance;
-                this.MinValue = minValue;
-                this.MaxValue = maxValue;
+                this.outerInstance = outerInstance;
+                this.minValue = minValue;
+                this.maxValue = maxValue;
             }
 
             internal override long Next()
             {
-                return TestUtil.NextLong(Random(), MinValue, MaxValue);
+                return TestUtil.NextLong(Random(), minValue, maxValue);
             }
         }
 
@@ -2689,21 +2689,21 @@ namespace Lucene.Net.Index
 
         private class LongProducerAnonymousInnerClassHelper3 : LongProducer
         {
-            private readonly BaseDocValuesFormatTestCase OuterInstance;
+            private readonly BaseDocValuesFormatTestCase outerInstance;
 
-            private long Min;
-            private long Mul;
+            private long min;
+            private long mul;
 
             public LongProducerAnonymousInnerClassHelper3(BaseDocValuesFormatTestCase outerInstance, long min, long mul)
             {
-                this.OuterInstance = outerInstance;
-                this.Min = min;
-                this.Mul = mul;
+                this.outerInstance = outerInstance;
+                this.min = min;
+                this.mul = mul;
             }
 
             internal override long Next()
             {
-                return Min + Mul * Random().Next(1 << 20);
+                return min + mul * Random().Next(1 << 20);
             }
         }
 
@@ -2728,11 +2728,11 @@ namespace Lucene.Net.Index
 
         private class LongProducerAnonymousInnerClassHelper4 : LongProducer
         {
-            private readonly BaseDocValuesFormatTestCase OuterInstance;
+            private readonly BaseDocValuesFormatTestCase outerInstance;
 
             public LongProducerAnonymousInnerClassHelper4(BaseDocValuesFormatTestCase outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             internal override long Next()
@@ -3232,24 +3232,24 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
-            private readonly BaseDocValuesFormatTestCase OuterInstance;
+            private readonly BaseDocValuesFormatTestCase outerInstance;
 
-            private DirectoryReader Ir;
-            private CountdownEvent StartingGun;
+            private DirectoryReader ir;
+            private CountdownEvent startingGun;
 
             public ThreadAnonymousInnerClassHelper(BaseDocValuesFormatTestCase outerInstance, DirectoryReader ir, CountdownEvent startingGun)
             {
-                this.OuterInstance = outerInstance;
-                this.Ir = ir;
-                this.StartingGun = startingGun;
+                this.outerInstance = outerInstance;
+                this.ir = ir;
+                this.startingGun = startingGun;
             }
 
             public override void Run()
             {
                 try
                 {
-                    StartingGun.Wait();
-                    foreach (AtomicReaderContext context in Ir.Leaves)
+                    startingGun.Wait();
+                    foreach (AtomicReaderContext context in ir.Leaves)
                     {
                         AtomicReader r = context.AtomicReader;
                         BinaryDocValues binaries = r.GetBinaryDocValues("dvBin");
@@ -3267,7 +3267,7 @@ namespace Lucene.Net.Index
                             Assert.AreEqual(Convert.ToInt64(expected, CultureInfo.InvariantCulture), numerics.Get(j));
                         }
                     }
-                    TestUtil.CheckReader(Ir);
+                    TestUtil.CheckReader(ir);
                 }
                 catch (Exception e)
                 {
@@ -3372,24 +3372,24 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper2 : ThreadClass
         {
-            private readonly BaseDocValuesFormatTestCase OuterInstance;
+            private readonly BaseDocValuesFormatTestCase outerInstance;
 
-            private DirectoryReader Ir;
-            private CountdownEvent StartingGun;
+            private DirectoryReader ir;
+            private CountdownEvent startingGun;
 
             public ThreadAnonymousInnerClassHelper2(BaseDocValuesFormatTestCase outerInstance, DirectoryReader ir, CountdownEvent startingGun)
             {
-                this.OuterInstance = outerInstance;
-                this.Ir = ir;
-                this.StartingGun = startingGun;
+                this.outerInstance = outerInstance;
+                this.ir = ir;
+                this.startingGun = startingGun;
             }
 
             public override void Run()
             {
                 try
                 {
-                    StartingGun.Wait();
-                    foreach (AtomicReaderContext context in Ir.Leaves)
+                    startingGun.Wait();
+                    foreach (AtomicReaderContext context in ir.Leaves)
                     {
                         AtomicReader r = context.AtomicReader;
                         BinaryDocValues binaries = r.GetBinaryDocValues("dvBin");
@@ -3461,7 +3461,7 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    TestUtil.CheckReader(Ir);
+                    TestUtil.CheckReader(ir);
                 }
                 catch (Exception e)
                 {

@@ -65,10 +65,10 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class ThreadedIndexingAndSearchingTestCase : LuceneTestCase
     {
-        protected internal readonly AtomicBoolean failed = new AtomicBoolean();
-        protected internal readonly AtomicInt32 addCount = new AtomicInt32();
-        protected internal readonly AtomicInt32 delCount = new AtomicInt32();
-        protected internal readonly AtomicInt32 packCount = new AtomicInt32();
+        protected internal readonly AtomicBoolean m_failed = new AtomicBoolean();
+        protected internal readonly AtomicInt32 m_addCount = new AtomicInt32();
+        protected internal readonly AtomicInt32 m_delCount = new AtomicInt32();
+        protected internal readonly AtomicInt32 m_packCount = new AtomicInt32();
 
         protected internal Directory dir;
         protected internal IndexWriter writer;
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
                 // TODO: would be better if this were cross thread, so that we make sure one thread deleting anothers added docs works:
                 IList<string> toDeleteIDs = new List<string>();
                 IList<SubDocs> toDeleteSubDocs = new List<SubDocs>();
-                while (Environment.TickCount < stopTime && !outerInstance.failed.Get())
+                while (Environment.TickCount < stopTime && !outerInstance.m_failed.Get())
                 {
                     try
                     {
@@ -237,7 +237,7 @@ namespace Lucene.Net.Index
                                 {
                                     delSubDocs = null;
                                     // Add doc block, using new packID
-                                    packID = outerInstance.packCount.GetAndIncrement().ToString(CultureInfo.InvariantCulture);
+                                    packID = outerInstance.m_packCount.GetAndIncrement().ToString(CultureInfo.InvariantCulture);
                                 }
 
                                 Field packIDField = outerInstance.NewStringField("packID", packID, Field.Store.YES);
@@ -261,7 +261,7 @@ namespace Lucene.Net.Index
                                     docsList.Add(TestUtil.CloneDocument(doc));
                                     docIDs.Add(doc.Get("docid"));
                                 }
-                                outerInstance.addCount.AddAndGet(docsList.Count);
+                                outerInstance.m_addCount.AddAndGet(docsList.Count);
 
                                 Term packIDTerm = new Term("packID", packID);
 
@@ -269,7 +269,7 @@ namespace Lucene.Net.Index
                                 {
                                     delSubDocs.deleted = true;
                                     delIDs.AddAll(delSubDocs.subIDs);
-                                    outerInstance.delCount.AddAndGet(delSubDocs.subIDs.Count);
+                                    outerInstance.m_delCount.AddAndGet(delSubDocs.subIDs.Count);
                                     if (VERBOSE)
                                     {
                                         Console.WriteLine(Thread.CurrentThread.Name + ": update pack packID=" + delSubDocs.packID + " count=" + docsList.Count + " docs=" + Arrays.ToString(docIDs));
@@ -304,7 +304,7 @@ namespace Lucene.Net.Index
                                     Console.WriteLine(Thread.CurrentThread.Name + ": add doc docid:" + docid);
                                 }
                                 outerInstance.AddDocument(new Term("docid", docid), doc);
-                                outerInstance.addCount.GetAndIncrement();
+                                outerInstance.m_addCount.GetAndIncrement();
 
                                 if (Random().Next(5) == 3)
                                 {
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
                             }
                             string docid = doc.Get("docid");
                             outerInstance.UpdateDocument(new Term("docid", docid), doc);
-                            outerInstance.addCount.GetAndIncrement();
+                            outerInstance.m_addCount.GetAndIncrement();
 
                             if (Random().Next(5) == 3)
                             {
@@ -353,7 +353,7 @@ namespace Lucene.Net.Index
                                 }
                                 outerInstance.DeleteDocuments(new Term("docid", id));
                             }
-                            int count = outerInstance.delCount.AddAndGet(toDeleteIDs.Count);
+                            int count = outerInstance.m_delCount.AddAndGet(toDeleteIDs.Count);
                             if (VERBOSE)
                             {
                                 Console.WriteLine(Thread.CurrentThread.Name + ": tot " + count + " deletes");
@@ -372,7 +372,7 @@ namespace Lucene.Net.Index
                                     Console.WriteLine(Thread.CurrentThread.Name + ": del subs: " + subDocs.subIDs + " packID=" + subDocs.packID);
                                 }
                                 delIDs.AddAll(subDocs.subIDs);
-                                outerInstance.delCount.AddAndGet(subDocs.subIDs.Count);
+                                outerInstance.m_delCount.AddAndGet(subDocs.subIDs.Count);
                             }
                             toDeleteSubDocs.Clear();
                         }
@@ -386,7 +386,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine(Thread.CurrentThread.Name + ": hit exc");
                         Console.WriteLine(t.ToString());
                         Console.Write(t.StackTrace);
-                        outerInstance.failed.Set(true);
+                        outerInstance.m_failed.Set(true);
                         throw new Exception(t.ToString(), t);
                     }
                 }
@@ -531,7 +531,7 @@ namespace Lucene.Net.Index
                     catch (Exception t)
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": hit exc");
-                        outerInstance.failed.Set(true);
+                        outerInstance.m_failed.Set(true);
                         Console.WriteLine(t.ToString());
                         throw new Exception(t.ToString(), t);
                     }
@@ -554,10 +554,10 @@ namespace Lucene.Net.Index
 
         public virtual void RunTest(string testName)
         {
-            failed.Set(false);
-            addCount.Set(0);
-            delCount.Set(0);
-            packCount.Set(0);
+            m_failed.Set(false);
+            m_addCount.Set(0);
+            m_delCount.Set(0);
+            m_packCount.Set(0);
 
             long t0 = Environment.TickCount;
 
@@ -640,7 +640,7 @@ namespace Lucene.Net.Index
 
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: done join indexing threads [" + (Environment.TickCount - t0) + " ms]; addCount=" + addCount + " delCount=" + delCount);
+                Console.WriteLine("TEST: done join indexing threads [" + (Environment.TickCount - t0) + " ms]; addCount=" + m_addCount + " delCount=" + m_delCount);
             }
 
             IndexSearcher s = FinalSearcher;
@@ -649,7 +649,7 @@ namespace Lucene.Net.Index
                 Console.WriteLine("TEST: finalSearcher=" + s);
             }
 
-            assertFalse(failed.Get());
+            assertFalse(m_failed.Get());
 
             bool doFail = false;
 
@@ -753,12 +753,12 @@ namespace Lucene.Net.Index
             }
             assertFalse(doFail);
 
-            assertEquals("index=" + writer.SegString() + " addCount=" + addCount + " delCount=" + delCount, addCount.Get() - delCount.Get(), s.IndexReader.NumDocs);
+            assertEquals("index=" + writer.SegString() + " addCount=" + m_addCount + " delCount=" + m_delCount, m_addCount.Get() - m_delCount.Get(), s.IndexReader.NumDocs);
             ReleaseSearcher(s);
 
             writer.Commit();
 
-            assertEquals("index=" + writer.SegString() + " addCount=" + addCount + " delCount=" + delCount, addCount.Get() - delCount.Get(), writer.NumDocs);
+            assertEquals("index=" + writer.SegString() + " addCount=" + m_addCount + " delCount=" + m_delCount, m_addCount.Get() - m_delCount.Get(), writer.NumDocs);
 
             DoClose();
             writer.Dispose(false);

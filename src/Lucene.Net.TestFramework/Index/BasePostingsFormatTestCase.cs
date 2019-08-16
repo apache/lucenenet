@@ -112,54 +112,54 @@ namespace Lucene.Net.Index
         {
             // Used only to generate docIDs; this way if you pull w/
             // or w/o positions you get the same docID sequence:
-            internal readonly Random DocRandom;
+            internal readonly Random docRandom;
 
-            internal readonly Random Random;
-            public int DocFreq;
-            internal readonly int MaxDocSpacing;
-            internal readonly int PayloadSize;
-            internal readonly bool FixedPayloads;
-            internal readonly IBits LiveDocs;
-            internal readonly BytesRef Payload_Renamed;
-            internal readonly IndexOptions Options;
-            internal readonly bool DoPositions;
+            internal readonly Random random;
+            public int DocFreq { get; set; }
+            internal readonly int maxDocSpacing;
+            internal readonly int payloadSize;
+            internal readonly bool fixedPayloads;
+            internal readonly IBits liveDocs;
+            internal readonly BytesRef payload;
+            internal readonly IndexOptions options;
+            internal readonly bool doPositions;
 
-            internal int DocID_Renamed;
-            internal int Freq_Renamed;
-            public int Upto;
+            internal int docID;
+            internal int freq;
+            public int Upto { get; set; }
 
-            internal int Pos;
-            internal int Offset;
-            internal int StartOffset_Renamed;
-            internal int EndOffset_Renamed;
-            internal int PosSpacing;
-            internal int PosUpto;
+            internal int pos;
+            internal int offset;
+            internal int startOffset;
+            internal int endOffset;
+            internal int posSpacing;
+            internal int posUpto;
 
             public SeedPostings(long seed, int minDocFreq, int maxDocFreq, IBits liveDocs, IndexOptions options)
             {
-                Random = new Random((int)seed);
-                DocRandom = new Random(Random.Next());
-                DocFreq = TestUtil.NextInt(Random, minDocFreq, maxDocFreq);
-                this.LiveDocs = liveDocs;
+                random = new Random((int)seed);
+                docRandom = new Random(random.Next());
+                DocFreq = TestUtil.NextInt(random, minDocFreq, maxDocFreq);
+                this.liveDocs = liveDocs;
 
                 // TODO: more realistic to inversely tie this to numDocs:
-                MaxDocSpacing = TestUtil.NextInt(Random, 1, 100);
+                maxDocSpacing = TestUtil.NextInt(random, 1, 100);
 
-                if (Random.Next(10) == 7)
+                if (random.Next(10) == 7)
                 {
                     // 10% of the time create big payloads:
-                    PayloadSize = 1 + Random.Next(3);
+                    payloadSize = 1 + random.Next(3);
                 }
                 else
                 {
-                    PayloadSize = 1 + Random.Next(1);
+                    payloadSize = 1 + random.Next(1);
                 }
 
-                FixedPayloads = Random.NextBoolean();
-                var payloadBytes = new byte[PayloadSize];
-                Payload_Renamed = new BytesRef(payloadBytes);
-                this.Options = options;
-                DoPositions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS.CompareTo(options) <= 0;
+                fixedPayloads = random.NextBoolean();
+                var payloadBytes = new byte[payloadSize];
+                payload = new BytesRef(payloadBytes);
+                this.options = options;
+                doPositions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS.CompareTo(options) <= 0;
             }
 
             public override int NextDoc()
@@ -167,9 +167,9 @@ namespace Lucene.Net.Index
                 while (true)
                 {
                     _nextDoc();
-                    if (LiveDocs == null || DocID_Renamed == NO_MORE_DOCS || LiveDocs.Get(DocID_Renamed))
+                    if (liveDocs == null || docID == NO_MORE_DOCS || liveDocs.Get(docID))
                     {
-                        return DocID_Renamed;
+                        return docID;
                     }
                 }
             }
@@ -177,133 +177,133 @@ namespace Lucene.Net.Index
             internal virtual int _nextDoc()
             {
                 // Must consume random:
-                while (PosUpto < Freq_Renamed)
+                while (posUpto < freq)
                 {
                     NextPosition();
                 }
 
                 if (Upto < DocFreq)
                 {
-                    if (Upto == 0 && DocRandom.NextBoolean())
+                    if (Upto == 0 && docRandom.NextBoolean())
                     {
                         // Sometimes index docID = 0
                     }
-                    else if (MaxDocSpacing == 1)
+                    else if (maxDocSpacing == 1)
                     {
-                        DocID_Renamed++;
+                        docID++;
                     }
                     else
                     {
                         // TODO: sometimes have a biggish gap here!
-                        DocID_Renamed += TestUtil.NextInt(DocRandom, 1, MaxDocSpacing);
+                        docID += TestUtil.NextInt(docRandom, 1, maxDocSpacing);
                     }
 
-                    if (Random.Next(200) == 17)
+                    if (random.Next(200) == 17)
                     {
-                        Freq_Renamed = TestUtil.NextInt(Random, 1, 1000);
+                        freq = TestUtil.NextInt(random, 1, 1000);
                     }
-                    else if (Random.Next(10) == 17)
+                    else if (random.Next(10) == 17)
                     {
-                        Freq_Renamed = TestUtil.NextInt(Random, 1, 20);
+                        freq = TestUtil.NextInt(random, 1, 20);
                     }
                     else
                     {
-                        Freq_Renamed = TestUtil.NextInt(Random, 1, 4);
+                        freq = TestUtil.NextInt(random, 1, 4);
                     }
 
-                    Pos = 0;
-                    Offset = 0;
-                    PosUpto = 0;
-                    PosSpacing = TestUtil.NextInt(Random, 1, 100);
+                    pos = 0;
+                    offset = 0;
+                    posUpto = 0;
+                    posSpacing = TestUtil.NextInt(random, 1, 100);
 
                     Upto++;
-                    return DocID_Renamed;
+                    return docID;
                 }
                 else
                 {
-                    return DocID_Renamed = NO_MORE_DOCS;
+                    return docID = NO_MORE_DOCS;
                 }
             }
 
             public override int DocID
             {
-                get { return DocID_Renamed; }
+                get { return docID; }
             }
 
             public override int Freq
             {
-                get { return Freq_Renamed; }
+                get { return freq; }
             }
 
             public override int NextPosition()
             {
-                if (!DoPositions)
+                if (!doPositions)
                 {
-                    PosUpto = Freq_Renamed;
+                    posUpto = freq;
                     return 0;
                 }
-                Debug.Assert(PosUpto < Freq_Renamed);
+                Debug.Assert(posUpto < freq);
 
-                if (PosUpto == 0 && Random.NextBoolean())
+                if (posUpto == 0 && random.NextBoolean())
                 {
                     // Sometimes index pos = 0
                 }
-                else if (PosSpacing == 1)
+                else if (posSpacing == 1)
                 {
-                    Pos++;
+                    pos++;
                 }
                 else
                 {
-                    Pos += TestUtil.NextInt(Random, 1, PosSpacing);
+                    pos += TestUtil.NextInt(random, 1, posSpacing);
                 }
 
-                if (PayloadSize != 0)
+                if (payloadSize != 0)
                 {
-                    if (FixedPayloads)
+                    if (fixedPayloads)
                     {
-                        Payload_Renamed.Length = PayloadSize;
-                        Random.NextBytes(Payload_Renamed.Bytes);
+                        payload.Length = payloadSize;
+                        random.NextBytes(payload.Bytes);
                     }
                     else
                     {
-                        int thisPayloadSize = Random.Next(PayloadSize);
+                        int thisPayloadSize = random.Next(payloadSize);
                         if (thisPayloadSize != 0)
                         {
-                            Payload_Renamed.Length = PayloadSize;
-                            Random.NextBytes(Payload_Renamed.Bytes);
+                            payload.Length = payloadSize;
+                            random.NextBytes(payload.Bytes);
                         }
                         else
                         {
-                            Payload_Renamed.Length = 0;
+                            payload.Length = 0;
                         }
                     }
                 }
                 else
                 {
-                    Payload_Renamed.Length = 0;
+                    payload.Length = 0;
                 }
 
-                StartOffset_Renamed = Offset + Random.Next(5);
-                EndOffset_Renamed = StartOffset_Renamed + Random.Next(10);
-                Offset = EndOffset_Renamed;
+                startOffset = offset + random.Next(5);
+                endOffset = startOffset + random.Next(10);
+                offset = endOffset;
 
-                PosUpto++;
-                return Pos;
+                posUpto++;
+                return pos;
             }
 
             public override int StartOffset
             {
-                get { return StartOffset_Renamed; }
+                get { return startOffset; }
             }
 
             public override int EndOffset
             {
-                get { return EndOffset_Renamed; }
+                get { return endOffset; }
             }
 
             public override BytesRef GetPayload()
             {
-                return Payload_Renamed.Length == 0 ? null : Payload_Renamed;
+                return payload.Length == 0 ? null : payload;
             }
 
             public override int Advance(int target)
@@ -600,13 +600,13 @@ namespace Lucene.Net.Index
                             int freq = postings.Freq;
                             if (VERBOSE)
                             {
-                                Console.WriteLine("    " + postings.Upto + ": docID=" + docID + " freq=" + postings.Freq_Renamed);
+                                Console.WriteLine("    " + postings.Upto + ": docID=" + docID + " freq=" + postings.freq);
                             }
-                            postingsConsumer.StartDoc(docID, doFreq ? postings.Freq_Renamed : -1);
+                            postingsConsumer.StartDoc(docID, doFreq ? postings.freq : -1);
                             seenDocs.Set(docID);
                             if (doPos)
                             {
-                                totalTF += postings.Freq_Renamed;
+                                totalTF += postings.freq;
                                 for (int posUpto = 0; posUpto < freq; posUpto++)
                                 {
                                     int pos = postings.NextPosition();
@@ -665,9 +665,9 @@ namespace Lucene.Net.Index
         private class ThreadState
         {
             // Only used with REUSE option:
-            public DocsEnum ReuseDocsEnum;
+            public DocsEnum ReuseDocsEnum { get; set; }
 
-            public DocsAndPositionsEnum ReuseDocsAndPositionsEnum;
+            public DocsAndPositionsEnum ReuseDocsAndPositionsEnum { get; set; }
         }
 
         private void VerifyEnum(ThreadState threadState, 
@@ -1074,21 +1074,21 @@ namespace Lucene.Net.Index
 
         new private class TestThread : ThreadClass
         {
-            internal Fields FieldsSource;
-            internal ISet<Option> Options;
-            internal IndexOptions MaxIndexOptions;
-            internal IndexOptions MaxTestOptions;
-            internal bool AlwaysTestMax;
-            internal BasePostingsFormatTestCase TestCase;
+            internal Fields fieldsSource;
+            internal ISet<Option> options;
+            internal IndexOptions maxIndexOptions;
+            internal IndexOptions maxTestOptions;
+            internal bool alwaysTestMax;
+            internal BasePostingsFormatTestCase testCase;
 
             public TestThread(BasePostingsFormatTestCase testCase, Fields fieldsSource, ISet<Option> options, IndexOptions maxTestOptions, IndexOptions maxIndexOptions, bool alwaysTestMax)
             {
-                this.FieldsSource = fieldsSource;
-                this.Options = options;
-                this.MaxTestOptions = maxTestOptions;
-                this.MaxIndexOptions = maxIndexOptions;
-                this.AlwaysTestMax = alwaysTestMax;
-                this.TestCase = testCase;
+                this.fieldsSource = fieldsSource;
+                this.options = options;
+                this.maxTestOptions = maxTestOptions;
+                this.maxIndexOptions = maxIndexOptions;
+                this.alwaysTestMax = alwaysTestMax;
+                this.testCase = testCase;
             }
 
             public override void Run()
@@ -1097,7 +1097,7 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-                        TestCase.TestTermsOneThread(FieldsSource, Options, MaxTestOptions, MaxIndexOptions, AlwaysTestMax);
+                        testCase.TestTermsOneThread(fieldsSource, options, maxTestOptions, maxIndexOptions, alwaysTestMax);
                     }
                     catch (Exception t)
                     {
@@ -1106,8 +1106,8 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    FieldsSource = null;
-                    TestCase = null;
+                    fieldsSource = null;
+                    testCase = null;
                 }
             }
         }

@@ -2811,7 +2811,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TestPointAnonymousInnerClassHelper : RandomIndexWriter.TestPoint
+        private class TestPointAnonymousInnerClassHelper : RandomIndexWriter.ITestPoint
         {
             private readonly TestIndexWriter OuterInstance;
 

@@ -26,12 +26,12 @@ namespace Lucene.Net.Index
     /// </summary>
     public class AllDeletedFilterReader : FilterAtomicReader
     {
-        internal readonly IBits LiveDocs_Renamed;
+        internal readonly IBits liveDocs;
 
         public AllDeletedFilterReader(AtomicReader @in)
             : base(@in)
         {
-            LiveDocs_Renamed = new Bits.MatchNoBits(@in.MaxDoc);
+            liveDocs = new Bits.MatchNoBits(@in.MaxDoc);
             Debug.Assert(MaxDoc == 0 || HasDeletions);
         }
 
@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return LiveDocs_Renamed;
+                return liveDocs;
             }
         }
 

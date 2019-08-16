@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
 
             DirectoryReader r = DirectoryReader.Open(writer, true);
 
-            while (Environment.TickCount < stopTime && !failed.Get())
+            while (Environment.TickCount < stopTime && !m_failed.Get())
             {
                 if (Random().NextBoolean())
                 {
