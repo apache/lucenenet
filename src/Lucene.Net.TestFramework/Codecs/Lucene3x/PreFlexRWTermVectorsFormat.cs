@@ -42,12 +42,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private class Lucene3xTermVectorsReaderAnonymousInnerClassHelper : Lucene3xTermVectorsReader
         {
-            private readonly PreFlexRWTermVectorsFormat OuterInstance;
+            private readonly PreFlexRWTermVectorsFormat outerInstance;
 
             public Lucene3xTermVectorsReaderAnonymousInnerClassHelper(PreFlexRWTermVectorsFormat outerInstance, Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
                 : base(directory, segmentInfo, fieldInfos, context)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override bool SortTermsByUnicode()

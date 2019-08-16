@@ -55,12 +55,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private class Lucene3xFieldsAnonymousInnerClassHelper : Lucene3xFields
         {
-            private readonly PreFlexRWPostingsFormat OuterInstance;
+            private readonly PreFlexRWPostingsFormat outerInstance;
 
             public Lucene3xFieldsAnonymousInnerClassHelper(PreFlexRWPostingsFormat outerInstance, Store.Directory directory, Index.FieldInfos fieldInfos, Index.SegmentInfo segmentInfo, Store.IOContext context, int termsIndexDivisor)
                 : base(directory, fieldInfos, segmentInfo, context, termsIndexDivisor)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected override bool SortTermsByUnicode

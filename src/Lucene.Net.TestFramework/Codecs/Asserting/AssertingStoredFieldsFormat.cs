@@ -49,12 +49,12 @@ namespace Lucene.Net.Codecs.Asserting
         internal class AssertingStoredFieldsReader : StoredFieldsReader
         {
             internal readonly StoredFieldsReader @in;
-            internal readonly int MaxDoc;
+            internal readonly int maxDoc;
 
             internal AssertingStoredFieldsReader(StoredFieldsReader @in, int maxDoc)
             {
                 this.@in = @in;
-                this.MaxDoc = maxDoc;
+                this.maxDoc = maxDoc;
             }
 
             protected override void Dispose(bool disposing)
@@ -65,13 +65,13 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void VisitDocument(int n, StoredFieldVisitor visitor)
             {
-                Debug.Assert(n >= 0 && n < MaxDoc);
+                Debug.Assert(n >= 0 && n < maxDoc);
                 @in.VisitDocument(n, visitor);
             }
 
             public override object Clone()
             {
-                return new AssertingStoredFieldsReader((StoredFieldsReader)@in.Clone(), MaxDoc);
+                return new AssertingStoredFieldsReader((StoredFieldsReader)@in.Clone(), maxDoc);
             }
 
             public override long RamBytesUsed()

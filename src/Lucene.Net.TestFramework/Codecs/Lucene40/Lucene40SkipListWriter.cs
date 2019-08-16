@@ -33,36 +33,36 @@ namespace Lucene.Net.Codecs.Lucene40
     [Obsolete("Only for reading old 4.0 segments")]
     public class Lucene40SkipListWriter : MultiLevelSkipListWriter
     {
-        private int[] LastSkipDoc;
-        private int[] LastSkipPayloadLength;
-        private int[] LastSkipOffsetLength;
-        private long[] LastSkipFreqPointer;
-        private long[] LastSkipProxPointer;
+        private int[] lastSkipDoc;
+        private int[] lastSkipPayloadLength;
+        private int[] lastSkipOffsetLength;
+        private long[] lastSkipFreqPointer;
+        private long[] lastSkipProxPointer;
 
-        private IndexOutput FreqOutput;
-        private IndexOutput ProxOutput;
+        private IndexOutput freqOutput;
+        private IndexOutput proxOutput;
 
-        private int CurDoc;
-        private bool CurStorePayloads;
-        private bool CurStoreOffsets;
-        private int CurPayloadLength;
-        private int CurOffsetLength;
-        private long CurFreqPointer;
-        private long CurProxPointer;
+        private int curDoc;
+        private bool curStorePayloads;
+        private bool curStoreOffsets;
+        private int curPayloadLength;
+        private int curOffsetLength;
+        private long curFreqPointer;
+        private long curProxPointer;
 
         /// <summary>
         /// Sole constructor. </summary>
         public Lucene40SkipListWriter(int skipInterval, int numberOfSkipLevels, int docCount, IndexOutput freqOutput, IndexOutput proxOutput)
             : base(skipInterval, numberOfSkipLevels, docCount)
         {
-            this.FreqOutput = freqOutput;
-            this.ProxOutput = proxOutput;
+            this.freqOutput = freqOutput;
+            this.proxOutput = proxOutput;
 
-            LastSkipDoc = new int[numberOfSkipLevels];
-            LastSkipPayloadLength = new int[numberOfSkipLevels];
-            LastSkipOffsetLength = new int[numberOfSkipLevels];
-            LastSkipFreqPointer = new long[numberOfSkipLevels];
-            LastSkipProxPointer = new long[numberOfSkipLevels];
+            lastSkipDoc = new int[numberOfSkipLevels];
+            lastSkipPayloadLength = new int[numberOfSkipLevels];
+            lastSkipOffsetLength = new int[numberOfSkipLevels];
+            lastSkipFreqPointer = new long[numberOfSkipLevels];
+            lastSkipProxPointer = new long[numberOfSkipLevels];
         }
 
         /// <summary>
@@ -72,28 +72,28 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             Debug.Assert(storePayloads || payloadLength == -1);
             Debug.Assert(storeOffsets || offsetLength == -1);
-            this.CurDoc = doc;
-            this.CurStorePayloads = storePayloads;
-            this.CurPayloadLength = payloadLength;
-            this.CurStoreOffsets = storeOffsets;
-            this.CurOffsetLength = offsetLength;
-            this.CurFreqPointer = FreqOutput.GetFilePointer();
-            if (ProxOutput != null)
+            this.curDoc = doc;
+            this.curStorePayloads = storePayloads;
+            this.curPayloadLength = payloadLength;
+            this.curStoreOffsets = storeOffsets;
+            this.curOffsetLength = offsetLength;
+            this.curFreqPointer = freqOutput.GetFilePointer();
+            if (proxOutput != null)
             {
-                this.CurProxPointer = ProxOutput.GetFilePointer();
+                this.curProxPointer = proxOutput.GetFilePointer();
             }
         }
 
         public override void ResetSkip()
         {
             base.ResetSkip();
-            Arrays.Fill(LastSkipDoc, 0);
-            Arrays.Fill(LastSkipPayloadLength, -1); // we don't have to write the first length in the skip list
-            Arrays.Fill(LastSkipOffsetLength, -1); // we don't have to write the first length in the skip list
-            Arrays.Fill(LastSkipFreqPointer, FreqOutput.GetFilePointer());
-            if (ProxOutput != null)
+            Arrays.Fill(lastSkipDoc, 0);
+            Arrays.Fill(lastSkipPayloadLength, -1); // we don't have to write the first length in the skip list
+            Arrays.Fill(lastSkipOffsetLength, -1); // we don't have to write the first length in the skip list
+            Arrays.Fill(lastSkipFreqPointer, freqOutput.GetFilePointer());
+            if (proxOutput != null)
             {
-                Arrays.Fill(LastSkipProxPointer, ProxOutput.GetFilePointer());
+                Arrays.Fill(lastSkipProxPointer, proxOutput.GetFilePointer());
             }
         }
 
@@ -119,14 +119,14 @@ namespace Lucene.Net.Codecs.Lucene40
             //         if DocSkip is even, then it is assumed that the
             //         current payload/offset lengths equals the lengths at the previous
             //         skip point
-            int delta = CurDoc - LastSkipDoc[level];
+            int delta = curDoc - lastSkipDoc[level];
 
-            if (CurStorePayloads || CurStoreOffsets)
+            if (curStorePayloads || curStoreOffsets)
             {
-                Debug.Assert(CurStorePayloads || CurPayloadLength == LastSkipPayloadLength[level]);
-                Debug.Assert(CurStoreOffsets || CurOffsetLength == LastSkipOffsetLength[level]);
+                Debug.Assert(curStorePayloads || curPayloadLength == lastSkipPayloadLength[level]);
+                Debug.Assert(curStoreOffsets || curOffsetLength == lastSkipOffsetLength[level]);
 
-                if (CurPayloadLength == LastSkipPayloadLength[level] && CurOffsetLength == LastSkipOffsetLength[level])
+                if (curPayloadLength == lastSkipPayloadLength[level] && curOffsetLength == lastSkipOffsetLength[level])
                 {
                     // the current payload/offset lengths equals the lengths at the previous skip point,
                     // so we don't store the lengths again
@@ -138,15 +138,15 @@ namespace Lucene.Net.Codecs.Lucene40
                     // set the lowest bit and store the current payload and/or offset lengths as VInts.
                     skipBuffer.WriteVInt32(delta << 1 | 1);
 
-                    if (CurStorePayloads)
+                    if (curStorePayloads)
                     {
-                        skipBuffer.WriteVInt32(CurPayloadLength);
-                        LastSkipPayloadLength[level] = CurPayloadLength;
+                        skipBuffer.WriteVInt32(curPayloadLength);
+                        lastSkipPayloadLength[level] = curPayloadLength;
                     }
-                    if (CurStoreOffsets)
+                    if (curStoreOffsets)
                     {
-                        skipBuffer.WriteVInt32(CurOffsetLength);
-                        LastSkipOffsetLength[level] = CurOffsetLength;
+                        skipBuffer.WriteVInt32(curOffsetLength);
+                        lastSkipOffsetLength[level] = curOffsetLength;
                     }
                 }
             }
@@ -156,13 +156,13 @@ namespace Lucene.Net.Codecs.Lucene40
                 skipBuffer.WriteVInt32(delta);
             }
 
-            skipBuffer.WriteVInt32((int)(CurFreqPointer - LastSkipFreqPointer[level]));
-            skipBuffer.WriteVInt32((int)(CurProxPointer - LastSkipProxPointer[level]));
+            skipBuffer.WriteVInt32((int)(curFreqPointer - lastSkipFreqPointer[level]));
+            skipBuffer.WriteVInt32((int)(curProxPointer - lastSkipProxPointer[level]));
 
-            LastSkipDoc[level] = CurDoc;
+            lastSkipDoc[level] = curDoc;
 
-            LastSkipFreqPointer[level] = CurFreqPointer;
-            LastSkipProxPointer[level] = CurProxPointer;
+            lastSkipFreqPointer[level] = curFreqPointer;
+            lastSkipProxPointer[level] = curProxPointer;
         }
     }
 }

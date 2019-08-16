@@ -146,12 +146,12 @@ namespace Lucene.Net.Codecs.Asserting
         {
             internal readonly TermsConsumer @in;
             private readonly FieldInfo fieldInfo;
-            internal BytesRef LastTerm = null;
-            internal TermsConsumerState State = TermsConsumerState.INITIAL;
-            internal AssertingPostingsConsumer LastPostingsConsumer = null;
-            internal long SumTotalTermFreq = 0;
-            internal long SumDocFreq = 0;
-            internal OpenBitSet VisitedDocs = new OpenBitSet();
+            internal BytesRef lastTerm = null;
+            internal TermsConsumerState state = TermsConsumerState.INITIAL;
+            internal AssertingPostingsConsumer lastPostingsConsumer = null;
+            internal long sumTotalTermFreq = 0;
+            internal long sumDocFreq = 0;
+            internal OpenBitSet visitedDocs = new OpenBitSet();
 
             internal AssertingTermsConsumer(TermsConsumer @in, FieldInfo fieldInfo)
             {
@@ -161,41 +161,41 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override PostingsConsumer StartTerm(BytesRef text)
             {
-                Debug.Assert(State == TermsConsumerState.INITIAL || State == TermsConsumerState.START && LastPostingsConsumer.DocFreq == 0);
-                State = TermsConsumerState.START;
-                Debug.Assert(LastTerm == null || @in.Comparer.Compare(text, LastTerm) > 0);
-                LastTerm = BytesRef.DeepCopyOf(text);
-                return LastPostingsConsumer = new AssertingPostingsConsumer(@in.StartTerm(text), fieldInfo, VisitedDocs);
+                Debug.Assert(state == TermsConsumerState.INITIAL || state == TermsConsumerState.START && lastPostingsConsumer.docFreq == 0);
+                state = TermsConsumerState.START;
+                Debug.Assert(lastTerm == null || @in.Comparer.Compare(text, lastTerm) > 0);
+                lastTerm = BytesRef.DeepCopyOf(text);
+                return lastPostingsConsumer = new AssertingPostingsConsumer(@in.StartTerm(text), fieldInfo, visitedDocs);
             }
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-                Debug.Assert(State == TermsConsumerState.START);
-                State = TermsConsumerState.INITIAL;
-                Debug.Assert(text.Equals(LastTerm));
+                Debug.Assert(state == TermsConsumerState.START);
+                state = TermsConsumerState.INITIAL;
+                Debug.Assert(text.Equals(lastTerm));
                 Debug.Assert(stats.DocFreq > 0); // otherwise, this method should not be called.
-                Debug.Assert(stats.DocFreq == LastPostingsConsumer.DocFreq);
-                SumDocFreq += stats.DocFreq;
+                Debug.Assert(stats.DocFreq == lastPostingsConsumer.docFreq);
+                sumDocFreq += stats.DocFreq;
                 if (fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY)
                 {
                     Debug.Assert(stats.TotalTermFreq == -1);
                 }
                 else
                 {
-                    Debug.Assert(stats.TotalTermFreq == LastPostingsConsumer.TotalTermFreq);
-                    SumTotalTermFreq += stats.TotalTermFreq;
+                    Debug.Assert(stats.TotalTermFreq == lastPostingsConsumer.totalTermFreq);
+                    sumTotalTermFreq += stats.TotalTermFreq;
                 }
                 @in.FinishTerm(text, stats);
             }
 
             public override void Finish(long sumTotalTermFreq, long sumDocFreq, int docCount)
             {
-                Debug.Assert(State == TermsConsumerState.INITIAL || State == TermsConsumerState.START && LastPostingsConsumer.DocFreq == 0);
-                State = TermsConsumerState.FINISHED;
+                Debug.Assert(state == TermsConsumerState.INITIAL || state == TermsConsumerState.START && lastPostingsConsumer.docFreq == 0);
+                state = TermsConsumerState.FINISHED;
                 Debug.Assert(docCount >= 0);
-                Debug.Assert(docCount == VisitedDocs.Cardinality());
+                Debug.Assert(docCount == visitedDocs.Cardinality());
                 Debug.Assert(sumDocFreq >= docCount);
-                Debug.Assert(sumDocFreq == this.SumDocFreq);
+                Debug.Assert(sumDocFreq == this.sumDocFreq);
                 if (fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY)
                 {
                     Debug.Assert(sumTotalTermFreq == -1);
@@ -203,7 +203,7 @@ namespace Lucene.Net.Codecs.Asserting
                 else
                 {
                     Debug.Assert(sumTotalTermFreq >= sumDocFreq);
-                    Debug.Assert(sumTotalTermFreq == this.SumTotalTermFreq);
+                    Debug.Assert(sumTotalTermFreq == this.sumTotalTermFreq);
                 }
                 @in.Finish(sumTotalTermFreq, sumDocFreq, docCount);
             }
@@ -227,58 +227,58 @@ namespace Lucene.Net.Codecs.Asserting
         {
             internal readonly PostingsConsumer @in;
             private readonly FieldInfo fieldInfo;
-            internal readonly OpenBitSet VisitedDocs;
-            internal PostingsConsumerState State = PostingsConsumerState.INITIAL;
-            internal int Freq;
-            internal int PositionCount;
-            internal int LastPosition = 0;
-            internal int LastStartOffset = 0;
-            internal int DocFreq = 0;
-            internal long TotalTermFreq = 0;
+            internal readonly OpenBitSet visitedDocs;
+            internal PostingsConsumerState state = PostingsConsumerState.INITIAL;
+            internal int freq;
+            internal int positionCount;
+            internal int lastPosition = 0;
+            internal int lastStartOffset = 0;
+            internal int docFreq = 0;
+            internal long totalTermFreq = 0;
 
             internal AssertingPostingsConsumer(PostingsConsumer @in, FieldInfo fieldInfo, OpenBitSet visitedDocs)
             {
                 this.@in = @in;
                 this.fieldInfo = fieldInfo;
-                this.VisitedDocs = visitedDocs;
+                this.visitedDocs = visitedDocs;
             }
 
             public override void StartDoc(int docID, int freq)
             {
-                Debug.Assert(State == PostingsConsumerState.INITIAL);
-                State = PostingsConsumerState.START;
+                Debug.Assert(state == PostingsConsumerState.INITIAL);
+                state = PostingsConsumerState.START;
                 Debug.Assert(docID >= 0);
                 if (fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY)
                 {
                     Debug.Assert(freq == -1);
-                    this.Freq = 0; // we don't expect any positions here
+                    this.freq = 0; // we don't expect any positions here
                 }
                 else
                 {
                     Debug.Assert(freq > 0);
-                    this.Freq = freq;
-                    TotalTermFreq += freq;
+                    this.freq = freq;
+                    totalTermFreq += freq;
                 }
-                this.PositionCount = 0;
-                this.LastPosition = 0;
-                this.LastStartOffset = 0;
-                DocFreq++;
-                VisitedDocs.Set(docID);
+                this.positionCount = 0;
+                this.lastPosition = 0;
+                this.lastStartOffset = 0;
+                docFreq++;
+                visitedDocs.Set(docID);
                 @in.StartDoc(docID, freq);
             }
 
             public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
             {
-                Debug.Assert(State == PostingsConsumerState.START);
-                Debug.Assert(PositionCount < Freq);
-                PositionCount++;
-                Debug.Assert(position >= LastPosition || position == -1); // we still allow -1 from old 3.x indexes
-                LastPosition = position;
+                Debug.Assert(state == PostingsConsumerState.START);
+                Debug.Assert(positionCount < freq);
+                positionCount++;
+                Debug.Assert(position >= lastPosition || position == -1); // we still allow -1 from old 3.x indexes
+                lastPosition = position;
                 if (fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
                 {
                     Debug.Assert(startOffset >= 0);
-                    Debug.Assert(startOffset >= LastStartOffset);
-                    LastStartOffset = startOffset;
+                    Debug.Assert(startOffset >= lastStartOffset);
+                    lastStartOffset = startOffset;
                     Debug.Assert(endOffset >= startOffset);
                 }
                 else
@@ -295,15 +295,15 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void FinishDoc()
             {
-                Debug.Assert(State == PostingsConsumerState.START);
-                State = PostingsConsumerState.INITIAL;
+                Debug.Assert(state == PostingsConsumerState.START);
+                state = PostingsConsumerState.INITIAL;
                 if (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                 {
-                    Debug.Assert(PositionCount == 0); // we should not have fed any positions!
+                    Debug.Assert(positionCount == 0); // we should not have fed any positions!
                 }
                 else
                 {
-                    Debug.Assert(PositionCount == Freq);
+                    Debug.Assert(positionCount == freq);
                 }
                 @in.FinishDoc();
             }

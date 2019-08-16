@@ -25,11 +25,11 @@ namespace Lucene.Net.Codecs.Asserting
     [CodecName("Asserting")]
     public sealed class AssertingCodec : FilterCodec
     {
-        private readonly PostingsFormat Postings = new AssertingPostingsFormat();
-        private readonly TermVectorsFormat Vectors = new AssertingTermVectorsFormat();
-        private readonly StoredFieldsFormat StoredFields = new AssertingStoredFieldsFormat();
-        private readonly DocValuesFormat DocValues = new AssertingDocValuesFormat();
-        private readonly NormsFormat Norms = new AssertingNormsFormat();
+        private readonly PostingsFormat postings = new AssertingPostingsFormat();
+        private readonly TermVectorsFormat vectors = new AssertingTermVectorsFormat();
+        private readonly StoredFieldsFormat storedFields = new AssertingStoredFieldsFormat();
+        private readonly DocValuesFormat docValues = new AssertingDocValuesFormat();
+        private readonly NormsFormat norms = new AssertingNormsFormat();
 
         public AssertingCodec()
             : base(new Lucene46Codec())
@@ -38,27 +38,27 @@ namespace Lucene.Net.Codecs.Asserting
 
         public override PostingsFormat PostingsFormat
         {
-            get { return Postings; }
+            get { return postings; }
         }
 
         public override TermVectorsFormat TermVectorsFormat
         {
-            get { return Vectors; }
+            get { return vectors; }
         }
 
         public override StoredFieldsFormat StoredFieldsFormat
         {
-            get { return StoredFields; }
+            get { return storedFields; }
         }
 
         public override DocValuesFormat DocValuesFormat
         {
-            get { return DocValues; }
+            get { return docValues; }
         }
 
         public override NormsFormat NormsFormat
         {
-            get { return Norms; }
+            get { return norms; }
         }
     }
 }

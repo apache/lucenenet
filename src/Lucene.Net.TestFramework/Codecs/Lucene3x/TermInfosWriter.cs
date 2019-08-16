@@ -51,10 +51,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         // NOTE: always change this if you switch to a new format!
         public const int FORMAT_CURRENT = FORMAT_VERSION_UTF8_LENGTH_IN_BYTES;
 
-        private FieldInfos FieldInfos;
-        private IndexOutput Output;
-        private TermInfo LastTi = new TermInfo();
-        private long Size;
+        private FieldInfos fieldInfos;
+        private IndexOutput output;
+        private TermInfo lastTi = new TermInfo();
+        private long size;
 
         // TODO: the default values for these two parameters should be settable from
         // IndexWriter.  However, once that's done, folks will start setting them to
@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// slower.  Searching is typically not dominated by dictionary lookup, so
         /// tweaking this is rarely useful.
         /// </summary>
-        internal int IndexInterval = 128;
+        internal int indexInterval = 128;
 
         /// <summary>
         /// Expert: The fraction of term entries stored in skip tables,
@@ -79,20 +79,20 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// smaller values result in bigger indexes, less acceleration and more
         /// accelerable cases. More detailed experiments would be useful here.
         /// </summary>
-        internal int SkipInterval = 16;
+        internal int skipInterval = 16;
 
         /// <summary>
         /// Expert: The maximum number of skip levels. Smaller values result in
         /// slightly smaller indexes, but slower skipping in big posting lists.
         /// </summary>
-        internal int MaxSkipLevels = 10;
+        internal int maxSkipLevels = 10;
 
-        private long LastIndexPointer;
-        private bool IsIndex;
-        private readonly BytesRef LastTerm = new BytesRef();
-        private int LastFieldNumber = -1;
+        private long lastIndexPointer;
+        private bool isIndex;
+        private readonly BytesRef lastTerm = new BytesRef();
+        private int lastFieldNumber = -1;
 
-        private TermInfosWriter Other;
+        private TermInfosWriter other;
 
         internal TermInfosWriter(Directory directory, string segment, FieldInfos fis, int interval)
         {
@@ -100,19 +100,19 @@ namespace Lucene.Net.Codecs.Lucene3x
             bool success = false;
             try
             {
-                Other = new TermInfosWriter(directory, segment, fis, interval, true);
-                Other.Other = this;
+                other = new TermInfosWriter(directory, segment, fis, interval, true);
+                other.other = this;
                 success = true;
             }
             finally
             {
                 if (!success)
                 {
-                    IOUtils.DisposeWhileHandlingException(Output);
+                    IOUtils.DisposeWhileHandlingException(output);
 
                     try
                     {
-                        directory.DeleteFile(IndexFileNames.SegmentFileName(segment, "", (IsIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)));
+                        directory.DeleteFile(IndexFileNames.SegmentFileName(segment, "", (isIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)));
                     }
 #pragma warning disable 168
                     catch (IOException ignored)
@@ -130,18 +130,18 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private void Initialize(Directory directory, string segment, FieldInfos fis, int interval, bool isi)
         {
-            IndexInterval = interval;
-            FieldInfos = fis;
-            IsIndex = isi;
-            Output = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", (IsIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)), IOContext.DEFAULT);
+            indexInterval = interval;
+            fieldInfos = fis;
+            isIndex = isi;
+            output = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", (isIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)), IOContext.DEFAULT);
             bool success = false;
             try
             {
-                Output.WriteInt32(FORMAT_CURRENT); // write format
-                Output.WriteInt64(0); // leave space for size
-                Output.WriteInt32(IndexInterval); // write indexInterval
-                Output.WriteInt32(SkipInterval); // write skipInterval
-                Output.WriteInt32(MaxSkipLevels); // write maxSkipLevels
+                output.WriteInt32(FORMAT_CURRENT); // write format
+                output.WriteInt64(0); // leave space for size
+                output.WriteInt32(indexInterval); // write indexInterval
+                output.WriteInt32(skipInterval); // write skipInterval
+                output.WriteInt32(maxSkipLevels); // write maxSkipLevels
                 Debug.Assert(InitUTF16Results());
                 success = true;
             }
@@ -149,11 +149,11 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (!success)
                 {
-                    IOUtils.DisposeWhileHandlingException(Output);
+                    IOUtils.DisposeWhileHandlingException(output);
 
                     try
                     {
-                        directory.DeleteFile(IndexFileNames.SegmentFileName(segment, "", (IsIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)));
+                        directory.DeleteFile(IndexFileNames.SegmentFileName(segment, "", (isIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)));
                     }
 #pragma warning disable 168
                     catch (IOException ignored)
@@ -165,16 +165,16 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         // Currently used only by assert statements
-        internal CharsRef Utf16Result1;
+        internal CharsRef utf16Result1;
 
-        internal CharsRef Utf16Result2;
-        private readonly BytesRef ScratchBytes = new BytesRef();
+        internal CharsRef utf16Result2;
+        private readonly BytesRef scratchBytes = new BytesRef();
 
         // Currently used only by assert statements
         private bool InitUTF16Results()
         {
-            Utf16Result1 = new CharsRef(10);
-            Utf16Result2 = new CharsRef(10);
+            utf16Result1 = new CharsRef(10);
+            utf16Result2 = new CharsRef(10);
             return true;
         }
 
@@ -195,52 +195,52 @@ namespace Lucene.Net.Codecs.Lucene3x
         // Currently used only by assert statement
         private int CompareToLastTerm(int fieldNumber, BytesRef term)
         {
-            if (LastFieldNumber != fieldNumber)
+            if (lastFieldNumber != fieldNumber)
             {
-                int cmp = FieldName(FieldInfos, LastFieldNumber).CompareToOrdinal(FieldName(FieldInfos, fieldNumber));
+                int cmp = FieldName(fieldInfos, lastFieldNumber).CompareToOrdinal(FieldName(fieldInfos, fieldNumber));
                 // If there is a field named "" (empty string) then we
                 // will get 0 on this comparison, yet, it's "OK".  But
                 // it's not OK if two different field numbers map to
                 // the same name.
-                if (cmp != 0 || LastFieldNumber != -1)
+                if (cmp != 0 || lastFieldNumber != -1)
                 {
                     return cmp;
                 }
             }
 
-            ScratchBytes.CopyBytes(term);
-            Debug.Assert(LastTerm.Offset == 0);
-            UnicodeUtil.UTF8toUTF16(LastTerm.Bytes, 0, LastTerm.Length, Utf16Result1);
+            scratchBytes.CopyBytes(term);
+            Debug.Assert(lastTerm.Offset == 0);
+            UnicodeUtil.UTF8toUTF16(lastTerm.Bytes, 0, lastTerm.Length, utf16Result1);
 
-            Debug.Assert(ScratchBytes.Offset == 0);
-            UnicodeUtil.UTF8toUTF16(ScratchBytes.Bytes, 0, ScratchBytes.Length, Utf16Result2);
+            Debug.Assert(scratchBytes.Offset == 0);
+            UnicodeUtil.UTF8toUTF16(scratchBytes.Bytes, 0, scratchBytes.Length, utf16Result2);
 
             int len;
-            if (Utf16Result1.Length < Utf16Result2.Length)
+            if (utf16Result1.Length < utf16Result2.Length)
             {
-                len = Utf16Result1.Length;
+                len = utf16Result1.Length;
             }
             else
             {
-                len = Utf16Result2.Length;
+                len = utf16Result2.Length;
             }
 
             for (int i = 0; i < len; i++)
             {
-                char ch1 = Utf16Result1.Chars[i];
-                char ch2 = Utf16Result2.Chars[i];
+                char ch1 = utf16Result1.Chars[i];
+                char ch2 = utf16Result2.Chars[i];
                 if (ch1 != ch2)
                 {
                     return ch1 - ch2;
                 }
             }
-            if (Utf16Result1.Length == 0 && LastFieldNumber == -1)
+            if (utf16Result1.Length == 0 && lastFieldNumber == -1)
             {
                 // If there is a field named "" (empty string) with a term text of "" (empty string) then we
                 // will get 0 on this comparison, yet, it's "OK".
                 return -1;
             }
-            return Utf16Result1.Length - Utf16Result2.Length;
+            return utf16Result1.Length - utf16Result2.Length;
         }
 
         /// <summary>
@@ -250,35 +250,35 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// </summary>
         public void Add(int fieldNumber, BytesRef term, TermInfo ti)
         {
-            Debug.Assert(CompareToLastTerm(fieldNumber, term) < 0 || (IsIndex && term.Length == 0 && LastTerm.Length == 0), "Terms are out of order: field=" + FieldName(FieldInfos, fieldNumber) + " (number " + fieldNumber + ")" + " lastField=" + FieldName(FieldInfos, LastFieldNumber) + " (number " + LastFieldNumber + ")" + " text=" + term.Utf8ToString() + " lastText=" + LastTerm.Utf8ToString());
+            Debug.Assert(CompareToLastTerm(fieldNumber, term) < 0 || (isIndex && term.Length == 0 && lastTerm.Length == 0), "Terms are out of order: field=" + FieldName(fieldInfos, fieldNumber) + " (number " + fieldNumber + ")" + " lastField=" + FieldName(fieldInfos, lastFieldNumber) + " (number " + lastFieldNumber + ")" + " text=" + term.Utf8ToString() + " lastText=" + lastTerm.Utf8ToString());
 
-            Debug.Assert(ti.FreqPointer >= LastTi.FreqPointer, "freqPointer out of order (" + ti.FreqPointer + " < " + LastTi.FreqPointer + ")");
-            Debug.Assert(ti.ProxPointer >= LastTi.ProxPointer, "proxPointer out of order (" + ti.ProxPointer + " < " + LastTi.ProxPointer + ")");
+            Debug.Assert(ti.FreqPointer >= lastTi.FreqPointer, "freqPointer out of order (" + ti.FreqPointer + " < " + lastTi.FreqPointer + ")");
+            Debug.Assert(ti.ProxPointer >= lastTi.ProxPointer, "proxPointer out of order (" + ti.ProxPointer + " < " + lastTi.ProxPointer + ")");
 
-            if (!IsIndex && Size % IndexInterval == 0)
+            if (!isIndex && size % indexInterval == 0)
             {
-                Other.Add(LastFieldNumber, LastTerm, LastTi); // add an index term
+                other.Add(lastFieldNumber, lastTerm, lastTi); // add an index term
             }
             WriteTerm(fieldNumber, term); // write term
 
-            Output.WriteVInt32(ti.DocFreq); // write doc freq
-            Output.WriteVInt64(ti.FreqPointer - LastTi.FreqPointer); // write pointers
-            Output.WriteVInt64(ti.ProxPointer - LastTi.ProxPointer);
+            output.WriteVInt32(ti.DocFreq); // write doc freq
+            output.WriteVInt64(ti.FreqPointer - lastTi.FreqPointer); // write pointers
+            output.WriteVInt64(ti.ProxPointer - lastTi.ProxPointer);
 
-            if (ti.DocFreq >= SkipInterval)
+            if (ti.DocFreq >= skipInterval)
             {
-                Output.WriteVInt32(ti.SkipOffset);
+                output.WriteVInt32(ti.SkipOffset);
             }
 
-            if (IsIndex)
+            if (isIndex)
             {
-                Output.WriteVInt64(Other.Output.GetFilePointer() - LastIndexPointer);
-                LastIndexPointer = Other.Output.GetFilePointer(); // write pointer
+                output.WriteVInt64(other.output.GetFilePointer() - lastIndexPointer);
+                lastIndexPointer = other.output.GetFilePointer(); // write pointer
             }
 
-            LastFieldNumber = fieldNumber;
-            LastTi.Set(ti);
-            Size++;
+            lastFieldNumber = fieldNumber;
+            lastTi.Set(ti);
+            size++;
         }
 
         private void WriteTerm(int fieldNumber, BytesRef term)
@@ -288,10 +288,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             // TODO: UTF16toUTF8 could tell us this prefix
             // Compute prefix in common with last term:
             int start = 0;
-            int limit = term.Length < LastTerm.Length ? term.Length : LastTerm.Length;
+            int limit = term.Length < lastTerm.Length ? term.Length : lastTerm.Length;
             while (start < limit)
             {
-                if (term.Bytes[start + term.Offset] != LastTerm.Bytes[start + LastTerm.Offset])
+                if (term.Bytes[start + term.Offset] != lastTerm.Bytes[start + lastTerm.Offset])
                 {
                     break;
                 }
@@ -299,11 +299,11 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
 
             int length = term.Length - start;
-            Output.WriteVInt32(start); // write shared prefix length
-            Output.WriteVInt32(length); // write delta length
-            Output.WriteBytes(term.Bytes, start + term.Offset, length); // write delta bytes
-            Output.WriteVInt32(fieldNumber); // write field num
-            LastTerm.CopyBytes(term);
+            output.WriteVInt32(start); // write shared prefix length
+            output.WriteVInt32(length); // write delta length
+            output.WriteBytes(term.Bytes, start + term.Offset, length); // write delta bytes
+            output.WriteVInt32(fieldNumber); // write field num
+            lastTerm.CopyBytes(term);
         }
 
         /// <summary>
@@ -312,20 +312,20 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             try
             {
-                Output.Seek(4); // write size after format
-                Output.WriteInt64(Size);
+                output.Seek(4); // write size after format
+                output.WriteInt64(size);
             }
             finally
             {
                 try
                 {
-                    Output.Dispose();
+                    output.Dispose();
                 }
                 finally
                 {
-                    if (!IsIndex)
+                    if (!isIndex)
                     {
-                        Other.Dispose();
+                        other.Dispose();
                     }
                 }
             }

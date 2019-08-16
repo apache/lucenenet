@@ -95,85 +95,85 @@ namespace Lucene.Net.Codecs.Asserting
         internal class AssertingTermVectorsWriter : TermVectorsWriter
         {
             internal readonly TermVectorsWriter @in;
-            internal Status DocStatus, FieldStatus, TermStatus;
-            internal int DocCount, FieldCount, TermCount, PositionCount;
-            internal bool HasPositions;
+            internal Status docStatus, fieldStatus, termStatus;
+            internal int docCount, fieldCount, termCount, positionCount;
+            internal bool hasPositions;
 
             internal AssertingTermVectorsWriter(TermVectorsWriter @in)
             {
                 this.@in = @in;
-                DocStatus = Status.UNDEFINED;
-                FieldStatus = Status.UNDEFINED;
-                TermStatus = Status.UNDEFINED;
-                FieldCount = TermCount = PositionCount = 0;
+                docStatus = Status.UNDEFINED;
+                fieldStatus = Status.UNDEFINED;
+                termStatus = Status.UNDEFINED;
+                fieldCount = termCount = positionCount = 0;
             }
 
             public override void StartDocument(int numVectorFields)
             {
-                Debug.Assert(FieldCount == 0);
-                Debug.Assert(DocStatus != Status.STARTED);
+                Debug.Assert(fieldCount == 0);
+                Debug.Assert(docStatus != Status.STARTED);
                 @in.StartDocument(numVectorFields);
-                DocStatus = Status.STARTED;
-                FieldCount = numVectorFields;
-                DocCount++;
+                docStatus = Status.STARTED;
+                fieldCount = numVectorFields;
+                docCount++;
             }
 
             public override void FinishDocument()
             {
-                Debug.Assert(FieldCount == 0);
-                Debug.Assert(DocStatus == Status.STARTED);
+                Debug.Assert(fieldCount == 0);
+                Debug.Assert(docStatus == Status.STARTED);
                 @in.FinishDocument();
-                DocStatus = Status.FINISHED;
+                docStatus = Status.FINISHED;
             }
 
             public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
             {
-                Debug.Assert(TermCount == 0);
-                Debug.Assert(DocStatus == Status.STARTED);
-                Debug.Assert(FieldStatus != Status.STARTED);
+                Debug.Assert(termCount == 0);
+                Debug.Assert(docStatus == Status.STARTED);
+                Debug.Assert(fieldStatus != Status.STARTED);
                 @in.StartField(info, numTerms, positions, offsets, payloads);
-                FieldStatus = Status.STARTED;
-                TermCount = numTerms;
-                HasPositions = positions || offsets || payloads;
+                fieldStatus = Status.STARTED;
+                termCount = numTerms;
+                hasPositions = positions || offsets || payloads;
             }
 
             public override void FinishField()
             {
-                Debug.Assert(TermCount == 0);
-                Debug.Assert(FieldStatus == Status.STARTED);
+                Debug.Assert(termCount == 0);
+                Debug.Assert(fieldStatus == Status.STARTED);
                 @in.FinishField();
-                FieldStatus = Status.FINISHED;
-                --FieldCount;
+                fieldStatus = Status.FINISHED;
+                --fieldCount;
             }
 
             public override void StartTerm(BytesRef term, int freq)
             {
-                Debug.Assert(DocStatus == Status.STARTED);
-                Debug.Assert(FieldStatus == Status.STARTED);
-                Debug.Assert(TermStatus != Status.STARTED);
+                Debug.Assert(docStatus == Status.STARTED);
+                Debug.Assert(fieldStatus == Status.STARTED);
+                Debug.Assert(termStatus != Status.STARTED);
                 @in.StartTerm(term, freq);
-                TermStatus = Status.STARTED;
-                PositionCount = HasPositions ? freq : 0;
+                termStatus = Status.STARTED;
+                positionCount = hasPositions ? freq : 0;
             }
 
             public override void FinishTerm()
             {
-                Debug.Assert(PositionCount == 0);
-                Debug.Assert(DocStatus == Status.STARTED);
-                Debug.Assert(FieldStatus == Status.STARTED);
-                Debug.Assert(TermStatus == Status.STARTED);
+                Debug.Assert(positionCount == 0);
+                Debug.Assert(docStatus == Status.STARTED);
+                Debug.Assert(fieldStatus == Status.STARTED);
+                Debug.Assert(termStatus == Status.STARTED);
                 @in.FinishTerm();
-                TermStatus = Status.FINISHED;
-                --TermCount;
+                termStatus = Status.FINISHED;
+                --termCount;
             }
 
             public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
             {
-                Debug.Assert(DocStatus == Status.STARTED);
-                Debug.Assert(FieldStatus == Status.STARTED);
-                Debug.Assert(TermStatus == Status.STARTED);
+                Debug.Assert(docStatus == Status.STARTED);
+                Debug.Assert(fieldStatus == Status.STARTED);
+                Debug.Assert(termStatus == Status.STARTED);
                 @in.AddPosition(position, startOffset, endOffset, payload);
-                --PositionCount;
+                --positionCount;
             }
 
             public override void Abort()
@@ -183,10 +183,10 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void Finish(FieldInfos fis, int numDocs)
             {
-                Debug.Assert(DocCount == numDocs);
-                Debug.Assert(DocStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED));
-                Debug.Assert(FieldStatus != Status.STARTED);
-                Debug.Assert(TermStatus != Status.STARTED);
+                Debug.Assert(docCount == numDocs);
+                Debug.Assert(docStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED));
+                Debug.Assert(fieldStatus != Status.STARTED);
+                Debug.Assert(termStatus != Status.STARTED);
                 @in.Finish(fis, numDocs);
             }
 

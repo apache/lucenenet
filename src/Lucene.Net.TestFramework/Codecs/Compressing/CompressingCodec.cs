@@ -73,8 +73,8 @@ namespace Lucene.Net.Codecs.Compressing
             return RandomInstance(random, RandomInts.NextIntBetween(random, 1, 500), withSegmentSuffix);
         }
 
-        private readonly CompressingStoredFieldsFormat StoredFieldsFormat_Renamed;
-        private readonly CompressingTermVectorsFormat TermVectorsFormat_Renamed;
+        private readonly CompressingStoredFieldsFormat storedFieldsFormat;
+        private readonly CompressingTermVectorsFormat termVectorsFormat;
 
         /// <summary>
         /// Creates a compressing codec with a given segment suffix
@@ -82,8 +82,8 @@ namespace Lucene.Net.Codecs.Compressing
         protected CompressingCodec(string segmentSuffix, CompressionMode compressionMode, int chunkSize)
             : base(new Lucene46Codec())
         {
-            this.StoredFieldsFormat_Renamed = new CompressingStoredFieldsFormat(this.Name, segmentSuffix, compressionMode, chunkSize);
-            this.TermVectorsFormat_Renamed = new CompressingTermVectorsFormat(this.Name, segmentSuffix, compressionMode, chunkSize);
+            this.storedFieldsFormat = new CompressingStoredFieldsFormat(this.Name, segmentSuffix, compressionMode, chunkSize);
+            this.termVectorsFormat = new CompressingTermVectorsFormat(this.Name, segmentSuffix, compressionMode, chunkSize);
         }
 
         /// <summary>
@@ -96,17 +96,17 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override StoredFieldsFormat StoredFieldsFormat
         {
-            get { return StoredFieldsFormat_Renamed; }
+            get { return storedFieldsFormat; }
         }
 
         public override TermVectorsFormat TermVectorsFormat
         {
-            get { return TermVectorsFormat_Renamed; }
+            get { return termVectorsFormat; }
         }
 
         public override string ToString()
         {
-            return Name + "(storedFieldsFormat=" + StoredFieldsFormat_Renamed + ", termVectorsFormat=" + TermVectorsFormat_Renamed + ")";
+            return Name + "(storedFieldsFormat=" + storedFieldsFormat + ", termVectorsFormat=" + termVectorsFormat + ")";
         }
     }
 }

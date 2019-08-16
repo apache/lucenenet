@@ -37,24 +37,24 @@ namespace Lucene.Net.Codecs.Lucene3x
 #pragma warning disable 612, 618
     internal sealed class PreFlexRWTermVectorsWriter : TermVectorsWriter
     {
-        private readonly Directory Directory;
-        private readonly string Segment;
-        private IndexOutput Tvx = null, Tvd = null, Tvf = null;
+        private readonly Directory directory;
+        private readonly string segment;
+        private IndexOutput tvx = null, tvd = null, tvf = null;
 
         public PreFlexRWTermVectorsWriter(Directory directory, string segment, IOContext context)
         {
-            this.Directory = directory;
-            this.Segment = segment;
+            this.directory = directory;
+            this.segment = segment;
             bool success = false;
             try
             {
                 // Open files for TermVector storage
-                Tvx = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION), context);
-                Tvx.WriteInt32(Lucene3xTermVectorsReader.FORMAT_CURRENT);
-                Tvd = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), context);
-                Tvd.WriteInt32(Lucene3xTermVectorsReader.FORMAT_CURRENT);
-                Tvf = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION), context);
-                Tvf.WriteInt32(Lucene3xTermVectorsReader.FORMAT_CURRENT);
+                tvx = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION), context);
+                tvx.WriteInt32(Lucene3xTermVectorsReader.FORMAT_CURRENT);
+                tvd = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), context);
+                tvd.WriteInt32(Lucene3xTermVectorsReader.FORMAT_CURRENT);
+                tvf = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION), context);
+                tvf.WriteInt32(Lucene3xTermVectorsReader.FORMAT_CURRENT);
                 success = true;
             }
             finally
@@ -68,34 +68,34 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void StartDocument(int numVectorFields)
         {
-            LastFieldName = null;
-            this.NumVectorFields = numVectorFields;
-            Tvx.WriteInt64(Tvd.GetFilePointer());
-            Tvx.WriteInt64(Tvf.GetFilePointer());
-            Tvd.WriteVInt32(numVectorFields);
-            FieldCount = 0;
-            Fps = ArrayUtil.Grow(Fps, numVectorFields);
+            lastFieldName = null;
+            this.numVectorFields = numVectorFields;
+            tvx.WriteInt64(tvd.GetFilePointer());
+            tvx.WriteInt64(tvf.GetFilePointer());
+            tvd.WriteVInt32(numVectorFields);
+            fieldCount = 0;
+            fps = ArrayUtil.Grow(fps, numVectorFields);
         }
 
-        private long[] Fps = new long[10]; // pointers to the tvf before writing each field
-        private int FieldCount = 0; // number of fields we have written so far for this document
-        private int NumVectorFields = 0; // total number of fields we will write for this document
-        private string LastFieldName;
+        private long[] fps = new long[10]; // pointers to the tvf before writing each field
+        private int fieldCount = 0; // number of fields we have written so far for this document
+        private int numVectorFields = 0; // total number of fields we will write for this document
+        private string lastFieldName;
 
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
-            Debug.Assert(LastFieldName == null || info.Name.CompareToOrdinal(LastFieldName) > 0, "fieldName=" + info.Name + " lastFieldName=" + LastFieldName);
-            LastFieldName = info.Name;
+            Debug.Assert(lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0, "fieldName=" + info.Name + " lastFieldName=" + lastFieldName);
+            lastFieldName = info.Name;
             if (payloads)
             {
                 throw new System.NotSupportedException("3.x codec does not support payloads on vectors!");
             }
-            this.Positions = positions;
-            this.Offsets = offsets;
-            LastTerm.Length = 0;
-            Fps[FieldCount++] = Tvf.GetFilePointer();
-            Tvd.WriteVInt32(info.Number);
-            Tvf.WriteVInt32(numTerms);
+            this.positions = positions;
+            this.offsets = offsets;
+            lastTerm.Length = 0;
+            fps[fieldCount++] = tvf.GetFilePointer();
+            tvd.WriteVInt32(info.Number);
+            tvf.WriteVInt32(numTerms);
             sbyte bits = 0x0;
             if (positions)
             {
@@ -105,93 +105,93 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 bits |= Lucene3xTermVectorsReader.STORE_OFFSET_WITH_TERMVECTOR;
             }
-            Tvf.WriteByte((byte)bits);
+            tvf.WriteByte((byte)bits);
 
-            Debug.Assert(FieldCount <= NumVectorFields);
-            if (FieldCount == NumVectorFields)
+            Debug.Assert(fieldCount <= numVectorFields);
+            if (fieldCount == numVectorFields)
             {
                 // last field of the document
                 // this is crazy because the file format is crazy!
-                for (int i = 1; i < FieldCount; i++)
+                for (int i = 1; i < fieldCount; i++)
                 {
-                    Tvd.WriteVInt64(Fps[i] - Fps[i - 1]);
+                    tvd.WriteVInt64(fps[i] - fps[i - 1]);
                 }
             }
         }
 
-        private readonly BytesRef LastTerm = new BytesRef(10);
+        private readonly BytesRef lastTerm = new BytesRef(10);
 
         // NOTE: we override addProx, so we don't need to buffer when indexing.
         // we also don't buffer during bulk merges.
-        private int[] OffsetStartBuffer = new int[10];
+        private int[] offsetStartBuffer = new int[10];
 
-        private int[] OffsetEndBuffer = new int[10];
-        private int OffsetIndex = 0;
-        private int OffsetFreq = 0;
-        private bool Positions = false;
-        private bool Offsets = false;
+        private int[] offsetEndBuffer = new int[10];
+        private int offsetIndex = 0;
+        private int offsetFreq = 0;
+        private bool positions = false;
+        private bool offsets = false;
 
         public override void StartTerm(BytesRef term, int freq)
         {
-            int prefix = StringHelper.BytesDifference(LastTerm, term);
+            int prefix = StringHelper.BytesDifference(lastTerm, term);
             int suffix = term.Length - prefix;
-            Tvf.WriteVInt32(prefix);
-            Tvf.WriteVInt32(suffix);
-            Tvf.WriteBytes(term.Bytes, term.Offset + prefix, suffix);
-            Tvf.WriteVInt32(freq);
-            LastTerm.CopyBytes(term);
-            LastPosition = LastOffset = 0;
+            tvf.WriteVInt32(prefix);
+            tvf.WriteVInt32(suffix);
+            tvf.WriteBytes(term.Bytes, term.Offset + prefix, suffix);
+            tvf.WriteVInt32(freq);
+            lastTerm.CopyBytes(term);
+            lastPosition = lastOffset = 0;
 
-            if (Offsets && Positions)
+            if (offsets && positions)
             {
                 // we might need to buffer if its a non-bulk merge
-                OffsetStartBuffer = ArrayUtil.Grow(OffsetStartBuffer, freq);
-                OffsetEndBuffer = ArrayUtil.Grow(OffsetEndBuffer, freq);
-                OffsetIndex = 0;
-                OffsetFreq = freq;
+                offsetStartBuffer = ArrayUtil.Grow(offsetStartBuffer, freq);
+                offsetEndBuffer = ArrayUtil.Grow(offsetEndBuffer, freq);
+                offsetIndex = 0;
+                offsetFreq = freq;
             }
         }
 
-        internal int LastPosition = 0;
-        internal int LastOffset = 0;
+        internal int lastPosition = 0;
+        internal int lastOffset = 0;
 
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
         {
             Debug.Assert(payload == null);
-            if (Positions && Offsets)
+            if (positions && offsets)
             {
                 // write position delta
-                Tvf.WriteVInt32(position - LastPosition);
-                LastPosition = position;
+                tvf.WriteVInt32(position - lastPosition);
+                lastPosition = position;
 
                 // buffer offsets
-                OffsetStartBuffer[OffsetIndex] = startOffset;
-                OffsetEndBuffer[OffsetIndex] = endOffset;
-                OffsetIndex++;
+                offsetStartBuffer[offsetIndex] = startOffset;
+                offsetEndBuffer[offsetIndex] = endOffset;
+                offsetIndex++;
 
                 // dump buffer if we are done
-                if (OffsetIndex == OffsetFreq)
+                if (offsetIndex == offsetFreq)
                 {
-                    for (int i = 0; i < OffsetIndex; i++)
+                    for (int i = 0; i < offsetIndex; i++)
                     {
-                        Tvf.WriteVInt32(OffsetStartBuffer[i] - LastOffset);
-                        Tvf.WriteVInt32(OffsetEndBuffer[i] - OffsetStartBuffer[i]);
-                        LastOffset = OffsetEndBuffer[i];
+                        tvf.WriteVInt32(offsetStartBuffer[i] - lastOffset);
+                        tvf.WriteVInt32(offsetEndBuffer[i] - offsetStartBuffer[i]);
+                        lastOffset = offsetEndBuffer[i];
                     }
                 }
             }
-            else if (Positions)
+            else if (positions)
             {
                 // write position delta
-                Tvf.WriteVInt32(position - LastPosition);
-                LastPosition = position;
+                tvf.WriteVInt32(position - lastPosition);
+                lastPosition = position;
             }
-            else if (Offsets)
+            else if (offsets)
             {
                 // write offset deltas
-                Tvf.WriteVInt32(startOffset - LastOffset);
-                Tvf.WriteVInt32(endOffset - startOffset);
-                LastOffset = endOffset;
+                tvf.WriteVInt32(startOffset - lastOffset);
+                tvf.WriteVInt32(endOffset - startOffset);
+                lastOffset = endOffset;
             }
         }
 
@@ -206,19 +206,19 @@ namespace Lucene.Net.Codecs.Lucene3x
 #pragma warning restore 168
             {
             }
-            IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION));
+            IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION), IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION));
         }
 
         public override void Finish(FieldInfos fis, int numDocs)
         {
-            if (4 + ((long)numDocs) * 16 != Tvx.GetFilePointer())
+            if (4 + ((long)numDocs) * 16 != tvx.GetFilePointer())
             // this is most likely a bug in Sun JRE 1.6.0_04/_05;
             // we detect that the bug has struck, here, and
             // throw an exception to prevent the corruption from
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw new Exception("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + Tvx.GetFilePointer() + " file=" + Tvx.ToString() + "; now aborting this merge to prevent index corruption");
+                throw new Exception("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + tvx.GetFilePointer() + " file=" + tvx.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
 
@@ -228,8 +228,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             // make an effort to close all streams we can but remember and re-throw
             // the first exception encountered in this process
-            IOUtils.Dispose(Tvx, Tvd, Tvf);
-            Tvx = Tvd = Tvf = null;
+            IOUtils.Dispose(tvx, tvd, tvf);
+            tvx = tvd = tvf = null;
         }
 
         public override IComparer<BytesRef> Comparer
