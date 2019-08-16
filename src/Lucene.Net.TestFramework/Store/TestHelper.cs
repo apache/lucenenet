@@ -20,8 +20,8 @@ namespace Lucene.Net.Store
     using SimpleFSIndexInput = Lucene.Net.Store.SimpleFSDirectory.SimpleFSIndexInput;
 
     /// <summary>
-    /// this class provides access to package-level features defined in the
-    ///  store package. It is used for testing only.
+    /// This class provides access to namespace-level features defined in the
+    /// Store namespace. It is used for testing only.
     /// </summary>
     public sealed class TestHelper
     {
@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns true if the instance of the provided input stream is actually
-        ///  an SimpleFSIndexInput.
+        /// an <see cref="SimpleFSIndexInput"/>.
         /// </summary>
         public static bool IsSimpleFSIndexInput(IndexInput @is)
         {
@@ -40,8 +40,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Returns true if the provided input stream is an SimpleFSIndexInput and
-        ///  is a clone, that is it does not own its underlying file descriptor.
+        /// Returns true if the provided input stream is an <see cref="SimpleFSIndexInput"/> and
+        /// is a clone, that is it does not own its underlying file descriptor.
         /// </summary>
         public static bool IsSimpleFSIndexInputClone(IndexInput @is)
         {
@@ -56,12 +56,12 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Given an instance of SimpleFSDirectory.SimpleFSIndexInput, this method returns
-        ///  true if the underlying file descriptor is valid, and false otherwise.
-        ///  this can be used to determine if the OS file has been closed.
-        ///  The descriptor becomes invalid when the non-clone instance of the
-        ///  SimpleFSIndexInput that owns this descriptor is closed. However, the
-        ///  descriptor may possibly become invalid in other ways as well.
+        /// Given an instance of <see cref="SimpleFSIndexInput"/>, this method returns
+        /// true if the underlying file descriptor is valid, and false otherwise.
+        /// this can be used to determine if the OS file has been closed.
+        /// The descriptor becomes invalid when the non-clone instance of the
+        /// <see cref="SimpleFSIndexInput"/> that owns this descriptor is disposed. However, the
+        /// descriptor may possibly become invalid in other ways as well.
         /// </summary>
         public static bool IsSimpleFSIndexInputOpen(IndexInput @is)
         {

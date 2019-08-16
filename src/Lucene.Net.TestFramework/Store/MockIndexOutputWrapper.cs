@@ -22,12 +22,11 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Used by MockRAMDirectory to create an output stream that
-    /// will throw anSystem.IO.IOException on fake disk full, track max
+    /// Used by <see cref="MockDirectoryWrapper"/> to create an output stream that
+    /// will throw an <see cref="System.IO.IOException"/> on fake disk full, track max
     /// disk space actually used, and maybe throw random
-    ///System.IO.IOExceptions.
+    /// <see cref="System.IO.IOException"/>s.
     /// </summary>
-
     public class MockIndexOutputWrapper : IndexOutput
     {
         private MockDirectoryWrapper dir;
@@ -51,7 +50,7 @@ namespace Lucene.Net.Store
             // If MockRAMDir crashed since we were opened, then don't write anything
             if (dir.crashed)
             {
-                throw new System.IO.IOException("MockRAMDirectory was crashed; cannot write to " + name);
+                throw new System.IO.IOException("MockDirectoryWrapper was crashed; cannot write to " + name);
             }
         }
 
@@ -93,6 +92,7 @@ namespace Lucene.Net.Store
                     message += "; wrote " + freeSpace + " of " + len + " bytes";
                 }
                 message += ")";
+                // LUCENENET TODO: Finish implementation
                 /*if (LuceneTestCase.VERBOSE)
                 {
                   Console.WriteLine(Thread.CurrentThread.Name + ": MDW: now throw fake disk full");

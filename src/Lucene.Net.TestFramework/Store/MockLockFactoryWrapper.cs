@@ -18,7 +18,7 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Used by MockDirectoryWrapper to wrap another factory
+    /// Used by <see cref="MockDirectoryWrapper"/> to wrap another factory
     /// and track open locks.
     /// </summary>
     public class MockLockFactoryWrapper : LockFactory

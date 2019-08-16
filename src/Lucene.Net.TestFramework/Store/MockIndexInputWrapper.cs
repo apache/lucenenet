@@ -21,10 +21,9 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Used by MockDirectoryWrapper to create an input stream that
-    /// keeps track of when it's been closed.
+    /// Used by <see cref="MockDirectoryWrapper"/> to create an input stream that
+    /// keeps track of when it's been disposed.
     /// </summary>
-
     public class MockIndexInputWrapper : IndexInput
     {
         private MockDirectoryWrapper dir;

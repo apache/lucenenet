@@ -20,9 +20,9 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// hangs onto files a little bit longer (50ms in close).
-    /// MockDirectoryWrapper acts like windows: you can't delete files
-    /// open elsewhere. so the idea is to make race conditions for tiny
+    /// Hangs onto files a little bit longer (50ms in close).
+    /// <see cref="MockDirectoryWrapper"/> acts like Windows: you can't delete files
+    /// open elsewhere. So the idea is to make race conditions for tiny
     /// files (like segments) easier to reproduce.
     /// </summary>
     internal class SlowClosingMockIndexInputWrapper : MockIndexInputWrapper

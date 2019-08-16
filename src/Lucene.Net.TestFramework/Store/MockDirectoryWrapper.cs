@@ -14,21 +14,21 @@ using Console = Lucene.Net.Support.SystemConsole;
 namespace Lucene.Net.Store
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -61,20 +61,36 @@ namespace Lucene.Net.Store
     }
 
     /// <summary>
-    /// this is a Directory Wrapper that adds methods
+    /// This is a Directory Wrapper that adds methods
     /// intended to be used only by unit tests.
     /// It also adds a number of features useful for testing:
-    /// <ul>
-    ///   <li> Instances created by <seealso cref="LuceneTestCase#newDirectory()"/> are tracked
-    ///        to ensure they are closed by the test.</li>
-    ///   <li> When a MockDirectoryWrapper is closed, it will throw an exception if
-    ///        it has any open files against it (with a stacktrace indicating where
-    ///        they were opened from).</li>
-    ///   <li> When a MockDirectoryWrapper is closed, it runs CheckIndex to test if
-    ///        the index was corrupted.</li>
-    ///   <li> MockDirectoryWrapper simulates some "features" of Windows, such as
-    ///        refusing to write/delete to open files.</li>
-    /// </ul>
+    /// <list type="bullet">
+    ///     <item>
+    ///         <description>
+    ///             Instances created by <see cref="LuceneTestCase.NewDirectory()"/> are tracked
+    ///             to ensure they are disposed by the test.
+    ///         </description>
+    ///     </item>
+    ///     <item>
+    ///         <description>
+    ///             When a <see cref="MockDirectoryWrapper"/> is disposed, it will throw an exception if
+    ///             it has any open files against it (with a stacktrace indicating where
+    ///             they were opened from).
+    ///         </description>
+    ///     </item>
+    ///     <item>
+    ///         <description>
+    ///             When a <see cref="MockDirectoryWrapper"/> is disposed, it runs <see cref="Index.CheckIndex"/> to test if
+    ///             the index was corrupted.
+    ///         </description>
+    ///     </item>
+    ///     <item>
+    ///         <description>
+    ///             <see cref="MockDirectoryWrapper"/> simulates some "features" of Windows, such as
+    ///             refusing to write/delete to open files.
+    ///         </description>
+    ///     </item>
+    /// </list>
     /// </summary>
     public class MockDirectoryWrapper : BaseDirectoryWrapper
     {
@@ -160,7 +176,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public virtual bool TrackDiskUsage
+        public virtual bool TrackDiskUsage // LUCENENET TODO: API - add getter
         {
             set
             {
@@ -172,7 +188,7 @@ namespace Lucene.Net.Store
         /// If set to true, we throw anSystem.IO.IOException if the same
         ///  file is opened by createOutput, ever.
         /// </summary>
-        public virtual bool PreventDoubleWrite
+        public virtual bool PreventDoubleWrite // LUCENENET TODO: API - add getter
         {
             set
             {
@@ -186,7 +202,7 @@ namespace Lucene.Net.Store
         ///  sometimes throw FileNotFoundException or
         ///  NoSuchFileException.
         /// </summary>
-        public virtual bool AllowRandomFileNotFoundException
+        public virtual bool AllowRandomFileNotFoundException // LUCENENET TODO: API - add getter
         {
             set
             {
@@ -198,7 +214,7 @@ namespace Lucene.Net.Store
         /// If set to true, you can open an inputstream on a file
         ///  that is still open for writes.
         /// </summary>
-        public virtual bool AllowReadingFilesStillOpenForWrite
+        public virtual bool AllowReadingFilesStillOpenForWrite // LUCENENET TODO: API - add getter
         {
             set
             {
@@ -206,7 +222,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public virtual Throttling Throttling
+        public virtual Throttling Throttling // LUCENENET TODO: API - add getter
         {
             set
             {
@@ -215,9 +231,9 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Returns true if <seealso cref="#in"/> must sync its files.
-        /// Currently, only <seealso cref="NRTCachingDirectory"/> requires sync'ing its files
-        /// because otherwise they are cached in an internal <seealso cref="RAMDirectory"/>. If
+        /// Returns true if <see cref="m_input"/> must sync its files.
+        /// Currently, only <see cref="NRTCachingDirectory"/> requires sync'ing its files
+        /// because otherwise they are cached in an internal <see cref="RAMDirectory"/>. If
         /// other directories require that too, they should be added to this method.
         /// </summary>
         private bool MustSync()
@@ -282,7 +298,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Simulates a crash of OS or machine by overwriting
-        ///  unsynced files.
+        /// unsynced files.
         /// </summary>
         public void Crash()
         {
@@ -439,8 +455,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Emulate windows whereby deleting an open file is not
-        /// allowed (raiseSystem.IO.IOException).
+        /// Emulate Windows whereby deleting an open file is not
+        /// allowed (raise <see cref="IOException"/>).
         /// </summary>
         public virtual bool NoDeleteOpenFile
         {
@@ -473,7 +489,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// If 0.0, no exceptions will be thrown.  Else this should
         /// be a double 0.0 - 1.0.  We will randomly throw an
-        ///System.IO.IOException on the first write to an OutputStream based
+        /// <see cref="IOException"/> on the first write to a <see cref="Stream"/> based
         /// on this probability.
         /// </summary>
         public virtual double RandomIOExceptionRate
@@ -489,10 +505,10 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// If 0.0, no exceptions will be thrown during openInput
-        /// and createOutput.  Else this should
+        /// If 0.0, no exceptions will be thrown during <see cref="OpenInput(string, IOContext)"/>
+        /// and <see cref="CreateOutput(string, IOContext)"/>.  Else this should
         /// be a double 0.0 - 1.0 and we will randomly throw an
-        ///System.IO.IOException in openInput and createOutput with
+        /// <see cref="IOException"/> in <see cref="OpenInput(string, IOContext)"/> and <see cref="CreateOutput(string, IOContext)"/> with
         /// this probability.
         /// </summary>
         public virtual double RandomIOExceptionRateOnOpen
@@ -511,6 +527,7 @@ namespace Lucene.Net.Store
         {
             if (randomState.NextDouble() < randomIOExceptionRate)
             {
+                // LUCENENET TODO: Finish implementation
                 /*if (LuceneTestCase.VERBOSE)
                 {
                   Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception" + (message == null ? "" : " (" + message + ")"));
@@ -524,6 +541,7 @@ namespace Lucene.Net.Store
         {
             if (randomState.NextDouble() < randomIOExceptionRateOnOpen)
             {
+                // LUCENENET TODO: Finish implementation
                 /*if (LuceneTestCase.VERBOSE)
                 {
                   Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception during open file=" + name);
@@ -837,7 +855,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Provided for testing purposes.  Use sizeInBytes() instead. </summary>
-        public long RecomputedSizeInBytes
+        public long RecomputedSizeInBytes // LUCENENET TODO: API - Change back to GetRecomputedSizeInBytes() - non-deterministic 
         {
             get
             {
@@ -858,13 +876,13 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Like getRecomputedSizeInBytes(), but, uses actual file
+        /// Like <see cref="RecomputedSizeInBytes"/>, but, uses actual file
         /// lengths rather than buffer allocations (which are
         /// quantized up to nearest
-        /// RAMOutputStream.BUFFER_SIZE (now 1024) bytes.
+        /// <see cref="RAMOutputStream.BUFFER_SIZE"/> (now 1024) bytes.
         /// </summary>
 
-        public long RecomputedActualSizeInBytes
+        public long RecomputedActualSizeInBytes // LUCENENET TODO: API - Change back to GetRecomputedActualSizeInBytes() - non-deterministic
         {
             get
             {
@@ -897,14 +915,14 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Set to false if you want to return the pure lockfactory
-        /// and not wrap it with MockLockFactoryWrapper.
-        /// <p>
-        /// Be careful if you turn this off: MockDirectoryWrapper might
-        /// no longer be able to detect if you forget to close an IndexWriter,
+        /// and not wrap it with <see cref="MockLockFactoryWrapper"/>.
+        /// <para/>
+        /// Be careful if you turn this off: <see cref="MockDirectoryWrapper"/> might
+        /// no longer be able to detect if you forget to close an <see cref="IndexWriter"/>,
         /// and spit out horribly scary confusing exceptions instead of
         /// simply telling you that.
         /// </summary>
-        public virtual bool WrapLockFactory
+        public virtual bool WrapLockFactory // LUCENENET TODO: API - Add getter
         {
             set
             {
@@ -1146,29 +1164,31 @@ namespace Lucene.Net.Store
         /// Objects that represent fail-able conditions. Objects of a derived
         /// class are created and registered with the mock directory. After
         /// register, each object will be invoked once for each first write
-        /// of a file, giving the object a chance to throw anSystem.IO.IOException.
+        /// of a file, giving the object a chance to throw an <see cref="IOException"/>.
         /// </summary>
-        public class Failure
+        public class Failure // LUCENENET TDOO: API - de-nest
         {
             /// <summary>
-            /// eval is called on the first write of every new file.
+            /// Eval is called on the first write of every new file.
             /// </summary>
             public virtual void Eval(MockDirectoryWrapper dir)
             {
             }
 
             /// <summary>
-            /// reset should set the state of the failure to its default
+            /// Reset should set the state of the failure to its default
             /// (freshly constructed) state. Reset is convenient for tests
             /// that want to create one failure object and then reuse it in
-            /// multiple cases. this, combined with the fact that Failure
+            /// multiple cases. This, combined with the fact that <see cref="Failure"/>
             /// subclasses are often anonymous classes makes reset difficult to
             /// do otherwise.
-            ///
+            /// <para/>
             /// A typical example of use is
+            /// <code>
             /// Failure failure = new Failure() { ... };
             /// ...
-            /// mock.failOn(failure.reset())
+            /// mock.FailOn(failure.Reset())
+            /// </code>
             /// </summary>
             public virtual Failure Reset()
             {
@@ -1191,8 +1211,8 @@ namespace Lucene.Net.Store
         internal List<Failure> failures;
 
         /// <summary>
-        /// add a Failure object to the list of objects to be evaluated
-        /// at every potential failure point
+        /// Add a <see cref="Failure"/> object to the list of objects to be evaluated
+        /// at every potential failure point.
         /// </summary>
         public virtual void FailOn(Failure fail)
         {
@@ -1208,7 +1228,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Iterate through the failures list, giving each object a
-        /// chance to throw an IOE
+        /// chance to throw an <see cref="IOException"/>.
         /// </summary>
         internal virtual void MaybeThrowDeterministicException()
         {
@@ -1450,10 +1470,10 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Use this when throwing fake <see cref="System.IO.IOException"/>,
+        /// Use this when throwing fake <see cref="IOException"/>,
         /// e.g. from <see cref="MockDirectoryWrapper.Failure"/>.
         /// </summary>
-        public class FakeIOException : System.IO.IOException
+        public class FakeIOException : System.IO.IOException // LUCENENET TDOO: API - de-nest
         {
         }
     }

@@ -50,7 +50,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public virtual bool Open
+        public virtual bool Open // LUCENENET TODO: API - rename IsOpen
         {
             get
             {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Store
         /// Set whether or not checkindex should be run
         /// on close
         /// </summary>
-        public virtual bool CheckIndexOnClose
+        public virtual bool CheckIndexOnClose  // LUCENENET TODO: API - rename CheckIndexOnDispose
         {
             set
             {
@@ -74,7 +74,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public virtual bool CrossCheckTermVectorsOnClose
+        public virtual bool CrossCheckTermVectorsOnClose  // LUCENENET TODO: API - rename CrossCheckTermVectorsOnDispose
         {
             set
             {
