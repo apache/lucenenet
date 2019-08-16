@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs.MockRandom
                 // TODO: others
             }
 
-            private static String getExtension(String fileName)
+            private static string GetExtension(string fileName)
             {
                 int idx = fileName.IndexOf('.');
                 Debug.Assert(idx != -1);
@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.MockRandom
             {
                 // Must only use extension, because IW.addIndexes can
                 // rename segment!
-                Int32StreamFactory f = delegates[(Math.Abs(salt ^ getExtension(fileName).GetHashCode())) % delegates.size()];
+                Int32StreamFactory f = delegates[(Math.Abs(salt ^ GetExtension(fileName).GetHashCode())) % delegates.size()];
                 if (LuceneTestCase.VERBOSE)
                 {
                     Console.WriteLine("MockRandomCodec: read using int factory " + f + " from fileName=" + fileName);
@@ -123,7 +123,7 @@ namespace Lucene.Net.Codecs.MockRandom
 
             public override Int32IndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
             {
-                Int32StreamFactory f = delegates[(Math.Abs(salt ^ getExtension(fileName).GetHashCode())) % delegates.size()];
+                Int32StreamFactory f = delegates[(Math.Abs(salt ^ GetExtension(fileName).GetHashCode())) % delegates.size()];
                 if (LuceneTestCase.VERBOSE)
                 {
                     Console.WriteLine("MockRandomCodec: write using int factory " + f + " to fileName=" + fileName);
