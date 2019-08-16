@@ -32,6 +32,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -258,6 +259,8 @@ namespace Lucene.Net.Util
             {
                 this.Value = value;
             }
+            [WritableArray]
+            [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public string[] Value { get; private set; }
         }
 
