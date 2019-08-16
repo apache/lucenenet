@@ -62,9 +62,9 @@ namespace Lucene.Net.Search
 
         internal class FieldAndShardVersion
         {
-            internal readonly long Version;
-            internal readonly int NodeID;
-            internal readonly string Field;
+            internal long Version { get; private set; }
+            internal int NodeID { get; private set; }
+            internal string Field { get; private set; }
 
             public FieldAndShardVersion(int nodeID, long version, string field)
             {
@@ -98,20 +98,20 @@ namespace Lucene.Net.Search
 
         internal class TermAndShardVersion
         {
-            internal readonly long Version;
-            internal readonly int NodeID;
-            internal readonly Term Term;
+            internal readonly long version;
+            internal readonly int nodeID;
+            internal readonly Term term;
 
             public TermAndShardVersion(int nodeID, long version, Term term)
             {
-                this.NodeID = nodeID;
-                this.Version = version;
-                this.Term = term;
+                this.nodeID = nodeID;
+                this.version = version;
+                this.term = term;
             }
 
             public override int GetHashCode()
             {
-                return (int)(Version * NodeID + Term.GetHashCode());
+                return (int)(version * nodeID + term.GetHashCode());
             }
 
             public override bool Equals(object _other)
@@ -123,13 +123,13 @@ namespace Lucene.Net.Search
 
                 TermAndShardVersion other = (TermAndShardVersion)_other;
 
-                return Term.Equals(other.Term) && Version == other.Version && NodeID == other.NodeID;
+                return term.Equals(other.term) && version == other.version && nodeID == other.nodeID;
             }
         }
 
         // We share collection stats for these fields on each node
         // reopen:
-        private readonly string[] FieldsToShare = new string[] { "body", "title" };
+        private readonly string[] fieldsToShare = new string[] { "body", "title" };
 
         // Called by one node once it has reopened, to notify all
         // other nodes.  this is just a mock (since it goes and
@@ -145,20 +145,20 @@ namespace Lucene.Net.Search
 
             // Broadcast new collection stats for this node to all
             // other nodes:
-            foreach (string field in FieldsToShare)
+            foreach (string field in fieldsToShare)
             {
                 CollectionStatistics stats = newSearcher.CollectionStatistics(field);
-                foreach (NodeState node in Nodes)
+                foreach (NodeState node in m_nodes)
                 {
                     // Don't put my own collection stats into the cache;
                     // we pull locally:
                     if (node.MyNodeID != nodeID)
                     {
-                        node.CollectionStatsCache[new FieldAndShardVersion(nodeID, version, field)] = stats;
+                        node.collectionStatsCache[new FieldAndShardVersion(nodeID, version, field)] = stats;
                     }
                 }
             }
-            foreach (NodeState node in Nodes)
+            foreach (NodeState node in m_nodes)
             {
                 node.UpdateNodeVersion(nodeID, version);
             }
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search
         // concurrently):
         internal virtual TopDocs SearchNode(int nodeID, long[] nodeVersions, Query q, Sort sort, int numHits, ScoreDoc searchAfter)
         {
-            NodeState.ShardIndexSearcher s = Nodes[nodeID].Acquire(nodeVersions);
+            NodeState.ShardIndexSearcher s = m_nodes[nodeID].Acquire(nodeVersions);
             try
             {
                 if (sort == null)
@@ -194,7 +194,7 @@ namespace Lucene.Net.Search
             }
             finally
             {
-                Nodes[nodeID].Release(s);
+                m_nodes[nodeID].Release(s);
             }
         }
 
@@ -202,7 +202,7 @@ namespace Lucene.Net.Search
         // term stats from remote node
         internal virtual IDictionary<Term, TermStatistics> GetNodeTermStats(ISet<Term> terms, int nodeID, long version)
         {
-            NodeState node = Nodes[nodeID];
+            NodeState node = m_nodes[nodeID];
             IDictionary<Term, TermStatistics> stats = new Dictionary<Term, TermStatistics>();
             IndexSearcher s = node.Searchers.Acquire(version);
             if (s == null)
@@ -226,13 +226,13 @@ namespace Lucene.Net.Search
 
         protected internal sealed class NodeState : IDisposable
         {
-            private readonly ShardSearchingTestBase OuterInstance;
+            private readonly ShardSearchingTestBase outerInstance;
 
-            public readonly Directory Dir;
-            public readonly IndexWriter Writer;
-            public readonly SearcherLifetimeManager Searchers;
-            public readonly SearcherManager Mgr;
-            public readonly int MyNodeID;
+            public Directory Dir { get; private set; }
+            public IndexWriter Writer { get; private set; }
+            public SearcherLifetimeManager Searchers { get; private set; }
+            public SearcherManager Mgr { get; private set; }
+            public int MyNodeID { get; private set; }
             public readonly long[] CurrentNodeVersions;
 
             // TODO: nothing evicts from here!!!  Somehow, on searcher
@@ -240,8 +240,8 @@ namespace Lucene.Net.Search
             // local cache...?  And still LRU otherwise (for the
             // still-live searchers).
 
-            internal readonly IDictionary<FieldAndShardVersion, CollectionStatistics> CollectionStatsCache = new ConcurrentDictionary<FieldAndShardVersion, CollectionStatistics>();
-            internal readonly IDictionary<TermAndShardVersion, TermStatistics> TermStatsCache = new ConcurrentDictionary<TermAndShardVersion, TermStatistics>();
+            internal readonly IDictionary<FieldAndShardVersion, CollectionStatistics> collectionStatsCache = new ConcurrentDictionary<FieldAndShardVersion, CollectionStatistics>();
+            internal readonly IDictionary<TermAndShardVersion, TermStatistics> termStatsCache = new ConcurrentDictionary<TermAndShardVersion, TermStatistics>();
 
             /// <summary>
             /// Matches docs in the local shard but scores based on
@@ -251,17 +251,17 @@ namespace Lucene.Net.Search
 
             public class ShardIndexSearcher : IndexSearcher
             {
-                private readonly ShardSearchingTestBase.NodeState OuterInstance;
+                private readonly ShardSearchingTestBase.NodeState outerInstance;
 
                 // Version for the node searchers we search:
                 public readonly long[] NodeVersions;
 
-                public readonly int MyNodeID;
+                public int MyNodeID { get; private set; }
 
                 public ShardIndexSearcher(ShardSearchingTestBase.NodeState outerInstance, long[] nodeVersions, IndexReader localReader, int nodeID)
                     : base(localReader)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                     this.NodeVersions = nodeVersions;
                     MyNodeID = nodeID;
                     Debug.Assert(MyNodeID == outerInstance.MyNodeID, "myNodeID=" + nodeID + " NodeState.this.myNodeID=" + outerInstance.MyNodeID);
@@ -286,17 +286,17 @@ namespace Lucene.Net.Search
                         foreach (Term term in terms)
                         {
                             TermAndShardVersion key = new TermAndShardVersion(nodeID, NodeVersions[nodeID], term);
-                            if (!OuterInstance.TermStatsCache.ContainsKey(key))
+                            if (!outerInstance.termStatsCache.ContainsKey(key))
                             {
                                 missing.Add(term);
                             }
                         }
                         if (missing.Count != 0)
                         {
-                            foreach (KeyValuePair<Term, TermStatistics> ent in OuterInstance.OuterInstance.GetNodeTermStats(missing, nodeID, NodeVersions[nodeID]))
+                            foreach (KeyValuePair<Term, TermStatistics> ent in outerInstance.outerInstance.GetNodeTermStats(missing, nodeID, NodeVersions[nodeID]))
                             {
                                 TermAndShardVersion key = new TermAndShardVersion(nodeID, NodeVersions[nodeID], ent.Key);
-                                OuterInstance.TermStatsCache[key] = ent.Value;
+                                outerInstance.termStatsCache[key] = ent.Value;
                             }
                         }
                     }
@@ -319,7 +319,7 @@ namespace Lucene.Net.Search
                         else
                         {
                             TermAndShardVersion key = new TermAndShardVersion(nodeID, NodeVersions[nodeID], term);
-                            subStats = OuterInstance.TermStatsCache[key];
+                            subStats = outerInstance.termStatsCache[key];
                             // We pre-cached during rewrite so all terms
                             // better be here...
                             Debug.Assert(subStats != null);
@@ -369,11 +369,11 @@ namespace Lucene.Net.Search
                         }
                         else
                         {
-                            nodeStats = OuterInstance.CollectionStatsCache[key];
+                            nodeStats = outerInstance.collectionStatsCache[key];
                         }
                         if (nodeStats == null)
                         {
-                            Console.WriteLine("coll stats myNodeID=" + MyNodeID + ": " + OuterInstance.CollectionStatsCache.Keys);
+                            Console.WriteLine("coll stats myNodeID=" + MyNodeID + ": " + outerInstance.collectionStatsCache.Keys);
                         }
                         // Collection stats are pre-shared on reopen, so,
                         // we better not have a cache miss:
@@ -429,7 +429,7 @@ namespace Lucene.Net.Search
                         }
                         else
                         {
-                            shardHits[nodeID] = OuterInstance.OuterInstance.SearchNode(nodeID, NodeVersions, query, null, numHits, null);
+                            shardHits[nodeID] = outerInstance.outerInstance.SearchNode(nodeID, NodeVersions, query, null, numHits, null);
                         }
                     }
 
@@ -457,7 +457,7 @@ namespace Lucene.Net.Search
                         {
                             // all documents with after.Score were already collected, so collect
                             // only documents with worse scores.
-                            NodeState.ShardIndexSearcher s = OuterInstance.OuterInstance.Nodes[nodeID].Acquire(NodeVersions);
+                            NodeState.ShardIndexSearcher s = outerInstance.outerInstance.m_nodes[nodeID].Acquire(NodeVersions);
                             try
                             {
                                 // Setting after.Doc to reader.MaxDoc-1 is a way to tell
@@ -470,7 +470,7 @@ namespace Lucene.Net.Search
                             }
                             finally
                             {
-                                OuterInstance.OuterInstance.Nodes[nodeID].Release(s);
+                                outerInstance.outerInstance.m_nodes[nodeID].Release(s);
                             }
                         }
                         else if (nodeID == after.ShardIndex)
@@ -493,7 +493,7 @@ namespace Lucene.Net.Search
                         }
                         else
                         {
-                            shardHits[nodeID] = OuterInstance.OuterInstance.SearchNode(nodeID, NodeVersions, query, null, numHits, shardAfter);
+                            shardHits[nodeID] = outerInstance.outerInstance.SearchNode(nodeID, NodeVersions, query, null, numHits, shardAfter);
                         }
                         //System.out.println("  node=" + nodeID + " totHits=" + shardHits[nodeID].TotalHits);
                     }
@@ -521,7 +521,7 @@ namespace Lucene.Net.Search
                         }
                         else
                         {
-                            shardHits[nodeID] = OuterInstance.OuterInstance.SearchNode(nodeID, NodeVersions, query, sort, numHits, null);
+                            shardHits[nodeID] = outerInstance.outerInstance.SearchNode(nodeID, NodeVersions, query, sort, numHits, null);
                         }
                     }
 
@@ -539,7 +539,7 @@ namespace Lucene.Net.Search
 
             public NodeState(ShardSearchingTestBase outerInstance, Random random, int nodeID, int numNodes)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 MyNodeID = nodeID;
                 Dir = NewFSDirectory(CreateTempDir("ShardSearchingTestBase"));
                 // TODO: set warmer
@@ -625,8 +625,8 @@ namespace Lucene.Net.Search
                     {
                         // New searcher was opened
                         long version = Searchers.Record(after);
-                        Searchers.Prune(new SearcherLifetimeManager.PruneByAge(OuterInstance.MaxSearcherAgeSeconds));
-                        OuterInstance.BroadcastNodeReopen(MyNodeID, version, after);
+                        Searchers.Prune(new SearcherLifetimeManager.PruneByAge(outerInstance.maxSearcherAgeSeconds));
+                        outerInstance.BroadcastNodeReopen(MyNodeID, version, after);
                     }
                 }
                 finally
@@ -653,11 +653,11 @@ namespace Lucene.Net.Search
         // concurrency
         private sealed class ChangeIndices : ThreadClass
         {
-            private readonly ShardSearchingTestBase OuterInstance;
+            private readonly ShardSearchingTestBase outerInstance;
 
             public ChangeIndices(ShardSearchingTestBase outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override void Run()
@@ -666,10 +666,10 @@ namespace Lucene.Net.Search
                 {
                     LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
                     int numDocs = 0;
-                    while (Time.NanoTime() < OuterInstance.endTimeNanos)
+                    while (Time.NanoTime() < outerInstance.endTimeNanos)
                     {
                         int what = Random().Next(3);
-                        NodeState node = OuterInstance.Nodes[Random().Next(OuterInstance.Nodes.Length)];
+                        NodeState node = outerInstance.m_nodes[Random().Next(outerInstance.m_nodes.Length)];
                         if (numDocs == 0 || what == 0)
                         {
                             node.Writer.AddDocument(docs.NextDoc());
@@ -693,7 +693,7 @@ namespace Lucene.Net.Search
 
                         if (Random().Next(17) == 12)
                         {
-                            OuterInstance.Nodes[Random().Next(OuterInstance.Nodes.Length)].Reopen();
+                            outerInstance.m_nodes[Random().Next(outerInstance.m_nodes.Length)].Reopen();
                         }
                     }
                 }
@@ -706,40 +706,40 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal NodeState[] Nodes;
-        internal int MaxSearcherAgeSeconds;
+        protected internal NodeState[] m_nodes;
+        internal int maxSearcherAgeSeconds;
         internal long endTimeNanos;
-        private ThreadClass ChangeIndicesThread;
+        private ThreadClass changeIndicesThread;
 
         protected internal virtual void Start(int numNodes, double runTimeSec, int maxSearcherAgeSeconds)
         {
             endTimeNanos = Time.NanoTime() + (long)(runTimeSec * 1000000000);
-            this.MaxSearcherAgeSeconds = maxSearcherAgeSeconds;
+            this.maxSearcherAgeSeconds = maxSearcherAgeSeconds;
 
-            Nodes = new NodeState[numNodes];
+            m_nodes = new NodeState[numNodes];
             for (int nodeID = 0; nodeID < numNodes; nodeID++)
             {
-                Nodes[nodeID] = new NodeState(this, Random(), nodeID, numNodes);
+                m_nodes[nodeID] = new NodeState(this, Random(), nodeID, numNodes);
             }
 
-            long[] nodeVersions = new long[Nodes.Length];
+            long[] nodeVersions = new long[m_nodes.Length];
             for (int nodeID = 0; nodeID < numNodes; nodeID++)
             {
-                IndexSearcher s = Nodes[nodeID].Mgr.Acquire();
+                IndexSearcher s = m_nodes[nodeID].Mgr.Acquire();
                 try
                 {
-                    nodeVersions[nodeID] = Nodes[nodeID].Searchers.Record(s);
+                    nodeVersions[nodeID] = m_nodes[nodeID].Searchers.Record(s);
                 }
                 finally
                 {
-                    Nodes[nodeID].Mgr.Release(s);
+                    m_nodes[nodeID].Mgr.Release(s);
                 }
             }
 
             for (int nodeID = 0; nodeID < numNodes; nodeID++)
             {
-                IndexSearcher s = Nodes[nodeID].Mgr.Acquire();
-                Debug.Assert(nodeVersions[nodeID] == Nodes[nodeID].Searchers.Record(s));
+                IndexSearcher s = m_nodes[nodeID].Mgr.Acquire();
+                Debug.Assert(nodeVersions[nodeID] == m_nodes[nodeID].Searchers.Record(s));
                 Debug.Assert(s != null);
                 try
                 {
@@ -747,18 +747,18 @@ namespace Lucene.Net.Search
                 }
                 finally
                 {
-                    Nodes[nodeID].Mgr.Release(s);
+                    m_nodes[nodeID].Mgr.Release(s);
                 }
             }
 
-            ChangeIndicesThread = new ChangeIndices(this);
-            ChangeIndicesThread.Start();
+            changeIndicesThread = new ChangeIndices(this);
+            changeIndicesThread.Start();
         }
 
         protected internal virtual void Finish()
         {
-            ChangeIndicesThread.Join();
-            foreach (NodeState node in Nodes)
+            changeIndicesThread.Join();
+            foreach (NodeState node in m_nodes)
             {
                 node.Dispose();
             }
@@ -769,8 +769,8 @@ namespace Lucene.Net.Search
         /// </summary>
         protected internal class SearcherAndVersion
         {
-            public readonly IndexSearcher Searcher;
-            public readonly long Version;
+            public IndexSearcher Searcher { get; private set; }
+            public long Version { get; private set; }
 
             public SearcherAndVersion(IndexSearcher searcher, long version)
             {

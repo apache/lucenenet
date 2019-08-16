@@ -128,11 +128,11 @@ namespace Lucene.Net.Search
         /// </summary>
         public class SetCollector : ICollector
         {
-            internal readonly ISet<int?> Bag;
+            internal readonly ISet<int?> bag;
 
             public SetCollector(ISet<int?> bag)
             {
-                this.Bag = bag;
+                this.bag = bag;
             }
 
             internal int @base = 0;
@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                Bag.Add(Convert.ToInt32(doc + @base, CultureInfo.InvariantCulture));
+                bag.Add(Convert.ToInt32(doc + @base, CultureInfo.InvariantCulture));
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)
@@ -502,9 +502,9 @@ namespace Lucene.Net.Search
             internal Query q;
             internal IndexSearcher s;
             internal string d;
-            internal bool Deep;
+            internal bool deep;
 
-            internal Scorer Scorer_Renamed;
+            internal Scorer scorer;
             internal int @base = 0;
 
             /// <summary>
@@ -519,12 +519,12 @@ namespace Lucene.Net.Search
                 this.q = q;
                 this.s = s;
                 this.d = q.ToString(defaultFieldName);
-                this.Deep = deep;
+                this.deep = deep;
             }
 
             public virtual void SetScorer(Scorer scorer)
             {
-                this.Scorer_Renamed = scorer;
+                this.scorer = scorer;
             }
 
             public virtual void Collect(int doc)
@@ -541,7 +541,7 @@ namespace Lucene.Net.Search
                 }
 
                 Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
-                VerifyExplanation(d, doc, Scorer_Renamed.GetScore(), Deep, exp);
+                VerifyExplanation(d, doc, scorer.GetScore(), deep, exp);
                 Assert.IsTrue(exp.IsMatch, "Explanation of [[" + d + "]] for #" + doc + " does not indicate match: " + exp.ToString());
             }
 

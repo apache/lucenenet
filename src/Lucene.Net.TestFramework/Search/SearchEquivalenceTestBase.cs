@@ -52,11 +52,11 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class SearchEquivalenceTestBase : LuceneTestCase
     {
-        protected internal static IndexSearcher	S1, S2;
-        protected internal static Directory Directory;
-        protected internal static IndexReader Reader;
-        protected internal static Analyzer Analyzer;
-        protected internal static string Stopword; // we always pick a character as a stopword
+        protected internal static IndexSearcher m_s1, m_s2;
+        protected internal static Directory m_directory;
+        protected internal static IndexReader m_reader;
+        protected internal static Analyzer m_analyzer;
+        protected internal static string m_stopword; // we always pick a character as a stopword
 
         /// <summary>
         /// LUCENENET specific
@@ -68,11 +68,11 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             Random random = Random();
-            Directory = NewDirectory();
-            Stopword = "" + RandomChar();
-            CharacterRunAutomaton stopset = new CharacterRunAutomaton(BasicAutomata.MakeString(Stopword));
-            Analyzer = new MockAnalyzer(random, MockTokenizer.WHITESPACE, false, stopset);
-            RandomIndexWriter iw = new RandomIndexWriter(random, Directory, Analyzer, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            m_directory = NewDirectory();
+            m_stopword = "" + RandomChar();
+            CharacterRunAutomaton stopset = new CharacterRunAutomaton(BasicAutomata.MakeString(m_stopword));
+            m_analyzer = new MockAnalyzer(random, MockTokenizer.WHITESPACE, false, stopset);
+            RandomIndexWriter iw = new RandomIndexWriter(random, m_directory, m_analyzer, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             Document doc = new Document();
             Field id = new StringField("id", "", Field.Store.NO);
             Field field = new TextField("field", "", Field.Store.NO);
@@ -103,22 +103,22 @@ namespace Lucene.Net.Search
                 }
             }
 
-            Reader = iw.Reader;
-            S1 = NewSearcher(Reader);
-            S2 = NewSearcher(Reader);
+            m_reader = iw.Reader;
+            m_s1 = NewSearcher(m_reader);
+            m_s2 = NewSearcher(m_reader);
             iw.Dispose();
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            Reader.Dispose();
-            Directory.Dispose();
-            Analyzer.Dispose();
-            Reader = null;
-            Directory = null;
-            Analyzer = null;
-            S1 = S2 = null;
+            m_reader.Dispose();
+            m_directory.Dispose();
+            m_analyzer.Dispose();
+            m_reader = null;
+            m_directory = null;
+            m_analyzer = null;
+            m_s1 = m_s2 = null;
             base.AfterClass();
         }
 
@@ -208,8 +208,8 @@ namespace Lucene.Net.Search
             }
 
             // not efficient, but simple!
-            TopDocs td1 = S1.Search(q1, filter, Reader.MaxDoc);
-            TopDocs td2 = S2.Search(q2, filter, Reader.MaxDoc);
+            TopDocs td1 = m_s1.Search(q1, filter, m_reader.MaxDoc);
+            TopDocs td2 = m_s2.Search(q2, filter, m_reader.MaxDoc);
             Assert.IsTrue(td1.TotalHits <= td2.TotalHits);
 
             // fill the superset into a bitset

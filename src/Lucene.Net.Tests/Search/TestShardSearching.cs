@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
 
                     try
                     {
-                        localShardSearcher = Nodes[myNodeID].Acquire(prevSearchState.Versions);
+                        localShardSearcher = m_nodes[myNodeID].Acquire(prevSearchState.Versions);
                     }
                     catch (SearcherExpiredException see)
                     {
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
                         Console.WriteLine("\nTEST: fresh query");
                     }
                     // Do fresh query:
-                    localShardSearcher = Nodes[myNodeID].Acquire();
+                    localShardSearcher = m_nodes[myNodeID].Acquire();
                     prevSearchState = null;
                 }
 
@@ -156,7 +156,7 @@ namespace Lucene.Net.Search
                         for (int nodeID = 0; nodeID < numNodes; nodeID++)
                         {
                             long subVersion = localShardSearcher.NodeVersions[nodeID];
-                            IndexSearcher sub = Nodes[nodeID].Searchers.Acquire(subVersion);
+                            IndexSearcher sub = m_nodes[nodeID].Searchers.Acquire(subVersion);
                             if (sub == null)
                             {
                                 nodeID--;
@@ -309,7 +309,7 @@ namespace Lucene.Net.Search
                 }
                 finally
                 {
-                    Nodes[myNodeID].Release(localShardSearcher);
+                    m_nodes[myNodeID].Release(localShardSearcher);
                     foreach (IndexReader sub in subs)
                     {
                         if (sub != null)

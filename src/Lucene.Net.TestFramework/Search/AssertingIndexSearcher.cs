@@ -34,30 +34,30 @@ namespace Lucene.Net.Search
     /// </summary>
     public class AssertingIndexSearcher : IndexSearcher
     {
-        internal readonly Random Random;
+        internal readonly Random random;
 
         public AssertingIndexSearcher(Random random, IndexReader r)
             : base(r)
         {
-            this.Random = new Random(random.Next());
+            this.random = new Random(random.Next());
         }
 
         public AssertingIndexSearcher(Random random, IndexReaderContext context)
             : base(context)
         {
-            this.Random = new Random(random.Next());
+            this.random = new Random(random.Next());
         }
 
         public AssertingIndexSearcher(Random random, IndexReader r, TaskScheduler ex)
             : base(r, ex)
         {
-            this.Random = new Random(random.Next());
+            this.random = new Random(random.Next());
         }
 
         public AssertingIndexSearcher(Random random, IndexReaderContext context, TaskScheduler ex)
             : base(context, ex)
         {
-            this.Random = new Random(random.Next());
+            this.random = new Random(random.Next());
         }
 
         /// <summary>
@@ -65,17 +65,17 @@ namespace Lucene.Net.Search
         public override Weight CreateNormalizedWeight(Query query)
         {
             Weight w = base.CreateNormalizedWeight(query);
-            return new AssertingWeightAnonymousInnerClassHelper(this, Random, w);
+            return new AssertingWeightAnonymousInnerClassHelper(this, random, w);
         }
 
         private class AssertingWeightAnonymousInnerClassHelper : AssertingWeight
         {
-            private readonly AssertingIndexSearcher OuterInstance;
+            private readonly AssertingIndexSearcher outerInstance;
 
             public AssertingWeightAnonymousInnerClassHelper(AssertingIndexSearcher outerInstance, Random random, Weight w)
                 : base(random, w)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override void Normalize(float norm, float topLevelBoost)
@@ -100,17 +100,17 @@ namespace Lucene.Net.Search
 
         protected override Query WrapFilter(Query query, Filter filter)
         {
-            if (Random.NextBoolean())
+            if (random.NextBoolean())
             {
                 return base.WrapFilter(query, filter);
             }
-            return (filter == null) ? query : new FilteredQuery(query, filter, TestUtil.RandomFilterStrategy(Random));
+            return (filter == null) ? query : new FilteredQuery(query, filter, TestUtil.RandomFilterStrategy(random));
         }
 
         protected override void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)
         {
             // TODO: shouldn't we AssertingCollector.wrap(collector) here?
-            base.Search(leaves, AssertingWeight.Wrap(Random, weight), collector);
+            base.Search(leaves, AssertingWeight.Wrap(random, weight), collector);
         }
 
         public override string ToString()

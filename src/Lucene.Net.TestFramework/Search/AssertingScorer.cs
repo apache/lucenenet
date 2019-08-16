@@ -66,16 +66,16 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal readonly Random Random;
+        internal readonly Random random;
         internal readonly Scorer @in;
-        internal readonly AssertingAtomicReader.AssertingDocsEnum DocsEnumIn;
+        internal readonly AssertingAtomicReader.AssertingDocsEnum docsEnumIn;
 
         private AssertingScorer(Random random, Scorer @in)
             : base(@in.Weight)
         {
-            this.Random = random;
+            this.random = random;
             this.@in = @in;
-            this.DocsEnumIn = new AssertingAtomicReader.AssertingDocsEnum(@in);
+            this.docsEnumIn = new AssertingAtomicReader.AssertingDocsEnum(@in);
         }
 
         public virtual Scorer In
@@ -133,12 +133,12 @@ namespace Lucene.Net.Search
 
         public override int NextDoc()
         {
-            return DocsEnumIn.NextDoc();
+            return docsEnumIn.NextDoc();
         }
 
         public override int Advance(int target)
         {
-            return DocsEnumIn.Advance(target);
+            return docsEnumIn.Advance(target);
         }
 
         public override long GetCost()

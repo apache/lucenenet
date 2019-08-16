@@ -31,15 +31,15 @@ namespace Lucene.Net.Search
             return other is AssertingWeight ? other : new AssertingWeight(random, other);
         }
 
-        internal readonly bool ScoresDocsOutOfOrder_Renamed;
-        internal readonly Random Random;
+        internal readonly bool scoresDocsOutOfOrder;
+        internal readonly Random random;
         internal readonly Weight @in;
 
         internal AssertingWeight(Random random, Weight @in)
         {
-            this.Random = random;
+            this.random = random;
             this.@in = @in;
-            ScoresDocsOutOfOrder_Renamed = @in.ScoresDocsOutOfOrder || random.NextBoolean();
+            scoresDocsOutOfOrder = @in.ScoresDocsOutOfOrder || random.NextBoolean();
         }
 
         public override Explanation Explain(AtomicReaderContext context, int doc)
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
             // if the caller asks for in-order scoring or if the weight does not support
             // out-of order scoring then collection will have to happen in-order.
             Scorer inScorer = @in.GetScorer(context, acceptDocs);
-            return AssertingScorer.Wrap(new Random(Random.Next()), inScorer);
+            return AssertingScorer.Wrap(new Random(random.Next()), inScorer);
         }
 
         public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
@@ -87,28 +87,28 @@ namespace Lucene.Net.Search
             {
                 // The incoming scorer already has a specialized
                 // implementation for BulkScorer, so we should use it:
-                inScorer = AssertingBulkScorer.Wrap(new Random(Random.Next()), inScorer);
+                inScorer = AssertingBulkScorer.Wrap(new Random(random.Next()), inScorer);
             }
-            else if (Random.NextBoolean())
+            else if (random.NextBoolean())
             {
                 // Let super wrap this.scorer instead, so we use
                 // AssertingScorer:
                 inScorer = base.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
             }
 
-            if (scoreDocsInOrder == false && Random.NextBoolean())
+            if (scoreDocsInOrder == false && random.NextBoolean())
             {
                 // The caller claims it can handle out-of-order
                 // docs; let's confirm that by pulling docs and
                 // randomly shuffling them before collection:
-                inScorer = new AssertingBulkOutOfOrderScorer(new Random(Random.Next()), inScorer);
+                inScorer = new AssertingBulkOutOfOrderScorer(new Random(random.Next()), inScorer);
             }
             return inScorer;
         }
 
         public override bool ScoresDocsOutOfOrder
         {
-            get { return ScoresDocsOutOfOrder_Renamed; }
+            get { return scoresDocsOutOfOrder; }
         }
     }
 }

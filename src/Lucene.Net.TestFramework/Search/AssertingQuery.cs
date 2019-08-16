@@ -29,7 +29,7 @@ namespace Lucene.Net.Search
     /// Assertion-enabled query. </summary>
     public class AssertingQuery : Query
     {
-        private readonly Random Random;
+        private readonly Random random;
         private readonly Query @in;
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
         public AssertingQuery(Random random, Query @in)
         {
             Debug.Assert(@in != null);
-            this.Random = random;
+            this.random = random;
             this.@in = @in;
         }
 
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
 
         public override Weight CreateWeight(IndexSearcher searcher)
         {
-            return AssertingWeight.Wrap(new Random(Random.Next()), @in.CreateWeight(searcher));
+            return AssertingWeight.Wrap(new Random(random.Next()), @in.CreateWeight(searcher));
         }
 
         public override void ExtractTerms(ISet<Term> terms)
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
 
         public override object Clone()
         {
-            return Wrap(new Random(Random.Next()), (Query)@in.Clone());
+            return Wrap(new Random(random.Next()), (Query)@in.Clone());
         }
 
         public override Query Rewrite(IndexReader reader)
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                return Wrap(new Random(Random.Next()), rewritten);
+                return Wrap(new Random(random.Next()), rewritten);
             }
         }
 
