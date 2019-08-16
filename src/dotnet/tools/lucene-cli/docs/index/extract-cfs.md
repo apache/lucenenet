@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene index extract-cfs <CFS_FILE_NAME> [-dir|--directory-type] [?|-h|--help]</code>
+<code>lucene index extract-cfs \<CFS_FILE_NAME> [-dir|--directory-type] [?|-h|--help]</code>
 
 ### Description
 

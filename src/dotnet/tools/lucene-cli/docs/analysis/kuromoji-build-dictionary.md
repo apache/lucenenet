@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene analysis kuromoji-build-dictionary <FORMAT> <INPUT_DIRECTORY> <OUTPUT_DIRECTORY> [-e|--encoding] [-n|--normalize] [?|-h|--help]</code>
+<code>lucene analysis kuromoji-build-dictionary \<FORMAT> \<INPUT_DIRECTORY> \<OUTPUT_DIRECTORY> [-e|--encoding] [-n|--normalize] [?|-h|--help]</code>
 
 ### Description
 

@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene benchmark find-quality-queries [?|-h|--help]</code>
+<code>lucene benchmark find-quality-queries \<INPUT_DIRECTORY> [?|-h|--help]</code>
 
 ### Arguments
 

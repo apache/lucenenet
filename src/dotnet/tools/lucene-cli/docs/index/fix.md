@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene index fix [<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vectors] [-dir|--directory-type] [--dry-run] [?|-h|--help]</code>
+<code>lucene index fix [\<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vectors] [-dir|--directory-type] [--dry-run] [?|-h|--help]</code>
 
 ### Description
 

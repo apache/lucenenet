@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene index check [<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vectors] [-dir|--directory-type] [-s|--segment] [?|-h|--help]</code>
+<code>lucene index check [\<INDEX_DIRECTORY>] [-v|--verbose] [-c|--cross-check-term-vectors] [-dir|--directory-type] [-s|--segment] [?|-h|--help]</code>
 
 ### Description
 

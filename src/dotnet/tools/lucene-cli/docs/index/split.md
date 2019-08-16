@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene index split <OUTPUT_DIRECTORY> <INPUT_DIRECTORY>[ <INPUT_DIRECTORY_2>...] [-n|--number-of-parts] [-s|--sequential] [?|-h|--help]</code>
+<code>lucene index split \<OUTPUT_DIRECTORY> \<INPUT_DIRECTORY>[ \<INPUT_DIRECTORY_2>...] [-n|--number-of-parts] [-s|--sequential] [?|-h|--help]</code>
 
 ### Description
 

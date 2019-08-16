@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene analysis stempel-patch-stems <STEMMER_TABLE_FILE> [-e|--encoding] [?|-h|--help]</code>
+<code>lucene analysis stempel-patch-stems \<STEMMER_TABLE_FILE> [-e|--encoding] [?|-h|--help]</code>
 
 ### Description
 
