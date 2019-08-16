@@ -20,21 +20,21 @@ namespace Lucene.Net.Search
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     //using Assert = junit.framework.Assert;
 
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// check very basic hashCode and equals </summary>
+        /// Check very basic <see cref="object.GetHashCode()"/> and <see cref="object.Equals(object)"/>. </summary>
         public static void CheckHashEquals(Query q)
         {
             Query q2 = (Query)q.Clone();
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// deep check that explanations of a query 'score' correctly </summary>
+        /// Deep check that explanations of a query 'score' correctly. </summary>
         public static void CheckExplanations(Query q, IndexSearcher s)
         {
             CheckHits.CheckExplanations(q, null, s, true);
@@ -116,17 +116,18 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Various query sanity checks on a searcher, some checks are only done for
-        /// instanceof IndexSearcher.
+        /// instance of <see cref="IndexSearcher"/>.
         /// </summary>
-        /// <param name = "similarity" >
+        /// <param name="similarity">
         /// LUCENENET specific
         /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         /// </param>
-        /// <seealso cref= #check(Query) </seealso>
-        /// <seealso cref= #checkFirstSkipTo </seealso>
-        /// <seealso cref= #checkSkipTo </seealso>
-        /// <seealso cref= #checkExplanations </seealso>
-        /// <seealso cref= #checkEqual </seealso>
+        /// <seealso cref="Check(Query)"/>
+        /// <seealso cref="CheckFirstSkipTo(Query, IndexSearcher, Similarity)"/>
+        /// <seealso cref="CheckSkipTo(Query, IndexSearcher, Similarity)"/>
+        /// <seealso cref="CheckExplanations(Query, IndexSearcher)"/>
+        /// <seealso cref="CheckEqual(Query, Query)"/>
+        // LUCENENET TODO: API remove Similarity
         public static void Check(Random random, Query q1, IndexSearcher s, Similarity similarity)
         {
             Check(random, q1, s, true, similarity);
@@ -136,6 +137,7 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         /// </param>
+        // LUCENENET TODO: API remove Similarity
         public static void Check(Random random, Query q1, IndexSearcher s, bool wrap, Similarity similarity)
         {
             try
@@ -170,8 +172,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// this is a MultiReader that can be used for randomly wrapping other readers
-        /// without creating FieldCache insanity.
+        /// This is a <see cref="MultiReader"/> that can be used for randomly wrapping other readers
+        /// without creating <see cref="FieldCache"/> insanity.
         /// The trick is to use an opaque/fake cache key.
         /// </summary>
         public class FCInvisibleMultiReader : MultiReader
@@ -201,17 +203,18 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Given an IndexSearcher, returns a new IndexSearcher whose IndexReader
-        /// is a MultiReader containing the Reader of the original IndexSearcher,
-        /// as well as several "empty" IndexReaders -- some of which will have
-        /// deleted documents in them.  this new IndexSearcher should
-        /// behave exactly the same as the original IndexSearcher. </summary>
-        /// <param name="s"> the searcher to wrap </param>
-        /// <param name="edge"> if negative, s will be the first sub; if 0, s will be in the middle, if positive s will be the last sub </param>
+        /// Given an <see cref="IndexSearcher"/>, returns a new <see cref="IndexSearcher"/> whose <see cref="IndexReader"/>
+        /// is a <see cref="MultiReader"/> containing the <see cref="IndexReader"/> of the original <see cref="IndexSearcher"/>,
+        /// as well as several "empty" <see cref="IndexReader"/>s -- some of which will have
+        /// deleted documents in them.  This new <see cref="IndexSearcher"/> should
+        /// behave exactly the same as the original <see cref="IndexSearcher"/>. </summary>
+        /// <param name="s"> The searcher to wrap. </param>
+        /// <param name="edge"> If negative, s will be the first sub; if 0, s will be in the middle, if positive s will be the last sub. </param>
         /// <param name="similarity">
         /// LUCENENET specific
         /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         /// </param>
+        // LUCENENET TODO: API remove Similarity
         public static IndexSearcher WrapUnderlyingReader(Random random, IndexSearcher s, int edge, Similarity similarity)
         {
             IndexReader r = s.IndexReader;
@@ -260,13 +263,14 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// alternate scorer skipTo(),skipTo(),next(),next(),skipTo(),skipTo(), etc
-        /// and ensure a hitcollector receives same docs and scores
+        /// Alternate scorer skipTo(),skipTo(),next(),next(),skipTo(),skipTo(), etc
+        /// and ensure a hitcollector receives same docs and scores.
         /// </summary>
         /// <param name = "similarity" >
         /// LUCENENET specific
         /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         /// </param>
+        // LUCENENET TODO: API remove Similarity
         public static void CheckSkipTo(Query q, IndexSearcher s, Similarity similarity)
         {
             //System.out.println("Checking "+q);
@@ -422,11 +426,12 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// check that first skip on just created scorers always goes to the right doc</summary>
+        /// Check that first skip on just created scorers always goes to the right doc.</summary>
         /// <param name = "similarity" >
         /// LUCENENET specific
         /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         /// </param>
+        // LUCENENET TODO: API remove Similarity
         public static void CheckFirstSkipTo(Query q, IndexSearcher s, Similarity similarity)
         {
             //System.out.println("checkFirstSkipTo: "+q);

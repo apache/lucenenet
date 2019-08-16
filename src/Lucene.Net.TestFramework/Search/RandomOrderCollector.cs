@@ -22,8 +22,8 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// Randomize collection order. Don't forget to call <seealso cref="#flush()"/> when
-    ///  collection is finished to collect buffered documents.
+    /// Randomize collection order. Don't forget to call <see cref="Flush()"/> when
+    /// collection is finished to collect buffered documents.
     /// </summary>
     internal sealed class RandomOrderCollector : ICollector
     {

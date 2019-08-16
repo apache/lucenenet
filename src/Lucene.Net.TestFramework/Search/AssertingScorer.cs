@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
     using AssertingAtomicReader = Lucene.Net.Index.AssertingAtomicReader;
 
     /// <summary>
-    /// Wraps a Scorer with additional checks </summary>
+    /// Wraps a <see cref="Scorer"/> with additional checks.</summary>
     public class AssertingScorer : Scorer
     {
         // we need to track scorers using a weak hash map because otherwise we

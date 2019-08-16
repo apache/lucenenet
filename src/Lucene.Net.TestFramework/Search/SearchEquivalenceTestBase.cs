@@ -11,21 +11,21 @@ namespace Lucene.Net.Search
     using NUnit.Framework;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
@@ -45,10 +45,10 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Simple base class for checking search equivalence.
-    /// Extend it, and write tests that create <seealso cref="#randomTerm()"/>s
+    /// Extend it, and write tests that create <see cref="RandomTerm()"/>s
     /// (all terms are single characters a-z), and use
-    /// <seealso cref="#assertSameSet(Query, Query)"/> and
-    /// <seealso cref="#assertSubsetOf(Query, Query)"/>
+    /// <see cref="AssertSameSet(Query, Query)"/> and
+    /// <see cref="AssertSubsetOf(Query, Query)"/>.
     /// </summary>
     public abstract class SearchEquivalenceTestBase : LuceneTestCase
     {
@@ -123,8 +123,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// populate a field with random contents.
-        /// terms should be single characters in lowercase (a-z)
+        /// Populate a field with random contents.
+        /// Terms should be single characters in lowercase (a-z)
         /// tokenization can be assumed to be on whitespace.
         /// </summary>
         internal static string RandomFieldContents()
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// returns random character (a-z)
+        /// Returns random character (a-z)
         /// </summary>
         internal static char RandomChar()
         {
@@ -152,8 +152,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// returns a term suitable for searching.
-        /// terms are single characters in lowercase (a-z)
+        /// Returns a term suitable for searching.
+        /// Terms are single characters in lowercase (a-z).
         /// </summary>
         protected internal virtual Term RandomTerm()
         {
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a random filter over the document set
+        /// Returns a random filter over the document set.
         /// </summary>
         protected internal virtual Filter RandomFilter()
         {
@@ -169,8 +169,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Asserts that the documents returned by <code>q1</code>
-        /// are the same as of those returned by <code>q2</code>
+        /// Asserts that the documents returned by <paramref name="q1"/>
+        /// are the same as of those returned by <paramref name="q2"/>.
         /// </summary>
         public virtual void AssertSameSet(Query q1, Query q2)
         {
@@ -179,8 +179,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Asserts that the documents returned by <code>q1</code>
-        /// are a subset of those returned by <code>q2</code>
+        /// Asserts that the documents returned by <paramref name="q1"/>
+        /// are a subset of those returned by <paramref name="q2"/>.
         /// </summary>
         public virtual void AssertSubsetOf(Query q1, Query q2)
         {
@@ -192,10 +192,10 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Asserts that the documents returned by <code>q1</code>
-        /// are a subset of those returned by <code>q2</code>.
-        ///
-        /// Both queries will be filtered by <code>filter</code>
+        /// Asserts that the documents returned by <paramref name="q1"/>
+        /// are a subset of those returned by <paramref name="q2"/>.
+        /// <para/>
+        /// Both queries will be filtered by <paramref name="filter"/>.
         /// </summary>
         protected internal virtual void AssertSubsetOf(Query q1, Query q2, Filter filter)
         {

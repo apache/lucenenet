@@ -20,8 +20,8 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// A crazy <seealso cref="BulkScorer"/> that wraps another <seealso cref="BulkScorer"/>
-    ///  but shuffles the order of the collected documents.
+    /// A crazy <see cref="BulkScorer"/> that wraps another <see cref="BulkScorer"/>
+    /// but shuffles the order of the collected documents.
     /// </summary>
     public class AssertingBulkOutOfOrderScorer : BulkScorer
     {

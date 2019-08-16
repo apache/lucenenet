@@ -16,21 +16,21 @@ namespace Lucene.Net.Search
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using OpenMode = Lucene.Net.Index.OpenMode;
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Thrown when the lease for a searcher has expired.
         /// </summary>
-        public class SearcherExpiredException : Exception
+        public class SearcherExpiredException : Exception // LUCENENET TODO: API - de-nest, make serializable
         {
             public SearcherExpiredException(string message)
                 : base(message)
@@ -245,10 +245,9 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Matches docs in the local shard but scores based on
-            ///  aggregated stats ("mock distributed scoring") from all
-            ///  nodes.
+            /// aggregated stats ("mock distributed scoring") from all
+            /// nodes.
             /// </summary>
-
             public class ShardIndexSearcher : IndexSearcher
             {
                 private readonly ShardSearchingTestBase.NodeState outerInstance;
@@ -258,7 +257,7 @@ namespace Lucene.Net.Search
 
                 public int MyNodeID { get; private set; }
 
-                public ShardIndexSearcher(ShardSearchingTestBase.NodeState outerInstance, long[] nodeVersions, IndexReader localReader, int nodeID)
+                public ShardIndexSearcher(ShardSearchingTestBase.NodeState outerInstance, long[] nodeVersions, IndexReader localReader, int nodeID) // LUCENENET TODO: API - we don't want outerInstance on the public API if possible
                     : base(localReader)
                 {
                     this.outerInstance = outerInstance;
@@ -537,7 +536,7 @@ namespace Lucene.Net.Search
 
             internal volatile ShardIndexSearcher currentShardSearcher;
 
-            public NodeState(ShardSearchingTestBase outerInstance, Random random, int nodeID, int numNodes)
+            public NodeState(ShardSearchingTestBase outerInstance, Random random, int nodeID, int numNodes) // LUCENENET TODO: API - we don't want outerInstance on the public API if possible
             {
                 this.outerInstance = outerInstance;
                 MyNodeID = nodeID;
@@ -765,9 +764,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// An IndexSearcher and associated version (lease)
+        /// An <see cref="IndexSearcher"/> and associated version (lease)
         /// </summary>
-        protected internal class SearcherAndVersion
+        protected internal class SearcherAndVersion // LUCENENET TODO: API - de-nest
         {
             public IndexSearcher Searcher { get; private set; }
             public long Version { get; private set; }

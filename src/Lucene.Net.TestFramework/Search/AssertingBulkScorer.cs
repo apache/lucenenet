@@ -25,7 +25,7 @@ namespace Lucene.Net.Search
     using DocsEnum = Lucene.Net.Index.DocsEnum;
 
     /// <summary>
-    /// Wraps a Scorer with additional checks </summary>
+    /// Wraps a <see cref="Scorer"/> with additional checks. </summary>
     public class AssertingBulkScorer : BulkScorer
     {
         private static readonly VirtualMethod SCORE_COLLECTOR = new VirtualMethod(typeof(BulkScorer), "Score", typeof(ICollector));

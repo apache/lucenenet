@@ -11,21 +11,21 @@ namespace Lucene.Net.Search
     using System.IO;
 
     /*
-             * Licensed to the Apache Software Foundation (ASF) under one or more
-             * contributor license agreements.  See the NOTICE file distributed with
-             * this work for additional information regarding copyright ownership.
-             * The ASF licenses this file to You under the Apache License, Version 2.0
-             * (the "License"); you may not use this file except in compliance with
-             * the License.  You may obtain a copy of the License at
-             *
-             *     http://www.apache.org/licenses/LICENSE-2.0
-             *
-             * Unless required by applicable law or agreed to in writing, software
-             * distributed under the License is distributed on an "AS IS" BASIS,
-             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-             * See the License for the specific language governing permissions and
-             * limitations under the License.
-             */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IndexReader = Lucene.Net.Index.IndexReader;
@@ -82,20 +82,21 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Tests that a query matches the an expected set of documents using a
         /// HitCollector.
-        ///
-        /// <p>
+        /// <para>
         /// Note that when using the HitCollector API, documents will be collected
         /// if they "match" regardless of what their score is.
-        /// </p> </summary>
-        /// <param name="query"> the query to test </param>
-        /// <param name="searcher"> the searcher to test the query against </param>
-        /// <param name="defaultFieldName"> used for displaying the query in assertion messages </param>
-        /// <param name="results"> a list of documentIds that must match the query </param>
+        /// </para>
+        /// </summary>
+        /// <param name="query"> The query to test. </param>
+        /// <param name="searcher"> The searcher to test the query against. </param>
+        /// <param name="defaultFieldName"> Used for displaying the query in assertion messages. </param>
+        /// <param name="results"> A list of documentIds that must match the query. </param>
         /// <param name="similarity">
         /// LUCENENET specific
         /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         /// </param>
-        /// <seealso cref=#checkHits </seealso>
+        /// <seealso cref="DoCheckHits(Random, Query, string, IndexSearcher, int[], Similarity)"/>
+        // LUCENENET TODO: API - get rid of Similarity from the param list
         public static void CheckHitCollector(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results, Similarity similarity)
         {
             QueryUtils.Check(random, query, searcher, similarity);
@@ -126,7 +127,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Just collects document ids into a set.
         /// </summary>
-        public class SetCollector : ICollector
+        public class SetCollector : ICollector // LUCENENET TODO: De-nest
         {
             internal readonly ISet<int?> bag;
 
@@ -172,7 +173,8 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         /// </param>
-        /// <seealso cref= #checkHitCollector </seealso>
+        /// <seealso cref="CheckHitCollector(Random, Query, string, IndexSearcher, int[], Similarity)"/>
+        // LUCENENET TODO: API - get rid of Similarity from the param list
         public static void DoCheckHits(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results, Similarity similarity)
         {
             ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
@@ -195,7 +197,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Tests that a Hits has an expected order of documents </summary>
+        /// Tests that a Hits has an expected order of documents. </summary>
         public static void CheckDocIds(string mes, int[] results, ScoreDoc[] hits)
         {
             Assert.AreEqual(hits.Length, results.Length, mes + " nr of hits");
@@ -271,7 +273,7 @@ namespace Lucene.Net.Search
             return sb.ToString();
         }
 
-        public static string TopdocsString(TopDocs docs, int start, int end)
+        public static string TopdocsString(TopDocs docs, int start, int end) // LUCENENET TODO: API - rename TopDocsString
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("TopDocs totalHits=").Append(docs.TotalHits).Append(" top=").Append(docs.ScoreDocs.Length).Append('\n');
@@ -299,14 +301,15 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Asserts that the explanation value for every document matching a
         /// query corresponds with the true score.
-        /// </summary>
-        /// <seealso cref= ExplanationAsserter </seealso>
-        /// <seealso cref= #checkExplanations(Query, String, IndexSearcher, boolean) for a
+        /// <para/>
+        /// See <see cref="CheckExplanations(Query, String, IndexSearcher, bool)"/> for a
         /// "deep" testing of the explanation details.
-        /// </seealso>
-        /// <param name="query"> the query to test </param>
-        /// <param name="searcher"> the searcher to test the query against </param>
-        /// <param name="defaultFieldName"> used for displaing the query in assertion messages </param>
+        /// </summary>
+        /// <seealso cref="ExplanationAsserter"/>
+        /// <seealso cref="CheckExplanations(Query, String, IndexSearcher, bool)"/>
+        /// <param name="query"> The query to test. </param>
+        /// <param name="searcher"> The searcher to test the query against. </param>
+        /// <param name="defaultFieldName"> Used for displaing the query in assertion messages. </param>
         public static void CheckExplanations(Query query, string defaultFieldName, IndexSearcher searcher)
         {
             CheckExplanations(query, defaultFieldName, searcher, false);
@@ -317,19 +320,19 @@ namespace Lucene.Net.Search
         /// query corresponds with the true score.  Optionally does "deep"
         /// testing of the explanation details.
         /// </summary>
-        /// <seealso cref= ExplanationAsserter </seealso>
-        /// <param name="query"> the query to test </param>
-        /// <param name="searcher"> the searcher to test the query against </param>
-        /// <param name="defaultFieldName"> used for displaing the query in assertion messages </param>
-        /// <param name="deep"> indicates whether a deep comparison of sub-Explanation details should be executed </param>
+        /// <seealso cref="ExplanationAsserter"/>
+        /// <param name="query"> The query to test. </param>
+        /// <param name="searcher"> The searcher to test the query against. </param>
+        /// <param name="defaultFieldName"> Used for displaing the query in assertion messages. </param>
+        /// <param name="deep"> Indicates whether a deep comparison of sub-Explanation details should be executed. </param>
         public static void CheckExplanations(Query query, string defaultFieldName, IndexSearcher searcher, bool deep)
         {
             searcher.Search(query, new ExplanationAsserter(query, defaultFieldName, searcher, deep));
         }
 
         /// <summary>
-        /// returns a reasonable epsilon for comparing two floats,
-        ///  where minor differences are acceptable such as score vs. explain
+        /// Returns a reasonable epsilon for comparing two floats,
+        /// where minor differences are acceptable such as score vs. explain.
         /// </summary>
         public static float ExplainToleranceDelta(float f1, float f2)
         {
@@ -340,11 +343,11 @@ namespace Lucene.Net.Search
         /// Assert that an explanation has the expected score, and optionally that its
         /// sub-details max/sum/factor match to that score.
         /// </summary>
-        /// <param name="q"> String representation of the query for assertion messages </param>
-        /// <param name="doc"> Document ID for assertion messages </param>
-        /// <param name="score"> Real score value of doc with query q </param>
-        /// <param name="deep"> indicates whether a deep comparison of sub-Explanation details should be executed </param>
-        /// <param name="expl"> The Explanation to match against score </param>
+        /// <param name="q"> String representation of the query for assertion messages. </param>
+        /// <param name="doc"> Document ID for assertion messages. </param>
+        /// <param name="score"> Real score value of doc with query <paramref name="q"/>. </param>
+        /// <param name="deep"> Indicates whether a deep comparison of sub-Explanation details should be executed. </param>
+        /// <param name="expl"> The <see cref="Explanation"/> to match against score. </param>
         public static void VerifyExplanation(string q, int doc, float score, bool deep, Explanation expl)
         {
             float value = expl.Value;
@@ -448,11 +451,11 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// an IndexSearcher that implicitly checks hte explanation of every match
+        /// An <see cref="IndexSearcher"/> that implicitly checks hte explanation of every match
         /// whenever it executes a search.
         /// </summary>
         /// <seealso cref= ExplanationAsserter </seealso>
-        public class ExplanationAssertingSearcher : IndexSearcher
+        public class ExplanationAssertingSearcher : IndexSearcher // LUCENENET TODO: API De-nest
         {
             public ExplanationAssertingSearcher(IndexReader r)
                 : base(r)
@@ -492,12 +495,12 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Asserts that the score explanation for every document matching a
         /// query corresponds with the true score.
-        ///
-        /// NOTE: this HitCollector should only be used with the Query and Searcher
+        /// <para/>
+        /// NOTE: this HitCollector should only be used with the <see cref="Query"/> and <see cref="IndexSearcher"/>
         /// specified at when it is constructed.
         /// </summary>
-        /// <seealso cref= CheckHits#verifyExplanation </seealso>
-        public class ExplanationAsserter : ICollector
+        /// <seealso cref="CheckHits.VerifyExplanation(string, int, float, bool, Explanation)"/>
+        public class ExplanationAsserter : ICollector // LUCENENET TODO: API De-nest
         {
             internal Query q;
             internal IndexSearcher s;

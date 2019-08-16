@@ -23,10 +23,9 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// Wraps another Collector and checks that
-    ///  acceptsDocsOutOfOrder is respected.
+    /// Wraps another <see cref="ICollector"/> and checks that
+    /// <see cref="AcceptsDocsOutOfOrder"/> is respected.
     /// </summary>
-
     public class AssertingCollector : ICollector
     {
         public static ICollector Wrap(Random random, ICollector other, bool inOrder)
