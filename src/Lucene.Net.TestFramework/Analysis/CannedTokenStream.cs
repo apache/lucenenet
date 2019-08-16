@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis
      */
 
     /// <summary>
-    /// TokenStream from a canned list of Tokens.
+    /// <see cref="TokenStream"/> from a canned list of <see cref="Token"/>s.
     /// </summary>
     public sealed class CannedTokenStream : TokenStream
     {
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// If you want trailing holes, pass a non-zero
-        ///  finalPosInc.
+        /// <paramref name="finalPosInc"/>.
         /// </summary>
         public CannedTokenStream(int finalPosInc, int finalOffset, params Token[] tokens)
         {

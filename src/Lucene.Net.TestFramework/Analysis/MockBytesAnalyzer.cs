@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis
      */
 
     /// <summary>
-    /// Analyzer for testing that encodes terms as UTF-16 bytes.
+    /// <see cref="Analyzer"/> for testing that encodes terms as UTF-16 bytes.
     /// </summary>
     public class MockBytesAnalyzer : Analyzer
     {

@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Run a vocabulary test against two data files inside a zip file </summary>
+        /// Run a vocabulary test against two data files inside a zip file. </summary>
         public static void AssertVocabulary(Analyzer a, Stream zipFile, string voc, string @out)
         {
             using (ZipArchive zip = new ZipArchive(zipFile, ZipArchiveMode.Read, false, Encoding.UTF8))
@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Run a vocabulary test against a tab-separated data file inside a zip file </summary>
+        /// Run a vocabulary test against a tab-separated data file inside a zip file. </summary>
         public static void AssertVocabulary(Analyzer a, Stream zipFile, string vocOut)
         {
             using (ZipArchive zip = new ZipArchive(zipFile, ZipArchiveMode.Read, false, Encoding.UTF8))

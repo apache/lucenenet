@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,25 +31,14 @@ namespace Lucene.Net.Analysis
     // TODO: cut SynFilter over to this
     // TODO: somehow add "nuke this input token" capability...
 
-    /// <summary>
-    /// An abstract TokenFilter to make it easier to build graph
-    ///  token filters requiring some lookahead.  this class handles
-    ///  the details of buffering up tokens, recording them by
-    ///  position, restoring them, providing access to them, etc.
-    /// </summary>
-
+    
     public class LookaheadTokenFilter
     {
-        /*public interface Position
-        {
-            void Add(AttributeSource.State state);
-        }*/
-
         /// <summary>
         /// Holds all state for a single position; subclass this
-        ///  to record other state at each position.
+        /// to record other state at each position.
         /// </summary>
-        public class Position : Lucene.Net.Util.RollingBuffer.IResettable
+        public class Position : Lucene.Net.Util.RollingBuffer.IResettable // LUCENENET TODO: API - De-nest and rename LookaheadTokenFilterPosition
         {
             // Buffered input tokens at this position:
             public readonly IList<AttributeSource.State> InputTokens = new List<AttributeSource.State>();
@@ -83,6 +73,12 @@ namespace Lucene.Net.Analysis
         }
     }
 
+    /// <summary>
+    /// An abstract <see cref="TokenFilter"/> to make it easier to build graph
+    /// token filters requiring some lookahead.  This class handles
+    /// the details of buffering up tokens, recording them by
+    /// position, restoring them, providing access to them, etc.
+    /// </summary>
     public abstract class LookaheadTokenFilter<T> : TokenFilter
         where T : LookaheadTokenFilter.Position
     {
@@ -120,9 +116,9 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Call this only from within afterPosition, to insert a new
-        ///  token.  After calling this you should set any
-        ///  necessary token you need.
+        /// Call this only from within <see cref="AfterPosition()"/>, to insert a new
+        /// token. After calling this you should set any
+        /// necessary token you need.
         /// </summary>
         protected internal virtual void InsertToken()
         {
@@ -136,11 +132,11 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// this is called when all input tokens leaving a given
-        ///  position have been returned.  Override this and
-        ///  call insertToken and then set whichever token's
-        ///  attributes you want, if you want to inject
-        ///  a token starting from this position.
+        /// This is called when all input tokens leaving a given
+        /// position have been returned.  Override this and
+        /// call insertToken and then set whichever token's
+        /// attributes you want, if you want to inject
+        /// a token starting from this position.
         /// </summary>
         protected internal virtual void AfterPosition()
         {
@@ -148,9 +144,9 @@ namespace Lucene.Net.Analysis
 
         protected internal abstract T NewPosition();
 
-        protected internal Lucene.Net.Util.RollingBuffer<LookaheadTokenFilter.Position> positions;
+        protected internal RollingBuffer<LookaheadTokenFilter.Position> positions;
 
-        private class RollingBufferAnonymousInnerClassHelper : Lucene.Net.Util.RollingBuffer<LookaheadTokenFilter.Position>
+        private class RollingBufferAnonymousInnerClassHelper : RollingBuffer<LookaheadTokenFilter.Position>
         {
             private LookaheadTokenFilter<T> outerInstance;
 
@@ -232,8 +228,8 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Call this when you are done looking ahead; it will set
-        ///  the next token to return.  Return the boolean back to
-        ///  the caller.
+        /// the next token to return.  Return the boolean back to
+        /// the caller.
         /// </summary>
         protected internal virtual bool NextToken()
         {

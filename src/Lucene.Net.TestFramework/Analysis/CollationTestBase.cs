@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis
      */
 
 	/// <summary>
-	/// base test class for testing Unicode collation.
+	/// Base test class for testing Unicode collation.
 	/// </summary>
 	public abstract class CollationTestBase : LuceneTestCase
 	{
@@ -50,9 +50,8 @@ namespace Lucene.Net.Analysis
         /// Convenience method to perform the same function as CollationKeyFilter.
         /// </summary>
         /// <param name="keyBits"> the result from
-        ///  collator.getCollationKey(original).toByteArray() </param>
-        /// <returns> The encoded collation key for the original String </returns>
-        /// @deprecated only for testing deprecated filters
+        /// <c>collator.GetCollationKey(original).ToByteArray()</c></param>
+        /// <returns> The encoded collation key for the original string.</returns>
         [Obsolete("only for testing deprecated filters")]
 		protected internal virtual string EncodeCollationKey(byte[] keyBits)
 		{
@@ -148,15 +147,17 @@ namespace Lucene.Net.Analysis
 			farsiIndex.Dispose();
 		}
 
-		// Test using various international locales with accented characters (which
-		// sort differently depending on locale)
-		//
-		// Copied (and slightly modified) from
-		// Lucene.Net.Search.TestSort.testInternationalSort()
-		//
-		// TODO: this test is really fragile. there are already 3 different cases,
-		// depending upon unicode version.
-		public virtual void TestCollationKeySort(Analyzer usAnalyzer, Analyzer franceAnalyzer, Analyzer swedenAnalyzer, Analyzer denmarkAnalyzer, string usResult, string frResult, string svResult, string dkResult)
+        /// <summary>
+        /// Test using various international locales with accented characters (which
+        /// sort differently depending on locale).
+        /// </summary>
+
+        // Copied (and slightly modified) from
+        // Lucene.Net.Search.TestSort.TestInternationalSort()
+        //
+        // TODO: this test is really fragile. there are already 3 different cases,
+        // depending upon unicode version.
+        public virtual void TestCollationKeySort(Analyzer usAnalyzer, Analyzer franceAnalyzer, Analyzer swedenAnalyzer, Analyzer denmarkAnalyzer, string usResult, string frResult, string svResult, string dkResult)
 		{
 			Directory indexStore = NewDirectory();
 			IndexWriter writer = new IndexWriter(indexStore, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
@@ -215,9 +216,11 @@ namespace Lucene.Net.Analysis
 			indexStore.Dispose();
 		}
 
-		// Make sure the documents returned by the search match the expected list
-		// Copied from TestSort.java
-		private void AssertMatches(IndexSearcher searcher, Search.Query query, Sort sort, string expectedResult)
+        /// <summary>
+        /// Make sure the documents returned by the search match the expected list
+        /// </summary>
+        // Copied from TestSort.java
+        private void AssertMatches(IndexSearcher searcher, Search.Query query, Sort sort, string expectedResult)
 		{
 			ScoreDoc[] result = searcher.Search(query, null, 1000, sort).ScoreDocs;
 			StringBuilder buff = new StringBuilder(10);

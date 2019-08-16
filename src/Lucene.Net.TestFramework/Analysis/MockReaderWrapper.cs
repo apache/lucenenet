@@ -7,29 +7,28 @@ namespace Lucene.Net.Analysis
     using System.IO;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// Wraps a Reader, and can throw random or fixed
-    ///  exceptions, and spoon feed read chars.
+    /// Wraps a <see cref="TextReader"/>, and can throw random or fixed
+    /// exceptions, and spoon feed read chars.
     /// </summary>
-
     public class MockReaderWrapper : StringReader
     {
         private readonly Random random;
@@ -50,7 +49,7 @@ namespace Lucene.Net.Analysis
         {
             excAtChar = charUpto;
             // You should only call this on init!:
-            Assert.AreEqual(0, readSoFar);
+            Assert.AreEqual(0, readSoFar); // LUCENENET TODO: This should be Debug.Assert
         }
 
         public virtual void ThrowExcNext()
@@ -111,12 +110,12 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        public bool MarkSupported()
+        public bool MarkSupported() // LUCENENET TODO: API - property?
         {
             return false;
         }
 
-        public bool Ready()
+        public bool Ready() // LUCENENET TODO: API - property?
         {
             return false;
         }

@@ -35,8 +35,8 @@ namespace Lucene.Net.Analysis
     // instead of checking itself:
 
     /// <summary>
-    /// A TokenFilter that checks consistency of the tokens (eg
-    ///  offsets are consistent with one another).
+    /// A <see cref="TokenFilter"/> that checks consistency of the tokens (eg
+    /// offsets are consistent with one another).
     /// </summary>
     public sealed class ValidatingTokenFilter : TokenFilter
     {
@@ -78,9 +78,9 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// The name arg is used to identify this stage when
-        ///  throwing exceptions (useful if you have more than one
-        ///  instance in your chain).
+        /// The <paramref name="name"/> is used to identify this stage when
+        /// throwing exceptions (useful if you have more than one
+        /// instance in your chain).
         /// </summary>
         public ValidatingTokenFilter(TokenStream @in, string name, bool offsetsAreCorrect)
             : base(@in)

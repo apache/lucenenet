@@ -28,8 +28,8 @@ namespace Lucene.Net.Analysis
 
     /// <summary>
     /// Randomly inserts overlapped (posInc=0) tokens with
-    ///  posLength sometimes > 1.  The chain must have
-    ///  an OffsetAttribute.
+    /// posLength sometimes > 1.  The chain must have
+    /// an <see cref="IOffsetAttribute"/>.
     /// </summary>
 
     public sealed class MockGraphTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>

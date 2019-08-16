@@ -1,8 +1,6 @@
 using Lucene.Net.Support;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 
 namespace Lucene.Net.Analysis
 {
@@ -24,8 +22,8 @@ namespace Lucene.Net.Analysis
      */
 
     /// <summary>
-    /// the purpose of this charfilter is to send offsets out of bounds
-    ///  if the analyzer doesn't use correctOffset or does incorrect offset math.
+    /// The purpose of this charfilter is to send offsets out of bounds
+    /// if the analyzer doesn't use <see cref="CharFilter.CorrectOffset(int)"/> or does incorrect offset math.
     /// </summary>
     public class MockCharFilter : CharFilter
     {

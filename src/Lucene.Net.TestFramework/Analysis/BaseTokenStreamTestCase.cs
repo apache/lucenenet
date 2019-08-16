@@ -46,33 +46,33 @@ namespace Lucene.Net.Analysis
     using TextField = TextField;
 
     /// <summary>
-    /// base class for all Lucene unit tests that use TokenStreams.
+    /// Base class for all Lucene unit tests that use <see cref="TokenStream"/>s.
     /// <p>
     /// When writing unit tests for analysis components, its highly recommended
-    /// to use the helper methods here (especially in conjunction with <seealso cref="MockAnalyzer"/> or
-    /// <seealso cref="MockTokenizer"/>), as they contain many assertions and checks to
+    /// to use the helper methods here (especially in conjunction with <see cref="MockAnalyzer"/> or
+    /// <see cref="MockTokenizer"/>), as they contain many assertions and checks to
     /// catch bugs.
     /// </summary>
-    /// <seealso cref= MockAnalyzer </seealso>
-    /// <seealso cref= MockTokenizer </seealso>
+    /// <seealso cref="MockAnalyzer"/>
+    /// <seealso cref="MockTokenizer"/>
     public abstract class BaseTokenStreamTestCase : LuceneTestCase
     {
         // some helpers to test Analyzers and TokenStreams:
 
         /// <summary>
         /// Attribute that records if it was cleared or not.  this is used
-        /// for testing that ClearAttributes() was called correctly.
+        /// for testing that <see cref="Lucene.Net.Util.AttributeSource.ClearAttributes()"/> was called correctly.
         /// </summary>
-        public interface ICheckClearAttributesAttribute : IAttribute
+        public interface ICheckClearAttributesAttribute : IAttribute // LUCENENET TODO: API - de-nest
         {
             bool AndResetClearCalled { get; }
         }
 
         /// <summary>
         /// Attribute that records if it was cleared or not.  this is used
-        /// for testing that ClearAttributes() was called correctly.
+        /// for testing that <see cref="Lucene.Net.Util.AttributeSource.ClearAttributes()"/> was called correctly.
         /// </summary>
-        public sealed class CheckClearAttributesAttribute : Attribute, ICheckClearAttributesAttribute
+        public sealed class CheckClearAttributesAttribute : Attribute, ICheckClearAttributesAttribute // LUCENENET TODO: API - de-nest
         {
             internal bool clearCalled = false;
 
@@ -537,8 +537,9 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        // simple utility method for testing stemmers
-
+        /// <summary>
+        /// Simple utility method for testing stemmers
+        /// </summary>
         public static void CheckOneTerm(Analyzer a, string input, string expected)
         {
             AssertAnalyzesTo(a, input, new string[] { expected });
@@ -557,9 +558,9 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy
-        ///
-        /// LUCENENET specific
+        /// Utility method for blasting tokenstreams with data to make sure they don't do anything crazy
+        /// <para/>
+        /// LUCENENET specific:
         /// Non-static to reduce the inter-class dependencies due to use of
         /// static variables
         /// </summary>
@@ -569,9 +570,9 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy
-        /// 
-        /// LUCENENET specific
+        /// Utility method for blasting tokenstreams with data to make sure they don't do anything crazy
+        /// <para/>
+        /// LUCENENET specific:
         /// Non-static to reduce the inter-class dependencies due to use of
         /// static variables
         /// </summary>

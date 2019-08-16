@@ -27,7 +27,6 @@ namespace Lucene.Net.Analysis
     /// Wraps a whitespace tokenizer with a filter that sets
     /// the first token, and odd tokens to posinc=1, and all others
     /// to 0, encoding the position as pos: XXX in the payload.
-    ///
     /// </summary>
     public sealed class MockPayloadAnalyzer : Analyzer
     {

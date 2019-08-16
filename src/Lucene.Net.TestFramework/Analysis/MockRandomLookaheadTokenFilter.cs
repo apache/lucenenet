@@ -25,11 +25,9 @@ namespace Lucene.Net.Analysis
     using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
 
     /// <summary>
-    /// Uses <seealso cref="LookaheadTokenFilter"/> to randomly peek at future tokens.
+    /// Uses <see cref="LookaheadTokenFilter"/> to randomly peek at future tokens.
     /// </summary>
-
-    public sealed class MockRandomLookaheadTokenFilter
-        : LookaheadTokenFilter<LookaheadTokenFilter.Position>
+    public sealed class MockRandomLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
     {
         private readonly ICharTermAttribute termAtt;// = addAttribute(typeof(CharTermAttribute));
         private Random random; //not readonly to reset seed later

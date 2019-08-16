@@ -6,40 +6,49 @@ using Console = Lucene.Net.Support.SystemConsole;
 namespace Lucene.Net.Analysis
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /// <summary>
-    /// Analyzer for testing
-    /// <p>
-    /// this analyzer is a replacement for Whitespace/Simple/KeywordAnalyzers
+    /// Analyzer for testing.
+    /// <para/>
+    /// This analyzer is a replacement for Whitespace/Simple/KeywordAnalyzers
     /// for unit tests. If you are testing a custom component such as a queryparser
     /// or analyzer-wrapper that consumes analysis streams, its a great idea to test
     /// it with this analyzer instead. MockAnalyzer has the following behavior:
-    /// <ul>
-    ///   <li>By default, the assertions in <seealso cref="MockTokenizer"/> are turned on for extra
-    ///       checks that the consumer is consuming properly. These checks can be disabled
-    ///       with <seealso cref="#setEnableChecks(boolean)"/>.
-    ///   <li>Payload data is randomly injected into the stream for more thorough testing
-    ///       of payloads.
-    /// </ul> </summary>
-    /// <seealso cref= MockTokenizer </seealso>
+    /// <list type="bullet">
+    ///     <item>
+    ///         <description>
+    ///             By default, the assertions in <see cref="MockTokenizer"/> are turned on for extra
+    ///             checks that the consumer is consuming properly. These checks can be disabled
+    ///             with <see cref="EnableChecks"/>.
+    ///         </description>
+    ///     </item>
+    ///     <item>
+    ///         <description>
+    ///             Payload data is randomly injected into the stream for more thorough testing
+    ///             of payloads.
+    ///         </description>
+    ///     </item>
+    /// </list>
+    /// </summary>
+    /// <seealso cref="MockTokenizer"/>
     public sealed class MockAnalyzer : Analyzer
     {
         private readonly CharacterRunAutomaton runAutomaton;
@@ -53,7 +62,7 @@ namespace Lucene.Net.Analysis
         private int maxTokenLength = MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH;
 
         /// <summary>
-        /// Creates a new MockAnalyzer.
+        /// Creates a new <see cref="MockAnalyzer"/>.
         /// </summary>
         /// <param name="random"> Random for payloads behavior </param>
         /// <param name="runAutomaton"> DFA describing how tokenization should happen (e.g. [a-zA-Z]+) </param>
@@ -150,7 +159,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        public int PositionIncrementGap
+        public int PositionIncrementGap // LUCENENET TODO: API change to SetPositionIncrementGap()
         {
             set
             {
@@ -164,9 +173,8 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Set a new offset gap which will then be added to the offset when several fields with the same name are indexed </summary>
-        /// <param name="offsetGap"> The offset gap that should be used. </param>
-        public int OffsetGap
+        /// Sets an offset gap which will then be added to the offset when several fields with the same name are indexed </summary>
+        public int OffsetGap // LUCENENET TODO: API change to SetOffsetGap()
         {
             set
             {
@@ -186,7 +194,7 @@ namespace Lucene.Net.Analysis
         /// Toggle consumer workflow checking: if your test consumes tokenstreams normally you
         /// should leave this enabled.
         /// </summary>
-        public bool EnableChecks
+        public bool EnableChecks // LUCENENET TODO: API Add getter
         {
             set
             {
@@ -195,9 +203,9 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Toggle maxTokenLength for MockTokenizer
+        /// Toggle maxTokenLength for <see cref="MockTokenizer"/>.
         /// </summary>
-        public int MaxTokenLength
+        public int MaxTokenLength // LUCENENET TODO: API Add getter
         {
             set
             {

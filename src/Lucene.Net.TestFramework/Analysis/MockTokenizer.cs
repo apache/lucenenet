@@ -1,61 +1,66 @@
 using Lucene.Net.Analysis.TokenAttributes;
-using System;
-using System.Diagnostics;
+using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
+using System.IO;
+using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
+using RegExp = Lucene.Net.Util.Automaton.RegExp;
 
 namespace Lucene.Net.Analysis
 {
-    using Lucene.Net.Support;
-
-    //using RandomizedContext = com.carrotsearch.randomizedtesting.RandomizedContext;
-    using System.IO;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
-    using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
-    using RegExp = Lucene.Net.Util.Automaton.RegExp;
+
 
     /// <summary>
     /// Tokenizer for testing.
-    /// <p>
-    /// this tokenizer is a replacement for <seealso cref="#WHITESPACE"/>, <seealso cref="#SIMPLE"/>, and <seealso cref="#KEYWORD"/>
-    /// tokenizers. If you are writing a component such as a TokenFilter, its a great idea to test
-    /// it wrapping this tokenizer instead for extra checks. this tokenizer has the following behavior:
-    /// <ul>
-    ///   <li>An internal state-machine is used for checking consumer consistency. These checks can
-    ///       be disabled with <seealso cref="#setEnableChecks(boolean)"/>.
-    ///   <li>For convenience, optionally lowercases terms that it outputs.
-    /// </ul>
+    /// <para/>
+    /// This tokenizer is a replacement for <see cref="WHITESPACE"/>, <see cref="SIMPLE"/>, and <see cref="KEYWORD"/>
+    /// tokenizers. If you are writing a component such as a <see cref="TokenFilter"/>, its a great idea to test
+    /// it wrapping this tokenizer instead for extra checks. This tokenizer has the following behavior:
+    /// <list type="bullet">
+    ///     <item>
+    ///         <description>
+    ///             An internal state-machine is used for checking consumer consistency. These checks can
+    ///             be disabled with <see cref="EnableChecks"/>.
+    ///         </description>
+    ///     </item>
+    ///     <item>
+    ///         <description>
+    ///             For convenience, optionally lowercases terms that it outputs.
+    ///         </description>
+    ///     </item>
+    /// </list>
     /// </summary>
     public class MockTokenizer : Tokenizer
     {
         /// <summary>
-        /// Acts Similar to WhitespaceTokenizer </summary>
+        /// Acts Similar to <see cref="Analysis.Core.WhitespaceTokenizer"/>.</summary>
         public static readonly CharacterRunAutomaton WHITESPACE = new CharacterRunAutomaton(new RegExp("[^ \t\r\n]+").ToAutomaton());
 
         /// <summary>
-        /// Acts Similar to KeywordTokenizer.
+        /// Acts Similar to <see cref="Analysis.Core.KeywordTokenizer"/>.
         /// TODO: Keyword returns an "empty" token for an empty reader...
         /// </summary>
         public static readonly CharacterRunAutomaton KEYWORD = new CharacterRunAutomaton(new RegExp(".*").ToAutomaton());
 
         /// <summary>
-        /// Acts like LetterTokenizer. </summary>
+        /// Acts like <see cref="Analysis.Core.LetterTokenizer"/>. </summary>
         // the ugly regex below is incomplete Unicode 5.2 [:Letter:]
         public static readonly CharacterRunAutomaton SIMPLE = new CharacterRunAutomaton(new RegExp("[A-Za-zªµºÀ-ÖØ-öø-ˁ一-鿌]+").ToAutomaton());
 
@@ -118,7 +123,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Calls <seealso cref="#MockTokenizer(Reader, CharacterRunAutomaton, boolean) MockTokenizer(Reader, WHITESPACE, true)"/> </summary>
+        /// Calls <c>MockTokenizer(TextReader, WHITESPACE, true)</c>.</summary>
         public MockTokenizer(TextReader input)
             : this(input, WHITESPACE, true)
         {
@@ -139,6 +144,7 @@ namespace Lucene.Net.Analysis
 
         public sealed override bool IncrementToken()
         {
+            // LUCENENET TODO: Enable this assert
             //Debug.Assert(!EnableChecks_Renamed || (StreamState == State.RESET || StreamState == State.INCREMENT), "IncrementToken() called while in wrong state: " + StreamState);
             ClearAttributes();
             for (; ; )
@@ -218,7 +224,7 @@ namespace Lucene.Net.Analysis
             }
             else
             {
-                Assert.True(!char.IsLowSurrogate((char)ch), "unpaired low surrogate: " + ch.ToString("x"));
+                Assert.True(!char.IsLowSurrogate((char)ch), "unpaired low surrogate: " + ch.ToString("x")); // LUCENENET TODO: This should be Debug.Assert
                 off++;
                 if (char.IsHighSurrogate((char)ch))
                 {
@@ -226,12 +232,12 @@ namespace Lucene.Net.Analysis
                     if (ch2 >= 0)
                     {
                         off++;
-                        Assert.True(char.IsLowSurrogate((char)ch2), "unpaired high surrogate: " + ch.ToString("x") + ", followed by: " + ch2.ToString("x"));
+                        Assert.True(char.IsLowSurrogate((char)ch2), "unpaired high surrogate: " + ch.ToString("x") + ", followed by: " + ch2.ToString("x")); // LUCENENET TODO: This should be Debug.Assert
                         return Character.ToCodePoint((char)ch, (char)ch2);
                     }
                     else
                     {
-                        Assert.True(false, "stream ends with unpaired high surrogate: " + ch.ToString("x"));
+                        Assert.True(false, "stream ends with unpaired high surrogate: " + ch.ToString("x")); // LUCENENET TODO: This should be Debug.Assert
                     }
                 }
                 return ch;
@@ -299,7 +305,7 @@ namespace Lucene.Net.Analysis
             state = runAutomaton.InitialState;
             lastOffset = off = 0;
             bufferedCodePoint = -1;
-            Assert.True(!enableChecks || streamState != State.RESET, "double reset()");
+            Assert.True(!enableChecks || streamState != State.RESET, "double reset()"); // LUCENENET TODO: This should be Debug.Assert
             streamState = State.RESET;
         }
 
@@ -318,7 +324,7 @@ namespace Lucene.Net.Analysis
 
         internal override bool SetReaderTestPoint()
         {
-            Assert.True(!enableChecks || streamState == State.CLOSE, "setReader() called in wrong state: " + streamState);
+            Assert.True(!enableChecks || streamState == State.CLOSE, "setReader() called in wrong state: " + streamState); // LUCENENET TODO: This should be Debug.Assert
             streamState = State.SETREADER;
             return true;
         }
@@ -332,7 +338,7 @@ namespace Lucene.Net.Analysis
             // these tests should disable this check (in general you should consume the entire stream)
             try
             {
-                //Debug.Assert(!EnableChecks_Renamed || StreamState == State.INCREMENT_FALSE, "end() called before IncrementToken() returned false!");
+                //Debug.Assert(!EnableChecks_Renamed || StreamState == State.INCREMENT_FALSE, "end() called before IncrementToken() returned false!"); // LUCENENET TODO: Enable this
             }
             finally
             {
@@ -344,7 +350,7 @@ namespace Lucene.Net.Analysis
         /// Toggle consumer workflow checking: if your test consumes tokenstreams normally you
         /// should leave this enabled.
         /// </summary>
-        public virtual bool EnableChecks
+        public virtual bool EnableChecks // LUCENENET TODO: API - add getter
         {
             set
             {

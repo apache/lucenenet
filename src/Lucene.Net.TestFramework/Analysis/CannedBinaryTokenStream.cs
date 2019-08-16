@@ -23,14 +23,14 @@ namespace Lucene.Net.Analysis
     using System.Runtime.CompilerServices;
 
     /// <summary>
-    /// TokenStream from a canned list of binary (BytesRef-based)
+    /// <see cref="TokenStream"/> from a canned list of binary (<see cref="BytesRef"/>-based)
     /// tokens.
     /// </summary>
     public sealed class CannedBinaryTokenStream : TokenStream
     {
         /// <summary>
         /// Represents a binary token. </summary>
-        public sealed class BinaryToken
+        public sealed class BinaryToken // LUCENENET TODO: API - de-nest
         {
             internal BytesRef Term { get; set; }
             internal int PosInc { get; set; }
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis
         /// An attribute extending <see cref="ITermToBytesRefAttribute"/>
         /// but exposing <see cref="BytesRef"/> property.
         /// </summary>
-        public interface IBinaryTermAttribute : ITermToBytesRefAttribute
+        public interface IBinaryTermAttribute : ITermToBytesRefAttribute // LUCENENET TODO: API - de-nest
         {
             /// <summary>
             /// Set the current binary value. </summary>
@@ -72,8 +72,8 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Implementation for <seealso cref="IBinaryTermAttribute"/>. </summary>
-        public sealed class BinaryTermAttribute : Attribute, IBinaryTermAttribute
+        /// Implementation for <see cref="IBinaryTermAttribute"/>. </summary>
+        public sealed class BinaryTermAttribute : Attribute, IBinaryTermAttribute // LUCENENET TODO: API - de-nest
         {
             internal readonly BytesRef bytes = new BytesRef();
 

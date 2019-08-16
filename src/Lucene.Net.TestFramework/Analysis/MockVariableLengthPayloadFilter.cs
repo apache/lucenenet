@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// TokenFilter that adds random variable-length payloads.
+    /// <see cref="TokenFilter"/> that adds random variable-length payloads.
     /// </summary>
     public sealed class MockVariableLengthPayloadFilter : TokenFilter
     {
