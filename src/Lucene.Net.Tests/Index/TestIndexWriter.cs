@@ -670,7 +670,7 @@ namespace Lucene.Net.Index
             public MyRAMDirectory(Directory @delegate)
                 : base(Random(), @delegate)
             {
-                LockFactory_Renamed = null;
+                m_lockFactory = null;
                 myLockFactory = new SingleInstanceLockFactory();
             }
 

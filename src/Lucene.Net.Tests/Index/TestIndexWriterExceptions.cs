@@ -1077,14 +1077,14 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (DoFail)
+                if (m_doFail)
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     bool foundMethod =
                         StackTraceHelper.DoesStackTraceContainMethod(typeof(MockDirectoryWrapper).Name, "Sync");
 
-                    if (DoFail && foundMethod)
+                    if (m_doFail && foundMethod)
                     {
                         DidFail = true;
                         if (VERBOSE)
@@ -2190,13 +2190,13 @@ namespace Lucene.Net.Index
 
             public override MockDirectoryWrapper.Failure Reset()
             {
-                DoFail = false;
+                m_doFail = false;
                 return this;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (DoFail)
+                if (m_doFail)
                 {
                     if (Random().NextBoolean())
                     {

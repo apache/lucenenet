@@ -41,6 +41,7 @@ namespace Lucene.Net.Index
     using TextField = TextField;
     using Attributes;
     using Lucene.Net.Util;
+    using Lucene.Net.Store;
 
     [TestFixture]
     public class TestConcurrentMergeScheduler : LuceneTestCase
@@ -405,7 +406,7 @@ namespace Lucene.Net.Index
             Directory d = NewDirectory();
             if (d is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)d).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)d).Throttling = Throttling.NEVER;
             }
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             iwc.SetMaxBufferedDocs(5);

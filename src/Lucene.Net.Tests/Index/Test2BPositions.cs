@@ -1,6 +1,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -58,7 +59,7 @@ namespace Lucene.Net.Index
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPositions"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
 
             IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))

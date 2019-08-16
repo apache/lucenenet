@@ -27,19 +27,19 @@ namespace Lucene.Net.Store
 
     public class MockIndexInputWrapper : IndexInput
     {
-        private MockDirectoryWrapper Dir;
-        internal readonly string Name;
+        private MockDirectoryWrapper dir;
+        internal readonly string name;
         private IndexInput @delegate;
-        private bool IsClone;
-        private bool Closed;
+        private bool isClone;
+        private bool closed;
 
         /// <summary>
         /// Construct an empty output buffer. </summary>
         public MockIndexInputWrapper(MockDirectoryWrapper dir, string name, IndexInput @delegate)
             : base("MockIndexInputWrapper(name=" + name + " delegate=" + @delegate + ")")
         {
-            this.Name = name;
-            this.Dir = dir;
+            this.name = name;
+            this.dir = dir;
             this.@delegate = @delegate;
         }
 
@@ -55,14 +55,14 @@ namespace Lucene.Net.Store
                 }
                 finally
                 {
-                    Closed = true;
+                    closed = true;
                     @delegate.Dispose();
                     // Pending resolution on LUCENE-686 we may want to
                     // remove the conditional check so we also track that
                     // all clones get closed:
-                    if (!IsClone)
+                    if (!isClone)
                     {
-                        Dir.RemoveIndexInput(this, Name);
+                        dir.RemoveIndexInput(this, name);
                     }
                 }
             }
@@ -70,7 +70,7 @@ namespace Lucene.Net.Store
 
         private void EnsureOpen()
         {
-            if (Closed)
+            if (closed)
             {
                 throw new Exception("Abusing closed IndexInput!");
             }
@@ -79,10 +79,10 @@ namespace Lucene.Net.Store
         public override object Clone()
         {
             EnsureOpen();
-            Dir.InputCloneCount_Renamed.IncrementAndGet();
+            dir.inputCloneCount.IncrementAndGet();
             IndexInput iiclone = (IndexInput)@delegate.Clone();
-            MockIndexInputWrapper clone = new MockIndexInputWrapper(Dir, Name, iiclone);
-            clone.IsClone = true;
+            MockIndexInputWrapper clone = new MockIndexInputWrapper(dir, name, iiclone);
+            clone.isClone = true;
             // Pending resolution on LUCENE-686 we may want to
             // uncomment this code so that we also track that all
             // clones get closed:

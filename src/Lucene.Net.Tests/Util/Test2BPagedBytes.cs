@@ -1,4 +1,5 @@
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Store;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
@@ -41,7 +42,7 @@ namespace Lucene.Net.Util
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("test2BPagedBytes"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
             PagedBytes pb = new PagedBytes(15);
             IndexOutput dataOutput = dir.CreateOutput("foo", IOContext.DEFAULT);

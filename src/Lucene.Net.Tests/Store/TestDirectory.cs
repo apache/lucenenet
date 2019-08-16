@@ -1,5 +1,6 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
@@ -31,8 +32,6 @@ namespace Lucene.Net.Store
          * See the License for the specific language governing permissions and
          * limitations under the License.
          */
-
-    using Throttling = Lucene.Net.Store.MockDirectoryWrapper.Throttling_e;
 
     [TestFixture]
     public class TestDirectory : LuceneTestCase

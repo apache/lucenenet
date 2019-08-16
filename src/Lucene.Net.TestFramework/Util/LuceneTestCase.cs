@@ -44,6 +44,7 @@ namespace Lucene.Net.Util
 {
     using Analysis;
     using Attributes;
+    using Lucene.Net.Store;
     using Search.Similarities;
     using System.Linq;
     using System.Text.RegularExpressions;
@@ -362,7 +363,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Throttling, see <seealso cref="MockDirectoryWrapper#setThrottling(Throttling)"/>. </summary>
-        public static readonly MockDirectoryWrapper.Throttling_e TEST_THROTTLING = TEST_NIGHTLY ? MockDirectoryWrapper.Throttling_e.SOMETIMES : MockDirectoryWrapper.Throttling_e.NEVER;
+        public static readonly Throttling TEST_THROTTLING = TEST_NIGHTLY ? Throttling.SOMETIMES : Throttling.NEVER;
 
         /// <summary>
         /// Leave temporary files on disk, even on successful runs. </summary>

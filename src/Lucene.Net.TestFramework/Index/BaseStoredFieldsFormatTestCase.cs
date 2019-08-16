@@ -2,6 +2,7 @@ using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
@@ -687,7 +688,7 @@ namespace Lucene.Net.Index
 
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
 
             Document emptyDoc = new Document(); // emptyDoc

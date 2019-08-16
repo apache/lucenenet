@@ -1,3 +1,4 @@
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
@@ -251,7 +252,7 @@ namespace Lucene.Net.Index
                 AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
                 MockDirectoryWrapper dir = NewMockDirectory();
                 // mock a very slow harddisk sometimes here so that flushing is very slow
-                dir.Throttling = MockDirectoryWrapper.Throttling_e.SOMETIMES;
+                dir.Throttling = Throttling.SOMETIMES;
                 IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
                 iwc.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
                 iwc.SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH);

@@ -40,6 +40,27 @@ namespace Lucene.Net.Store
     using ThrottledIndexOutput = Lucene.Net.Util.ThrottledIndexOutput;
 
     /// <summary>
+    /// Enum for controlling hard disk throttling.
+    /// Set via <seealso cref="MockDirectoryWrapper #setThrottling(Throttling)"/>
+    /// <p>
+    /// WARNING: can make tests very slow.
+    /// </summary>
+    public enum Throttling
+    {
+        /// <summary>
+        /// always emulate a slow hard disk. could be very slow! </summary>
+        ALWAYS,
+
+        /// <summary>
+        /// sometimes (2% of the time) emulate a slow hard disk. </summary>
+        SOMETIMES,
+
+        /// <summary>
+        /// never throttle output </summary>
+        NEVER
+    }
+
+    /// <summary>
     /// this is a Directory Wrapper that adds methods
     /// intended to be used only by unit tests.
     /// It also adds a number of features useful for testing:
@@ -57,63 +78,63 @@ namespace Lucene.Net.Store
     /// </summary>
     public class MockDirectoryWrapper : BaseDirectoryWrapper
     {
-        internal long MaxSize;
+        internal long maxSize;
 
         // Max actual bytes used. this is set by MockRAMOutputStream:
-        internal long MaxUsedSize;
+        internal long maxUsedSize;
 
-        internal double RandomIOExceptionRate_Renamed;
-        internal double RandomIOExceptionRateOnOpen_Renamed;
-        internal Random RandomState;
-        internal bool NoDeleteOpenFile_Renamed = true;
+        internal double randomIOExceptionRate;
+        internal double randomIOExceptionRateOnOpen;
+        internal Random randomState;
+        internal bool noDeleteOpenFile = true;
         internal bool assertNoDeleteOpenFile = false;
-        internal bool PreventDoubleWrite_Renamed = true;
-        internal bool TrackDiskUsage_Renamed = false;
-        internal bool WrapLockFactory_Renamed = true;
-        internal bool AllowRandomFileNotFoundException_Renamed = true;
-        internal bool AllowReadingFilesStillOpenForWrite_Renamed = false;
-        private ISet<string> UnSyncedFiles;
-        private ISet<string> CreatedFiles;
-        private ISet<string> OpenFilesForWrite = new HashSet<string>();
-        internal ISet<string> OpenLocks = new ConcurrentHashSet<string>();
-        internal volatile bool Crashed;
-        private ThrottledIndexOutput ThrottledOutput;
-        private Throttling_e throttling = Throttling_e.SOMETIMES;
-        protected internal LockFactory LockFactory_Renamed;
+        internal bool preventDoubleWrite = true;
+        internal bool trackDiskUsage = false;
+        internal bool wrapLockFactory = true;
+        internal bool allowRandomFileNotFoundException = true;
+        internal bool allowReadingFilesStillOpenForWrite = false;
+        private ISet<string> unSyncedFiles;
+        private ISet<string> createdFiles;
+        private ISet<string> openFilesForWrite = new HashSet<string>();
+        internal ISet<string> openLocks = new ConcurrentHashSet<string>();
+        internal volatile bool crashed;
+        private ThrottledIndexOutput throttledOutput;
+        private Throttling throttling = Throttling.SOMETIMES;
+        protected internal LockFactory m_lockFactory;
 
-        internal readonly AtomicInt64 InputCloneCount_Renamed = new AtomicInt64();
+        internal readonly AtomicInt64 inputCloneCount = new AtomicInt64();
 
         // use this for tracking files for crash.
         // additionally: provides debugging information in case you leave one open
-        private readonly ConcurrentDictionary<IDisposable, Exception> OpenFileHandles = new ConcurrentDictionary<IDisposable, Exception>(new IdentityComparer<IDisposable>());
+        private readonly ConcurrentDictionary<IDisposable, Exception> openFileHandles = new ConcurrentDictionary<IDisposable, Exception>(new IdentityComparer<IDisposable>());
 
         // NOTE: we cannot initialize the Map here due to the
         // order in which our constructor actually does this
         // member initialization vs when it calls super.  It seems
         // like super is called, then our members are initialized:
-        private IDictionary<string, int> OpenFiles;
+        private IDictionary<string, int> openFiles;
 
         // Only tracked if noDeleteOpenFile is true: if an attempt
         // is made to delete an open file, we enroll it here.
-        private ISet<string> OpenFilesDeleted;
+        private ISet<string> openFilesDeleted;
 
         private void Init()
         {
             lock (this)
             {
-                if (OpenFiles == null)
+                if (openFiles == null)
                 {
-                    OpenFiles = new Dictionary<string, int>();
-                    OpenFilesDeleted = new HashSet<string>();
+                    openFiles = new Dictionary<string, int>();
+                    openFilesDeleted = new HashSet<string>();
                 }
 
-                if (CreatedFiles == null)
+                if (createdFiles == null)
                 {
-                    CreatedFiles = new HashSet<string>();
+                    createdFiles = new HashSet<string>();
                 }
-                if (UnSyncedFiles == null)
+                if (unSyncedFiles == null)
                 {
-                    UnSyncedFiles = new HashSet<string>();
+                    unSyncedFiles = new HashSet<string>();
                 }
             }
         }
@@ -124,10 +145,10 @@ namespace Lucene.Net.Store
             // must make a private random since our methods are
             // called from different threads; else test failures may
             // not be reproducible from the original seed
-            this.RandomState = new Random(random.Next());
-            this.ThrottledOutput = new ThrottledIndexOutput(ThrottledIndexOutput.MBitsToBytes(40 + RandomState.Next(10)), 5 + RandomState.Next(5), null);
+            this.randomState = new Random(random.Next());
+            this.throttledOutput = new ThrottledIndexOutput(ThrottledIndexOutput.MBitsToBytes(40 + randomState.Next(10)), 5 + randomState.Next(5), null);
             // force wrapping of lockfactory
-            this.LockFactory_Renamed = new MockLockFactoryWrapper(this, @delegate.LockFactory);
+            this.m_lockFactory = new MockLockFactoryWrapper(this, @delegate.LockFactory);
             Init();
         }
 
@@ -135,7 +156,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return (int)InputCloneCount_Renamed.Get();
+                return (int)inputCloneCount.Get();
             }
         }
 
@@ -143,7 +164,7 @@ namespace Lucene.Net.Store
         {
             set
             {
-                TrackDiskUsage_Renamed = value;
+                trackDiskUsage = value;
             }
         }
 
@@ -155,7 +176,7 @@ namespace Lucene.Net.Store
         {
             set
             {
-                PreventDoubleWrite_Renamed = value;
+                preventDoubleWrite = value;
             }
         }
 
@@ -169,7 +190,7 @@ namespace Lucene.Net.Store
         {
             set
             {
-                AllowRandomFileNotFoundException_Renamed = value;
+                allowRandomFileNotFoundException = value;
             }
         }
 
@@ -181,32 +202,11 @@ namespace Lucene.Net.Store
         {
             set
             {
-                AllowReadingFilesStillOpenForWrite_Renamed = value;
+                allowReadingFilesStillOpenForWrite = value;
             }
         }
 
-        /// <summary>
-        /// Enum for controlling hard disk throttling.
-        /// Set via <seealso cref="MockDirectoryWrapper #setThrottling(Throttling)"/>
-        /// <p>
-        /// WARNING: can make tests very slow.
-        /// </summary>
-        public enum Throttling_e
-        {
-            /// <summary>
-            /// always emulate a slow hard disk. could be very slow! </summary>
-            ALWAYS,
-
-            /// <summary>
-            /// sometimes (2% of the time) emulate a slow hard disk. </summary>
-            SOMETIMES,
-
-            /// <summary>
-            /// never throttle output </summary>
-            NEVER
-        }
-
-        public virtual Throttling_e Throttling
+        public virtual Throttling Throttling
         {
             set
             {
@@ -237,24 +237,24 @@ namespace Lucene.Net.Store
             {
                 MaybeYield();
                 MaybeThrowDeterministicException();
-                if (Crashed)
+                if (crashed)
                 {
                     throw new System.IO.IOException("cannot sync after crash");
                 }
                 // don't wear out our hardware so much in tests.
-                if (LuceneTestCase.Rarely(RandomState) || MustSync())
+                if (LuceneTestCase.Rarely(randomState) || MustSync())
                 {
                     foreach (string name in names)
                     {
                         // randomly fail with IOE on any file
                         MaybeThrowIOException(name);
                         m_input.Sync(new[] { name });
-                        UnSyncedFiles.Remove(name);
+                        unSyncedFiles.Remove(name);
                     }
                 }
                 else
                 {
-                    UnSyncedFiles.RemoveAll(names);
+                    unSyncedFiles.RemoveAll(names);
                 }
             }
         }
@@ -288,16 +288,16 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                Crashed = true;
-                OpenFiles = new Dictionary<string, int>();
-                OpenFilesForWrite = new HashSet<string>();
-                OpenFilesDeleted = new HashSet<string>();
-                using (IEnumerator<string> it = UnSyncedFiles.GetEnumerator())
+                crashed = true;
+                openFiles = new Dictionary<string, int>();
+                openFilesForWrite = new HashSet<string>();
+                openFilesDeleted = new HashSet<string>();
+                using (IEnumerator<string> it = unSyncedFiles.GetEnumerator())
                 {
-                    UnSyncedFiles = new HashSet<string>();
+                    unSyncedFiles = new HashSet<string>();
                     // first force-close all files, so we can corrupt on windows etc.
                     // clone the file map, as these guys want to remove themselves on close.
-                    var m = new IdentityHashMap<IDisposable, Exception>(OpenFileHandles);
+                    var m = new IdentityHashMap<IDisposable, Exception>(openFileHandles);
                     foreach (IDisposable f in m.Keys)
                     {
                         try
@@ -315,7 +315,7 @@ namespace Lucene.Net.Store
                     while (it.MoveNext())
                     {
                         string name = it.Current;
-                        int damage = RandomState.Next(5);
+                        int damage = randomState.Next(5);
                         string action = null;
 
                         if (damage == 0)
@@ -330,7 +330,7 @@ namespace Lucene.Net.Store
                             long length = FileLength(name);
                             var zeroes = new byte[256];
                             long upto = 0;
-                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState)))
+                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
                             {
                                 while (upto < length)
                                 {
@@ -350,15 +350,15 @@ namespace Lucene.Net.Store
                             string tempFileName;
                             while (true)
                             {
-                                tempFileName = "" + RandomState.Next();
+                                tempFileName = "" + randomState.Next();
                                 if (!LuceneTestCase.SlowFileExists(m_input, tempFileName))
                                 {
                                     break;
                                 }
                             }
-                            using (IndexOutput tempOut = m_input.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(RandomState)))
+                            using (IndexOutput tempOut = m_input.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(randomState)))
                             {
-                                using (IndexInput ii = m_input.OpenInput(name, LuceneTestCase.NewIOContext(RandomState)))
+                                using (IndexInput ii = m_input.OpenInput(name, LuceneTestCase.NewIOContext(randomState)))
                                 {
                                     tempOut.CopyBytes(ii, ii.Length / 2);
                                 }
@@ -367,9 +367,9 @@ namespace Lucene.Net.Store
                             // Delete original and copy bytes back:
                             DeleteFile(name, true);
 
-                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState)))
+                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
                             {
-                                using (IndexInput ii = m_input.OpenInput(tempFileName, LuceneTestCase.NewIOContext(RandomState)))
+                                using (IndexInput ii = m_input.OpenInput(tempFileName, LuceneTestCase.NewIOContext(randomState)))
                                 {
                                     @out.CopyBytes(ii, ii.Length);
                                 }
@@ -386,7 +386,7 @@ namespace Lucene.Net.Store
                             action = "fully truncated";
                             // Totally truncate the file to zero bytes
                             DeleteFile(name, true);
-                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState)))
+                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
                             {
                                 @out.Length = 0;
                             }
@@ -404,8 +404,8 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                Crashed = false;
-                OpenLocks.Clear();
+                crashed = false;
+                openLocks.Clear();
             }
         }
 
@@ -413,11 +413,11 @@ namespace Lucene.Net.Store
         {
             set
             {
-                this.MaxSize = value;
+                this.maxSize = value;
             }
             get
             {
-                return this.MaxSize;
+                return this.maxSize;
             }
         }
 
@@ -429,13 +429,13 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return this.MaxUsedSize;
+                return this.maxUsedSize;
             }
         }
 
         public virtual void ResetMaxUsedSizeInBytes()
         {
-            this.MaxUsedSize = RecomputedActualSizeInBytes;
+            this.maxUsedSize = RecomputedActualSizeInBytes;
         }
 
         /// <summary>
@@ -446,11 +446,11 @@ namespace Lucene.Net.Store
         {
             set
             {
-                this.NoDeleteOpenFile_Renamed = value;
+                this.noDeleteOpenFile = value;
             }
             get
             {
-                return NoDeleteOpenFile_Renamed;
+                return noDeleteOpenFile;
             }
         }
 
@@ -480,11 +480,11 @@ namespace Lucene.Net.Store
         {
             set
             {
-                RandomIOExceptionRate_Renamed = value;
+                randomIOExceptionRate = value;
             }
             get
             {
-                return RandomIOExceptionRate_Renamed;
+                return randomIOExceptionRate;
             }
         }
 
@@ -499,17 +499,17 @@ namespace Lucene.Net.Store
         {
             set
             {
-                RandomIOExceptionRateOnOpen_Renamed = value;
+                randomIOExceptionRateOnOpen = value;
             }
             get
             {
-                return RandomIOExceptionRateOnOpen_Renamed;
+                return randomIOExceptionRateOnOpen;
             }
         }
 
         internal virtual void MaybeThrowIOException(string message)
         {
-            if (RandomState.NextDouble() < RandomIOExceptionRate_Renamed)
+            if (randomState.NextDouble() < randomIOExceptionRate)
             {
                 /*if (LuceneTestCase.VERBOSE)
                 {
@@ -522,20 +522,20 @@ namespace Lucene.Net.Store
 
         internal virtual void MaybeThrowIOExceptionOnOpen(string name)
         {
-            if (RandomState.NextDouble() < RandomIOExceptionRateOnOpen_Renamed)
+            if (randomState.NextDouble() < randomIOExceptionRateOnOpen)
             {
                 /*if (LuceneTestCase.VERBOSE)
                 {
                   Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception during open file=" + name);
                   (new Exception()).printStackTrace(System.out);
                 }*/
-                if (AllowRandomFileNotFoundException_Renamed == false || RandomState.NextBoolean())
+                if (allowRandomFileNotFoundException == false || randomState.NextBoolean())
                 {
                     throw new System.IO.IOException("a randomSystem.IO.IOException (" + name + ")");
                 }
                 else
                 {
-                    throw RandomState.NextBoolean() ? (IOException)new FileNotFoundException("a randomSystem.IO.IOException (" + name + ")") : new DirectoryNotFoundException("a randomSystem.IO.IOException (" + name + ")");
+                    throw randomState.NextBoolean() ? (IOException)new FileNotFoundException("a randomSystem.IO.IOException (" + name + ")") : new DirectoryNotFoundException("a randomSystem.IO.IOException (" + name + ")");
                 }
             }
         }
@@ -556,14 +556,14 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                foreach (var ent in OpenFileHandles)
+                foreach (var ent in openFileHandles)
                 {
-                    if (input && ent.Key is MockIndexInputWrapper && ((MockIndexInputWrapper)ent.Key).Name.Equals(name, StringComparison.Ordinal))
+                    if (input && ent.Key is MockIndexInputWrapper && ((MockIndexInputWrapper)ent.Key).name.Equals(name, StringComparison.Ordinal))
                     {
                         t = CreateException(t, ent.Value);
                         break;
                     }
-                    else if (!input && ent.Key is MockIndexOutputWrapper && ((MockIndexOutputWrapper)ent.Key).Name.Equals(name, StringComparison.Ordinal))
+                    else if (!input && ent.Key is MockIndexOutputWrapper && ((MockIndexOutputWrapper)ent.Key).name.Equals(name, StringComparison.Ordinal))
                     {
                         t = CreateException(t, ent.Value);
                         break;
@@ -580,7 +580,7 @@ namespace Lucene.Net.Store
 
         private void MaybeYield()
         {
-            if (RandomState.NextBoolean())
+            if (randomState.NextBoolean())
             {
 #if NETSTANDARD1_6
                 Thread.Sleep(0);
@@ -599,20 +599,20 @@ namespace Lucene.Net.Store
 
                 MaybeThrowDeterministicException();
 
-                if (Crashed && !forced)
+                if (crashed && !forced)
                 {
                     throw new System.IO.IOException("cannot delete after crash");
                 }
 
-                if (UnSyncedFiles.Contains(name))
+                if (unSyncedFiles.Contains(name))
                 {
-                    UnSyncedFiles.Remove(name);
+                    unSyncedFiles.Remove(name);
                 }
-                if (!forced && (NoDeleteOpenFile_Renamed || assertNoDeleteOpenFile))
+                if (!forced && (noDeleteOpenFile || assertNoDeleteOpenFile))
                 {
-                    if (OpenFiles.ContainsKey(name))
+                    if (openFiles.ContainsKey(name))
                     {
-                        OpenFilesDeleted.Add(name);
+                        openFilesDeleted.Add(name);
 
                         if (!assertNoDeleteOpenFile)
                         {
@@ -625,7 +625,7 @@ namespace Lucene.Net.Store
                     }
                     else
                     {
-                        OpenFilesDeleted.Remove(name);
+                        openFilesDeleted.Remove(name);
                     }
                 }
                 m_input.DeleteFile(name);
@@ -638,7 +638,7 @@ namespace Lucene.Net.Store
             {
                 lock (this)
                 {
-                    return new HashSet<string>(OpenFilesDeleted);
+                    return new HashSet<string>(openFilesDeleted);
                 }
             }
         }
@@ -664,19 +664,19 @@ namespace Lucene.Net.Store
                 {
                     MaybeThrowDeterministicException();
                 }
-                if (Crashed)
+                if (crashed)
                 {
                     throw new System.IO.IOException("cannot createOutput after crash");
                 }
                 Init();
                 lock (this)
                 {
-                    if (PreventDoubleWrite_Renamed && CreatedFiles.Contains(name) && !name.Equals("segments.gen", StringComparison.Ordinal))
+                    if (preventDoubleWrite && createdFiles.Contains(name) && !name.Equals("segments.gen", StringComparison.Ordinal))
                     {
                         throw new System.IO.IOException("file \"" + name + "\" was already written to");
                     }
                 }
-                if ((NoDeleteOpenFile_Renamed || assertNoDeleteOpenFile) && OpenFiles.ContainsKey(name))
+                if ((noDeleteOpenFile || assertNoDeleteOpenFile) && openFiles.ContainsKey(name))
                 {
                     if (!assertNoDeleteOpenFile)
                     {
@@ -688,12 +688,12 @@ namespace Lucene.Net.Store
                     }
                 }
 
-                if (Crashed)
+                if (crashed)
                 {
                     throw new System.IO.IOException("cannot createOutput after crash");
                 }
-                UnSyncedFiles.Add(name);
-                CreatedFiles.Add(name);
+                unSyncedFiles.Add(name);
+                createdFiles.Add(name);
 
                 if (m_input is RAMDirectory)
                 {
@@ -702,7 +702,7 @@ namespace Lucene.Net.Store
                     RAMFile existing = ramdir.m_fileMap.ContainsKey(name) ? ramdir.m_fileMap[name] : null;
 
                     // Enforce write once:
-                    if (existing != null && !name.Equals("segments.gen", StringComparison.Ordinal) && PreventDoubleWrite_Renamed)
+                    if (existing != null && !name.Equals("segments.gen", StringComparison.Ordinal) && preventDoubleWrite)
                     {
                         throw new System.IO.IOException("file " + name + " already exists");
                     }
@@ -717,24 +717,24 @@ namespace Lucene.Net.Store
                     }
                 }
                 //System.out.println(Thread.currentThread().getName() + ": MDW: create " + name);
-                IndexOutput delegateOutput = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState, context));
-                if (RandomState.Next(10) == 0)
+                IndexOutput delegateOutput = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState, context));
+                if (randomState.Next(10) == 0)
                 {
                     // once in a while wrap the IO in a Buffered IO with random buffer sizes
-                    delegateOutput = new BufferedIndexOutputWrapper(this, 1 + RandomState.Next(BufferedIndexOutput.DEFAULT_BUFFER_SIZE), delegateOutput);
+                    delegateOutput = new BufferedIndexOutputWrapper(this, 1 + randomState.Next(BufferedIndexOutput.DEFAULT_BUFFER_SIZE), delegateOutput);
                 }
                 IndexOutput io = new MockIndexOutputWrapper(this, delegateOutput, name);
                 AddFileHandle(io, name, Handle.Output);
-                OpenFilesForWrite.Add(name);
+                openFilesForWrite.Add(name);
 
                 // throttling REALLY slows down tests, so don't do it very often for SOMETIMES.
-                if (throttling == Throttling_e.ALWAYS || (throttling == Throttling_e.SOMETIMES && RandomState.Next(50) == 0) && !(m_input is RateLimitedDirectoryWrapper))
+                if (throttling == Throttling.ALWAYS || (throttling == Throttling.SOMETIMES && randomState.Next(50) == 0) && !(m_input is RateLimitedDirectoryWrapper))
                 {
                     if (LuceneTestCase.VERBOSE)
                     {
                         Console.WriteLine("MockDirectoryWrapper: throttling indexOutput (" + name + ")");
                     }
-                    return ThrottledOutput.NewFromDelegate(io);
+                    return throttledOutput.NewFromDelegate(io);
                 }
                 else
                 {
@@ -757,19 +757,19 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 int v;
-                if (OpenFiles.TryGetValue(name, out v))
+                if (openFiles.TryGetValue(name, out v))
                 {
                     v++;
                     //Debug.WriteLine("Add {0} - {1} - {2}", c, name, v);
-                    OpenFiles[name] = v;
+                    openFiles[name] = v;
                 }
                 else
                 {
                     //Debug.WriteLine("Add {0} - {1} - {2}", c, name, 1);
-                    OpenFiles[name] = 1;
+                    openFiles[name] = 1;
                 }
 
-                OpenFileHandles[c] = new Exception("unclosed Index" + handle.ToString() + ": " + name);
+                openFileHandles[c] = new Exception("unclosed Index" + handle.ToString() + ": " + name);
             }
         }
 
@@ -801,15 +801,15 @@ namespace Lucene.Net.Store
 
                 // cannot open a file for input if it's still open for
                 // output, except for segments.gen and segments_N
-                if (!AllowReadingFilesStillOpenForWrite_Renamed && OpenFilesForWrite.Contains(name, StringComparer.Ordinal) && !name.StartsWith("segments", StringComparison.Ordinal))
+                if (!allowReadingFilesStillOpenForWrite && openFilesForWrite.Contains(name, StringComparer.Ordinal) && !name.StartsWith("segments", StringComparison.Ordinal))
                 {
                     throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
                 }
 
-                IndexInput delegateInput = m_input.OpenInput(name, LuceneTestCase.NewIOContext(RandomState, context));
+                IndexInput delegateInput = m_input.OpenInput(name, LuceneTestCase.NewIOContext(randomState, context));
 
                 IndexInput ii;
-                int randomInt = RandomState.Next(500);
+                int randomInt = randomState.Next(500);
                 if (randomInt == 0)
                 {
                     if (LuceneTestCase.VERBOSE)
@@ -908,7 +908,7 @@ namespace Lucene.Net.Store
         {
             set
             {
-                this.WrapLockFactory_Renamed = value;
+                this.wrapLockFactory = value;
             }
         }
 
@@ -920,34 +920,34 @@ namespace Lucene.Net.Store
                 {
                     // files that we tried to delete, but couldn't because readers were open.
                     // all that matters is that we tried! (they will eventually go away)
-                    ISet<string> pendingDeletions = new HashSet<string>(OpenFilesDeleted);
+                    ISet<string> pendingDeletions = new HashSet<string>(openFilesDeleted);
                     MaybeYield();
-                    if (OpenFiles == null)
+                    if (openFiles == null)
                     {
-                        OpenFiles = new Dictionary<string, int>();
-                        OpenFilesDeleted = new HashSet<string>();
+                        openFiles = new Dictionary<string, int>();
+                        openFilesDeleted = new HashSet<string>();
                     }
-                    if (OpenFiles.Count > 0)
+                    if (openFiles.Count > 0)
                     {
                         // print the first one as its very verbose otherwise
-                        Exception cause = OpenFileHandles.Values.FirstOrDefault();
+                        Exception cause = openFileHandles.Values.FirstOrDefault();
 
                         // RuntimeException instead ofSystem.IO.IOException because
                         // super() does not throwSystem.IO.IOException currently:
                         throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: "
-                            + string.Join(" ,", OpenFiles.ToArray().Select(x => x.Key)), cause);
+                            + string.Join(" ,", openFiles.ToArray().Select(x => x.Key)), cause);
                     }
-                    if (OpenLocks.Count > 0)
+                    if (openLocks.Count > 0)
                     {
                         throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: "
-                            + string.Join(" ,", OpenLocks.ToArray()));
+                            + string.Join(" ,", openLocks.ToArray()));
                     }
 
-                    IsOpen = false;
+                    m_isOpen = false;
                     if (CheckIndexOnClose)
                     {
-                        RandomIOExceptionRate_Renamed = 0.0;
-                        RandomIOExceptionRateOnOpen_Renamed = 0.0;
+                        randomIOExceptionRate = 0.0;
+                        randomIOExceptionRateOnOpen = 0.0;
                         if (DirectoryReader.IndexExists(this))
                         {
                             if (LuceneTestCase.VERBOSE)
@@ -1105,23 +1105,23 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 int v;
-                if (OpenFiles.TryGetValue(name, out v))
+                if (openFiles.TryGetValue(name, out v))
                 {
                     if (v == 1)
                     {
                         //Debug.WriteLine("RemoveOpenFile OpenFiles.Remove {0} - {1}", c, name);
-                        OpenFiles.Remove(name);
+                        openFiles.Remove(name);
                     }
                     else
                     {
                         v--;
-                        OpenFiles[name] = v;
+                        openFiles[name] = v;
                         //Debug.WriteLine("RemoveOpenFile OpenFiles DECREMENT {0} - {1} - {2}", c, name, v);
                     }
                 }
 
                 Exception _;
-                OpenFileHandles.TryRemove(c, out _);
+                openFileHandles.TryRemove(c, out _);
             }
         }
 
@@ -1129,7 +1129,7 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                OpenFilesForWrite.Remove(name);
+                openFilesForWrite.Remove(name);
                 RemoveOpenFile(@out, name);
             }
         }
@@ -1175,20 +1175,20 @@ namespace Lucene.Net.Store
                 return this;
             }
 
-            protected internal bool DoFail;
+            protected internal bool m_doFail;
 
             public virtual void SetDoFail()
             {
-                DoFail = true;
+                m_doFail = true;
             }
 
             public virtual void ClearDoFail()
             {
-                DoFail = false;
+                m_doFail = false;
             }
         }
 
-        internal List<Failure> Failures;
+        internal List<Failure> failures;
 
         /// <summary>
         /// add a Failure object to the list of objects to be evaluated
@@ -1198,11 +1198,11 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                if (Failures == null)
+                if (failures == null)
                 {
-                    Failures = new List<Failure>();
+                    failures = new List<Failure>();
                 }
-                Failures.Add(fail);
+                failures.Add(fail);
             }
         }
 
@@ -1214,11 +1214,11 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                if (Failures != null)
+                if (failures != null)
                 {
-                    for (int i = 0; i < Failures.Count; i++)
+                    for (int i = 0; i < failures.Count; i++)
                     {
-                        Failures[i].Eval(this);
+                        failures[i].Eval(this);
                     }
                 }
             }
@@ -1279,7 +1279,7 @@ namespace Lucene.Net.Store
                 // some impls (e.g. FSDir) do instanceof here.
                 m_input.SetLockFactory(lockFactory);
                 // now set our wrapped factory here
-                this.LockFactory_Renamed = new MockLockFactoryWrapper(this, lockFactory);
+                this.m_lockFactory = new MockLockFactoryWrapper(this, lockFactory);
             }
         }
 
@@ -1290,9 +1290,9 @@ namespace Lucene.Net.Store
                 lock (this)
                 {
                     MaybeYield();
-                    if (WrapLockFactory_Renamed)
+                    if (wrapLockFactory)
                     {
-                        return LockFactory_Renamed;
+                        return m_lockFactory;
                     }
                     else
                     {
@@ -1326,12 +1326,12 @@ namespace Lucene.Net.Store
             MaybeYield();
             if (!LuceneTestCase.SlowFileExists(m_input, name))
             {
-                throw RandomState.NextBoolean() ? (IOException)new FileNotFoundException(name) : new DirectoryNotFoundException(name);
+                throw randomState.NextBoolean() ? (IOException)new FileNotFoundException(name) : new DirectoryNotFoundException(name);
             }
             // cannot open a file for input if it's still open for
             // output, except for segments.gen and segments_N
 
-            if (OpenFilesForWrite.Contains(name) && !name.StartsWith("segments", StringComparison.Ordinal))
+            if (openFilesForWrite.Contains(name) && !name.StartsWith("segments", StringComparison.Ordinal))
             {
                 throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
             }
@@ -1344,16 +1344,16 @@ namespace Lucene.Net.Store
 
         private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
         {
-            private readonly MockDirectoryWrapper OuterInstance;
+            private readonly MockDirectoryWrapper outerInstance;
 
-            private string Name;
-            private IndexInputSlicer DelegateHandle;
+            private string name;
+            private IndexInputSlicer delegateHandle;
 
             public IndexInputSlicerAnonymousInnerClassHelper(MockDirectoryWrapper outerInstance, string name, IndexInputSlicer delegateHandle)
             {
-                this.OuterInstance = outerInstance;
-                this.Name = name;
-                this.DelegateHandle = delegateHandle;
+                this.outerInstance = outerInstance;
+                this.name = name;
+                this.delegateHandle = delegateHandle;
             }
 
             private int disposed = 0;
@@ -1364,61 +1364,61 @@ namespace Lucene.Net.Store
                 {
                     if (disposing)
                     {
-                        DelegateHandle.Dispose();
-                        OuterInstance.RemoveOpenFile(this, Name);
+                        delegateHandle.Dispose();
+                        outerInstance.RemoveOpenFile(this, name);
                     }
                 }
             }
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
-                OuterInstance.MaybeYield();
-                IndexInput ii = new MockIndexInputWrapper(OuterInstance, Name, DelegateHandle.OpenSlice(sliceDescription, offset, length));
-                OuterInstance.AddFileHandle(ii, Name, Handle.Input);
+                outerInstance.MaybeYield();
+                IndexInput ii = new MockIndexInputWrapper(outerInstance, name, delegateHandle.OpenSlice(sliceDescription, offset, length));
+                outerInstance.AddFileHandle(ii, name, Handle.Input);
                 return ii;
             }
 
             [Obsolete("Only for reading CFS files from 3.x indexes.")]
             public override IndexInput OpenFullSlice()
             {
-                OuterInstance.MaybeYield();
-                IndexInput ii = new MockIndexInputWrapper(OuterInstance, Name, DelegateHandle.OpenFullSlice());
-                OuterInstance.AddFileHandle(ii, Name, Handle.Input);
+                outerInstance.MaybeYield();
+                IndexInput ii = new MockIndexInputWrapper(outerInstance, name, delegateHandle.OpenFullSlice());
+                outerInstance.AddFileHandle(ii, name, Handle.Input);
                 return ii;
             }
         }
 
         internal sealed class BufferedIndexOutputWrapper : BufferedIndexOutput
         {
-            private readonly MockDirectoryWrapper OuterInstance;
+            private readonly MockDirectoryWrapper outerInstance;
 
-            internal readonly IndexOutput Io;
+            internal readonly IndexOutput io;
 
             public BufferedIndexOutputWrapper(MockDirectoryWrapper outerInstance, int bufferSize, IndexOutput io)
                 : base(bufferSize)
             {
-                this.OuterInstance = outerInstance;
-                this.Io = io;
+                this.outerInstance = outerInstance;
+                this.io = io;
             }
 
             public override long Length
             {
                 get
                 {
-                    return Io.Length;
+                    return io.Length;
                 }
             }
 
             protected internal override void FlushBuffer(byte[] b, int offset, int len)
             {
-                Io.WriteBytes(b, offset, len);
+                io.WriteBytes(b, offset, len);
             }
 
             [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
             public override void Seek(long pos)
             {
                 Flush();
-                Io.Seek(pos);
+                io.Seek(pos);
             }
 
             public override void Flush()
@@ -1429,7 +1429,7 @@ namespace Lucene.Net.Store
                 }
                 finally
                 {
-                    Io.Flush();
+                    io.Flush();
                 }
             }
 
@@ -1443,7 +1443,7 @@ namespace Lucene.Net.Store
                     }
                     finally
                     {
-                        Io.Dispose();
+                        io.Dispose();
                     }
                 }
             }

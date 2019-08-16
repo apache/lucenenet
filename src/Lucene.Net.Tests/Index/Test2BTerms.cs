@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
             //MockDirectoryWrapper dir = NewFSDirectory(new File("/p/lucene/indices/2bindex"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
             dir.CheckIndexOnClose = false; // don't double-checkindex
 

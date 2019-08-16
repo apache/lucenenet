@@ -23,12 +23,12 @@ namespace Lucene.Net.Store
     /// </summary>
     public class MockLockFactoryWrapper : LockFactory
     {
-        internal MockDirectoryWrapper Dir;
+        internal MockDirectoryWrapper dir;
         internal LockFactory @delegate;
 
         public MockLockFactoryWrapper(MockDirectoryWrapper dir, LockFactory @delegate)
         {
-            this.Dir = dir;
+            this.dir = dir;
             this.@delegate = @delegate;
         }
 
@@ -52,7 +52,7 @@ namespace Lucene.Net.Store
         public override void ClearLock(string lockName)
         {
             @delegate.ClearLock(lockName);
-            Dir.OpenLocks.Remove(lockName);
+            dir.openLocks.Remove(lockName);
         }
 
         public override string ToString()
@@ -62,23 +62,23 @@ namespace Lucene.Net.Store
 
         private class MockLock : Lock
         {
-            private readonly MockLockFactoryWrapper OuterInstance;
+            private readonly MockLockFactoryWrapper outerInstance;
 
-            internal Lock DelegateLock;
-            internal string Name;
+            internal Lock delegateLock;
+            internal string name;
 
             internal MockLock(MockLockFactoryWrapper outerInstance, Lock @delegate, string name)
             {
-                this.OuterInstance = outerInstance;
-                this.DelegateLock = @delegate;
-                this.Name = name;
+                this.outerInstance = outerInstance;
+                this.delegateLock = @delegate;
+                this.name = name;
             }
 
             public override bool Obtain()
             {
-                if (DelegateLock.Obtain())
+                if (delegateLock.Obtain())
                 {
-                    OuterInstance.Dir.OpenLocks.Add(Name);
+                    outerInstance.dir.openLocks.Add(name);
                     return true;
                 }
                 else
@@ -91,14 +91,14 @@ namespace Lucene.Net.Store
             {
                 if (disposing)
                 {
-                    DelegateLock.Dispose();
-                    OuterInstance.Dir.OpenLocks.Remove(Name);
+                    delegateLock.Dispose();
+                    outerInstance.dir.openLocks.Remove(name);
                 }
             }
 
             public override bool IsLocked()
             {
-                return DelegateLock.IsLocked();
+                return delegateLock.IsLocked();
             }
         }
     }

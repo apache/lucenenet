@@ -445,7 +445,7 @@ namespace Lucene.Net.Index
                 // leftovers:
                 dir.AssertNoUnrefencedFilesOnClose = false;
 
-                if (DoFail)
+                if (m_doFail)
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
@@ -459,7 +459,7 @@ namespace Lucene.Net.Index
                     {
                         if (OnlyOnce)
                         {
-                            DoFail = false;
+                            m_doFail = false;
                         }
                         //System.out.println(Thread.currentThread().getName() + ": now fail");
                         //new Throwable(Console.WriteLine().StackTrace);
@@ -513,7 +513,7 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (DoFail)
+                if (m_doFail)
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
@@ -521,7 +521,7 @@ namespace Lucene.Net.Index
                     {
                         if (OnlyOnce)
                         {
-                            DoFail = false;
+                            m_doFail = false;
                         }
                         //System.out.println(Thread.currentThread().getName() + ": NOW FAIL: onlyOnce=" + onlyOnce);
                         //new Throwable(Console.WriteLine().StackTrace);

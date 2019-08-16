@@ -565,7 +565,7 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (!DoFail)
+                if (!m_doFail)
                 {
                     return;
                 }

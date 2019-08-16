@@ -17,6 +17,7 @@
 
 using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -47,7 +48,7 @@ namespace Lucene.Net.Util
                 BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));
                 if (dir is MockDirectoryWrapper)
                 {
-                    ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                    ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
                 }
                 int blockBits = TestUtil.NextInt(random, 1, 20);
                 int blockSize = 1 << blockBits;
@@ -186,7 +187,7 @@ namespace Lucene.Net.Util
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
             int blockBits = TestUtil.NextInt(Random(), 14, 28);
             int blockSize = 1 << blockBits;

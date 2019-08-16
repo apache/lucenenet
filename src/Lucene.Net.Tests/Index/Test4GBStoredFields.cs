@@ -2,6 +2,7 @@ using System;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -47,7 +48,7 @@ namespace Lucene.Net.Index
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new MMapDirectory(CreateTempDir("4GBStoredFields")));
-            dir.Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+            dir.Throttling = Throttling.NEVER;
 
             var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
                             .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)

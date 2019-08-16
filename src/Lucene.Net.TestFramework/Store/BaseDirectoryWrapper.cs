@@ -28,9 +28,9 @@ namespace Lucene.Net.Store
     // no randoms, no nothing.
     public class BaseDirectoryWrapper : FilterDirectory
     {
-        private bool CheckIndexOnClose_Renamed = true;
-        private bool CrossCheckTermVectorsOnClose_Renamed = true;
-        protected internal volatile bool IsOpen = true;
+        private bool checkIndexOnClose = true;
+        private bool crossCheckTermVectorsOnClose = true;
+        protected internal volatile bool m_isOpen = true;
 
         public BaseDirectoryWrapper(Directory @delegate)
             : base(@delegate)
@@ -41,10 +41,10 @@ namespace Lucene.Net.Store
         {
             if (disposing)
             {
-                IsOpen = false;
-                if (CheckIndexOnClose_Renamed && DirectoryReader.IndexExists(this))
+                m_isOpen = false;
+                if (checkIndexOnClose && DirectoryReader.IndexExists(this))
                 {
-                    TestUtil.CheckIndex(this, CrossCheckTermVectorsOnClose_Renamed);
+                    TestUtil.CheckIndex(this, crossCheckTermVectorsOnClose);
                 }
                 base.Dispose(disposing);
             }
@@ -54,7 +54,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return IsOpen;
+                return m_isOpen;
             }
         }
 
@@ -66,11 +66,11 @@ namespace Lucene.Net.Store
         {
             set
             {
-                this.CheckIndexOnClose_Renamed = value;
+                this.checkIndexOnClose = value;
             }
             get
             {
-                return CheckIndexOnClose_Renamed;
+                return checkIndexOnClose;
             }
         }
 
@@ -78,11 +78,11 @@ namespace Lucene.Net.Store
         {
             set
             {
-                this.CrossCheckTermVectorsOnClose_Renamed = value;
+                this.crossCheckTermVectorsOnClose = value;
             }
             get
             {
-                return CrossCheckTermVectorsOnClose_Renamed;
+                return crossCheckTermVectorsOnClose;
             }
         }
 
