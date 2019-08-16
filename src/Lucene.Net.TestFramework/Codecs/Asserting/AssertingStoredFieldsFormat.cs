@@ -95,40 +95,40 @@ namespace Lucene.Net.Codecs.Asserting
         internal class AssertingStoredFieldsWriter : StoredFieldsWriter
         {
             internal readonly StoredFieldsWriter @in;
-            internal int NumWritten;
-            internal int FieldCount;
-            internal Status DocStatus;
+            internal int numWritten;
+            internal int fieldCount;
+            internal Status docStatus;
 
             internal AssertingStoredFieldsWriter(StoredFieldsWriter @in)
             {
                 this.@in = @in;
-                this.DocStatus = Status.UNDEFINED;
+                this.docStatus = Status.UNDEFINED;
             }
 
             public override void StartDocument(int numStoredFields)
             {
-                Debug.Assert(DocStatus != Status.STARTED);
+                Debug.Assert(docStatus != Status.STARTED);
                 @in.StartDocument(numStoredFields);
-                Debug.Assert(FieldCount == 0);
-                FieldCount = numStoredFields;
-                NumWritten++;
-                DocStatus = Status.STARTED;
+                Debug.Assert(fieldCount == 0);
+                fieldCount = numStoredFields;
+                numWritten++;
+                docStatus = Status.STARTED;
             }
 
             public override void FinishDocument()
             {
-                Debug.Assert(DocStatus == Status.STARTED);
-                Debug.Assert(FieldCount == 0);
+                Debug.Assert(docStatus == Status.STARTED);
+                Debug.Assert(fieldCount == 0);
                 @in.FinishDocument();
-                DocStatus = Status.FINISHED;
+                docStatus = Status.FINISHED;
             }
 
             public override void WriteField(FieldInfo info, IIndexableField field)
             {
-                Debug.Assert(DocStatus == Status.STARTED);
+                Debug.Assert(docStatus == Status.STARTED);
                 @in.WriteField(info, field);
-                Debug.Assert(FieldCount > 0);
-                FieldCount--;
+                Debug.Assert(fieldCount > 0);
+                fieldCount--;
             }
 
             public override void Abort()
@@ -138,10 +138,10 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void Finish(FieldInfos fis, int numDocs)
             {
-                Debug.Assert(DocStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED));
+                Debug.Assert(docStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED));
                 @in.Finish(fis, numDocs);
-                Debug.Assert(FieldCount == 0);
-                Debug.Assert(numDocs == NumWritten);
+                Debug.Assert(fieldCount == 0);
+                Debug.Assert(numDocs == numWritten);
             }
 
             protected override void Dispose(bool disposing)

@@ -288,28 +288,28 @@ namespace Lucene.Net.Analysis
 
 		private class ThreadAnonymousInnerClassHelper : ThreadClass
 		{
-			private readonly CollationTestBase OuterInstance;
+			private readonly CollationTestBase outerInstance;
 
-			private Analyzer Analyzer;
-			private IDictionary<string, BytesRef> Map;
+			private Analyzer analyzer;
+			private IDictionary<string, BytesRef> map;
 
 			public ThreadAnonymousInnerClassHelper(CollationTestBase outerInstance, Analyzer analyzer, IDictionary<string, BytesRef> map)
 			{
-				this.OuterInstance = outerInstance;
-				this.Analyzer = analyzer;
-				this.Map = map;
+				this.outerInstance = outerInstance;
+				this.analyzer = analyzer;
+				this.map = map;
 			}
 
 			public override void Run()
 			{
 				try
 				{
-					foreach (var mapping in this.Map)
+					foreach (var mapping in this.map)
 					{
 						string term = mapping.Key;
 						BytesRef expected = mapping.Value;
 						IOException priorException = null;
-						TokenStream ts = this.Analyzer.GetTokenStream("fake", new StringReader(term));
+						TokenStream ts = this.analyzer.GetTokenStream("fake", new StringReader(term));
 						try
 						{
 							ITermToBytesRefAttribute termAtt = ts.AddAttribute<ITermToBytesRefAttribute>();

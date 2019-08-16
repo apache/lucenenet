@@ -32,11 +32,11 @@ namespace Lucene.Net.Analysis
         /// Represents a binary token. </summary>
         public sealed class BinaryToken
         {
-            internal BytesRef Term;
-            internal int PosInc;
-            internal int PosLen;
-            internal int StartOffset;
-            internal int EndOffset;
+            internal BytesRef Term { get; set; }
+            internal int PosInc { get; set; }
+            internal int PosLen { get; set; }
+            internal int StartOffset { get; set; }
+            internal int EndOffset { get; set; }
 
             public BinaryToken(BytesRef term)
             {
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis
         /// Implementation for <seealso cref="IBinaryTermAttribute"/>. </summary>
         public sealed class BinaryTermAttribute : Attribute, IBinaryTermAttribute
         {
-            internal readonly BytesRef Bytes = new BytesRef();
+            internal readonly BytesRef bytes = new BytesRef();
 
             public void FillBytesRef()
             {
@@ -86,11 +86,11 @@ namespace Lucene.Net.Analysis
             {
                 get
                 {
-                    return Bytes;
+                    return bytes;
                 }
                 set
                 {
-                    this.Bytes.CopyBytes(value);
+                    this.bytes.CopyBytes(value);
                 }
             }
 
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis
             public override void CopyTo(IAttribute target)
             {
                 BinaryTermAttribute other = (BinaryTermAttribute)target;
-                other.Bytes.CopyBytes(Bytes);
+                other.bytes.CopyBytes(bytes);
             }
 
             public override object Clone()

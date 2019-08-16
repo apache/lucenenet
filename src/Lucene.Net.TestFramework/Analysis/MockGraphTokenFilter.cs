@@ -68,11 +68,11 @@ namespace Lucene.Net.Analysis
                     Console.WriteLine("  do insert! posLen=" + posLength);
                 }
 
-                LookaheadTokenFilter.Position posEndData = positions.Get(OutputPos + posLength);
+                LookaheadTokenFilter.Position posEndData = positions.Get(m_outputPos + posLength);
 
                 // Look ahead as needed until we figure out the right
                 // endOffset:
-                while (!end && posEndData.EndOffset == -1 && InputPos <= (OutputPos + posLength))
+                while (!m_end && posEndData.EndOffset == -1 && m_inputPos <= (m_outputPos + posLength))
                 {
                     if (!PeekToken())
                     {
@@ -85,13 +85,13 @@ namespace Lucene.Net.Analysis
                     // Notify super class that we are injecting a token:
                     InsertToken();
                     ClearAttributes();
-                    PosLenAtt.PositionLength = posLength;
+                    m_posLenAtt.PositionLength = posLength;
                     termAtt.Append(TestUtil.RandomUnicodeString(random));
-                    PosIncAtt.PositionIncrement = 0;
-                    OffsetAtt.SetOffset(positions.Get(OutputPos).StartOffset, posEndData.EndOffset);
+                    m_posIncAtt.PositionIncrement = 0;
+                    m_offsetAtt.SetOffset(positions.Get(m_outputPos).StartOffset, posEndData.EndOffset);
                     if (DEBUG)
                     {
-                        Console.WriteLine("  inject: outputPos=" + OutputPos + " startOffset=" + OffsetAtt.StartOffset + " endOffset=" + OffsetAtt.EndOffset + " posLength=" + PosLenAtt.PositionLength);
+                        Console.WriteLine("  inject: outputPos=" + m_outputPos + " startOffset=" + m_offsetAtt.StartOffset + " endOffset=" + m_offsetAtt.EndOffset + " posLength=" + m_posLenAtt.PositionLength);
                     }
                     // TODO: set TypeAtt too?
                 }
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis
         {
             if (DEBUG)
             {
-                Console.WriteLine("MockGraphTF.incr inputPos=" + InputPos + " outputPos=" + OutputPos);
+                Console.WriteLine("MockGraphTF.incr inputPos=" + m_inputPos + " outputPos=" + m_outputPos);
             }
             if (random == null)
             {

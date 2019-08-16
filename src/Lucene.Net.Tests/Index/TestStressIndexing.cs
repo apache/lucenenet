@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
             MockDirectoryWrapper wrapper = directory as MockDirectoryWrapper;
             if (wrapper != null)
             {
-                wrapper.AssertNoUnrefencedFilesOnClose = true;
+                wrapper.AssertNoUnreferencedFilesOnClose = true;
             }
 
             RunStressTest(directory, newScheduler());

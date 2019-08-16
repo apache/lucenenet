@@ -643,13 +643,13 @@ namespace Lucene.Net.Store
             }
         }
 
-        private bool FailOnCreateOutput_Renamed = true;
+        private bool failOnCreateOutput = true;
 
         public virtual bool FailOnCreateOutput
         {
             set
             {
-                FailOnCreateOutput_Renamed = value;
+                failOnCreateOutput = value;
             }
         }
 
@@ -660,7 +660,7 @@ namespace Lucene.Net.Store
                 MaybeThrowDeterministicException();
                 MaybeThrowIOExceptionOnOpen(name);
                 MaybeYield();
-                if (FailOnCreateOutput_Renamed)
+                if (failOnCreateOutput)
                 {
                     MaybeThrowDeterministicException();
                 }
@@ -773,13 +773,13 @@ namespace Lucene.Net.Store
             }
         }
 
-        private bool FailOnOpenInput_Renamed = true;
+        private bool failOnOpenInput = true;
 
         public virtual bool FailOnOpenInput
         {
             set
             {
-                FailOnOpenInput_Renamed = value;
+                failOnOpenInput = value;
             }
         }
 
@@ -790,7 +790,7 @@ namespace Lucene.Net.Store
                 MaybeThrowDeterministicException();
                 MaybeThrowIOExceptionOnOpen(name);
                 MaybeYield();
-                if (FailOnOpenInput_Renamed)
+                if (failOnOpenInput)
                 {
                     MaybeThrowDeterministicException();
                 }
@@ -885,13 +885,13 @@ namespace Lucene.Net.Store
         }
 
         // NOTE: this is off by default; see LUCENE-5574
-        private bool AssertNoUnreferencedFilesOnClose;
+        private bool assertNoUnreferencedFilesOnClose;
 
-        public virtual bool AssertNoUnrefencedFilesOnClose
+        public virtual bool AssertNoUnreferencedFilesOnClose
         {
             set
             {
-                AssertNoUnreferencedFilesOnClose = value;
+                assertNoUnreferencedFilesOnClose = value;
             }
         }
 
@@ -962,7 +962,7 @@ namespace Lucene.Net.Store
                             TestUtil.CheckIndex(this, CrossCheckTermVectorsOnClose);
 
                             // TODO: factor this out / share w/ TestIW.assertNoUnreferencedFiles
-                            if (AssertNoUnreferencedFilesOnClose)
+                            if (assertNoUnreferencedFilesOnClose)
                             {
                                 // now look for unreferenced files: discount ones that we tried to delete but could not
                                 HashSet<string> allFiles = new HashSet<string>(Arrays.AsList(ListAll()));

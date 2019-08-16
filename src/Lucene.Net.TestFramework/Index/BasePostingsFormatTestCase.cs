@@ -319,8 +319,8 @@ namespace Lucene.Net.Index
 
         private class FieldAndTerm
         {
-            internal string Field;
-            internal BytesRef Term;
+            internal string Field { get; set; }
+            internal BytesRef Term { get; set; }
 
             public FieldAndTerm(string field, BytesRef term)
             {
@@ -330,17 +330,17 @@ namespace Lucene.Net.Index
         }
 
         // Holds all postings:
-        private static SortedDictionary<string, SortedDictionary<BytesRef, long>> Fields;
+        private static SortedDictionary<string, SortedDictionary<BytesRef, long>> fields;
 
-        private static FieldInfos FieldInfos;
+        private static FieldInfos fieldInfos;
 
-        private static FixedBitSet GlobalLiveDocs;
+        private static FixedBitSet globalLiveDocs;
 
-        private static IList<FieldAndTerm> AllTerms;
-        private static int MaxDoc;
+        private static IList<FieldAndTerm> allTerms;
+        private static int maxDoc;
 
-        private static long TotalPostings;
-        private static long TotalPayloadBytes;
+        private static long totalPostings;
+        private static long totalPayloadBytes;
 
         private static SeedPostings GetSeedPostings(string term, long seed, bool withLiveDocs, IndexOptions options)
         {
@@ -366,7 +366,7 @@ namespace Lucene.Net.Index
                 maxDocFreq = 3;
             }
 
-            return new SeedPostings(seed, minDocFreq, maxDocFreq, withLiveDocs ? GlobalLiveDocs : null, options);
+            return new SeedPostings(seed, minDocFreq, maxDocFreq, withLiveDocs ? globalLiveDocs : null, options);
         }
 
         [OneTimeSetUp]
@@ -374,25 +374,25 @@ namespace Lucene.Net.Index
         {
             base.BeforeClass();
 
-            TotalPostings = 0;
-            TotalPayloadBytes = 0;
+            totalPostings = 0;
+            totalPayloadBytes = 0;
 
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            Fields = new SortedDictionary<string, SortedDictionary<BytesRef, long>>(StringComparer.Ordinal);
+            fields = new SortedDictionary<string, SortedDictionary<BytesRef, long>>(StringComparer.Ordinal);
 
             int numFields = TestUtil.NextInt(Random(), 1, 5);
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: " + numFields + " fields");
             }
-            MaxDoc = 0;
+            maxDoc = 0;
 
             FieldInfo[] fieldInfoArray = new FieldInfo[numFields];
             int fieldUpto = 0;
             while (fieldUpto < numFields)
             {
                 string field = TestUtil.RandomSimpleString(Random());
-                if (Fields.ContainsKey(field))
+                if (fields.ContainsKey(field))
                 {
                     continue;
                 }
@@ -403,7 +403,7 @@ namespace Lucene.Net.Index
                 fieldUpto++;
 
                 SortedDictionary<BytesRef, long> postings = new SortedDictionary<BytesRef, long>();
-                Fields[field] = postings;
+                fields[field] = postings;
                 HashSet<string> seenTerms = new HashSet<string>();
 
                 int numTerms;
@@ -458,61 +458,61 @@ namespace Lucene.Net.Index
                     {
                         lastDoc = doc;
                     }
-                    MaxDoc = Math.Max(lastDoc, MaxDoc);
+                    maxDoc = Math.Max(lastDoc, maxDoc);
                 }
             }
 
-            FieldInfos = new FieldInfos(fieldInfoArray);
+            fieldInfos = new FieldInfos(fieldInfoArray);
 
             // It's the count, not the last docID:
-            MaxDoc++;
+            maxDoc++;
 
-            GlobalLiveDocs = new FixedBitSet(MaxDoc);
+            globalLiveDocs = new FixedBitSet(maxDoc);
             double liveRatio = Random().NextDouble();
-            for (int i = 0; i < MaxDoc; i++)
+            for (int i = 0; i < maxDoc; i++)
             {
                 if (Random().NextDouble() <= liveRatio)
                 {
-                    GlobalLiveDocs.Set(i);
+                    globalLiveDocs.Set(i);
                 }
             }
 
-            AllTerms = new List<FieldAndTerm>();
-            foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in Fields)
+            allTerms = new List<FieldAndTerm>();
+            foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in fields)
             {
                 string field = fieldEnt.Key;
                 foreach (KeyValuePair<BytesRef, long> termEnt in fieldEnt.Value.EntrySet())
                 {
-                    AllTerms.Add(new FieldAndTerm(field, termEnt.Key));
+                    allTerms.Add(new FieldAndTerm(field, termEnt.Key));
                 }
             }
 
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: done init postings; " + AllTerms.Count + " total terms, across " + FieldInfos.Count + " fields");
+                Console.WriteLine("TEST: done init postings; " + allTerms.Count + " total terms, across " + fieldInfos.Count + " fields");
             }
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            AllTerms = null;
-            FieldInfos = null;
-            Fields = null;
-            GlobalLiveDocs = null;
+            allTerms = null;
+            fieldInfos = null;
+            fields = null;
+            globalLiveDocs = null;
             base.AfterClass();
         }
 
         // TODO maybe instead of @BeforeClass just make a single test run: build postings & index & test it?
 
-        private FieldInfos CurrentFieldInfos;
+        private FieldInfos currentFieldInfos;
 
         // maxAllowed = the "highest" we can index, but we will still
         // randomly index at lower IndexOption
         private FieldsProducer BuildIndex(Directory dir, IndexOptions maxAllowed, bool allowPayloads, bool alwaysTestMax)
         {
             Codec codec = Codec;
-            SegmentInfo segmentInfo = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, "_0", MaxDoc, false, codec, null);
+            SegmentInfo segmentInfo = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, "_0", maxDoc, false, codec, null);
 
             int maxIndexOption = Enum.GetValues(typeof(IndexOptions)).Cast<IndexOptions>().ToList().IndexOf(maxAllowed);
             if (VERBOSE)
@@ -524,10 +524,10 @@ namespace Lucene.Net.Index
 
             // TODO use allowPayloads
 
-            var newFieldInfoArray = new FieldInfo[Fields.Count];
-            for (int fieldUpto = 0; fieldUpto < Fields.Count; fieldUpto++)
+            var newFieldInfoArray = new FieldInfo[fields.Count];
+            for (int fieldUpto = 0; fieldUpto < fields.Count; fieldUpto++)
             {
-                FieldInfo oldFieldInfo = FieldInfos.FieldInfo(fieldUpto);
+                FieldInfo oldFieldInfo = fieldInfos.FieldInfo(fieldUpto);
 
                 string pf = TestUtil.GetPostingsFormat(codec, oldFieldInfo.Name);
                 int fieldMaxIndexOption;
@@ -552,15 +552,15 @@ namespace Lucene.Net.Index
 
             // Estimate that flushed segment size will be 25% of
             // what we use in RAM:
-            long bytes = TotalPostings * 8 + TotalPayloadBytes;
+            long bytes = totalPostings * 8 + totalPayloadBytes;
 
-            SegmentWriteState writeState = new SegmentWriteState(null, dir, segmentInfo, newFieldInfos, 32, null, new IOContext(new FlushInfo(MaxDoc, bytes)));
+            SegmentWriteState writeState = new SegmentWriteState(null, dir, segmentInfo, newFieldInfos, 32, null, new IOContext(new FlushInfo(maxDoc, bytes)));
 
             // LUCENENET specific - BUG: we must wrap this in a using block in case anything in the below loop throws
             using (FieldsConsumer fieldsConsumer = codec.PostingsFormat.FieldsConsumer(writeState))
             {
 
-                foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in Fields)
+                foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in fields)
                 {
                     string field = fieldEnt.Key;
                     IDictionary<BytesRef, long> terms = fieldEnt.Value;
@@ -582,7 +582,7 @@ namespace Lucene.Net.Index
                     TermsConsumer termsConsumer = fieldsConsumer.AddField(fieldInfo);
                     long sumTotalTF = 0;
                     long sumDF = 0;
-                    FixedBitSet seenDocs = new FixedBitSet(MaxDoc);
+                    FixedBitSet seenDocs = new FixedBitSet(maxDoc);
                     foreach (KeyValuePair<BytesRef, long> termEnt in terms)
                     {
                         BytesRef term = termEnt.Key;
@@ -655,7 +655,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            CurrentFieldInfos = newFieldInfos;
+            currentFieldInfos = newFieldInfos;
 
             SegmentReadState readState = new SegmentReadState(dir, segmentInfo, newFieldInfos, IOContext.READ, 1);
 
@@ -697,7 +697,7 @@ namespace Lucene.Net.Index
             IBits liveDocs;
             if (useLiveDocs)
             {
-                liveDocs = GlobalLiveDocs;
+                liveDocs = globalLiveDocs;
                 if (VERBOSE)
                 {
                     Console.WriteLine("  use liveDocs");
@@ -712,11 +712,11 @@ namespace Lucene.Net.Index
                 }
             }
 
-            FieldInfo fieldInfo = CurrentFieldInfos.FieldInfo(field);
+            FieldInfo fieldInfo = currentFieldInfos.FieldInfo(field);
 
             // NOTE: can be empty list if we are using liveDocs:
             SeedPostings expected = GetSeedPostings(term.Utf8ToString(), 
-                                                    Fields[field][term], 
+                                                    fields[field][term], 
                                                     useLiveDocs, 
                                                     maxIndexOptions);
             Assert.AreEqual(expected.DocFreq, termsEnum.DocFreq);
@@ -854,7 +854,7 @@ namespace Lucene.Net.Index
             double skipChance = alwaysTestMax ? 0.5 : Random().NextDouble();
             int numSkips = expected.DocFreq < 3 ? 1 : TestUtil.NextInt(Random(), 1, Math.Min(20, expected.DocFreq / 3));
             int skipInc = expected.DocFreq / numSkips;
-            int skipDocInc = MaxDoc / numSkips;
+            int skipDocInc = maxDoc / numSkips;
 
             // Sometimes do 100% skipping:
             bool doAllSkipping = options.Contains(Option.SKIPPING) && Random().Next(7) == 1;
@@ -929,7 +929,7 @@ namespace Lucene.Net.Index
 
                     if (expected.Upto >= stopAt)
                     {
-                        int target = Random().NextBoolean() ? MaxDoc : DocsEnum.NO_MORE_DOCS;
+                        int target = Random().NextBoolean() ? maxDoc : DocsEnum.NO_MORE_DOCS;
                         if (VERBOSE)
                         {
                             Console.WriteLine("  now advance to end (target=" + target + ")");
@@ -1148,9 +1148,9 @@ namespace Lucene.Net.Index
             IList<TermState> termStates = new List<TermState>();
             IList<FieldAndTerm> termStateTerms = new List<FieldAndTerm>();
 
-            Collections.Shuffle(AllTerms);
+            Collections.Shuffle(allTerms);
             int upto = 0;
-            while (upto < AllTerms.Count)
+            while (upto < allTerms.Count)
             {
                 bool useTermState = termStates.Count != 0 && Random().Next(5) == 1;
                 FieldAndTerm fieldAndTerm;
@@ -1161,7 +1161,7 @@ namespace Lucene.Net.Index
                 if (!useTermState)
                 {
                     // Seek by random field+term:
-                    fieldAndTerm = AllTerms[upto++];
+                    fieldAndTerm = allTerms[upto++];
                     if (VERBOSE)
                     {
                         Console.WriteLine("\nTEST: seek to term=" + fieldAndTerm.Field + ":" + fieldAndTerm.Term.Utf8ToString());

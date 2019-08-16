@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis
         {
             // At the outset, getMaxPos is -1. So we'll peek. When we reach the end of the sentence and go to the
             // first token of the next sentence, maxPos will be the prev sentence's end token, and we'll go again.
-            if (positions.MaxPos < OutputPos)
+            if (positions.MaxPos < m_outputPos)
             {
                 PeekSentence();
             }
@@ -65,16 +65,16 @@ namespace Lucene.Net.Analysis
 
         protected internal override void AfterPosition()
         {
-            if (InsertUpto < OutputPos)
+            if (InsertUpto < m_outputPos)
             {
                 InsertToken();
                 // replace term with 'improved' term.
                 ClearAttributes();
                 TermAtt.SetEmpty();
                 PosIncAtt.PositionIncrement = 0;
-                TermAtt.Append(((TestPosition)positions.Get(OutputPos)).Fact);
-                OffsetAtt.SetOffset(positions.Get(OutputPos).StartOffset, positions.Get(OutputPos + 1).EndOffset);
-                InsertUpto = OutputPos;
+                TermAtt.Append(((TestPosition)positions.Get(m_outputPos)).Fact);
+                OffsetAtt.SetOffset(positions.Get(m_outputPos).StartOffset, positions.Get(m_outputPos + 1).EndOffset);
+                InsertUpto = m_outputPos;
             }
         }
 
@@ -103,7 +103,7 @@ namespace Lucene.Net.Analysis
             for (int x = 0; x < facts.Count; x++)
             {
                 // sentenceTokens is just relative to sentence, positions is absolute.
-                ((TestPosition)positions.Get(OutputPos + x)).Fact = facts[x];
+                ((TestPosition)positions.Get(m_outputPos + x)).Fact = facts[x];
             }
         }
     }

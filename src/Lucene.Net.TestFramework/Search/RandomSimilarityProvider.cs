@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
             perFieldSeed = random.Next();
             coordType = random.Next(3);
             shouldQueryNorm = random.NextBoolean();
-            knownSims = new List<Similarity>(AllSims);
+            knownSims = new List<Similarity>(allSims);
             Collections.Shuffle(knownSims, random);
         }
 
@@ -140,20 +140,20 @@ namespace Lucene.Net.Search
         /// Lambdas for IB. </summary>
         internal static Lambda[] LAMBDAS = new Lambda[] { new LambdaDF(), new LambdaTTF() };
 
-        internal static IList<Similarity> AllSims;
+        internal static IList<Similarity> allSims;
 
         static RandomSimilarityProvider()
         {
-            AllSims = new List<Similarity>();
-            AllSims.Add(new DefaultSimilarity());
-            AllSims.Add(new BM25Similarity());
+            allSims = new List<Similarity>();
+            allSims.Add(new DefaultSimilarity());
+            allSims.Add(new BM25Similarity());
             foreach (BasicModel basicModel in BASIC_MODELS)
             {
                 foreach (AfterEffect afterEffect in AFTER_EFFECTS)
                 {
                     foreach (Normalization normalization in NORMALIZATIONS)
                     {
-                        AllSims.Add(new DFRSimilarity(basicModel, afterEffect, normalization));
+                        allSims.Add(new DFRSimilarity(basicModel, afterEffect, normalization));
                     }
                 }
             }
@@ -163,14 +163,14 @@ namespace Lucene.Net.Search
                 {
                     foreach (Normalization normalization in NORMALIZATIONS)
                     {
-                        AllSims.Add(new IBSimilarity(distribution, lambda, normalization));
+                        allSims.Add(new IBSimilarity(distribution, lambda, normalization));
                     }
                 }
             }
             /* TODO: enable Dirichlet
             allSims.Add(new LMDirichletSimilarity()); */
-            AllSims.Add(new LMJelinekMercerSimilarity(0.1f));
-            AllSims.Add(new LMJelinekMercerSimilarity(0.7f));
+            allSims.Add(new LMJelinekMercerSimilarity(0.1f));
+            allSims.Add(new LMJelinekMercerSimilarity(0.7f));
         }
 
         public override string ToString()

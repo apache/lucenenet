@@ -45,12 +45,12 @@ namespace Lucene.Net.Search
             return SCORE_COLLECTOR.IsOverriddenAsOf(inScorer.GetType()) || SCORE_COLLECTOR_RANGE.IsOverriddenAsOf(inScorer.GetType());
         }
 
-        internal readonly Random Random;
+        internal readonly Random random;
         internal readonly BulkScorer @in;
 
         private AssertingBulkScorer(Random random, BulkScorer @in)
         {
-            this.Random = random;
+            this.random = random;
             this.@in = @in;
         }
 
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
 
         public override void Score(ICollector collector)
         {
-            if (Random.NextBoolean())
+            if (random.NextBoolean())
             {
                 try
                 {

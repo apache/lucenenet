@@ -2692,7 +2692,7 @@ namespace Lucene.Net.Util
         /// A base location for temporary files of a given test. Helps in figuring out
         /// which tests left which files and where.
         /// </summary>
-        private static DirectoryInfo TempDirBase;
+        private static DirectoryInfo tempDirBase;
 
         /// <summary>
         /// Retry to create temporary file name this many times.
@@ -2843,7 +2843,7 @@ namespace Lucene.Net.Util
         /// A queue of temporary resources to be removed after the
         /// suite completes. </summary>
         /// <seealso cref= #registerToRemoveAfterSuite(File) </seealso>
-        private static readonly ConcurrentQueue<string> CleanupQueue = new ConcurrentQueue<string>();
+        private static readonly ConcurrentQueue<string> cleanupQueue = new ConcurrentQueue<string>();
 
         /// <summary>
         /// Register temporary folder for removal after the suite completes.
@@ -2858,7 +2858,7 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            CleanupQueue.Enqueue(f.FullName);
+            cleanupQueue.Enqueue(f.FullName);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -2870,8 +2870,8 @@ namespace Lucene.Net.Util
         private void CleanupTemporaryFiles()
         {
             // Drain cleanup queue and clear it.
-            var tempDirBasePath = (TempDirBase != null ? TempDirBase.FullName : null);
-            TempDirBase = null;
+            var tempDirBasePath = (tempDirBase != null ? tempDirBase.FullName : null);
+            tempDirBase = null;
 
             // Only check and throw an IOException on un-removable files if the test
             // was successful. Otherwise just report the path of temporary files
@@ -2879,7 +2879,7 @@ namespace Lucene.Net.Util
             if (LuceneTestCase.SuiteFailureMarker /*.WasSuccessful()*/)
             {
                 string f;
-                while (CleanupQueue.TryDequeue(out f))
+                while (cleanupQueue.TryDequeue(out f))
                 {
                     try
                     {

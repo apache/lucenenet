@@ -443,7 +443,7 @@ namespace Lucene.Net.Index
                 // Since we throw exc during abort, eg when IW is
                 // attempting to delete files, we will leave
                 // leftovers:
-                dir.AssertNoUnrefencedFilesOnClose = false;
+                dir.AssertNoUnreferencedFilesOnClose = false;
 
                 if (m_doFail)
                 {

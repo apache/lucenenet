@@ -200,29 +200,29 @@ namespace Lucene.Net.Codecs.Lucene40
             return 0;
         }
 
-        internal int LastDocID;
-        internal int Df;
+        internal int lastDocID;
+        internal int df;
 
         public override void StartDoc(int docID, int termDocFreq)
         {
             // if (DEBUG) System.out.println("SPW:   startDoc seg=" + segment + " docID=" + docID + " tf=" + termDocFreq + " freqOut.fp=" + freqOut.getFilePointer());
 
-            int delta = docID - LastDocID;
+            int delta = docID - lastDocID;
 
-            if (docID < 0 || (Df > 0 && delta <= 0))
+            if (docID < 0 || (df > 0 && delta <= 0))
             {
-                throw new CorruptIndexException("docs out of order (" + docID + " <= " + LastDocID + " ) (freqOut: " + freqOut + ")");
+                throw new CorruptIndexException("docs out of order (" + docID + " <= " + lastDocID + " ) (freqOut: " + freqOut + ")");
             }
 
-            if ((++Df % skipInterval) == 0)
+            if ((++df % skipInterval) == 0)
             {
-                skipListWriter.SetSkipData(LastDocID, storePayloads, lastPayloadLength, storeOffsets, lastOffsetLength);
-                skipListWriter.BufferSkip(Df);
+                skipListWriter.SetSkipData(lastDocID, storePayloads, lastPayloadLength, storeOffsets, lastOffsetLength);
+                skipListWriter.BufferSkip(df);
             }
 
             Debug.Assert(docID < totalNumDocs, "docID=" + docID + " totalNumDocs=" + totalNumDocs);
 
-            LastDocID = docID;
+            lastDocID = docID;
             if (indexOptions == IndexOptions.DOCS_ONLY)
             {
                 freqOut.WriteVInt32(delta);
@@ -324,10 +324,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
             // TODO: wasteful we are counting this (counting # docs
             // for this term) in two places?
-            Debug.Assert(state.DocFreq == Df);
+            Debug.Assert(state.DocFreq == df);
             state.FreqStart = freqStart;
             state.ProxStart = proxStart;
-            if (Df >= skipMinimum)
+            if (df >= skipMinimum)
             {
                 state.SkipOffset = skipListWriter.WriteSkip(freqOut) - freqStart;
             }
@@ -335,8 +335,8 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 state.SkipOffset = -1;
             }
-            LastDocID = 0;
-            Df = 0;
+            lastDocID = 0;
+            df = 0;
         }
 
         public override void EncodeTerm(long[] empty, DataOutput @out, FieldInfo fieldInfo, BlockTermState _state, bool absolute)

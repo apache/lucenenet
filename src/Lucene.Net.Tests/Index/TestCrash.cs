@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
 
             // We create leftover files because merging could be
             // running when we crash:
-            dir.AssertNoUnrefencedFilesOnClose = false;
+            dir.AssertNoUnreferencedFilesOnClose = false;
 
             Crash(writer);
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
 
             // We create leftover files because merging could be
             // running / store files could be open when we crash:
-            dir.AssertNoUnrefencedFilesOnClose = false;
+            dir.AssertNoUnreferencedFilesOnClose = false;
 
             dir.PreventDoubleWrite = false;
             Console.WriteLine("TEST: now crash");
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
 
             // We create leftover files because merging could be
             // running when we crash:
-            dir.AssertNoUnrefencedFilesOnClose = false;
+            dir.AssertNoUnreferencedFilesOnClose = false;
 
             writer.Dispose();
             writer = InitIndex(newScheduler2, Random(), dir, false);

@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private const string SEPARATE_NORMS_EXTENSION = "s";
 
         private readonly IndexOutput @out;
-        private int LastFieldNumber = -1; // only for assert
+        private int lastFieldNumber = -1; // only for assert
 
         public PreFlexRWNormsConsumer(Directory directory, string segment, IOContext context)
         {
@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
-            Debug.Assert(field.Number > LastFieldNumber, "writing norms fields out of order" + LastFieldNumber + " -> " + field.Number);
+            Debug.Assert(field.Number > lastFieldNumber, "writing norms fields out of order" + lastFieldNumber + " -> " + field.Number);
             foreach (var n in values)
             {
                 if (((sbyte)(byte)(long)n) < sbyte.MinValue || ((sbyte)(byte)(long)n) > sbyte.MaxValue)
@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 @out.WriteByte((byte)(sbyte)n);
             }
-            LastFieldNumber = field.Number;
+            lastFieldNumber = field.Number;
         }
 
         protected override void Dispose(bool disposing)

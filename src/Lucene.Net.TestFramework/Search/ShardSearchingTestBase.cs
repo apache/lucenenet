@@ -535,7 +535,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            internal volatile ShardIndexSearcher CurrentShardSearcher;
+            internal volatile ShardIndexSearcher currentShardSearcher;
 
             public NodeState(ShardSearchingTestBase outerInstance, Random random, int nodeID, int numNodes)
             {
@@ -562,19 +562,19 @@ namespace Lucene.Net.Search
 
             public void InitSearcher(long[] nodeVersions)
             {
-                Debug.Assert(CurrentShardSearcher == null);
+                Debug.Assert(currentShardSearcher == null);
                 Array.Copy(nodeVersions, 0, CurrentNodeVersions, 0, CurrentNodeVersions.Length);
-                CurrentShardSearcher = new ShardIndexSearcher(this, (long[])CurrentNodeVersions.Clone(), Mgr.Acquire().IndexReader, MyNodeID);
+                currentShardSearcher = new ShardIndexSearcher(this, (long[])CurrentNodeVersions.Clone(), Mgr.Acquire().IndexReader, MyNodeID);
             }
 
             public void UpdateNodeVersion(int nodeID, long version)
             {
                 CurrentNodeVersions[nodeID] = version;
-                if (CurrentShardSearcher != null)
+                if (currentShardSearcher != null)
                 {
-                    CurrentShardSearcher.IndexReader.DecRef();
+                    currentShardSearcher.IndexReader.DecRef();
                 }
-                CurrentShardSearcher = new ShardIndexSearcher(this, (long[])CurrentNodeVersions.Clone(), Mgr.Acquire().IndexReader, MyNodeID);
+                currentShardSearcher = new ShardIndexSearcher(this, (long[])CurrentNodeVersions.Clone(), Mgr.Acquire().IndexReader, MyNodeID);
             }
 
             // Get the current (fresh) searcher for this node
@@ -582,7 +582,7 @@ namespace Lucene.Net.Search
             {
                 while (true)
                 {
-                    ShardIndexSearcher s = CurrentShardSearcher;
+                    ShardIndexSearcher s = currentShardSearcher;
                     // In theory the reader could get decRef'd to 0
                     // before we have a chance to incRef, ie if a reopen
                     // happens right after the above line, this thread
@@ -637,9 +637,9 @@ namespace Lucene.Net.Search
 
             public void Dispose()
             {
-                if (CurrentShardSearcher != null)
+                if (currentShardSearcher != null)
                 {
-                    CurrentShardSearcher.IndexReader.DecRef();
+                    currentShardSearcher.IndexReader.DecRef();
                 }
                 Searchers.Dispose();
                 Mgr.Dispose();

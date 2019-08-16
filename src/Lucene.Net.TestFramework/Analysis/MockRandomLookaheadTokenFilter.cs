@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis
 
         protected internal override void AfterPosition()
         {
-            if (!end && random.Next(4) == 2)
+            if (!m_end && random.Next(4) == 2)
             {
                 PeekToken();
             }
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis
                 Console.WriteLine("\n" + Thread.CurrentThread.Name + ": MRLTF.incrToken");
             }
 
-            if (!end)
+            if (!m_end)
             {
                 while (true)
                 {
@@ -73,13 +73,13 @@ namespace Lucene.Net.Analysis
                         {
                             if (DEBUG)
                             {
-                                Console.WriteLine("  peek; inputPos=" + InputPos + " END");
+                                Console.WriteLine("  peek; inputPos=" + m_inputPos + " END");
                             }
                             break;
                         }
                         if (DEBUG)
                         {
-                            Console.WriteLine("  peek; inputPos=" + InputPos + " token=" + termAtt);
+                            Console.WriteLine("  peek; inputPos=" + m_inputPos + " token=" + termAtt);
                         }
                     }
                     else

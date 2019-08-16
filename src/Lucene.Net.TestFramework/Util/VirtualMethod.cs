@@ -64,12 +64,12 @@ namespace Lucene.Net.Util
     // is not generic).
     public sealed class VirtualMethod
     {
-        private static readonly ISet<MethodInfo> SingletonSet = new ConcurrentHashSet<MethodInfo>(new HashSet<MethodInfo>());
+        private static readonly ISet<MethodInfo> singletonSet = new ConcurrentHashSet<MethodInfo>(new HashSet<MethodInfo>());
 
-        private readonly Type BaseClass;
-        private readonly string Method;
-        private readonly Type[] Parameters;
-        private readonly WeakIdentityMap<Type, int> Cache = WeakIdentityMap<Type, int>.NewConcurrentHashMap(false);
+        private readonly Type baseClass;
+        private readonly string method;
+        private readonly Type[] parameters;
+        private readonly WeakIdentityMap<Type, int> cache = WeakIdentityMap<Type, int>.NewConcurrentHashMap(false);
 
         /// <summary>
         /// Creates a new instance for the given <c>baseClass</c> and method declaration. </summary>
@@ -78,9 +78,9 @@ namespace Lucene.Net.Util
         /// <exception cref="ArgumentException"> if <c>baseClass</c> does not declare the given method. </exception>
         public VirtualMethod(Type baseClass, string method, params Type[] parameters)
         {
-            this.BaseClass = baseClass;
-            this.Method = method;
-            this.Parameters = parameters;
+            this.baseClass = baseClass;
+            this.method = method;
+            this.parameters = parameters;
             try
             {
                 MethodInfo mi = GetMethod(baseClass, method, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, parameters);
@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
                 {
                     throw new System.ArgumentException(baseClass.Name + " has no such method.");
                 }
-                else if (!SingletonSet.Add(mi))
+                else if (!singletonSet.Add(mi))
                 {
                     throw new System.NotSupportedException("VirtualMethod instances must be singletons and therefore " + "assigned to static final members in the same class, they use as baseClass ctor param.");
                 }
@@ -105,11 +105,11 @@ namespace Lucene.Net.Util
         /// <returns> 0 iff not overridden, else the distance to the base class </returns>
         public int GetImplementationDistance(Type subclazz)
         {
-            int distance = Cache.Get(subclazz);
+            int distance = cache.Get(subclazz);
             if (distance == default(int))
             {
                 // we have the slight chance that another thread may do the same, but who cares?
-                Cache.Put(subclazz, distance = Convert.ToInt32(ReflectImplementationDistance(subclazz), CultureInfo.InvariantCulture));
+                cache.Put(subclazz, distance = Convert.ToInt32(ReflectImplementationDistance(subclazz), CultureInfo.InvariantCulture));
             }
             return (int)distance;
         }
@@ -127,20 +127,20 @@ namespace Lucene.Net.Util
 
         private int ReflectImplementationDistance(Type subclazz)
         {
-            if (!BaseClass.GetTypeInfo().IsAssignableFrom(subclazz))
+            if (!baseClass.GetTypeInfo().IsAssignableFrom(subclazz))
             {
-                throw new System.ArgumentException(subclazz.Name + " is not a subclass of " + BaseClass.Name);
+                throw new System.ArgumentException(subclazz.Name + " is not a subclass of " + baseClass.Name);
             }
             bool overridden = false;
             int distance = 0;
-            for (Type clazz = subclazz; clazz != BaseClass && clazz != null; clazz = clazz.GetTypeInfo().BaseType)
+            for (Type clazz = subclazz; clazz != baseClass && clazz != null; clazz = clazz.GetTypeInfo().BaseType)
             {
                 // lookup method, if success mark as overridden
                 if (!overridden)
                 {
-                    MethodInfo mi =  GetMethod(clazz, Method,
+                    MethodInfo mi =  GetMethod(clazz, method,
                         BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly,
-                        Parameters);
+                        parameters);
 
                     if (mi != null)
                         overridden = true;

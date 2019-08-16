@@ -440,7 +440,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Operators for <seealso cref="#randomRegexpishString(Random, int)"/>.
         /// </summary>
-        private static readonly IList<string> Ops = Arrays.AsList(".", "?", "{0," + MaxRecursionBound + "}", "{1," + MaxRecursionBound + "}", "(", ")", "-", "[", "]", "|"); // bounded replacement for '+' -  bounded replacement for '*'
+        private static readonly IList<string> ops = Arrays.AsList(".", "?", "{0," + MaxRecursionBound + "}", "{1," + MaxRecursionBound + "}", "(", ")", "-", "[", "]", "|"); // bounded replacement for '+' -  bounded replacement for '*'
 
         /// <summary>
         /// Returns a String thats "regexpish" (contains lots of operators typically found in regular expressions)
@@ -461,7 +461,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    regexp.Append(RandomInts.RandomFrom(r, Ops));
+                    regexp.Append(RandomInts.RandomFrom(r, ops));
                 }
             }
             return regexp.ToString();
@@ -724,7 +724,7 @@ namespace Lucene.Net.Util
             return builder.ToString();
         }
 
-        private static readonly int[] BlockStarts = new int[]
+        private static readonly int[] blockStarts = new int[]
         {
             0x0000, 0x0080, 0x0100, 0x0180, 0x0250, 0x02B0, 0x0300, 0x0370, 0x0400, 0x0500, 0x0530, 0x0590, 0x0600, 0x0700,
             0x0750, 0x0780, 0x07C0, 0x0800, 0x0900, 0x0980, 0x0A00, 0x0A80, 0x0B00, 0x0B80, 0x0C00, 0x0C80, 0x0D00, 0x0D80,
@@ -743,7 +743,7 @@ namespace Lucene.Net.Util
             0x2F800, 0xE0000, 0xE0100, 0xF0000, 0x100000
         };
 
-        private static readonly int[] BlockEnds = new int[]
+        private static readonly int[] blockEnds = new int[]
         {
             0x007F, 0x00FF, 0x017F, 0x024F, 0x02AF, 0x02FF, 0x036F, 0x03FF, 0x04FF, 0x052F, 0x058F, 0x05FF, 0x06FF, 0x074F,
             0x077F, 0x07BF, 0x07FF, 0x083F, 0x097F, 0x09FF, 0x0A7F, 0x0AFF, 0x0B7F, 0x0BFF, 0x0C7F, 0x0CFF, 0x0D7F, 0x0DFF,
@@ -781,11 +781,11 @@ namespace Lucene.Net.Util
         public static string RandomRealisticUnicodeString(Random r, int minLength, int maxLength)
         {
             int end = NextInt(r, minLength, maxLength);
-            int block = r.Next(BlockStarts.Length);
+            int block = r.Next(blockStarts.Length);
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < end; i++)
             {
-                sb.AppendCodePoint(NextInt(r, BlockStarts[block], BlockEnds[block]));
+                sb.AppendCodePoint(NextInt(r, blockStarts[block], blockEnds[block]));
             }
             return sb.ToString();
         }
@@ -1022,11 +1022,11 @@ namespace Lucene.Net.Util
 
         private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector
         {
-            private IDictionary<string, object> Map;
+            private IDictionary<string, object> map;
 
             public AttributeReflectorAnonymousInnerClassHelper(IDictionary<string, object> map)
             {
-                this.Map = map;
+                this.map = map;
             }
 
             public void Reflect<T>(string key, object value)
@@ -1037,7 +1037,7 @@ namespace Lucene.Net.Util
 
             public void Reflect(Type attClass, string key, object value)
             {
-                Map[attClass.Name + '#' + key] = value;
+                map[attClass.Name + '#' + key] = value;
             }
         }
 
