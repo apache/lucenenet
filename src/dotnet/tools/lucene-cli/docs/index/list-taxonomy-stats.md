@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene index list-taxonomy-stats [<INDEX_DIRECTORY>] [-tree|--show-tree] [?|-h|--help]</code>
+<code>lucene index list-taxonomy-stats [\<INDEX_DIRECTORY>] [-tree|--show-tree] [?|-h|--help]</code>
 
 ### Description
 

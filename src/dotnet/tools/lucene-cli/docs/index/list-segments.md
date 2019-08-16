@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene index list-segments [<INDEX_DIRECTORY>] [?|-h|--help]</code>
+<code>lucene index list-segments [\<INDEX_DIRECTORY>] [?|-h|--help]</code>
 
 ### Description
 

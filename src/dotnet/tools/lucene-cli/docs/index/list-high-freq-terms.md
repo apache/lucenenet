@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene index list-high-freq-terms [<INDEX_DIRECTORY>] [-t|--total-term-frequency] [-n|--number-of-terms] [-f|--field] [?|-h|--help]</code>
+<code>lucene index list-high-freq-terms [\<INDEX_DIRECTORY>] [-t|--total-term-frequency] [-n|--number-of-terms] [-f|--field] [?|-h|--help]</code>
 
 ### Description
 
