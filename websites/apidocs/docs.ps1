@@ -104,22 +104,17 @@ $PluginsFolder = (Join-Path -Path $ApiDocsFolder "lucenetemplate\plugins")
 New-Item $PluginsFolder -type directory -force
 & $msbuild $pluginSln "/p:OutDir=$PluginsFolder"
 
-# Rebuild the main solution to ensure everything is in place correctly (only on clean)
-if ($Clean -eq 1) {
-    $mainSln = (Join-Path -Path $RepoRoot "Lucene.Net.sln")
-    & $nuget restore $mainSln  
-    & $msbuild $mainSln "/t:Clean,Build"
-}  
-
 # Due to a bug with docfx and msbuild, we also need to set environment vars here
 # https://github.com/dotnet/docfx/issues/1969
-# Then it turns out we also need 2015 build tools installed, wat!? 
+# Then it turns out we also need 2017 build tools installed, wat!? 
 # https://www.microsoft.com/en-us/download/details.aspx?id=48159
 # I have tried the latest docfx version https://github.com/dotnet/docfx/releases/download/v2.44/docfx.zip but it cannot build,
 # this is supposed to be fixed in the latest docfx, but alas it's still broken: https://github.com/dotnet/docfx/issues/4869
 # The only way i can get this building currently is to have the VS2017 build tools installed.
+# UPDATE: Interestingly it now works by passing in the most recent msbuild target...
+# TODO: Need to upgrade to latest docfx and figure out why there are issues.
 
-[Environment]::SetEnvironmentVariable("VSINSTALLDIR", "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools")
+[Environment]::SetEnvironmentVariable("VSINSTALLDIR", $msbuild)
 [Environment]::SetEnvironmentVariable("VisualStudioVersion", "15.0")
 
 $DocFxJson = Join-Path -Path $ApiDocsFolder "docfx.json"
