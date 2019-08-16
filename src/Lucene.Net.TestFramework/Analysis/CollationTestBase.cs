@@ -291,9 +291,9 @@ namespace Lucene.Net.Analysis
 			private readonly CollationTestBase OuterInstance;
 
 			private Analyzer Analyzer;
-			private Dictionary<string, BytesRef> Map;
+			private IDictionary<string, BytesRef> Map;
 
-			public ThreadAnonymousInnerClassHelper(CollationTestBase outerInstance, Analyzer analyzer, Dictionary<string, BytesRef> map)
+			public ThreadAnonymousInnerClassHelper(CollationTestBase outerInstance, Analyzer analyzer, IDictionary<string, BytesRef> map)
 			{
 				this.OuterInstance = outerInstance;
 				this.Analyzer = analyzer;
