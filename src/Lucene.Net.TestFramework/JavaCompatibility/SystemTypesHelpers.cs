@@ -40,7 +40,7 @@ namespace Lucene.Net
             return str.ToCharArray();
         }
 
-        public static string toString(this object obj)
+        public static string toString(this object obj) // LUCENENET TODO: wrap Collections.ToString()
         {
             // LUCENENET: We compensate for the fact that
             // .NET doesn't have reliable results from ToString
