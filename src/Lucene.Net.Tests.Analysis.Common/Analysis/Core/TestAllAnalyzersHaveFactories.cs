@@ -8,6 +8,7 @@ using Lucene.Net.Analysis.Snowball;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
+using Lucene.Net.TestFramework.Analysis;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -46,15 +47,37 @@ namespace Lucene.Net.Analysis.Core
         private static readonly ISet<Type> testComponents = new IdentityHashSet<Type>();
         static TestAllAnalyzersHaveFactories()
         {
-            testComponents.addAll(new Type[] { typeof(MockTokenizer), typeof(MockCharFilter), typeof(MockFixedLengthPayloadFilter), typeof(MockGraphTokenFilter), typeof(MockHoleInjectingTokenFilter), typeof(MockRandomLookaheadTokenFilter), typeof(MockTokenFilter), typeof(MockVariableLengthPayloadFilter), typeof(ValidatingTokenFilter) });
-            crazyComponents.addAll(new Type[] { typeof(CachingTokenFilter), typeof(TeeSinkTokenFilter),
+            testComponents.addAll(new Type[] {
+                typeof(MockTokenizer),
+                typeof(MockCharFilter),
+                typeof(MockFixedLengthPayloadFilter),
+                typeof(MockGraphTokenFilter),
+                typeof(MockHoleInjectingTokenFilter),
+                typeof(MockRandomLookaheadTokenFilter),
+                typeof(MockTokenFilter),
+                typeof(MockVariableLengthPayloadFilter),
+                typeof(ValidatingTokenFilter),
+                typeof(CrankyTokenFilter)
+            });
+            crazyComponents.addAll(new Type[] {
+                typeof(CachingTokenFilter),
+                typeof(TeeSinkTokenFilter),
                 // LUCENENET: Added this specialized BufferedCharFilter which doesn't need a factory
                 typeof(BufferedCharFilter)
             });
 #pragma warning disable 612, 618
-            deprecatedDuplicatedComponents.addAll(new Type[] { typeof(DutchStemFilter), typeof(FrenchStemFilter), typeof(IndicTokenizer) });
+            deprecatedDuplicatedComponents.addAll(new Type[] {
+                typeof(DutchStemFilter),
+                typeof(FrenchStemFilter),
+                typeof(IndicTokenizer)
+            });
 #pragma warning restore 612, 618
-            oddlyNamedComponents.addAll(new Type[] { typeof(ReversePathHierarchyTokenizer), typeof(SnowballFilter), typeof(PatternKeywordMarkerFilter), typeof(SetKeywordMarkerFilter) }); // this is called SnowballPorterFilterFactory -  this is supported via an option to PathHierarchyTokenizer's factory
+            oddlyNamedComponents.addAll(new Type[] {
+                typeof(ReversePathHierarchyTokenizer), // this is supported via an option to PathHierarchyTokenizer's factory
+                typeof(SnowballFilter), // this is called SnowballPorterFilterFactory
+                typeof(PatternKeywordMarkerFilter),
+                typeof(SetKeywordMarkerFilter)
+            });
         }
 
         // these are 'crazy' components like cachingtokenfilter. does it make sense to add factories for these?

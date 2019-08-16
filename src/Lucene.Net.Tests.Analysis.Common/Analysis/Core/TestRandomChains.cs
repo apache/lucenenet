@@ -17,6 +17,7 @@ using Lucene.Net.Analysis.Wikipedia;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Tartarus.Snowball;
+using Lucene.Net.TestFramework.Analysis;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
@@ -97,14 +98,8 @@ namespace Lucene.Net.Analysis.Core
                     // offsets offenders?
                     // doesn't actual reset itself:
                     typeof(CachingTokenFilter),
-
-#if NETSTANDARD
-#if FEATURE_BREAKITERATOR
-                    // LUCENENET TODO: icu-dotnet is throwing AccessViolationException, bringing down the test runner
-                    typeof(Th.ThaiTokenizer),
-#endif
-#endif
-
+                    // Not broken, simulates brokenness:
+                    typeof(CrankyTokenFilter),
                     // Not broken: we forcefully add this, so we shouldn't
                     // also randomly pick it:
                     typeof(ValidatingTokenFilter)))
@@ -136,8 +131,6 @@ namespace Lucene.Net.Analysis.Core
                     typeof(CommonGramsQueryFilter),
                     // TODO: probably doesnt handle graph inputs, too afraid to try
                     typeof(WordDelimiterFilter)))
-
-
                 {
                     foreach (ConstructorInfo ctor in c.GetConstructors())
                     {
