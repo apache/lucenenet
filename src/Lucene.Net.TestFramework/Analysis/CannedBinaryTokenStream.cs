@@ -53,12 +53,12 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        private readonly BinaryToken[] Tokens;
-        private int Upto = 0;
-        private readonly IBinaryTermAttribute TermAtt;// = AddAttribute<BinaryTermAttribute>();
-        private readonly IPositionIncrementAttribute PosIncrAtt;// = AddAttribute<PositionIncrementAttribute>();
-        private readonly IPositionLengthAttribute PosLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
-        private readonly IOffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
+        private readonly BinaryToken[] tokens;
+        private int upto = 0;
+        private readonly IBinaryTermAttribute termAtt;// = AddAttribute<BinaryTermAttribute>();
+        private readonly IPositionIncrementAttribute posIncrAtt;// = AddAttribute<PositionIncrementAttribute>();
+        private readonly IPositionLengthAttribute posLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
+        private readonly IOffsetAttribute offsetAtt;// = addAttribute(typeof(OffsetAttribute));
 
         /// <summary>
         /// An attribute extending <see cref="ITermToBytesRefAttribute"/>
@@ -123,25 +123,25 @@ namespace Lucene.Net.Analysis
         public CannedBinaryTokenStream(params BinaryToken[] tokens)
             : base()
         {
-            this.Tokens = tokens;
-            TermAtt = AddAttribute<IBinaryTermAttribute>();
-            PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
-            PosLengthAtt = AddAttribute<IPositionLengthAttribute>();
-            OffsetAtt = AddAttribute<IOffsetAttribute>();
+            this.tokens = tokens;
+            termAtt = AddAttribute<IBinaryTermAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            posLengthAtt = AddAttribute<IPositionLengthAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         public override bool IncrementToken()
         {
-            if (Upto < Tokens.Length)
+            if (upto < tokens.Length)
             {
-                BinaryToken token = Tokens[Upto++];
+                BinaryToken token = tokens[upto++];
                 // TODO: can we just capture/restoreState so
                 // we get all attrs...?
                 ClearAttributes();
-                TermAtt.BytesRef = token.Term;
-                PosIncrAtt.PositionIncrement = token.PosInc;
-                PosLengthAtt.PositionLength = token.PosLen;
-                OffsetAtt.SetOffset(token.StartOffset, token.EndOffset);
+                termAtt.BytesRef = token.Term;
+                posIncrAtt.PositionIncrement = token.PosInc;
+                posLengthAtt.PositionLength = token.PosLen;
+                offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                 return true;
             }
             else

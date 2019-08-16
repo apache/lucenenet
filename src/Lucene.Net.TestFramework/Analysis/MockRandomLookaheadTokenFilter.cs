@@ -31,16 +31,16 @@ namespace Lucene.Net.Analysis
     public sealed class MockRandomLookaheadTokenFilter
         : LookaheadTokenFilter<LookaheadTokenFilter.Position>
     {
-        private readonly ICharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
+        private readonly ICharTermAttribute termAtt;// = addAttribute(typeof(CharTermAttribute));
         private Random random; //not readonly to reset seed later
-        private readonly long Seed;
+        private readonly long seed;
 
         public MockRandomLookaheadTokenFilter(Random random, TokenStream @in)
             : base(@in)
         {
-            this.TermAtt = AddAttribute<ICharTermAttribute>();
-            this.Seed = random.Next();
-            this.random = new Random((int)Seed);
+            this.termAtt = AddAttribute<ICharTermAttribute>();
+            this.seed = random.Next();
+            this.random = new Random((int)seed);
         }
 
         protected internal override LookaheadTokenFilter.Position NewPosition()
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis
                         }
                         if (DEBUG)
                         {
-                            Console.WriteLine("  peek; inputPos=" + InputPos + " token=" + TermAtt);
+                            Console.WriteLine("  peek; inputPos=" + InputPos + " token=" + termAtt);
                         }
                     }
                     else
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis
             {
                 if (DEBUG)
                 {
-                    Console.WriteLine("  return nextToken token=" + TermAtt);
+                    Console.WriteLine("  return nextToken token=" + termAtt);
                 }
             }
             else
@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis
         public override void Reset()
         {
             base.Reset();
-            random = new Random((int)Seed);
+            random = new Random((int)seed);
         }
     }
 }

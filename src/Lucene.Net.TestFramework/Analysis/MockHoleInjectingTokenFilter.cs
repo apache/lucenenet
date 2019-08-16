@@ -31,48 +31,48 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class MockHoleInjectingTokenFilter : TokenFilter
     {
-        private readonly int RandomSeed;
-        private Random Random;
-        private readonly IPositionIncrementAttribute PosIncAtt;
-        private readonly IPositionLengthAttribute PosLenAtt;
-        private int MaxPos;
-        private int Pos;
+        private readonly int randomSeed;
+        private Random random;
+        private readonly IPositionIncrementAttribute posIncAtt;
+        private readonly IPositionLengthAttribute posLenAtt;
+        private int maxPos;
+        private int pos;
 
         public MockHoleInjectingTokenFilter(Random random, TokenStream @in)
             : base(@in)
         {
-            RandomSeed = random.Next();
-            PosIncAtt = AddAttribute<IPositionIncrementAttribute>();
-            PosLenAtt = AddAttribute<IPositionLengthAttribute>();
+            randomSeed = random.Next();
+            posIncAtt = AddAttribute<IPositionIncrementAttribute>();
+            posLenAtt = AddAttribute<IPositionLengthAttribute>();
         }
 
         public override void Reset()
         {
             base.Reset();
-            Random = new Random(RandomSeed);
-            MaxPos = -1;
-            Pos = -1;
+            random = new Random(randomSeed);
+            maxPos = -1;
+            pos = -1;
         }
 
         public override bool IncrementToken()
         {
             if (m_input.IncrementToken())
             {
-                int posInc = PosIncAtt.PositionIncrement;
+                int posInc = posIncAtt.PositionIncrement;
 
-                int nextPos = Pos + posInc;
+                int nextPos = pos + posInc;
 
                 // Carefully inject a hole only where it won't mess up
                 // the graph:
-                if (posInc > 0 && MaxPos <= nextPos && Random.Next(5) == 3)
+                if (posInc > 0 && maxPos <= nextPos && random.Next(5) == 3)
                 {
-                    int holeSize = TestUtil.NextInt(Random, 1, 5);
-                    PosIncAtt.PositionIncrement = posInc + holeSize;
+                    int holeSize = TestUtil.NextInt(random, 1, 5);
+                    posIncAtt.PositionIncrement = posInc + holeSize;
                     nextPos += holeSize;
                 }
 
-                Pos = nextPos;
-                MaxPos = Math.Max(MaxPos, Pos + PosLenAtt.PositionLength);
+                pos = nextPos;
+                maxPos = Math.Max(maxPos, pos + posLenAtt.PositionLength);
 
                 return true;
             }

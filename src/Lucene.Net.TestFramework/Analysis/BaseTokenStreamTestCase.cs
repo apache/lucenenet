@@ -74,31 +74,31 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public sealed class CheckClearAttributesAttribute : Attribute, ICheckClearAttributesAttribute
         {
-            internal bool ClearCalled = false;
+            internal bool clearCalled = false;
 
             public bool AndResetClearCalled
             {
                 get
                 {
-                    bool old = ClearCalled;
-                    ClearCalled = false;
+                    bool old = clearCalled;
+                    clearCalled = false;
                     return old;
                 }
             }
 
             public override void Clear()
             {
-                ClearCalled = true;
+                clearCalled = true;
             }
 
             public override bool Equals(object other)
             {
-                return (other is CheckClearAttributesAttribute && ((CheckClearAttributesAttribute)other).ClearCalled == this.ClearCalled);
+                return (other is CheckClearAttributesAttribute && ((CheckClearAttributesAttribute)other).clearCalled == this.clearCalled);
             }
 
             public override int GetHashCode()
             {
-                return 76137213 ^ ClearCalled.GetHashCode();
+                return 76137213 ^ clearCalled.GetHashCode();
             }
 
             public override void CopyTo(IAttribute target)
@@ -583,22 +583,22 @@ namespace Lucene.Net.Analysis
 
         internal class AnalysisThread : ThreadClass
         {
-            private readonly BaseTokenStreamTestCase OuterInstance;
-            internal readonly int Iterations;
-            internal readonly int MaxWordLength;
-            internal readonly long Seed;
+            private readonly BaseTokenStreamTestCase outerInstance;
+            internal readonly int iterations;
+            internal readonly int maxWordLength;
+            internal readonly long seed;
             internal readonly Analyzer a;
-            internal readonly bool UseCharFilter;
-            internal readonly bool Simple;
-            internal readonly bool OffsetsAreCorrect;
-            internal readonly RandomIndexWriter Iw;
-            private readonly CountdownEvent _latch;
+            internal readonly bool useCharFilter;
+            internal readonly bool simple;
+            internal readonly bool offsetsAreCorrect;
+            internal readonly RandomIndexWriter iw;
+            private readonly CountdownEvent latch;
 
             // NOTE: not volatile because we don't want the tests to
             // add memory barriers (ie alter how threads
             // interact)... so this is just "best effort":
             public bool Failed;
-            public Exception firstException = null;
+            public Exception FirstException = null;
 
             /// <summary>
             /// <param name="outerInstance">
@@ -608,16 +608,16 @@ namespace Lucene.Net.Analysis
             internal AnalysisThread(long seed, CountdownEvent latch, Analyzer a, int iterations, int maxWordLength, 
                 bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw, BaseTokenStreamTestCase outerInstance)
             {
-                this.Seed = seed;
+                this.seed = seed;
                 this.a = a;
-                this.Iterations = iterations;
-                this.MaxWordLength = maxWordLength;
-                this.UseCharFilter = useCharFilter;
-                this.Simple = simple;
-                this.OffsetsAreCorrect = offsetsAreCorrect;
-                this.Iw = iw;
-                this._latch = latch;
-                this.OuterInstance = outerInstance;
+                this.iterations = iterations;
+                this.maxWordLength = maxWordLength;
+                this.useCharFilter = useCharFilter;
+                this.simple = simple;
+                this.offsetsAreCorrect = offsetsAreCorrect;
+                this.iw = iw;
+                this.latch = latch;
+                this.outerInstance = outerInstance;
             }
 
             public override void Run()
@@ -625,10 +625,10 @@ namespace Lucene.Net.Analysis
                 bool success = false;
                 try
                 {
-                    if (_latch != null) _latch.Wait();
+                    if (latch != null) latch.Wait();
                     // see the part in checkRandomData where it replays the same text again
                     // to verify reproducability/reuse: hopefully this would catch thread hazards.
-                    OuterInstance.CheckRandomData(new Random((int)Seed), a, Iterations, MaxWordLength, UseCharFilter, Simple, OffsetsAreCorrect, Iw);
+                    outerInstance.CheckRandomData(new Random((int)seed), a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
                     success = true;
                 }
                 catch (Exception e)
@@ -638,9 +638,9 @@ namespace Lucene.Net.Analysis
                     // LUCENENET: Throwing an exception on another thread
                     // is pointless, so we set it to a variable so we can read
                     // it from our main thread (for debugging).
-                    if (firstException == null)
+                    if (FirstException == null)
                     {
-                        firstException = e;
+                        FirstException = e;
                     }
                 }
                 finally
@@ -716,7 +716,7 @@ namespace Lucene.Net.Analysis
                 {
                     if (t.Failed)
                     {
-                        fail("Thread threw exception: " + t.firstException.ToString());
+                        fail("Thread threw exception: " + t.FirstException.ToString());
                     }
                 }
 

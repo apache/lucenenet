@@ -32,30 +32,30 @@ namespace Lucene.Net.Analysis
 
     public class MockReaderWrapper : StringReader
     {
-        private readonly Random Random;
+        private readonly Random random;
 
-        private int ExcAtChar = -1;
-        private int ReadSoFar;
-        private bool ThrowExcNext_Renamed;
+        private int excAtChar = -1;
+        private int readSoFar;
+        private bool throwExcNext;
 
         public MockReaderWrapper(Random random, string text)
             : base(text)
         {
-            this.Random = random;
+            this.random = random;
         }
 
         /// <summary>
         /// Throw an exception after reading this many chars. </summary>
         public virtual void ThrowExcAfterChar(int charUpto)
         {
-            ExcAtChar = charUpto;
+            excAtChar = charUpto;
             // You should only call this on init!:
-            Assert.AreEqual(0, ReadSoFar);
+            Assert.AreEqual(0, readSoFar);
         }
 
         public virtual void ThrowExcNext()
         {
-            ThrowExcNext_Renamed = true;
+            throwExcNext = true;
         }
 
         public override int Read()
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis
             ThrowExceptionIfApplicable();
 
             var c = base.Read();
-            ReadSoFar += 1;
+            readSoFar += 1;
             return c;
         }
 
@@ -80,16 +80,16 @@ namespace Lucene.Net.Analysis
             {
                 // Spoon-feed: intentionally maybe return less than
                 // the consumer asked for
-                realLen = TestUtil.NextInt(Random, 1, len);
+                realLen = TestUtil.NextInt(random, 1, len);
             }
-            if (ExcAtChar != -1)
+            if (excAtChar != -1)
             {
-                int left = ExcAtChar - ReadSoFar;
+                int left = excAtChar - readSoFar;
                 Assert.True(left != 0);
                 read = base.Read(cbuf, off, Math.Min(realLen, left));
                 //Characters are left
                 Assert.True(read != 0);
-                ReadSoFar += read;
+                readSoFar += read;
             }
             else
             {
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis
 
         private void ThrowExceptionIfApplicable()
         {
-            if (ThrowExcNext_Renamed || (ExcAtChar != -1 && ReadSoFar >= ExcAtChar))
+            if (throwExcNext || (excAtChar != -1 && readSoFar >= excAtChar))
             {
                 throw new Exception("fake exception now!");
             }

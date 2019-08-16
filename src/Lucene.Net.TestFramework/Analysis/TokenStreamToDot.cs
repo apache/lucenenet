@@ -28,12 +28,12 @@ namespace Lucene.Net.Analysis
     public class TokenStreamToDot
     {
         private readonly TokenStream @in;
-        private readonly ICharTermAttribute TermAtt;
-        private readonly IPositionIncrementAttribute PosIncAtt;
-        private readonly IPositionLengthAttribute PosLengthAtt;
-        private readonly IOffsetAttribute OffsetAtt;
-        private readonly string InputText;
-        protected internal readonly TextWriter @out;
+        private readonly ICharTermAttribute termAtt;
+        private readonly IPositionIncrementAttribute posIncAtt;
+        private readonly IPositionLengthAttribute posLengthAtt;
+        private readonly IOffsetAttribute offsetAtt;
+        private readonly string inputText;
+        protected internal readonly TextWriter m_out;
 
         /// <summary>
         /// If inputText is non-null, and the TokenStream has
@@ -43,18 +43,18 @@ namespace Lucene.Net.Analysis
         public TokenStreamToDot(string inputText, TokenStream @in, TextWriter @out)
         {
             this.@in = @in;
-            this.@out = @out;
-            this.InputText = inputText;
-            TermAtt = @in.AddAttribute<ICharTermAttribute>();
-            PosIncAtt = @in.AddAttribute<IPositionIncrementAttribute>();
-            PosLengthAtt = @in.AddAttribute<IPositionLengthAttribute>();
+            this.m_out = @out;
+            this.inputText = inputText;
+            termAtt = @in.AddAttribute<ICharTermAttribute>();
+            posIncAtt = @in.AddAttribute<IPositionIncrementAttribute>();
+            posLengthAtt = @in.AddAttribute<IPositionLengthAttribute>();
             if (@in.HasAttribute<IOffsetAttribute>())
             {
-                OffsetAtt = @in.AddAttribute<IOffsetAttribute>();
+                offsetAtt = @in.AddAttribute<IOffsetAttribute>();
             }
             else
             {
-                OffsetAtt = null;
+                offsetAtt = null;
             }
         }
 
@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis
             while (@in.IncrementToken())
             {
                 bool isFirst = pos == -1;
-                int posInc = PosIncAtt.PositionIncrement;
+                int posInc = posIncAtt.PositionIncrement;
                 if (isFirst && posInc == 0)
                 {
                     // TODO: hmm are TS's still allowed to do this...?
@@ -99,15 +99,15 @@ namespace Lucene.Net.Analysis
                     WriteArc(-1, pos, null, null);
                 }
 
-                string arcLabel = TermAtt.ToString();
-                if (OffsetAtt != null)
+                string arcLabel = termAtt.ToString();
+                if (offsetAtt != null)
                 {
-                    int startOffset = OffsetAtt.StartOffset;
-                    int endOffset = OffsetAtt.EndOffset;
+                    int startOffset = offsetAtt.StartOffset;
+                    int endOffset = offsetAtt.EndOffset;
                     //System.out.println("start=" + startOffset + " end=" + endOffset + " len=" + inputText.length());
-                    if (InputText != null)
+                    if (inputText != null)
                     {
-                        arcLabel += " / " + InputText.Substring(startOffset, endOffset - startOffset);
+                        arcLabel += " / " + inputText.Substring(startOffset, endOffset - startOffset);
                     }
                     else
                     {
@@ -115,8 +115,8 @@ namespace Lucene.Net.Analysis
                     }
                 }
 
-                WriteArc(pos, pos + PosLengthAtt.PositionLength, arcLabel, null);
-                lastEndPos = pos + PosLengthAtt.PositionLength;
+                WriteArc(pos, pos + posLengthAtt.PositionLength, arcLabel, null);
+                lastEndPos = pos + posLengthAtt.PositionLength;
             }
 
             @in.End();
@@ -134,30 +134,30 @@ namespace Lucene.Net.Analysis
 
         protected internal virtual void WriteArc(int fromNode, int toNode, string label, string style)
         {
-            @out.Write("  " + fromNode + " -> " + toNode + " [");
+            m_out.Write("  " + fromNode + " -> " + toNode + " [");
             if (label != null)
             {
-                @out.Write(" label=\"" + label + "\"");
+                m_out.Write(" label=\"" + label + "\"");
             }
             if (style != null)
             {
-                @out.Write(" style=\"" + style + "\"");
+                m_out.Write(" style=\"" + style + "\"");
             }
-            @out.WriteLine("]");
+            m_out.WriteLine("]");
         }
 
         protected internal virtual void WriteNode(int name, string label)
         {
-            @out.Write("  " + name);
+            m_out.Write("  " + name);
             if (label != null)
             {
-                @out.Write(" [label=\"" + label + "\"]");
+                m_out.Write(" [label=\"" + label + "\"]");
             }
             else
             {
-                @out.Write(" [shape=point color=white]");
+                m_out.Write(" [shape=point color=white]");
             }
-            @out.WriteLine();
+            m_out.WriteLine();
         }
 
         private const string FONT_NAME = "Helvetica";
@@ -166,22 +166,22 @@ namespace Lucene.Net.Analysis
         /// Override to customize. </summary>
         protected internal virtual void WriteHeader()
         {
-            @out.WriteLine("digraph tokens {");
-            @out.WriteLine("  graph [ fontsize=30 labelloc=\"t\" label=\"\" splines=true overlap=false rankdir = \"LR\" ];");
-            @out.WriteLine("  // A2 paper size");
-            @out.WriteLine("  size = \"34.4,16.5\";");
+            m_out.WriteLine("digraph tokens {");
+            m_out.WriteLine("  graph [ fontsize=30 labelloc=\"t\" label=\"\" splines=true overlap=false rankdir = \"LR\" ];");
+            m_out.WriteLine("  // A2 paper size");
+            m_out.WriteLine("  size = \"34.4,16.5\";");
             //out.println("  // try to fill paper");
             //out.println("  ratio = fill;");
-            @out.WriteLine("  edge [ fontname=\"" + FONT_NAME + "\" fontcolor=\"red\" color=\"#606060\" ]");
-            @out.WriteLine("  node [ style=\"filled\" fillcolor=\"#e8e8f0\" shape=\"Mrecord\" fontname=\"" + FONT_NAME + "\" ]");
-            @out.WriteLine();
+            m_out.WriteLine("  edge [ fontname=\"" + FONT_NAME + "\" fontcolor=\"red\" color=\"#606060\" ]");
+            m_out.WriteLine("  node [ style=\"filled\" fillcolor=\"#e8e8f0\" shape=\"Mrecord\" fontname=\"" + FONT_NAME + "\" ]");
+            m_out.WriteLine();
         }
 
         /// <summary>
         /// Override to customize. </summary>
         protected internal virtual void WriteTrailer()
         {
-            @out.WriteLine("}");
+            m_out.WriteLine("}");
         }
     }
 }

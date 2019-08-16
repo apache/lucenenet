@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 
 namespace Lucene.Net.Analysis
 {
@@ -30,12 +31,12 @@ namespace Lucene.Net.Analysis
     public class MockUTF16TermAttributeImpl : CharTermAttribute
     {
         //internal static readonly Charset Charset = Charset.forName("UTF-16LE");
-        internal static readonly System.Text.Encoding Charset = System.Text.Encoding.Unicode;
+        internal static readonly Encoding charset = Encoding.Unicode;
 
         public override void FillBytesRef()
         {
             BytesRef bytes = BytesRef;
-            var utf16 = Charset.GetBytes(this.ToString());
+            var utf16 = charset.GetBytes(this.ToString());
             bytes.Bytes = utf16;
             bytes.Offset = 0;
             bytes.Length = utf16.Length;

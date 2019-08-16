@@ -43,34 +43,34 @@ namespace Lucene.Net.Analysis
     ///
     internal sealed class MockPayloadFilter : TokenFilter
     {
-        internal string FieldName;
+        internal string fieldName;
 
-        internal int Pos;
+        internal int pos;
 
         internal int i;
 
-        internal readonly IPositionIncrementAttribute PosIncrAttr;
-        internal readonly IPayloadAttribute PayloadAttr;
-        internal readonly ICharTermAttribute TermAttr;
+        internal readonly IPositionIncrementAttribute posIncrAttr;
+        internal readonly IPayloadAttribute payloadAttr;
+        internal readonly ICharTermAttribute termAttr;
 
         public MockPayloadFilter(TokenStream input, string fieldName)
             : base(input)
         {
-            this.FieldName = fieldName;
-            Pos = 0;
+            this.fieldName = fieldName;
+            pos = 0;
             i = 0;
-            PosIncrAttr = input.AddAttribute<IPositionIncrementAttribute>();
-            PayloadAttr = input.AddAttribute<IPayloadAttribute>();
-            TermAttr = input.AddAttribute<ICharTermAttribute>();
+            posIncrAttr = input.AddAttribute<IPositionIncrementAttribute>();
+            payloadAttr = input.AddAttribute<IPayloadAttribute>();
+            termAttr = input.AddAttribute<ICharTermAttribute>();
         }
 
         public override bool IncrementToken()
         {
             if (m_input.IncrementToken())
             {
-                PayloadAttr.Payload = new BytesRef(("pos: " + Pos)/*.getBytes(IOUtils.CHARSET_UTF_8)*/);
+                payloadAttr.Payload = new BytesRef(("pos: " + pos)/*.getBytes(IOUtils.CHARSET_UTF_8)*/); // LUCENENET TODO: UTF8 conversion
                 int posIncr;
-                if (Pos == 0 || i % 2 == 1)
+                if (pos == 0 || i % 2 == 1)
                 {
                     posIncr = 1;
                 }
@@ -78,8 +78,8 @@ namespace Lucene.Net.Analysis
                 {
                     posIncr = 0;
                 }
-                PosIncrAttr.PositionIncrement = posIncr;
-                Pos += posIncr;
+                posIncrAttr.PositionIncrement = posIncr;
+                pos += posIncr;
                 i++;
                 return true;
             }
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis
         {
             base.Reset();
             i = 0;
-            Pos = 0;
+            pos = 0;
         }
     }
 }

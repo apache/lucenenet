@@ -35,11 +35,11 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	public abstract class CollationTestBase : LuceneTestCase
 	{
-		protected internal string FirstRangeBeginningOriginal = "\u062F";
-		protected internal string FirstRangeEndOriginal = "\u0698";
+		protected internal string m_firstRangeBeginningOriginal = "\u062F";
+		protected internal string m_firstRangeEndOriginal = "\u0698";
 
-		protected internal string SecondRangeBeginningOriginal = "\u0633";
-		protected internal string SecondRangeEndOriginal = "\u0638";
+		protected internal string m_secondRangeBeginningOriginal = "\u0633";
+		protected internal string m_secondRangeEndOriginal = "\u0638";
 
         // LUCENENET: The all locales may are not available for collation.
         // LUCENENET: Removed this (only) reference to the ICU library, since it has a lot of data and we don't

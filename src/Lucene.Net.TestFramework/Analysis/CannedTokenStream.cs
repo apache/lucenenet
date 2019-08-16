@@ -24,21 +24,21 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class CannedTokenStream : TokenStream
     {
-        private readonly Token[] Tokens;
-        private int Upto = 0;
-        private ICharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
-        private IPositionIncrementAttribute PosIncrAtt;// = addAttribute(typeof(PositionIncrementAttribute));
-        private IPositionLengthAttribute PosLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
-        private IOffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
-        private IPayloadAttribute PayloadAtt;// = addAttribute(typeof(PayloadAttribute));
-        private readonly int FinalOffset;
-        private readonly int FinalPosInc;
+        private readonly Token[] tokens;
+        private int upto = 0;
+        private ICharTermAttribute termAtt;// = addAttribute(typeof(CharTermAttribute));
+        private IPositionIncrementAttribute posIncrAtt;// = addAttribute(typeof(PositionIncrementAttribute));
+        private IPositionLengthAttribute posLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
+        private IOffsetAttribute offsetAtt;// = addAttribute(typeof(OffsetAttribute));
+        private IPayloadAttribute payloadAtt;// = addAttribute(typeof(PayloadAttribute));
+        private readonly int finalOffset;
+        private readonly int finalPosInc;
 
         public CannedTokenStream(params Token[] tokens)
         {
-            this.Tokens = tokens;
-            FinalOffset = 0;
-            FinalPosInc = 0;
+            this.tokens = tokens;
+            finalOffset = 0;
+            finalPosInc = 0;
             InitParams();
         }
 
@@ -48,42 +48,42 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public CannedTokenStream(int finalPosInc, int finalOffset, params Token[] tokens)
         {
-            this.Tokens = tokens;
-            this.FinalOffset = finalOffset;
-            this.FinalPosInc = finalPosInc;
+            this.tokens = tokens;
+            this.finalOffset = finalOffset;
+            this.finalPosInc = finalPosInc;
             InitParams();
         }
 
         private void InitParams()
         {
-            TermAtt = AddAttribute<ICharTermAttribute>();
-            PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
-            PosLengthAtt = AddAttribute<IPositionLengthAttribute>();
-            OffsetAtt = AddAttribute<IOffsetAttribute>();
-            PayloadAtt = AddAttribute<IPayloadAttribute>();
+            termAtt = AddAttribute<ICharTermAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            posLengthAtt = AddAttribute<IPositionLengthAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+            payloadAtt = AddAttribute<IPayloadAttribute>();
         }
 
         public override void End()
         {
             base.End();
-            PosIncrAtt.PositionIncrement = FinalPosInc;
-            OffsetAtt.SetOffset(FinalOffset, FinalOffset);
+            posIncrAtt.PositionIncrement = finalPosInc;
+            offsetAtt.SetOffset(finalOffset, finalOffset);
         }
 
         public override bool IncrementToken()
         {
-            if (Upto < Tokens.Length)
+            if (upto < tokens.Length)
             {
-                Token token = Tokens[Upto++];
+                Token token = tokens[upto++];
                 // TODO: can we just capture/restoreState so
                 // we get all attrs...?
                 ClearAttributes();
-                TermAtt.SetEmpty();
-                TermAtt.Append(token.ToString());
-                PosIncrAtt.PositionIncrement = token.PositionIncrement;
-                PosLengthAtt.PositionLength = token.PositionLength;
-                OffsetAtt.SetOffset(token.StartOffset, token.EndOffset);
-                PayloadAtt.Payload = token.Payload;
+                termAtt.SetEmpty();
+                termAtt.Append(token.ToString());
+                posIncrAtt.PositionIncrement = token.PositionIncrement;
+                posLengthAtt.PositionLength = token.PositionLength;
+                offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
+                payloadAtt.Payload = token.Payload;
                 return true;
             }
             else

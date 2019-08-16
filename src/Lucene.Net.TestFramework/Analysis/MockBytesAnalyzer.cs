@@ -24,11 +24,11 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public class MockBytesAnalyzer : Analyzer
     {
-        private readonly MockBytesAttributeFactory Factory = new MockBytesAttributeFactory();
+        private readonly MockBytesAttributeFactory factory = new MockBytesAttributeFactory();
 
         protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            Tokenizer t = new MockTokenizer(Factory, reader, MockTokenizer.KEYWORD, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
+            Tokenizer t = new MockTokenizer(factory, reader, MockTokenizer.KEYWORD, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
             return new TokenStreamComponents(t);
         }
     }

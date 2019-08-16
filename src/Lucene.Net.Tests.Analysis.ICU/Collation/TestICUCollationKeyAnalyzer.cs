@@ -40,13 +40,13 @@ namespace Lucene.Net.Collation
 
             this.analyzer = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, collator);
             this.firstRangeBeginning = new BytesRef
-          (collator.GetCollationKey(FirstRangeBeginningOriginal).ToByteArray());
+          (collator.GetCollationKey(m_firstRangeBeginningOriginal).ToByteArray());
             this.firstRangeEnd = new BytesRef
-          (collator.GetCollationKey(FirstRangeEndOriginal).ToByteArray());
+          (collator.GetCollationKey(m_firstRangeEndOriginal).ToByteArray());
             this.secondRangeBeginning = new BytesRef
-          (collator.GetCollationKey(SecondRangeBeginningOriginal).ToByteArray());
+          (collator.GetCollationKey(m_secondRangeBeginningOriginal).ToByteArray());
             this.secondRangeEnd = new BytesRef
-          (collator.GetCollationKey(SecondRangeEndOriginal).ToByteArray());
+          (collator.GetCollationKey(m_secondRangeEndOriginal).ToByteArray());
         }
 
         [Test]

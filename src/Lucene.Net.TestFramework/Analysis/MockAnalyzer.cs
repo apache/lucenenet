@@ -42,15 +42,15 @@ namespace Lucene.Net.Analysis
     /// <seealso cref= MockTokenizer </seealso>
     public sealed class MockAnalyzer : Analyzer
     {
-        private readonly CharacterRunAutomaton RunAutomaton;
-        private readonly bool LowerCase;
-        private readonly CharacterRunAutomaton Filter;
-        private int PositionIncrementGap_Renamed;
-        private int? OffsetGap_Renamed;
-        private readonly Random Random;
-        private IDictionary<string, int?> PreviousMappings = new Dictionary<string, int?>();
-        private bool EnableChecks_Renamed = true;
-        private int MaxTokenLength_Renamed = MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH;
+        private readonly CharacterRunAutomaton runAutomaton;
+        private readonly bool lowerCase;
+        private readonly CharacterRunAutomaton filter;
+        private int positionIncrementGap;
+        private int? offsetGap;
+        private readonly Random random;
+        private IDictionary<string, int?> previousMappings = new Dictionary<string, int?>();
+        private bool enableChecks = true;
+        private int maxTokenLength = MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH;
 
         /// <summary>
         /// Creates a new MockAnalyzer.
@@ -63,10 +63,10 @@ namespace Lucene.Net.Analysis
             : base(PER_FIELD_REUSE_STRATEGY)
         {
             // TODO: this should be solved in a different way; Random should not be shared (!).
-            this.Random = new Random(random.Next());
-            this.RunAutomaton = runAutomaton;
-            this.LowerCase = lowerCase;
-            this.Filter = filter;
+            this.random = new Random(random.Next());
+            this.runAutomaton = runAutomaton;
+            this.lowerCase = lowerCase;
+            this.filter = filter;
         }
 
         /// <summary>
@@ -89,9 +89,9 @@ namespace Lucene.Net.Analysis
 
         protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
-            MockTokenizer tokenizer = new MockTokenizer(reader, RunAutomaton, LowerCase, MaxTokenLength_Renamed);
-            tokenizer.EnableChecks = EnableChecks_Renamed;
-            MockTokenFilter filt = new MockTokenFilter(tokenizer, Filter);
+            MockTokenizer tokenizer = new MockTokenizer(reader, runAutomaton, lowerCase, maxTokenLength);
+            tokenizer.EnableChecks = enableChecks;
+            MockTokenFilter filt = new MockTokenFilter(tokenizer, filter);
             return new TokenStreamComponents(tokenizer, MaybePayload(filt, fieldName));
         }
 
@@ -100,13 +100,13 @@ namespace Lucene.Net.Analysis
             lock (this)
             {
                 int? val;
-                PreviousMappings.TryGetValue(fieldName, out val);
+                previousMappings.TryGetValue(fieldName, out val);
                 if (val == null)
                 {
                     val = -1; // no payloads
-                    if (LuceneTestCase.Rarely(Random))
+                    if (LuceneTestCase.Rarely(random))
                     {
-                        switch (Random.Next(3))
+                        switch (random.Next(3))
                         {
                             case 0: // no payloads
                                 val = -1;
@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis
                                 break;
 
                             case 2: // fixed length payload
-                                val = Random.Next(12);
+                                val = random.Next(12);
                                 break;
                         }
                     }
@@ -132,7 +132,7 @@ namespace Lucene.Net.Analysis
                             Console.WriteLine("MockAnalyzer: field=" + fieldName + " gets fixed length=" + val + " payloads");
                         }
                     }
-                    PreviousMappings[fieldName] = val; // save it so we are consistent for this field
+                    previousMappings[fieldName] = val; // save it so we are consistent for this field
                 }
 
                 if (val == -1)
@@ -141,11 +141,11 @@ namespace Lucene.Net.Analysis
                 }
                 else if (val == int.MaxValue)
                 {
-                    return new MockVariableLengthPayloadFilter(Random, stream);
+                    return new MockVariableLengthPayloadFilter(random, stream);
                 }
                 else
                 {
-                    return new MockFixedLengthPayloadFilter(Random, stream, (int)val);
+                    return new MockFixedLengthPayloadFilter(random, stream, (int)val);
                 }
             }
         }
@@ -154,13 +154,13 @@ namespace Lucene.Net.Analysis
         {
             set
             {
-                this.PositionIncrementGap_Renamed = value;
+                this.positionIncrementGap = value;
             }
         }
 
         public override int GetPositionIncrementGap(string fieldName)
         {
-            return PositionIncrementGap_Renamed;
+            return positionIncrementGap;
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace Lucene.Net.Analysis
         {
             set
             {
-                this.OffsetGap_Renamed = value;
+                this.offsetGap = value;
             }
         }
 
@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis
         /// <param name="fieldName"> Currently not used, the same offset gap is returned for each field. </param>
         public override int GetOffsetGap(string fieldName)
         {
-            return OffsetGap_Renamed == null ? base.GetOffsetGap(fieldName) : OffsetGap_Renamed.Value;
+            return offsetGap == null ? base.GetOffsetGap(fieldName) : offsetGap.Value;
         }
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis
         {
             set
             {
-                this.EnableChecks_Renamed = value;
+                this.enableChecks = value;
             }
         }
 
@@ -201,7 +201,7 @@ namespace Lucene.Net.Analysis
         {
             set
             {
-                this.MaxTokenLength_Renamed = value;
+                this.maxTokenLength = value;
             }
         }
     }

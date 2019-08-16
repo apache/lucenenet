@@ -36,16 +36,16 @@ namespace Lucene.Net.Analysis
     {
         new private static bool DEBUG = false;
 
-        private readonly ICharTermAttribute TermAtt;
+        private readonly ICharTermAttribute termAtt;
 
-        private readonly long Seed;
-        private Random Random;
+        private readonly long seed;
+        private Random random;
 
         public MockGraphTokenFilter(Random random, TokenStream input)
             : base(input)
         {
-            Seed = random.Next();
-            TermAtt = AddAttribute<ICharTermAttribute>();
+            seed = random.Next();
+            termAtt = AddAttribute<ICharTermAttribute>();
         }
 
         protected internal override LookaheadTokenFilter.Position NewPosition()
@@ -59,9 +59,9 @@ namespace Lucene.Net.Analysis
             {
                 Console.WriteLine("MockGraphTF.afterPos");
             }
-            if (Random.Next(7) == 5)
+            if (random.Next(7) == 5)
             {
-                int posLength = TestUtil.NextInt(Random, 1, 5);
+                int posLength = TestUtil.NextInt(random, 1, 5);
 
                 if (DEBUG)
                 {
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis
                     InsertToken();
                     ClearAttributes();
                     PosLenAtt.PositionLength = posLength;
-                    TermAtt.Append(TestUtil.RandomUnicodeString(Random));
+                    termAtt.Append(TestUtil.RandomUnicodeString(random));
                     PosIncAtt.PositionIncrement = 0;
                     OffsetAtt.SetOffset(positions.Get(OutputPos).StartOffset, posEndData.EndOffset);
                     if (DEBUG)
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis
             // NOTE: must be "deterministically random" because
             // baseTokenStreamTestCase pulls tokens twice on the
             // same input and asserts they are the same:
-            this.Random = new Random((int)Seed);
+            this.random = new Random((int)seed);
         }
 
         protected override void Dispose(bool disposing)
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis
             if (disposing)
             {
                 base.Dispose(disposing);
-                this.Random = null;
+                this.random = null;
             }
         }
 
@@ -129,7 +129,7 @@ namespace Lucene.Net.Analysis
             {
                 Console.WriteLine("MockGraphTF.incr inputPos=" + InputPos + " outputPos=" + OutputPos);
             }
-            if (Random == null)
+            if (random == null)
             {
                 throw new AssertionException("incrementToken called in wrong state!");
             }
