@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
     // TODO: what is this used for? just testing BufferedIndexInput?
     // if so it should be pkg-private. otherwise its a dup of ByteArrayIndexInput?
     /// <summary>
-    /// IndexInput backed by a byte[] for testing.
+    /// <see cref="Store.IndexInput"/> backed by a <see cref="T:byte[]"/> for testing.
     /// </summary>
     public class MockIndexInput : BufferedIndexInput
     {

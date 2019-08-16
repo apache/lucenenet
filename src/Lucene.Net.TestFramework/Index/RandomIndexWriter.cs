@@ -38,11 +38,10 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Silly class that randomizes the indexing experience.  EG
-    ///  it may swap in a different merge policy/scheduler; may
-    ///  commit periodically; may or may not forceMerge in the end,
-    ///  may flush by doc count instead of RAM, etc.
+    /// it may swap in a different merge policy/scheduler; may
+    /// commit periodically; may or may not forceMerge in the end,
+    /// may flush by doc count instead of RAM, etc.
     /// </summary>
-
     public class RandomIndexWriter : IDisposable
     {
         public IndexWriter w;
@@ -85,7 +84,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// create a RandomIndexWriter with a random config: Uses TEST_VERSION_CURRENT and MockAnalyzer
+        /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/> and <see cref="MockAnalyzer"/>.
         ///
         /// LUCENENET specific
         /// Similarity and TimeZone parameters allow a RandomIndexWriter to be
@@ -93,13 +92,14 @@ namespace Lucene.Net.Index
         /// <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
         /// <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
         /// </summary>
+        // LUCENENET TODO: API - revert to using static Similarity and TimeZone so we can get rid of these extra parameters
         public RandomIndexWriter(Random r, Directory dir, Similarity similarity, TimeZoneInfo timezone)
             : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r), similarity, timezone))
         {
         }
 
         /// <summary>
-        /// create a RandomIndexWriter with a random config: Uses TEST_VERSION_CURRENT
+        /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/>.
         ///
         /// LUCENENET specific
         /// Similarity and TimeZone parameters allow a RandomIndexWriter to be
@@ -107,13 +107,14 @@ namespace Lucene.Net.Index
         /// <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
         /// <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
         /// </summary>
+        // LUCENENET TODO: API - revert to using static Similarity and TimeZone so we can get rid of these extra parameters
         public RandomIndexWriter(Random r, Directory dir, Analyzer a, Similarity similarity, TimeZoneInfo timezone)
             : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a, similarity, timezone))
         {
         }
 
         /// <summary>
-        /// Creates a RandomIndexWriter with a random config
+        /// Creates a <see cref="RandomIndexWriter"/> with a random config.
         ///
         /// LUCENENET specific
         /// Similarity and TimeZone parameters allow a RandomIndexWriter to be
@@ -121,13 +122,14 @@ namespace Lucene.Net.Index
         /// <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
         /// <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
         /// </summary>
+        // LUCENENET TODO: API - revert to using static Similarity and TimeZone so we can get rid of these extra parameters
         public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a, Similarity similarity, TimeZoneInfo timezone)
             : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a, similarity, timezone))
         {
         }
 
         /// <summary>
-        /// create a RandomIndexWriter with the provided config </summary>
+        /// Creates a <see cref="RandomIndexWriter"/> with the provided config </summary>
         public RandomIndexWriter(Random r, Directory dir, IndexWriterConfig c)
         {
             // TODO: this should be solved in a different way; Random should not be shared (!).
@@ -148,7 +150,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Adds a Document. </summary>
-        /// <seealso cref= IndexWriter#addDocument(Iterable) </seealso>
+        /// <seealso cref="IndexWriter.AddDocument(IEnumerable{IIndexableField})"/>
         public virtual void AddDocument(IEnumerable<IIndexableField> doc)
         {
             AddDocument(doc, w.Analyzer);
@@ -271,7 +273,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Updates a document. </summary>
-        /// <seealso cref= IndexWriter#updateDocument(Term, Iterable) </seealso>
+        /// <see cref="IndexWriter.UpdateDocument(Term, IEnumerable{IIndexableField})"/>
         public virtual void UpdateDocument(Term t, IEnumerable<IIndexableField> doc)
         {
             if (r.Next(5) == 3)
@@ -537,10 +539,10 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Forces a forceMerge.
-        /// <p>
+        /// <para/>
         /// NOTE: this should be avoided in tests unless absolutely necessary,
         /// as it will result in less test coverage. </summary>
-        /// <seealso cref= IndexWriter#forceMerge(int) </seealso>
+        /// <seealso cref="IndexWriter.ForceMerge(int)"/>
         public virtual void ForceMerge(int maxSegmentCount)
         {
             w.ForceMerge(maxSegmentCount);
@@ -584,8 +586,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Simple interface that is executed for each <tt>TP</tt> <seealso cref="InfoStream"/> component
-        /// message. See also <seealso cref="RandomIndexWriter#mockIndexWriter(Directory, IndexWriterConfig, TestPoint)"/>
+        /// Simple interface that is executed for each <c>TP</c> <see cref="InfoStream"/> component
+        /// message. See also <see cref="RandomIndexWriter.MockIndexWriter(Directory, IndexWriterConfig, ITestPoint)"/>.
         /// </summary>
         public interface ITestPoint // LUCENENET TODO: API de-nest
         {

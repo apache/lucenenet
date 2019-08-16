@@ -10,21 +10,21 @@ namespace Lucene.Net.Index
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 
@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Returns the codec to run tests against </summary>
-        protected abstract Codec Codec { get; }
+        protected abstract Codec Codec { get; } // LUCENENET TODO: API - Change to GetCodec() - this sometimes returns a new or randomly selected instance
 
         private Codec savedCodec;
 
@@ -64,13 +64,13 @@ namespace Lucene.Net.Index
             IDictionary<string, long> bytesUsedByExtension = new Dictionary<string, long>();
             foreach (string file in d.ListAll())
             {
-				string ext = IndexFileNames.GetExtension(file) ?? string.Empty;
+                string ext = IndexFileNames.GetExtension(file) ?? string.Empty;
                 long previousLength = bytesUsedByExtension.ContainsKey(ext) ? bytesUsedByExtension[ext] : 0;
                 bytesUsedByExtension[ext] = previousLength + d.FileLength(file);
             }
-			foreach (string item in ExcludedExtensionsFromByteCounts()) {
-				bytesUsedByExtension.Remove(item);							
-			}
+            foreach (string item in ExcludedExtensionsFromByteCounts()) {
+                bytesUsedByExtension.Remove(item);
+            }
             return bytesUsedByExtension;
         }
 

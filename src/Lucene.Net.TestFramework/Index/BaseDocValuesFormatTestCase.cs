@@ -13,21 +13,21 @@ using System.Threading;
 namespace Lucene.Net.Index
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BinaryDocValuesField = BinaryDocValuesField;
@@ -57,12 +57,12 @@ namespace Lucene.Net.Index
     using TopDocs = Lucene.Net.Search.TopDocs;
 
     /// <summary>
-    /// Abstract class to do basic tests for a docvalues format.
+    /// Abstract class to do basic tests for a <see cref="Codecs.DocValuesFormat"/>.
     /// NOTE: this test focuses on the docvalues impl, nothing else.
     /// The [stretch] goal is for this test to be
-    /// so thorough in testing a new DocValuesFormat that if this
+    /// so thorough in testing a new <see cref="Codecs.DocValuesFormat"/> that if this
     /// test passes, then all Lucene/Solr tests should also pass.  Ie,
-    /// if there is some bug in a given DocValuesFormat that this
+    /// if there is some bug in a given <see cref="Codecs.DocValuesFormat"/> that this
     /// test fails to catch then this test needs to be improved!
     /// </summary>
     public abstract class BaseDocValuesFormatTestCase : BaseIndexFileFormatTestCase
@@ -1164,9 +1164,9 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-        /*
-         * Simple test case to show how to use the API
-         */
+        /// <summary>
+        /// Simple test case to show how to use the API
+        /// </summary>
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestDocValuesSimple()
         {

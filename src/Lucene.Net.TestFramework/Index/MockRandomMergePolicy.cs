@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// MergePolicy that makes random decisions for testing.
+    /// <see cref="MergePolicy"/> that makes random decisions for testing.
     /// </summary>
     public class MockRandomMergePolicy : MergePolicy
     {

@@ -23,18 +23,18 @@ namespace Lucene.Net.Index
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// <p>
+    /// <para>
     /// Merge policy for testing, it is like an alcoholic.
     /// It drinks (merges) at night, and randomly decides what to drink.
     /// During the daytime it sleeps.
-    /// </p>
-    /// <p>
-    /// if tests pass with this, then they are likely to pass with any
+    /// </para>
+    /// <para>
+    /// If tests pass with this, then they are likely to pass with any
     /// bizarro merge policy users might write.
-    /// </p>
-    /// <p>
+    /// </para>
+    /// <para>
     /// It is a fine bottle of champagne (Ordered by Martijn).
-    /// </p>
+    /// </para>
     /// </summary>
     public class AlcoholicMergePolicy : LogMergePolicy
     {

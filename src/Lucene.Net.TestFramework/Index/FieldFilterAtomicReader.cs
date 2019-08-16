@@ -21,12 +21,8 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using IBits = Lucene.Net.Util.IBits;
-
-    //using FilterIterator = Lucene.Net.Util.FilterIterator;
-
     /// <summary>
-    /// A <seealso cref="FilterAtomicReader"/> that exposes only a subset
+    /// A <see cref="FilterAtomicReader"/> that exposes only a subset
     /// of fields from the underlying wrapped reader.
     /// </summary>
     public sealed class FieldFilterAtomicReader : FilterAtomicReader

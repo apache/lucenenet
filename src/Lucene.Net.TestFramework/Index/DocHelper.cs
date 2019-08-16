@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
     using StringField = StringField;
     using TextField = TextField;
 
-    public class DocHelper
+    public class DocHelper // LUCENENET TODO: API - mark internal
     {
         public static readonly FieldType CustomType;
         public const string FIELD_1_TEXT = "field one text";
@@ -148,8 +148,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Writes the document to the directory using a segment
-        /// named "test"; returns the SegmentInfo describing the new
-        /// segment
+        /// named "test"; returns the <see cref="SegmentInfo"/> describing the new
+        /// segment.
         /// </summary>
         public static SegmentCommitInfo WriteDoc(Random random, Directory dir, Document doc)
         {
@@ -158,8 +158,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Writes the document to the directory using the analyzer
-        /// and the similarity score; returns the SegmentInfo
-        /// describing the new segment
+        /// and the similarity score; returns the <see cref="SegmentInfo"/>
+        /// describing the new segment.
         /// </summary>
         public static SegmentCommitInfo WriteDoc(Random random, Directory dir, Analyzer analyzer, Similarity similarity, Document doc)
         {

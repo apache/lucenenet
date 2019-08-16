@@ -21,10 +21,9 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    ///
     /// <summary>
-    /// A <code>DocumentsWriterPerThreadPool<code> that selects thread states at random.
-    ///
+    /// A <c>DocumentsWriterPerThreadPool<c> that selects thread states at random.
+    /// <para/>
     /// @lucene.internal
     /// @lucene.experimental
     /// </summary>

@@ -18,8 +18,8 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// A <seealso cref="DirectoryReader"/> that wraps all its subreaders with
-    /// <seealso cref="AssertingAtomicReader"/>
+    /// A <see cref="DirectoryReader"/> that wraps all its subreaders with
+    /// <see cref="AssertingAtomicReader"/>
     /// </summary>
     public class AssertingDirectoryReader : FilterDirectoryReader
     {

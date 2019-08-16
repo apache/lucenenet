@@ -58,11 +58,11 @@ namespace Lucene.Net.Index
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// Codec that assigns per-field random postings formats.
+    /// <see cref="Codec"/> that assigns per-field random <see cref="Codecs.PostingsFormat"/>s.
     /// <para/>
     /// The same field/format assignment will happen regardless of order,
     /// a hash is computed up front that determines the mapping.
-    /// this means fields can be put into things like HashSets and added to
+    /// This means fields can be put into things like <see cref="HashSet{T}"/>s and added to
     /// documents in different orders and the test will still be deterministic
     /// and reproducable.
     /// </summary>
@@ -79,11 +79,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// unique set of format names this codec knows about </summary>
-        public ISet<string> formatNames = new HashSet<string>();
+        public ISet<string> formatNames = new HashSet<string>(); // LUCENENET TODO: API - make property
 
         /// <summary>
         /// unique set of docvalues format names this codec knows about </summary>
-        public ISet<string> dvFormatNames = new HashSet<string>();
+        public ISet<string> dvFormatNames = new HashSet<string>(); // LUCENENET TODO: API - make property
 
         /// <summary>
         /// memorized field->postingsformat mappings </summary>
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
                 Debug.Assert(previousMappings.Count < 10000, "test went insane");
             }
 
-            //if (LuceneTestCase.VERBOSE)
+            //if (LuceneTestCase.VERBOSE) // LUCENENET TODO: Make this static again so we can access it
             //{
                 Console.WriteLine("RandomCodec.GetPostingsFormatForField(\"" + name + "\") returned '" + codec.Name + "' with underlying type '" + codec.GetType().ToString() + "'.");
             //}

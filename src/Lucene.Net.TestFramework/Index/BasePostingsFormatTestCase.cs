@@ -16,21 +16,21 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using Codec = Lucene.Net.Codecs.Codec;
     using Constants = Lucene.Net.Util.Constants;
@@ -50,13 +50,13 @@ namespace Lucene.Net.Index
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// Abstract class to do basic tests for a postings format.
+    /// Abstract class to do basic tests for a <see cref="Codecs.PostingsFormat"/>.
     /// NOTE: this test focuses on the postings
     /// (docs/freqs/positions/payloads/offsets) impl, not the
     /// terms dict.  The [stretch] goal is for this test to be
-    /// so thorough in testing a new PostingsFormat that if this
+    /// so thorough in testing a new <see cref="Codecs.PostingsFormat"/> that if this
     /// test passes, then all Lucene/Solr tests should also pass.  Ie,
-    /// if there is some bug in a given PostingsFormat that this
+    /// if there is some bug in a given <see cref="Codecs.PostingsFormat"/> that this
     /// test fails to catch then this test needs to be improved!
     /// </summary>
 
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Given the same random seed this always enumerates the
-        ///  same random postings
+        /// same random postings.
         /// </summary>
         private class SeedPostings : DocsAndPositionsEnum
         {
@@ -1257,7 +1257,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Indexes all fields/terms at the specified
-        ///  IndexOptions, and fully tests at that IndexOptions.
+        /// <see cref="IndexOptions"/>, and fully tests at that <see cref="IndexOptions"/>.
         /// </summary>
         private void TestFull(IndexOptions options, bool withPayloads)
         {
