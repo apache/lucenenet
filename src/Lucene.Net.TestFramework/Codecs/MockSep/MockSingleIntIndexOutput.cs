@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.MockSep
     /// <summary>
     /// Writes ints directly to the file (not in blocks) as
     /// vInt.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class MockSingleIntIndexOutput : Int32IndexOutput

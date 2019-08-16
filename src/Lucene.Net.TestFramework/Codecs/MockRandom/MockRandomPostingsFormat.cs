@@ -59,7 +59,7 @@ namespace Lucene.Net.Codecs.MockRandom
         }
 
         public MockRandomPostingsFormat()
-                  : this(null)
+            : this(null)
         {
             // This ctor should *only* be used at read-time: get NPE if you use it!
         }

@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.MockSep
 
     /// <summary>
     /// A silly codec that simply writes each file separately as
-    /// single vInts.Don't use this (performance will be poor)!
+    /// single vInts. Don't use this (performance will be poor)!
     /// This is here just to test the core sep codec
     /// classes.
     /// </summary>

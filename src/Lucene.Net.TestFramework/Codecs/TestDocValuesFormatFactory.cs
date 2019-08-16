@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs
     /// <summary>
     /// LUCENENET specific class used to add the DocValuesFormats from the test framework
     /// </summary>
-    public class TestDocValuesFormatFactory : DefaultDocValuesFormatFactory
+    public class TestDocValuesFormatFactory : DefaultDocValuesFormatFactory // LUCENENET TODO: API - make internal
     {
         protected override void Initialize()
         {

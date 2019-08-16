@@ -20,7 +20,7 @@ namespace Lucene.Net.Codecs.Lucene40
      */
 
     /// <summary>
-    /// Read-write version of Lucene40Codec for testing </summary>
+    /// Read-write version of <see cref="Lucene40Codec"/> for testing. </summary>
 #pragma warning disable 612, 618
     public sealed class Lucene40RWCodec : Lucene40Codec
     {

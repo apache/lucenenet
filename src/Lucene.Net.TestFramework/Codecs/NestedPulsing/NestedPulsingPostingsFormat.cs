@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.NestedPulsing
 
     /// <summary>
     /// Pulsing(1, Pulsing(2, Lucene41))
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     // TODO: if we create PulsingPostingsBaseFormat then we

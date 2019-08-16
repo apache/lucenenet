@@ -5,26 +5,21 @@ namespace Lucene.Net.Codecs.Lucene40
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
-    /// <summary>
-    /// Consumes doc & freq, writing them using the current
-    ///  index file format
-    /// </summary>
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
     using DataOutput = Lucene.Net.Store.DataOutput;
@@ -37,9 +32,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
     /// <summary>
     /// Concrete class that writes the 4.0 frq/prx postings format.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso> cref= Lucene40PostingsFormat
-    /// @lucene.experimental  </seealso>
+    /// <seealso cref="Lucene40PostingsFormat"/>
 #pragma warning disable 612, 618
     public sealed class Lucene40PostingsWriter : PostingsWriterBase
     {
@@ -49,7 +45,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Expert: The fraction of TermDocs entries stored in skip tables,
-        /// used to accelerate <seealso cref="DocsEnum#advance(int)"/>.  Larger values result in
+        /// used to accelerate <see cref="Search.DocIdSetIterator.Advance(int)"/>.  Larger values result in
         /// smaller indexes, greater acceleration, but fewer accelerable cases, while
         /// smaller values result in bigger indexes, less acceleration and more
         /// accelerable cases. More detailed experiments would be useful here.
@@ -91,8 +87,8 @@ namespace Lucene.Net.Codecs.Lucene40
         // private String segment;
 
         /// <summary>
-        /// Creates a <seealso cref="Lucene40PostingsWriter"/>, with the
-        ///  <seealso cref="#DEFAULT_SKIP_INTERVAL"/>.
+        /// Creates a <see cref="Lucene40PostingsWriter"/>, with the
+        /// <see cref="DEFAULT_SKIP_INTERVAL"/>.
         /// </summary>
         public Lucene40PostingsWriter(SegmentWriteState state)
             : this(state, DEFAULT_SKIP_INTERVAL)
@@ -242,7 +238,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Add a new position & payload </summary>
+        /// Add a new <paramref name="position"/> &amp; <paramref name="payload"/>. </summary>
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
             //if (DEBUG) System.out.println("SPW:     addPos pos=" + position + " payload=" + (payload == null ? "null" : (payload.Length + " bytes")) + " proxFP=" + proxOut.getFilePointer());
@@ -315,7 +311,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Called when we are done adding docs to this term </summary>
+        /// Called when we are done adding docs to this term. </summary>
         public override void FinishTerm(BlockTermState _state)
         {
             StandardTermState state = (StandardTermState)_state;

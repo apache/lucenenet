@@ -53,9 +53,9 @@ namespace Lucene.Net.Codecs.MockSep
             }
         }
 
-        /**
-         * Just reads a vInt directly from the file.
-         */
+        /// <summary>
+        /// Just reads a vInt directly from the file.
+        /// </summary>
         public class MockReader : Reader
         {
             // clone:
@@ -66,7 +66,9 @@ namespace Lucene.Net.Codecs.MockSep
                 this.@in = @in;
             }
 
-            /** Reads next single int */
+            /// <summary>
+            /// Reads next single int.
+            /// </summary>
             public override int Next()
             {
                 //System.out.println("msii.next() fp=" + in.getFilePointer() + " vs " + in.length());

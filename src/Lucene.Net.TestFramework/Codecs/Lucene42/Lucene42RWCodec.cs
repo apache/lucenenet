@@ -20,7 +20,7 @@ namespace Lucene.Net.Codecs.Lucene42
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /// <summary>
-    /// Read-write version of <seealso cref="Lucene42Codec"/> for testing.
+    /// Read-write version of <see cref="Lucene42Codec"/> for testing.
     /// </summary>
 #pragma warning disable 612, 618
     public class Lucene42RWCodec : Lucene42Codec

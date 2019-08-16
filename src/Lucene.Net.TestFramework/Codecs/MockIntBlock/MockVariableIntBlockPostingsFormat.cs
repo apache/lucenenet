@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
 
     /// <summary>
     /// A silly test codec to verify core support for variable
-    /// sized int block encoders is working.The int encoder
+    /// sized int block encoders is working. The int encoder
     /// used here writes baseBlockSize ints at once, if the first
     /// int is &lt;= 3, else 2* baseBlockSize.
     /// </summary>
@@ -53,10 +53,10 @@ namespace Lucene.Net.Codecs.MockIntBlock
             return Name + "(baseBlockSize=" + baseBlockSize + ")";
         }
 
-        /**
-         * If the first value is &lt;= 3, writes baseBlockSize vInts at once,
-         * otherwise writes 2*baseBlockSize vInts.
-         */
+        /// <summary>
+        /// If the first value is &lt;= 3, writes baseBlockSize vInts at once,
+        /// otherwise writes 2*baseBlockSize vInts.
+        /// </summary>
         public class MockInt32Factory : Int32StreamFactory
         {
 

@@ -21,6 +21,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     /// <summary>
     /// Writes 3.x-like indexes (not perfect emulation yet) for testing only!
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #pragma warning disable 612, 618

@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs
     /// <summary>
     /// LUCENENET specific class used to add the codecs from the test framework
     /// </summary>
-    public class TestCodecFactory : DefaultCodecFactory
+    public class TestCodecFactory : DefaultCodecFactory // LUCENENET TODO: API - make internal
     {
         protected override void Initialize()
         {

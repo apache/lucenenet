@@ -12,21 +12,21 @@ namespace Lucene.Net.Codecs.RAMOnly
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
@@ -44,10 +44,10 @@ namespace Lucene.Net.Codecs.RAMOnly
 
     /// <summary>
     /// Stores all postings data in RAM, but writes a small
-    ///  token (header + single int) to identify which "slot" the
-    ///  index is using in RAM HashMap.
-    ///
-    ///  NOTE: this codec sorts terms by reverse-unicode-order!
+    /// token (header + single int) to identify which "slot" the
+    /// index is using in RAM dictionary.
+    /// <para/>
+    /// NOTE: this codec sorts terms by reverse-unicode-order!
     /// </summary>
     [PostingsFormatName("RAMOnly")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class RAMOnlyPostingsFormat : PostingsFormat

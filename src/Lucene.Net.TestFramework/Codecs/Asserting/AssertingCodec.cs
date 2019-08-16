@@ -20,7 +20,7 @@ namespace Lucene.Net.Codecs.Asserting
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 
     /// <summary>
-    /// Acts like <seealso cref="Lucene46Codec"/> but with additional asserts.
+    /// Acts like <see cref="Lucene46Codec"/> but with additional asserts.
     /// </summary>
     [CodecName("Asserting")]
     public sealed class AssertingCodec : FilterCodec

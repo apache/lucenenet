@@ -17,7 +17,6 @@ namespace Lucene.Net.Codecs.Lucene3x
      * limitations under the License.
      */
 
-    ///
     /// <summary>
     /// @lucene.internal
     /// @lucene.experimental

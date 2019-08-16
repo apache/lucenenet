@@ -20,6 +20,11 @@ namespace Lucene.Net.Codecs.MockSep
      * limitations under the License.
      */
 
+    /// <summary>
+    /// Encodes ints directly as vInts with <see cref="MockSingleIntIndexOutput"/>.
+    /// <para/>
+    /// @lucene.experimental
+    /// </summary>
     public class MockSingleIntFactory : Int32StreamFactory
     {
         public override Int32IndexInput OpenInput(Directory dir, string fileName, IOContext context)
