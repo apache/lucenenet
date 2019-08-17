@@ -1065,7 +1065,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.PositionIncrementGap = 100;
+            analyzer.SetPositionIncrementGap(100);
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);

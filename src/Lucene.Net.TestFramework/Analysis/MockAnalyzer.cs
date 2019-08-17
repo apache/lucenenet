@@ -159,12 +159,9 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        public int PositionIncrementGap // LUCENENET TODO: API change to SetPositionIncrementGap()
+        public void SetPositionIncrementGap(int positionIncrementGap)
         {
-            set
-            {
-                this.positionIncrementGap = value;
-            }
+            this.positionIncrementGap = positionIncrementGap;
         }
 
         public override int GetPositionIncrementGap(string fieldName)

@@ -450,7 +450,7 @@ namespace Lucene.Net.Index.Memory
             query.Add(new Term("field", "jumps"));
             assertTrue(mindex.Search(query) > 0.1);
             mindex.Reset();
-            mockAnalyzer.PositionIncrementGap = (1 + Random().nextInt(10));
+            mockAnalyzer.SetPositionIncrementGap(1 + Random().nextInt(10));
             mindex.AddField("field", "the quick brown fox", mockAnalyzer);
             mindex.AddField("field", "jumps over the", mockAnalyzer);
             assertEquals(0, mindex.Search(query), 0.00001f);
