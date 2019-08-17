@@ -428,7 +428,7 @@ namespace Lucene.Net.Index
                     w.DeleteDocuments(new Term("id", "" + Random().Next(i + 1)));
                 }
             }
-            Assert.IsTrue(((TrackingCMS)w.w.Config.MergeScheduler).TotMergedBytes != 0);
+            Assert.IsTrue(((TrackingCMS)w.IndexWriter.Config.MergeScheduler).TotMergedBytes != 0);
             w.Dispose();
             d.Dispose();
         }

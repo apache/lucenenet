@@ -568,7 +568,7 @@ namespace Lucene.Net.Search
             }
             try
             {
-                new SearcherManager(w.w, random.NextBoolean(), theEvilOne);
+                new SearcherManager(w.IndexWriter, random.NextBoolean(), theEvilOne);
             }
 #pragma warning disable 168
             catch (InvalidOperationException ise)

@@ -190,7 +190,7 @@ namespace Lucene.Net.Tests.Join
             document.Add(new StringField("fieldXXX", "x", Field.Store.NO));
             w.AddDocument(document);
 
-            IndexSearcher searcher = new IndexSearcher(DirectoryReader.Open(w.w, false));
+            IndexSearcher searcher = new IndexSearcher(DirectoryReader.Open(w.IndexWriter, false));
             w.Dispose();
             Filter parentFilter = new QueryWrapperFilter(new TermQuery(new Term("__type", "parent")));
             Filter childFilter = new QueryWrapperFilter(new PrefixQuery(new Term("field2")));

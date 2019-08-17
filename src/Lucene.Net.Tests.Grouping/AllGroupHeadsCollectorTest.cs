@@ -53,7 +53,7 @@ namespace Lucene.Net.Search.Grouping
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
                     new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
-            bool canUseIDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
+            bool canUseIDV = !"Lucene3x".Equals(w.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
             DocValuesType valueType = vts[Random().nextInt(vts.Length)];
 
             // 0
@@ -217,7 +217,7 @@ namespace Lucene.Net.Search.Grouping
                     dir,
                     NewIndexWriterConfig(TEST_VERSION_CURRENT,
                         new MockAnalyzer(Random())));
-                bool preFlex = "Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
+                bool preFlex = "Lucene3x".Equals(w.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
                 bool canUseIDV = !preFlex;
                 DocValuesType valueType = vts[Random().nextInt(vts.Length)];
 

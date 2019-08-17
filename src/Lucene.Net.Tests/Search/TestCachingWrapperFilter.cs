@@ -369,7 +369,7 @@ namespace Lucene.Net.Search
             // flipping a coin) may give us a newly opened reader,
             // but we use .reopen on this reader below and expect to
             // (must) get an NRT reader:
-            DirectoryReader reader = DirectoryReader.Open(writer.w, true);
+            DirectoryReader reader = DirectoryReader.Open(writer.IndexWriter, true);
             // same reason we don't wrap?
             IndexSearcher searcher = NewSearcher(reader, false, Similarity);
 

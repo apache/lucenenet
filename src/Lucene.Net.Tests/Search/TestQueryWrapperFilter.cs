@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
         {
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
-            w.w.Config.SetMaxBufferedDocs(17);
+            w.IndexWriter.Config.SetMaxBufferedDocs(17);
             int numDocs = AtLeast(100);
             HashSet<string> aDocs = new HashSet<string>();
             for (int i = 0; i < numDocs; i++)

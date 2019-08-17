@@ -120,16 +120,16 @@ namespace Lucene.Net.Index.Sorter
             // single segment in the index, and threefore the index won't be sorted.
             // This hurts the assumption of the test later on, that the index is sorted
             // by SortingMP.
-            iw1.w.AddDocument(doc2);
-            iw2.w.AddDocument(doc2);
+            iw1.IndexWriter.AddDocument(doc2);
+            iw2.IndexWriter.AddDocument(doc2);
 
             if (DefaultCodecSupportsFieldUpdates())
             {
                 // update NDV of docs belonging to one term (covers many documents)
                 long value = Random().NextInt64();
                 string term = RandomInts.RandomFrom(Random(), terms);
-                iw1.w.UpdateNumericDocValue(new Term("s", term), "ndv", value);
-                iw2.w.UpdateNumericDocValue(new Term("s", term), "ndv", value);
+                iw1.IndexWriter.UpdateNumericDocValue(new Term("s", term), "ndv", value);
+                iw2.IndexWriter.UpdateNumericDocValue(new Term("s", term), "ndv", value);
             }
 
             iw1.ForceMerge(1);

@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
     /// </summary>
     public class RandomIndexWriter : IDisposable
     {
-        public IndexWriter w;
+        public IndexWriter IndexWriter { get; set; } // LUCENENET: Renamed from w to IndexWriter to make it clear what this is.
         private readonly Random r;
         internal int docCount;
         internal int flushAt;
@@ -134,12 +134,12 @@ namespace Lucene.Net.Index
         {
             // TODO: this should be solved in a different way; Random should not be shared (!).
             this.r = new Random(r.Next());
-            w = MockIndexWriter(dir, c, r);
+            IndexWriter = MockIndexWriter(dir, c, r);
             flushAt = TestUtil.NextInt32(r, 10, 1000);
-            codec = w.Config.Codec;
+            codec = IndexWriter.Config.Codec;
             if (LuceneTestCase.VERBOSE)
             {
-                Console.WriteLine("RIW dir=" + dir + " config=" + w.Config);
+                Console.WriteLine("RIW dir=" + dir + " config=" + IndexWriter.Config);
                 Console.WriteLine("codec default=" + codec.Name);
             }
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexWriter.AddDocument(IEnumerable{IIndexableField})"/>
         public virtual void AddDocument(IEnumerable<IIndexableField> doc)
         {
-            AddDocument(doc, w.Analyzer);
+            AddDocument(doc, IndexWriter.Analyzer);
         }
 
         public virtual void AddDocument(IEnumerable<IIndexableField> doc, Analyzer a)
@@ -164,11 +164,11 @@ namespace Lucene.Net.Index
                 // (but we need to clone them), and only when
                 // getReader, commit, etc. are called, we do an
                 // addDocuments?  Would be better testing.
-                w.AddDocuments(new IterableAnonymousInnerClassHelper<IIndexableField>(this, doc), a);
+                IndexWriter.AddDocuments(new IterableAnonymousInnerClassHelper<IIndexableField>(this, doc), a);
             }
             else
             {
-                w.AddDocument(doc, a);
+                IndexWriter.AddDocument(doc, a);
             }
 
             MaybeCommit();
@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("RIW.add/updateDocument: now doing a commit at docCount=" + docCount);
                 }
-                w.Commit();
+                IndexWriter.Commit();
                 flushAt += TestUtil.NextInt32(r, (int)(flushAtFactor * 10), (int)(flushAtFactor * 1000));
                 if (flushAtFactor < 2e6)
                 {
@@ -261,13 +261,13 @@ namespace Lucene.Net.Index
 
         public virtual void AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs)
         {
-            w.AddDocuments(docs);
+            IndexWriter.AddDocuments(docs);
             MaybeCommit();
         }
 
         public virtual void UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
-            w.UpdateDocuments(delTerm, docs);
+            IndexWriter.UpdateDocuments(delTerm, docs);
             MaybeCommit();
         }
 
@@ -278,11 +278,11 @@ namespace Lucene.Net.Index
         {
             if (r.Next(5) == 3)
             {
-                w.UpdateDocuments(t, new IterableAnonymousInnerClassHelper2(this, doc));
+                IndexWriter.UpdateDocuments(t, new IterableAnonymousInnerClassHelper2(this, doc));
             }
             else
             {
-                w.UpdateDocument(t, doc);
+                IndexWriter.UpdateDocument(t, doc);
             }
             MaybeCommit();
         }
@@ -356,52 +356,52 @@ namespace Lucene.Net.Index
 
         public virtual void AddIndexes(params Directory[] dirs)
         {
-            w.AddIndexes(dirs);
+            IndexWriter.AddIndexes(dirs);
         }
 
         public virtual void AddIndexes(params IndexReader[] readers)
         {
-            w.AddIndexes(readers);
+            IndexWriter.AddIndexes(readers);
         }
 
         public virtual void UpdateNumericDocValue(Term term, string field, long? value)
         {
-            w.UpdateNumericDocValue(term, field, value);
+            IndexWriter.UpdateNumericDocValue(term, field, value);
         }
 
         public virtual void UpdateBinaryDocValue(Term term, string field, BytesRef value)
         {
-            w.UpdateBinaryDocValue(term, field, value);
+            IndexWriter.UpdateBinaryDocValue(term, field, value);
         }
 
         public virtual void DeleteDocuments(Term term)
         {
-            w.DeleteDocuments(term);
+            IndexWriter.DeleteDocuments(term);
         }
 
         public virtual void DeleteDocuments(Query q)
         {
-            w.DeleteDocuments(q);
+            IndexWriter.DeleteDocuments(q);
         }
 
         public virtual void Commit()
         {
-            w.Commit();
+            IndexWriter.Commit();
         }
 
         public virtual int NumDocs
         {
-            get { return w.NumDocs; }
+            get { return IndexWriter.NumDocs; }
         }
 
         public virtual int MaxDoc
         {
-            get { return w.MaxDoc; }
+            get { return IndexWriter.MaxDoc; }
         }
 
         public virtual void DeleteAll()
         {
-            w.DeleteAll();
+            IndexWriter.DeleteAll();
         }
 
         public virtual DirectoryReader Reader
@@ -417,12 +417,12 @@ namespace Lucene.Net.Index
 
         public virtual void ForceMergeDeletes(bool doWait)
         {
-            w.ForceMergeDeletes(doWait);
+            IndexWriter.ForceMergeDeletes(doWait);
         }
 
         public virtual void ForceMergeDeletes()
         {
-            w.ForceMergeDeletes();
+            IndexWriter.ForceMergeDeletes();
         }
 
         public virtual bool RandomForceMerge
@@ -453,7 +453,7 @@ namespace Lucene.Net.Index
         {
             if (doRandomForceMerge)
             {
-                int segCount = w.SegmentCount;
+                int segCount = IndexWriter.SegmentCount;
                 if (r.NextBoolean() || segCount == 0)
                 {
                     // full forceMerge
@@ -461,7 +461,7 @@ namespace Lucene.Net.Index
                     {
                         Console.WriteLine("RIW: doRandomForceMerge(1)");
                     }
-                    w.ForceMerge(1);
+                    IndexWriter.ForceMerge(1);
                 }
                 else
                 {
@@ -471,8 +471,8 @@ namespace Lucene.Net.Index
                     {
                         Console.WriteLine("RIW: doRandomForceMerge(" + limit + ")");
                     }
-                    w.ForceMerge(limit);
-                    Debug.Assert(!doRandomForceMergeAssert || w.SegmentCount <= limit, "limit=" + limit + " actual=" + w.SegmentCount);
+                    IndexWriter.ForceMerge(limit);
+                    Debug.Assert(!doRandomForceMergeAssert || IndexWriter.SegmentCount <= limit, "limit=" + limit + " actual=" + IndexWriter.SegmentCount);
                 }
             }
         }
@@ -495,9 +495,9 @@ namespace Lucene.Net.Index
                 }
                 if (r.Next(5) == 1)
                 {
-                    w.Commit();
+                    IndexWriter.Commit();
                 }
-                return w.GetReader(applyDeletions);
+                return IndexWriter.GetReader(applyDeletions);
             }
             else
             {
@@ -505,14 +505,14 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("RIW.getReader: open new reader");
                 }
-                w.Commit();
+                IndexWriter.Commit();
                 if (r.NextBoolean())
                 {
-                    return DirectoryReader.Open(w.Directory, TestUtil.NextInt32(r, 1, 10));
+                    return DirectoryReader.Open(IndexWriter.Directory, TestUtil.NextInt32(r, 1, 10));
                 }
                 else
                 {
-                    return w.GetReader(applyDeletions);
+                    return IndexWriter.GetReader(applyDeletions);
                 }
             }
         }
@@ -541,7 +541,7 @@ namespace Lucene.Net.Index
                 {
                     DoRandomForceMerge();
                 }
-                w.Dispose();
+                IndexWriter.Dispose();
             }
         }
 
@@ -553,7 +553,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexWriter.ForceMerge(int)"/>
         public virtual void ForceMerge(int maxSegmentCount)
         {
-            w.ForceMerge(maxSegmentCount);
+            IndexWriter.ForceMerge(maxSegmentCount);
         }
 
         public sealed class TestPointInfoStream : InfoStream

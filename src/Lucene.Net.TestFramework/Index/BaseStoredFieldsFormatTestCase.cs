@@ -397,7 +397,7 @@ namespace Lucene.Net.Index
                 {
                     doc.Add(fld);
                 }
-                iw.w.AddDocument(doc);
+                iw.IndexWriter.AddDocument(doc);
             }
             iw.Commit();
 
@@ -615,10 +615,10 @@ namespace Lucene.Net.Index
                     Field f = new Field("bytes" + j, data[i][j], type);
                     doc.Add(f);
                 }
-                iw.w.AddDocument(doc);
+                iw.IndexWriter.AddDocument(doc);
                 if (Random().NextBoolean() && (i % (data.Length / 10) == 0))
                 {
-                    iw.w.Dispose();
+                    iw.IndexWriter.Dispose();
                     // test merging against a non-compressing codec
                     if (iwConf.Codec == otherCodec)
                     {

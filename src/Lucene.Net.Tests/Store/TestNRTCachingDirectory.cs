@@ -71,7 +71,7 @@ namespace Lucene.Net.Store
                 {
                     if (r == null)
                     {
-                        r = DirectoryReader.Open(w.w, false);
+                        r = DirectoryReader.Open(w.IndexWriter, false);
                     }
                     else
                     {

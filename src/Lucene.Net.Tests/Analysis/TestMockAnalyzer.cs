@@ -377,7 +377,7 @@ namespace Lucene.Net.Analysis
             Assert.AreEqual(null, te.Next());
             reader.Dispose();
             writer.Dispose();
-            writer.w.Directory.Dispose();
+            writer.IndexWriter.Directory.Dispose();
         }
 
         private class AnalyzerWrapperAnonymousInnerClassHelper2 : AnalyzerWrapper

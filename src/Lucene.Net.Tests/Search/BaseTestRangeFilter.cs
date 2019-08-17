@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
             doc.Add(bodyField);
 
             RandomIndexWriter writer = new RandomIndexWriter(random, index.Index, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(TestUtil.NextInt32(random, 50, 1000)).SetMergePolicy(NewLogMergePolicy()));
-            TestUtil.ReduceOpenFiles(writer.w);
+            TestUtil.ReduceOpenFiles(writer.IndexWriter);
 
             while (true)
             {

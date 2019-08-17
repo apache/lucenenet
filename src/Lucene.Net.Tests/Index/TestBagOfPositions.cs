@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
             int threadCount = TestUtil.NextInt32(Random(), 1, 5);
             if (VERBOSE)
             {
-                Console.WriteLine("config: " + iw.w.Config);
+                Console.WriteLine("config: " + iw.IndexWriter.Config);
                 Console.WriteLine("threadCount=" + threadCount);
             }
 

@@ -47,7 +47,7 @@ namespace Lucene.Net.Search.Grouping
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
                     new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
-            bool canUseDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
+            bool canUseDV = !"Lucene3x".Equals(w.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
             bool useDv = canUseDV && Random().nextBoolean();
 
             // 0
@@ -559,7 +559,7 @@ namespace Lucene.Net.Search.Grouping
                     new MockAnalyzer(random)
                 )
             );
-            bool canUseDV = !"Lucene3x".Equals(writer.w.Config.Codec.Name, StringComparison.Ordinal);
+            bool canUseDV = !"Lucene3x".Equals(writer.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
             bool useDv = canUseDV && !multipleFacetValuesPerDocument && random.nextBoolean();
 
             Document doc = new Document();

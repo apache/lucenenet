@@ -233,7 +233,7 @@ namespace Lucene.Net.Index
                                         {
                                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": reopen reader=" + oldReader + " version=" + version);
                                         }
-                                        newReader = DirectoryReader.OpenIfChanged(oldReader, Writer.w, true);
+                                        newReader = DirectoryReader.OpenIfChanged(oldReader, Writer.IndexWriter, true);
                                     }
                                 }
                                 else

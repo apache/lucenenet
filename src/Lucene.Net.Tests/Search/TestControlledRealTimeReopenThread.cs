@@ -559,7 +559,7 @@ namespace Lucene.Net.Search
 
             try
             {
-                new SearcherManager(w.w, false, theEvilOne);
+                new SearcherManager(w.IndexWriter, false, theEvilOne);
                 fail("didn't hit expected exception");
             }
 #pragma warning disable 168

@@ -365,7 +365,7 @@ namespace Lucene.Net.Index
             const double RUN_SEC = 0.5;
             var dir = NewDirectory();
             var w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
-            TestUtil.ReduceOpenFiles(w.w);
+            TestUtil.ReduceOpenFiles(w.IndexWriter);
             w.Commit();
             var failed = new AtomicBoolean();
             var threads = new ThreadClass[NUM_THREADS];

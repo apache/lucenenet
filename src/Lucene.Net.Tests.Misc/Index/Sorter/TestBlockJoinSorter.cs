@@ -152,7 +152,7 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
             indexReader.Dispose();
-            writer.w.Directory.Dispose();
+            writer.IndexWriter.Directory.Dispose();
         }
     }
 }

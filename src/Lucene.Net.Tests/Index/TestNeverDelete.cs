@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
                 ((MockDirectoryWrapper)d).NoDeleteOpenFile = false;
             }
             RandomIndexWriter w = new RandomIndexWriter(Random(), d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
-            w.w.Config.SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 5, 30));
+            w.IndexWriter.Config.SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 5, 30));
 
             w.Commit();
             ThreadClass[] indexThreads = new ThreadClass[Random().Next(4)];
