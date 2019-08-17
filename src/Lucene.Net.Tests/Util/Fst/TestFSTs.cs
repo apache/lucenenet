@@ -106,11 +106,11 @@ namespace Lucene.Net.Util.Fst
 
                 for (int idx = 0; idx < strings.Length; idx++)
                 {
-                    terms[idx] = FSTTester<object>.ToIntsRef(strings[idx], inputMode);
+                    terms[idx] = FSTTester<object>.ToInt32sRef(strings[idx], inputMode);
                 }
                 for (int idx = 0; idx < strings2.Length; idx++)
                 {
-                    terms2[idx] = FSTTester<object>.ToIntsRef(strings2[idx], inputMode);
+                    terms2[idx] = FSTTester<object>.ToInt32sRef(strings2[idx], inputMode);
                 }
                 Array.Sort(terms2);
 
@@ -312,7 +312,7 @@ namespace Lucene.Net.Util.Fst
                     while (termsSet.Count < numWords)
                     {
                         string term = FSTTester<object>.GetRandomString(random);
-                        termsSet.Add(FSTTester<object>.ToIntsRef(term, inputMode));
+                        termsSet.Add(FSTTester<object>.ToInt32sRef(term, inputMode));
                     }
                     DoTest(inputMode, termsSet.ToArray(/*new IntsRef[termsSet.Count]*/));
                 }
@@ -561,7 +561,7 @@ namespace Lucene.Net.Util.Fst
                         {
                             break;
                         }
-                        FSTTester<object>.ToIntsRef(w, InputMode, intsRef);
+                        FSTTester<object>.ToInt32sRef(w, InputMode, intsRef);
                         Builder.Add(intsRef, GetOutput(intsRef, ord));
 
                         ord++;
@@ -637,7 +637,7 @@ namespace Lucene.Net.Util.Fst
                                 {
                                     break;
                                 }
-                                FSTTester<object>.ToIntsRef(w, InputMode, intsRef);
+                                FSTTester<object>.ToInt32sRef(w, InputMode, intsRef);
                                 if (iter == 0)
                                 {
                                     T expected = GetOutput(intsRef, ord);

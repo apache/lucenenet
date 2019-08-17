@@ -70,7 +70,7 @@ namespace Lucene.Net.Util.Fst
                     while (termsSet.size() < numWords)
                     {
                         string term = FSTTester<object>.GetRandomString(random);
-                        termsSet.Add(FSTTester<object>.ToIntsRef(term, inputMode));
+                        termsSet.Add(FSTTester<object>.ToInt32sRef(term, inputMode));
                     }
                     DoTest(inputMode, termsSet.ToArray());
                 }

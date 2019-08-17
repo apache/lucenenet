@@ -125,26 +125,26 @@ namespace Lucene.Net.Util.Fst
             return new string(buffer, 0, end);
         }
 
-        internal static Int32sRef ToIntsRef(string s, int inputMode)
+        internal static Int32sRef ToInt32sRef(string s, int inputMode)
         {
-            return ToIntsRef(s, inputMode, new Int32sRef(10));
+            return ToInt32sRef(s, inputMode, new Int32sRef(10));
         }
 
-        internal static Int32sRef ToIntsRef(string s, int inputMode, Int32sRef ir)
+        internal static Int32sRef ToInt32sRef(string s, int inputMode, Int32sRef ir)
         {
             if (inputMode == 0)
             {
                 // utf8
-                return ToIntsRef(new BytesRef(s), ir);
+                return ToInt32sRef(new BytesRef(s), ir);
             }
             else
             {
                 // utf32
-                return ToIntsRefUTF32(s, ir);
+                return ToInt32sRefUTF32(s, ir);
             }
         }
 
-        internal static Int32sRef ToIntsRefUTF32(string s, Int32sRef ir)
+        internal static Int32sRef ToInt32sRefUTF32(string s, Int32sRef ir)
         {
             int charLength = s.Length;
             int charIdx = 0;
@@ -164,7 +164,7 @@ namespace Lucene.Net.Util.Fst
             return ir;
         }
 
-        internal static Int32sRef ToIntsRef(BytesRef br, Int32sRef ir)
+        internal static Int32sRef ToInt32sRef(BytesRef br, Int32sRef ir)
         {
             if (br.Length > ir.Int32s.Length)
             {
@@ -555,7 +555,7 @@ namespace Lucene.Net.Util.Fst
                     // seek to term that doesn't exist:
                     while (true)
                     {
-                        Int32sRef term = ToIntsRef(GetRandomString(random), inputMode);
+                        Int32sRef term = ToInt32sRef(GetRandomString(random), inputMode);
                         int pos = pairs.BinarySearch(new InputOutput<T>(term, default(T)));
                         if (pos < 0)
                         {
@@ -685,7 +685,7 @@ namespace Lucene.Net.Util.Fst
                         int attempt = 0;
                         for (; attempt < 10; attempt++)
                         {
-                            Int32sRef term = ToIntsRef(GetRandomString(random), inputMode);
+                            Int32sRef term = ToInt32sRef(GetRandomString(random), inputMode);
                             if (!termsMap.ContainsKey(term) && term.CompareTo(pairs[upto].Input) > 0)
                             {
                                 int pos = pairs.BinarySearch(new InputOutput<T>(term, default(T)));
