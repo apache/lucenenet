@@ -31,12 +31,9 @@ namespace Lucene.Net.Codecs.Lucene41
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
         }
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return new Lucene41RWCodec();
-            }
+            return new Lucene41RWCodec();
         }
 
 

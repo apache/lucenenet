@@ -24,12 +24,9 @@ namespace Lucene.Net.Codecs.SimpleText
     public class TestSimpleTextTermVectorsFormat : BaseTermVectorsFormatTestCase
     {
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return new SimpleTextCodec();
-            }
+            return new SimpleTextCodec();
         }
 
         #region BaseTermVectorsFormatTestCase

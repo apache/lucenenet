@@ -28,12 +28,9 @@ namespace Lucene.Net.Codecs.Memory
     {
         private readonly Codec codec = TestUtil.AlwaysDocValuesFormat(new MemoryDocValuesFormat());
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return codec;
-            }
+            return codec;
         }
 
         protected override bool CodecAcceptsHugeBinaryValues(string field)

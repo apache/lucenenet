@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Returns the codec to run tests against </summary>
-        protected abstract Codec Codec { get; } // LUCENENET TODO: API - Change to GetCodec() - this sometimes returns a new or randomly selected instance
+        protected abstract Codec GetCodec();
 
         private Codec savedCodec;
 
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
             base.SetUp();
             // set the default codec, so adding test cases to this isn't fragile
             savedCodec = Codec.Default;
-            Codec.Default = Codec;
+            Codec.Default = GetCodec();
         }
 
         [TearDown]

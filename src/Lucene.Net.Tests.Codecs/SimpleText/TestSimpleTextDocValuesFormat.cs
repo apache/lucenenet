@@ -35,12 +35,9 @@ namespace Lucene.Net.Codecs.SimpleText
     {
         private readonly Codec codec = new SimpleTextCodec();
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return codec;
-            }
+            return codec;
         }
 
         #region BaseDocValuesFormatTestCase

@@ -28,12 +28,9 @@ namespace Lucene.Net.Codecs.Bloom
     {
         private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new TestBloomFilteredLucene41Postings());
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return codec;
-            }
+            return codec;
         }
 
 

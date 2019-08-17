@@ -29,12 +29,9 @@ namespace Lucene.Net.Index
     [SuppressCodecs("Lucene3x")]
     public class TestDocValuesFormat : BaseDocValuesFormatTestCase
     {
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return Codec.Default;
-            }
+            return Codec.Default;
         }
 
         protected internal override bool CodecAcceptsHugeBinaryValues(string field)

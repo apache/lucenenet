@@ -29,12 +29,9 @@ namespace Lucene.Net.Codecs.Lucene41
     {
         private readonly Codec Codec_Renamed = TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat());
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return Codec_Renamed;
-            }
+            return Codec_Renamed;
         }
 
 

@@ -29,12 +29,9 @@ namespace Lucene.Net.Codecs.DiskDV
     {
         private readonly Codec codec = TestUtil.AlwaysDocValuesFormat(new DiskDocValuesFormat());
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return codec;
-            }
+            return codec;
         }
 
 

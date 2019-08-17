@@ -65,12 +65,9 @@ namespace Lucene.Net.Codecs.PerField
             base.SetUp();
         }
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return Codec_Renamed;
-            }
+            return Codec_Renamed;
         }
 
         protected internal override bool CodecAcceptsHugeBinaryValues(string field)

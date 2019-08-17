@@ -31,12 +31,9 @@ namespace Lucene.Net.Codecs.BlockTerms
     {
         private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new Lucene41WithOrds());
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return codec;
-            }
+            return codec;
         }
 
 

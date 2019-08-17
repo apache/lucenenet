@@ -33,12 +33,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
         }
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return new PreFlexRWCodec();
-            }
+            return new PreFlexRWCodec();
         }
 
         [Test]

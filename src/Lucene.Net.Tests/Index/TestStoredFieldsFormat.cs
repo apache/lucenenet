@@ -31,19 +31,16 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestStoredFieldsFormat : BaseStoredFieldsFormatTestCase
     {
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return Codec.Default;
-            }
+            return Codec.Default;
         }
 
         [Test]
         public override void TestWriteReadMerge()
         {
 #pragma warning disable 612, 618
-            AssumeFalse("impersonation isnt good enough", Codec is Lucene3xCodec);
+            AssumeFalse("impersonation isnt good enough", GetCodec() is Lucene3xCodec);
 #pragma warning restore 612, 618
             // this test tries to switch up between the codec and another codec.
             // for 3.x: we currently cannot take an index with existing 4.x segments

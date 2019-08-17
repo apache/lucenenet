@@ -38,12 +38,9 @@ namespace Lucene.Net.Codecs.Compressing
     [TestFixture]
     public class TestCompressingTermVectorsFormat : BaseTermVectorsFormatTestCase
     {
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return CompressingCodec.RandomInstance(Random());
-            }
+            return CompressingCodec.RandomInstance(Random());
         }
 
         // https://issues.apache.org/jira/browse/LUCENE-5156

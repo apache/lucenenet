@@ -511,7 +511,7 @@ namespace Lucene.Net.Index
         // randomly index at lower IndexOption
         private FieldsProducer BuildIndex(Directory dir, IndexOptions maxAllowed, bool allowPayloads, bool alwaysTestMax)
         {
-            Codec codec = Codec;
+            Codec codec = GetCodec();
             SegmentInfo segmentInfo = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, "_0", maxDoc, false, codec, null);
 
             int maxIndexOption = Enum.GetValues(typeof(IndexOptions)).Cast<IndexOptions>().ToList().IndexOf(maxAllowed);

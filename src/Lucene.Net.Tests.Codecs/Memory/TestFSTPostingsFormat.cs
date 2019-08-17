@@ -28,12 +28,9 @@ namespace Lucene.Net.Codecs.Memory
     {
         private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new FSTPostingsFormat());
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return codec;
-            }
+            return codec;
         }
 
 

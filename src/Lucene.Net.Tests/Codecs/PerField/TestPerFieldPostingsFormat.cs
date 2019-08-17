@@ -31,12 +31,9 @@ namespace Lucene.Net.Codecs.PerField
     [TestFixture]
     public class TestPerFieldPostingsFormat : BasePostingsFormatTestCase
     {
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return new RandomCodec(new Random(Random().Next()), new HashSet<string>());
-            }
+            return new RandomCodec(new Random(Random().Next()), new HashSet<string>());
         }
 
         [Test]

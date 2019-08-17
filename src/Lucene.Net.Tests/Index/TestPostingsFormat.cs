@@ -28,12 +28,9 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestPostingsFormat : BasePostingsFormatTestCase
     {
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return Codec.Default;
-            }
+            return Codec.Default;
         }
 
         [Test]

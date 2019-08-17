@@ -30,12 +30,9 @@ namespace Lucene.Net.Codecs.IntBlock
         // TODO: randomize blocksize
         private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new MockFixedInt32BlockPostingsFormat());
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return codec;
-            }
+            return codec;
         }
 
 

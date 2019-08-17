@@ -39,12 +39,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return codec;
-            }
+            return codec;
         }
 
 

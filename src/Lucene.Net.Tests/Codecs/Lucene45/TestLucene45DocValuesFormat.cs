@@ -29,12 +29,9 @@ namespace Lucene.Net.Codecs.Lucene45
     {
         private readonly Codec Codec_Renamed = TestUtil.AlwaysDocValuesFormat(new Lucene45DocValuesFormat());
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return Codec_Renamed;
-            }
+            return Codec_Renamed;
         }
 
         #region BaseCompressingDocValuesFormatTestCase

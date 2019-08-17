@@ -29,12 +29,9 @@ namespace Lucene.Net.Codecs.Pulsing
         // TODO: randomize cutoff
         private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat());
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return codec;
-            }
+            return codec;
         }
 
 

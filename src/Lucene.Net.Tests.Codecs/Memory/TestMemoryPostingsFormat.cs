@@ -29,12 +29,9 @@ namespace Lucene.Net.Codecs.Memory
         // TODO: randomize doPack
         private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat());
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return codec;
-            }
+            return codec;
         }
 
         #region BasePostingsFormatTestCase

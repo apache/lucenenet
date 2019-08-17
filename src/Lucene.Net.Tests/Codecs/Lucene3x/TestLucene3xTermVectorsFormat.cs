@@ -34,12 +34,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             base.SetUp();
         }
 
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return new PreFlexRWCodec();
-            }
+            return new PreFlexRWCodec();
         }
 
         protected override IEnumerable<Options> ValidOptions()
