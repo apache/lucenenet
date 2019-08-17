@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
                 long value;
                 if (values.Count < uniqueValueCount)
                 {
-                    value = Random().NextLong();
+                    value = Random().NextInt64();
                     values.Add(value);
                 }
                 else

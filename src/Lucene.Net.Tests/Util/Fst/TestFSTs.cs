@@ -1052,7 +1052,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         while (true)
                         {
-                            string s = Convert.ToString(Random().NextLong());
+                            string s = Convert.ToString(Random().NextInt64());
                             if (!allIDs.Contains(s))
                             {
                                 idString = s;
@@ -1089,7 +1089,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         while (true)
                         {
-                            idString = Convert.ToString(Random().NextLong());
+                            idString = Convert.ToString(Random().NextInt64());
                             if (!allIDs.Contains(idString))
                             {
                                 break;

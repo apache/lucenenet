@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 Document d = new Document();
-                long number = Random().NextLong();
+                long number = Random().NextInt64();
                 d.Add(new NumericDocValuesField("number", number));
                 BytesRef bytes = new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()));
                 d.Add(new BinaryDocValuesField("bytes", bytes));

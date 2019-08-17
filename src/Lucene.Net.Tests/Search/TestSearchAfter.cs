@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
                 else if (sf.Type == SortFieldType.INT64)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.INT64, sf.IsReverse);
-                    sf2.MissingValue = Random().NextLong();
+                    sf2.MissingValue = Random().NextInt64();
                     AllSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.SINGLE)
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
                 fields.Add(NewStringField("byte", "" + ((sbyte)Random().Next()), Field.Store.NO));
                 fields.Add(NewStringField("short", "" + ((short)Random().Next()), Field.Store.NO));
                 fields.Add(new Int32Field("int", Random().Next(), Field.Store.NO));
-                fields.Add(new Int64Field("long", Random().NextLong(), Field.Store.NO));
+                fields.Add(new Int64Field("long", Random().NextInt64(), Field.Store.NO));
 
                 fields.Add(new SingleField("float", (float)Random().NextDouble(), Field.Store.NO));
                 fields.Add(new DoubleField("double", Random().NextDouble(), Field.Store.NO));

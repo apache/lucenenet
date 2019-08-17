@@ -48,7 +48,7 @@ namespace Lucene.Net.Util.Packed
             int iters = AtLeast(3);
             for (int i = 0; i < iters; ++i)
             {
-                int valueCount = RandomInts.NextIntBetween(Random(), 1, int.MaxValue);
+                int valueCount = RandomInts.NextInt32Between(Random(), 1, int.MaxValue);
                 foreach (PackedInt32s.Format format in PackedInt32s.Format.Values)
                 {
                     for (int bpv = 1; bpv <= 64; ++bpv)
@@ -106,7 +106,7 @@ namespace Lucene.Net.Util.Packed
                     }
                     else
                     {
-                        acceptableOverhead = Random().NextFloat();
+                        acceptableOverhead = Random().NextSingle();
                     }
                     PackedInt32s.Writer w = PackedInt32s.GetWriter(@out, valueCount, nbits, acceptableOverhead);
                     long startFp = @out.GetFilePointer();
@@ -117,7 +117,7 @@ namespace Lucene.Net.Util.Packed
                     {
                         if (nbits == 64)
                         {
-                            values[i] = Random().NextLong();
+                            values[i] = Random().NextInt64();
                         }
                         else
                         {
@@ -211,7 +211,7 @@ namespace Lucene.Net.Util.Packed
         public virtual void TestEndPointer()
         {
             Directory dir = NewDirectory();
-            int valueCount = RandomInts.NextIntBetween(Random(), 1, 1000);
+            int valueCount = RandomInts.NextInt32Between(Random(), 1, 1000);
             IndexOutput @out = dir.CreateOutput("tests.bin", NewIOContext(Random()));
             for (int i = 0; i < valueCount; ++i)
             {
@@ -234,7 +234,7 @@ namespace Lucene.Net.Util.Packed
 
                         // test iterator
                         @in.Seek(0L);
-                        PackedInt32s.IReaderIterator it = PackedInt32s.GetReaderIteratorNoHeader(@in, format, version, valueCount, bpv, RandomInts.NextIntBetween(Random(), 1, 1 << 16));
+                        PackedInt32s.IReaderIterator it = PackedInt32s.GetReaderIteratorNoHeader(@in, format, version, valueCount, bpv, RandomInts.NextInt32Between(Random(), 1, 1 << 16));
                         for (int i = 0; i < valueCount; ++i)
                         {
                             it.Next();
@@ -366,7 +366,7 @@ namespace Lucene.Net.Util.Packed
 
                 for (int bitsPerValue = 1; bitsPerValue <= 64; bitsPerValue++)
                 {
-                    AssertRandomEquality(valueCount, bitsPerValue, Random().NextLong());
+                    AssertRandomEquality(valueCount, bitsPerValue, Random().NextInt64());
                 }
             }
         }
@@ -802,7 +802,7 @@ namespace Lucene.Net.Util.Packed
         {
             int pageSize = 1 << (TestUtil.NextInt(Random(), 6, 30));
             // supports 0 values?
-            PagedGrowableWriter writer = new PagedGrowableWriter(0, pageSize, TestUtil.NextInt(Random(), 1, 64), Random().NextFloat());
+            PagedGrowableWriter writer = new PagedGrowableWriter(0, pageSize, TestUtil.NextInt(Random(), 1, 64), Random().NextSingle());
             Assert.AreEqual(0, writer.Count);
 
             // compare against AppendingDeltaPackedLongBuffer
@@ -817,7 +817,7 @@ namespace Lucene.Net.Util.Packed
                     max = PackedInt32s.MaxValue(Rarely() ? TestUtil.NextInt(Random(), 0, 63) : TestUtil.NextInt(Random(), 0, 31));
                 }
             }
-            writer = new PagedGrowableWriter(size, pageSize, TestUtil.NextInt(Random(), 1, 64), Random().NextFloat());
+            writer = new PagedGrowableWriter(size, pageSize, TestUtil.NextInt(Random(), 1, 64), Random().NextSingle());
             Assert.AreEqual(size, writer.Count);
             for (int i = size - 1; i >= 0; --i)
             {
@@ -867,7 +867,7 @@ namespace Lucene.Net.Util.Packed
             long max = PackedInt32s.MaxValue(bitsPerValue);
             int pageSize = 1 << (TestUtil.NextInt(Random(), 6, 30));
             // supports 0 values?
-            PagedMutable writer = new PagedMutable(0, pageSize, bitsPerValue, Random().NextFloat() / 2);
+            PagedMutable writer = new PagedMutable(0, pageSize, bitsPerValue, Random().NextSingle() / 2);
             Assert.AreEqual(0, writer.Count);
 
             // compare against AppendingDeltaPackedLongBuffer
@@ -876,9 +876,9 @@ namespace Lucene.Net.Util.Packed
 
             for (int i = 0; i < size; ++i)
             {
-                buf.Add(bitsPerValue == 64 ? Random().NextLong() : TestUtil.NextLong(Random(), 0, max));
+                buf.Add(bitsPerValue == 64 ? Random().NextInt64() : TestUtil.NextLong(Random(), 0, max));
             }
-            writer = new PagedMutable(size, pageSize, bitsPerValue, Random().NextFloat());
+            writer = new PagedMutable(size, pageSize, bitsPerValue, Random().NextSingle());
             Assert.AreEqual(size, writer.Count);
             for (int i = size - 1; i >= 0; --i)
             {
@@ -927,7 +927,7 @@ namespace Lucene.Net.Util.Packed
         {
             long size = TestUtil.NextLong(Random(), 2 * (long)int.MaxValue, 3 * (long)int.MaxValue);
             int pageSize = 1 << (TestUtil.NextInt(Random(), 16, 30));
-            PagedGrowableWriter writer = new PagedGrowableWriter(size, pageSize, 1, Random().NextFloat());
+            PagedGrowableWriter writer = new PagedGrowableWriter(size, pageSize, 1, Random().NextSingle());
             long index = TestUtil.NextLong(Random(), (long)int.MaxValue, size - 1);
             writer.Set(index, 2);
             Assert.AreEqual(2, writer.Get(index));
@@ -1027,7 +1027,7 @@ namespace Lucene.Net.Util.Packed
                     long[] blocks = new long[blocksOffset + blocksLen];
                     for (int i = 0; i < blocks.Length; ++i)
                     {
-                        blocks[i] = Random().NextLong();
+                        blocks[i] = Random().NextInt64();
                         if (format == PackedInt32s.Format.PACKED_SINGLE_BLOCK && 64 % bpv != 0)
                         {
                             // clear highest bits for packed
@@ -1129,9 +1129,9 @@ namespace Lucene.Net.Util.Packed
         public virtual void TestAppendingLongBuffer()
         {
 
-            long[] arr = new long[RandomInts.NextIntBetween(Random(), 1, 1000000)];
+            long[] arr = new long[RandomInts.NextInt32Between(Random(), 1, 1000000)];
             float[] ratioOptions = new float[] { PackedInt32s.DEFAULT, PackedInt32s.COMPACT, PackedInt32s.FAST };
-            foreach (int bpv in new int[] { 0, 1, 63, 64, RandomInts.NextIntBetween(Random(), 2, 62) })
+            foreach (int bpv in new int[] { 0, 1, 63, 64, RandomInts.NextInt32Between(Random(), 2, 62) })
             {
                 foreach (DataType dataType in Enum.GetValues(typeof(DataType)))
                 {
@@ -1161,7 +1161,7 @@ namespace Lucene.Net.Util.Packed
 
                     if (bpv == 0)
                     {
-                        arr[0] = Random().NextLong();
+                        arr[0] = Random().NextInt64();
                         for (int i = 1; i < arr.Length; ++i)
                         {
                             arr[i] = arr[i - 1] + inc;
@@ -1171,7 +1171,7 @@ namespace Lucene.Net.Util.Packed
                     {
                         for (int i = 0; i < arr.Length; ++i)
                         {
-                            arr[i] = Random().NextLong();
+                            arr[i] = Random().NextInt64();
                         }
                     }
                     else
@@ -1179,7 +1179,7 @@ namespace Lucene.Net.Util.Packed
                         long minValue = TestUtil.NextLong(Random(), long.MinValue, long.MaxValue - PackedInt32s.MaxValue(bpv));
                         for (int i = 0; i < arr.Length; ++i)
                         {
-                            arr[i] = minValue + inc * i + Random().NextLong() & PackedInt32s.MaxValue(bpv); // TestUtil.nextLong is too slow
+                            arr[i] = minValue + inc * i + Random().NextInt64() & PackedInt32s.MaxValue(bpv); // TestUtil.nextLong is too slow
                         }
                     }
 
@@ -1253,11 +1253,11 @@ namespace Lucene.Net.Util.Packed
             bool[] skip = new bool[longs.Length];
             for (int i = 0; i < longs.Length; ++i)
             {
-                int bpv = RandomInts.NextIntBetween(Random(), 1, 64);
+                int bpv = RandomInts.NextInt32Between(Random(), 1, 64);
                 bitsPerValues[i] = Random().NextBoolean() ? bpv : TestUtil.NextInt(Random(), bpv, 64);
                 if (bpv == 64)
                 {
-                    longs[i] = Random().NextLong();
+                    longs[i] = Random().NextInt64();
                 }
                 else
                 {
@@ -1313,7 +1313,7 @@ namespace Lucene.Net.Util.Packed
                 {
                     if (i % blockSize == 0)
                     {
-                        minValue = Rarely() ? Random().Next(256) : Rarely() ? -5 : Random().NextLong();
+                        minValue = Rarely() ? Random().Next(256) : Rarely() ? -5 : Random().NextInt64();
                         bpv = Random().Next(65);
                     }
                     if (bpv == 0)
@@ -1322,7 +1322,7 @@ namespace Lucene.Net.Util.Packed
                     }
                     else if (bpv == 64)
                     {
-                        values[i] = Random().NextLong();
+                        values[i] = Random().NextInt64();
                     }
                     else
                     {

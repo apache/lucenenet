@@ -3191,7 +3191,7 @@ namespace Lucene.Net.Index
                 storedBinField.SetBytesValue(buffer);
                 dvBinField.SetBytesValue(buffer);
                 dvSortedField.SetBytesValue(buffer);
-                long numericValue = Random().NextLong();
+                long numericValue = Random().NextInt64();
                 storedNumericField.SetStringValue(Convert.ToString(numericValue, CultureInfo.InvariantCulture));
                 dvNumericField.SetInt64Value(numericValue);
                 writer.AddDocument(doc);
@@ -3305,7 +3305,7 @@ namespace Lucene.Net.Index
                 storedBinField.SetBytesValue(buffer);
                 dvBinField.SetBytesValue(buffer);
                 dvSortedField.SetBytesValue(buffer);
-                long numericValue = Random().NextLong();
+                long numericValue = Random().NextInt64();
                 storedNumericField.SetStringValue(Convert.ToString(numericValue, CultureInfo.InvariantCulture));
                 dvNumericField.SetInt64Value(numericValue);
                 Document doc = new Document();

@@ -113,7 +113,7 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public void TestEqualsHashCode()
         {
-            CommonTermsQuery query = new CommonTermsQuery(RandomOccur(Random()), RandomOccur(Random()), Random().NextFloat(), Random().NextBoolean());
+            CommonTermsQuery query = new CommonTermsQuery(RandomOccur(Random()), RandomOccur(Random()), Random().NextSingle(), Random().NextBoolean());
             int terms = AtLeast(2);
             for (int i = 0; i < terms; i++)
             {
@@ -121,11 +121,11 @@ namespace Lucene.Net.Tests.Queries
             }
 
             QueryUtils.CheckHashEquals(query);
-            QueryUtils.CheckUnequal(new CommonTermsQuery(RandomOccur(Random()), RandomOccur(Random()), Random().NextFloat(), Random().NextBoolean()), query);
+            QueryUtils.CheckUnequal(new CommonTermsQuery(RandomOccur(Random()), RandomOccur(Random()), Random().NextSingle(), Random().NextBoolean()), query);
             {
-                long seed = Random().NextLong();
+                long seed = Random().NextInt64();
                 Random r = new Random((int)seed);
-                CommonTermsQuery left = new CommonTermsQuery(RandomOccur(r), RandomOccur(r), r.NextFloat(), r.NextBoolean());
+                CommonTermsQuery left = new CommonTermsQuery(RandomOccur(r), RandomOccur(r), r.NextSingle(), r.NextBoolean());
                 int leftTerms = AtLeast(r, 2);
                 for (int i = 0; i < leftTerms; i++)
                 {
@@ -135,7 +135,7 @@ namespace Lucene.Net.Tests.Queries
                 left.HighFreqMinimumNumberShouldMatch = r.nextInt(4);
                 left.LowFreqMinimumNumberShouldMatch = r.nextInt(4);
                 r = new Random((int)seed);
-                CommonTermsQuery right = new CommonTermsQuery(RandomOccur(r), RandomOccur(r), r.NextFloat(), r.NextBoolean());
+                CommonTermsQuery right = new CommonTermsQuery(RandomOccur(r), RandomOccur(r), r.NextSingle(), r.NextBoolean());
                 int rightTerms = AtLeast(r, 2);
                 for (int i = 0; i < rightTerms; i++)
                 {
@@ -157,7 +157,7 @@ namespace Lucene.Net.Tests.Queries
         public void TestNullTerm()
         {
             Random random = Random();
-            CommonTermsQuery query = new CommonTermsQuery(RandomOccur(random), RandomOccur(random), Random().NextFloat());
+            CommonTermsQuery query = new CommonTermsQuery(RandomOccur(random), RandomOccur(random), Random().NextSingle());
             try
             {
                 query.Add(null);
@@ -305,7 +305,7 @@ namespace Lucene.Net.Tests.Queries
             Random random = Random();
             try
             {
-                new CommonTermsQuery(Occur.MUST_NOT, RandomOccur(random), Random().NextFloat());
+                new CommonTermsQuery(Occur.MUST_NOT, RandomOccur(random), Random().NextSingle());
                 Fail(@"MUST_NOT is not supproted");
             }
 #pragma warning disable 168
@@ -316,7 +316,7 @@ namespace Lucene.Net.Tests.Queries
 
             try
             {
-                new CommonTermsQuery(RandomOccur(random), Occur.MUST_NOT, Random().NextFloat());
+                new CommonTermsQuery(RandomOccur(random), Occur.MUST_NOT, Random().NextSingle());
                 Fail(@"MUST_NOT is not supproted");
             }
 #pragma warning disable 168
@@ -391,7 +391,7 @@ namespace Lucene.Net.Tests.Queries
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer, Similarity, TimeZone);
-            CreateRandomIndex(AtLeast(50), w, Random().NextLong());
+            CreateRandomIndex(AtLeast(50), w, Random().NextInt64());
             DirectoryReader reader = w.Reader;
             AtomicReader wrapper = SlowCompositeReaderWrapper.Wrap(reader);
             string field = @"body";

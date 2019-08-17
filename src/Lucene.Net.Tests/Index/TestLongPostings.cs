@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
         {
             // Don't use TestUtil.getTempDir so that we own the
             // randomness (ie same seed will point to same dir):
-            Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random().NextLong()));
+            Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random().NextInt64()));
 
             int NUM_DOCS = AtLeast(2000);
 
@@ -342,7 +342,7 @@ namespace Lucene.Net.Index
         {
             // Don't use TestUtil.getTempDir so that we own the
             // randomness (ie same seed will point to same dir):
-            Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random().NextLong()));
+            Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random().NextInt64()));
 
             int NUM_DOCS = AtLeast(2000);
 

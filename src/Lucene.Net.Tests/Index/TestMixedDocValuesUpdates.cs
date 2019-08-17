@@ -471,7 +471,7 @@ namespace Lucene.Net.Index
             {
                 int doc = Random().Next(numDocs);
                 Term t = new Term("id", "doc" + doc);
-                long value = Random().NextLong();
+                long value = Random().NextInt64();
                 writer.UpdateBinaryDocValue(t, "f", TestBinaryDocValuesUpdates.ToBytes(value));
                 writer.UpdateNumericDocValue(t, "cf", value * 2);
                 DirectoryReader reader = DirectoryReader.Open(writer, true);

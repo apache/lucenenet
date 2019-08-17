@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
             PagedBytes pb = new PagedBytes(15);
             IndexOutput dataOutput = dir.CreateOutput("foo", IOContext.DEFAULT);
             long netBytes = 0;
-            long seed = Random().NextLong();
+            long seed = Random().NextInt64();
             long lastFP = 0;
             Random r2 = new Random((int)seed);
             while (netBytes < 1.1 * int.MaxValue)

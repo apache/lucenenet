@@ -28,7 +28,7 @@ namespace Lucene.Net.Randomized.Generators
 {
     public static class RandomInts
     {
-        public static int NextIntBetween(this Random random, int min, int max)
+        public static int NextInt32Between(this Random random, int min, int max)
         {
             Debug.Assert(min <= max, String.Format("Min must be less than or equal max int. min: {0}, max: {1}", min, max));
             var range = max - min;
@@ -43,14 +43,14 @@ namespace Lucene.Net.Randomized.Generators
             return random.NextDouble() > 0.5;
         }
 
-        public static float NextFloat(this Random random)
+        public static float NextSingle(this Random random)
         {
             return (float)random.NextDouble();
         }
 
         /* .NET has random.Next(max) which negates the need for randomInt(Random random, int max) as  */
 
-        public static long NextLong(this Random random)
+        public static long NextInt64(this Random random)
         {
             int i1 = random.Next();
             int i2 = random.Next();

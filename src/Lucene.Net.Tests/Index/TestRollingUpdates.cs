@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
             if ((!"Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal)) && Random().NextBoolean())
             {
                 Codec.Default =
-                    TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(Random().nextBoolean(), random.NextFloat()));
+                    TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(Random().nextBoolean(), random.NextSingle()));
             }
 
             MockAnalyzer analyzer = new MockAnalyzer(Random());

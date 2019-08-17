@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(500);
             for (int i = 0; i < numDocs; i++)
             {
-                field.SetInt64Value(Random().NextLong());
+                field.SetInt64Value(Random().NextInt64());
                 iw.AddDocument(doc);
                 if (Random().Next(17) == 0)
                 {
@@ -395,9 +395,9 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 if (Random().Next(4) >= 0)
                 {
-                    doc.Add(new NumericDocValuesField("numbers", Random().NextLong()));
+                    doc.Add(new NumericDocValuesField("numbers", Random().NextInt64()));
                 }
-                doc.Add(new NumericDocValuesField("numbersAlways", Random().NextLong()));
+                doc.Add(new NumericDocValuesField("numbersAlways", Random().NextInt64()));
                 iw.AddDocument(doc);
                 if (Random().Next(17) == 0)
                 {

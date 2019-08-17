@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.Compressing
             var arr = new byte[length];
             for (int i = 0; i < arr.Length; ++i)
             {
-                arr[i] = (byte)RandomInts.NextIntBetween(Random(), 0, max);
+                arr[i] = (byte)RandomInts.NextInt32Between(Random(), 0, max);
             }
             return arr;
         }
@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Compressing
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestIncompressible()
         {
-            var decompressed = new byte[RandomInts.NextIntBetween(Random(), 20, 256)];
+            var decompressed = new byte[RandomInts.NextInt32Between(Random(), 20, 256)];
             for (int i = 0; i < decompressed.Length; ++i)
             {
                 decompressed[i] = (byte)i;

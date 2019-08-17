@@ -446,7 +446,7 @@ namespace Lucene.Net.Index
                         term = "verylow_" + term;
                     }
 
-                    long termSeed = Random().NextLong();
+                    long termSeed = Random().NextInt64();
                     postings[new BytesRef(term)] = termSeed;
 
                     // NOTE: sort of silly: we enum all the docs just to

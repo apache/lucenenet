@@ -48,7 +48,7 @@ namespace Lucene.Net.Index.Sorter
         private Document randomDocument()
         {
             Document doc = new Document();
-            doc.Add(new NumericDocValuesField("ndv", Random().NextLong()));
+            doc.Add(new NumericDocValuesField("ndv", Random().NextInt64()));
             doc.Add(new StringField("s", RandomInts.RandomFrom(Random(), terms), Field.Store.YES));
             return doc;
         }
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index.Sorter
                 randomTerms.add(TestUtil.RandomSimpleString(Random()));
             }
             terms = new List<string>(randomTerms);
-            long seed = Random().NextLong();
+            long seed = Random().NextInt64();
             IndexWriterConfig iwc1 = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new Random((int)seed)));
             IndexWriterConfig iwc2 = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new Random((int)seed)));
             iwc2.SetMergePolicy(NewSortingMergePolicy(sort));
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index.Sorter
             if (DefaultCodecSupportsFieldUpdates())
             {
                 // update NDV of docs belonging to one term (covers many documents)
-                long value = Random().NextLong();
+                long value = Random().NextInt64();
                 string term = RandomInts.RandomFrom(Random(), terms);
                 iw1.w.UpdateNumericDocValue(new Term("s", term), "ndv", value);
                 iw2.w.UpdateNumericDocValue(new Term("s", term), "ndv", value);

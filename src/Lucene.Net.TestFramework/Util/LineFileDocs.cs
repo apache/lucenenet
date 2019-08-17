@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
             {
                 return 0L;
             }
-            return (random.NextLong() & long.MaxValue) % (size / 3);
+            return (random.NextInt64() & long.MaxValue) % (size / 3);
         }
 
         private void Open(Random random)

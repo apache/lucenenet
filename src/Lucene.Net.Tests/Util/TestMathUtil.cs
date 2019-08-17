@@ -50,7 +50,7 @@ namespace Lucene.Net.Util
             }
             else if (Random().NextBoolean())
             {
-                return Random().NextLong();
+                return Random().NextInt64();
             }
             else
             {

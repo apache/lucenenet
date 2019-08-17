@@ -506,7 +506,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 Document doc = new Document();
                 doc.Add(NewStringField("content", testDoc.content, Field.Store.NO));
-                testDoc.value = Random().NextFloat();
+                testDoc.value = Random().NextSingle();
                 doc.Add(new SingleDocValuesField("value", testDoc.value));
                 for (int j = 0; j < numDims; j++)
                 {

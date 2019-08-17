@@ -282,7 +282,7 @@ namespace Lucene.Net.Index
                     // float/double
                     if (Random().NextBoolean())
                     {
-                        float f = Random().NextFloat();
+                        float f = Random().NextSingle();
                         answer = Convert.ToSingle(f, CultureInfo.InvariantCulture);
                         nf = new SingleField("nf", f, Field.Store.NO);
                         sf = new StoredField("nf", f);
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        long l = Random().NextLong();
+                        long l = Random().NextInt64();
                         answer = Convert.ToInt64(l, CultureInfo.InvariantCulture);
                         nf = new Int64Field("nf", l, Field.Store.NO);
                         sf = new StoredField("nf", l);
@@ -373,7 +373,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
+            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random(), 2, 30));
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
 
             FieldType ft = new FieldType();
@@ -382,9 +382,9 @@ namespace Lucene.Net.Index
 
             string @string = TestUtil.RandomSimpleString(Random(), 50);
             var bytes = @string.GetBytes(Encoding.UTF8);
-            long l = Random().NextBoolean() ? Random().Next(42) : Random().NextLong();
+            long l = Random().NextBoolean() ? Random().Next(42) : Random().NextInt64();
             int i = Random().NextBoolean() ? Random().Next(42) : Random().Next();
-            float f = Random().NextFloat();
+            float f = Random().NextSingle();
             double d = Random().NextDouble();
 
             IList<Field> fields = Arrays.AsList(new Field("bytes", bytes, ft), new Field("string", @string, ft), new Int64Field("long", l, Field.Store.YES), new Int32Field("int", i, Field.Store.YES), new SingleField("float", f, Field.Store.YES), new DoubleField("double", d, Field.Store.YES)
@@ -430,7 +430,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
+            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random(), 2, 30));
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
 
             // make sure that the fact that documents might be empty is not a problem
@@ -459,7 +459,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
+            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random(), 2, 30));
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
 
             // make sure the readers are properly cloned
@@ -584,14 +584,14 @@ namespace Lucene.Net.Index
             }
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
+            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random(), 2, 30));
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, (IndexWriterConfig)iwConf.Clone());
 
             int docCount = AtLeast(200);
             var data = new byte[docCount][][];
             for (int i = 0; i < docCount; ++i)
             {
-                int fieldCount = Rarely() ? RandomInts.NextIntBetween(Random(), 1, 500) : RandomInts.NextIntBetween(Random(), 1, 5);
+                int fieldCount = Rarely() ? RandomInts.NextInt32Between(Random(), 1, 500) : RandomInts.NextInt32Between(Random(), 1, 5);
                 data[i] = new byte[fieldCount][];
                 for (int j = 0; j < fieldCount; ++j)
                 {
@@ -684,7 +684,7 @@ namespace Lucene.Net.Index
             // so if we get NRTCachingDir+SimpleText, we make massive stored fields and OOM (LUCENE-4484)
             Directory dir = new MockDirectoryWrapper(Random(), new MMapDirectory(CreateTempDir("testBigDocuments")));
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
+            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random(), 2, 30));
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
 
             if (dir is MockDirectoryWrapper)
@@ -705,13 +705,13 @@ namespace Lucene.Net.Index
             onlyStored.IsIndexed = false;
 
             Field smallField = new Field("fld", RandomByteArray(Random().Next(10), 256), onlyStored);
-            int numFields = RandomInts.NextIntBetween(Random(), 500000, 1000000);
+            int numFields = RandomInts.NextInt32Between(Random(), 500000, 1000000);
             for (int i = 0; i < numFields; ++i)
             {
                 bigDoc1.Add(smallField);
             }
 
-            Field bigField = new Field("fld", RandomByteArray(RandomInts.NextIntBetween(Random(), 1000000, 5000000), 2), onlyStored);
+            Field bigField = new Field("fld", RandomByteArray(RandomInts.NextInt32Between(Random(), 1000000, 5000000), 2), onlyStored);
             bigDoc2.Add(bigField);
 
             int numDocs = AtLeast(5);

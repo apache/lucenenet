@@ -34,7 +34,7 @@ namespace Lucene.Net.Util.Automaton
         public virtual void TestStringUnion()
         {
             List<BytesRef> strings = new List<BytesRef>();
-            for (int i = RandomInts.NextIntBetween(Random(), 0, 1000); --i >= 0; )
+            for (int i = RandomInts.NextInt32Between(Random(), 0, 1000); --i >= 0; )
             {
                 strings.Add(new BytesRef(TestUtil.RandomUnicodeString(Random())));
             }

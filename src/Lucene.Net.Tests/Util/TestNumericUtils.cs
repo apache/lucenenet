@@ -373,7 +373,7 @@ namespace Lucene.Net.Util
                     break;
 
                 default:
-                    val = random.NextLong();
+                    val = random.NextInt64();
                     break;
             }
 

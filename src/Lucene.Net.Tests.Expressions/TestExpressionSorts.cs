@@ -58,13 +58,13 @@ namespace Lucene.Net.Expressions
 				    NewStringField("byte", string.Empty + (unchecked((byte) Random().Next())), Field.Store.NO),
 				    NewStringField("short", string.Empty + ((short) Random().Next()), Field.Store.NO),
 				    new Int32Field("int", Random().Next(), Field.Store.NO),
-				    new Int64Field("long", Random().NextLong(), Field.Store.NO),
+				    new Int64Field("long", Random().NextInt64(), Field.Store.NO),
 
-				    new SingleField("float", Random().NextFloat(), Field.Store.NO),
+				    new SingleField("float", Random().NextSingle(), Field.Store.NO),
 				    new DoubleField("double", Random().NextDouble(), Field.Store.NO),
 
 				    new NumericDocValuesField("intdocvalues", Random().Next()),
-				    new SingleDocValuesField("floatdocvalues", Random().NextFloat())
+				    new SingleDocValuesField("floatdocvalues", Random().NextSingle())
 				};
                 iw.AddDocument(document);
             }

@@ -415,7 +415,7 @@ namespace Lucene.Net.Util
                 long[] words = new long[bits2words + Random().Next(100)];
                 for (int i = bits2words; i < words.Length; i++)
                 {
-                    words[i] = Random().NextLong();
+                    words[i] = Random().NextInt64();
                 }
                 bs = new FixedBitSet(words, numBits);
             }

@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs.Lucene41
         [Test]
         public virtual void TestEncodeDecode()
         {
-            int iterations = RandomInts.NextIntBetween(Random(), 1, 1000);
+            int iterations = RandomInts.NextInt32Between(Random(), 1, 1000);
             float AcceptableOverheadRatio = (float)Random().NextDouble();
             int[] values = new int[(iterations - 1) * Lucene41PostingsFormat.BLOCK_SIZE + ForUtil.MAX_DATA_SIZE];
             for (int i = 0; i < iterations; ++i)
@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 int bpv = Random().Next(32);
                 if (bpv == 0)
                 {
-                    int value = RandomInts.NextIntBetween(Random(), 0, int.MaxValue);
+                    int value = RandomInts.NextInt32Between(Random(), 0, int.MaxValue);
                     for (int j = 0; j < Lucene41PostingsFormat.BLOCK_SIZE; ++j)
                     {
                         values[i * Lucene41PostingsFormat.BLOCK_SIZE + j] = value;
@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     for (int j = 0; j < Lucene41PostingsFormat.BLOCK_SIZE; ++j)
                     {
-                        values[i * Lucene41PostingsFormat.BLOCK_SIZE + j] = RandomInts.NextIntBetween(Random(), 0, (int)PackedInt32s.MaxValue(bpv));
+                        values[i * Lucene41PostingsFormat.BLOCK_SIZE + j] = RandomInts.NextInt32Between(Random(), 0, (int)PackedInt32s.MaxValue(bpv));
                     }
                 }
             }

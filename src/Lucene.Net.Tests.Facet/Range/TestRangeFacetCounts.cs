@@ -398,7 +398,7 @@ namespace Lucene.Net.Facet.Range
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                long v = Random().NextLong();
+                long v = Random().NextInt64();
                 values[i] = v;
                 doc.Add(new NumericDocValuesField("field", v));
                 doc.Add(new Int64Field("field", v, Field.Store.NO));
@@ -441,7 +441,7 @@ namespace Lucene.Net.Facet.Range
                     }
                     else
                     {
-                        min = Random().NextLong();
+                        min = Random().NextInt64();
                     }
                     long max;
                     if (rangeID > 0 && Random().Next(10) == 7)
@@ -459,7 +459,7 @@ namespace Lucene.Net.Facet.Range
                     }
                     else
                     {
-                        max = Random().NextLong();
+                        max = Random().NextInt64();
                     }
 
                     if (min > max)
@@ -587,7 +587,7 @@ namespace Lucene.Net.Facet.Range
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                float v = Random().NextFloat();
+                float v = Random().NextSingle();
                 values[i] = v;
                 doc.Add(new SingleDocValuesField("field", v));
                 doc.Add(new SingleField("field", v, Field.Store.NO));
