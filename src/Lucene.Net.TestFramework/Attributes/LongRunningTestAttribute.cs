@@ -19,6 +19,7 @@
  *
 */
 
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 namespace Lucene.Net.Attributes
@@ -26,6 +27,7 @@ namespace Lucene.Net.Attributes
     /// <summary>
     /// This test runs long and should be skipped in the 1st run.
     /// </summary>
+    [ExceptionToNetNumericConvention]
     public class LongRunningTestAttribute : CategoryAttribute
     {
         public LongRunningTestAttribute() : base("LongRunningTest")

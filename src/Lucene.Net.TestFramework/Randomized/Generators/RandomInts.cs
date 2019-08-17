@@ -19,6 +19,7 @@
  *
 */
 
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,6 +27,7 @@ using System.Linq;
 
 namespace Lucene.Net.Randomized.Generators
 {
+    [ExceptionToNetNumericConvention]
     public static class RandomInts
     {
         public static int NextInt32Between(this Random random, int min, int max)
