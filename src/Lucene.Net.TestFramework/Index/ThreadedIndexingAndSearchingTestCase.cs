@@ -70,8 +70,8 @@ namespace Lucene.Net.Index
         protected internal readonly AtomicInt32 m_delCount = new AtomicInt32();
         protected internal readonly AtomicInt32 m_packCount = new AtomicInt32();
 
-        protected internal Directory dir;
-        protected internal IndexWriter writer;
+        protected internal Directory m_dir;
+        protected internal IndexWriter m_writer;
 
         private class SubDocs
         {
@@ -105,27 +105,27 @@ namespace Lucene.Net.Index
 
         protected internal virtual void UpdateDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
-            writer.UpdateDocuments(id, docs);
+            m_writer.UpdateDocuments(id, docs);
         }
 
         protected internal virtual void AddDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
-            writer.AddDocuments(docs);
+            m_writer.AddDocuments(docs);
         }
 
         protected internal virtual void AddDocument(Term id, IEnumerable<IIndexableField> doc)
         {
-            writer.AddDocument(doc);
+            m_writer.AddDocument(doc);
         }
 
         protected internal virtual void UpdateDocument(Term term, IEnumerable<IIndexableField> doc)
         {
-            writer.UpdateDocument(term, doc);
+            m_writer.UpdateDocument(term, doc);
         }
 
         protected internal virtual void DeleteDocuments(Term term)
         {
-            writer.DeleteDocuments(term);
+            m_writer.DeleteDocuments(term);
         }
 
         protected internal virtual void DoAfterIndexingThreadDone()
@@ -470,7 +470,7 @@ namespace Lucene.Net.Index
                                 if (source.Equals("merge", StringComparison.Ordinal))
                                 {
                                     assertTrue("sub reader " + sub + " wasn't warmed: warmed=" + outerInstance.warmed + " diagnostics=" + diagnostics + " si=" + segReader.SegmentInfo,
-                                        !outerInstance.assertMergedSegmentsWarmed || outerInstance.warmed.ContainsKey(segReader.core));
+                                        !outerInstance.m_assertMergedSegmentsWarmed || outerInstance.warmed.ContainsKey(segReader.core));
                                 }
                             }
                             if (s.IndexReader.NumDocs > 0)
@@ -547,7 +547,7 @@ namespace Lucene.Net.Index
         {
         }
 
-        protected internal bool assertMergedSegmentsWarmed = true;
+        protected internal bool m_assertMergedSegmentsWarmed = true;
 
         private readonly IDictionary<SegmentCoreReaders, bool?> warmed = new WeakDictionary<SegmentCoreReaders, bool?>(); //new ConcurrentHashMapWrapper<SegmentCoreReaders, bool?>(new HashMap<SegmentCoreReaders, bool?>());
         // Collections.synchronizedMap(new WeakHashMap<SegmentCoreReaders, bool?>());
@@ -564,10 +564,10 @@ namespace Lucene.Net.Index
             Random random = new Random(Random().Next());
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
             DirectoryInfo tempDir = CreateTempDir(testName);
-            dir = GetDirectory(NewMockFSDirectory(tempDir)); // some subclasses rely on this being MDW
-            if (dir is BaseDirectoryWrapper)
+            m_dir = GetDirectory(NewMockFSDirectory(tempDir)); // some subclasses rely on this being MDW
+            if (m_dir is BaseDirectoryWrapper)
             {
-                ((BaseDirectoryWrapper)dir).CheckIndexOnClose = false; // don't double-checkIndex, we do it ourselves.
+                ((BaseDirectoryWrapper)m_dir).CheckIndexOnClose = false; // don't double-checkIndex, we do it ourselves.
             }
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
@@ -599,8 +599,8 @@ namespace Lucene.Net.Index
             {
                 conf.SetInfoStream(new PrintStreamInfoStreamAnonymousInnerClassHelper(this, Console.Out));
             }
-            writer = new IndexWriter(dir, conf);
-            TestUtil.ReduceOpenFiles(writer);
+            m_writer = new IndexWriter(m_dir, conf);
+            TestUtil.ReduceOpenFiles(m_writer);
 
             TaskScheduler es = Random().NextBoolean() ? null : TaskScheduler.Default;
 
@@ -753,15 +753,15 @@ namespace Lucene.Net.Index
             }
             assertFalse(doFail);
 
-            assertEquals("index=" + writer.SegString() + " addCount=" + m_addCount + " delCount=" + m_delCount, m_addCount.Get() - m_delCount.Get(), s.IndexReader.NumDocs);
+            assertEquals("index=" + m_writer.SegString() + " addCount=" + m_addCount + " delCount=" + m_delCount, m_addCount.Get() - m_delCount.Get(), s.IndexReader.NumDocs);
             ReleaseSearcher(s);
 
-            writer.Commit();
+            m_writer.Commit();
 
-            assertEquals("index=" + writer.SegString() + " addCount=" + m_addCount + " delCount=" + m_delCount, m_addCount.Get() - m_delCount.Get(), writer.NumDocs);
+            assertEquals("index=" + m_writer.SegString() + " addCount=" + m_addCount + " delCount=" + m_delCount, m_addCount.Get() - m_delCount.Get(), m_writer.NumDocs);
 
             DoClose();
-            writer.Dispose(false);
+            m_writer.Dispose(false);
 
             // Cannot shutdown until after writer is closed because
             // writer has merged segment warmer that uses IS to run
@@ -772,8 +772,8 @@ namespace Lucene.Net.Index
               es.awaitTermination(1, TimeUnit.SECONDS);
             }*/
 
-            TestUtil.CheckIndex(dir);
-            dir.Dispose();
+            TestUtil.CheckIndex(m_dir);
+            m_dir.Dispose();
             //System.IO.Directory.Delete(tempDir.FullName, true);
             TestUtil.Rm(tempDir);
 

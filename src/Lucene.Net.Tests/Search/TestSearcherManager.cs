@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
             {
                 if (!isNRT)
                 {
-                    writer.Commit();
+                    m_writer.Commit();
                 }
                 assertTrue(mgr.MaybeRefresh() || mgr.IsSearcherCurrent());
                 return mgr.Acquire();
@@ -84,16 +84,16 @@ namespace Lucene.Net.Search
                 // TODO: can we randomize the applyAllDeletes?  But
                 // somehow for final searcher we must apply
                 // deletes...
-                mgr = new SearcherManager(writer, true, factory);
+                mgr = new SearcherManager(m_writer, true, factory);
                 isNRT = true;
             }
             else
             {
                 // SearcherManager needs to see empty commit:
-                writer.Commit();
-                mgr = new SearcherManager(dir, factory);
+                m_writer.Commit();
+                mgr = new SearcherManager(m_dir, factory);
                 isNRT = false;
-                assertMergedSegmentsWarmed = false;
+                m_assertMergedSegmentsWarmed = false;
             }
 
             lifetimeMGR = new SearcherLifetimeManager();
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
                     while (Environment.TickCount < stopTime)
                     {
                         Thread.Sleep(TestUtil.NextInt32(Random(), 1, 100));
-                        outerInstance.writer.Commit();
+                        outerInstance.m_writer.Commit();
                         Thread.Sleep(TestUtil.NextInt32(Random(), 1, 5));
                         bool block = Random().NextBoolean();
                         if (block)

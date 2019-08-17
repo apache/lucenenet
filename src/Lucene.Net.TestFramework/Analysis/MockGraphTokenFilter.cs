@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis
                     Console.WriteLine("  do insert! posLen=" + posLength);
                 }
 
-                LookaheadTokenFilter.Position posEndData = positions.Get(m_outputPos + posLength);
+                LookaheadTokenFilter.Position posEndData = m_positions.Get(m_outputPos + posLength);
 
                 // Look ahead as needed until we figure out the right
                 // endOffset:
@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis
                     m_posLenAtt.PositionLength = posLength;
                     termAtt.Append(TestUtil.RandomUnicodeString(random));
                     m_posIncAtt.PositionIncrement = 0;
-                    m_offsetAtt.SetOffset(positions.Get(m_outputPos).StartOffset, posEndData.EndOffset);
+                    m_offsetAtt.SetOffset(m_positions.Get(m_outputPos).StartOffset, posEndData.EndOffset);
                     if (DEBUG)
                     {
                         Console.WriteLine("  inject: outputPos=" + m_outputPos + " startOffset=" + m_offsetAtt.StartOffset + " endOffset=" + m_offsetAtt.EndOffset + " posLength=" + m_posLenAtt.PositionLength);

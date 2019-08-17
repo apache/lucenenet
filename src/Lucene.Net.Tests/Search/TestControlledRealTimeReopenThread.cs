@@ -267,12 +267,12 @@ namespace Lucene.Net.Search
                 Console.WriteLine("TEST: make SearcherManager maxReopenSec=" + maxReopenSec + " minReopenSec=" + minReopenSec);
             }
 
-            genWriter = new TrackingIndexWriter(writer);
+            genWriter = new TrackingIndexWriter(m_writer);
 
             SearcherFactory sf = new SearcherFactoryAnonymousInnerClassHelper(this, es);
 
-            nrtNoDeletes = new SearcherManager(writer, false, sf);
-            nrtDeletes = new SearcherManager(writer, true, sf);
+            nrtNoDeletes = new SearcherManager(m_writer, false, sf);
+            nrtDeletes = new SearcherManager(m_writer, true, sf);
 
             nrtDeletesThread = new ControlledRealTimeReopenThread<IndexSearcher>(genWriter, nrtDeletes, maxReopenSec, minReopenSec);
             nrtDeletesThread.Name = "NRTDeletes Reopen Thread";

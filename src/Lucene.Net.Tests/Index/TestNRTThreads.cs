@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
         {
             bool anyOpenDelFiles = false;
 
-            DirectoryReader r = DirectoryReader.Open(writer, true);
+            DirectoryReader r = DirectoryReader.Open(m_writer, true);
 
             while (Environment.TickCount < stopTime && !m_failed.Get())
             {
@@ -74,8 +74,8 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: now close reader=" + r);
                     }
                     r.Dispose();
-                    writer.Commit();
-                    ISet<string> openDeletedFiles = ((MockDirectoryWrapper)dir).OpenDeletedFiles;
+                    m_writer.Commit();
+                    ISet<string> openDeletedFiles = ((MockDirectoryWrapper)m_dir).OpenDeletedFiles;
                     if (openDeletedFiles.Count > 0)
                     {
                         Console.WriteLine("OBD files: " + openDeletedFiles);
@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
                     {
                         Console.WriteLine("TEST: now open");
                     }
-                    r = DirectoryReader.Open(writer, true);
+                    r = DirectoryReader.Open(m_writer, true);
                 }
                 if (VERBOSE)
                 {
@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
             r.Dispose();
 
             //System.out.println("numDocs=" + r.NumDocs + " openDelFileCount=" + dir.openDeleteFileCount());
-            ISet<string> openDeletedFiles_ = ((MockDirectoryWrapper)dir).OpenDeletedFiles;
+            ISet<string> openDeletedFiles_ = ((MockDirectoryWrapper)m_dir).OpenDeletedFiles;
             if (openDeletedFiles_.Count > 0)
             {
                 Console.WriteLine("OBD files: " + openDeletedFiles_);
@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
             // Force writer to do reader pooling, always, so that
             // all merged segments, even for merges before
             // doSearching is called, are warmed:
-            writer.GetReader().Dispose();
+            m_writer.GetReader().Dispose();
         }
 
         private IndexSearcher FixedSearcher;
@@ -161,17 +161,17 @@ namespace Lucene.Net.Index
                 {
                     if (Random().NextBoolean())
                     {
-                        r2 = writer.GetReader();
+                        r2 = m_writer.GetReader();
                     }
                     else
                     {
-                        writer.Commit();
-                        r2 = DirectoryReader.Open(dir);
+                        m_writer.Commit();
+                        r2 = DirectoryReader.Open(m_dir);
                     }
                 }
                 else
                 {
-                    r2 = writer.GetReader();
+                    r2 = m_writer.GetReader();
                 }
                 return NewSearcher(r2);
             }
