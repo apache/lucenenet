@@ -67,6 +67,8 @@ namespace Lucene.Net.Util
     /// Setup and restore suite-level environment (fine grained junk that
     /// doesn't fit anywhere else).
     /// </summary>
+    // LUCENENET specific: This class was refactored to be called directly from LuceneTestCase, since
+    // we didn't port over the entire test suite from Java.
     internal sealed class TestRuleSetupAndRestoreClassEnv : AbstractBeforeAfterRule
     {
         /// <summary>
@@ -84,7 +86,7 @@ namespace Lucene.Net.Util
         internal Similarity similarity;
         internal Codec codec;
 
-        /// <seealso cref= SuppressCodecs </seealso>
+        /// <seealso cref="LuceneTestCase.SuppressCodecsAttribute"/>
         internal HashSet<string> avoidCodecs;
 
         public override void Before(LuceneTestCase testInstance)

@@ -10,36 +10,36 @@ namespace Lucene.Net.Util
     using NUnit.Framework;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
     /// <summary>
-    /// Base test class for <seealso cref="DocIdSet"/>s. </summary>
+    /// Base test class for <see cref="DocIdSet"/>s. </summary>
     public abstract class BaseDocIdSetTestCase<T> : LuceneTestCase
         where T : Lucene.Net.Search.DocIdSet
     {
         /// <summary>
-        /// Create a copy of the given <seealso cref="BitSet"/> which has <code>length</code> bits. </summary>
+        /// Create a copy of the given <see cref="BitArray"/> which has <paramref name="length"/> bits. </summary>
         public abstract T CopyOf(BitArray bs, int length);
 
         /// <summary>
-        /// Create a random set which has <code>numBitsSet</code> of its <code>numBits</code> bits set. </summary>
+        /// Create a random set which has <paramref name="numBitsSet"/> of its <paramref name="numBits"/> bits set. </summary>
         protected internal static BitArray RandomSet(int numBits, int numBitsSet)
         {
             Debug.Assert(numBitsSet <= numBits);
@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Same as <seealso cref="#randomSet(int, int)"/> but given a load factor. </summary>
+        /// Same as <see cref="RandomSet(int, int)"/> but given a load factor. </summary>
         protected internal static BitArray RandomSet(int numBits, float percentSet)
         {
             return RandomSet(numBits, (int)(percentSet * numBits));
@@ -120,7 +120,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Compare the content of the set against a <seealso cref="BitSet"/>.
+        /// Compare the content of the set against a <see cref="BitArray"/>.
         /// </summary>
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestAgainstBitSet()
@@ -156,7 +156,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Assert that the content of the <seealso cref="DocIdSet"/> is the same as the content of the <seealso cref="BitSet"/>.
+        /// Assert that the content of the <see cref="DocIdSet"/> is the same as the content of the <see cref="BitArray"/>.
         /// </summary>
         public virtual void AssertEquals(int numBits, BitArray ds1, T ds2)
         {

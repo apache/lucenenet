@@ -1,4 +1,4 @@
-﻿// LUCENENET NOTE: This class appears to be Java-specific, so it wasn't ported.
+﻿// LUCENENET NOTE: This class was moved to Lucene.Net.TestFramework.Util.
 
 //namespace Lucene.Net.Util
 //{

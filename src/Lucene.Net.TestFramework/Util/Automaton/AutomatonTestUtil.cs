@@ -26,7 +26,7 @@ namespace Lucene.Net.Util.Automaton
 
     /// <summary>
     /// Utilities for testing automata.
-    /// <p>
+    /// <para/>
     /// Capable of generating random regular expressions,
     /// and automata, and also provides a number of very
     /// basic unoptimized implementations (*slow) for testing.
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// picks a random int code point, avoiding surrogates;
-        /// throws IllegalArgumentException if this transition only
+        /// throws <see cref="ArgumentException"/> if this transition only
         /// accepts surrogates
         /// </summary>
         private static int GetRandomCodePoint(Random r, Transition t)
@@ -197,9 +197,9 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Lets you retrieve random strings accepted
-        /// by an Automaton.
-        /// <p>
-        /// Once created, call <seealso cref="#getRandomAcceptedString(Random)"/>
+        /// by an <see cref="Automaton"/>.
+        /// <para/>
+        /// Once created, call <see cref="GetRandomAcceptedString(Random)"/>
         /// to get a new string (in UTF-32 codepoints).
         /// </summary>
         public class RandomAcceptedStrings
@@ -366,7 +366,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// return a random NFA/DFA for testing </summary>
+        /// Return a random NFA/DFA for testing. </summary>
         public static Automaton RandomAutomaton(Random random)
         {
             // get two random Automata from regexps
@@ -434,7 +434,7 @@ namespace Lucene.Net.Util.Automaton
          */
 
         /// <summary>
-        /// Simple, original brics implementation of Brzozowski minimize()
+        /// Simple, original brics implementation of Brzozowski Minimize()
         /// </summary>
         public static void MinimizeSimple(Automaton a)
         {
@@ -447,7 +447,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Simple, original brics implementation of determinize()
+        /// Simple, original brics implementation of Determinize()
         /// </summary>
         public static void DeterminizeSimple(Automaton a)
         {
@@ -461,7 +461,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Simple, original brics implementation of determinize()
+        /// Simple, original brics implementation of Determinize()
         /// Determinizes the given automaton using the given set of initial states.
         /// </summary>
         public static void DeterminizeSimple(Automaton a, ISet<State> initialset)
@@ -528,7 +528,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Returns true if the language of this automaton is finite.
-        /// <p>
+        /// <para/>
         /// WARNING: this method is slow, it will blow up if the automaton is large.
         /// this is only used to test the correctness of our faster implementation.
         /// </summary>

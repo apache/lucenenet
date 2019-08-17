@@ -29,40 +29,40 @@ namespace Lucene.Net.Util
     /// <summary>
     /// A utility for keeping backwards compatibility on previously abstract methods
     /// (or similar replacements).
-    /// <p>Before the replacement method can be made abstract, the old method must kept deprecated.
-    /// If somebody still overrides the deprecated method in a non-final class,
+    /// <para>Before the replacement method can be made abstract, the old method must kept deprecated.
+    /// If somebody still overrides the deprecated method in a non-sealed class,
     /// you must keep track, of this and maybe delegate to the old method in the subclass.
-    /// The cost of reflection is minimized by the following usage of this class:</p>
-    /// <p>Define <strong>static final</strong> fields in the base class (<c>BaseClass</c>),
-    /// where the old and new method are declared:</p>
-    /// <pre class="prettyprint">
-    ///  static final VirtualMethod&lt;BaseClass&gt; newMethod =
-    ///   new VirtualMethod&lt;BaseClass&gt;(BaseClass.class, "newName", parameters...);
-    ///  static final VirtualMethod&lt;BaseClass&gt; oldMethod =
-    ///   new VirtualMethod&lt;BaseClass&gt;(BaseClass.class, "oldName", parameters...);
-    /// </pre>
-    /// <p>this enforces the singleton status of these objects, as the maintenance of the cache would be too costly else.
-    /// If you try to create a second instance of for the same method/<c>baseClass</c> combination, an exception is thrown.</p>
-    /// <p>To detect if e.g. the old method was overridden by a more far subclass on the inheritance path to the current
-    /// instance's class, use a <strong>non-static</strong> field:</p>
-    /// <pre class="prettyprint">
-    ///  final boolean isDeprecatedMethodOverridden =
-    ///   oldMethod.getImplementationDistance(this.getClass()) > newMethod.getImplementationDistance(this.getClass());
+    /// The cost of reflection is minimized by the following usage of this class:</para>
+    /// <para>Define <strong>static readonly</strong> fields in the base class (<c>BaseClass</c>),
+    /// where the old and new method are declared:</para>
+    /// <code>
+    /// internal static readonly VirtualMethod newMethod =
+    ///     new VirtualMethod(typeof(BaseClass), "newName", parameters...);
+    /// internal static readonly VirtualMethod oldMethod =
+    ///     new VirtualMethod(typeof(BaseClass), "oldName", parameters...);
+    /// </code>
+    /// <para>this enforces the singleton status of these objects, as the maintenance of the cache would be too costly else.
+    /// If you try to create a second instance of for the same method/<c>baseClass</c> combination, an exception is thrown.</para>
+    /// <para>To detect if e.g. the old method was overridden by a more far subclass on the inheritance path to the current
+    /// instance's class, use a <strong>non-static</strong> field:</para>
+    /// <code>
+    ///  bool isDeprecatedMethodOverridden =
+    ///      oldMethod.GetImplementationDistance(this.GetType()) > newMethod.GetImplementationDistance(this.GetType());
     ///
     ///  <em>// alternatively (more readable):</em>
-    ///  final boolean isDeprecatedMethodOverridden =
-    ///   VirtualMethod.compareImplementationDistance(this.getClass(), oldMethod, newMethod) > 0
-    /// </pre>
-    /// <p><seealso cref="GetImplementationDistance"/> returns the distance of the subclass that overrides this method.
+    ///  bool isDeprecatedMethodOverridden =
+    ///      VirtualMethod.CompareImplementationDistance(this.GetType(), oldMethod, newMethod) > 0
+    /// </code>
+    /// <para><seealso cref="GetImplementationDistance"/> returns the distance of the subclass that overrides this method.
     /// The one with the larger distance should be used preferable.
     /// this way also more complicated method rename scenarios can be handled
-    /// (think of 2.9 <see cref="Analysis.TokenStream"/> deprecations).</p>
+    /// (think of 2.9 <see cref="Analysis.TokenStream"/> deprecations).</para>
     ///
     /// @lucene.internal
     /// </summary>
     // LUCENENET NOTE: Pointless to make this class generic, since the generic type is never used (the Type class in .NET
     // is not generic).
-    public sealed class VirtualMethod
+    public sealed class VirtualMethod // LUCENENET TODO: API - move back to its original Lucene home location, Lucene.Net.Util
     {
         private static readonly ISet<MethodInfo> singletonSet = new ConcurrentHashSet<MethodInfo>(new HashSet<MethodInfo>());
 
@@ -72,10 +72,10 @@ namespace Lucene.Net.Util
         private readonly WeakIdentityMap<Type, int> cache = WeakIdentityMap<Type, int>.NewConcurrentHashMap(false);
 
         /// <summary>
-        /// Creates a new instance for the given <c>baseClass</c> and method declaration. </summary>
+        /// Creates a new instance for the given <paramref name="baseClass"/> and method declaration. </summary>
         /// <exception cref="InvalidOperationException"> if you create a second instance of the same
-        /// <c>baseClass</c> and method declaration combination. this enforces the singleton status. </exception>
-        /// <exception cref="ArgumentException"> if <c>baseClass</c> does not declare the given method. </exception>
+        /// <paramref name="baseClass"/> and method declaration combination. This enforces the singleton status. </exception>
+        /// <exception cref="ArgumentException"> If <paramref name="baseClass"/> does not declare the given method. </exception>
         public VirtualMethod(Type baseClass, string method, params Type[] parameters)
         {
             this.baseClass = baseClass;
@@ -101,8 +101,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the distance from the <c>baseClass</c> in which this method is overridden/implemented
-        /// in the inheritance path between <c>baseClass</c> and the given subclass <c>subclazz</c>. </summary>
-        /// <returns> 0 iff not overridden, else the distance to the base class </returns>
+        /// in the inheritance path between <c>baseClass</c> and the given subclass <paramref name="subclazz"/>. </summary>
+        /// <returns> 0 if and only if not overridden, else the distance to the base class. </returns>
         public int GetImplementationDistance(Type subclazz)
         {
             int distance = cache.Get(subclazz);
@@ -119,7 +119,7 @@ namespace Lucene.Net.Util
         /// <c>baseClass</c> and the given subclass <paramref name="subclazz"/>.
         /// <para/>You can use this method to detect if a method that should normally be final was overridden
         /// by the given instance's class. </summary>
-        /// <returns> <c>false</c> iff not overridden </returns>
+        /// <returns> <c>false</c> if and only if not overridden. </returns>
         public bool IsOverriddenAsOf(Type subclazz)
         {
             return GetImplementationDistance(subclazz) > 0;
@@ -157,11 +157,13 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Utility method that compares the implementation/override distance of two methods. </summary>
-        /// <returns> <ul>
-        ///  <li>&gt; 1, iff <paramref name="m1"/> is overridden/implemented in a subclass of the class overriding/declaring <paramref name="m2"/>
-        ///  <li>&lt; 1, iff <paramref name="m2"/> is overridden in a subclass of the class overriding/declaring <paramref name="m1"/>
-        ///  <li>0, iff both methods are overridden in the same class (or are not overridden at all)
-        /// </ul> </returns>
+        /// <returns> 
+        /// <list type="bullet">
+        ///     <item><description>&gt; 1, iff <paramref name="m1"/> is overridden/implemented in a subclass of the class overriding/declaring <paramref name="m2"/></description></item>
+        ///     <item><description>&lt; 1, iff <paramref name="m2"/> is overridden in a subclass of the class overriding/declaring <paramref name="m1"/></description></item>
+        ///     <item><description>0, iff both methods are overridden in the same class (or are not overridden at all)</description></item>
+        /// </list>
+        /// </returns>
         public static int CompareImplementationDistance(Type clazz, VirtualMethod m1, VirtualMethod m2)
         {
             return m1.GetImplementationDistance(clazz).CompareTo(m2.GetImplementationDistance(clazz));

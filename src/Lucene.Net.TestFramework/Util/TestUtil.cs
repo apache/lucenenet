@@ -24,21 +24,21 @@ namespace Lucene.Net.Util
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BinaryDocValuesField = BinaryDocValuesField;
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using Codec = Lucene.Net.Codecs.Codec;
     //using CheckIndex = Lucene.Net.Index.CheckIndex;
@@ -78,8 +78,13 @@ namespace Lucene.Net.Util
     /// <summary>
     /// General utility methods for Lucene unit tests.
     /// </summary>
-    public static class TestUtil
+    public static class TestUtil // LUCENENET specific - made static rather than making a private constructor
     {
+        /// <summary>
+        /// Deletes one or more files or directories (and everything underneath it).
+        /// </summary>
+        /// <exception cref="IOException">If any of the given files (or their subhierarchy files in case
+        /// of directories) cannot be removed.</exception>
         public static void Rm(params DirectoryInfo[] locations)
         {
             HashSet<FileSystemInfo> unremoved = Rm(new HashSet<FileSystemInfo>(), locations);
@@ -119,6 +124,9 @@ namespace Lucene.Net.Util
             return unremoved;
         }
 
+        /// <summary>
+        /// LUCENENET specific overload, since files and directories are different entities in .NET
+        /// </summary>
         private static HashSet<FileSystemInfo> Rm(HashSet<FileSystemInfo> unremoved, params FileInfo[] locations)
         {
             foreach (FileInfo file in locations)
@@ -140,6 +148,10 @@ namespace Lucene.Net.Util
             return unremoved;
         }
 
+        /// <summary>
+        /// Convenience method unzipping <paramref name="zipFileStream"/> into <paramref name="destDir"/>, cleaning up
+        /// <paramref name="destDir"/> first. 
+        /// </summary>
         public static void Unzip(Stream zipFileStream, DirectoryInfo destDir)
         {
             Rm(destDir);
@@ -171,6 +183,10 @@ namespace Lucene.Net.Util
             }
         }
 
+        /// <summary>
+        /// LUCENENET specific method for normalizing file path names
+        /// for the current operating system.
+        /// </summary>
         private static string CorrectPath(string input)
         {
             if (Path.DirectorySeparatorChar.Equals('/'))
@@ -194,9 +210,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this runs the CheckIndex tool on the index in.  If any
-        ///  issues are hit, a RuntimeException is thrown; else,
-        ///  true is returned.
+        /// This runs the <see cref="Index.CheckIndex"/> tool on the index in.  If any
+        /// issues are hit, an <see cref="Exception"/> is thrown; else,
+        /// true is returned.
         /// </summary>
         public static CheckIndex.Status CheckIndex(Directory dir)
         {
@@ -229,8 +245,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this runs the CheckIndex tool on the Reader.  If any
-        ///  issues are hit, a RuntimeException is thrown
+        /// This runs the <see cref="Index.CheckIndex"/> tool on the <see cref="IndexReader"/>.  If any
+        /// issues are hit, an <see cref="Exception"/> is thrown.
         /// </summary>
         public static void CheckReader(IndexReader reader)
         {
@@ -269,15 +285,15 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// start and end are BOTH inclusive </summary>
-        public static int NextInt(Random r, int start, int end)
+        /// Start and end are BOTH inclusive </summary>
+        public static int NextInt(Random r, int start, int end) // LUCENENET TODO: API - rename NextInt32
         {
             return RandomInts.NextIntBetween(r, start, end);
         }
 
         /// <summary>
-        /// start and end are BOTH inclusive </summary>
-        public static long NextLong(Random r, long start, long end)
+        /// Start and end are BOTH inclusive </summary>
+        public static long NextLong(Random r, long start, long end) // LUCENENET TODO: API - rename NextInt64
         {
             Assert.True(end >= start);
             BigInteger range = (BigInteger)end + (BigInteger)1 - (BigInteger)start;
@@ -385,7 +401,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Fills provided char[] with valid random unicode code
+        /// Fills provided <see cref="T:char[]"/> with valid random unicode code
         /// unit sequence.
         /// </summary>
         public static void RandomFixedLengthUnicodeString(Random random, char[] chars, int offset, int length)
@@ -423,7 +439,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns a String thats "regexpish" (contains lots of operators typically found in regular expressions)
+        /// Returns a <see cref="string"/> thats "regexpish" (contains lots of operators typically found in regular expressions)
         /// If you call this enough times, you might get a valid regex!
         /// </summary>
         public static string RandomRegexpishString(Random r)
@@ -433,20 +449,30 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Maximum recursion bound for '+' and '*' replacements in
-        /// <seealso cref="#randomRegexpishString(Random, int)"/>.
+        /// <see cref="RandomRegexpishString(Random, int)"/>.
         /// </summary>
         private const int MaxRecursionBound = 5;
 
         /// <summary>
-        /// Operators for <seealso cref="#randomRegexpishString(Random, int)"/>.
+        /// Operators for <see cref="RandomRegexpishString(Random, int)"/>.
         /// </summary>
-        private static readonly IList<string> ops = Arrays.AsList(".", "?", "{0," + MaxRecursionBound + "}", "{1," + MaxRecursionBound + "}", "(", ")", "-", "[", "]", "|"); // bounded replacement for '+' -  bounded replacement for '*'
+        private static readonly IList<string> ops = Arrays.AsList(
+            ".", "?", 
+            "{0," + MaxRecursionBound + "}", // bounded replacement for '*'
+            "{1," + MaxRecursionBound + "}", // bounded replacement for '+'
+            "(", 
+            ")", 
+            "-", 
+            "[", 
+            "]", 
+            "|"
+        );
 
         /// <summary>
-        /// Returns a String thats "regexpish" (contains lots of operators typically found in regular expressions)
+        /// Returns a <see cref="string"/> thats "regexpish" (contains lots of operators typically found in regular expressions)
         /// If you call this enough times, you might get a valid regex!
         ///
-        /// <P>Note: to avoid practically endless backtracking patterns we replace asterisk and plus
+        /// <para/>Note: to avoid practically endless backtracking patterns we replace asterisk and plus
         /// operators with bounded repetitions. See LUCENE-4111 for more info.
         /// </summary>
         /// <param name="maxLength"> A hint about maximum length of the regexpish string. It may be exceeded by a few characters. </param>
@@ -686,7 +712,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Randomly upcases, downcases, or leaves intact each code point in the given string
+        /// Randomly upcases, downcases, or leaves intact each code point in the given string.
         /// </summary>
         public static string RandomlyRecaseString(Random random, string str)
         {
@@ -770,7 +796,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns random string of length up to maxLength codepoints , all codepoints within the same unicode block. </summary>
+        /// Returns random string of length up to maxLength codepoints, all codepoints within the same unicode block. </summary>
         public static string RandomRealisticUnicodeString(Random r, int maxLength)
         {
             return RandomRealisticUnicodeString(r, 0, maxLength);
@@ -850,9 +876,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Return a Codec that can read any of the
-        ///  default codecs and formats, but always writes in the specified
-        ///  format.
+        /// Return a <see cref="Codec"/> that can read any of the
+        /// default codecs and formats, but always writes in the specified
+        /// format.
         /// </summary>
         public static Codec AlwaysPostingsFormat(PostingsFormat format)
         {
@@ -882,9 +908,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Return a Codec that can read any of the
-        ///  default codecs and formats, but always writes in the specified
-        ///  format.
+        /// Return a <see cref="Codec"/> that can read any of the
+        /// default codecs and formats, but always writes in the specified
+        /// format.
         /// </summary>
         public static Codec AlwaysDocValuesFormat(DocValuesFormat format)
         {
@@ -978,8 +1004,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// just tries to configure things to keep the open file
-        /// count lowish
+        /// Just tries to configure things to keep the open file
+        /// count lowish.
         /// </summary>
         public static void ReduceOpenFiles(IndexWriter w)
         {
@@ -1007,10 +1033,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Checks some basic behaviour of an AttributeImpl </summary>
-        /// <param name="att">Attribute to reflect</param>
-        /// <param name="reflectedValues"> contains a map with "AttributeClass#key" as values </param>
-        public static void AssertAttributeReflection(Attribute att, IDictionary<string, object> reflectedValues)
+        /// Checks some basic behaviour of an <see cref="Attribute"/>. </summary>
+        /// <param name="att"><see cref="Attribute"/> to reflect</param>
+        /// <param name="reflectedValues"> Contains a <see cref="IDictionary{String, Object}"/> with "AttributeSubclassType/key" as values.</param>
+        public static void AssertAttributeReflection(Attribute att, IDictionary<string, object> reflectedValues) // LUCENENET TODO: API - object here should instead be Type, I think
         {
             IDictionary<string, object> map = new Dictionary<string, object>();
             att.ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(map));
@@ -1131,9 +1157,11 @@ namespace Lucene.Net.Util
             return doc2;
         }
 
-        // Returns a DocsEnum, but randomly sometimes uses a
-        // DocsAndFreqsEnum, DocsAndPositionsEnum.  Returns null
-        // if field/term doesn't exist:
+        /// <summary>
+        /// Returns a <see cref="DocsEnum"/>, but randomly sometimes uses a
+        /// <see cref="MultiDocsEnum"/>, <see cref="DocsAndPositionsEnum"/>.  Returns null
+        /// if field/term doesn't exist.
+        /// </summary>
         public static DocsEnum Docs(Random random, IndexReader r, string field, BytesRef term, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             Terms terms = MultiFields.GetTerms(r, field);
@@ -1149,8 +1177,10 @@ namespace Lucene.Net.Util
             return Docs(random, termsEnum, liveDocs, reuse, flags);
         }
 
-        // Returns a DocsEnum from a positioned TermsEnum, but
-        // randomly sometimes uses a DocsAndFreqsEnum, DocsAndPositionsEnum.
+        /// <summary>
+        /// Returns a <see cref="DocsEnum"/> from a positioned <see cref="TermsEnum"/>, but
+        /// randomly sometimes uses a <see cref="MultiDocsEnum"/>, <see cref="DocsAndPositionsEnum"/>.
+        /// </summary>
         public static DocsEnum Docs(Random random, TermsEnum termsEnum, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             if (random.NextBoolean())
@@ -1202,16 +1232,16 @@ namespace Lucene.Net.Util
                     UnicodeUtil.UTF8toUTF16(@ref.Bytes, @ref.Offset, @ref.Length, chars);
                     return chars;
                 //case 3:
-                //return CharBuffer.wrap(@ref.Utf8ToString());
+                //return CharBuffer.wrap(@ref.Utf8ToString()); // LUCENENET TODO: Add this now that CharBuffer is implemented
                 default:
                     return new StringCharSequenceWrapper(@ref.Utf8ToString());
             }
         }
 
         /// <summary>
-        /// Shutdown <seealso cref="ExecutorService"/> and wait for its.
+        /// Shutdown <see cref="TaskScheduler"/> and wait for its.
         /// </summary>
-        public static void ShutdownExecutorService(TaskScheduler ex)
+        public static void ShutdownExecutorService(TaskScheduler ex) // LUCENENET TODO: API - either implement or comment out
         {
             /*if (ex != null)
             {
@@ -1230,7 +1260,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns a valid (compiling) Pattern instance with random stuff inside. Be careful
+        /// Returns a valid (compiling) <see cref="Regex"/> instance with random stuff inside. Be careful
         /// when applying random patterns to longer strings as certain types of patterns
         /// may explode into exponential times in backtracking implementations (such as Java's).
         /// </summary>        
@@ -1299,8 +1329,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns a random string in the specified length range consisting
-        /// entirely of whitespace characters </summary>
-        /// <seealso cref= #WHITESPACE_CHARACTERS </seealso>
+        /// entirely of whitespace characters.
+        /// </summary>
+        /// <seealso cref="WHITESPACE_CHARACTERS"/>
         public static string RandomWhitespace(Random r, int minLength, int maxLength)
         {
             int end = NextInt(r, minLength, maxLength);
@@ -1414,14 +1445,40 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// List of characters that match <seealso cref="Character#isWhitespace"/> </summary>
+        /// List of characters that match <see cref="char.IsWhiteSpace(char)"/>.</summary>
         public static readonly char[] WHITESPACE_CHARACTERS = new char[]
         {
-            '\u0009', '\n', '\u000B', '\u000C', '\r', '\u001C', '\u001D', '\u001E', '\u001F', '\u0020', '\u1680', '\u180E', '\u2000',
-            '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2008', '\u2009', '\u200A', '\u2028', '\u2029', '\u205F', '\u3000'
+            // :TODO: is this list exhaustive?
+            '\u0009',
+            '\n',
+            '\u000B',
+            '\u000C',
+            '\r',
+            '\u001C',
+            '\u001D',
+            '\u001E',
+            '\u001F',
+            '\u0020',
+            // '\u0085', faild sanity check?
+            '\u1680',
+            '\u180E',
+            '\u2000',
+            '\u2001',
+            '\u2002',
+            '\u2003',
+            '\u2004',
+            '\u2005',
+            '\u2006',
+            '\u2008',
+            '\u2009',
+            '\u200A',
+            '\u2028',
+            '\u2029',
+            '\u205F',
+            '\u3000'
         };
 
-        public static byte[] ToByteArray(this sbyte[] arr)
+        public static byte[] ToByteArray(this sbyte[] arr) // LUCENENET TODO: Not CLS compliant
         {
             var unsigned = new byte[arr.Length];
             System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);

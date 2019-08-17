@@ -26,7 +26,7 @@ namespace Lucene.Net.Util
     using IndexOutput = Lucene.Net.Store.IndexOutput;
 
     /// <summary>
-    /// Intentionally slow IndexOutput for testing.
+    /// Intentionally slow <see cref="IndexOutput"/> for testing.
     /// </summary>
     public class ThrottledIndexOutput : IndexOutput
     {
