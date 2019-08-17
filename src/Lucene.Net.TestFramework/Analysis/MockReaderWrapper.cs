@@ -110,14 +110,14 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        public bool MarkSupported() // LUCENENET TODO: API - property?
+        public bool IsMarkSupported // LUCENENET specific - renamed from markSupported()
         {
-            return false;
+            get { return false; }
         }
 
-        public bool Ready() // LUCENENET TODO: API - property?
+        public bool IsReady // LUCENENET specific - renamed from ready()
         {
-            return false;
+            get { return false; }
         }
 
         public static bool IsMyEvilException(Exception t)
