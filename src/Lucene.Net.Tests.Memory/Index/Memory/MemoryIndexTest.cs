@@ -533,7 +533,7 @@ namespace Lucene.Net.Index.Memory
             MockAnalyzer mockAnalyzer = new MockAnalyzer(Random());
             if (Random().nextBoolean())
             {
-                mockAnalyzer.OffsetGap = (Random().nextInt(100));
+                mockAnalyzer.SetOffsetGap(Random().nextInt(100));
             }
             //index into a random directory
             FieldType type = new FieldType(TextField.TYPE_STORED);

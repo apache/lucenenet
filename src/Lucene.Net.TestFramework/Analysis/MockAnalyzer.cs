@@ -171,12 +171,9 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Sets an offset gap which will then be added to the offset when several fields with the same name are indexed </summary>
-        public int OffsetGap // LUCENENET TODO: API change to SetOffsetGap()
+        public void SetOffsetGap(int offsetGap)
         {
-            set
-            {
-                this.offsetGap = value;
-            }
+            this.offsetGap = offsetGap;
         }
 
         /// <summary>
