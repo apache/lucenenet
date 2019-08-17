@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis
             {
                 // Spoon-feed: intentionally maybe return less than
                 // the consumer asked for
-                realLen = TestUtil.NextInt(random, 1, len);
+                realLen = TestUtil.NextInt32(random, 1, len);
             }
             if (excAtChar != -1)
             {

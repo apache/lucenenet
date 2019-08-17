@@ -474,7 +474,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsConfig config = new FacetsConfig();
             config.SetMultiValued("dim", true);
 
-            int numLabels = TestUtil.NextInt(Random(), 40000, 100000);
+            int numLabels = TestUtil.NextInt32(Random(), 40000, 100000);
 
             Document doc = new Document();
             doc.Add(NewTextField("field", "text", Field.Store.NO));
@@ -764,7 +764,7 @@ namespace Lucene.Net.Facet.Taxonomy
             var tw = new DirectoryTaxonomyWriter(taxoDir);
             FacetsConfig config = new FacetsConfig();
             int numDocs = AtLeast(1000);
-            int numDims = TestUtil.NextInt(Random(), 1, 7);
+            int numDims = TestUtil.NextInt32(Random(), 1, 7);
             IList<TestDoc> testDocs = GetRandomDocs(tokens, numDocs, numDims);
             foreach (TestDoc testDoc in testDocs)
             {

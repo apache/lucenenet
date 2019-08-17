@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             IndexWriter iwriter = new IndexWriter(dir, iwc);
 
-            int uniqueValueCount = TestUtil.NextInt(Random(), 1, 256);
+            int uniqueValueCount = TestUtil.NextInt32(Random(), 1, 256);
             IList<long> values = new List<long>();
 
             Document doc = new Document();

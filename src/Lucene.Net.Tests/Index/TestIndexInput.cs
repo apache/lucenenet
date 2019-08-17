@@ -62,11 +62,11 @@ namespace Lucene.Net.Index
                 if (Rarely())
                 {
                     // a long with lots of zeroes at the end
-                    l1 = LONGS[i] = TestUtil.NextLong(random, 0, int.MaxValue) << 32;
+                    l1 = LONGS[i] = TestUtil.NextInt64(random, 0, int.MaxValue) << 32;
                 }
                 else
                 {
-                    l1 = LONGS[i] = TestUtil.NextLong(random, 0, long.MaxValue);
+                    l1 = LONGS[i] = TestUtil.NextInt64(random, 0, long.MaxValue);
                 }
                 bdo.WriteVInt64(l1);
                 bdo.WriteInt64(l1);

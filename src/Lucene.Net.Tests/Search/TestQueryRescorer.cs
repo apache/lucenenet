@@ -338,12 +338,12 @@ namespace Lucene.Net.Search
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
 
             int[] idToNum = new int[numDocs];
-            int maxValue = TestUtil.NextInt(Random(), 10, 1000000);
+            int maxValue = TestUtil.NextInt32(Random(), 10, 1000000);
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
                 doc.Add(NewStringField("id", "" + i, Field.Store.YES));
-                int numTokens = TestUtil.NextInt(Random(), 1, 10);
+                int numTokens = TestUtil.NextInt32(Random(), 1, 10);
                 StringBuilder b = new StringBuilder();
                 for (int j = 0; j < numTokens; j++)
                 {
@@ -358,7 +358,7 @@ namespace Lucene.Net.Search
             w.Dispose();
 
             IndexSearcher s = NewSearcher(r);
-            int numHits = TestUtil.NextInt(Random(), 1, numDocs);
+            int numHits = TestUtil.NextInt32(Random(), 1, numDocs);
             bool reverse = Random().NextBoolean();
 
             //System.out.println("numHits=" + numHits + " reverse=" + reverse);

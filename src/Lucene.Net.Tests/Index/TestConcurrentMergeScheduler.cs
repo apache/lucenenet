@@ -287,8 +287,8 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
 
-            int maxMergeCount = TestUtil.NextInt(Random(), 1, 5);
-            int maxMergeThreads = TestUtil.NextInt(Random(), 1, maxMergeCount);
+            int maxMergeCount = TestUtil.NextInt32(Random(), 1, 5);
+            int maxMergeThreads = TestUtil.NextInt32(Random(), 1, maxMergeCount);
             CountdownEvent enoughMergesWaiting = new CountdownEvent(maxMergeCount);
             AtomicInt32 runningMergeCount = new AtomicInt32(0);
             AtomicBoolean failed = new AtomicBoolean();

@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, conf);
 
             // create index
-            int numThreads = TestUtil.NextInt(Random(), 3, 6);
+            int numThreads = TestUtil.NextInt32(Random(), 3, 6);
             int numDocs = AtLeast(2000);
             for (int i = 0; i < numDocs; i++)
             {
@@ -505,7 +505,7 @@ namespace Lucene.Net.Index
             // test data: lots of documents (few 10Ks) and lots of update terms (few hundreds)
             int numDocs = AtLeast(20000);
             int numBinaryFields = AtLeast(5);
-            int numTerms = TestUtil.NextInt(random, 10, 100); // terms should affect many docs
+            int numTerms = TestUtil.NextInt32(random, 10, 100); // terms should affect many docs
             HashSet<string> updateTerms = new HashSet<string>();
             while (updateTerms.Count < numTerms)
             {
@@ -518,7 +518,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                int numUpdateTerms = TestUtil.NextInt(random, 1, numTerms / 10);
+                int numUpdateTerms = TestUtil.NextInt32(random, 1, numTerms / 10);
                 for (int j = 0; j < numUpdateTerms; j++)
                 {
                     doc.Add(new StringField("upd", RandomInts.RandomFrom(random, updateTerms), Store.NO));

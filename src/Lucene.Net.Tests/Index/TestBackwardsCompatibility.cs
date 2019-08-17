@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
         private IndexUpgrader NewIndexUpgrader(Directory dir)
         {
             bool streamType = Random().NextBoolean();
-            int choice = TestUtil.NextInt(Random(), 0, 2);
+            int choice = TestUtil.NextInt32(Random(), 0, 2);
             switch (choice)
             {
                 case 0:

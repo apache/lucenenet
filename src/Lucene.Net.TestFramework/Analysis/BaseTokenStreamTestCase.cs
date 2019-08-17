@@ -679,7 +679,7 @@ namespace Lucene.Net.Analysis
                 CheckRandomData(new Random((int)seed), a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
                 // now test with multiple threads: note we do the EXACT same thing we did before in each thread,
                 // so this should only really fail from another thread if its an actual thread problem
-                int numThreads = TestUtil.NextInt(random, 2, 4);
+                int numThreads = TestUtil.NextInt32(random, 2, 4);
                 var startingGun = new CountdownEvent(1);
                 var threads = new AnalysisThread[numThreads];
                 for (int i = 0; i < threads.Length; i++)

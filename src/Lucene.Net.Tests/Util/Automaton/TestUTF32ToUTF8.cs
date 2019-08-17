@@ -107,7 +107,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 for (int iter = 0; iter < iters; iter++)
                 {
-                    int x = TestUtil.NextInt(r, 0, invalidRange - 1);
+                    int x = TestUtil.NextInt32(r, 0, invalidRange - 1);
                     int code;
                     if (x >= startCode)
                     {
@@ -134,16 +134,16 @@ namespace Lucene.Net.Util.Automaton
             switch (r.Next(4))
             {
                 case 0:
-                    return TestUtil.NextInt(r, 0, 128);
+                    return TestUtil.NextInt32(r, 0, 128);
 
                 case 1:
-                    return TestUtil.NextInt(r, 128, 2048);
+                    return TestUtil.NextInt32(r, 128, 2048);
 
                 case 2:
-                    return TestUtil.NextInt(r, 2048, 65536);
+                    return TestUtil.NextInt32(r, 2048, 65536);
 
                 default:
-                    return TestUtil.NextInt(r, 65536, 1 + MAX_UNICODE);
+                    return TestUtil.NextInt32(r, 65536, 1 + MAX_UNICODE);
             }
         }
 

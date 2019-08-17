@@ -119,7 +119,7 @@ namespace Lucene.Net.Util
         {
             arr[i] = i == 0
             ? new Entry(random.nextInt(6), 0)
-            : new Entry(arr[i - 1].Value - TestUtil.NextInt(random, 1, 5), i);
+            : new Entry(arr[i - 1].Value - TestUtil.NextInt32(random, 1, 5), i);
             
         }
 
@@ -135,7 +135,7 @@ namespace Lucene.Net.Util
         {
             arr[i] = i == 0
             ? new Entry(random.nextInt(6), 0)
-            : new Entry(arr[i - 1].Value + TestUtil.NextInt(random, -8, 10), i);
+            : new Entry(arr[i - 1].Value + TestUtil.NextInt32(random, -8, 10), i);
             
         }
 

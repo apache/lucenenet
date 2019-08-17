@@ -449,7 +449,7 @@ namespace Lucene.Net.Facet
             bChance /= sum;
             cChance /= sum;
 
-            int numDims = TestUtil.NextInt(Random(), 2, 5);
+            int numDims = TestUtil.NextInt32(Random(), 2, 5);
             //int numDims = 3;
             int numDocs = AtLeast(3000);
             //int numDocs = 20;
@@ -592,7 +592,7 @@ namespace Lucene.Net.Facet
             if (Random().NextBoolean())
             {
                 // Randomly delete a few docs:
-                int numDel = TestUtil.NextInt(Random(), 1, (int)(numDocs * 0.05));
+                int numDel = TestUtil.NextInt32(Random(), 1, (int)(numDocs * 0.05));
                 if (VERBOSE)
                 {
                     Console.WriteLine("delete " + numDel);
@@ -650,7 +650,7 @@ namespace Lucene.Net.Facet
             {
 
                 string contentToken = Random().Next(30) == 17 ? null : randomContentToken(true);
-                int numDrillDown = TestUtil.NextInt(Random(), 1, Math.Min(4, numDims));
+                int numDrillDown = TestUtil.NextInt32(Random(), 1, Math.Min(4, numDims));
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter + " baseQuery=" + contentToken + " numDrillDown=" + numDrillDown + " useSortedSetDV=" + doUseDV);
@@ -672,7 +672,7 @@ namespace Lucene.Net.Facet
                         }
                         else
                         {
-                            int orCount = TestUtil.NextInt(Random(), 1, Math.Min(5, dimValues[dim].Length));
+                            int orCount = TestUtil.NextInt32(Random(), 1, Math.Min(5, dimValues[dim].Length));
                             drillDowns[dim] = new string[orCount];
                             anyMultiValuedDrillDowns |= orCount > 1;
                             for (int i = 0; i < orCount; i++)
@@ -1192,7 +1192,7 @@ namespace Lucene.Net.Facet
 
             for (int dim = 0; dim < expected.Counts.Length; dim++)
             {
-                int topN = Random().NextBoolean() ? dimValues[dim].Length : TestUtil.NextInt(Random(), 1, dimValues[dim].Length);
+                int topN = Random().NextBoolean() ? dimValues[dim].Length : TestUtil.NextInt32(Random(), 1, dimValues[dim].Length);
                 FacetResult fr = actual.Facets.GetTopChildren(topN, "dim" + dim);
                 if (VERBOSE)
                 {

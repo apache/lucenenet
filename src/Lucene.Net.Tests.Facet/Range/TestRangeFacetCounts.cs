@@ -418,7 +418,7 @@ namespace Lucene.Net.Facet.Range
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
-                int numRange = TestUtil.NextInt(Random(), 1, 100);
+                int numRange = TestUtil.NextInt32(Random(), 1, 100);
                 Int64Range[] ranges = new Int64Range[numRange];
                 int[] expectedCounts = new int[numRange];
                 long minAcceptedValue = long.MaxValue;
@@ -607,7 +607,7 @@ namespace Lucene.Net.Facet.Range
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
-                int numRange = TestUtil.NextInt(Random(), 1, 5);
+                int numRange = TestUtil.NextInt32(Random(), 1, 5);
                 DoubleRange[] ranges = new DoubleRange[numRange];
                 int[] expectedCounts = new int[numRange];
                 float minAcceptedValue = float.PositiveInfinity;
@@ -812,7 +812,7 @@ namespace Lucene.Net.Facet.Range
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
-                int numRange = TestUtil.NextInt(Random(), 1, 5);
+                int numRange = TestUtil.NextInt32(Random(), 1, 5);
                 DoubleRange[] ranges = new DoubleRange[numRange];
                 int[] expectedCounts = new int[numRange];
                 double minAcceptedValue = double.PositiveInfinity;

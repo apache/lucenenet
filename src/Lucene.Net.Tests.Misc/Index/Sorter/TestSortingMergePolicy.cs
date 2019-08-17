@@ -60,15 +60,15 @@ namespace Lucene.Net.Index.Sorter
             if (Random().nextBoolean())
             {
                 TieredMergePolicy tmp = NewTieredMergePolicy(Random());
-                int numSegs = TestUtil.NextInt(Random(), 3, 5);
+                int numSegs = TestUtil.NextInt32(Random(), 3, 5);
                 tmp.SegmentsPerTier = (numSegs);
-                tmp.MaxMergeAtOnce = (TestUtil.NextInt(Random(), 2, numSegs));
+                tmp.MaxMergeAtOnce = (TestUtil.NextInt32(Random(), 2, numSegs));
                 mp = tmp;
             }
             else
             {
                 LogMergePolicy lmp = NewLogMergePolicy(Random());
-                lmp.MergeFactor = TestUtil.NextInt(Random(), 3, 5);
+                lmp.MergeFactor = TestUtil.NextInt32(Random(), 3, 5);
                 mp = lmp;
             }
             // wrap it with a sorting mp
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index.Sorter
             dir1 = NewDirectory();
             dir2 = NewDirectory();
             int numDocs = AtLeast(150);
-            int numTerms = TestUtil.NextInt(Random(), 1, numDocs / 5);
+            int numTerms = TestUtil.NextInt32(Random(), 1, numDocs / 5);
             ISet<string> randomTerms = new HashSet<string>();
             while (randomTerms.size() < numTerms)
             {

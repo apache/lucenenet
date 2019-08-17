@@ -961,7 +961,7 @@ namespace Lucene.Net.Search
             Document doc = new Document();
             Int64Field field = new Int64Field("f", 0L, Field.Store.YES);
             doc.Add(field);
-            long[] values = new long[TestUtil.NextInt(Random(), 1, 10)];
+            long[] values = new long[TestUtil.NextInt32(Random(), 1, 10)];
             for (int i = 0; i < values.Length; ++i)
             {
                 long v;
@@ -977,7 +977,7 @@ namespace Lucene.Net.Search
                         v = long.MaxValue;
                         break;
                     default:
-                        v = TestUtil.NextLong(Random(), -10, 10);
+                        v = TestUtil.NextInt64(Random(), -10, 10);
                         break;
                 }
                 values[i] = v;
@@ -1015,7 +1015,7 @@ namespace Lucene.Net.Search
             Document doc = new Document();
             Int32Field field = new Int32Field("f", 0, Field.Store.YES);
             doc.Add(field);
-            int[] values = new int[TestUtil.NextInt(Random(), 1, 10)];
+            int[] values = new int[TestUtil.NextInt32(Random(), 1, 10)];
             for (int i = 0; i < values.Length; ++i)
             {
                 int v;
@@ -1031,7 +1031,7 @@ namespace Lucene.Net.Search
                         v = int.MaxValue;
                         break;
                     default:
-                        v = TestUtil.NextInt(Random(), -10, 10);
+                        v = TestUtil.NextInt32(Random(), -10, 10);
                         break;
                 }
                 values[i] = v;

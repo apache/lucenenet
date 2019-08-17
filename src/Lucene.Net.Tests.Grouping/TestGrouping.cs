@@ -774,7 +774,7 @@ namespace Lucene.Net.Search.Grouping
         [Test]
         public virtual void TestRandom()
         {
-            int numberOfRuns = TestUtil.NextInt(Random(), 3, 6);
+            int numberOfRuns = TestUtil.NextInt32(Random(), 3, 6);
             for (int iter = 0; iter < numberOfRuns; iter++)
             {
                 if (VERBOSE)
@@ -782,10 +782,10 @@ namespace Lucene.Net.Search.Grouping
                     Console.WriteLine("TEST: iter=" + iter);
                 }
 
-                int numDocs = TestUtil.NextInt(Random(), 100, 1000) * RANDOM_MULTIPLIER;
+                int numDocs = TestUtil.NextInt32(Random(), 100, 1000) * RANDOM_MULTIPLIER;
                 //final int numDocs = TestUtil.nextInt(random, 5, 20);
 
-                int numGroups = TestUtil.NextInt(Random(), 1, numDocs);
+                int numGroups = TestUtil.NextInt32(Random(), 1, numDocs);
 
 
                 if (VERBOSE)
@@ -808,7 +808,7 @@ namespace Lucene.Net.Search.Grouping
 
                     groups.Add(new BytesRef(randomValue));
                 }
-                string[] contentStrings = new string[TestUtil.NextInt(Random(), 2, 20)];
+                string[] contentStrings = new string[TestUtil.NextInt32(Random(), 2, 20)];
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: create fake content");
@@ -1033,14 +1033,14 @@ namespace Lucene.Net.Search.Grouping
                             }
                         }
 
-                        int topNGroups = TestUtil.NextInt(Random(), 1, 30);
+                        int topNGroups = TestUtil.NextInt32(Random(), 1, 30);
                         // int topNGroups = 10;
-                        int docsPerGroup = TestUtil.NextInt(Random(), 1, 50);
+                        int docsPerGroup = TestUtil.NextInt32(Random(), 1, 50);
 
-                        int groupOffset = TestUtil.NextInt(Random(), 0, (topNGroups - 1) / 2);
+                        int groupOffset = TestUtil.NextInt32(Random(), 0, (topNGroups - 1) / 2);
                         // int groupOffset = 0;
 
-                        int docOffset = TestUtil.NextInt(Random(), 0, docsPerGroup - 1);
+                        int docOffset = TestUtil.NextInt32(Random(), 0, docsPerGroup - 1);
                         // int docOffset = 0;
 
                         bool doCache = Random().nextBoolean();

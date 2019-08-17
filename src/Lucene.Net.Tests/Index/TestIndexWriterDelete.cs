@@ -1124,7 +1124,7 @@ namespace Lucene.Net.Index
             while (upto < ids.Count)
             {
                 int left = ids.Count - upto;
-                int inc = Math.Min(left, TestUtil.NextInt(Random(), 1, 20));
+                int inc = Math.Min(left, TestUtil.NextInt32(Random(), 1, 20));
                 int limit = upto + inc;
                 while (upto < limit)
                 {

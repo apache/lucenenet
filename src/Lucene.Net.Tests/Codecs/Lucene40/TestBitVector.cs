@@ -266,10 +266,10 @@ namespace Lucene.Net.Codecs.Lucene40
         public virtual void TestClearedBitNearEnd()
         {
             Directory d = NewDirectory();
-            int numBits = TestUtil.NextInt(Random(), 7, 1000);
+            int numBits = TestUtil.NextInt32(Random(), 7, 1000);
             BitVector bv = new BitVector(numBits);
             bv.InvertAll();
-            bv.Clear(numBits - TestUtil.NextInt(Random(), 1, 7));
+            bv.Clear(numBits - TestUtil.NextInt32(Random(), 1, 7));
             bv.Write(d, "test", NewIOContext(Random()));
             Assert.AreEqual(numBits - 1, bv.Count());
             d.Dispose();
@@ -279,7 +279,7 @@ namespace Lucene.Net.Codecs.Lucene40
         public virtual void TestMostlySet()
         {
             Directory d = NewDirectory();
-            int numBits = TestUtil.NextInt(Random(), 30, 1000);
+            int numBits = TestUtil.NextInt32(Random(), 30, 1000);
             for (int numClear = 0; numClear < 20; numClear++)
             {
                 BitVector bv = new BitVector(numBits);

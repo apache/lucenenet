@@ -107,7 +107,7 @@ namespace Lucene.Net.Search.Spans
             SimplePayloadAnalyzer = new AnalyzerAnonymousInnerClassHelper();
 
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, SimplePayloadAnalyzer).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, SimplePayloadAnalyzer).SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
             //writer.infoStream = System.out;
             for (int i = 0; i < 2000; i++)
             {

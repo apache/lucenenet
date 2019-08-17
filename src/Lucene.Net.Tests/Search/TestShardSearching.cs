@@ -72,13 +72,13 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSimple()
         {
-            int numNodes = TestUtil.NextInt(Random(), 1, 10);
+            int numNodes = TestUtil.NextInt32(Random(), 1, 10);
 
             double runTimeSec = AtLeast(3);
 
-            int minDocsToMakeTerms = TestUtil.NextInt(Random(), 5, 20);
+            int minDocsToMakeTerms = TestUtil.NextInt32(Random(), 5, 20);
 
-            int maxSearcherAgeSeconds = TestUtil.NextInt(Random(), 1, 3);
+            int maxSearcherAgeSeconds = TestUtil.NextInt32(Random(), 1, 3);
 
             if (VERBOSE)
             {
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search
                                 }
                                 else
                                 {
-                                    prefix = t.Substring(0, TestUtil.NextInt(Random(), 1, 2));
+                                    prefix = t.Substring(0, TestUtil.NextInt32(Random(), 1, 2));
                                 }
                                 query = new PrefixQuery(new Term("body", prefix));
                             }
@@ -335,7 +335,7 @@ namespace Lucene.Net.Search
 
         private PreviousSearchState AssertSame(IndexSearcher mockSearcher, NodeState.ShardIndexSearcher shardSearcher, Query q, Sort sort, PreviousSearchState state)
         {
-            int numHits = TestUtil.NextInt(Random(), 1, 100);
+            int numHits = TestUtil.NextInt32(Random(), 1, 100);
             if (state != null && state.SearchAfterLocal == null)
             {
                 // In addition to what we last searched:

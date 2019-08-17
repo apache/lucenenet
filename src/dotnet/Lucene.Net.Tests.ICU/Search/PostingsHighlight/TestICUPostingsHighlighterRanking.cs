@@ -73,7 +73,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             for (int i = 0; i < numDocs; i++)
             {
                 StringBuilder bodyText = new StringBuilder();
-                int numSentences = TestUtil.NextInt(Random(), 1, maxNumSentences);
+                int numSentences = TestUtil.NextInt32(Random(), 1, maxNumSentences);
                 for (int j = 0; j < numSentences; j++)
                 {
                     bodyText.Append(newSentence(Random(), maxSentenceLength));
@@ -150,18 +150,18 @@ namespace Lucene.Net.Search.PostingsHighlight
         private String newSentence(Random r, int maxSentenceLength)
         {
             StringBuilder sb = new StringBuilder();
-            int numElements = TestUtil.NextInt(r, 1, maxSentenceLength);
+            int numElements = TestUtil.NextInt32(r, 1, maxSentenceLength);
             for (int i = 0; i < numElements; i++)
             {
                 if (sb.Length > 0)
                 {
                     sb.append(' ');
-                    sb.append((char)TestUtil.NextInt(r, 'a', 'z'));
+                    sb.append((char)TestUtil.NextInt32(r, 'a', 'z'));
                 }
                 else
                 {
                     // capitalize the first word to help breakiterator
-                    sb.append((char)TestUtil.NextInt(r, 'A', 'Z'));
+                    sb.append((char)TestUtil.NextInt32(r, 'A', 'Z'));
                 }
             }
             sb.append(". "); // finalize sentence

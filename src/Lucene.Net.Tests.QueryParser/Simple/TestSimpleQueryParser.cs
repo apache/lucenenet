@@ -703,7 +703,7 @@ namespace Lucene.Net.QueryParsers.Simple
             {
                 string query = TestUtil.RandomUnicodeString(Random());
                 Parse(query); // no exception
-                ParseKeyword(query, (Operator)TestUtil.NextInt(Random(), 0, 1024)); // no exception
+                ParseKeyword(query, (Operator)TestUtil.NextInt32(Random(), 0, 1024)); // no exception
             }
         }
 
@@ -721,7 +721,7 @@ namespace Lucene.Net.QueryParsers.Simple
                     sb.append(chars[Random().Next(chars.Length)]);
                 }
                 Parse(sb.toString()); // no exception
-                ParseKeyword(sb.toString(), (Operator)TestUtil.NextInt(Random(), 0, 1024)); // no exception
+                ParseKeyword(sb.toString(), (Operator)TestUtil.NextInt32(Random(), 0, 1024)); // no exception
             }
         }
     }

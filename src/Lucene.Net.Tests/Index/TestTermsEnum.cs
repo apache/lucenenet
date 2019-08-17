@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
             Directory d = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
             RandomIndexWriter w = new RandomIndexWriter(Random(), d, analyzer, Similarity, TimeZone);
             int numDocs = AtLeast(10);
             for (int docCount = 0; docCount < numDocs; docCount++)
@@ -621,7 +621,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRandomTerms()
         {
-            var terms = new string[TestUtil.NextInt(Random(), 1, AtLeast(1000))];
+            var terms = new string[TestUtil.NextInt32(Random(), 1, AtLeast(1000))];
             var seen = new HashSet<string>();
 
             var allowEmptyString = Random().NextBoolean();

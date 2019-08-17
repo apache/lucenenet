@@ -74,7 +74,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     while (true)
                     {
                         Document doc = new Document();
-                        int numPaths = TestUtil.NextInt(Random(), 1, 5);
+                        int numPaths = TestUtil.NextInt32(Random(), 1, 5);
                         for (int i = 0; i < numPaths; i++)
                         {
                             string path;

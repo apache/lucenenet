@@ -95,18 +95,18 @@ namespace Lucene.Net.Util.Fst
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
                     // Sometimes go backwards
-                    long value = lastOutput + TestUtil.NextInt(Random(), -100, 1000);
+                    long value = lastOutput + TestUtil.NextInt32(Random(), -100, 1000);
                     while (value < 0)
                     {
-                        value = lastOutput + TestUtil.NextInt(Random(), -100, 1000);
+                        value = lastOutput + TestUtil.NextInt32(Random(), -100, 1000);
                     }
                     object output;
                     if (Random().nextInt(5) == 3)
                     {
-                        long value2 = lastOutput + TestUtil.NextInt(Random(), -100, 1000);
+                        long value2 = lastOutput + TestUtil.NextInt32(Random(), -100, 1000);
                         while (value2 < 0)
                         {
-                            value2 = lastOutput + TestUtil.NextInt(Random(), -100, 1000);
+                            value2 = lastOutput + TestUtil.NextInt32(Random(), -100, 1000);
                         }
                         List<long> values = new List<long>();
                         values.Add(value);
@@ -135,15 +135,15 @@ namespace Lucene.Net.Util.Fst
                     for (int idx = 0; idx < terms.Length; idx++)
                     {
 
-                        int outputCount = TestUtil.NextInt(Random(), 1, 7);
+                        int outputCount = TestUtil.NextInt32(Random(), 1, 7);
                         List<long?> values = new List<long?>();
                         for (int i = 0; i < outputCount; i++)
                         {
                             // Sometimes go backwards
-                            long value = lastOutput2 + TestUtil.NextInt(Random(), -100, 1000);
+                            long value = lastOutput2 + TestUtil.NextInt32(Random(), -100, 1000);
                             while (value < 0)
                             {
-                                value = lastOutput2 + TestUtil.NextInt(Random(), -100, 1000);
+                                value = lastOutput2 + TestUtil.NextInt32(Random(), -100, 1000);
                             }
                             values.Add(value);
                             lastOutput2 = value;

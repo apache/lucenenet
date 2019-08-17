@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetUseCompoundFile(false);
 
             TermIndexInterval = config.TermIndexInterval;
-            IndexDivisor = TestUtil.NextInt(Random(), 1, 10);
+            IndexDivisor = TestUtil.NextInt32(Random(), 1, 10);
             NUMBER_OF_DOCUMENTS = AtLeast(100);
             NUMBER_OF_FIELDS = AtLeast(Math.Max(10, 3 * TermIndexInterval * IndexDivisor / NUMBER_OF_DOCUMENTS));
 

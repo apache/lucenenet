@@ -665,10 +665,10 @@ namespace Lucene.Net.Index
                 ((MockDirectoryWrapper)d).PreventDoubleWrite = false;
             }
 
-            int threadCount = TestUtil.NextInt(Random(), 2, 6);
+            int threadCount = TestUtil.NextInt32(Random(), 2, 6);
 
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
             AtomicObject<IndexWriter> writerRef =
                 new AtomicObject<IndexWriter>(new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)));
 

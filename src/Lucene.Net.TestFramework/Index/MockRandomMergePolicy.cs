@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
 
                 // TODO: sometimes make more than 1 merge?
                 mergeSpec = new MergeSpecification();
-                int segsToMerge = TestUtil.NextInt(random, 1, numSegments);
+                int segsToMerge = TestUtil.NextInt32(random, 1, numSegments);
                 mergeSpec.Add(new OneMerge(segments.SubList(0, segsToMerge)));
             }
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
                 while (upto < eligibleSegments.Count)
                 {
                     int max = Math.Min(10, eligibleSegments.Count - upto);
-                    int inc = max <= 2 ? max : TestUtil.NextInt(random, 2, max);
+                    int inc = max <= 2 ? max : TestUtil.NextInt32(random, 2, max);
                     mergeSpec.Add(new OneMerge(eligibleSegments.SubList(upto, upto + inc)));
                     upto += inc;
                 }

@@ -206,7 +206,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             int numTests = AtLeast(3);
             for (int i = 0; i < numTests; i++)
             {
-                Dotest(TestUtil.NextInt(random, 2, 100), TestUtil.NextInt(random, 100, 1000));
+                Dotest(TestUtil.NextInt32(random, 2, 100), TestUtil.NextInt32(random, 100, 1000));
             }
         }
 

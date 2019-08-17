@@ -990,7 +990,7 @@ namespace Lucene.Net.Index
             CommitAndAddIndexes3 c = new CommitAndAddIndexes3(this, NUM_COPY);
             c.LaunchThreads(-1);
 
-            Thread.Sleep(TestUtil.NextInt(Random(), 10, 500));
+            Thread.Sleep(TestUtil.NextInt32(Random(), 10, 500));
 
             // Close w/o first stopping/joining the threads
             if (VERBOSE)
@@ -1018,7 +1018,7 @@ namespace Lucene.Net.Index
             CommitAndAddIndexes3 c = new CommitAndAddIndexes3(this, NUM_COPY);
             c.LaunchThreads(-1);
 
-            Thread.Sleep(TestUtil.NextInt(Random(), 10, 500));
+            Thread.Sleep(TestUtil.NextInt32(Random(), 10, 500));
 
             // Close w/o first stopping/joining the threads
             if (VERBOSE)

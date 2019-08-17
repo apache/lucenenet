@@ -46,10 +46,10 @@ namespace Lucene.Net.Index
             MergeScheduler mergeScheduler = new SerialMergeSchedulerAnonymousInnerClassHelper(this, mayMerge);
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(mergeScheduler).SetMergePolicy(MergePolicy()));
             writer.Config.MergePolicy.NoCFSRatio = Random().NextBoolean() ? 0 : 1;
-            int numSegments = TestUtil.NextInt(Random(), 2, 20);
+            int numSegments = TestUtil.NextInt32(Random(), 2, 20);
             for (int i = 0; i < numSegments; ++i)
             {
-                int numDocs = TestUtil.NextInt(Random(), 1, 5);
+                int numDocs = TestUtil.NextInt32(Random(), 1, 5);
                 for (int j = 0; j < numDocs; ++j)
                 {
                     writer.AddDocument(new Document());
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
             for (int i = 5; i >= 0; --i)
             {
                 int segmentCount = writer.SegmentCount;
-                int maxNumSegments = i == 0 ? 1 : TestUtil.NextInt(Random(), 1, 10);
+                int maxNumSegments = i == 0 ? 1 : TestUtil.NextInt32(Random(), 1, 10);
                 mayMerge.Set(segmentCount > maxNumSegments);
                 writer.ForceMerge(maxNumSegments);
             }

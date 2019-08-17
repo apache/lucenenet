@@ -373,7 +373,7 @@ namespace Lucene.Net.Search.Grouping
         public void TestRandom()
         {
             Random random = Random();
-            int numberOfRuns = TestUtil.NextInt(random, 3, 6);
+            int numberOfRuns = TestUtil.NextInt32(random, 3, 6);
             for (int indexIter = 0; indexIter < numberOfRuns; indexIter++)
             {
                 bool multipleFacetsPerDocument = random.nextBoolean();
@@ -517,9 +517,9 @@ namespace Lucene.Net.Search.Grouping
         private IndexContext CreateIndexContext(bool multipleFacetValuesPerDocument)
         {
             Random random = Random();
-            int numDocs = TestUtil.NextInt(random, 138, 1145) * RANDOM_MULTIPLIER;
-            int numGroups = TestUtil.NextInt(random, 1, numDocs / 4);
-            int numFacets = TestUtil.NextInt(random, 1, numDocs / 6);
+            int numDocs = TestUtil.NextInt32(random, 138, 1145) * RANDOM_MULTIPLIER;
+            int numGroups = TestUtil.NextInt32(random, 1, numDocs / 4);
+            int numFacets = TestUtil.NextInt32(random, 1, numDocs / 6);
 
             if (VERBOSE)
             {
@@ -536,7 +536,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 facetValues.Add(GenerateRandomNonEmptyString());
             }
-            string[] contentBrs = new string[TestUtil.NextInt(random, 2, 20)];
+            string[] contentBrs = new string[TestUtil.NextInt32(random, 2, 20)];
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: create fake content");

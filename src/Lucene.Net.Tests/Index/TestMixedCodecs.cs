@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
                         w.Dispose();
                     }
                     w = new RandomIndexWriter(Random(), dir, iwc);
-                    docsLeftInthisSegment = TestUtil.NextInt(Random(), 10, 100);
+                    docsLeftInthisSegment = TestUtil.NextInt32(Random(), 10, 100);
                 }
                 Document doc = new Document();
                 doc.Add(NewStringField("id", Convert.ToString(docUpto), Field.Store.YES));

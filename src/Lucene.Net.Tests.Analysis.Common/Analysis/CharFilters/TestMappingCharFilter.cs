@@ -353,7 +353,7 @@ namespace Lucene.Net.Analysis.CharFilters
                     Console.WriteLine("\nTEST iter=" + iter);
                 }
 
-                char endLetter = (char)TestUtil.NextInt(random, 'b', 'z');
+                char endLetter = (char)TestUtil.NextInt32(random, 'b', 'z');
                 IDictionary<string, string> map = new Dictionary<string, string>();
                 NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
                 int numMappings = AtLeast(5);
@@ -516,7 +516,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         }
                         else
                         {
-                            char[] buffer = new char[TestUtil.NextInt(random, 1, 100)];
+                            char[] buffer = new char[TestUtil.NextInt32(random, 1, 100)];
                             int off = buffer.Length == 1 ? 0 : random.Next(buffer.Length - 1);
                             int count = mapFilter.Read(buffer, off, buffer.Length - off);
                             if (count == -1)

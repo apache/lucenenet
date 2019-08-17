@@ -54,11 +54,11 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 id.SetStringValue("" + i);
-                char ch1 = (char)TestUtil.NextInt(Random(), 'a', 'z');
-                char ch2 = (char)TestUtil.NextInt(Random(), 'a', 'z');
+                char ch1 = (char)TestUtil.NextInt32(Random(), 'a', 'z');
+                char ch2 = (char)TestUtil.NextInt32(Random(), 'a', 'z');
                 field1.SetStringValue("" + ch1 + " " + ch2);
-                ch1 = (char)TestUtil.NextInt(Random(), 'a', 'z');
-                ch2 = (char)TestUtil.NextInt(Random(), 'a', 'z');
+                ch1 = (char)TestUtil.NextInt32(Random(), 'a', 'z');
+                ch2 = (char)TestUtil.NextInt32(Random(), 'a', 'z');
                 field2.SetStringValue("" + ch1 + " " + ch2);
                 writer.AddDocument(doc);
             }

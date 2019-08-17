@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 string s = isS1.Get(idx) ? s1 : s2;
                 Field f = NewTextField("field", s, Field.Store.NO);
-                int count = TestUtil.NextInt(Random(), 1, 4);
+                int count = TestUtil.NextInt32(Random(), 1, 4);
                 for (int ct = 0; ct < count; ct++)
                 {
                     doc.Add(f);
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            targetDocID = docID + TestUtil.NextInt(Random(), 1, NUM_DOCS - docID);
+                            targetDocID = docID + TestUtil.NextInt32(Random(), 1, NUM_DOCS - docID);
                         }
                         if (VERBOSE)
                         {
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
                     Document doc = new Document();
                     string s = isS1.Get(idx) ? s1 : s2;
                     Field f = NewField("field", s, ft);
-                    int count = TestUtil.NextInt(Random(), 1, 4);
+                    int count = TestUtil.NextInt32(Random(), 1, 4);
                     for (int ct = 0; ct < count; ct++)
                     {
                         doc.Add(f);
@@ -521,7 +521,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            targetDocID = docID + TestUtil.NextInt(Random(), 1, NUM_DOCS - docID);
+                            targetDocID = docID + TestUtil.NextInt32(Random(), 1, NUM_DOCS - docID);
                         }
                         if (VERBOSE)
                         {

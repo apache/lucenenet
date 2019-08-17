@@ -162,7 +162,7 @@ namespace Lucene.Net.Search.Grouping
         [Test]
         public void TestRandom()
         {
-            int numberOfRuns = TestUtil.NextInt(Random(), 3, 6);
+            int numberOfRuns = TestUtil.NextInt32(Random(), 3, 6);
             for (int iter = 0; iter < numberOfRuns; iter++)
             {
                 if (VERBOSE)
@@ -170,8 +170,8 @@ namespace Lucene.Net.Search.Grouping
                     Console.WriteLine(string.Format("TEST: iter={0} total={1}", iter, numberOfRuns));
                 }
 
-                int numDocs = TestUtil.NextInt(Random(), 100, 1000) * RANDOM_MULTIPLIER;
-                int numGroups = TestUtil.NextInt(Random(), 1, numDocs);
+                int numDocs = TestUtil.NextInt32(Random(), 100, 1000) * RANDOM_MULTIPLIER;
+                int numGroups = TestUtil.NextInt32(Random(), 1, numDocs);
 
                 if (VERBOSE)
                 {
@@ -190,7 +190,7 @@ namespace Lucene.Net.Search.Grouping
                     } while ("".Equals(randomValue, StringComparison.Ordinal));
                     groups.Add(new BytesRef(randomValue));
                 }
-                string[] contentStrings = new string[TestUtil.NextInt(Random(), 2, 20)];
+                string[] contentStrings = new string[TestUtil.NextInt32(Random(), 2, 20)];
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: create fake content");

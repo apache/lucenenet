@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
                 AddAttribute<ITermToBytesRefAttribute>();
                 Bytes.Length = TOKEN_LEN;
                 this.Random = random;
-                NextSave = TestUtil.NextInt(random, 500000, 1000000);
+                NextSave = TestUtil.NextInt32(random, 500000, 1000000);
             }
 
             public override bool IncrementToken()
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
                 {
                     SavedTerms.Add(BytesRef.DeepCopyOf(Bytes));
                     Console.WriteLine("TEST: save term=" + Bytes);
-                    NextSave = TestUtil.NextInt(Random, 500000, 1000000);
+                    NextSave = TestUtil.NextInt32(Random, 500000, 1000000);
                 }
                 return true;
             }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
             Console.WriteLine("Starting Test2B");
             long TERM_COUNT = ((long)int.MaxValue) + 100000000;
 
-            int TERMS_PER_DOC = TestUtil.NextInt(Random(), 100000, 1000000);
+            int TERMS_PER_DOC = TestUtil.NextInt32(Random(), 100000, 1000000);
 
             IList<BytesRef> savedTerms = null;
 
@@ -263,7 +263,7 @@ namespace Lucene.Net.Index
             Console.WriteLine("TEST: findTerms");
             TermsEnum termsEnum = MultiFields.GetTerms(r, "field").GetIterator(null);
             IList<BytesRef> savedTerms = new List<BytesRef>();
-            int nextSave = TestUtil.NextInt(Random(), 500000, 1000000);
+            int nextSave = TestUtil.NextInt32(Random(), 500000, 1000000);
             BytesRef term;
             while ((term = termsEnum.Next()) != null)
             {
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
                 {
                     savedTerms.Add(BytesRef.DeepCopyOf(term));
                     Console.WriteLine("TEST: add " + term);
-                    nextSave = TestUtil.NextInt(Random(), 500000, 1000000);
+                    nextSave = TestUtil.NextInt32(Random(), 500000, 1000000);
                 }
             }
             return savedTerms;

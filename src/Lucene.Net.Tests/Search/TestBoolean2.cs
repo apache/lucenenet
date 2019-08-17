@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
                 MulFactor *= 2;
             } while (docCount < 3000);
 
-            RandomIndexWriter riw = new RandomIndexWriter(Random(), Dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
+            RandomIndexWriter riw = new RandomIndexWriter(Random(), Dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 50, 1000)));
             Document doc_ = new Document();
             doc_.Add(NewTextField("field2", "xxx", Field.Store.NO));
             for (int i = 0; i < NUM_EXTRA_DOCS / 2; i++)

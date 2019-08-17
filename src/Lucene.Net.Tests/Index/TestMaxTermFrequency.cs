@@ -93,11 +93,11 @@ namespace Lucene.Net.Index
         private string AddValue()
         {
             IList<string> terms = new List<string>();
-            int maxCeiling = TestUtil.NextInt(Random(), 0, 255);
+            int maxCeiling = TestUtil.NextInt32(Random(), 0, 255);
             int max = 0;
             for (char ch = 'a'; ch <= 'z'; ch++)
             {
-                int num = TestUtil.NextInt(Random(), 0, maxCeiling);
+                int num = TestUtil.NextInt32(Random(), 0, maxCeiling);
                 for (int i = 0; i < num; i++)
                 {
                     terms.Add(char.ToString(ch));

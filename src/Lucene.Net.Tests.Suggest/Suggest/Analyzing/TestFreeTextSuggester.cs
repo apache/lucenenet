@@ -440,7 +440,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         [Test]
         public void TestRandom()
         {
-            string[] terms = new string[TestUtil.NextInt(Random(), 2, 10)];
+            string[] terms = new string[TestUtil.NextInt32(Random(), 2, 10)];
             ISet<string> seen = new HashSet<string>();
             while (seen.size() < terms.Length)
             {
@@ -479,7 +479,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 totTokens += docs[i].Length;
             }
 
-            int grams = TestUtil.NextInt(Random(), 1, 4);
+            int grams = TestUtil.NextInt32(Random(), 1, 4);
 
             if (VERBOSE)
             {
@@ -534,7 +534,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             int lookups = AtLeast(100);
             for (int iter = 0; iter < lookups; iter++)
             {
-                string[] tokens = new string[TestUtil.NextInt(Random(), 1, 5)];
+                string[] tokens = new string[TestUtil.NextInt32(Random(), 1, 5)];
                 for (int i = 0; i < tokens.Length; i++)
                 {
                     tokens[i] = GetZipfToken(terms);
@@ -551,10 +551,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     trimStart = 0;
                 }
-                int trimAt = TestUtil.NextInt(Random(), trimStart, tokens[tokens.Length - 1].Length);
+                int trimAt = TestUtil.NextInt32(Random(), trimStart, tokens[tokens.Length - 1].Length);
                 tokens[tokens.Length - 1] = tokens[tokens.Length - 1].Substring(0, trimAt - 0);
 
-                int num = TestUtil.NextInt(Random(), 1, 100);
+                int num = TestUtil.NextInt32(Random(), 1, 100);
                 StringBuilder b = new StringBuilder();
                 foreach (string token in tokens)
                 {

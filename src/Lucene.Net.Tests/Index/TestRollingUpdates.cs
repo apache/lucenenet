@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
             }
 
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             int SIZE = AtLeast(20);
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
             {
                 IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
                 int numUpdates = AtLeast(20);
-                int numThreads = TestUtil.NextInt(Random(), 2, 6);
+                int numThreads = TestUtil.NextInt32(Random(), 2, 6);
                 IndexingThread[] threads = new IndexingThread[numThreads];
                 for (int i = 0; i < numThreads; i++)
                 {

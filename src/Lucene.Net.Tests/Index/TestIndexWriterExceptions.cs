@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
                     {
                         if (r.NextBoolean())
                         {
-                            Writer.UpdateDocuments(idTerm, new DocCopyIterator(doc, TestUtil.NextInt(r, 1, 20)));
+                            Writer.UpdateDocuments(idTerm, new DocCopyIterator(doc, TestUtil.NextInt32(r, 1, 20)));
                         }
                         else
                         {
@@ -1818,7 +1818,7 @@ namespace Lucene.Net.Index
             }
 
             docs.Clear();
-            int limit = TestUtil.NextInt(Random(), 2, 25);
+            int limit = TestUtil.NextInt32(Random(), 2, 25);
             int crashAt = Random().Next(limit);
             for (int docCount = 0; docCount < limit; docCount++)
             {

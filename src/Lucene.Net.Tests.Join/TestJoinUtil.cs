@@ -391,18 +391,18 @@ namespace Lucene.Net.Tests.Join
         [Test]
         public void TestSingleValueRandomJoin()
         {
-            int maxIndexIter = TestUtil.NextInt(Random(), 6, 12);
-            int maxSearchIter = TestUtil.NextInt(Random(), 13, 26);
-            ExecuteRandomJoin(false, maxIndexIter, maxSearchIter, TestUtil.NextInt(Random(), 87, 764));
+            int maxIndexIter = TestUtil.NextInt32(Random(), 6, 12);
+            int maxSearchIter = TestUtil.NextInt32(Random(), 13, 26);
+            ExecuteRandomJoin(false, maxIndexIter, maxSearchIter, TestUtil.NextInt32(Random(), 87, 764));
         }
 
         [Test]
         public void TestMultiValueRandomJoin()
             // this test really takes more time, that is why the number of iterations are smaller.
         {
-            int maxIndexIter = TestUtil.NextInt(Random(), 3, 6);
-            int maxSearchIter = TestUtil.NextInt(Random(), 6, 12);
-            ExecuteRandomJoin(true, maxIndexIter, maxSearchIter, TestUtil.NextInt(Random(), 11, 57));
+            int maxIndexIter = TestUtil.NextInt32(Random(), 3, 6);
+            int maxSearchIter = TestUtil.NextInt32(Random(), 6, 12);
+            ExecuteRandomJoin(true, maxIndexIter, maxSearchIter, TestUtil.NextInt32(Random(), 11, 57));
         }
         
         private void ExecuteRandomJoin(bool multipleValuesPerDocument, int maxIndexIter, int maxSearchIter,

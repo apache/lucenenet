@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis
             }
             if (random.Next(7) == 5)
             {
-                int posLength = TestUtil.NextInt(random, 1, 5);
+                int posLength = TestUtil.NextInt32(random, 1, 5);
 
                 if (DEBUG)
                 {

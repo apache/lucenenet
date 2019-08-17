@@ -482,7 +482,7 @@ namespace Lucene.Net.Index.Memory
             {
                 Store.Directory dir = NewDirectory();
                 MockAnalyzer mockAnalyzer = new MockAnalyzer(Random());
-                mockAnalyzer.MaxTokenLength = (TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH));
+                mockAnalyzer.MaxTokenLength = (TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH));
                 IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, mockAnalyzer));
                 Document nextDoc = lineFileDocs.NextDoc();
                 Document doc = new Document();

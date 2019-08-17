@@ -539,7 +539,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         private static string RandomText()
         {
-            int numWords = TestUtil.NextInt(Random(), 1, 4);
+            int numWords = TestUtil.NextInt32(Random(), 1, 4);
 
             StringBuilder b = new StringBuilder();
             for (int i = 0; i < numWords; i++)
@@ -584,7 +584,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 while (!stop.Get())
                 {
                     string query = RandomText();
-                    int topN = TestUtil.NextInt(Random(), 1, 100);
+                    int topN = TestUtil.NextInt32(Random(), 1, 100);
                     bool allTermsRequired = Random().nextBoolean();
                     bool doHilite = Random().nextBoolean();
                     // We don't verify the results; just doing
@@ -852,7 +852,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         if (expected.Any())
                         {
 
-                            int topN = TestUtil.NextInt(Random(), 1, expected.size());
+                            int topN = TestUtil.NextInt32(Random(), 1, expected.size());
 
                             IList<Lookup.LookupResult> actual = suggester.DoLookup(TestUtil.StringToCharSequence(query, Random()).ToString(), topN, allTermsRequired, doHilite);
 

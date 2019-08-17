@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
             riw.AddDocument(d);
 
             // add a mix of f1's and f2's
-            int numExtraDocs = TestUtil.NextInt(Random(), 1, 1000);
+            int numExtraDocs = TestUtil.NextInt32(Random(), 1, 1000);
             for (int i = 0; i < numExtraDocs; i++)
             {
                 d = new Document();

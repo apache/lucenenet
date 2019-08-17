@@ -237,7 +237,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             // NOTE: this also controls the number of threads!
-            int n = TestUtil.NextInt(Random(), 20, 40);
+            int n = TestUtil.NextInt32(Random(), 20, 40);
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             for (int i = 0; i < n; i++)
             {
@@ -414,7 +414,7 @@ namespace Lucene.Net.Index
                     }
                     lock (this)
                     {
-                        Monitor.Wait(this, TimeSpan.FromMilliseconds(TestUtil.NextInt(Random(), 1, 100)));
+                        Monitor.Wait(this, TimeSpan.FromMilliseconds(TestUtil.NextInt32(Random(), 1, 100)));
                     }
                 }
             }
@@ -446,7 +446,7 @@ namespace Lucene.Net.Index
 
                     lock (this)
                     {
-                        Monitor.Wait(this, TimeSpan.FromMilliseconds(TestUtil.NextInt(Random(), 1, 100)));
+                        Monitor.Wait(this, TimeSpan.FromMilliseconds(TestUtil.NextInt32(Random(), 1, 100)));
                     }
                 }
             }

@@ -500,7 +500,7 @@ namespace Lucene.Net.Facet.Taxonomy
             var tw = new DirectoryTaxonomyWriter(taxoDir);
             FacetsConfig config = new FacetsConfig();
             int numDocs = AtLeast(1000);
-            int numDims = TestUtil.NextInt(Random(), 1, 7);
+            int numDims = TestUtil.NextInt32(Random(), 1, 7);
             IList<TestDoc> testDocs = GetRandomDocs(tokens, numDocs, numDims);
             foreach (TestDoc testDoc in testDocs)
             {

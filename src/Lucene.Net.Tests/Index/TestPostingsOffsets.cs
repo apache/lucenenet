@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
 
             for (int j = 0; j < numSkippingTests; j++)
             {
-                int num = TestUtil.NextInt(Random(), 100, Math.Min(numDocs - 1, 999));
+                int num = TestUtil.NextInt32(Random(), 100, Math.Min(numDocs - 1, 999));
                 DocsAndPositionsEnum dp = MultiFields.GetTermPositionsEnum(reader, null, "numbers", new BytesRef("hundred"));
                 int doc = dp.Advance(num);
                 Assert.AreEqual(num, doc);

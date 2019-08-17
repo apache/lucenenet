@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: pass=" + pass);
                 }
                 bool doAbort = pass == 1;
-                long diskFree = TestUtil.NextInt(Random(), 100, 300);
+                long diskFree = TestUtil.NextInt32(Random(), 100, 300);
                 while (true)
                 {
                     if (VERBOSE)
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
                         dir.Dispose();
                         // Now try again w/ more space:
 
-                        diskFree += TEST_NIGHTLY ? TestUtil.NextInt(Random(), 400, 600) : TestUtil.NextInt(Random(), 3000, 5000);
+                        diskFree += TEST_NIGHTLY ? TestUtil.NextInt32(Random(), 400, 600) : TestUtil.NextInt32(Random(), 3000, 5000);
                     }
                     else
                     {
@@ -267,7 +267,7 @@ namespace Lucene.Net.Index
                 }
 
                 // Start with 100 bytes more than we are currently using:
-                long diskFree = diskUsage + TestUtil.NextInt(Random(), 50, 200);
+                long diskFree = diskUsage + TestUtil.NextInt32(Random(), 50, 200);
 
                 int method = iter;
 
@@ -547,7 +547,7 @@ namespace Lucene.Net.Index
                     dir.Dispose();
 
                     // Try again with more free space:
-                    diskFree += TEST_NIGHTLY ? TestUtil.NextInt(Random(), 4000, 8000) : TestUtil.NextInt(Random(), 40000, 80000);
+                    diskFree += TEST_NIGHTLY ? TestUtil.NextInt32(Random(), 4000, 8000) : TestUtil.NextInt32(Random(), 40000, 80000);
                 }
             }
 

@@ -857,7 +857,7 @@ namespace Lucene.Net.Util
         {
             int min = (TEST_NIGHTLY ? 2 * i : i) * RANDOM_MULTIPLIER;
             int max = min + (min / 2);
-            return TestUtil.NextInt(random, min, max);
+            return TestUtil.NextInt32(random, min, max);
         }
 
         public static int AtLeast(int i)
@@ -999,8 +999,8 @@ namespace Lucene.Net.Util
             }
             else if (Rarely(r))
             {
-                int maxThreadCount = TestUtil.NextInt(Random(), 1, 4);
-                int maxMergeCount = TestUtil.NextInt(Random(), maxThreadCount, maxThreadCount + 4);
+                int maxThreadCount = TestUtil.NextInt32(Random(), 1, 4);
+                int maxMergeCount = TestUtil.NextInt32(Random(), maxThreadCount, maxThreadCount + 4);
                 IConcurrentMergeScheduler mergeScheduler;
 
 #if !FEATURE_CONCURRENTMERGESCHEDULER
@@ -1023,12 +1023,12 @@ namespace Lucene.Net.Util
                 if (Rarely(r))
                 {
                     // crazy value
-                    c.SetMaxBufferedDocs(TestUtil.NextInt(r, 2, 15));
+                    c.SetMaxBufferedDocs(TestUtil.NextInt32(r, 2, 15));
                 }
                 else
                 {
                     // reasonable value
-                    c.SetMaxBufferedDocs(TestUtil.NextInt(r, 16, 1000));
+                    c.SetMaxBufferedDocs(TestUtil.NextInt32(r, 16, 1000));
                 }
             }
             if (r.NextBoolean())
@@ -1036,17 +1036,17 @@ namespace Lucene.Net.Util
                 if (Rarely(r))
                 {
                     // crazy value
-                    c.SetTermIndexInterval(r.NextBoolean() ? TestUtil.NextInt(r, 1, 31) : TestUtil.NextInt(r, 129, 1000));
+                    c.SetTermIndexInterval(r.NextBoolean() ? TestUtil.NextInt32(r, 1, 31) : TestUtil.NextInt32(r, 129, 1000));
                 }
                 else
                 {
                     // reasonable value
-                    c.SetTermIndexInterval(TestUtil.NextInt(r, 32, 128));
+                    c.SetTermIndexInterval(TestUtil.NextInt32(r, 32, 128));
                 }
             }
             if (r.NextBoolean())
             {
-                int maxNumThreadStates = Rarely(r) ? TestUtil.NextInt(r, 5, 20) : TestUtil.NextInt(r, 1, 4); // reasonable value -  crazy value
+                int maxNumThreadStates = Rarely(r) ? TestUtil.NextInt32(r, 5, 20) : TestUtil.NextInt32(r, 1, 4); // reasonable value -  crazy value
 
                 if (Rarely(r))
                 {
@@ -1084,7 +1084,7 @@ namespace Lucene.Net.Util
             }
             c.SetUseCompoundFile(r.NextBoolean());
             c.SetReaderPooling(r.NextBoolean());
-            c.SetReaderTermsIndexDivisor(TestUtil.NextInt(r, 1, 4));
+            c.SetReaderTermsIndexDivisor(TestUtil.NextInt32(r, 1, 4));
             c.SetCheckIntegrityAtMerge(r.NextBoolean());
             return c;
         }
@@ -1146,11 +1146,11 @@ namespace Lucene.Net.Util
             logmp.CalibrateSizeByDeletes = r.NextBoolean();
             if (Rarely(r))
             {
-                logmp.MergeFactor = TestUtil.NextInt(r, 2, 9);
+                logmp.MergeFactor = TestUtil.NextInt32(r, 2, 9);
             }
             else
             {
-                logmp.MergeFactor = TestUtil.NextInt(r, 10, 50);
+                logmp.MergeFactor = TestUtil.NextInt32(r, 10, 50);
             }
             ConfigureRandom(r, logmp);
             return logmp;
@@ -1182,13 +1182,13 @@ namespace Lucene.Net.Util
             TieredMergePolicy tmp = new TieredMergePolicy();
             if (Rarely(r))
             {
-                tmp.MaxMergeAtOnce = TestUtil.NextInt(r, 2, 9);
-                tmp.MaxMergeAtOnceExplicit = TestUtil.NextInt(r, 2, 9);
+                tmp.MaxMergeAtOnce = TestUtil.NextInt32(r, 2, 9);
+                tmp.MaxMergeAtOnceExplicit = TestUtil.NextInt32(r, 2, 9);
             }
             else
             {
-                tmp.MaxMergeAtOnce = TestUtil.NextInt(r, 10, 50);
-                tmp.MaxMergeAtOnceExplicit = TestUtil.NextInt(r, 10, 50);
+                tmp.MaxMergeAtOnce = TestUtil.NextInt32(r, 10, 50);
+                tmp.MaxMergeAtOnceExplicit = TestUtil.NextInt32(r, 10, 50);
             }
             if (Rarely(r))
             {
@@ -1202,11 +1202,11 @@ namespace Lucene.Net.Util
             tmp.ForceMergeDeletesPctAllowed = 0.0 + r.NextDouble() * 30.0;
             if (Rarely(r))
             {
-                tmp.SegmentsPerTier = TestUtil.NextInt(r, 2, 20);
+                tmp.SegmentsPerTier = TestUtil.NextInt32(r, 2, 20);
             }
             else
             {
-                tmp.SegmentsPerTier = TestUtil.NextInt(r, 10, 50);
+                tmp.SegmentsPerTier = TestUtil.NextInt32(r, 10, 50);
             }
             ConfigureRandom(r, tmp);
             tmp.ReclaimDeletesWeight = r.NextDouble() * 4;
@@ -1667,7 +1667,7 @@ namespace Lucene.Net.Util
             {
                 // Always return at least the estimatedMergeBytes of
                 // the incoming IOContext:
-                return new IOContext(new MergeInfo(randomNumDocs, Math.Max(oldContext.MergeInfo.EstimatedMergeBytes, size), random.NextBoolean(), TestUtil.NextInt(random, 1, 100)));
+                return new IOContext(new MergeInfo(randomNumDocs, Math.Max(oldContext.MergeInfo.EstimatedMergeBytes, size), random.NextBoolean(), TestUtil.NextInt32(random, 1, 100)));
             }
             else
             {
@@ -1801,7 +1801,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    threads = TestUtil.NextInt(random, 1, 8);
+                    threads = TestUtil.NextInt32(random, 1, 8);
                     ex = new LimitedConcurrencyLevelTaskScheduler(threads);
                     //ex = new ThreadPoolExecutor(threads, threads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<IThreadRunnable>(), new NamedThreadFactory("LuceneTestCase"));
                     // uncomment to intensify LUCENE-3840

@@ -259,8 +259,8 @@ namespace Lucene.Net.Analysis.NGram
         {
             for (int i = 0; i < 10; i++)
             {
-                int min = TestUtil.NextInt(Random(), 2, 10);
-                int max = TestUtil.NextInt(Random(), min, 20);
+                int min = TestUtil.NextInt32(Random(), 2, 10);
+                int max = TestUtil.NextInt32(Random(), min, 20);
 
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, min, max);
                 CheckRandomData(Random(), a, 100 * RANDOM_MULTIPLIER);
@@ -370,8 +370,8 @@ namespace Lucene.Net.Analysis.NGram
         {
             string s = TestUtil.RandomUnicodeString(Random(), 10);
             int codePointCount = s.CodePointCount(0, s.Length);
-            int minGram = TestUtil.NextInt(Random(), 1, 3);
-            int maxGram = TestUtil.NextInt(Random(), minGram, 10);
+            int minGram = TestUtil.NextInt32(Random(), 1, 3);
+            int maxGram = TestUtil.NextInt32(Random(), minGram, 10);
             TokenStream tk = new KeywordTokenizer(new StringReader(s));
             tk = new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, tk, minGram, maxGram);
             ICharTermAttribute termAtt = tk.AddAttribute<ICharTermAttribute>();

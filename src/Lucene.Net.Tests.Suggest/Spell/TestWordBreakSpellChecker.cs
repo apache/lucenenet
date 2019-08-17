@@ -276,7 +276,7 @@ namespace Lucene.Net.Search.Spell
         [Test]
         public void TestRandom()
         {
-            int numDocs = TestUtil.NextInt(Random(), (10 * RANDOM_MULTIPLIER),
+            int numDocs = TestUtil.NextInt32(Random(), (10 * RANDOM_MULTIPLIER),
                 (100 * RANDOM_MULTIPLIER));
             Directory dir = null;
             RandomIndexWriter writer = null;
@@ -286,7 +286,7 @@ namespace Lucene.Net.Search.Spell
                 dir = NewDirectory();
                 writer = new RandomIndexWriter(Random(), dir, new MockAnalyzer(Random(),
                     MockTokenizer.WHITESPACE, false), Similarity, TimeZone);
-                int maxLength = TestUtil.NextInt(Random(), 5, 50);
+                int maxLength = TestUtil.NextInt32(Random(), 5, 50);
                 List<string> originals = new List<string>(numDocs);
                 List<string[]> breaks = new List<string[]>(numDocs);
                 for (int i = 0; i < numDocs; i++)
@@ -309,7 +309,7 @@ namespace Lucene.Net.Search.Spell
                     originals.Add(orig);
                     int totalLength = orig.CodePointCount(0, orig.Length);
                     int breakAt = orig.OffsetByCodePoints(0,
-                        TestUtil.NextInt(Random(), 1, totalLength - 1));
+                        TestUtil.NextInt32(Random(), 1, totalLength - 1));
                     string[] broken = new string[2];
                     broken[0] = orig.Substring(0, breakAt - 0);
                     broken[1] = orig.Substring(breakAt);

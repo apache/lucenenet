@@ -280,7 +280,7 @@ namespace Lucene.Net.Index.Sorter
                 assertTrue(((SortingAtomicReader.SortingDocsAndPositionsEnum)sortedPositions).Reused(reuse)); // make sure reuse worked
             }
             doc = 0;
-            while ((doc = sortedPositions.Advance(doc + TestUtil.NextInt(Random(), 1, 5))) != DocIdSetIterator.NO_MORE_DOCS)
+            while ((doc = sortedPositions.Advance(doc + TestUtil.NextInt32(Random(), 1, 5))) != DocIdSetIterator.NO_MORE_DOCS)
             {
                 int freq = sortedPositions.Freq;
                 assertEquals("incorrect freq for doc=" + doc, sortedValues[doc] / 10 + 1, freq);
@@ -311,7 +311,7 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
             FixedBitSet bits = new FixedBitSet(maxDoc);
-            int bitsSet = TestUtil.NextInt(Random(), 1, maxDoc - 1);
+            int bitsSet = TestUtil.NextInt32(Random(), 1, maxDoc - 1);
             for (int i = 0; i < bitsSet; ++i)
             {
                 while (true)

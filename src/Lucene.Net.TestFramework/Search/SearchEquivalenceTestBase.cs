@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
         /// </summary>
         internal static char RandomChar()
         {
-            return (char)TestUtil.NextInt(Random(), 'a', 'z');
+            return (char)TestUtil.NextInt32(Random(), 'a', 'z');
         }
 
         /// <summary>

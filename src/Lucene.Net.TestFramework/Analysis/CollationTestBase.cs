@@ -240,7 +240,7 @@ namespace Lucene.Net.Analysis
 		public virtual void AssertThreadSafe(Analyzer analyzer)
 		{
 			int numTestPoints = 100;
-			int numThreads = TestUtil.NextInt(Random(), 3, 5);
+			int numThreads = TestUtil.NextInt32(Random(), 3, 5);
 			Dictionary<string, BytesRef> map = new Dictionary<string, BytesRef>();
 
 			// create a map<String,SortKey> up front.

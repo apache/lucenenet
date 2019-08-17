@@ -543,7 +543,7 @@ namespace Lucene.Net.Search
                 Dir = NewFSDirectory(CreateTempDir("ShardSearchingTestBase"));
                 // TODO: set warmer
                 MockAnalyzer analyzer = new MockAnalyzer(Random());
-                analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+                analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
                 IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
                 iwc.SetOpenMode(OpenMode.CREATE);
                 if (VERBOSE)

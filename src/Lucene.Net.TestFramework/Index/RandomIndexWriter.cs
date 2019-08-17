@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
             // TODO: this should be solved in a different way; Random should not be shared (!).
             this.r = new Random(r.Next());
             w = MockIndexWriter(dir, c, r);
-            flushAt = TestUtil.NextInt(r, 10, 1000);
+            flushAt = TestUtil.NextInt32(r, 10, 1000);
             codec = w.Config.Codec;
             if (LuceneTestCase.VERBOSE)
             {
@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("RIW.add/updateDocument: now doing a commit at docCount=" + docCount);
                 }
                 w.Commit();
-                flushAt += TestUtil.NextInt(r, (int)(flushAtFactor * 10), (int)(flushAtFactor * 1000));
+                flushAt += TestUtil.NextInt32(r, (int)(flushAtFactor * 10), (int)(flushAtFactor * 1000));
                 if (flushAtFactor < 2e6)
                 {
                     // gradually but exponentially increase time b/w flushes
@@ -458,7 +458,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // partial forceMerge
-                    int limit = TestUtil.NextInt(r, 1, segCount);
+                    int limit = TestUtil.NextInt32(r, 1, segCount);
                     if (LuceneTestCase.VERBOSE)
                     {
                         Console.WriteLine("RIW: doRandomForceMerge(" + limit + ")");
@@ -500,7 +500,7 @@ namespace Lucene.Net.Index
                 w.Commit();
                 if (r.NextBoolean())
                 {
-                    return DirectoryReader.Open(w.Directory, TestUtil.NextInt(r, 1, 10));
+                    return DirectoryReader.Open(w.Directory, TestUtil.NextInt32(r, 1, 10));
                 }
                 else
                 {

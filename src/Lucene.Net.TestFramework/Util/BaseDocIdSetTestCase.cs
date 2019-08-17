@@ -125,7 +125,7 @@ namespace Lucene.Net.Util
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestAgainstBitSet()
         {
-            int numBits = TestUtil.NextInt(Random(), 100, 1 << 20);
+            int numBits = TestUtil.NextInt32(Random(), 100, 1 << 20);
             // test various random sets with various load factors
             foreach (float percentSet in new float[] { 0f, 0.0001f, (float)Random().NextDouble() / 2, 0.9f, 1f })
             {
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util
             copy_ = CopyOf(set_, numBits); // then random index
             AssertEquals(numBits, set_, copy_);
             // test regular increments
-            for (int inc = 2; inc < 1000; inc += TestUtil.NextInt(Random(), 1, 100))
+            for (int inc = 2; inc < 1000; inc += TestUtil.NextInt32(Random(), 1, 100))
             {
                 set_ = new BitArray(numBits);
                 for (int d = Random().Next(10); d < numBits; d += inc)

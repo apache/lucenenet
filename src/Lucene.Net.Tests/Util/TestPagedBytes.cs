@@ -50,11 +50,11 @@ namespace Lucene.Net.Util
                 {
                     ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
                 }
-                int blockBits = TestUtil.NextInt(random, 1, 20);
+                int blockBits = TestUtil.NextInt32(random, 1, 20);
                 int blockSize = 1 << blockBits;
                 PagedBytes p = new PagedBytes(blockBits);
                 IndexOutput @out = dir.CreateOutput("foo", IOContext.DEFAULT);
-                int numBytes = TestUtil.NextInt(Random(), 2, 10000000);
+                int numBytes = TestUtil.NextInt32(Random(), 2, 10000000);
 
                 byte[] answer = new byte[numBytes];
                 Random().NextBytes(answer);
@@ -122,7 +122,7 @@ namespace Lucene.Net.Util
             Random random = Random();
             for (int iter = 0; iter < 5 * RANDOM_MULTIPLIER; iter++)
             {
-                int blockBits = TestUtil.NextInt(random, 1, 20);
+                int blockBits = TestUtil.NextInt32(random, 1, 20);
                 int blockSize = 1 << blockBits;
                 PagedBytes p = new PagedBytes(blockBits);
                 DataOutput @out = p.GetDataOutput();
@@ -189,14 +189,14 @@ namespace Lucene.Net.Util
             {
                 ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
-            int blockBits = TestUtil.NextInt(Random(), 14, 28);
+            int blockBits = TestUtil.NextInt32(Random(), 14, 28);
             int blockSize = 1 << blockBits;
-            var arr = new byte[TestUtil.NextInt(Random(), blockSize / 2, blockSize * 2)];
+            var arr = new byte[TestUtil.NextInt32(Random(), blockSize / 2, blockSize * 2)];
             for (int i = 0; i < arr.Length; ++i)
             {
                 arr[i] = (byte)(sbyte)i;
             }
-            long numBytes = (1L << 31) + TestUtil.NextInt(Random(), 1, blockSize * 3);
+            long numBytes = (1L << 31) + TestUtil.NextInt32(Random(), 1, blockSize * 3);
             var p = new PagedBytes(blockBits);
             var @out = dir.CreateOutput("foo", IOContext.DEFAULT);
             for (long i = 0; i < numBytes; )
@@ -212,7 +212,7 @@ namespace Lucene.Net.Util
             p.Copy(@in, numBytes);
             PagedBytes.Reader reader = p.Freeze(Random().NextBoolean());
 
-            foreach (long offset in new long[] { 0L, int.MaxValue, numBytes - 1, TestUtil.NextLong(Random(), 1, numBytes - 2) })
+            foreach (long offset in new long[] { 0L, int.MaxValue, numBytes - 1, TestUtil.NextInt64(Random(), 1, numBytes - 2) })
             {
                 BytesRef b = new BytesRef();
                 reader.FillSlice(b, offset, 1);

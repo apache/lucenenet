@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
                 queries[i] = new AutomatonQuery(new Term("bogus", "bogus"), AutomatonTestUtil.RandomAutomaton(Random()));
             }
             CountdownEvent startingGun = new CountdownEvent(1);
-            int numThreads = TestUtil.NextInt(Random(), 2, 5);
+            int numThreads = TestUtil.NextInt32(Random(), 2, 5);
             ThreadClass[] threads = new ThreadClass[numThreads];
             for (int threadID = 0; threadID < numThreads; threadID++)
             {

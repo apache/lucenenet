@@ -200,7 +200,7 @@ namespace Lucene.Net.Util.Fst
                 long lastOutput = 0;
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
-                    long value = lastOutput + TestUtil.NextInt(Random(), 1, 1000);
+                    long value = lastOutput + TestUtil.NextInt32(Random(), 1, 1000);
                     lastOutput = value;
                     pairs.Add(new FSTTester<long?>.InputOutput<long?>(terms[idx], value));
                 }
@@ -213,7 +213,7 @@ namespace Lucene.Net.Util.Fst
                 List<FSTTester<long?>.InputOutput<long?>> pairs = new List<FSTTester<long?>.InputOutput<long?>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
-                    pairs.Add(new FSTTester<long?>.InputOutput<long?>(terms[idx], TestUtil.NextLong(Random(), 0, long.MaxValue)));
+                    pairs.Add(new FSTTester<long?>.InputOutput<long?>(terms[idx], TestUtil.NextInt64(Random(), 0, long.MaxValue)));
                 }
                 (new FSTTester<long?>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
             }
@@ -227,7 +227,7 @@ namespace Lucene.Net.Util.Fst
                 long lastOutput = 0;
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
-                    long value = lastOutput + TestUtil.NextInt(Random(), 1, 1000);
+                    long value = lastOutput + TestUtil.NextInt32(Random(), 1, 1000);
                     lastOutput = value;
                     pairs.Add(new FSTTester<Pair>.InputOutput<Pair>(terms[idx], outputs.NewPair((long?)idx, value)));
                 }
@@ -323,7 +323,7 @@ namespace Lucene.Net.Util.Fst
         [Ignore("This test will take around 10-14 hours to finish. It was marked with a Nightly attribute in the original Java source, but we don't currently have a corresponding attribute")]
         public virtual void TestBigSet()
         {
-            TestRandomWords(TestUtil.NextInt(Random(), 50000, 60000), 1, false);
+            TestRandomWords(TestUtil.NextInt32(Random(), 50000, 60000), 1, false);
         }
 
         // Build FST for all unique terms in the test line docs
@@ -335,7 +335,7 @@ namespace Lucene.Net.Util.Fst
             LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
             int RUN_TIME_MSEC = AtLeast(500);
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(-1).SetRAMBufferSizeMB(64);
             DirectoryInfo tempDir = CreateTempDir("fstlines");
@@ -837,7 +837,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     rand = new Random(17);
                 }
-                return outputs.NewPair(ord, TestUtil.NextInt(rand, 1, 5000));
+                return outputs.NewPair(ord, TestUtil.NextInt32(rand, 1, 5000));
             }
         }
 
@@ -868,7 +868,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     rand = new Random(17);
                 }
-                return (long)TestUtil.NextInt(rand, 1, 5000);
+                return (long)TestUtil.NextInt32(rand, 1, 5000);
             }
         }
 
@@ -1659,7 +1659,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     allPrefixes.Add(s.Substring(0, j));
                 }
-                int weight = TestUtil.NextInt(random, 1, 100); // weights 1..100
+                int weight = TestUtil.NextInt32(random, 1, 100); // weights 1..100
                 slowCompletor[s] = (long)weight;
             }
 
@@ -1694,7 +1694,7 @@ namespace Lucene.Net.Util.Fst
                     prefixOutput += arc.Output;
                 }
 
-                int topN = TestUtil.NextInt(random, 1, 10);
+                int topN = TestUtil.NextInt32(random, 1, 10);
 
                 Util.TopResults<long?> r = Util.ShortestPaths(fst, arc, fst.Outputs.NoOutput, minLongComparer, topN, true);
                 Assert.IsTrue(r.IsComplete);
@@ -1799,8 +1799,8 @@ namespace Lucene.Net.Util.Fst
                 {
                     allPrefixes.Add(s.Substring(0, j));
                 }
-                int weight = TestUtil.NextInt(random, 1, 100); // weights 1..100
-                int output = TestUtil.NextInt(random, 0, 500); // outputs 0..500
+                int weight = TestUtil.NextInt32(random, 1, 100); // weights 1..100
+                int output = TestUtil.NextInt32(random, 0, 500); // outputs 0..500
                 slowCompletor[s] = new TwoLongs(this, weight, output);
             }
 
@@ -1837,7 +1837,7 @@ namespace Lucene.Net.Util.Fst
                     prefixOutput = outputs.Add(prefixOutput, arc.Output);
                 }
 
-                int topN = TestUtil.NextInt(random, 1, 10);
+                int topN = TestUtil.NextInt32(random, 1, 10);
 
                 Util.TopResults<Pair> r = Util.ShortestPaths(fst, arc, fst.Outputs.NoOutput, minPairWeightComparer, topN, true);
                 Assert.IsTrue(r.IsComplete);

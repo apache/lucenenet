@@ -237,7 +237,7 @@ namespace Lucene.Net.Analysis
             {
                 CharacterRunAutomaton dfa = new CharacterRunAutomaton(AutomatonTestUtil.RandomAutomaton(Random()));
                 bool lowercase = Random().NextBoolean();
-                int limit = TestUtil.NextInt(Random(), 0, 500);
+                int limit = TestUtil.NextInt32(Random(), 0, 500);
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, dfa, lowercase, limit);
                 CheckRandomData(Random(), a, 100);
                 a.Dispose();

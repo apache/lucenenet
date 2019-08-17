@@ -80,10 +80,10 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             Random rand = Random();
-            RandomIndexWriter w = new RandomIndexWriter(rand, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(rand, 5, 20)));
+            RandomIndexWriter w = new RandomIndexWriter(rand, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt32(rand, 5, 20)));
             //w.w.setNoCFSRatio(0.0);
             int docCount = AtLeast(200);
-            int fieldCount = TestUtil.NextInt(rand, 1, 5);
+            int fieldCount = TestUtil.NextInt32(rand, 1, 5);
 
             IList<int?> fieldIDs = new List<int?>();
 
@@ -765,7 +765,7 @@ namespace Lucene.Net.Index
                 doc.Add(new StoredField("f", TestUtil.RandomSimpleString(Random())));
                 w.AddDocument(doc);
             }
-            int deleteCount = TestUtil.NextInt(Random(), 5, numDocs);
+            int deleteCount = TestUtil.NextInt32(Random(), 5, numDocs);
             for (int i = 0; i < deleteCount; ++i)
             {
                 int id = Random().Next(numDocs);
@@ -774,7 +774,7 @@ namespace Lucene.Net.Index
             w.Commit();
             w.Dispose();
             w = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-            w.ForceMerge(TestUtil.NextInt(Random(), 1, 3));
+            w.ForceMerge(TestUtil.NextInt32(Random(), 1, 3));
             w.Commit();
             w.Dispose();
             TestUtil.CheckIndex(dir);

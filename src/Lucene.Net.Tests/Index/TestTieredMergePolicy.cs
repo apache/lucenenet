@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
 
                 IndexWriter w = new IndexWriter(dir, conf);
                 int maxCount = 0;
-                int numDocs = TestUtil.NextInt(Random(), 20, 100);
+                int numDocs = TestUtil.NextInt32(Random(), 20, 100);
                 for (int i = 0; i < numDocs; i++)
                 {
                     Document doc = new Document();
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
                 w.Flush(true, true);
 
                 int segmentCount = w.SegmentCount;
-                int targetCount = TestUtil.NextInt(Random(), 1, segmentCount);
+                int targetCount = TestUtil.NextInt32(Random(), 1, segmentCount);
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: merge to " + targetCount + " segs (current count=" + segmentCount + ")");

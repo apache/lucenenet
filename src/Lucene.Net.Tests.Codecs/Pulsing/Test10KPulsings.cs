@@ -52,7 +52,7 @@ namespace Lucene.Net.Codecs.Pulsing
             Document document = new Document();
             FieldType ft = new FieldType(TextField.TYPE_STORED);
 
-            switch (TestUtil.NextInt(Random(), 0, 2))
+            switch (TestUtil.NextInt32(Random(), 0, 2))
             {
                 case 0:
                     ft.IndexOptions = IndexOptions.DOCS_ONLY;
@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs.Pulsing
         public virtual void Test10kNotPulsed()
         {
             // we always run this test with pulsing codec.
-            int freqCutoff = TestUtil.NextInt(Random(), 1, 10);
+            int freqCutoff = TestUtil.NextInt32(Random(), 1, 10);
             Codec cp = TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(freqCutoff));
 
             DirectoryInfo f = CreateTempDir("10knotpulsed");
@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs.Pulsing
             Document document = new Document();
             FieldType ft = new FieldType(TextField.TYPE_STORED);
 
-            switch (TestUtil.NextInt(Random(), 0, 2))
+            switch (TestUtil.NextInt32(Random(), 0, 2))
             {
                 case 0:
                     ft.IndexOptions = IndexOptions.DOCS_ONLY;

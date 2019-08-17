@@ -49,11 +49,11 @@ namespace Lucene.Net.Store
             Directory dir = NewDirectory();
             NRTCachingDirectory cachedDir = new NRTCachingDirectory(dir, 2.0, 25.0);
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             RandomIndexWriter w = new RandomIndexWriter(Random(), cachedDir, conf);
             LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
-            int numDocs = TestUtil.NextInt(Random(), 100, 400);
+            int numDocs = TestUtil.NextInt32(Random(), 100, 400);
 
             if (VERBOSE)
             {

@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSearcherManager_Mem()
         {
-            pruner = new SearcherLifetimeManager.PruneByAge(TEST_NIGHTLY ? TestUtil.NextInt(Random(), 1, 20) : 1);
+            pruner = new SearcherLifetimeManager.PruneByAge(TEST_NIGHTLY ? TestUtil.NextInt32(Random(), 1, 20) : 1);
             RunTest("TestSearcherManager");
         }
 
@@ -154,9 +154,9 @@ namespace Lucene.Net.Search
 
                     while (Environment.TickCount < stopTime)
                     {
-                        Thread.Sleep(TestUtil.NextInt(Random(), 1, 100));
+                        Thread.Sleep(TestUtil.NextInt32(Random(), 1, 100));
                         outerInstance.writer.Commit();
-                        Thread.Sleep(TestUtil.NextInt(Random(), 1, 5));
+                        Thread.Sleep(TestUtil.NextInt32(Random(), 1, 5));
                         bool block = Random().NextBoolean();
                         if (block)
                         {

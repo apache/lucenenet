@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
     {
         public override PForDeltaDocIdSet CopyOf(BitArray bs, int length)
         {
-            PForDeltaDocIdSet.Builder builder = (new PForDeltaDocIdSet.Builder()).SetIndexInterval(TestUtil.NextInt(Random(), 1, 20));
+            PForDeltaDocIdSet.Builder builder = (new PForDeltaDocIdSet.Builder()).SetIndexInterval(TestUtil.NextInt32(Random(), 1, 20));
             for (int doc = bs.NextSetBit(0); doc != -1; doc = bs.NextSetBit(doc + 1))
             {
                 builder.Add(doc);

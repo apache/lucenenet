@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis
                 // the graph:
                 if (posInc > 0 && maxPos <= nextPos && random.Next(5) == 3)
                 {
-                    int holeSize = TestUtil.NextInt(random, 1, 5);
+                    int holeSize = TestUtil.NextInt32(random, 1, 5);
                     posIncAtt.PositionIncrement = posInc + holeSize;
                     nextPos += holeSize;
                 }

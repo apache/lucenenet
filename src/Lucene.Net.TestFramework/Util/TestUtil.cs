@@ -286,14 +286,14 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Start and end are BOTH inclusive </summary>
-        public static int NextInt(Random r, int start, int end) // LUCENENET TODO: API - rename NextInt32
+        public static int NextInt32(Random r, int start, int end)
         {
             return RandomInts.NextInt32Between(r, start, end);
         }
 
         /// <summary>
         /// Start and end are BOTH inclusive </summary>
-        public static long NextLong(Random r, long start, long end) // LUCENENET TODO: API - rename NextInt64
+        public static long NextInt64(Random r, long start, long end)
         {
             Assert.True(end >= start);
             BigInteger range = (BigInteger)end + (BigInteger)1 - (BigInteger)start;
@@ -342,7 +342,7 @@ namespace Lucene.Net.Util
 
         public static string RandomSimpleString(Random r, int minLength, int maxLength)
         {
-            int end = NextInt(r, minLength, maxLength);
+            int end = NextInt32(r, minLength, maxLength);
             if (end == 0)
             {
                 // allow 0 length
@@ -351,14 +351,14 @@ namespace Lucene.Net.Util
             char[] buffer = new char[end];
             for (int i = 0; i < end; i++)
             {
-                buffer[i] = (char)TestUtil.NextInt(r, 'a', 'z');
+                buffer[i] = (char)TestUtil.NextInt32(r, 'a', 'z');
             }
             return new string(buffer, 0, end);
         }
 
         public static string RandomSimpleStringRange(Random r, char minChar, char maxChar, int maxLength)
         {
-            int end = NextInt(r, 0, maxLength);
+            int end = NextInt32(r, 0, maxLength);
             if (end == 0)
             {
                 // allow 0 length
@@ -367,7 +367,7 @@ namespace Lucene.Net.Util
             char[] buffer = new char[end];
             for (int i = 0; i < end; i++)
             {
-                buffer[i] = (char)TestUtil.NextInt(r, minChar, maxChar);
+                buffer[i] = (char)TestUtil.NextInt32(r, minChar, maxChar);
             }
             return new string(buffer, 0, end);
         }
@@ -389,7 +389,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static string RandomUnicodeString(Random r, int maxLength)
         {
-            int end = NextInt(r, 0, maxLength);
+            int end = NextInt32(r, 0, maxLength);
             if (end == 0)
             {
                 // allow 0 length
@@ -415,9 +415,9 @@ namespace Lucene.Net.Util
                 {
                     // Make a surrogate pair
                     // High surrogate
-                    chars[i++] = (char)NextInt(random, 0xd800, 0xdbff);
+                    chars[i++] = (char)NextInt32(random, 0xd800, 0xdbff);
                     // Low surrogate
-                    chars[i++] = (char)NextInt(random, 0xdc00, 0xdfff);
+                    chars[i++] = (char)NextInt32(random, 0xdc00, 0xdfff);
                 }
                 else if (t <= 1)
                 {
@@ -425,15 +425,15 @@ namespace Lucene.Net.Util
                 }
                 else if (2 == t)
                 {
-                    chars[i++] = (char)NextInt(random, 0x80, 0x7ff);
+                    chars[i++] = (char)NextInt32(random, 0x80, 0x7ff);
                 }
                 else if (3 == t)
                 {
-                    chars[i++] = (char)NextInt(random, 0x800, 0xd7ff);
+                    chars[i++] = (char)NextInt32(random, 0x800, 0xd7ff);
                 }
                 else if (4 == t)
                 {
-                    chars[i++] = (char)NextInt(random, 0xe000, 0xffff);
+                    chars[i++] = (char)NextInt32(random, 0xe000, 0xffff);
                 }
             }
         }
@@ -479,7 +479,7 @@ namespace Lucene.Net.Util
         public static string RandomRegexpishString(Random r, int maxLength)
         {
             StringBuilder regexp = new StringBuilder(maxLength);
-            for (int i = NextInt(r, 0, maxLength); i > 0; i--)
+            for (int i = NextInt32(r, 0, maxLength); i > 0; i--)
             {
                 if (r.NextBoolean())
                 {
@@ -519,7 +519,7 @@ namespace Lucene.Net.Util
 
         public static string RandomHtmlishString(Random random, int numElements)
         {
-            int end = NextInt(random, 0, numElements);
+            int end = NextInt32(random, 0, numElements);
             if (end == 0)
             {
                 // allow 0 length
@@ -538,31 +538,31 @@ namespace Lucene.Net.Util
                     case 1:
                         {
                             sb.Append("<");
-                            sb.Append("    ".Substring(NextInt(random, 0, 4)));
+                            sb.Append("    ".Substring(NextInt32(random, 0, 4)));
                             sb.Append(RandomSimpleString(random));
-                            for (int j = 0; j < NextInt(random, 0, 10); ++j)
+                            for (int j = 0; j < NextInt32(random, 0, 10); ++j)
                             {
                                 sb.Append(' ');
                                 sb.Append(RandomSimpleString(random));
-                                sb.Append(" ".Substring(NextInt(random, 0, 1)));
+                                sb.Append(" ".Substring(NextInt32(random, 0, 1)));
                                 sb.Append('=');
-                                sb.Append(" ".Substring(NextInt(random, 0, 1)));
-                                sb.Append("\"".Substring(NextInt(random, 0, 1)));
+                                sb.Append(" ".Substring(NextInt32(random, 0, 1)));
+                                sb.Append("\"".Substring(NextInt32(random, 0, 1)));
                                 sb.Append(RandomSimpleString(random));
-                                sb.Append("\"".Substring(NextInt(random, 0, 1)));
+                                sb.Append("\"".Substring(NextInt32(random, 0, 1)));
                             }
-                            sb.Append("    ".Substring(NextInt(random, 0, 4)));
-                            sb.Append("/".Substring(NextInt(random, 0, 1)));
-                            sb.Append(">".Substring(NextInt(random, 0, 1)));
+                            sb.Append("    ".Substring(NextInt32(random, 0, 4)));
+                            sb.Append("/".Substring(NextInt32(random, 0, 1)));
+                            sb.Append(">".Substring(NextInt32(random, 0, 1)));
                             break;
                         }
                     case 2:
                         {
                             sb.Append("</");
-                            sb.Append("    ".Substring(NextInt(random, 0, 4)));
+                            sb.Append("    ".Substring(NextInt32(random, 0, 4)));
                             sb.Append(RandomSimpleString(random));
-                            sb.Append("    ".Substring(NextInt(random, 0, 4)));
-                            sb.Append(">".Substring(NextInt(random, 0, 1)));
+                            sb.Append("    ".Substring(NextInt32(random, 0, 4)));
+                            sb.Append(">".Substring(NextInt32(random, 0, 1)));
                             break;
                         }
                     case 3:
@@ -620,7 +620,7 @@ namespace Lucene.Net.Util
                     case 16:
                         {
                             sb.Append("&");
-                            switch (NextInt(random, 0, 2))
+                            switch (NextInt32(random, 0, 2))
                             {
                                 case 0:
                                     sb.Append(RandomSimpleString(random));
@@ -630,26 +630,26 @@ namespace Lucene.Net.Util
                                     sb.Append(HTML_CHAR_ENTITIES[random.Next(HTML_CHAR_ENTITIES.Length)]);
                                     break;
                             }
-                            sb.Append(";".Substring(NextInt(random, 0, 1)));
+                            sb.Append(";".Substring(NextInt32(random, 0, 1)));
                             break;
                         }
                     case 17:
                         {
                             sb.Append("&#");
-                            if (0 == NextInt(random, 0, 1))
+                            if (0 == NextInt32(random, 0, 1))
                             {
-                                sb.Append(NextInt(random, 0, int.MaxValue - 1));
-                                sb.Append(";".Substring(NextInt(random, 0, 1)));
+                                sb.Append(NextInt32(random, 0, int.MaxValue - 1));
+                                sb.Append(";".Substring(NextInt32(random, 0, 1)));
                             }
                             break;
                         }
                     case 18:
                         {
                             sb.Append("&#x");
-                            if (0 == NextInt(random, 0, 1))
+                            if (0 == NextInt32(random, 0, 1))
                             {
-                                sb.Append(Convert.ToString(NextInt(random, 0, int.MaxValue - 1), 16));
-                                sb.Append(";".Substring(NextInt(random, 0, 1)));
+                                sb.Append(Convert.ToString(NextInt32(random, 0, int.MaxValue - 1), 16));
+                                sb.Append(";".Substring(NextInt32(random, 0, 1)));
                             }
                             break;
                         }
@@ -659,7 +659,7 @@ namespace Lucene.Net.Util
                         break;
 
                     case 20:
-                        sb.Append(NextInt(random, 0, int.MaxValue - 1));
+                        sb.Append(NextInt32(random, 0, int.MaxValue - 1));
                         break;
 
                     case 21:
@@ -667,25 +667,25 @@ namespace Lucene.Net.Util
                         break;
 
                     case 22:
-                        sb.Append("          ".Substring(NextInt(random, 0, 10)));
+                        sb.Append("          ".Substring(NextInt32(random, 0, 10)));
                         break;
 
                     case 23:
                         {
                             sb.Append("<");
-                            if (0 == NextInt(random, 0, 3))
+                            if (0 == NextInt32(random, 0, 3))
                             {
-                                sb.Append("          ".Substring(NextInt(random, 1, 10)));
+                                sb.Append("          ".Substring(NextInt32(random, 1, 10)));
                             }
-                            if (0 == NextInt(random, 0, 1))
+                            if (0 == NextInt32(random, 0, 1))
                             {
                                 sb.Append("/");
-                                if (0 == NextInt(random, 0, 3))
+                                if (0 == NextInt32(random, 0, 3))
                                 {
-                                    sb.Append("          ".Substring(NextInt(random, 1, 10)));
+                                    sb.Append("          ".Substring(NextInt32(random, 1, 10)));
                                 }
                             }
-                            switch (NextInt(random, 0, 3))
+                            switch (NextInt32(random, 0, 3))
                             {
                                 case 0:
                                     sb.Append(RandomlyRecaseString(random, "script"));
@@ -700,7 +700,7 @@ namespace Lucene.Net.Util
                                     break;
                                 // default: append nothing
                             }
-                            sb.Append(">".Substring(NextInt(random, 0, 1)));
+                            sb.Append(">".Substring(NextInt32(random, 0, 1)));
                             break;
                         }
                     default:
@@ -734,7 +734,7 @@ namespace Lucene.Net.Util
 
                 pos += toRecase.Length;
 
-                switch (NextInt(random, 0, 2))
+                switch (NextInt32(random, 0, 2))
                 {
                     case 0:
                         builder.Append(toRecase.ToUpper()); // LUCENENET NOTE: Intentionally using current culture
@@ -806,12 +806,12 @@ namespace Lucene.Net.Util
         /// Returns random string of length between min and max codepoints, all codepoints within the same unicode block. </summary>
         public static string RandomRealisticUnicodeString(Random r, int minLength, int maxLength)
         {
-            int end = NextInt(r, minLength, maxLength);
+            int end = NextInt32(r, minLength, maxLength);
             int block = r.Next(blockStarts.Length);
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < end; i++)
             {
-                sb.AppendCodePoint(NextInt(r, blockStarts[block], blockEnds[block]));
+                sb.AppendCodePoint(NextInt32(r, blockStarts[block], blockEnds[block]));
             }
             return sb.ToString();
         }
@@ -849,26 +849,26 @@ namespace Lucene.Net.Util
                 }
                 else if (1 == t)
                 {
-                    buffer[i] = (char)NextInt(r, 0x80, 0x7ff);
+                    buffer[i] = (char)NextInt32(r, 0x80, 0x7ff);
                     bytes -= 2;
                 }
                 else if (2 == t)
                 {
-                    buffer[i] = (char)NextInt(r, 0x800, 0xd7ff);
+                    buffer[i] = (char)NextInt32(r, 0x800, 0xd7ff);
                     bytes -= 3;
                 }
                 else if (3 == t)
                 {
-                    buffer[i] = (char)NextInt(r, 0xe000, 0xffff);
+                    buffer[i] = (char)NextInt32(r, 0xe000, 0xffff);
                     bytes -= 3;
                 }
                 else if (4 == t)
                 {
                     // Make a surrogate pair
                     // High surrogate
-                    buffer[i++] = (char)NextInt(r, 0xd800, 0xdbff);
+                    buffer[i++] = (char)NextInt32(r, 0xd800, 0xdbff);
                     // Low surrogate
-                    buffer[i] = (char)NextInt(r, 0xdc00, 0xdfff);
+                    buffer[i] = (char)NextInt32(r, 0xdc00, 0xdfff);
                     bytes -= 4;
                 }
             }
@@ -1334,11 +1334,11 @@ namespace Lucene.Net.Util
         /// <seealso cref="WHITESPACE_CHARACTERS"/>
         public static string RandomWhitespace(Random r, int minLength, int maxLength)
         {
-            int end = NextInt(r, minLength, maxLength);
+            int end = NextInt32(r, minLength, maxLength);
             StringBuilder @out = new StringBuilder();
             for (int i = 0; i < end; i++)
             {
-                int offset = NextInt(r, 0, WHITESPACE_CHARACTERS.Length - 1);
+                int offset = NextInt32(r, 0, WHITESPACE_CHARACTERS.Length - 1);
                 char c = WHITESPACE_CHARACTERS[offset];
                 // sanity check
                 Assert.IsTrue(char.IsWhiteSpace(c), "Not really whitespace? (@" + offset + "): " + c);
@@ -1360,7 +1360,7 @@ namespace Lucene.Net.Util
             // otherwise, try to make it more realistic with 'words' since most tests use MockTokenizer
             // first decide how big the string will really be: 0..n
             maxLength = random.Next(maxLength);
-            int avgWordLength = TestUtil.NextInt(random, 3, 8);
+            int avgWordLength = TestUtil.NextInt32(random, 3, 8);
             StringBuilder sb = new StringBuilder();
             while (sb.Length < maxLength)
             {
@@ -1386,7 +1386,7 @@ namespace Lucene.Net.Util
                 return "";
             }
 
-            int evilness = TestUtil.NextInt(random, 0, 20);
+            int evilness = TestUtil.NextInt32(random, 0, 20);
 
             StringBuilder sb = new StringBuilder();
             while (sb.Length < wordLength)

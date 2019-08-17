@@ -280,7 +280,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                SortField[] sortFields = new SortField[TestUtil.NextInt(Random(), 2, 7)];
+                SortField[] sortFields = new SortField[TestUtil.NextInt32(Random(), 2, 7)];
                 for (int i = 0; i < sortFields.Length; i++)
                 {
                     sortFields[i] = AllSortFields[Random().Next(AllSortFields.Count)];
@@ -293,7 +293,7 @@ namespace Lucene.Net.Search
         {
             int maxDoc = Searcher.IndexReader.MaxDoc;
             TopDocs all;
-            int pageSize = TestUtil.NextInt(Random(), 1, maxDoc * 2);
+            int pageSize = TestUtil.NextInt32(Random(), 1, maxDoc * 2);
             if (isVerbose)
             {
                 Console.WriteLine("\nassertQuery " + (Iter++) + ": query=" + query + " filter=" + filter + " sort=" + sort + " pageSize=" + pageSize);

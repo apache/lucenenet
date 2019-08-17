@@ -120,7 +120,7 @@ namespace Lucene.Net.Util.Fst
             char[] buffer = new char[end];
             for (int i = 0; i < end; i++)
             {
-                buffer[i] = (char)TestUtil.NextInt(r, 97, 102);
+                buffer[i] = (char)TestUtil.NextInt32(r, 97, 102);
             }
             return new string(buffer, 0, end);
         }
@@ -205,10 +205,10 @@ namespace Lucene.Net.Util.Fst
             if (testPruning)
             {
                 // simple pruning
-                DoTest(TestUtil.NextInt(random, 1, 1 + pairs.Count), 0, true);
+                DoTest(TestUtil.NextInt32(random, 1, 1 + pairs.Count), 0, true);
 
                 // leafy pruning
-                DoTest(0, TestUtil.NextInt(random, 1, 1 + pairs.Count), true);
+                DoTest(0, TestUtil.NextInt32(random, 1, 1 + pairs.Count), true);
             }
         }
 
@@ -318,7 +318,7 @@ namespace Lucene.Net.Util.Fst
                                                 prune1, prune2, 
                                                 prune1 == 0 && prune2 == 0, 
                                                 allowRandomSuffixSharing ? random.NextBoolean() : true, 
-                                                allowRandomSuffixSharing ? TestUtil.NextInt(random, 1, 10) : int.MaxValue, 
+                                                allowRandomSuffixSharing ? TestUtil.NextInt32(random, 1, 10) : int.MaxValue, 
                                                 outputs, 
                                                 null, 
                                                 willRewrite, 
@@ -508,7 +508,7 @@ namespace Lucene.Net.Util.Fst
                 int num = LuceneTestCase.AtLeast(random, 100);
                 for (int iter = 0; iter < num; iter++)
                 {
-                    long v = TestUtil.NextLong(random, minLong, maxLong);
+                    long v = TestUtil.NextInt64(random, minLong, maxLong);
                     Int32sRef input = Util.GetByOutput(fstLong, v);
                     Assert.IsTrue(validOutputs.Contains(v) || input == null);
                 }

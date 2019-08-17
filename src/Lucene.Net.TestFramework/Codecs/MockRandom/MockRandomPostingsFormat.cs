@@ -94,9 +94,9 @@ namespace Lucene.Net.Codecs.MockRandom
             {
                 salt = random.nextInt();
                 delegates.Add(new MockSingleIntFactory());
-                int blockSize = TestUtil.NextInt(random, 1, 2000);
+                int blockSize = TestUtil.NextInt32(random, 1, 2000);
                 delegates.Add(new MockFixedInt32BlockPostingsFormat.MockInt32Factory(blockSize));
-                int baseBlockSize = TestUtil.NextInt(random, 1, 127);
+                int baseBlockSize = TestUtil.NextInt32(random, 1, 127);
                 delegates.Add(new MockVariableInt32BlockPostingsFormat.MockInt32Factory(baseBlockSize));
                 // TODO: others
             }
@@ -166,7 +166,7 @@ namespace Lucene.Net.Codecs.MockRandom
 
             // we pull this before the seed intentionally: because its not consumed at runtime
             // (the skipInterval is written into postings header)
-            int skipInterval = TestUtil.NextInt(seedRandom, minSkipInterval, 10);
+            int skipInterval = TestUtil.NextInt32(seedRandom, minSkipInterval, 10);
 
             if (LuceneTestCase.VERBOSE)
             {
@@ -212,7 +212,7 @@ namespace Lucene.Net.Codecs.MockRandom
 
             if (random.nextBoolean())
             {
-                int totTFCutoff = TestUtil.NextInt(random, 1, 20);
+                int totTFCutoff = TestUtil.NextInt32(random, 1, 20);
                 if (LuceneTestCase.VERBOSE)
                 {
                     Console.WriteLine("MockRandomCodec: writing pulsing postings with totTFCutoff=" + totTFCutoff);
@@ -266,7 +266,7 @@ namespace Lucene.Net.Codecs.MockRandom
 
                 // TODO: would be nice to allow 1 but this is very
                 // slow to write
-                int minTermsInBlock = TestUtil.NextInt(random, 2, 100);
+                int minTermsInBlock = TestUtil.NextInt32(random, 2, 100);
                 int maxTermsInBlock = Math.Max(2, (minTermsInBlock - 1) * 2 + random.nextInt(100));
 
                 bool success = false;
@@ -298,7 +298,7 @@ namespace Lucene.Net.Codecs.MockRandom
                 {
                     if (random.nextBoolean())
                     {
-                        state.TermIndexInterval = TestUtil.NextInt(random, 1, 100);
+                        state.TermIndexInterval = TestUtil.NextInt32(random, 1, 100);
                         if (LuceneTestCase.VERBOSE)
                         {
                             Console.WriteLine("MockRandomCodec: fixed-gap terms index (tii=" + state.TermIndexInterval + ")");
@@ -311,7 +311,7 @@ namespace Lucene.Net.Codecs.MockRandom
                         int n2 = random.nextInt(3);
                         if (n2 == 0)
                         {
-                            int tii = TestUtil.NextInt(random, 1, 100);
+                            int tii = TestUtil.NextInt32(random, 1, 100);
                             selector = new VariableGapTermsIndexWriter.EveryNTermSelector(tii);
                             if (LuceneTestCase.VERBOSE)
                             {
@@ -320,14 +320,14 @@ namespace Lucene.Net.Codecs.MockRandom
                         }
                         else if (n2 == 1)
                         {
-                            int docFreqThresh = TestUtil.NextInt(random, 2, 100);
-                            int tii = TestUtil.NextInt(random, 1, 100);
+                            int docFreqThresh = TestUtil.NextInt32(random, 2, 100);
+                            int tii = TestUtil.NextInt32(random, 1, 100);
                             selector = new VariableGapTermsIndexWriter.EveryNOrDocFreqTermSelector(docFreqThresh, tii);
                         }
                         else
                         {
                             int seed2 = random.Next();
-                            int gap = TestUtil.NextInt(random, 2, 40);
+                            int gap = TestUtil.NextInt32(random, 2, 40);
                             if (LuceneTestCase.VERBOSE)
                             {
                                 Console.WriteLine("MockRandomCodec: random-gap terms index (max gap=" + gap + ")");
@@ -400,7 +400,7 @@ namespace Lucene.Net.Codecs.MockRandom
 
             Random random = new Random((int)seed);
 
-            int readBufferSize = TestUtil.NextInt(random, 1, 4096);
+            int readBufferSize = TestUtil.NextInt32(random, 1, 4096);
             if (LuceneTestCase.VERBOSE)
             {
                 Console.WriteLine("MockRandomCodec: readBufferSize=" + readBufferSize);
@@ -428,7 +428,7 @@ namespace Lucene.Net.Codecs.MockRandom
 
             if (random.nextBoolean())
             {
-                int totTFCutoff = TestUtil.NextInt(random, 1, 20);
+                int totTFCutoff = TestUtil.NextInt32(random, 1, 20);
                 if (LuceneTestCase.VERBOSE)
                 {
                     Console.WriteLine("MockRandomCodec: reading pulsing postings with totTFCutoff=" + totTFCutoff);
@@ -514,7 +514,7 @@ namespace Lucene.Net.Codecs.MockRandom
                     // randomness diverges from writer, here:
                     if (state.TermsIndexDivisor != -1)
                     {
-                        state.TermsIndexDivisor = TestUtil.NextInt(random, 1, 10);
+                        state.TermsIndexDivisor = TestUtil.NextInt32(random, 1, 10);
                     }
 
                     if (doFixedGap)

@@ -168,8 +168,8 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestBuildDocMap()
         {
-            int maxDoc = TestUtil.NextInt(Random(), 1, 128);
-            int numDocs = TestUtil.NextInt(Random(), 0, maxDoc);
+            int maxDoc = TestUtil.NextInt32(Random(), 1, 128);
+            int numDocs = TestUtil.NextInt32(Random(), 0, maxDoc);
             int numDeletedDocs = maxDoc - numDocs;
             FixedBitSet liveDocs = new FixedBitSet(maxDoc);
             for (int i = 0; i < numDocs; ++i)

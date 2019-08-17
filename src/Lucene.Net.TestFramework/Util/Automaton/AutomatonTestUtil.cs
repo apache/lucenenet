@@ -74,9 +74,9 @@ namespace Lucene.Net.Util.Automaton
                 {
                     // Make a surrogate pair
                     // High surrogate
-                    buffer[i++] = (char)TestUtil.NextInt(r, 0xd800, 0xdbff);
+                    buffer[i++] = (char)TestUtil.NextInt32(r, 0xd800, 0xdbff);
                     // Low surrogate
-                    buffer[i] = (char)TestUtil.NextInt(r, 0xdc00, 0xdfff);
+                    buffer[i] = (char)TestUtil.NextInt32(r, 0xdc00, 0xdfff);
                 }
                 else if (t <= 1)
                 {
@@ -84,15 +84,15 @@ namespace Lucene.Net.Util.Automaton
                 }
                 else if (2 == t)
                 {
-                    buffer[i] = (char)TestUtil.NextInt(r, 0x80, 0x800);
+                    buffer[i] = (char)TestUtil.NextInt32(r, 0x80, 0x800);
                 }
                 else if (3 == t)
                 {
-                    buffer[i] = (char)TestUtil.NextInt(r, 0x800, 0xd7ff);
+                    buffer[i] = (char)TestUtil.NextInt32(r, 0x800, 0xd7ff);
                 }
                 else if (4 == t)
                 {
-                    buffer[i] = (char)TestUtil.NextInt(r, 0xe000, 0xffff);
+                    buffer[i] = (char)TestUtil.NextInt32(r, 0xe000, 0xffff);
                 }
                 else if (5 == t)
                 {

@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
                 HashSet<int?> deleted = new HashSet<int?>();
                 IList<BytesRef> terms = new List<BytesRef>();
 
-                int numDocs = TestUtil.NextInt(Random(), 1, 100 * RANDOM_MULTIPLIER);
+                int numDocs = TestUtil.NextInt32(Random(), 1, 100 * RANDOM_MULTIPLIER);
                 Documents.Document doc = new Documents.Document();
                 Field f = NewStringField("field", "", Field.Store.NO);
                 doc.Add(f);

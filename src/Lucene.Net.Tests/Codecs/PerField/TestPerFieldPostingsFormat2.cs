@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.PerField
             int numRounds = AtLeast(1);
             for (int i = 0; i < numRounds; i++)
             {
-                int num = TestUtil.NextInt(Random(), 30, 60);
+                int num = TestUtil.NextInt32(Random(), 30, 60);
                 IndexWriterConfig config = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
                 config.SetOpenMode(OpenMode.CREATE_OR_APPEND);
                 IndexWriter writer = NewWriter(dir, config);

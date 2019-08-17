@@ -63,8 +63,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
             for (int i = 0; i < 10000; i++)
             {
                 string text = TestUtil.RandomUnicodeString(Random(), 100);
-                int min = TestUtil.NextInt(Random(), 0, 100);
-                int max = TestUtil.NextInt(Random(), 0, 100);
+                int min = TestUtil.NextInt32(Random(), 0, 100);
+                int max = TestUtil.NextInt32(Random(), 0, 100);
                 int count = text.CodePointCount(0, text.Length);
                 if (min > max)
                 {

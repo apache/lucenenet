@@ -325,7 +325,7 @@ namespace Lucene.Net.Index
                 int docID = 0;
                 for (int j = 0; j < docFreq; j++)
                 {
-                    docID += TestUtil.NextInt(Random(), 1, 10);
+                    docID += TestUtil.NextInt32(Random(), 1, 10);
                     docs[j] = docID;
 
                     if (!omitTF)
@@ -335,7 +335,7 @@ namespace Lucene.Net.Index
                         int position = 0;
                         for (int k = 0; k < termFreq; k++)
                         {
-                            position += TestUtil.NextInt(Random(), 1, 10);
+                            position += TestUtil.NextInt32(Random(), 1, 10);
 
                             BytesRef payload;
                             if (storePayloads && Random().Next(4) == 0)
@@ -837,7 +837,7 @@ namespace Lucene.Net.Index
 
         private void Write(FieldInfos fieldInfos, Directory dir, FieldData[] fields, bool allowPreFlex)
         {
-            int termIndexInterval = TestUtil.NextInt(Random(), 13, 27);
+            int termIndexInterval = TestUtil.NextInt32(Random(), 13, 27);
             Codec codec = Codec.Default;
             SegmentInfo si = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, SEGMENT, 10000, false, codec, null);
             SegmentWriteState state = new SegmentWriteState(InfoStream.Default, dir, si, fieldInfos, termIndexInterval, null, NewIOContext(Random()));

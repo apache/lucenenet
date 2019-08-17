@@ -446,7 +446,7 @@ namespace Lucene.Net.Tests.Join
         private string[][] GetRandomFields(int maxUniqueValues)
         {
 
-            string[][] fields = new string[TestUtil.NextInt(Random(), 2, 4)][];
+            string[][] fields = new string[TestUtil.NextInt32(Random(), 2, 4)][];
             for (int fieldID = 0; fieldID < fields.Length; fieldID++)
             {
                 int valueCount;
@@ -456,7 +456,7 @@ namespace Lucene.Net.Tests.Join
                 }
                 else
                 {
-                    valueCount = TestUtil.NextInt(Random(), 1, maxUniqueValues);
+                    valueCount = TestUtil.NextInt32(Random(), 1, maxUniqueValues);
                 }
 
                 string[] values = fields[fieldID] = new string[valueCount];
@@ -510,7 +510,7 @@ namespace Lucene.Net.Tests.Join
             Directory dir = NewDirectory();
             Directory joinDir = NewDirectory();
 
-            int numParentDocs = TestUtil.NextInt(Random(), 100 * RANDOM_MULTIPLIER, 300 * RANDOM_MULTIPLIER);
+            int numParentDocs = TestUtil.NextInt32(Random(), 100 * RANDOM_MULTIPLIER, 300 * RANDOM_MULTIPLIER);
             //final int numParentDocs = 30;
 
             // Values for parent fields:
@@ -565,7 +565,7 @@ namespace Lucene.Net.Tests.Join
                     Console.WriteLine("  " + sb);
                 }
 
-                int numChildDocs = TestUtil.NextInt(Random(), 1, 20);
+                int numChildDocs = TestUtil.NextInt32(Random(), 1, 20);
                 for (int childDocID = 0; childDocID < numChildDocs; childDocID++)
                 {
                     // Denormalize: copy all parent fields into child doc:
@@ -671,7 +671,7 @@ namespace Lucene.Net.Tests.Join
                 {
                     BooleanQuery bq = new BooleanQuery();
                     childQuery = bq;
-                    int numClauses = TestUtil.NextInt(Random(), 2, 4);
+                    int numClauses = TestUtil.NextInt32(Random(), 2, 4);
                     bool didMust = false;
                     for (int clauseIDX = 0; clauseIDX < numClauses; clauseIDX++)
                     {
@@ -686,7 +686,7 @@ namespace Lucene.Net.Tests.Join
                         else
                         {
                             occur = Occur.SHOULD;
-                            int childFieldID = TestUtil.NextInt(Random(), 1, childFields.Length - 1);
+                            int childFieldID = TestUtil.NextInt32(Random(), 1, childFields.Length - 1);
                             clause = new TermQuery(new Term("child" + childFieldID, childFields[childFieldID][Random().Next(childFields[childFieldID].Length)]));
                         }
                         bq.Add(clause, occur);
@@ -698,7 +698,7 @@ namespace Lucene.Net.Tests.Join
                     childQuery = bq;
 
                     bq.Add(new TermQuery(RandomChildTerm(childFields[0])), Occur.MUST);
-                    int childFieldID = TestUtil.NextInt(Random(), 1, childFields.Length - 1);
+                    int childFieldID = TestUtil.NextInt32(Random(), 1, childFields.Length - 1);
                     bq.Add(new TermQuery(new Term("child" + childFieldID, childFields[childFieldID][Random().Next(childFields[childFieldID].Length)])), Random().NextBoolean() ? Occur.MUST : Occur.MUST_NOT);
                 }
 
@@ -827,7 +827,7 @@ namespace Lucene.Net.Tests.Join
 
                 joinS.Search(parentJoinQuery, c);
 
-                int hitsPerGroup = TestUtil.NextInt(Random(), 1, 20);
+                int hitsPerGroup = TestUtil.NextInt32(Random(), 1, 20);
                 //final int hitsPerGroup = 100;
                 ITopGroups<int> joinResults = c.GetTopGroups(childJoinQuery, childSort, 0, hitsPerGroup, 0, true);
 
@@ -903,7 +903,7 @@ namespace Lucene.Net.Tests.Join
                 {
                     BooleanQuery bq = new BooleanQuery();
                     parentQuery2 = bq;
-                    int numClauses = TestUtil.NextInt(Random(), 2, 4);
+                    int numClauses = TestUtil.NextInt32(Random(), 2, 4);
                     bool didMust = false;
                     for (int clauseIDX = 0; clauseIDX < numClauses; clauseIDX++)
                     {
@@ -918,7 +918,7 @@ namespace Lucene.Net.Tests.Join
                         else
                         {
                             occur = Occur.SHOULD;
-                            int fieldID = TestUtil.NextInt(Random(), 1, parentFields.Length - 1);
+                            int fieldID = TestUtil.NextInt32(Random(), 1, parentFields.Length - 1);
                             clause = new TermQuery(new Term("parent" + fieldID, parentFields[fieldID][Random().Next(parentFields[fieldID].Length)]));
                         }
                         bq.Add(clause, occur);
@@ -930,7 +930,7 @@ namespace Lucene.Net.Tests.Join
                     parentQuery2 = bq;
 
                     bq.Add(new TermQuery(RandomParentTerm(parentFields[0])), Occur.MUST);
-                    int fieldID = TestUtil.NextInt(Random(), 1, parentFields.Length - 1);
+                    int fieldID = TestUtil.NextInt32(Random(), 1, parentFields.Length - 1);
                     bq.Add(new TermQuery(new Term("parent" + fieldID, parentFields[fieldID][Random().Next(parentFields[fieldID].Length)])), Random().NextBoolean() ? Occur.MUST : Occur.MUST_NOT);
                 }
 

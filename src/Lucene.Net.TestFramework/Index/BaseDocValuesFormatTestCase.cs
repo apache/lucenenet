@@ -1227,7 +1227,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(100);
             BytesRefHash hash = new BytesRefHash();
             IDictionary<string, string> docToString = new Dictionary<string, string>();
-            int maxLength = TestUtil.NextInt(Random(), 1, 50);
+            int maxLength = TestUtil.NextInt32(Random(), 1, 50);
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
@@ -1336,7 +1336,7 @@ namespace Lucene.Net.Index
 
             internal override long Next()
             {
-                return TestUtil.NextLong(Random(), minValue, maxValue);
+                return TestUtil.NextInt64(Random(), minValue, maxValue);
             }
         }
 
@@ -1422,7 +1422,7 @@ namespace Lucene.Net.Index
 
             internal override long Next()
             {
-                return TestUtil.NextLong(Random(), minValue, maxValue);
+                return TestUtil.NextInt64(Random(), minValue, maxValue);
             }
         }
 
@@ -1604,7 +1604,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    length = TestUtil.NextInt(Random(), minLength, maxLength);
+                    length = TestUtil.NextInt32(Random(), minLength, maxLength);
                 }
                 var buffer = new byte[length];
                 Random().NextBytes(buffer);
@@ -1650,7 +1650,7 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                int fixedLength = TestUtil.NextInt(Random(), 0, 10);
+                int fixedLength = TestUtil.NextInt32(Random(), 0, 10);
                 DoTestBinaryVsStoredFields(fixedLength, fixedLength);
             }
         }
@@ -1690,7 +1690,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    length = TestUtil.NextInt(Random(), minLength, maxLength);
+                    length = TestUtil.NextInt32(Random(), minLength, maxLength);
                 }
                 var buffer = new byte[length];
                 Random().NextBytes(buffer);
@@ -1755,7 +1755,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    length = TestUtil.NextInt(Random(), minLength, maxLength);
+                    length = TestUtil.NextInt32(Random(), minLength, maxLength);
                 }
                 string value = TestUtil.RandomSimpleString(Random(), length);
                 indexedField.SetStringValue(value);
@@ -1795,7 +1795,7 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                int fixedLength = TestUtil.NextInt(Random(), 1, 10);
+                int fixedLength = TestUtil.NextInt32(Random(), 1, 10);
                 DoTestSortedVsStoredFields(fixedLength, fixedLength);
             }
         }
@@ -1806,7 +1806,7 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                int fixedLength = TestUtil.NextInt(Random(), 1, 10);
+                int fixedLength = TestUtil.NextInt32(Random(), 1, 10);
                 DoTestSortedVsFieldCache(fixedLength, fixedLength);
             }
         }
@@ -2323,9 +2323,9 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    length = TestUtil.NextInt(Random(), minLength, maxLength);
+                    length = TestUtil.NextInt32(Random(), minLength, maxLength);
                 }
-                int numValues = TestUtil.NextInt(Random(), 0, maxValuesPerDoc);
+                int numValues = TestUtil.NextInt32(Random(), 0, maxValuesPerDoc);
 
                 // create a random set of strings
                 // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
@@ -2401,7 +2401,7 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                int fixedLength = TestUtil.NextInt(Random(), 1, 10);
+                int fixedLength = TestUtil.NextInt32(Random(), 1, 10);
                 DoTestSortedSetVsStoredFields(fixedLength, fixedLength, 16);
             }
         }
@@ -2424,7 +2424,7 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                int fixedLength = TestUtil.NextInt(Random(), 1, 10);
+                int fixedLength = TestUtil.NextInt32(Random(), 1, 10);
                 DoTestSortedSetVsStoredFields(fixedLength, fixedLength, 1);
             }
         }
@@ -2534,7 +2534,7 @@ namespace Lucene.Net.Index
             // random seekExact(ord)
             for (long i = 0; i < numOrds; i++)
             {
-                long randomOrd = TestUtil.NextLong(Random(), 0, numOrds - 1);
+                long randomOrd = TestUtil.NextInt64(Random(), 0, numOrds - 1);
                 expected.SeekExact(randomOrd);
                 actual.SeekExact(randomOrd);
                 Assert.AreEqual(expected.Ord, actual.Ord);
@@ -2544,7 +2544,7 @@ namespace Lucene.Net.Index
             // random seekExact(BytesRef)
             for (long i = 0; i < numOrds; i++)
             {
-                long randomOrd = TestUtil.NextLong(Random(), 0, numOrds - 1);
+                long randomOrd = TestUtil.NextInt64(Random(), 0, numOrds - 1);
                 expected.SeekExact(randomOrd);
                 actual.SeekExact(expected.Term);
                 Assert.AreEqual(expected.Ord, actual.Ord);
@@ -2585,7 +2585,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    length = TestUtil.NextInt(Random(), minLength, maxLength);
+                    length = TestUtil.NextInt32(Random(), minLength, maxLength);
                 }
                 int numValues = Random().Next(17);
                 // create a random list of strings
@@ -2658,7 +2658,7 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                int fixedLength = TestUtil.NextInt(Random(), 1, 10);
+                int fixedLength = TestUtil.NextInt32(Random(), 1, 10);
                 DoTestSortedSetVsUninvertedField(fixedLength, fixedLength);
             }
         }
@@ -2968,12 +2968,12 @@ namespace Lucene.Net.Index
             {
                 // Sometimes make all values fixed length since some
                 // codecs have different code paths for this:
-                numDocs = TestUtil.NextInt(Random(), 10, 20);
-                fixedLength = TestUtil.NextInt(Random(), 65537, 256 * 1024);
+                numDocs = TestUtil.NextInt32(Random(), 10, 20);
+                fixedLength = TestUtil.NextInt32(Random(), 65537, 256 * 1024);
             }
             else
             {
-                numDocs = TestUtil.NextInt(Random(), 100, 200);
+                numDocs = TestUtil.NextInt32(Random(), 100, 200);
             }
             IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             var docBytes = new List<byte[]>();
@@ -2992,11 +2992,11 @@ namespace Lucene.Net.Index
                 }
                 else if (docID == 0 || Random().Next(5) == 3)
                 {
-                    numBytes = TestUtil.NextInt(Random(), 65537, 3 * 1024 * 1024);
+                    numBytes = TestUtil.NextInt32(Random(), 65537, 3 * 1024 * 1024);
                 }
                 else
                 {
-                    numBytes = TestUtil.NextInt(Random(), 1, 1024 * 1024);
+                    numBytes = TestUtil.NextInt32(Random(), 1, 1024 * 1024);
                 }
                 totalBytes += numBytes;
                 if (totalBytes > 5 * 1024 * 1024)
@@ -3091,12 +3091,12 @@ namespace Lucene.Net.Index
             {
                 // Sometimes make all values fixed length since some
                 // codecs have different code paths for this:
-                numDocs = TestUtil.NextInt(Random(), 10, 20);
+                numDocs = TestUtil.NextInt32(Random(), 10, 20);
                 fixedLength = Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH;
             }
             else
             {
-                numDocs = TestUtil.NextInt(Random(), 100, 200);
+                numDocs = TestUtil.NextInt32(Random(), 100, 200);
             }
             IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             var docBytes = new List<byte[]>();
@@ -3119,7 +3119,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    numBytes = TestUtil.NextInt(Random(), 1, Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
+                    numBytes = TestUtil.NextInt32(Random(), 1, Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
                 }
                 totalBytes += numBytes;
                 if (totalBytes > 5 * 1024 * 1024)
@@ -3185,7 +3185,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
-                int length = TestUtil.NextInt(Random(), 0, 8);
+                int length = TestUtil.NextInt32(Random(), 0, 8);
                 var buffer = new byte[length];
                 Random().NextBytes(buffer);
                 storedBinField.SetBytesValue(buffer);
@@ -3212,7 +3212,7 @@ namespace Lucene.Net.Index
 
             // compare
             DirectoryReader ir = DirectoryReader.Open(dir);
-            int numThreads = TestUtil.NextInt(Random(), 2, 7);
+            int numThreads = TestUtil.NextInt32(Random(), 2, 7);
             ThreadClass[] threads = new ThreadClass[numThreads];
             CountdownEvent startingGun = new CountdownEvent(1);
 
@@ -3299,7 +3299,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
-                int length = TestUtil.NextInt(Random(), 0, 8);
+                int length = TestUtil.NextInt32(Random(), 0, 8);
                 var buffer = new byte[length];
                 Random().NextBytes(buffer);
                 storedBinField.SetBytesValue(buffer);
@@ -3352,7 +3352,7 @@ namespace Lucene.Net.Index
 
             // compare
             DirectoryReader ir = DirectoryReader.Open(dir);
-            int numThreads = TestUtil.NextInt(Random(), 2, 7);
+            int numThreads = TestUtil.NextInt32(Random(), 2, 7);
             ThreadClass[] threads = new ThreadClass[numThreads];
             CountdownEvent startingGun = new CountdownEvent(1);
 

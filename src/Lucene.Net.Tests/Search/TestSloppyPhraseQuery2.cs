@@ -227,19 +227,19 @@ namespace Lucene.Net.Search
         private MultiPhraseQuery RandomPhraseQuery(int seed)
         {
             Random random = new Random(seed);
-            int length = TestUtil.NextInt(random, 2, 5);
+            int length = TestUtil.NextInt32(random, 2, 5);
             MultiPhraseQuery pq = new MultiPhraseQuery();
             int position = 0;
             for (int i = 0; i < length; i++)
             {
-                int depth = TestUtil.NextInt(random, 1, 3);
+                int depth = TestUtil.NextInt32(random, 1, 3);
                 Term[] terms = new Term[depth];
                 for (int j = 0; j < depth; j++)
                 {
-                    terms[j] = new Term("field", "" + (char)TestUtil.NextInt(random, 'a', 'z'));
+                    terms[j] = new Term("field", "" + (char)TestUtil.NextInt32(random, 'a', 'z'));
                 }
                 pq.Add(terms, position);
-                position += TestUtil.NextInt(random, 1, 3);
+                position += TestUtil.NextInt32(random, 1, 3);
             }
             return pq;
         }

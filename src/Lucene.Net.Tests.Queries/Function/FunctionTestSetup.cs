@@ -106,7 +106,7 @@ namespace Lucene.Net.Tests.Queries.Function
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, anlzr).SetMergePolicy(NewLogMergePolicy());
             if (doMultiSegment)
             {
-                iwc.SetMaxBufferedDocs(TestUtil.NextInt(Random(), 2, 7));
+                iwc.SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 2, 7));
             }
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
             // add docs not exactly in natural ID order, to verify we do check the order of docs by scores

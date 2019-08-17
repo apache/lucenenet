@@ -334,7 +334,7 @@ namespace Lucene.Net.Analysis.Core
                 // TODO: could cause huge ram usage to use full int range for some filters
                 // (e.g. allocate enormous arrays)
                 // return Integer.valueOf(random.nextInt());
-                return TestUtil.NextInt(random, -100, 100);
+                return TestUtil.NextInt32(random, -100, 100);
             }
         }
 

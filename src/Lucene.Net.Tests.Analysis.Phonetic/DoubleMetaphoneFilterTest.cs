@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Phonetic
         [Test]
         public void TestRandom()
         {
-            int codeLen = TestUtil.NextInt(Random(), 1, 8);
+            int codeLen = TestUtil.NextInt32(Random(), 1, 8);
             Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);

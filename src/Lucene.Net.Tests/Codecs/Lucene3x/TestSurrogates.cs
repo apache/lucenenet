@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 Assert.AreEqual(TermsEnum.SeekStatus.FOUND, te.SeekCeil(term.Bytes));
 
                 // now .next() this many times:
-                int ct = TestUtil.NextInt(r, 5, 100);
+                int ct = TestUtil.NextInt32(r, 5, 100);
                 for (int i = 0; i < ct; i++)
                 {
                     if (VERBOSE)
@@ -304,7 +304,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             Assert.AreEqual(fieldTerms[spot].Bytes, te.Term);
 
                             // now .next() this many times:
-                            int ct = TestUtil.NextInt(r, 5, 100);
+                            int ct = TestUtil.NextInt32(r, 5, 100);
                             for (int i = 0; i < ct; i++)
                             {
                                 if (VERBOSE)
@@ -347,7 +347,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
                 .SetCodec(new PreFlexRWCodec()));
 
-            int numField = TestUtil.NextInt(Random(), 2, 5);
+            int numField = TestUtil.NextInt32(Random(), 2, 5);
 
             int uniqueTermCount = 0;
 

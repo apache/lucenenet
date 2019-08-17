@@ -81,15 +81,15 @@ namespace Lucene.Net.Index
             int deletePercent = Random().Next(50);
             int deleteByQueryPercent = Random().Next(25);
             int ndocs = AtLeast(50);
-            int nWriteThreads = TestUtil.NextInt(Random(), 1, TEST_NIGHTLY ? 10 : 5);
-            int maxConcurrentCommits = TestUtil.NextInt(Random(), 1, TEST_NIGHTLY ? 10 : 5); // number of committers at a time... needed if we want to avoid commit errors due to exceeding the max
+            int nWriteThreads = TestUtil.NextInt32(Random(), 1, TEST_NIGHTLY ? 10 : 5);
+            int maxConcurrentCommits = TestUtil.NextInt32(Random(), 1, TEST_NIGHTLY ? 10 : 5); // number of committers at a time... needed if we want to avoid commit errors due to exceeding the max
 
             bool tombstones = Random().NextBoolean();
 
             // query variables
             AtomicInt64 operations = new AtomicInt64(AtLeast(10000)); // number of query operations to perform in total
 
-            int nReadThreads = TestUtil.NextInt(Random(), 1, TEST_NIGHTLY ? 10 : 5);
+            int nReadThreads = TestUtil.NextInt32(Random(), 1, TEST_NIGHTLY ? 10 : 5);
             InitModel(ndocs);
 
             FieldType storedOnlyType = new FieldType();

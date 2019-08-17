@@ -139,11 +139,11 @@ namespace Lucene.Net.Index
             {
                 random = new Random((int)seed);
                 docRandom = new Random(random.Next());
-                DocFreq = TestUtil.NextInt(random, minDocFreq, maxDocFreq);
+                DocFreq = TestUtil.NextInt32(random, minDocFreq, maxDocFreq);
                 this.liveDocs = liveDocs;
 
                 // TODO: more realistic to inversely tie this to numDocs:
-                maxDocSpacing = TestUtil.NextInt(random, 1, 100);
+                maxDocSpacing = TestUtil.NextInt32(random, 1, 100);
 
                 if (random.Next(10) == 7)
                 {
@@ -195,26 +195,26 @@ namespace Lucene.Net.Index
                     else
                     {
                         // TODO: sometimes have a biggish gap here!
-                        docID += TestUtil.NextInt(docRandom, 1, maxDocSpacing);
+                        docID += TestUtil.NextInt32(docRandom, 1, maxDocSpacing);
                     }
 
                     if (random.Next(200) == 17)
                     {
-                        freq = TestUtil.NextInt(random, 1, 1000);
+                        freq = TestUtil.NextInt32(random, 1, 1000);
                     }
                     else if (random.Next(10) == 17)
                     {
-                        freq = TestUtil.NextInt(random, 1, 20);
+                        freq = TestUtil.NextInt32(random, 1, 20);
                     }
                     else
                     {
-                        freq = TestUtil.NextInt(random, 1, 4);
+                        freq = TestUtil.NextInt32(random, 1, 4);
                     }
 
                     pos = 0;
                     offset = 0;
                     posUpto = 0;
-                    posSpacing = TestUtil.NextInt(random, 1, 100);
+                    posSpacing = TestUtil.NextInt32(random, 1, 100);
 
                     Upto++;
                     return docID;
@@ -254,7 +254,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    pos += TestUtil.NextInt(random, 1, posSpacing);
+                    pos += TestUtil.NextInt32(random, 1, posSpacing);
                 }
 
                 if (payloadSize != 0)
@@ -380,7 +380,7 @@ namespace Lucene.Net.Index
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
             fields = new SortedDictionary<string, SortedDictionary<BytesRef, long>>(StringComparer.Ordinal);
 
-            int numFields = TestUtil.NextInt(Random(), 1, 5);
+            int numFields = TestUtil.NextInt32(Random(), 1, 5);
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: " + numFields + " fields");
@@ -413,7 +413,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    numTerms = TestUtil.NextInt(Random(), 2, 20);
+                    numTerms = TestUtil.NextInt32(Random(), 2, 20);
                 }
 
                 for (int termUpto = 0; termUpto < numTerms; termUpto++)
@@ -852,7 +852,7 @@ namespace Lucene.Net.Index
             }
 
             double skipChance = alwaysTestMax ? 0.5 : Random().NextDouble();
-            int numSkips = expected.DocFreq < 3 ? 1 : TestUtil.NextInt(Random(), 1, Math.Min(20, expected.DocFreq / 3));
+            int numSkips = expected.DocFreq < 3 ? 1 : TestUtil.NextInt32(Random(), 1, Math.Min(20, expected.DocFreq / 3));
             int skipInc = expected.DocFreq / numSkips;
             int skipDocInc = maxDoc / numSkips;
 
@@ -907,7 +907,7 @@ namespace Lucene.Net.Index
                     if (expected.Upto < stopAt && Random().NextBoolean())
                     {
                         // Pick target we know exists:
-                        int skipCount = TestUtil.NextInt(Random(), 1, skipInc);
+                        int skipCount = TestUtil.NextInt32(Random(), 1, skipInc);
                         for (int skip = 0; skip < skipCount; skip++)
                         {
                             if (expected.NextDoc() == DocsEnum.NO_MORE_DOCS)
@@ -919,7 +919,7 @@ namespace Lucene.Net.Index
                     else
                     {
                         // Pick random target (might not exist):
-                        int skipDocIDs = TestUtil.NextInt(Random(), 1, skipDocInc);
+                        int skipDocIDs = TestUtil.NextInt32(Random(), 1, skipDocInc);
                         if (skipDocIDs > 0)
                         {
                             targetDocID = expected.DocID + skipDocIDs;
@@ -1119,7 +1119,7 @@ namespace Lucene.Net.Index
         {
             if (options.Contains(Option.THREADS))
             {
-                int numThreads = TestUtil.NextInt(Random(), 2, 5);
+                int numThreads = TestUtil.NextInt32(Random(), 2, 5);
                 ThreadClass[] threads = new ThreadClass[numThreads];
                 for (int threadUpto = 0; threadUpto < numThreads; threadUpto++)
                 {

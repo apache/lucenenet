@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Util
                     else if (random.NextBoolean())
                     {
                         // Read previous char
-                        var pos = TestUtil.NextInt(random, nextRead - availCount, nextRead - 1);
+                        var pos = TestUtil.NextInt32(random, nextRead - availCount, nextRead - 1);
                         if (VERBOSE)
                         {
                             Console.WriteLine("    old char pos=" + pos);
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.Util
                         }
                         else
                         {
-                            length = TestUtil.NextInt(random, 1, availCount);
+                            length = TestUtil.NextInt32(random, 1, availCount);
                         }
                         int start;
                         if (length == availCount)

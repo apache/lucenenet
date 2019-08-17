@@ -247,7 +247,7 @@ namespace Lucene.Net.Search.Grouping
         public virtual void TestRandom()
         {
             Random random = Random();
-            int numberOfRuns = TestUtil.NextInt(random, 3, 6);
+            int numberOfRuns = TestUtil.NextInt32(random, 3, 6);
             for (int indexIter = 0; indexIter < numberOfRuns; indexIter++)
             {
                 IndexContext context = CreateIndexContext();

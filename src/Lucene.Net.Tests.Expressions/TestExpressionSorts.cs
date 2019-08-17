@@ -48,7 +48,7 @@ namespace Lucene.Net.Expressions
             base.SetUp();
             dir = NewDirectory();
             var iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
-            int numDocs = TestUtil.NextInt(Random(), 2049, 4000);
+            int numDocs = TestUtil.NextInt32(Random(), 2049, 4000);
             for (int i = 0; i < numDocs; i++)
             {
                 var document = new Document
@@ -121,7 +121,7 @@ namespace Lucene.Net.Expressions
                     new SortField("score", SortFieldType.SCORE)
                 };
                 Collections.Shuffle(Arrays.AsList(fields), Random());
-                int numSorts = TestUtil.NextInt(Random(), 1, fields.Length);
+                int numSorts = TestUtil.NextInt32(Random(), 1, fields.Length);
                 AssertQuery(query, filter, new Sort(Arrays.CopyOfRange(fields, 0, numSorts)));
             }
         }
@@ -129,7 +129,7 @@ namespace Lucene.Net.Expressions
         
         internal virtual void AssertQuery(Query query, Filter filter, Sort sort)
         {
-            int size = TestUtil.NextInt(Random(), 1, searcher.IndexReader.MaxDoc / 5);
+            int size = TestUtil.NextInt32(Random(), 1, searcher.IndexReader.MaxDoc / 5);
             TopDocs expected = searcher.Search(query, filter, size, sort, Random().NextBoolean(), Random().NextBoolean());
 
             // make our actual sort, mutating original by replacing some of the 

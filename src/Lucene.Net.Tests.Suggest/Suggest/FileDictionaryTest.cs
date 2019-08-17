@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Suggest
             if (hasWeight)
             {
                 sb.Append(fieldDelimiter);
-                long weight = TestUtil.NextLong(Random(), long.MinValue, long.MaxValue);
+                long weight = TestUtil.NextInt64(Random(), long.MinValue, long.MaxValue);
                 // LUCENENET: We need to explicitly use invariant culture here,
                 // as that is what is expected in Java
                 sb.Append(weight.ToString(CultureInfo.InvariantCulture));

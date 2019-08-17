@@ -247,7 +247,7 @@ namespace Lucene.Net.Search
                     Console.WriteLine("iter=" + iter);
                 }
                 IList<string> terms = new List<string>(Arrays.AsList("a", "b", "c", "d", "e", "f"));
-                int numTerms = TestUtil.NextInt(Random(), 1, terms.Count);
+                int numTerms = TestUtil.NextInt32(Random(), 1, terms.Count);
                 while (terms.Count > numTerms)
                 {
                     terms.RemoveAt(Random().Next(terms.Count));
@@ -307,7 +307,7 @@ namespace Lucene.Net.Search
                         else
                         {
                             // advance
-                            int inc = TestUtil.NextInt(Random(), 1, left - 1);
+                            int inc = TestUtil.NextInt32(Random(), 1, left - 1);
                             nextUpto = inc + upto;
                             nextDoc = scorer.Advance(hits[nextUpto].Doc);
                         }

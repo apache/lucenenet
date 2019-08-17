@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
 
             for (int docCount = 0; docCount < NUM_DOCS; docCount++)
             {
-                int fieldCount = TestUtil.NextInt(Random(), 1, 17);
+                int fieldCount = TestUtil.NextInt32(Random(), 1, 17);
                 fieldsPerDoc[docCount] = fieldCount - 1;
 
                 int finalDocCount = docCount;

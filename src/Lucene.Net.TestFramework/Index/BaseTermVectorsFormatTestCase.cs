@@ -292,7 +292,7 @@ namespace Lucene.Net.Index
                     int o = Random().Next(sampleTerms.Length);
                     terms[i] = sampleTerms[o];
                     termBytes[i] = sampleTermBytes[o];
-                    positionsIncrements[i] = TestUtil.NextInt(Random(), i == 0 ? 1 : 0, 10);
+                    positionsIncrements[i] = TestUtil.NextInt32(Random(), i == 0 ? 1 : 0, 10);
                     if (offsetsGoBackwards)
                     {
                         startOffsets[i] = Random().Next();
@@ -302,13 +302,13 @@ namespace Lucene.Net.Index
                     {
                         if (i == 0)
                         {
-                            startOffsets[i] = TestUtil.NextInt(Random(), 0, 1 << 16);
+                            startOffsets[i] = TestUtil.NextInt32(Random(), 0, 1 << 16);
                         }
                         else
                         {
-                            startOffsets[i] = startOffsets[i - 1] + TestUtil.NextInt(Random(), 0, Rarely() ? 1 << 16 : 20);
+                            startOffsets[i] = startOffsets[i - 1] + TestUtil.NextInt32(Random(), 0, Rarely() ? 1 << 16 : 20);
                         }
-                        endOffsets[i] = startOffsets[i] + TestUtil.NextInt(Random(), 0, Rarely() ? 1 << 10 : 20);
+                        endOffsets[i] = startOffsets[i] + TestUtil.NextInt32(Random(), 0, Rarely() ? 1 << 10 : 20);
                     }
                 }
 
@@ -433,7 +433,7 @@ namespace Lucene.Net.Index
                     //} while (usedFileNames.Contains(this.FieldNames[i]));
 
                     usedFileNames.Add(this.fieldNames[i]);
-                    tokenStreams[i] = new RandomTokenStream(outerInstance, TestUtil.NextInt(Random(), 1, maxTermCount), sampleTerms, sampleTermBytes);
+                    tokenStreams[i] = new RandomTokenStream(outerInstance, TestUtil.NextInt32(Random(), 1, maxTermCount), sampleTerms, sampleTermBytes);
                 }
             }
 
@@ -685,7 +685,7 @@ namespace Lucene.Net.Index
                 Document emptyDoc = new Document();
                 Directory dir = NewDirectory();
                 RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-                RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 3), 20, options);
+                RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random(), 1, 3), 20, options);
                 for (int i = 0; i < numDocs; ++i)
                 {
                     if (i == docWithVectors)
@@ -733,7 +733,7 @@ namespace Lucene.Net.Index
                 using (Directory dir = NewDirectory())
                 using (RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
                 {
-                    RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 2), AtLeast(20000),
+                    RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random(), 1, 2), AtLeast(20000),
                         options);
                     writer.AddDocument(doc.ToDocument());
                     using (IndexReader reader = writer.Reader)
@@ -764,7 +764,7 @@ namespace Lucene.Net.Index
         // different options for the same field
         public virtual void TestMixedOptions()
         {
-            int numFields = TestUtil.NextInt(Random(), 1, 3);
+            int numFields = TestUtil.NextInt32(Random(), 1, 3);
             var docFactory = new RandomDocumentFactory(this, numFields, 10);
             foreach (var options1 in ValidOptions())
             {
@@ -803,7 +803,7 @@ namespace Lucene.Net.Index
             RandomDocument[] docs = new RandomDocument[numDocs];
             for (int i = 0; i < numDocs; ++i)
             {
-                docs[i] = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 3), TestUtil.NextInt(Random(), 10, 50), RandomOptions());
+                docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random(), 1, 3), TestUtil.NextInt32(Random(), 10, 50), RandomOptions());
             }
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
@@ -838,7 +838,7 @@ namespace Lucene.Net.Index
                 RandomDocument[] docs = new RandomDocument[numDocs];
                 for (int i = 0; i < numDocs; ++i)
                 {
-                    docs[i] = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 3), AtLeast(10), options);
+                    docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random(), 1, 3), AtLeast(10), options);
                 }
                 Directory dir = NewDirectory();
                 RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
@@ -883,7 +883,7 @@ namespace Lucene.Net.Index
                 RandomDocument[] docs = new RandomDocument[numDocs];
                 for (int i = 0; i < numDocs; ++i)
                 {
-                    docs[i] = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 3), AtLeast(10), options);
+                    docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random(), 1, 3), AtLeast(10), options);
                 }
                 Directory dir = NewDirectory();
                 RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);

@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer, Similarity, TimeZone);
             LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
             int charsToIndex = AtLeast(100000);
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
             if (answers.Count > 0)
             {
                 CountdownEvent startingGun = new CountdownEvent(1);
-                int numThreads = TestUtil.NextInt(Random(), 2, 5);
+                int numThreads = TestUtil.NextInt32(Random(), 2, 5);
                 ThreadClass[] threads = new ThreadClass[numThreads];
                 for (int threadID = 0; threadID < numThreads; threadID++)
                 {

@@ -40,9 +40,9 @@ namespace Lucene.Net.Util.Fst
             int iters = AtLeast(10);
             for (int iter = 0; iter < iters; iter++)
             {
-                int numBytes = TestUtil.NextInt(Random(), 1, 200000);
+                int numBytes = TestUtil.NextInt32(Random(), 1, 200000);
                 byte[] expected = new byte[numBytes];
-                int blockBits = TestUtil.NextInt(Random(), 8, 15);
+                int blockBits = TestUtil.NextInt32(Random(), 8, 15);
                 BytesStore bytes = new BytesStore(blockBits);
                 if (VERBOSE)
                 {
@@ -115,7 +115,7 @@ namespace Lucene.Net.Util.Fst
                                 // reverse bytes
                                 if (pos > 1)
                                 {
-                                    int len = TestUtil.NextInt(Random(), 2, Math.Min(100, pos));
+                                    int len = TestUtil.NextInt32(Random(), 2, Math.Min(100, pos));
                                     int start;
                                     if (len == pos)
                                     {
@@ -150,7 +150,7 @@ namespace Lucene.Net.Util.Fst
                                 if (pos > 2)
                                 {
                                     int randomPos = Random().Next(pos - 1);
-                                    int len = TestUtil.NextInt(Random(), 1, Math.Min(pos - randomPos - 1, 100));
+                                    int len = TestUtil.NextInt32(Random(), 1, Math.Min(pos - randomPos - 1, 100));
                                     byte[] temp = new byte[len];
                                     Random().NextBytes(temp);
                                     if (VERBOSE)
@@ -169,8 +169,8 @@ namespace Lucene.Net.Util.Fst
                                 if (pos > 1)
                                 {
                                     int src = Random().Next(pos - 1);
-                                    int dest = TestUtil.NextInt(Random(), src + 1, pos - 1);
-                                    int len = TestUtil.NextInt(Random(), 1, Math.Min(300, pos - dest));
+                                    int dest = TestUtil.NextInt32(Random(), src + 1, pos - 1);
+                                    int len = TestUtil.NextInt32(Random(), 1, Math.Min(300, pos - dest));
                                     if (VERBOSE)
                                     {
                                         Console.WriteLine("    copyBytes src=" + src + " dest=" + dest + " len=" + len);
@@ -223,7 +223,7 @@ namespace Lucene.Net.Util.Fst
                     if (pos > 0 && Random().Next(50) == 17)
                     {
                         // truncate
-                        int len = TestUtil.NextInt(Random(), 1, Math.Min(pos, 100));
+                        int len = TestUtil.NextInt32(Random(), 1, Math.Min(pos, 100));
                         bytes.Truncate(pos - len);
                         pos -= len;
                         Arrays.Fill(expected, pos, pos + len, (byte)0);
@@ -252,7 +252,7 @@ namespace Lucene.Net.Util.Fst
                     bytes.WriteTo(@out);
                     @out.Dispose();
                     IndexInput @in = dir.OpenInput("bytes", IOContext.DEFAULT);
-                    bytesToVerify = new BytesStore(@in, numBytes, TestUtil.NextInt(Random(), 256, int.MaxValue));
+                    bytesToVerify = new BytesStore(@in, numBytes, TestUtil.NextInt32(Random(), 256, int.MaxValue));
                     @in.Dispose();
                     dir.Dispose();
                 }
@@ -341,7 +341,7 @@ namespace Lucene.Net.Util.Fst
 
             if (totalLength > 1)
             {
-                int numOps = TestUtil.NextInt(Random(), 100, 200);
+                int numOps = TestUtil.NextInt32(Random(), 100, 200);
                 for (int op = 0; op < numOps; op++)
                 {
 
@@ -349,7 +349,7 @@ namespace Lucene.Net.Util.Fst
                     int pos;
                     if (reversed)
                     {
-                        pos = TestUtil.NextInt(Random(), numBytes, totalLength - 1);
+                        pos = TestUtil.NextInt32(Random(), numBytes, totalLength - 1);
                     }
                     else
                     {

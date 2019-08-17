@@ -187,13 +187,13 @@ namespace Lucene.Net.Index
                             {
                                 Console.WriteLine(Thread.CurrentThread.Name + ": now long sleep");
                             }
-                            Thread.Sleep(TestUtil.NextInt(Random(), 50, 500));
+                            Thread.Sleep(TestUtil.NextInt32(Random(), 50, 500));
                         }
 
                         // Rate limit ingest rate:
                         if (Random().Next(7) == 5)
                         {
-                            Thread.Sleep(TestUtil.NextInt(Random(), 1, 10));
+                            Thread.Sleep(TestUtil.NextInt32(Random(), 1, 10));
                             if (VERBOSE)
                             {
                                 Console.WriteLine(Thread.CurrentThread.Name + ": done sleep");
@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
                                 docsList.Add(TestUtil.CloneDocument(doc));
                                 docIDs.Add(doc.Get("docid"));
 
-                                int maxDocCount = TestUtil.NextInt(Random(), 1, 10);
+                                int maxDocCount = TestUtil.NextInt32(Random(), 1, 10);
                                 while (docsList.Count < maxDocCount)
                                 {
                                     doc = docs.NextDoc();
@@ -401,7 +401,7 @@ namespace Lucene.Net.Index
 
         protected internal virtual void RunSearchThreads(long stopTime)
         {
-            int numThreads = TestUtil.NextInt(Random(), 1, 5);
+            int numThreads = TestUtil.NextInt32(Random(), 1, 5);
             ThreadClass[] searchThreads = new ThreadClass[numThreads];
             AtomicInt32 totHits = new AtomicInt32();
 
@@ -570,7 +570,7 @@ namespace Lucene.Net.Index
                 ((BaseDirectoryWrapper)dir).CheckIndexOnClose = false; // don't double-checkIndex, we do it ourselves.
             }
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetInfoStream(new FailOnNonBulkMergesInfoStream());
 
             if (LuceneTestCase.TEST_NIGHTLY)
@@ -606,7 +606,7 @@ namespace Lucene.Net.Index
 
             DoAfterWriter(es);
 
-            int NUM_INDEX_THREADS = TestUtil.NextInt(Random(), 2, 4);
+            int NUM_INDEX_THREADS = TestUtil.NextInt32(Random(), 2, 4);
 
             int RUN_TIME_SEC = LuceneTestCase.TEST_NIGHTLY ? 300 : RANDOM_MULTIPLIER;
 

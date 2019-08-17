@@ -42,7 +42,7 @@ namespace Lucene.Net.Facet
             int iters = AtLeast(1000);
             for (int i = 0; i < iters; i++)
             {
-                int numParts = TestUtil.NextInt(Random(), 1, 6);
+                int numParts = TestUtil.NextInt32(Random(), 1, 6);
                 string[] parts = new string[numParts];
                 for (int j = 0; j < numParts; j++)
                 {

@@ -52,7 +52,7 @@ namespace Lucene.Net.Util
             Random r2 = new Random((int)seed);
             while (netBytes < 1.1 * int.MaxValue)
             {
-                int numBytes = TestUtil.NextInt(r2, 1, 32768);
+                int numBytes = TestUtil.NextInt32(r2, 1, 32768);
                 byte[] bytes = new byte[numBytes];
                 r2.NextBytes(bytes);
                 dataOutput.WriteBytes(bytes, bytes.Length);
@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
             netBytes = 0;
             while (netBytes < 1.1 * int.MaxValue)
             {
-                int numBytes = TestUtil.NextInt(r2, 1, 32768);
+                int numBytes = TestUtil.NextInt32(r2, 1, 32768);
                 var bytes = new byte[numBytes];
                 r2.NextBytes(bytes);
                 BytesRef expected = new BytesRef(bytes);

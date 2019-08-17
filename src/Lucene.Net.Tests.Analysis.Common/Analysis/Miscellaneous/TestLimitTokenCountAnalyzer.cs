@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             foreach (bool consumeAll in new bool[] { true, false })
             {
                 Store.Directory dir = NewDirectory();
-                int limit = TestUtil.NextInt(Random(), 50, 101000);
+                int limit = TestUtil.NextInt32(Random(), 50, 101000);
                 MockAnalyzer mock = new MockAnalyzer(Random());
 
                 // if we are consuming all tokens, we can use the checks, 

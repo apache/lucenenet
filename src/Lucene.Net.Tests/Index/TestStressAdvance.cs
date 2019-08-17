@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // test advance()
-                    int inc = TestUtil.NextInt(Random(), 1, expected.Count - 1 - upto);
+                    int inc = TestUtil.NextInt32(Random(), 1, expected.Count - 1 - upto);
                     if (VERBOSE)
                     {
                         Console.WriteLine("    do advance inc=" + inc);

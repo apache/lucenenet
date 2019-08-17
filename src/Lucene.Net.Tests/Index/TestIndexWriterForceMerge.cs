@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             doc.Add(NewStringField("content", "aaa", Field.Store.NO));
             int incrMin = TEST_NIGHTLY ? 15 : 40;
-            for (int numDocs = 10; numDocs < 500; numDocs += TestUtil.NextInt(Random(), incrMin, 5 * incrMin))
+            for (int numDocs = 10; numDocs < 500; numDocs += TestUtil.NextInt32(Random(), incrMin, 5 * incrMin))
             {
                 LogDocMergePolicy ldmp = new LogDocMergePolicy();
                 ldmp.MinMergeDocs = 1;

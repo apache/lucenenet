@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
         {
             IList<string> postingsList = new List<string>();
             int numTerms = AtLeast(300);
-            int maxTermsPerDoc = TestUtil.NextInt(Random(), 10, 20);
+            int maxTermsPerDoc = TestUtil.NextInt32(Random(), 10, 20);
             bool isSimpleText = "SimpleText".Equals(TestUtil.GetPostingsFormat("field"), StringComparison.Ordinal);
 
             IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
 
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
 
-            int threadCount = TestUtil.NextInt(Random(), 1, 5);
+            int threadCount = TestUtil.NextInt32(Random(), 1, 5);
             if (VERBOSE)
             {
                 Console.WriteLine("config: " + iw.w.Config);

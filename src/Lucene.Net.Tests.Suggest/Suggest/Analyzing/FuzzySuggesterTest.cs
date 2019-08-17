@@ -738,7 +738,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             for (int i = 0; i < numQueries; i++)
             {
-                int numTokens = TestUtil.NextInt(Random(), 1, 4);
+                int numTokens = TestUtil.NextInt32(Random(), 1, 4);
                 string key;
                 string analyzedKey;
                 while (true)
@@ -835,7 +835,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     Console.WriteLine("\nTEST: prefix=" + prefix);
                 }
 
-                int topN = TestUtil.NextInt(Random(), 1, 10);
+                int topN = TestUtil.NextInt32(Random(), 1, 10);
                 IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence(prefix, Random()).ToString(), false, topN);
 
                 // 2. go thru whole set to find suggestions:
@@ -1093,7 +1093,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         private string RandomSimpleString(int maxLen)
         {
-            int len = TestUtil.NextInt(Random(), 1, maxLen);
+            int len = TestUtil.NextInt32(Random(), 1, maxLen);
             char[] chars = new char[len];
             for (int j = 0; j < len; j++)
             {

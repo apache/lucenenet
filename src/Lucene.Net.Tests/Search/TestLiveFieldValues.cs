@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
 
             LiveFieldValues<IndexSearcher, int?> rt = new LiveFieldValuesAnonymousInnerClassHelper(mgr, missing);
 
-            int numThreads = TestUtil.NextInt(Random(), 2, 5);
+            int numThreads = TestUtil.NextInt32(Random(), 2, 5);
             if (VERBOSE)
             {
                 Console.WriteLine(numThreads + " threads");
@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
             IList<ThreadClass> threads = new List<ThreadClass>();
 
             int iters = AtLeast(1000);
-            int idCount = TestUtil.NextInt(Random(), 100, 10000);
+            int idCount = TestUtil.NextInt32(Random(), 100, 10000);
 
             double reopenChance = Random().NextDouble() * 0.01;
             double deleteChance = Random().NextDouble() * 0.25;

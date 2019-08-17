@@ -204,7 +204,7 @@ namespace Lucene.Net.Search
 
             while (end.Get() < docCount)
             {
-                int inc = TestUtil.NextInt(Random(), 1, 1000);
+                int inc = TestUtil.NextInt32(Random(), 1, 1000);
                 end.AddAndGet(inc);
                 scorer.Score(c, end.Get());
             }

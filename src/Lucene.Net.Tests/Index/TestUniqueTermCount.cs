@@ -86,11 +86,11 @@ namespace Lucene.Net.Index
         {
             StringBuilder sb = new StringBuilder();
             HashSet<string> terms = new HashSet<string>();
-            int num = TestUtil.NextInt(Random(), 0, 255);
+            int num = TestUtil.NextInt32(Random(), 0, 255);
             for (int i = 0; i < num; i++)
             {
                 sb.append(' ');
-                char term = (char)TestUtil.NextInt(Random(), 'a', 'z');
+                char term = (char)TestUtil.NextInt32(Random(), 'a', 'z');
                 sb.append(term);
                 terms.add("" + term);
             }

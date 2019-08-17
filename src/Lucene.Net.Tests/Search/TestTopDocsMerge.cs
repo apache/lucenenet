@@ -129,7 +129,7 @@ namespace Lucene.Net.Search
                 for (int contentIDX = 0; contentIDX < content.Length; contentIDX++)
                 {
                     StringBuilder sb = new StringBuilder();
-                    int numTokens = TestUtil.NextInt(Random(), 1, 10);
+                    int numTokens = TestUtil.NextInt32(Random(), 1, 10);
                     for (int tokenIDX = 0; tokenIDX < numTokens; tokenIDX++)
                     {
                         sb.Append(tokens[Random().Next(tokens.Length)]).Append(' ');
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    SortField[] randomSortFields = new SortField[TestUtil.NextInt(Random(), 1, 3)];
+                    SortField[] randomSortFields = new SortField[TestUtil.NextInt32(Random(), 1, 3)];
                     for (int sortIDX = 0; sortIDX < randomSortFields.Length; sortIDX++)
                     {
                         randomSortFields[sortIDX] = sortFields[Random().Next(sortFields.Count)];
@@ -232,7 +232,7 @@ namespace Lucene.Net.Search
                     sort = new Sort(randomSortFields);
                 }
 
-                int numHits = TestUtil.NextInt(Random(), 1, numDocs + 5);
+                int numHits = TestUtil.NextInt32(Random(), 1, numDocs + 5);
                 //final int numHits = 5;
 
                 if (VERBOSE)
@@ -250,7 +250,7 @@ namespace Lucene.Net.Search
                     {
                         TopScoreDocCollector c = TopScoreDocCollector.Create(numHits, Random().NextBoolean());
                         searcher.Search(query, c);
-                        from = TestUtil.NextInt(Random(), 0, numHits - 1);
+                        from = TestUtil.NextInt32(Random(), 0, numHits - 1);
                         size = numHits - from;
                         TopDocs tempTopHits = c.GetTopDocs();
                         if (from < tempTopHits.ScoreDocs.Length)
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search
                     searcher.Search(query, c);
                     if (useFrom)
                     {
-                        from = TestUtil.NextInt(Random(), 0, numHits - 1);
+                        from = TestUtil.NextInt32(Random(), 0, numHits - 1);
                         size = numHits - from;
                         TopDocs tempTopHits = c.GetTopDocs();
                         if (from < tempTopHits.ScoreDocs.Length)

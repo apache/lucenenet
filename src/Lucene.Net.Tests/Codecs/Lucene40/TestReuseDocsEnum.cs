@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs.Lucene40
             Directory dir = NewDirectory();
             Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat());
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetCodec(cp));
             int numdocs = AtLeast(20);

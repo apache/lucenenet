@@ -641,7 +641,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 // must be > 4096 so it spans multiple chunks
-                int termCount = TestUtil.NextInt(Random(), 4097, 8200);
+                int termCount = TestUtil.NextInt32(Random(), 4097, 8200);
 
                 IList<string> doc = new List<string>();
 
@@ -687,7 +687,7 @@ namespace Lucene.Net.Search
                     {
                         // pick existing sub-phrase
                         IList<string> lastDoc = docs[r.Next(docs.Count)];
-                        int len = TestUtil.NextInt(r, 1, 10);
+                        int len = TestUtil.NextInt32(r, 1, 10);
                         int start = r.Next(lastDoc.Count - len);
                         for (int k = start; k < start + len; k++)
                         {
@@ -713,7 +713,7 @@ namespace Lucene.Net.Search
                 int docID = r.Next(docs.Count);
                 IList<string> doc = docs[docID];
 
-                int numTerm = TestUtil.NextInt(r, 2, 20);
+                int numTerm = TestUtil.NextInt32(r, 2, 20);
                 int start = r.Next(doc.Count - numTerm);
                 PhraseQuery pq = new PhraseQuery();
                 StringBuilder sb = new StringBuilder();

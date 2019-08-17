@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
 
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             Similarity provider = new MySimProvider(this);

@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
 
                 doc.Add(new Int32Field("id", id, Field.Store.NO));
 
-                int termCount = TestUtil.NextInt(Random(), 0, 20 * RANDOM_MULTIPLIER);
+                int termCount = TestUtil.NextInt32(Random(), 0, 20 * RANDOM_MULTIPLIER);
                 while (ordsForDocSet.Count < termCount)
                 {
                     ordsForDocSet.Add(Random().Next(termsArray.Length));
@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
 
             HashSet<string> prefixes = new HashSet<string>();
-            int numPrefix = TestUtil.NextInt(Random(), 2, 7);
+            int numPrefix = TestUtil.NextInt32(Random(), 2, 7);
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: use " + numPrefix + " prefixes");
@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
 
                 doc.Add(new Int32Field("id", id, Field.Store.NO));
 
-                int termCount = TestUtil.NextInt(Random(), 0, 20 * RANDOM_MULTIPLIER);
+                int termCount = TestUtil.NextInt32(Random(), 0, 20 * RANDOM_MULTIPLIER);
                 while (ordsForDocSet.Count < termCount)
                 {
                     ordsForDocSet.Add(Random().Next(termsArray.Length));
@@ -337,7 +337,7 @@ namespace Lucene.Net.Index
 
         private void Verify(AtomicReader r, int[][] idToOrds, BytesRef[] termsArray, BytesRef prefixRef)
         {
-            DocTermOrds dto = new DocTermOrds(r, r.LiveDocs, "field", prefixRef, int.MaxValue, TestUtil.NextInt(Random(), 2, 10));
+            DocTermOrds dto = new DocTermOrds(r, r.LiveDocs, "field", prefixRef, int.MaxValue, TestUtil.NextInt32(Random(), 2, 10));
 
             FieldCache.Int32s docIDToID = FieldCache.DEFAULT.GetInt32s(r, "id", false);
             /*

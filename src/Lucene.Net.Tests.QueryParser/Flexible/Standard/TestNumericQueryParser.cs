@@ -188,7 +188,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), directory,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-                    .SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000))
+                    .SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 50, 1000))
                     .SetMergePolicy(NewLogMergePolicy()));
 
             Document doc = new Document();

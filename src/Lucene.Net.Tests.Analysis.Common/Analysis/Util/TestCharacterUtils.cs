@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Util
             for (int i = 0; i < 10; ++i)
             {
                 var s = TestUtil.RandomUnicodeString(Random()).toCharArray();
-                var index = TestUtil.NextInt(Random(), 0, s.Length);
+                var index = TestUtil.NextInt32(Random(), 0, s.Length);
                 var offset = Random().Next(7) - 3;
                 try
                 {
@@ -156,9 +156,9 @@ namespace Lucene.Net.Analysis.Util
             
             var restored = new char[buf.Length];
             
-            var o1 = TestUtil.NextInt(Random(), 0, Math.Min(5, orig.Length));
-            var o2 = TestUtil.NextInt(Random(), 0, o1);
-            var o3 = TestUtil.NextInt(Random(), 0, o1);
+            var o1 = TestUtil.NextInt32(Random(), 0, Math.Min(5, orig.Length));
+            var o2 = TestUtil.NextInt32(Random(), 0, o1);
+            var o3 = TestUtil.NextInt32(Random(), 0, o1);
             var codePointCount = charUtils.ToCodePoints(orig, o1, orig.Length - o1, buf, o2);
             var charCount = charUtils.ToChars(buf, o2, codePointCount, restored, o3);
             assertEquals(orig.Length - o1, charCount);

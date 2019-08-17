@@ -372,7 +372,7 @@ namespace Lucene.Net.Analysis.CharFilters
             AssertHTMLStripsTo(test, gold, null);
 
             StringBuilder testBuilder = new StringBuilder("<!--");
-            AppendChars(testBuilder, TestUtil.NextInt(Random(), 0, 1000));
+            AppendChars(testBuilder, TestUtil.NextInt32(Random(), 0, 1000));
             gold = "";
             AssertHTMLStripsTo(testBuilder.ToString(), gold, null);
         }
@@ -625,8 +625,8 @@ namespace Lucene.Net.Analysis.CharFilters
             int maxNumWords = 10000;
             int minWordLength = 3;
             int maxWordLength = 20;
-            int numWords = TestUtil.NextInt(Random(), minNumWords, maxNumWords);
-            switch (TestUtil.NextInt(Random(), 0, 4))
+            int numWords = TestUtil.NextInt32(Random(), minNumWords, maxNumWords);
+            switch (TestUtil.NextInt32(Random(), 0, 4))
             {
                 case 0:
                     {

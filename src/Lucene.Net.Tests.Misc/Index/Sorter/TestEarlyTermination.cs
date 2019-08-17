@@ -57,7 +57,7 @@ namespace Lucene.Net.Index.Sorter
         {
             dir = NewDirectory();
             numDocs = AtLeast(150);
-            int numTerms = TestUtil.NextInt(Random(), 1, numDocs / 5);
+            int numTerms = TestUtil.NextInt32(Random(), 1, numDocs / 5);
             ISet<string> randomTerms = new HashSet<string>();
             while (randomTerms.size() < numTerms)
             {
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index.Sorter
         public void TestEarlyTermination_()
         {
             CreateRandomIndexes(5);
-            int numHits = TestUtil.NextInt(Random(), 1, numDocs / 10);
+            int numHits = TestUtil.NextInt32(Random(), 1, numDocs / 10);
             Sort sort = new Sort(new SortField("ndv1", SortFieldType.INT64, false));
             bool fillFields = Random().nextBoolean();
             bool trackDocScores = Random().nextBoolean();
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index.Sorter
             // test that the collector works correctly when the index was sorted by a
             // different sorter than the one specified in the ctor.
             CreateRandomIndexes(5);
-            int numHits = TestUtil.NextInt(Random(), 1, numDocs / 10);
+            int numHits = TestUtil.NextInt32(Random(), 1, numDocs / 10);
             Sort sort = new Sort(new SortField("ndv2", SortFieldType.INT64, false));
             bool fillFields = Random().nextBoolean();
             bool trackDocScores = Random().nextBoolean();

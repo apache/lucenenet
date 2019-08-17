@@ -174,7 +174,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             Random random = new Random(Random().Next());
             foreach (String prefix in allPrefixes)
             {
-                int topN = TestUtil.NextInt(random, 1, 10);
+                int topN = TestUtil.NextInt32(random, 1, 10);
                 IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence(prefix, random).ToString(), false, topN);
 
                 // 2. go thru whole treemap (slowCompletor) and check its actually the best suggestion

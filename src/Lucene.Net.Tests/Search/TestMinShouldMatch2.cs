@@ -129,7 +129,7 @@ namespace Lucene.Net.Search
         {
             IList<string> list = Arrays.AsList(values);
             Collections.Shuffle(list);
-            int howMany = TestUtil.NextInt(Random(), 1, list.Count);
+            int howMany = TestUtil.NextInt32(Random(), 1, list.Count);
             for (int i = 0; i < howMany; i++)
             {
                 doc.Add(new StringField("field", list[i], Field.Store.NO));

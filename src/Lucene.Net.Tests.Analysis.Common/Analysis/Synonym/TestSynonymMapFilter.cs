@@ -458,7 +458,7 @@ namespace Lucene.Net.Analysis.Synonym
         public virtual void TestRandom()
         {
 
-            int alphabetSize = TestUtil.NextInt(Random(), 2, 7);
+            int alphabetSize = TestUtil.NextInt32(Random(), 2, 7);
 
             int docLen = AtLeast(3000);
             //final int docLen = 50;
@@ -483,7 +483,7 @@ namespace Lucene.Net.Analysis.Synonym
             b = new SynonymMap.Builder(dedup);
             for (int synIDX = 0; synIDX < numSyn; synIDX++)
             {
-                string synIn = GetRandomString('a', alphabetSize, TestUtil.NextInt(Random(), 1, 5)).Trim();
+                string synIn = GetRandomString('a', alphabetSize, TestUtil.NextInt32(Random(), 1, 5)).Trim();
                 OneSyn s = synMap.ContainsKey(synIn) ? synMap[synIn] : null;
                 if (s == null)
                 {
@@ -494,7 +494,7 @@ namespace Lucene.Net.Analysis.Synonym
                     synMap[synIn] = s;
                     s.keepOrig = Random().nextBoolean();
                 }
-                string synOut = GetRandomString('0', 10, TestUtil.NextInt(Random(), 1, 5)).Trim();
+                string synOut = GetRandomString('0', 10, TestUtil.NextInt32(Random(), 1, 5)).Trim();
                 s.@out.Add(synOut);
                 Add(synIn, synOut, s.keepOrig);
                 if (VERBOSE)

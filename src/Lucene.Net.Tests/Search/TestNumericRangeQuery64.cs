@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
             NoDocs = AtLeast(4096);
             Distance = (1L << 60) / NoDocs;
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
 
             FieldType storedLong = new FieldType(Int64Field.TYPE_NOT_STORED);
             storedLong.IsStored = true;
@@ -434,7 +434,7 @@ namespace Lucene.Net.Search
         {
             string field = "field" + precisionStep;
             int totalTermCountT = 0, totalTermCountC = 0, termCountT, termCountC;
-            int num = TestUtil.NextInt(Random(), 10, 20);
+            int num = TestUtil.NextInt32(Random(), 10, 20);
             for (int i = 0; i < num; i++)
             {
                 long lower = (long)(Random().NextDouble() * NoDocs * Distance) + StartOffset;
@@ -583,7 +583,7 @@ namespace Lucene.Net.Search
         {
             string field = "ascfield" + precisionStep;
             // 10 random tests
-            int num = TestUtil.NextInt(Random(), 10, 20);
+            int num = TestUtil.NextInt32(Random(), 10, 20);
             for (int i = 0; i < num; i++)
             {
                 long lower = (long)(Random().NextDouble() * NoDocs - NoDocs / 2);
@@ -682,7 +682,7 @@ namespace Lucene.Net.Search
             string field = "field" + precisionStep;
             // 10 random tests, the index order is ascending,
             // so using a reverse sort field should retun descending documents
-            int num = TestUtil.NextInt(Random(), 10, 20);
+            int num = TestUtil.NextInt32(Random(), 10, 20);
             for (int i = 0; i < num; i++)
             {
                 long lower = (long)(Random().NextDouble() * NoDocs * Distance) + StartOffset;

@@ -388,7 +388,7 @@ namespace Lucene.Net.Store
             int num = AtLeast(10);
             for (int i = 0; i < num; i++)
             {
-                AssertChunking(Random(), TestUtil.NextInt(Random(), 20, 100));
+                AssertChunking(Random(), TestUtil.NextInt32(Random(), 20, 100));
             }
         }
 

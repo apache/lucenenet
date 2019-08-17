@@ -501,7 +501,7 @@ namespace Lucene.Net.Util
             // test ensureCapacityWords
             int numWords = Random().Next(10) + 2; // make sure we grow the array (at least 128 bits)
             bits.EnsureCapacityWords(numWords);
-            bit = TestUtil.NextInt(Random(), 127, (numWords << 6) - 1); // pick a bit >= to 128, but still within range
+            bit = TestUtil.NextInt32(Random(), 127, (numWords << 6) - 1); // pick a bit >= to 128, but still within range
             bits.FastSet(bit);
             Assert.IsTrue(bits.FastGet(bit));
             bits.FastClear(bit);

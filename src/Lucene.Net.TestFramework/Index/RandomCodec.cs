@@ -148,9 +148,9 @@ namespace Lucene.Net.Index
             this.perFieldSeed = random.Next();
             // TODO: make it possible to specify min/max iterms per
             // block via CL:
-            int minItemsPerBlock = TestUtil.NextInt(random, 2, 100);
+            int minItemsPerBlock = TestUtil.NextInt32(random, 2, 100);
             int maxItemsPerBlock = 2 * (Math.Max(2, minItemsPerBlock - 1)) + random.Next(100);
-            int lowFreqCutoff = TestUtil.NextInt(random, 2, 100);
+            int lowFreqCutoff = TestUtil.NextInt32(random, 2, 100);
 
             Add(avoidCodecs,
                 new Lucene41PostingsFormat(minItemsPerBlock, maxItemsPerBlock),
@@ -167,8 +167,8 @@ namespace Lucene.Net.Index
                 //with such "wrapper" classes?
                 new TestBloomFilteredLucene41Postings(), 
                 new MockSepPostingsFormat(), 
-                new MockFixedInt32BlockPostingsFormat(TestUtil.NextInt(random, 1, 2000)),
-                new MockVariableInt32BlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), 
+                new MockFixedInt32BlockPostingsFormat(TestUtil.NextInt32(random, 1, 2000)),
+                new MockVariableInt32BlockPostingsFormat(TestUtil.NextInt32(random, 1, 127)), 
                 new MockRandomPostingsFormat(random),
                 new NestedPulsingPostingsFormat(), 
                 new Lucene41WithOrds(), 

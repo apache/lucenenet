@@ -90,7 +90,7 @@ namespace Lucene.Net.Util
 
             for (int i = 0; i < iter; i++)
             {
-                int sz = TestUtil.NextInt(Random(), 2, maxSize);
+                int sz = TestUtil.NextInt32(Random(), 2, maxSize);
                 BitArray a = new BitArray(sz);
                 Int64BitSet b = new Int64BitSet(sz);
 

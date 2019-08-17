@@ -279,7 +279,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             long lastDeleteTime = 0;
-            int targetNumDelete = TestUtil.NextInt(Random(), 1, 5);
+            int targetNumDelete = TestUtil.NextInt32(Random(), 1, 5);
             while (policy.NumDelete < targetNumDelete)
             {
                 // Record last time when writer performed deletes of

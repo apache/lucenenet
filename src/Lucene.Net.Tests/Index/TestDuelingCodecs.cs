@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
             long seed = Random().Next();
 
             // must use same seed because of random payloads, etc
-            int maxTermLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            int maxTermLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
             MockAnalyzer leftAnalyzer = new MockAnalyzer(new Random((int)seed));
             leftAnalyzer.MaxTokenLength = maxTermLength;
             MockAnalyzer rightAnalyzer = new MockAnalyzer(new Random((int)seed));

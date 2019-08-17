@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, r.Leaves.Count);
             AtomicReader ar = (AtomicReader)r.Leaves[0].Reader;
 
-            int numThreads = TestUtil.NextInt(Random(), 2, 5);
+            int numThreads = TestUtil.NextInt32(Random(), 2, 5);
             IList<ThreadClass> threads = new List<ThreadClass>();
             CountdownEvent startingGun = new CountdownEvent(1);
             for (int t = 0; t < numThreads; t++)
@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
 
             long END_TIME = Environment.TickCount + (TEST_NIGHTLY ? 30 : 1);
 
-            int NUM_THREADS = TestUtil.NextInt(Random(), 1, 10);
+            int NUM_THREADS = TestUtil.NextInt32(Random(), 1, 10);
             ThreadClass[] threads = new ThreadClass[NUM_THREADS];
             for (int thread = 0; thread < NUM_THREADS; thread++)
             {

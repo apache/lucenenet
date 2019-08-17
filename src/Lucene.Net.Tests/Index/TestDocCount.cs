@@ -61,10 +61,10 @@ namespace Lucene.Net.Index
         private IEnumerable<IIndexableField> Doc()
         {
             Document doc = new Document();
-            int numFields = TestUtil.NextInt(Random(), 1, 10);
+            int numFields = TestUtil.NextInt32(Random(), 1, 10);
             for (int i = 0; i < numFields; i++)
             {
-                doc.Add(NewStringField("" + TestUtil.NextInt(Random(), 'a', 'z'), "" + TestUtil.NextInt(Random(), 'a', 'z'), Field.Store.NO));
+                doc.Add(NewStringField("" + TestUtil.NextInt32(Random(), 'a', 'z'), "" + TestUtil.NextInt32(Random(), 'a', 'z'), Field.Store.NO));
             }
             return doc;
         }
