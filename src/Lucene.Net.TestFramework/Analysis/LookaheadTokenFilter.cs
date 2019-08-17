@@ -41,16 +41,16 @@ namespace Lucene.Net.Analysis
         public class Position : Lucene.Net.Util.RollingBuffer.IResettable // LUCENENET TODO: API - De-nest and rename LookaheadTokenFilterPosition
         {
             // Buffered input tokens at this position:
-            public readonly IList<AttributeSource.State> InputTokens = new List<AttributeSource.State>();
+            public IList<AttributeSource.State> InputTokens { get; private set; } = new List<AttributeSource.State>();
 
             // Next buffered token to be returned to consumer:
-            public int NextRead;
+            public int NextRead { get; set; }
 
             // Any token leaving from this position should have this startOffset:
-            public int StartOffset = -1;
+            public int StartOffset { get; set; } = -1;
 
             // Any token arriving to this position should have this endOffset:
-            public int EndOffset = -1;
+            public int EndOffset { get; set; } = -1;
 
             public void Reset()
             {
