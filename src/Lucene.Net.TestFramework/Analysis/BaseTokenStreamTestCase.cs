@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public sealed class CheckClearAttributesAttribute : Attribute, ICheckClearAttributesAttribute // LUCENENET TODO: API - de-nest
         {
-            internal bool clearCalled = false;
+            private bool clearCalled = false;
 
             public bool AndResetClearCalled
             {
@@ -548,7 +548,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// utility method for blasting tokenstreams with data to make sure they don't do anything crazy
-        ///
+        /// <para/>
         /// LUCENENET specific
         /// Non-static to reduce the inter-class dependencies due to use of
         /// static variables
