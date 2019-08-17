@@ -75,14 +75,14 @@ namespace Lucene.Net.Index
 
         private class SubDocs
         {
-            public readonly string packID;
-            public readonly IList<string> subIDs;
-            public bool deleted;
+            public string PackID { get; private set; }
+            public IList<string> SubIDs { get; private set; }
+            public bool Deleted { get; set; }
 
             public SubDocs(string packID, IList<string> subIDs)
             {
-                this.packID = packID;
-                this.subIDs = subIDs;
+                this.PackID = packID;
+                this.SubIDs = subIDs;
             }
         }
 
@@ -228,10 +228,10 @@ namespace Lucene.Net.Index
                                 if (toDeleteSubDocs.Count > 0 && Random().NextBoolean())
                                 {
                                     delSubDocs = toDeleteSubDocs[Random().Next(toDeleteSubDocs.Count)];
-                                    Debug.Assert(!delSubDocs.deleted);
+                                    Debug.Assert(!delSubDocs.Deleted);
                                     toDeleteSubDocs.Remove(delSubDocs);
                                     // Update doc block, replacing prior packID
-                                    packID = delSubDocs.packID;
+                                    packID = delSubDocs.PackID;
                                 }
                                 else
                                 {
@@ -267,12 +267,12 @@ namespace Lucene.Net.Index
 
                                 if (delSubDocs != null)
                                 {
-                                    delSubDocs.deleted = true;
-                                    delIDs.AddAll(delSubDocs.subIDs);
-                                    outerInstance.m_delCount.AddAndGet(delSubDocs.subIDs.Count);
+                                    delSubDocs.Deleted = true;
+                                    delIDs.AddAll(delSubDocs.SubIDs);
+                                    outerInstance.m_delCount.AddAndGet(delSubDocs.SubIDs.Count);
                                     if (VERBOSE)
                                     {
-                                        Console.WriteLine(Thread.CurrentThread.Name + ": update pack packID=" + delSubDocs.packID + " count=" + docsList.Count + " docs=" + Arrays.ToString(docIDs));
+                                        Console.WriteLine(Thread.CurrentThread.Name + ": update pack packID=" + delSubDocs.PackID + " count=" + docsList.Count + " docs=" + Arrays.ToString(docIDs));
                                     }
                                     outerInstance.UpdateDocuments(packIDTerm, docsList);
                                 }
@@ -363,16 +363,16 @@ namespace Lucene.Net.Index
 
                             foreach (SubDocs subDocs in toDeleteSubDocs)
                             {
-                                Debug.Assert(!subDocs.deleted);
-                                delPackIDs.Add(subDocs.packID);
-                                outerInstance.DeleteDocuments(new Term("packID", subDocs.packID));
-                                subDocs.deleted = true;
+                                Debug.Assert(!subDocs.Deleted);
+                                delPackIDs.Add(subDocs.PackID);
+                                outerInstance.DeleteDocuments(new Term("packID", subDocs.PackID));
+                                subDocs.Deleted = true;
                                 if (VERBOSE)
                                 {
-                                    Console.WriteLine(Thread.CurrentThread.Name + ": del subs: " + subDocs.subIDs + " packID=" + subDocs.packID);
+                                    Console.WriteLine(Thread.CurrentThread.Name + ": del subs: " + subDocs.SubIDs + " packID=" + subDocs.PackID);
                                 }
-                                delIDs.AddAll(subDocs.subIDs);
-                                outerInstance.m_delCount.AddAndGet(subDocs.subIDs.Count);
+                                delIDs.AddAll(subDocs.SubIDs);
+                                outerInstance.m_delCount.AddAndGet(subDocs.SubIDs.Count);
                             }
                             toDeleteSubDocs.Clear();
                         }
@@ -678,13 +678,13 @@ namespace Lucene.Net.Index
             // Verify: make sure each group of sub-docs are still in docID order:
             foreach (SubDocs subDocs in allSubDocs.ToList())
             {
-                TopDocs hits = s.Search(new TermQuery(new Term("packID", subDocs.packID)), 20);
-                if (!subDocs.deleted)
+                TopDocs hits = s.Search(new TermQuery(new Term("packID", subDocs.PackID)), 20);
+                if (!subDocs.Deleted)
                 {
                     // We sort by relevance but the scores should be identical so sort falls back to by docID:
-                    if (hits.TotalHits != subDocs.subIDs.Count)
+                    if (hits.TotalHits != subDocs.SubIDs.Count)
                     {
-                        Console.WriteLine("packID=" + subDocs.packID + ": expected " + subDocs.subIDs.Count + " hits but got " + hits.TotalHits);
+                        Console.WriteLine("packID=" + subDocs.PackID + ": expected " + subDocs.SubIDs.Count + " hits but got " + hits.TotalHits);
                         doFail = true;
                     }
                     else
@@ -704,11 +704,11 @@ namespace Lucene.Net.Index
                             }
                             lastDocID = docID;
                             Document doc = s.Doc(docID);
-                            assertEquals(subDocs.packID, doc.Get("packID"));
+                            assertEquals(subDocs.PackID, doc.Get("packID"));
                         }
 
                         lastDocID = startDocID - 1;
-                        foreach (string subID in subDocs.subIDs)
+                        foreach (string subID in subDocs.SubIDs)
                         {
                             hits = s.Search(new TermQuery(new Term("docid", subID)), 1);
                             assertEquals(1, hits.TotalHits);
@@ -726,7 +726,7 @@ namespace Lucene.Net.Index
                     // Pack was deleted -- make sure its docs are
                     // deleted.  We can't verify packID is deleted
                     // because we can re-use packID for update:
-                    foreach (string subID in subDocs.subIDs)
+                    foreach (string subID in subDocs.SubIDs)
                     {
                         assertEquals(0, s.Search(new TermQuery(new Term("docid", subID)), 1).TotalHits);
                     }
