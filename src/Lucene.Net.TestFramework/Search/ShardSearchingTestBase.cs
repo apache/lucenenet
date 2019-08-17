@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Console = Lucene.Net.Support.SystemConsole;
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+using System.Runtime.Serialization;
+#endif
 
 namespace Lucene.Net.Search
 {
@@ -53,12 +56,29 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Thrown when the lease for a searcher has expired.
         /// </summary>
-        public class SearcherExpiredException : Exception // LUCENENET TODO: API - de-nest, make serializable
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+        [Serializable]
+#endif
+        public class SearcherExpiredException : Exception // LUCENENET TODO: API - de-nest
         {
             public SearcherExpiredException(string message)
                 : base(message)
             {
             }
+
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+            /// <summary>
+            /// Initializes a new instance of this class with serialized data.
+            /// </summary>
+            /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+            protected SearcherExpiredException(SerializationInfo info, StreamingContext context)
+                : base(info, context)
+            {
+            }
+#endif
         }
 
         internal class FieldAndShardVersion

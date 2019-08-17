@@ -10,6 +10,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Console = Lucene.Net.Support.SystemConsole;
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+using System.Runtime.Serialization;
+#endif
 
 namespace Lucene.Net.Store
 {
@@ -1503,8 +1506,26 @@ namespace Lucene.Net.Store
         /// Use this when throwing fake <see cref="IOException"/>,
         /// e.g. from <see cref="MockDirectoryWrapper.Failure"/>.
         /// </summary>
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+        [Serializable]
+#endif
         public class FakeIOException : System.IO.IOException // LUCENENET TDOO: API - de-nest
         {
+            public FakeIOException() { } // LUCENENET specific - added public constructor for serialization
+
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+            /// <summary>
+            /// Initializes a new instance of this class with serialized data.
+            /// </summary>
+            /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+            protected FakeIOException(SerializationInfo info, StreamingContext context)
+                : base(info, context)
+            {
+            }
+#endif
         }
     }
 }
