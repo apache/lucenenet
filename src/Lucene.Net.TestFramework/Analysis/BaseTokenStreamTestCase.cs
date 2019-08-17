@@ -599,8 +599,8 @@ namespace Lucene.Net.Analysis
             // NOTE: not volatile because we don't want the tests to
             // add memory barriers (ie alter how threads
             // interact)... so this is just "best effort":
-            public bool Failed;
-            public Exception FirstException = null;
+            public bool Failed { get; set; }
+            public Exception FirstException { get; set; } = null;
 
             /// <summary>
             /// <param name="outerInstance">
