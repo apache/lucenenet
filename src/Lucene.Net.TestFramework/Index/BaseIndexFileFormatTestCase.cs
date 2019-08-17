@@ -33,6 +33,10 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class BaseIndexFileFormatTestCase : LuceneTestCase
     {
+        // LUCENENET specific - this class was internal in Java, but we can't mark it that way
+        // because it has public subclasses. So we are creating an internal constructor instead.
+        internal BaseIndexFileFormatTestCase() { }
+
         /// <summary>
         /// Returns the codec to run tests against </summary>
         protected abstract Codec GetCodec();
