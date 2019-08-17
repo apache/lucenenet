@@ -163,11 +163,13 @@ namespace Lucene.Net.Util
             return new HashSet<T>(args);
         }
 
+        [ExceptionToNetNumericConvention] // LUCENENET: This is for making test porting easier, keeping as-is
         protected int randomInt(int max)
         {
             return randomIntBetween(0, max);
         }
 
+        [ExceptionToNetNumericConvention] // LUCENENET: This is for making test porting easier, keeping as-is
         protected int randomIntBetween(int min, int max)
         {
             Debug.Assert(max >= min, "max must be >= min: " + min + ", " + max);
@@ -182,6 +184,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [ExceptionToNetNumericConvention] // LUCENENET: This is for making test porting easier, keeping as-is
         private static int toIntExact(long value)
         {
             if (value > int.MaxValue)

@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
@@ -1206,6 +1207,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
+        [ExceptionToNetNumericConvention] // LUCENENET: Private API, keeping as-is
         internal static int[] ToIntArray(IList<int> list)
         {
             int[] ret = new int[list.Count];

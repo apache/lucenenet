@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -112,6 +113,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
+        [ExceptionToNetNumericConvention] // LUCENENET: Private API, keeping as-is
         private void AddShortsField(FieldInfo field, IndexOutput output, IEnumerable<long?> values)
         {
             field.PutAttribute(legacyKey, LegacyDocValuesType.FIXED_INTS_16.ToString());
@@ -123,6 +125,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
+        [ExceptionToNetNumericConvention] // LUCENENET: Private API, keeping as-is
         private void AddIntsField(FieldInfo field, IndexOutput output, IEnumerable<long?> values)
         {
             field.PutAttribute(legacyKey, LegacyDocValuesType.FIXED_INTS_32.ToString());
@@ -134,6 +137,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
+        [ExceptionToNetNumericConvention] // LUCENENET: Private API, keeping as-is
         private void AddVarIntsField(FieldInfo field, IndexOutput output, IEnumerable<long?> values, long minValue, long maxValue)
         {
             field.PutAttribute(legacyKey, LegacyDocValuesType.VAR_INTS.ToString());
@@ -442,6 +446,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         // the little vint encoding used for var-deref
+        [ExceptionToNetNumericConvention] // LUCENENET: Private API, keeping as-is
         private static void WriteVShort(IndexOutput o, int i)
         {
             Debug.Assert(i >= 0 && i <= short.MaxValue);
