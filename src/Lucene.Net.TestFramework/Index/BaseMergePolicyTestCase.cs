@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Create a new <see cref="Index.MergePolicy"/> instance. </summary>
-        protected internal abstract MergePolicy MergePolicy(); // LUCENENET TODO: API - Rename NewMergePolicy() for consistency
+        protected internal abstract MergePolicy NewMergePolicy(); // LUCENENET specific - renamed from MergePolicy() to be consistent
 
         [Test]
         public virtual void TestForceMergeNotNeeded()
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             AtomicBoolean mayMerge = new AtomicBoolean(true);
             MergeScheduler mergeScheduler = new SerialMergeSchedulerAnonymousInnerClassHelper(this, mayMerge);
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(mergeScheduler).SetMergePolicy(MergePolicy()));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(mergeScheduler).SetMergePolicy(NewMergePolicy()));
             writer.Config.MergePolicy.NoCFSRatio = Random().NextBoolean() ? 0 : 1;
             int numSegments = TestUtil.NextInt32(Random(), 2, 20);
             for (int i = 0; i < numSegments; ++i)
