@@ -182,8 +182,8 @@ namespace Lucene.Net.Util.Fst
         /// Holds one input/output pair. </summary>
         public class InputOutput<T1> : IComparable<InputOutput<T1>>
         {
-            public readonly Int32sRef Input;
-            public readonly T1 Output;
+            public Int32sRef Input { get; private set; }
+            public T1 Output { get; private set; }
 
             public InputOutput(Int32sRef input, T1 output)
             {
