@@ -79,11 +79,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// unique set of format names this codec knows about </summary>
-        public ISet<string> formatNames = new HashSet<string>(); // LUCENENET TODO: API - make property
+        public ISet<string> FormatNames { get; set; } = new HashSet<string>();
 
         /// <summary>
         /// unique set of docvalues format names this codec knows about </summary>
-        public ISet<string> dvFormatNames = new HashSet<string>(); // LUCENENET TODO: API - make property
+        public ISet<string> DvFormatNames { get; set; } = new HashSet<string>();
 
         /// <summary>
         /// memorized field->postingsformat mappings </summary>
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
                 if (!avoidCodecs.Contains(p.Name))
                 {
                     formats.Add(p);
-                    formatNames.Add(p.Name);
+                    FormatNames.Add(p.Name);
                 }
             }
         }
@@ -223,7 +223,7 @@ namespace Lucene.Net.Index
                 if (!avoidCodecs.Contains(d.Name))
                 {
                     dvFormats.Add(d);
-                    dvFormatNames.Add(d.Name);
+                    DvFormatNames.Add(d.Name);
                 }
             }
         }

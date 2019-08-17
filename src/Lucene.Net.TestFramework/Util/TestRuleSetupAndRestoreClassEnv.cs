@@ -353,7 +353,7 @@ namespace Lucene.Net.Util
 
             if (codec is RandomCodec && avoidCodecs.Count > 0)
             {
-                foreach (string name in ((RandomCodec)codec).formatNames)
+                foreach (string name in ((RandomCodec)codec).FormatNames)
                 {
                     LuceneTestCase.AssumeFalse("Class not allowed to use postings format: " + name + ".", ShouldAvoidCodec(name));
                 }
