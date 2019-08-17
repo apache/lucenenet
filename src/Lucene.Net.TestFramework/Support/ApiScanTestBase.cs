@@ -815,6 +815,11 @@ namespace Lucene.Net.Support
 
             foreach (var t in types)
             {
+                if (t.GetTypeInfo().IsDefined(typeof(ExceptionToNetNumericConventionAttribute)))
+                {
+                    continue;
+                }
+
                 if (ContainsNonNetNumeric.IsMatch(t.Name))
                 {
                     result.Add(t.FullName);

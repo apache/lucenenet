@@ -24,7 +24,7 @@ namespace Lucene.Net.Support
     /// the numeric naming conventions of "Int16", "Int32", "Int64", and "Single"
     /// that are commonly used in .NET method and property names.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Event, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method | AttributeTargets.Event | AttributeTargets.Class, AllowMultiple = false)]
     public class ExceptionToNetNumericConventionAttribute : Attribute
     {
     }
