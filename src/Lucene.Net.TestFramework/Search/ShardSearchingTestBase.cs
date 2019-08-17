@@ -78,16 +78,16 @@ namespace Lucene.Net.Search
                 return (int)(Version * NodeID + Field.GetHashCode());
             }
 
-            public override bool Equals(object _other)
+            public override bool Equals(object other)
             {
-                if (!(_other is FieldAndShardVersion))
+                if (!(other is FieldAndShardVersion))
                 {
                     return false;
                 }
 
-                FieldAndShardVersion other = (FieldAndShardVersion)_other;
+                FieldAndShardVersion other_ = (FieldAndShardVersion)other;
 
-                return Field.Equals(other.Field, StringComparison.Ordinal) && Version == other.Version && NodeID == other.NodeID;
+                return Field.Equals(other_.Field, StringComparison.Ordinal) && Version == other_.Version && NodeID == other_.NodeID;
             }
 
             public override string ToString()
@@ -114,16 +114,16 @@ namespace Lucene.Net.Search
                 return (int)(version * nodeID + term.GetHashCode());
             }
 
-            public override bool Equals(object _other)
+            public override bool Equals(object other)
             {
-                if (!(_other is TermAndShardVersion))
+                if (!(other is TermAndShardVersion))
                 {
                     return false;
                 }
 
-                TermAndShardVersion other = (TermAndShardVersion)_other;
+                TermAndShardVersion other_ = (TermAndShardVersion)other;
 
-                return term.Equals(other.term) && version == other.version && nodeID == other.nodeID;
+                return term.Equals(other_.term) && version == other_.version && nodeID == other_.nodeID;
             }
         }
 

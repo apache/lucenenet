@@ -312,47 +312,47 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Called when we are done adding docs to this term. </summary>
-        public override void FinishTerm(BlockTermState _state)
+        public override void FinishTerm(BlockTermState state)
         {
-            StandardTermState state = (StandardTermState)_state;
+            StandardTermState state_ = (StandardTermState)state;
             // if (DEBUG) System.out.println("SPW: finishTerm seg=" + segment + " freqStart=" + freqStart);
-            Debug.Assert(state.DocFreq > 0);
+            Debug.Assert(state_.DocFreq > 0);
 
             // TODO: wasteful we are counting this (counting # docs
             // for this term) in two places?
-            Debug.Assert(state.DocFreq == df);
-            state.FreqStart = freqStart;
-            state.ProxStart = proxStart;
+            Debug.Assert(state_.DocFreq == df);
+            state_.FreqStart = freqStart;
+            state_.ProxStart = proxStart;
             if (df >= skipMinimum)
             {
-                state.SkipOffset = skipListWriter.WriteSkip(freqOut) - freqStart;
+                state_.SkipOffset = skipListWriter.WriteSkip(freqOut) - freqStart;
             }
             else
             {
-                state.SkipOffset = -1;
+                state_.SkipOffset = -1;
             }
             lastDocID = 0;
             df = 0;
         }
 
-        public override void EncodeTerm(long[] empty, DataOutput @out, FieldInfo fieldInfo, BlockTermState _state, bool absolute)
+        public override void EncodeTerm(long[] empty, DataOutput @out, FieldInfo fieldInfo, BlockTermState state, bool absolute)
         {
-            StandardTermState state = (StandardTermState)_state;
+            StandardTermState state_ = (StandardTermState)state;
             if (absolute)
             {
                 lastState = emptyState;
             }
-            @out.WriteVInt64(state.FreqStart - lastState.FreqStart);
-            if (state.SkipOffset != -1)
+            @out.WriteVInt64(state_.FreqStart - lastState.FreqStart);
+            if (state_.SkipOffset != -1)
             {
-                Debug.Assert(state.SkipOffset > 0);
-                @out.WriteVInt64(state.SkipOffset);
+                Debug.Assert(state_.SkipOffset > 0);
+                @out.WriteVInt64(state_.SkipOffset);
             }
             if (indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
             {
-                @out.WriteVInt64(state.ProxStart - lastState.ProxStart);
+                @out.WriteVInt64(state_.ProxStart - lastState.ProxStart);
             }
-            lastState = state;
+            lastState = state_;
         }
 
         protected override void Dispose(bool disposing)
