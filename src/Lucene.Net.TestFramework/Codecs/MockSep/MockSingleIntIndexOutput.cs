@@ -31,14 +31,14 @@ namespace Lucene.Net.Codecs.MockSep
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class MockSingleIntIndexOutput : Int32IndexOutput
+    public class MockSingleInt32IndexOutput : Int32IndexOutput // LUCENENET specific: Renamed from MockSingleIntIndexOutput
     {
         private readonly IndexOutput @out;
         internal const string CODEC = "SINGLE_INTS";
         internal const int VERSION_START = 0;
         internal const int VERSION_CURRENT = VERSION_START;
 
-        public MockSingleIntIndexOutput(Directory dir, string fileName, IOContext context)
+        public MockSingleInt32IndexOutput(Directory dir, string fileName, IOContext context)
         {
             @out = dir.CreateOutput(fileName, context);
             bool success = false;
@@ -63,7 +63,7 @@ namespace Lucene.Net.Codecs.MockSep
 
         public override Index GetIndex()
         {
-            return new MockSingleIntIndexOutputIndex(this);
+            return new MockSingleInt32IndexOutputIndex(this);
         }
 
         protected override void Dispose(bool disposing)
@@ -79,13 +79,13 @@ namespace Lucene.Net.Codecs.MockSep
             return "MockSingleIntIndexOutput fp=" + @out.GetFilePointer();
         }
 
-        private class MockSingleIntIndexOutputIndex : Index
+        private class MockSingleInt32IndexOutputIndex : Index // LUCENENET specific: Renamed from MockSingleIntIndexOutputIndex
         {
             internal long fp;
             internal long lastFP;
-            private readonly MockSingleIntIndexOutput outerClass;
+            private readonly MockSingleInt32IndexOutput outerClass;
 
-            public MockSingleIntIndexOutputIndex(MockSingleIntIndexOutput outerClass)
+            public MockSingleInt32IndexOutputIndex(MockSingleInt32IndexOutput outerClass)
             {
                 this.outerClass = outerClass;
             }
@@ -97,10 +97,10 @@ namespace Lucene.Net.Codecs.MockSep
 
             public override void CopyFrom(Index other, bool copyLast)
             {
-                fp = ((MockSingleIntIndexOutputIndex)other).fp;
+                fp = ((MockSingleInt32IndexOutputIndex)other).fp;
                 if (copyLast)
                 {
-                    lastFP = ((MockSingleIntIndexOutputIndex)other).fp;
+                    lastFP = ((MockSingleInt32IndexOutputIndex)other).fp;
                 }
             }
 

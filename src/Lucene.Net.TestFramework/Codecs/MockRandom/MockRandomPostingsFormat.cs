@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.MockRandom
             public MockInt32StreamFactory(Random random)
             {
                 salt = random.nextInt();
-                delegates.Add(new MockSingleIntFactory());
+                delegates.Add(new MockSingleInt32Factory());
                 int blockSize = TestUtil.NextInt32(random, 1, 2000);
                 delegates.Add(new MockFixedInt32BlockPostingsFormat.MockInt32Factory(blockSize));
                 int baseBlockSize = TestUtil.NextInt32(random, 1, 127);

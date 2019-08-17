@@ -22,22 +22,22 @@ namespace Lucene.Net.Codecs.MockSep
 
     /// <summary>
     /// Reads IndexInputs written with 
-    /// <see cref="MockSingleIntIndexOutput"/>.  NOTE: this class is just for
+    /// <see cref="MockSingleInt32IndexOutput"/>.  NOTE: this class is just for
     /// demonstration purposes(it is a very slow way to read a
     /// block of ints).
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class MockSingleIntIndexInput : Int32IndexInput
+    public class MockSingleInt32IndexInput : Int32IndexInput // LUCENENET specific: Renamed from MockSingleIntIndexInput
     {
         private readonly IndexInput @in;
 
-        public MockSingleIntIndexInput(Directory dir, string fileName, IOContext context)
+        public MockSingleInt32IndexInput(Directory dir, string fileName, IOContext context)
         {
             @in = dir.OpenInput(fileName, context);
-            CodecUtil.CheckHeader(@in, MockSingleIntIndexOutput.CODEC,
-                          MockSingleIntIndexOutput.VERSION_START,
-                          MockSingleIntIndexOutput.VERSION_START);
+            CodecUtil.CheckHeader(@in, MockSingleInt32IndexOutput.CODEC,
+                          MockSingleInt32IndexOutput.VERSION_START,
+                          MockSingleInt32IndexOutput.VERSION_START);
         }
 
         public override Reader GetReader()
@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.MockSep
             }
         }
 
-        internal class MockSingleIntIndexInputIndex : Index
+        internal class MockSingleInt32IndexInputIndex : Index // LUCENENET specific: Renamed from MockSingleIntIndexInputIndex
         {
             private long fp;
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs.MockSep
 
             public override void CopyFrom(Index other)
             {
-                fp = ((MockSingleIntIndexInputIndex)other).fp;
+                fp = ((MockSingleInt32IndexInputIndex)other).fp;
             }
 
             public override void Seek(Reader other)
@@ -110,14 +110,14 @@ namespace Lucene.Net.Codecs.MockSep
 
             public override object Clone()
             {
-                MockSingleIntIndexInputIndex other = new MockSingleIntIndexInputIndex();
+                MockSingleInt32IndexInputIndex other = new MockSingleInt32IndexInputIndex();
                 other.fp = fp;
                 return other;
             }
         }
         public override Index GetIndex()
         {
-            return new MockSingleIntIndexInputIndex();
+            return new MockSingleInt32IndexInputIndex();
         }
     }
 }

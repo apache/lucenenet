@@ -21,20 +21,20 @@ namespace Lucene.Net.Codecs.MockSep
      */
 
     /// <summary>
-    /// Encodes ints directly as vInts with <see cref="MockSingleIntIndexOutput"/>.
+    /// Encodes ints directly as vInts with <see cref="MockSingleInt32IndexOutput"/>.
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class MockSingleIntFactory : Int32StreamFactory
+    public class MockSingleInt32Factory : Int32StreamFactory // LUCENENET specific: Renamed from MockSingleIntFactory
     {
         public override Int32IndexInput OpenInput(Directory dir, string fileName, IOContext context)
         {
-            return new MockSingleIntIndexInput(dir, fileName, context);
+            return new MockSingleInt32IndexInput(dir, fileName, context);
         }
 
         public override Int32IndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
         {
-            return new MockSingleIntIndexOutput(dir, fileName, context);
+            return new MockSingleInt32IndexOutput(dir, fileName, context);
         }
     }
 }
