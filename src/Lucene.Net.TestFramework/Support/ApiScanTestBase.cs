@@ -313,7 +313,7 @@ namespace Lucene.Net.Support
 
             Assert.IsFalse(names.Any(), names.Count() + " member names containing the word 'Int' not followed " + 
                 "by 16, 32, or 64, 'Long', 'Short', or 'Float' detected. " +
-                "In .NET, we need to change to 'Short' to 'Int16', 'Int' to 'Int32', 'Long' to 'Int64', and 'Float' to 'Short'.");
+                "In .NET, we need to change to 'Short' to 'Int16', 'Int' to 'Int32', 'Long' to 'Int64', and 'Float' to 'Single'.");
         }
 
         //[Test, LuceneNetSpecific]
@@ -331,7 +331,7 @@ namespace Lucene.Net.Support
 
             Assert.IsFalse(names.Any(), names.Count() + " member names containing the word 'Int' not followed " +
                 "by 16, 32, or 64, 'Long', 'Short', or 'Float' detected. " +
-                "In .NET, we need to change to 'Short' to 'Int16', 'Int' to 'Int32', 'Long' to 'Int64', and 'Float' to 'Short'." +
+                "In .NET, we need to change to 'Short' to 'Int16', 'Int' to 'Int32', 'Long' to 'Int64', and 'Float' to 'Single'." +
                 "\n\nIMPORTANT: Before making changes, make sure to rename any types with ambiguous use of the word `Single` (meaning 'singular' rather than `System.Single`) to avoid confusion.");
         }
 
