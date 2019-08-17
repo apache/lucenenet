@@ -1310,24 +1310,24 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        internal abstract class LongProducer
+        internal abstract class Int64Producer
         {
             internal abstract long Next();
         }
 
         private void DoTestNumericsVsStoredFields(long minValue, long maxValue)
         {
-            DoTestNumericsVsStoredFields(new LongProducerAnonymousInnerClassHelper(this, minValue, maxValue));
+            DoTestNumericsVsStoredFields(new Int64ProducerAnonymousInnerClassHelper(this, minValue, maxValue));
         }
 
-        private class LongProducerAnonymousInnerClassHelper : LongProducer
+        private class Int64ProducerAnonymousInnerClassHelper : Int64Producer
         {
             private readonly BaseDocValuesFormatTestCase outerInstance;
 
             private long minValue;
             private long maxValue;
 
-            public LongProducerAnonymousInnerClassHelper(BaseDocValuesFormatTestCase outerInstance, long minValue, long maxValue)
+            public Int64ProducerAnonymousInnerClassHelper(BaseDocValuesFormatTestCase outerInstance, long minValue, long maxValue)
             {
                 this.outerInstance = outerInstance;
                 this.minValue = minValue;
@@ -1340,7 +1340,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DoTestNumericsVsStoredFields(LongProducer longs)
+        private void DoTestNumericsVsStoredFields(Int64Producer longs)
         {
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -1403,17 +1403,17 @@ namespace Lucene.Net.Index
 
         private void DoTestMissingVsFieldCache(long minValue, long maxValue)
         {
-            DoTestMissingVsFieldCache(new LongProducerAnonymousInnerClassHelper2(this, minValue, maxValue));
+            DoTestMissingVsFieldCache(new Int64ProducerAnonymousInnerClassHelper2(this, minValue, maxValue));
         }
 
-        private class LongProducerAnonymousInnerClassHelper2 : LongProducer
+        private class Int64ProducerAnonymousInnerClassHelper2 : Int64Producer
         {
             private readonly BaseDocValuesFormatTestCase outerInstance;
 
             private long minValue;
             private long maxValue;
 
-            public LongProducerAnonymousInnerClassHelper2(BaseDocValuesFormatTestCase outerInstance, long minValue, long maxValue)
+            public Int64ProducerAnonymousInnerClassHelper2(BaseDocValuesFormatTestCase outerInstance, long minValue, long maxValue)
             {
                 this.outerInstance = outerInstance;
                 this.minValue = minValue;
@@ -1426,7 +1426,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DoTestMissingVsFieldCache(LongProducer longs)
+        private void DoTestMissingVsFieldCache(Int64Producer longs)
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
             Directory dir = NewDirectory();
@@ -2682,19 +2682,19 @@ namespace Lucene.Net.Index
             {
                 long min = -(((long)Random().Next(1 << 30)) << 32);
                 long mul = Random().Next() & 0xFFFFFFFFL;
-                LongProducer longs = new LongProducerAnonymousInnerClassHelper3(this, min, mul);
+                Int64Producer longs = new Int64ProducerAnonymousInnerClassHelper3(this, min, mul);
                 DoTestNumericsVsStoredFields(longs);
             }
         }
 
-        private class LongProducerAnonymousInnerClassHelper3 : LongProducer
+        private class Int64ProducerAnonymousInnerClassHelper3 : Int64Producer
         {
             private readonly BaseDocValuesFormatTestCase outerInstance;
 
             private long min;
             private long mul;
 
-            public LongProducerAnonymousInnerClassHelper3(BaseDocValuesFormatTestCase outerInstance, long min, long mul)
+            public Int64ProducerAnonymousInnerClassHelper3(BaseDocValuesFormatTestCase outerInstance, long min, long mul)
             {
                 this.outerInstance = outerInstance;
                 this.min = min;
@@ -2721,16 +2721,16 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                LongProducer longs = new LongProducerAnonymousInnerClassHelper4(this);
+                Int64Producer longs = new Int64ProducerAnonymousInnerClassHelper4(this);
                 DoTestNumericsVsStoredFields(longs);
             }
         }
 
-        private class LongProducerAnonymousInnerClassHelper4 : LongProducer
+        private class Int64ProducerAnonymousInnerClassHelper4 : Int64Producer
         {
             private readonly BaseDocValuesFormatTestCase outerInstance;
 
-            public LongProducerAnonymousInnerClassHelper4(BaseDocValuesFormatTestCase outerInstance)
+            public Int64ProducerAnonymousInnerClassHelper4(BaseDocValuesFormatTestCase outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
