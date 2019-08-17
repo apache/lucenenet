@@ -168,7 +168,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < numDocs; i++)
             {
                 IList<Field> fields = new List<Field>();
-                fields.Add(NewTextField("english", English.IntToEnglish(i), Field.Store.NO));
+                fields.Add(NewTextField("english", English.Int32ToEnglish(i), Field.Store.NO));
                 fields.Add(NewTextField("oddeven", (i % 2 == 0) ? "even" : "odd", Field.Store.NO));
                 fields.Add(NewStringField("byte", "" + ((sbyte)Random().Next()), Field.Store.NO));
                 fields.Add(NewStringField("short", "" + ((short)Random().Next()), Field.Store.NO));

@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                doc.Add(new Field("numbers", English.IntToEnglish(i), ft));
+                doc.Add(new Field("numbers", English.Int32ToEnglish(i), ft));
                 doc.Add(new Field("oddeven", (i % 2) == 0 ? "even" : "odd", ft));
                 doc.Add(new StringField("id", "" + i, Field.Store.NO));
                 w.AddDocument(doc);

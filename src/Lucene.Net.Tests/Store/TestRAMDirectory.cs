@@ -67,7 +67,7 @@ namespace Lucene.Net.Store
             for (int i = 0; i < DocsToAdd; i++)
             {
                 doc = new Document();
-                doc.Add(NewStringField("content", English.IntToEnglish(i).Trim(), Field.Store.YES));
+                doc.Add(NewStringField("content", English.Int32ToEnglish(i).Trim(), Field.Store.YES));
                 writer.AddDocument(doc);
             }
             Assert.AreEqual(DocsToAdd, writer.MaxDoc);
@@ -160,7 +160,7 @@ namespace Lucene.Net.Store
                 for (int j = 1; j < OuterInstance.DocsPerThread; j++)
                 {
                     Document doc = new Document();
-                    doc.Add(OuterInstance.NewStringField("sizeContent", English.IntToEnglish(Num * OuterInstance.DocsPerThread + j).Trim(), Field.Store.YES));
+                    doc.Add(OuterInstance.NewStringField("sizeContent", English.Int32ToEnglish(Num * OuterInstance.DocsPerThread + j).Trim(), Field.Store.YES));
                     try
                     {
                         Writer.AddDocument(doc);

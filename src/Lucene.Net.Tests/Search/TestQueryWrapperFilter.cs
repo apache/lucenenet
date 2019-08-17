@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < 1000; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewStringField("field", English.IntToEnglish(i), Field.Store.NO));
+                doc.Add(NewStringField("field", English.Int32ToEnglish(i), Field.Store.NO));
                 writer.AddDocument(doc);
             }
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search
 
             for (int i = 0; i < 1000; i++)
             {
-                TermQuery termQuery = new TermQuery(new Term("field", English.IntToEnglish(i)));
+                TermQuery termQuery = new TermQuery(new Term("field", English.Int32ToEnglish(i)));
                 QueryWrapperFilter qwf = new QueryWrapperFilter(termQuery);
                 TopDocs td = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
                 Assert.AreEqual(1, td.TotalHits);

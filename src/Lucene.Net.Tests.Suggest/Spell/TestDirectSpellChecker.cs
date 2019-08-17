@@ -72,7 +72,7 @@ namespace Lucene.Net.Search.Spell
             for (int i = 0; i < 20; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("numbers", English.IntToEnglish(i), Field.Store.NO));
+                doc.Add(NewTextField("numbers", English.Int32ToEnglish(i), Field.Store.NO));
                 writer.AddDocument(doc);
             }
 
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Spell
             for (int i = 1000; i < 1100; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("numbers", English.IntToEnglish(i), Field.Store.NO));
+                doc.Add(NewTextField("numbers", English.Int32ToEnglish(i), Field.Store.NO));
                 writer.AddDocument(doc);
             }
 
@@ -211,7 +211,7 @@ namespace Lucene.Net.Search.Spell
             for (int i = 0; i < 20; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("numbers", English.IntToEnglish(i), Field.Store.NO));
+                doc.Add(NewTextField("numbers", English.Int32ToEnglish(i), Field.Store.NO));
                 writer.AddDocument(doc);
             }
 
@@ -238,7 +238,7 @@ namespace Lucene.Net.Search.Spell
             for (int i = 0; i < 20; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("numbers", English.IntToEnglish(i), Field.Store.NO));
+                doc.Add(NewTextField("numbers", English.Int32ToEnglish(i), Field.Store.NO));
                 writer.AddDocument(doc);
             }
 
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search.Spell
             for (int i = 0; i < 20; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("numbers", English.IntToEnglish(i), Field.Store.NO));
+                doc.Add(NewTextField("numbers", English.Int32ToEnglish(i), Field.Store.NO));
                 writer.AddDocument(doc);
             }
 

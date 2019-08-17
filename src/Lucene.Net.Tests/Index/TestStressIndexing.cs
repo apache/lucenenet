@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
                     Documents.Document d = new Documents.Document();
                     int n = Random().Next();
                     d.Add(NewStringFieldFunc("id", Convert.ToString(NextID++), Field.Store.YES));
-                    d.Add(NewTextFieldFunc("contents", English.IntToEnglish(n), Field.Store.NO));
+                    d.Add(NewTextFieldFunc("contents", English.Int32ToEnglish(n), Field.Store.NO));
                     Writer.AddDocument(d);
                 }
 

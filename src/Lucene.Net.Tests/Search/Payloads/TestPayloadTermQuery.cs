@@ -132,11 +132,11 @@ namespace Lucene.Net.Search.Payloads
             for (int i = 0; i < 1000; i++)
             {
                 Document doc = new Document();
-                Field noPayloadField = NewTextField(PayloadHelper.NO_PAYLOAD_FIELD, English.IntToEnglish(i), Field.Store.YES);
+                Field noPayloadField = NewTextField(PayloadHelper.NO_PAYLOAD_FIELD, English.Int32ToEnglish(i), Field.Store.YES);
                 //noPayloadField.setBoost(0);
                 doc.Add(noPayloadField);
-                doc.Add(NewTextField("field", English.IntToEnglish(i), Field.Store.YES));
-                doc.Add(NewTextField("multiField", English.IntToEnglish(i) + "  " + English.IntToEnglish(i), Field.Store.YES));
+                doc.Add(NewTextField("field", English.Int32ToEnglish(i), Field.Store.YES));
+                doc.Add(NewTextField("multiField", English.Int32ToEnglish(i) + "  " + English.Int32ToEnglish(i), Field.Store.YES));
                 writer.AddDocument(doc);
             }
             Reader = writer.Reader;

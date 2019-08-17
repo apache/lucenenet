@@ -204,7 +204,7 @@ namespace Lucene.Net.Index
                     Document d = new Document();
                     int n = Random().Next();
                     d.Add(outerInstance.NewField("id", Convert.ToString(nextID++), customType));
-                    d.Add(outerInstance.NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
+                    d.Add(outerInstance.NewTextField("contents", English.Int32ToEnglish(n), Field.Store.NO));
                     writer.AddDocument(d);
                 }
 
@@ -275,7 +275,7 @@ namespace Lucene.Net.Index
             {
                 Document d = new Document();
                 int n = Random().Next();
-                d.Add(NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
+                d.Add(NewTextField("contents", English.Int32ToEnglish(n), Field.Store.NO));
                 writer.AddDocument(d);
             }
             writer.Dispose();

@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
                 {
                     Documents.Document d = new Documents.Document();
                     d.Add(new StringField("id", Convert.ToString(i), Field.Store.YES));
-                    d.Add(new TextField("contents", English.IntToEnglish(i + 10 * Count), Field.Store.NO));
+                    d.Add(new TextField("contents", English.Int32ToEnglish(i + 10 * Count), Field.Store.NO));
                     Writer.UpdateDocument(new Term("id", Convert.ToString(i)), d);
                 }
             }
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
             {
                 Documents.Document d = new Documents.Document();
                 d.Add(NewStringField("id", Convert.ToString(i), Field.Store.YES));
-                d.Add(NewTextField("contents", English.IntToEnglish(i), Field.Store.NO));
+                d.Add(NewTextField("contents", English.Int32ToEnglish(i), Field.Store.NO));
                 if ((i - 1) % 7 == 0)
                 {
                     writer.Commit();

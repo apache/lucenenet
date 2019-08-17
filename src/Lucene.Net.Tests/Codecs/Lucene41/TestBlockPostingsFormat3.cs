@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Lucene41
             doc.Add(field8);
             for (int i = 0; i < MAXDOC; i++)
             {
-                string stringValue = Convert.ToString(i) + " verycommon " + English.IntToEnglish(i).Replace('-', ' ') + " " + TestUtil.RandomSimpleString(Random());
+                string stringValue = Convert.ToString(i) + " verycommon " + English.Int32ToEnglish(i).Replace('-', ' ') + " " + TestUtil.RandomSimpleString(Random());
                 field1.SetStringValue(stringValue);
                 field2.SetStringValue(stringValue);
                 field3.SetStringValue(stringValue);

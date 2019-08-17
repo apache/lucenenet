@@ -53,7 +53,7 @@ namespace Lucene.Net.Expressions
             {
                 var document = new Document
 				{
-				    NewTextField("english", English.IntToEnglish(i), Field.Store.NO),
+				    NewTextField("english", English.Int32ToEnglish(i), Field.Store.NO),
 				    NewTextField("oddeven", (i%2 == 0) ? "even" : "odd", Field.Store.NO),
 				    NewStringField("byte", string.Empty + (unchecked((byte) Random().Next())), Field.Store.NO),
 				    NewStringField("short", string.Empty + ((short) Random().Next()), Field.Store.NO),

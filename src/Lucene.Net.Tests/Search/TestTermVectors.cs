@@ -87,9 +87,9 @@ namespace Lucene.Net.Search
                 {
                     ft.StoreTermVectors = true;
                 }
-                doc.Add(new Field("field", English.IntToEnglish(i), ft));
+                doc.Add(new Field("field", English.Int32ToEnglish(i), ft));
                 //test no term vectors too
-                doc.Add(new TextField("noTV", English.IntToEnglish(i), Field.Store.YES));
+                doc.Add(new TextField("noTV", English.Int32ToEnglish(i), Field.Store.YES));
                 writer.AddDocument(doc);
             }
             Reader = writer.Reader;

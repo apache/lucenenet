@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Spell
             for (int i = 900; i < 1112; i++)
             {
                 Document doc = new Document();
-                string num = Regex.Replace(Regex.Replace(English.IntToEnglish(i), "[-]", " "), "[,]", "");
+                string num = Regex.Replace(Regex.Replace(English.Int32ToEnglish(i), "[-]", " "), "[,]", "");
                 doc.Add(NewTextField("numbers", num, Field.Store.NO));
                 writer.AddDocument(doc);
             }

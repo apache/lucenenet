@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
                 {
                     Document d = new Document();
                     d.Add(NewField("id", Convert.ToString(i), customType));
-                    d.Add(NewField("contents", English.IntToEnglish(i), customType));
+                    d.Add(NewField("contents", English.Int32ToEnglish(i), customType));
                     writer.AddDocument(d);
                 }
 
@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
                         {
                             Document d = new Document();
                             d.Add(OuterInstance.NewField("id", IterFinal + "_" + IFinal + "_" + j + "_" + k, CustomType));
-                            d.Add(OuterInstance.NewField("contents", English.IntToEnglish(IFinal + k), CustomType));
+                            d.Add(OuterInstance.NewField("contents", English.Int32ToEnglish(IFinal + k), CustomType));
                             WriterFinal.AddDocument(d);
                         }
                         for (int k = 0; k < 9 * (1 + IFinal); k++)

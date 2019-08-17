@@ -54,8 +54,8 @@ namespace Lucene.Net.Search.Spell
             for (int i = 0; i < 1000; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("field1", English.IntToEnglish(i), Field.Store.YES));
-                doc.Add(NewTextField("field2", English.IntToEnglish(i + 1), Field.Store.YES)); // + word thousand
+                doc.Add(NewTextField("field1", English.Int32ToEnglish(i), Field.Store.YES));
+                doc.Add(NewTextField("field2", English.Int32ToEnglish(i + 1), Field.Store.YES)); // + word thousand
                 doc.Add(NewTextField("field3", "fvei" + (i % 2 == 0 ? " five" : ""), Field.Store.YES)); // + word thousand
                 writer.AddDocument(doc);
             }

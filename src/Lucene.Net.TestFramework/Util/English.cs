@@ -24,20 +24,41 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public sealed class English
+    public static class English // LUCENENET specific - made class static
     {
-        private English() // no instance
+        // LUCENENET specific extension method
+        public static string ToEnglish(this long i)
         {
+            return Int64ToEnglish(i);
         }
 
-        public static string LongToEnglish(long i)
+        // LUCENENET specific extension method
+        public static void ToEnglish(this long i, StringBuilder result)
+        {
+            Int64ToEnglish(i, result);
+        }
+
+        // LUCENENET specific extension method
+        public static string ToEnglish(this int i)
+        {
+            return Int32ToEnglish(i);
+        }
+
+        // LUCENENET specific extension method
+        public static void ToEnglish(this int i, StringBuilder result)
+        {
+            Int32ToEnglish(i, result);
+        }
+
+
+        public static string Int64ToEnglish(long i)
         {
             StringBuilder result = new StringBuilder();
-            LongToEnglish(i, result);
+            Int64ToEnglish(i, result);
             return result.ToString();
         }
 
-        public static void LongToEnglish(long i, StringBuilder result)
+        public static void Int64ToEnglish(long i, StringBuilder result)
         {
             if (i == 0)
             {
@@ -51,43 +72,43 @@ namespace Lucene.Net.Util
             }
             if (i >= 1000000000000000000L) // quadrillion
             {
-                LongToEnglish(i / 1000000000000000000L, result);
+                Int64ToEnglish(i / 1000000000000000000L, result);
                 result.Append("quintillion, ");
                 i = i % 1000000000000000000L;
             }
             if (i >= 1000000000000000L) // quadrillion
             {
-                LongToEnglish(i / 1000000000000000L, result);
+                Int64ToEnglish(i / 1000000000000000L, result);
                 result.Append("quadrillion, ");
                 i = i % 1000000000000000L;
             }
             if (i >= 1000000000000L) // trillions
             {
-                LongToEnglish(i / 1000000000000L, result);
+                Int64ToEnglish(i / 1000000000000L, result);
                 result.Append("trillion, ");
                 i = i % 1000000000000L;
             }
             if (i >= 1000000000) // billions
             {
-                LongToEnglish(i / 1000000000, result);
+                Int64ToEnglish(i / 1000000000, result);
                 result.Append("billion, ");
                 i = i % 1000000000;
             }
             if (i >= 1000000) // millions
             {
-                LongToEnglish(i / 1000000, result);
+                Int64ToEnglish(i / 1000000, result);
                 result.Append("million, ");
                 i = i % 1000000;
             }
             if (i >= 1000) // thousands
             {
-                LongToEnglish(i / 1000, result);
+                Int64ToEnglish(i / 1000, result);
                 result.Append("thousand, ");
                 i = i % 1000;
             }
             if (i >= 100) // hundreds
             {
-                LongToEnglish(i / 100, result);
+                Int64ToEnglish(i / 100, result);
                 result.Append("hundred ");
                 i = i % 100;
             }
@@ -222,16 +243,16 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static string IntToEnglish(int i)
+        public static string Int32ToEnglish(int i)
         {
             StringBuilder result = new StringBuilder();
-            LongToEnglish(i, result);
+            Int64ToEnglish(i, result);
             return result.ToString();
         }
 
-        public static void IntToEnglish(int i, StringBuilder result)
+        public static void Int32ToEnglish(int i, StringBuilder result)
         {
-            LongToEnglish(i, result);
+            Int64ToEnglish(i, result);
         }
     }
 }

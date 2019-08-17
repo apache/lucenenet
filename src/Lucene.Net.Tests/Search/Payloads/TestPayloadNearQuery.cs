@@ -127,8 +127,8 @@ namespace Lucene.Net.Search.Payloads
             for (int i = 0; i < 1000; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("field", English.IntToEnglish(i), Field.Store.YES));
-                string txt = English.IntToEnglish(i) + ' ' + English.IntToEnglish(i + 1);
+                doc.Add(NewTextField("field", English.Int32ToEnglish(i), Field.Store.YES));
+                string txt = English.Int32ToEnglish(i) + ' ' + English.Int32ToEnglish(i + 1);
                 doc.Add(NewTextField("field2", txt, Field.Store.YES));
                 writer.AddDocument(doc);
             }
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search.Payloads
             }
             for (int i = 1; i < 10; i++)
             {
-                query = NewPhraseQuery("field", English.IntToEnglish(i) + " hundred", true, new AveragePayloadFunction());
+                query = NewPhraseQuery("field", English.Int32ToEnglish(i) + " hundred", true, new AveragePayloadFunction());
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: run query=" + query);
