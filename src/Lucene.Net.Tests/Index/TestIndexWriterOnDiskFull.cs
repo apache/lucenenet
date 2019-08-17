@@ -643,7 +643,7 @@ namespace Lucene.Net.Index
                             .SetMaxBufferedDocs(2)
                             .SetMergeScheduler(newScheduler());
             IndexWriter writer = new IndexWriter(dir, config);
-            dir.MaxSizeInBytes = Math.Max(1, dir.RecomputedActualSizeInBytes);
+            dir.MaxSizeInBytes = Math.Max(1, dir.GetRecomputedActualSizeInBytes());
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             doc.Add(NewField("field", "aaa bbb ccc ddd eee fff ggg hhh iii jjj", customType));

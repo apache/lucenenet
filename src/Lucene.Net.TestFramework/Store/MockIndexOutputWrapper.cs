@@ -64,7 +64,7 @@ namespace Lucene.Net.Store
             {
                 // Compute the real disk free.  this will greatly slow
                 // down our test but makes it more accurate:
-                realUsage = dir.RecomputedActualSizeInBytes;
+                realUsage = dir.GetRecomputedActualSizeInBytes();
                 freeSpace = dir.maxSize - realUsage;
             }
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Store
                 {
                     dir.maxUsedSize = realUsage;
                 }
-                string message = "fake disk full at " + dir.RecomputedActualSizeInBytes + " bytes when writing " + name + " (file length=" + @delegate.Length;
+                string message = "fake disk full at " + dir.GetRecomputedActualSizeInBytes() + " bytes when writing " + name + " (file length=" + @delegate.Length;
                 if (freeSpace > 0)
                 {
                     message += "; wrote " + freeSpace + " of " + len + " bytes";
@@ -117,7 +117,7 @@ namespace Lucene.Net.Store
                     {
                         // Now compute actual disk usage & track the maxUsedSize
                         // in the MockDirectoryWrapper:
-                        long size = dir.RecomputedActualSizeInBytes;
+                        long size = dir.GetRecomputedActualSizeInBytes();
                         if (size > dir.maxUsedSize)
                         {
                             dir.maxUsedSize = size;

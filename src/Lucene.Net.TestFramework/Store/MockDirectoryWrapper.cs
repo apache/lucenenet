@@ -471,7 +471,7 @@ namespace Lucene.Net.Store
 
         public virtual void ResetMaxUsedSizeInBytes()
         {
-            this.maxUsedSize = RecomputedActualSizeInBytes;
+            this.maxUsedSize = GetRecomputedActualSizeInBytes();
         }
 
         /// <summary>
@@ -882,51 +882,45 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Provided for testing purposes.  Use sizeInBytes() instead. </summary>
-        public long RecomputedSizeInBytes // LUCENENET TODO: API - Change back to GetRecomputedSizeInBytes() - non-deterministic 
+        /// Provided for testing purposes.  Use <see cref="GetSizeInBytes()"/> instead. </summary>
+        public long GetRecomputedSizeInBytes()
         {
-            get
+            lock (this)
             {
-                lock (this)
+                if (!(m_input is RAMDirectory))
                 {
-                    if (!(m_input is RAMDirectory))
-                    {
-                        return GetSizeInBytes();
-                    }
-                    long size = 0;
-                    foreach (RAMFile file in ((RAMDirectory)m_input).m_fileMap.Values)
-                    {
-                        size += file.GetSizeInBytes();
-                    }
-                    return size;
+                    return GetSizeInBytes();
                 }
+                long size = 0;
+                foreach (RAMFile file in ((RAMDirectory)m_input).m_fileMap.Values)
+                {
+                    size += file.GetSizeInBytes();
+                }
+                return size;
             }
         }
 
         /// <summary>
-        /// Like <see cref="RecomputedSizeInBytes"/>, but, uses actual file
+        /// Like <see cref="GetRecomputedSizeInBytes()"/>, but, uses actual file
         /// lengths rather than buffer allocations (which are
         /// quantized up to nearest
         /// <see cref="RAMOutputStream.BUFFER_SIZE"/> (now 1024) bytes.
         /// </summary>
 
-        public long RecomputedActualSizeInBytes // LUCENENET TODO: API - Change back to GetRecomputedActualSizeInBytes() - non-deterministic
+        public long GetRecomputedActualSizeInBytes()
         {
-            get
+            lock (this)
             {
-                lock (this)
+                if (!(m_input is RAMDirectory))
                 {
-                    if (!(m_input is RAMDirectory))
-                    {
-                        return GetSizeInBytes();
-                    }
-                    long size = 0;
-                    foreach (RAMFile file in ((RAMDirectory)m_input).m_fileMap.Values)
-                    {
-                        size += file.Length;
-                    }
-                    return size;
+                    return GetSizeInBytes();
                 }
+                long size = 0;
+                foreach (RAMFile file in ((RAMDirectory)m_input).m_fileMap.Values)
+                {
+                    size += file.Length;
+                }
+                return size;
             }
         }
 
