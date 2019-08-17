@@ -998,7 +998,7 @@ namespace Lucene.Net.Store
                     }
 
                     m_isOpen = false;
-                    if (CheckIndexOnClose)
+                    if (CheckIndexOnDispose)
                     {
                         randomIOExceptionRate = 0.0;
                         randomIOExceptionRateOnOpen = 0.0;
@@ -1013,7 +1013,7 @@ namespace Lucene.Net.Store
                             {
                                 Console.WriteLine("\nNOTE: MockDirectoryWrapper: now run CheckIndex");
                             }
-                            TestUtil.CheckIndex(this, CrossCheckTermVectorsOnClose);
+                            TestUtil.CheckIndex(this, CrossCheckTermVectorsOnDispose);
 
                             // TODO: factor this out / share w/ TestIW.assertNoUnreferencedFiles
                             if (assertNoUnreferencedFilesOnClose)

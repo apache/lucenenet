@@ -64,7 +64,7 @@ namespace Lucene.Net.Store
         public virtual void TestThreadSafety()
         {
             BaseDirectoryWrapper dir = NewDirectory();
-            dir.CheckIndexOnClose = false; // we arent making an index
+            dir.CheckIndexOnDispose = false; // we arent making an index
             if (dir is MockDirectoryWrapper)
             {
                 ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER; // makes this test really slow

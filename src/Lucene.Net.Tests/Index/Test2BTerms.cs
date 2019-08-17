@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
             {
                 ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
-            dir.CheckIndexOnClose = false; // don't double-checkindex
+            dir.CheckIndexOnDispose = false; // don't double-checkindex
 
             if (true)
             {

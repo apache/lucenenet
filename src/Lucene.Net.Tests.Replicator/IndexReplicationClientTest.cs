@@ -298,7 +298,7 @@ namespace Lucene.Net.Replicator
                     mdw.RandomIOExceptionRateOnOpen = clientExRate;
                     mdw.MaxSizeInBytes = clientMaxSize;
                     mdw.RandomIOExceptionRate = clientExRate;
-                    mdw.CheckIndexOnClose = false;
+                    mdw.CheckIndexOnDispose = false;
                     clientMaxSize *= 2;
                     clientExRate /= 2;
                     return mdw;

@@ -1858,7 +1858,7 @@ namespace Lucene.Net.Index
 
             // this test leaves only segments.gen, which causes
             // DirectoryReader.indexExists to return true:
-            dir.CheckIndexOnClose = false;
+            dir.CheckIndexOnDispose = false;
             dir.Dispose();
         }
 
@@ -2731,7 +2731,7 @@ namespace Lucene.Net.Index
 
                 if (mode != 0)
                 {
-                    dir.CheckIndexOnClose = false;
+                    dir.CheckIndexOnDispose = false;
                 }
                 dir.Dispose();
             }

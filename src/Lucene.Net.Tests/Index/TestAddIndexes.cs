@@ -1214,7 +1214,7 @@ namespace Lucene.Net.Index
             BaseDirectoryWrapper toAdd = NewDirectory();
             // Disable checkIndex, else we get an exception because
             // of the unregistered codec:
-            toAdd.CheckIndexOnClose = false;
+            toAdd.CheckIndexOnDispose = false;
             {
                 IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
                 conf.SetCodec(new UnRegisteredCodec());

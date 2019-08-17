@@ -49,9 +49,9 @@ namespace Lucene.Net.Store
             fileExtensions.Add(Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION);
 
             MockDirectoryWrapper primaryDir = new MockDirectoryWrapper(Random(), new RAMDirectory());
-            primaryDir.CheckIndexOnClose = false; // only part of an index
+            primaryDir.CheckIndexOnDispose = false; // only part of an index
             MockDirectoryWrapper secondaryDir = new MockDirectoryWrapper(Random(), new RAMDirectory());
-            secondaryDir.CheckIndexOnClose = false; // only part of an index
+            secondaryDir.CheckIndexOnDispose = false; // only part of an index
 
             FileSwitchDirectory fsd = new FileSwitchDirectory(fileExtensions, primaryDir, secondaryDir, true);
             // for now we wire Lucene40Codec because we rely upon its specific impl

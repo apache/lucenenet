@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             DirectoryInfo f = CreateTempDir("10kpulsed");
             BaseDirectoryWrapper dir = NewFSDirectory(f);
-            dir.CheckIndexOnClose = false; // we do this ourselves explicitly
+            dir.CheckIndexOnDispose = false; // we do this ourselves explicitly
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
 
             Document document = new Document();
@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             DirectoryInfo f = CreateTempDir("10knotpulsed");
             BaseDirectoryWrapper dir = NewFSDirectory(f);
-            dir.CheckIndexOnClose = false; // we do this ourselves explicitly
+            dir.CheckIndexOnDispose = false; // we do this ourselves explicitly
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
 
             Document document = new Document();

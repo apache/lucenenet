@@ -567,7 +567,7 @@ namespace Lucene.Net.Index
             m_dir = GetDirectory(NewMockFSDirectory(tempDir)); // some subclasses rely on this being MDW
             if (m_dir is BaseDirectoryWrapper)
             {
-                ((BaseDirectoryWrapper)m_dir).CheckIndexOnClose = false; // don't double-checkIndex, we do it ourselves.
+                ((BaseDirectoryWrapper)m_dir).CheckIndexOnDispose = false; // don't double-checkIndex, we do it ourselves.
             }
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);

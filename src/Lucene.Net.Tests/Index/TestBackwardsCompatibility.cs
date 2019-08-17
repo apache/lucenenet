@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
                 }
                 BaseDirectoryWrapper dir = NewFSDirectory(oldIndxeDir);
                 // don't checkindex, these are intentionally not supported
-                dir.CheckIndexOnClose = false;
+                dir.CheckIndexOnDispose = false;
 
                 IndexReader reader = null;
                 IndexWriter writer = null;

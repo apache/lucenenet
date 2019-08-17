@@ -82,7 +82,7 @@ namespace Lucene.Net
 
             using (BaseDirectoryWrapper dir = NewDirectory())
             {
-                dir.CheckIndexOnClose = false; // we use a custom codec provider
+                dir.CheckIndexOnDispose = false; // we use a custom codec provider
                 using (IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(new CustomPerFieldCodec()).SetMergePolicy(NewLogMergePolicy(3))))
                 {
                     Documents.Document doc = new Documents.Document();

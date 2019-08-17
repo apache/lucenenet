@@ -369,7 +369,7 @@ namespace Lucene.Net.Replicator
                     mdw.RandomIOExceptionRateOnOpen = clientExRate;
                     mdw.MaxSizeInBytes = clientMaxSize;
                     mdw.RandomIOExceptionRate = clientExRate;
-                    mdw.CheckIndexOnClose = false;
+                    mdw.CheckIndexOnDispose = false;
                     clientMaxSize *= 2;
                     clientExRate /= 2;
                     return mdw;
@@ -390,7 +390,7 @@ namespace Lucene.Net.Replicator
                         test.handlerTaxoDir.MaxSizeInBytes = (handlerTaxoMaxSize);
                         test.handlerTaxoDir.RandomIOExceptionRate = (handlerTaxoExRate);
                         test.handlerTaxoDir.RandomIOExceptionRateOnOpen = (handlerTaxoExRate);
-                        test.handlerTaxoDir.CheckIndexOnClose = (false);
+                        test.handlerTaxoDir.CheckIndexOnDispose = (false);
                         handlerTaxoMaxSize *= 2;
                         handlerTaxoExRate /= 2;
                     }

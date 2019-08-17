@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
             Directory target = NewDirectory();
 
             // We mess with the postings so this can fail:
-            ((BaseDirectoryWrapper)target).CrossCheckTermVectorsOnClose = false;
+            ((BaseDirectoryWrapper)target).CrossCheckTermVectorsOnDispose = false;
 
             writer = new IndexWriter(target, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             IndexReader reader = new TestReader(DirectoryReader.Open(directory));

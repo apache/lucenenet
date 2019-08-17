@@ -1429,7 +1429,7 @@ namespace Lucene.Net.Index
         public virtual void TestSimulatedCorruptIndex1()
         {
             BaseDirectoryWrapper dir = NewDirectory();
-            dir.CheckIndexOnClose = false; // we are corrupting it!
+            dir.CheckIndexOnDispose = false; // we are corrupting it!
 
             IndexWriter writer = null;
 
@@ -1485,7 +1485,7 @@ namespace Lucene.Net.Index
         public virtual void TestSimulatedCorruptIndex2()
         {
             BaseDirectoryWrapper dir = NewDirectory();
-            dir.CheckIndexOnClose = false; // we are corrupting it!
+            dir.CheckIndexOnDispose = false; // we are corrupting it!
             IndexWriter writer = null;
 
             writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(true)).SetUseCompoundFile(true));
