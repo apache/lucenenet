@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
-        public virtual void TestOneFloat()
+        public virtual void TestOneSingle() // LUCENENET specific - renamed from TestOneFloat
         {
             Directory directory = NewDirectory();
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
@@ -1520,7 +1520,7 @@ namespace Lucene.Net.Index
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
-        public virtual void TestShortNumericsVsStoredFields()
+        public virtual void TestInt16NumericsVsStoredFields() // LUCENENET specific - renamed from TestShortNumericsVsStoredFields
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1530,7 +1530,7 @@ namespace Lucene.Net.Index
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
-        public virtual void TestShortMissingVsFieldCache()
+        public virtual void TestInt16MissingVsFieldCache() // LUCENENET specific - renamed from TestShortMissingVsFieldCache
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1540,7 +1540,7 @@ namespace Lucene.Net.Index
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
-        public virtual void TestIntNumericsVsStoredFields()
+        public virtual void TestInt32NumericsVsStoredFields() // LUCENENET specific - renamed from TestIntNumericsVsStoredFields
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1550,7 +1550,7 @@ namespace Lucene.Net.Index
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
-        public virtual void TestIntMissingVsFieldCache()
+        public virtual void TestInt32MissingVsFieldCache() // LUCENENET specific - renamed from TestIntMissingVsFieldCache
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1560,7 +1560,7 @@ namespace Lucene.Net.Index
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
-        public virtual void TestLongNumericsVsStoredFields()
+        public virtual void TestInt64NumericsVsStoredFields() // LUCENENET specific - renamed from TestLongNumericsVsStoredFields
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
@@ -1570,7 +1570,7 @@ namespace Lucene.Net.Index
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
-        public virtual void TestLongMissingVsFieldCache()
+        public virtual void TestInt64MissingVsFieldCache() // LUCENENET specific - renamed from TestLongMissingVsFieldCache
         {
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)

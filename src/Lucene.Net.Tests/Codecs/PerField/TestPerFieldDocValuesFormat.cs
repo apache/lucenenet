@@ -168,9 +168,9 @@ namespace Lucene.Net.Codecs.PerField
         }
 
         [Test]
-        public override void TestOneFloat()
+        public override void TestOneSingle()
         {
-            base.TestOneFloat();
+            base.TestOneSingle();
         }
 
         [Test]
@@ -369,39 +369,39 @@ namespace Lucene.Net.Codecs.PerField
         }
 
         [Test]
-        public override void TestShortNumericsVsStoredFields()
+        public override void TestInt16NumericsVsStoredFields()
         {
-            base.TestShortNumericsVsStoredFields();
+            base.TestInt16NumericsVsStoredFields();
         }
 
         [Test]
-        public override void TestShortMissingVsFieldCache()
+        public override void TestInt16MissingVsFieldCache()
         {
-            base.TestShortMissingVsFieldCache();
+            base.TestInt16MissingVsFieldCache();
         }
 
         [Test]
-        public override void TestIntNumericsVsStoredFields()
+        public override void TestInt32NumericsVsStoredFields()
         {
-            base.TestIntNumericsVsStoredFields();
+            base.TestInt32NumericsVsStoredFields();
         }
 
         [Test]
-        public override void TestIntMissingVsFieldCache()
+        public override void TestInt32MissingVsFieldCache()
         {
-            base.TestIntMissingVsFieldCache();
+            base.TestInt32MissingVsFieldCache();
         }
 
         [Test]
-        public override void TestLongNumericsVsStoredFields()
+        public override void TestInt64NumericsVsStoredFields()
         {
-            base.TestLongNumericsVsStoredFields();
+            base.TestInt64NumericsVsStoredFields();
         }
 
         [Test]
-        public override void TestLongMissingVsFieldCache()
+        public override void TestInt64MissingVsFieldCache()
         {
-            base.TestLongMissingVsFieldCache();
+            base.TestInt64MissingVsFieldCache();
         }
 
         [Test]
