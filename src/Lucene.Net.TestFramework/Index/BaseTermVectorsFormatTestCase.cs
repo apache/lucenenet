@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
 
         private class OptionsWrapper
         {
-            public bool positions, offsets, payloads;
+            internal bool positions, offsets, payloads;
 
             private void SetOptionsWrapper(bool positions, bool offsets, bool payloads)
             {
