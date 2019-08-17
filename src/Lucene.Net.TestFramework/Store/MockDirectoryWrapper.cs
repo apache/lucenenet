@@ -41,8 +41,8 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// Enum for controlling hard disk throttling.
-    /// Set via <seealso cref="MockDirectoryWrapper #setThrottling(Throttling)"/>
-    /// <p>
+    /// Set via <see cref="MockDirectoryWrapper.Throttling"/>
+    /// <para/>
     /// WARNING: can make tests very slow.
     /// </summary>
     public enum Throttling
@@ -176,8 +176,12 @@ namespace Lucene.Net.Store
             }
         }
 
-        public virtual bool TrackDiskUsage // LUCENENET TODO: API - add getter
+        public virtual bool TrackDiskUsage
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return trackDiskUsage;
+            }
             set
             {
                 trackDiskUsage = value;
@@ -185,11 +189,15 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// If set to true, we throw anSystem.IO.IOException if the same
-        ///  file is opened by createOutput, ever.
+        /// If set to true, we throw an <see cref="System.IO.IOException"/> if the same
+        /// file is opened by <see cref="CreateOutput(string, IOContext)"/>, ever.
         /// </summary>
-        public virtual bool PreventDoubleWrite // LUCENENET TODO: API - add getter
+        public virtual bool PreventDoubleWrite
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return preventDoubleWrite;
+            }
             set
             {
                 preventDoubleWrite = value;
@@ -198,12 +206,16 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// If set to true (the default), when we throw random
-        /// System.IO.IOException on openInput or createOutput, we may
-        ///  sometimes throw FileNotFoundException or
-        ///  NoSuchFileException.
+        /// <see cref="System.IO.IOException"/> on <see cref="OpenInput(string, IOContext)"/> or 
+        /// <see cref="CreateOutput(string, IOContext)"/>, we may
+        /// sometimes throw <see cref="FileNotFoundException"/>.
         /// </summary>
-        public virtual bool AllowRandomFileNotFoundException // LUCENENET TODO: API - add getter
+        public virtual bool AllowRandomFileNotFoundException
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return allowRandomFileNotFoundException;
+            }
             set
             {
                 allowRandomFileNotFoundException = value;
@@ -212,18 +224,26 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// If set to true, you can open an inputstream on a file
-        ///  that is still open for writes.
+        /// that is still open for writes.
         /// </summary>
-        public virtual bool AllowReadingFilesStillOpenForWrite // LUCENENET TODO: API - add getter
+        public virtual bool AllowReadingFilesStillOpenForWrite
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return allowRandomFileNotFoundException;
+            }
             set
             {
                 allowReadingFilesStillOpenForWrite = value;
             }
         }
 
-        public virtual Throttling Throttling // LUCENENET TODO: API - add getter
+        public virtual Throttling Throttling
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return this.throttling;
+            }
             set
             {
                 this.throttling = value;
@@ -665,6 +685,10 @@ namespace Lucene.Net.Store
 
         public virtual bool FailOnCreateOutput
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return failOnCreateOutput;
+            }
             set
             {
                 failOnCreateOutput = value;
@@ -795,6 +819,10 @@ namespace Lucene.Net.Store
 
         public virtual bool FailOnOpenInput
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return FailOnOpenInput;
+            }
             set
             {
                 failOnOpenInput = value;
@@ -907,6 +935,10 @@ namespace Lucene.Net.Store
 
         public virtual bool AssertNoUnreferencedFilesOnClose
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return assertNoUnreferencedFilesOnClose;
+            }
             set
             {
                 assertNoUnreferencedFilesOnClose = value;
@@ -922,8 +954,12 @@ namespace Lucene.Net.Store
         /// and spit out horribly scary confusing exceptions instead of
         /// simply telling you that.
         /// </summary>
-        public virtual bool WrapLockFactory // LUCENENET TODO: API - Add getter
+        public virtual bool WrapLockFactory
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return wrapLockFactory;
+            }
             set
             {
                 this.wrapLockFactory = value;

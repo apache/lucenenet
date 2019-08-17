@@ -427,6 +427,10 @@ namespace Lucene.Net.Index
 
         public virtual bool RandomForceMerge
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return doRandomForceMerge;
+            }
             set
             {
                 doRandomForceMerge = value;
@@ -435,6 +439,10 @@ namespace Lucene.Net.Index
 
         public virtual bool DoRandomForceMergeAssert
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return doRandomForceMergeAssert;
+            }
             set
             {
                 doRandomForceMergeAssert = value;

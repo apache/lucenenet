@@ -350,8 +350,12 @@ namespace Lucene.Net.Analysis
         /// Toggle consumer workflow checking: if your test consumes tokenstreams normally you
         /// should leave this enabled.
         /// </summary>
-        public virtual bool EnableChecks // LUCENENET TODO: API - add getter
+        public virtual bool EnableChecks
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return enableChecks;
+            }
             set
             {
                 this.enableChecks = value;

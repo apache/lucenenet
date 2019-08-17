@@ -194,8 +194,12 @@ namespace Lucene.Net.Analysis
         /// Toggle consumer workflow checking: if your test consumes tokenstreams normally you
         /// should leave this enabled.
         /// </summary>
-        public bool EnableChecks // LUCENENET TODO: API Add getter
+        public bool EnableChecks
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return enableChecks;
+            }
             set
             {
                 this.enableChecks = value;
@@ -205,8 +209,12 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Toggle maxTokenLength for <see cref="MockTokenizer"/>.
         /// </summary>
-        public int MaxTokenLength // LUCENENET TODO: API Add getter
+        public int MaxTokenLength
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return maxTokenLength;
+            }
             set
             {
                 this.maxTokenLength = value;
