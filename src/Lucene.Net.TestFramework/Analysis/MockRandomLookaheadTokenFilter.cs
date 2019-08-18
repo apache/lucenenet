@@ -27,7 +27,7 @@ namespace Lucene.Net.Analysis
     /// <summary>
     /// Uses <see cref="LookaheadTokenFilter"/> to randomly peek at future tokens.
     /// </summary>
-    public sealed class MockRandomLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
+    public sealed class MockRandomLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilterPosition>
     {
         private readonly ICharTermAttribute termAtt;// = addAttribute(typeof(CharTermAttribute));
         private Random random; //not readonly to reset seed later
@@ -41,9 +41,9 @@ namespace Lucene.Net.Analysis
             this.random = new Random((int)seed);
         }
 
-        protected internal override LookaheadTokenFilter.Position NewPosition()
+        protected internal override LookaheadTokenFilterPosition NewPosition()
         {
-            return new LookaheadTokenFilter.Position();
+            return new LookaheadTokenFilterPosition();
         }
 
         protected internal override void AfterPosition()

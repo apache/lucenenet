@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis
     /// an <see cref="IOffsetAttribute"/>.
     /// </summary>
 
-    public sealed class MockGraphTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
+    public sealed class MockGraphTokenFilter : LookaheadTokenFilter<LookaheadTokenFilterPosition>
     {
         new private static bool DEBUG = false;
 
@@ -48,9 +48,9 @@ namespace Lucene.Net.Analysis
             termAtt = AddAttribute<ICharTermAttribute>();
         }
 
-        protected internal override LookaheadTokenFilter.Position NewPosition()
+        protected internal override LookaheadTokenFilterPosition NewPosition()
         {
-            return new LookaheadTokenFilter.Position();
+            return new LookaheadTokenFilterPosition();
         }
 
         protected internal override void AfterPosition()
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis
                     Console.WriteLine("  do insert! posLen=" + posLength);
                 }
 
-                LookaheadTokenFilter.Position posEndData = m_positions.Get(m_outputPos + posLength);
+                LookaheadTokenFilterPosition posEndData = m_positions.Get(m_outputPos + posLength);
 
                 // Look ahead as needed until we figure out the right
                 // endOffset:

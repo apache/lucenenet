@@ -51,16 +51,16 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        private class NeverPeeksLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
+        private class NeverPeeksLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilterPosition>
         {
             public NeverPeeksLookaheadTokenFilter(TokenStream input)
                 : base(input)
             {
             }
 
-            protected internal override LookaheadTokenFilter.Position NewPosition()
+            protected internal override LookaheadTokenFilterPosition NewPosition()
             {
-                return new LookaheadTokenFilter.Position();
+                return new LookaheadTokenFilterPosition();
             }
 
             public sealed override bool IncrementToken()
