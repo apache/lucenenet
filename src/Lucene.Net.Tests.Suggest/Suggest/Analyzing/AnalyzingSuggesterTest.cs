@@ -447,9 +447,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return t;
         }
 
-        internal static CannedBinaryTokenStream.BinaryToken NewToken(BytesRef term)
+        internal static BinaryToken NewToken(BytesRef term)
         {
-            return new CannedBinaryTokenStream.BinaryToken(term);
+            return new BinaryToken(term);
         }
 
         /*
@@ -1340,16 +1340,16 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             internal int tokenStreamCounter = 0;
             internal TokenStream[] tokenStreams = new TokenStream[] {
-              new CannedBinaryTokenStream(new CannedBinaryTokenStream.BinaryToken[] {
+              new CannedBinaryTokenStream(new BinaryToken[] {
                   NewToken(new BytesRef(new byte[] {0x0, 0x0, 0x0})),
                 }),
-              new CannedBinaryTokenStream(new CannedBinaryTokenStream.BinaryToken[] {
+              new CannedBinaryTokenStream(new BinaryToken[] {
                   NewToken(new BytesRef(new byte[] {0x0, 0x0})),
                 }),
-              new CannedBinaryTokenStream(new CannedBinaryTokenStream.BinaryToken[] {
+              new CannedBinaryTokenStream(new BinaryToken[] {
                   NewToken(new BytesRef(new byte[] {0x0, 0x0, 0x0})),
                 }),
-              new CannedBinaryTokenStream(new CannedBinaryTokenStream.BinaryToken[] {
+              new CannedBinaryTokenStream(new BinaryToken[] {
                   NewToken(new BytesRef(new byte[] {0x0, 0x0})),
                 }),
             };
