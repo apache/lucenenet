@@ -43,6 +43,35 @@ namespace Lucene.Net.Search
     using TermContext = Lucene.Net.Index.TermContext;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
+    // TODO: maybe SLM should throw this instead of returning null...
+    /// <summary>
+    /// Thrown when the lease for a searcher has expired.
+    /// </summary>
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+    [Serializable]
+#endif
+    public class SearcherExpiredException : Exception
+    {
+        public SearcherExpiredException(string message)
+            : base(message)
+        {
+        }
+
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        protected SearcherExpiredException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
+    }
+
     // TODO
     //   - doc blocks?  so we can test joins/grouping...
     //   - controlled consistency (NRTMgr)
@@ -52,34 +81,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class ShardSearchingTestBase : LuceneTestCase
     {
-        // TODO: maybe SLM should throw this instead of returning null...
-        /// <summary>
-        /// Thrown when the lease for a searcher has expired.
-        /// </summary>
-        // LUCENENET: It is no longer good practice to use binary serialization. 
-        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-        [Serializable]
-#endif
-        public class SearcherExpiredException : Exception // LUCENENET TODO: API - de-nest
-        {
-            public SearcherExpiredException(string message)
-                : base(message)
-            {
-            }
-
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-            /// <summary>
-            /// Initializes a new instance of this class with serialized data.
-            /// </summary>
-            /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-            /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-            protected SearcherExpiredException(SerializationInfo info, StreamingContext context)
-                : base(info, context)
-            {
-            }
-#endif
-        }
+        // LUCENENET speciic - de-nested SearcherExpiredException
 
         internal class FieldAndShardVersion
         {
@@ -798,7 +800,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// An <see cref="IndexSearcher"/> and associated version (lease)
         /// </summary>
-        protected internal class SearcherAndVersion // LUCENENET TODO: API - de-nest
+        protected internal class SearcherAndVersion
         {
             public IndexSearcher Searcher { get; private set; }
             public long Version { get; private set; }
