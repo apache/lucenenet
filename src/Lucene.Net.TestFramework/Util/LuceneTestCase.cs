@@ -1336,7 +1336,7 @@ namespace Lucene.Net.Util
             string fsdirClass = TEST_DIRECTORY;
             if (fsdirClass.Equals("random", StringComparison.Ordinal))
             {
-                fsdirClass = RandomInts.RandomFrom(Random, FS_DIRECTORIES);
+                fsdirClass = RandomPicks.RandomFrom(Random, FS_DIRECTORIES);
             }
 
             // LUCENENET specific - .NET will not throw an exception if the
@@ -1348,7 +1348,7 @@ namespace Lucene.Net.Util
             if (clazz == null || !(typeof(FSDirectory).IsAssignableFrom(clazz)))
             {
                 // TEST_DIRECTORY is not a sub-class of FSDirectory, so draw one at random
-                fsdirClass = RandomInts.RandomFrom(Random, FS_DIRECTORIES);
+                fsdirClass = RandomPicks.RandomFrom(Random, FS_DIRECTORIES);
                 clazz = CommandLineUtil.LoadFSDirectoryClass(fsdirClass);
             }
 
@@ -1513,7 +1513,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static CultureInfo RandomCulture(Random random) // LUCENENET specific renamed from RandomLocale
         {
-            return RandomInts.RandomFrom(random, CultureInfoSupport.GetNeutralAndSpecificCultures());
+            return RandomPicks.RandomFrom(random, CultureInfoSupport.GetNeutralAndSpecificCultures());
         }
 
         /// <summary>
@@ -1523,7 +1523,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static TimeZoneInfo RandomTimeZone(Random random)
         {
-            return RandomInts.RandomFrom(random, TimeZoneInfo.GetSystemTimeZones());
+            return RandomPicks.RandomFrom(random, TimeZoneInfo.GetSystemTimeZones());
         }
 
         /// <summary>
@@ -1566,7 +1566,7 @@ namespace Lucene.Net.Util
             {
                 if (Rarely(random))
                 {
-                    clazzName = RandomInts.RandomFrom(random, CORE_DIRECTORIES);
+                    clazzName = RandomPicks.RandomFrom(random, CORE_DIRECTORIES);
                 }
                 else
                 {

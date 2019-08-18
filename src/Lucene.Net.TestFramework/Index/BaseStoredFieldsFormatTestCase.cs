@@ -718,7 +718,7 @@ namespace Lucene.Net.Index
             Document[] docs = new Document[numDocs];
             for (int i = 0; i < numDocs; ++i)
             {
-                docs[i] = RandomInts.RandomFrom(Random, Arrays.AsList(emptyDoc, bigDoc1, bigDoc2));
+                docs[i] = RandomPicks.RandomFrom(Random, Arrays.AsList(emptyDoc, bigDoc1, bigDoc2));
             }
             for (int i = 0; i < numDocs; ++i)
             {

@@ -487,7 +487,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    regexp.Append(RandomInts.RandomFrom(r, ops));
+                    regexp.Append(RandomPicks.RandomFrom(r, ops));
                 }
             }
             return regexp.ToString();

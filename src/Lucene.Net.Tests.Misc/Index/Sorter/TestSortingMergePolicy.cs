@@ -49,7 +49,7 @@ namespace Lucene.Net.Index.Sorter
         {
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("ndv", Random.NextInt64()));
-            doc.Add(new StringField("s", RandomInts.RandomFrom(Random, terms), Field.Store.YES));
+            doc.Add(new StringField("s", RandomPicks.RandomFrom(Random, terms), Field.Store.YES));
             return doc;
         }
 
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 if (Random.nextInt(5) == 0 && i != numDocs - 1)
                 {
-                    string term = RandomInts.RandomFrom(Random, terms);
+                    string term = RandomPicks.RandomFrom(Random, terms);
                     iw1.DeleteDocuments(new Term("s", term));
                     iw2.DeleteDocuments(new Term("s", term));
                 }
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 // update NDV of docs belonging to one term (covers many documents)
                 long value = Random.NextInt64();
-                string term = RandomInts.RandomFrom(Random, terms);
+                string term = RandomPicks.RandomFrom(Random, terms);
                 iw1.IndexWriter.UpdateNumericDocValue(new Term("s", term), "ndv", value);
                 iw2.IndexWriter.UpdateNumericDocValue(new Term("s", term), "ndv", value);
             }

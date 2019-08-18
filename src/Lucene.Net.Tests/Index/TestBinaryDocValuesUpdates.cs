@@ -1537,7 +1537,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                doc.Add(new StringField("id", RandomInts.RandomFrom(Random, randomTerms), Store.NO));
+                doc.Add(new StringField("id", RandomPicks.RandomFrom(Random, randomTerms), Store.NO));
                 doc.Add(new BinaryDocValuesField("bdv", ToBytes(4L)));
                 doc.Add(new BinaryDocValuesField("control", ToBytes(8L)));
                 writer.AddDocument(doc);
@@ -1550,7 +1550,7 @@ namespace Lucene.Net.Index
 
             // update some docs to a random value
             long value = Random.Next();
-            Term term = new Term("id", RandomInts.RandomFrom(Random, randomTerms));
+            Term term = new Term("id", RandomPicks.RandomFrom(Random, randomTerms));
             writer.UpdateBinaryDocValue(term, "bdv", ToBytes(value));
             writer.UpdateBinaryDocValue(term, "control", ToBytes(value * 2));
             writer.Dispose();
@@ -1652,7 +1652,7 @@ namespace Lucene.Net.Index
                 int numUpdateTerms = TestUtil.NextInt32(random, 1, numTerms / 10);
                 for (int j = 0; j < numUpdateTerms; j++)
                 {
-                    doc.Add(new StringField("upd", RandomInts.RandomFrom(random, updateTerms), Store.NO));
+                    doc.Add(new StringField("upd", RandomPicks.RandomFrom(random, updateTerms), Store.NO));
                 }
                 for (int j = 0; j < numBinaryFields; j++)
                 {
@@ -1673,7 +1673,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numUpdates; i++)
             {
                 int field = random.Next(numBinaryFields);
-                Term updateTerm = new Term("upd", RandomInts.RandomFrom(random, updateTerms));
+                Term updateTerm = new Term("upd", RandomPicks.RandomFrom(random, updateTerms));
                 long value = random.Next();
                 writer.UpdateBinaryDocValue(updateTerm, "f" + field, ToBytes(value));
                 writer.UpdateBinaryDocValue(updateTerm, "cf" + field, ToBytes(value * 2));

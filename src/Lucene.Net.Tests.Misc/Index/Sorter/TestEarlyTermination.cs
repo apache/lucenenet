@@ -49,7 +49,7 @@ namespace Lucene.Net.Index.Sorter
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("ndv1", Random.nextInt(10)));
             doc.Add(new NumericDocValuesField("ndv2", Random.nextInt(10)));
-            doc.Add(new StringField("s", RandomInts.RandomFrom(Random, terms), Field.Store.YES));
+            doc.Add(new StringField("s", RandomPicks.RandomFrom(Random, terms), Field.Store.YES));
             return doc;
         }
 
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index.Sorter
                 }
                 if (Random.nextInt(15) == 0)
                 {
-                    string term = RandomInts.RandomFrom(Random, terms);
+                    string term = RandomPicks.RandomFrom(Random, terms);
                     iw.DeleteDocuments(new Term("s", term));
                 }
             }
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index.Sorter
             int iters = AtLeast(5);
             for (int i = 0; i < iters; ++i)
             {
-                TermQuery query = new TermQuery(new Term("s", RandomInts.RandomFrom(Random, terms)));
+                TermQuery query = new TermQuery(new Term("s", RandomPicks.RandomFrom(Random, terms)));
                 searcher.Search(query, collector1);
                 searcher.Search(query, new EarlyTerminatingSortingCollector(collector2, sort, numHits));
             }
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index.Sorter
                 TopFieldCollector collector1 = TopFieldCollector.Create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
                 TopFieldCollector collector2 = TopFieldCollector.Create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
 
-                TermQuery query = new TermQuery(new Term("s", RandomInts.RandomFrom(Random, terms)));
+                TermQuery query = new TermQuery(new Term("s", RandomPicks.RandomFrom(Random, terms)));
                 searcher.Search(query, collector1);
                 Sort different = new Sort(new SortField("ndv2", SortFieldType.INT64));
                 searcher.Search(query, new EarlyTerminatingSortingCollectorHelper(collector2, different, numHits));

@@ -59,15 +59,5 @@ namespace Lucene.Net.Randomized.Generators
             long l12 = ((i1 << 32) | i2);
             return l12;
         }
-
-        public static T RandomFrom<T>(Random rand, ISet<T> set)
-        {
-            return set.ElementAt(rand.Next(0, set.Count));
-        }
-
-        public static T RandomFrom<T>(Random rand, IList<T> set)
-        {
-            return set.ElementAt(rand.Next(0, set.Count));
-        }
     }
 }

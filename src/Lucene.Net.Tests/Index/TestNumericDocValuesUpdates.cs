@@ -1453,7 +1453,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                doc.Add(new StringField("id", RandomInts.RandomFrom(Random, randomTerms), Store.NO));
+                doc.Add(new StringField("id", RandomPicks.RandomFrom(Random, randomTerms), Store.NO));
                 doc.Add(new NumericDocValuesField("ndv", 4L));
                 doc.Add(new NumericDocValuesField("control", 8L));
                 writer.AddDocument(doc);
@@ -1466,7 +1466,7 @@ namespace Lucene.Net.Index
 
             // update some docs to a random value
             long value = Random.Next();
-            Term term = new Term("id", RandomInts.RandomFrom(Random, randomTerms));
+            Term term = new Term("id", RandomPicks.RandomFrom(Random, randomTerms));
             writer.UpdateNumericDocValue(term, "ndv", value);
             writer.UpdateNumericDocValue(term, "control", value * 2);
             writer.Dispose();
@@ -1566,7 +1566,7 @@ namespace Lucene.Net.Index
                 int numUpdateTerms = TestUtil.NextInt32(random, 1, numTerms / 10);
                 for (int j = 0; j < numUpdateTerms; j++)
                 {
-                    doc.Add(new StringField("upd", RandomInts.RandomFrom(random, updateTerms), Store.NO));
+                    doc.Add(new StringField("upd", RandomPicks.RandomFrom(random, updateTerms), Store.NO));
                 }
                 for (int j = 0; j < numNumericFields; j++)
                 {
@@ -1587,7 +1587,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numUpdates; i++)
             {
                 int field = random.Next(numNumericFields);
-                Term updateTerm = new Term("upd", RandomInts.RandomFrom(random, updateTerms));
+                Term updateTerm = new Term("upd", RandomPicks.RandomFrom(random, updateTerms));
                 long value = random.Next();
                 writer.UpdateNumericDocValue(updateTerm, "f" + field, value);
                 writer.UpdateNumericDocValue(updateTerm, "cf" + field, value * 2);

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Randomized.Generators;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net
 {
@@ -57,6 +59,14 @@ namespace Lucene.Net
         public static float NextSingle(this Random random)
         {
             return (float)random.NextDouble();
+        }
+
+        /// <summary>
+        /// Pick a random object from the <paramref name="collection"/>.
+        /// </summary>
+        public static T NextFrom<T>(this Random random, ICollection<T> collection)
+        {
+            return RandomPicks.RandomFrom(random, collection);
         }
     }
 }

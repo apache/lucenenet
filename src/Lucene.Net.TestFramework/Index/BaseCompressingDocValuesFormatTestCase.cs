@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    value = RandomInts.RandomFrom(Random, values);
+                    value = RandomPicks.RandomFrom(Random, values);
                 }
                 dvf.SetInt64Value(value);
                 iwriter.AddDocument(doc);
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
             long size1 = DirSize(dir);
             for (int i = 0; i < 20; ++i)
             {
-                dvf.SetInt64Value(RandomInts.RandomFrom(Random, values));
+                dvf.SetInt64Value(RandomPicks.RandomFrom(Random, values));
                 iwriter.AddDocument(doc);
             }
             iwriter.ForceMerge(1);

@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
 
         protected internal virtual Options RandomOptions()
         {
-            return RandomInts.RandomFrom(Random, new List<Options>(ValidOptions()));
+            return RandomPicks.RandomFrom(Random, new List<Options>(ValidOptions()));
         }
 
         protected internal virtual FieldType FieldType(Options options)
@@ -426,7 +426,7 @@ namespace Lucene.Net.Index
                 {
                     // LUCENENET NOTE: Using a simple Linq query to filter rather than using brute force makes this a lot
                     // faster (and won't infinitely retry due to poor random distribution).
-                    this.fieldNames[i] = RandomInts.RandomFrom(Random, fieldNames.Except(usedFileNames).ToArray());
+                    this.fieldNames[i] = RandomPicks.RandomFrom(Random, fieldNames.Except(usedFileNames).ToArray());
                     //do
                     //{
                     //    this.FieldNames[i] = RandomInts.RandomFrom(Random(), fieldNames);
@@ -653,11 +653,11 @@ namespace Lucene.Net.Index
             {
                 if (Random.NextBoolean())
                 {
-                    Assert.IsTrue(termsEnum.SeekExact(RandomInts.RandomFrom(Random, tk.termBytes)));
+                    Assert.IsTrue(termsEnum.SeekExact(RandomPicks.RandomFrom(Random, tk.termBytes)));
                 }
                 else
                 {
-                    Assert.AreEqual(SeekStatus.FOUND, termsEnum.SeekCeil(RandomInts.RandomFrom(Random, tk.termBytes)));
+                    Assert.AreEqual(SeekStatus.FOUND, termsEnum.SeekCeil(RandomPicks.RandomFrom(Random, tk.termBytes)));
                 }
             }
         }

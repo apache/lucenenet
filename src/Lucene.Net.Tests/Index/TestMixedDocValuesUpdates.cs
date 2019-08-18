@@ -521,7 +521,7 @@ namespace Lucene.Net.Index
                 int numUpdateTerms = TestUtil.NextInt32(random, 1, numTerms / 10);
                 for (int j = 0; j < numUpdateTerms; j++)
                 {
-                    doc.Add(new StringField("upd", RandomInts.RandomFrom(random, updateTerms), Store.NO));
+                    doc.Add(new StringField("upd", RandomPicks.RandomFrom(random, updateTerms), Store.NO));
                 }
                 for (int j = 0; j < numBinaryFields; j++)
                 {
@@ -542,7 +542,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numUpdates; i++)
             {
                 int field = random.Next(numBinaryFields);
-                Term updateTerm = new Term("upd", RandomInts.RandomFrom(random, updateTerms));
+                Term updateTerm = new Term("upd", RandomPicks.RandomFrom(random, updateTerms));
                 long value = random.Next();
                 writer.UpdateBinaryDocValue(updateTerm, "f" + field, TestBinaryDocValuesUpdates.ToBytes(value));
                 writer.UpdateNumericDocValue(updateTerm, "cf" + field, value * 2);
