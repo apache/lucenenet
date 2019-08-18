@@ -26,6 +26,343 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
+    /// Wraps a <see cref="Index.Fields"/> but with additional asserts
+    /// </summary>
+    public class AssertingFields : FilterAtomicReader.FilterFields
+    {
+        public AssertingFields(Fields input)
+            : base(input)
+        {
+        }
+
+        public override IEnumerator<string> GetEnumerator()
+        {
+            IEnumerator<string> iterator = base.GetEnumerator();
+            Debug.Assert(iterator != null);
+            return iterator;
+        }
+
+        public override Terms GetTerms(string field)
+        {
+            Terms terms = base.GetTerms(field);
+            return terms == null ? null : new AssertingTerms(terms);
+        }
+    }
+
+    /// <summary>
+    /// Wraps a <see cref="Terms"/> but with additional asserts
+    /// </summary>
+    public class AssertingTerms : FilterAtomicReader.FilterTerms
+    {
+        public AssertingTerms(Terms input)
+            : base(input)
+        {
+        }
+
+        public override TermsEnum Intersect(CompiledAutomaton automaton, BytesRef bytes)
+        {
+            TermsEnum termsEnum = m_input.Intersect(automaton, bytes);
+            Debug.Assert(termsEnum != null);
+            Debug.Assert(bytes == null || bytes.IsValid());
+            return new AssertingAtomicReader.AssertingTermsEnum(termsEnum);
+        }
+
+        public override TermsEnum GetIterator(TermsEnum reuse)
+        {
+            // TODO: should we give this thing a random to be super-evil,
+            // and randomly *not* unwrap?
+            if (reuse is AssertingAtomicReader.AssertingTermsEnum)
+            {
+                reuse = ((AssertingAtomicReader.AssertingTermsEnum)reuse).m_input;
+            }
+            TermsEnum termsEnum = base.GetIterator(reuse);
+            Debug.Assert(termsEnum != null);
+            return new AssertingAtomicReader.AssertingTermsEnum(termsEnum);
+        }
+    }
+
+    internal enum DocsEnumState
+    {
+        START,
+        ITERATING,
+        FINISHED
+    }
+
+    /// <summary>
+    /// Wraps a <see cref="DocsEnum"/> with additional checks </summary>
+    public class AssertingDocsEnum : FilterAtomicReader.FilterDocsEnum
+    {
+        internal DocsEnumState state = DocsEnumState.START;
+        internal int doc;
+
+        public AssertingDocsEnum(DocsEnum @in)
+            : this(@in, true)
+        {
+        }
+
+        public AssertingDocsEnum(DocsEnum @in, bool failOnUnsupportedDocID)
+            : base(@in)
+        {
+            try
+            {
+                int docid = @in.DocID;
+                Debug.Assert(docid == -1, @in.GetType() + ": invalid initial doc id: " + docid);
+            }
+            catch (System.NotSupportedException /*e*/)
+            {
+                if (failOnUnsupportedDocID)
+                {
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                }
+            }
+            doc = -1;
+        }
+
+        public override int NextDoc()
+        {
+            Debug.Assert(state != DocsEnumState.FINISHED, "NextDoc() called after NO_MORE_DOCS");
+            int nextDoc = base.NextDoc();
+            Debug.Assert(nextDoc > doc, "backwards nextDoc from " + doc + " to " + nextDoc + " " + m_input);
+            if (nextDoc == DocIdSetIterator.NO_MORE_DOCS)
+            {
+                state = DocsEnumState.FINISHED;
+            }
+            else
+            {
+                state = DocsEnumState.ITERATING;
+            }
+            Debug.Assert(base.DocID == nextDoc);
+            return doc = nextDoc;
+        }
+
+        public override int Advance(int target)
+        {
+            Debug.Assert(state != DocsEnumState.FINISHED, "Advance() called after NO_MORE_DOCS");
+            Debug.Assert(target > doc, "target must be > DocID, got " + target + " <= " + doc);
+            int advanced = base.Advance(target);
+            Debug.Assert(advanced >= target, "backwards advance from: " + target + " to: " + advanced);
+            if (advanced == DocIdSetIterator.NO_MORE_DOCS)
+            {
+                state = DocsEnumState.FINISHED;
+            }
+            else
+            {
+                state = DocsEnumState.ITERATING;
+            }
+            Debug.Assert(base.DocID == advanced);
+            return doc = advanced;
+        }
+
+        public override int DocID
+        {
+            get
+            {
+                Debug.Assert(doc == base.DocID, " invalid DocID in " + m_input.GetType() + " " + base.DocID + " instead of " + doc);
+                return doc;
+            }
+        }
+
+        public override int Freq
+        {
+            get
+            {
+                Debug.Assert(state != DocsEnumState.START, "Freq called before NextDoc()/Advance()");
+                Debug.Assert(state != DocsEnumState.FINISHED, "Freq called after NO_MORE_DOCS");
+                int freq = base.Freq;
+                Debug.Assert(freq > 0);
+                return freq;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Wraps a <see cref="NumericDocValues"/> but with additional asserts </summary>
+    public class AssertingNumericDocValues : NumericDocValues
+    {
+        internal readonly NumericDocValues @in;
+        internal readonly int maxDoc;
+
+        public AssertingNumericDocValues(NumericDocValues @in, int maxDoc)
+        {
+            this.@in = @in;
+            this.maxDoc = maxDoc;
+        }
+
+        public override long Get(int docID)
+        {
+            Debug.Assert(docID >= 0 && docID < maxDoc);
+            return @in.Get(docID);
+        }
+    }
+
+    /// <summary>
+    /// Wraps a <see cref="BinaryDocValues"/> but with additional asserts </summary>
+    public class AssertingBinaryDocValues : BinaryDocValues
+    {
+        internal readonly BinaryDocValues @in;
+        internal readonly int maxDoc;
+
+        public AssertingBinaryDocValues(BinaryDocValues @in, int maxDoc)
+        {
+            this.@in = @in;
+            this.maxDoc = maxDoc;
+        }
+
+        public override void Get(int docID, BytesRef result)
+        {
+            Debug.Assert(docID >= 0 && docID < maxDoc);
+            Debug.Assert(result.IsValid());
+            @in.Get(docID, result);
+            Debug.Assert(result.IsValid());
+        }
+    }
+
+    /// <summary>
+    /// Wraps a <see cref="SortedDocValues"/> but with additional asserts </summary>
+    public class AssertingSortedDocValues : SortedDocValues
+    {
+        internal readonly SortedDocValues @in;
+        internal readonly int maxDoc;
+        internal readonly int valueCount;
+
+        public AssertingSortedDocValues(SortedDocValues @in, int maxDoc)
+        {
+            this.@in = @in;
+            this.maxDoc = maxDoc;
+            this.valueCount = @in.ValueCount;
+            Debug.Assert(valueCount >= 0 && valueCount <= maxDoc);
+        }
+
+        public override int GetOrd(int docID)
+        {
+            Debug.Assert(docID >= 0 && docID < maxDoc);
+            int ord = @in.GetOrd(docID);
+            Debug.Assert(ord >= -1 && ord < valueCount);
+            return ord;
+        }
+
+        public override void LookupOrd(int ord, BytesRef result)
+        {
+            Debug.Assert(ord >= 0 && ord < valueCount);
+            Debug.Assert(result.IsValid());
+            @in.LookupOrd(ord, result);
+            Debug.Assert(result.IsValid());
+        }
+
+        public override int ValueCount
+        {
+            get
+            {
+                int valueCount = @in.ValueCount;
+                Debug.Assert(valueCount == this.valueCount); // should not change
+                return valueCount;
+            }
+        }
+
+        public override void Get(int docID, BytesRef result)
+        {
+            Debug.Assert(docID >= 0 && docID < maxDoc);
+            Debug.Assert(result.IsValid());
+            @in.Get(docID, result);
+            Debug.Assert(result.IsValid());
+        }
+
+        public override int LookupTerm(BytesRef key)
+        {
+            Debug.Assert(key.IsValid());
+            int result = @in.LookupTerm(key);
+            Debug.Assert(result < valueCount);
+            Debug.Assert(key.IsValid());
+            return result;
+        }
+    }
+
+    /// <summary>
+    /// Wraps a <see cref="SortedSetDocValues"/> but with additional asserts </summary>
+    public class AssertingSortedSetDocValues : SortedSetDocValues
+    {
+        internal readonly SortedSetDocValues @in;
+        internal readonly int maxDoc;
+        internal readonly long valueCount;
+        internal long lastOrd = NO_MORE_ORDS;
+
+        public AssertingSortedSetDocValues(SortedSetDocValues @in, int maxDoc)
+        {
+            this.@in = @in;
+            this.maxDoc = maxDoc;
+            this.valueCount = @in.ValueCount;
+            Debug.Assert(valueCount >= 0);
+        }
+
+        public override long NextOrd()
+        {
+            Debug.Assert(lastOrd != NO_MORE_ORDS);
+            long ord = @in.NextOrd();
+            Debug.Assert(ord < valueCount);
+            Debug.Assert(ord == NO_MORE_ORDS || ord > lastOrd);
+            lastOrd = ord;
+            return ord;
+        }
+
+        public override void SetDocument(int docID)
+        {
+            Debug.Assert(docID >= 0 && docID < maxDoc, "docid=" + docID + ",maxDoc=" + maxDoc);
+            @in.SetDocument(docID);
+            lastOrd = -2;
+        }
+
+        public override void LookupOrd(long ord, BytesRef result)
+        {
+            Debug.Assert(ord >= 0 && ord < valueCount);
+            Debug.Assert(result.IsValid());
+            @in.LookupOrd(ord, result);
+            Debug.Assert(result.IsValid());
+        }
+
+        public override long ValueCount
+        {
+            get
+            {
+                long valueCount = @in.ValueCount;
+                Debug.Assert(valueCount == this.valueCount); // should not change
+                return valueCount;
+            }
+        }
+
+        public override long LookupTerm(BytesRef key)
+        {
+            Debug.Assert(key.IsValid());
+            long result = @in.LookupTerm(key);
+            Debug.Assert(result < valueCount);
+            Debug.Assert(key.IsValid());
+            return result;
+        }
+    }
+
+    /// <summary>
+    /// Wraps a <see cref="IBits"/> but with additional asserts </summary>
+    public class AssertingBits : IBits
+    {
+        internal readonly IBits @in;
+
+        public AssertingBits(IBits @in)
+        {
+            this.@in = @in;
+        }
+
+        public bool Get(int index)
+        {
+            Debug.Assert(index >= 0 && index < Length);
+            return @in.Get(index);
+        }
+
+        public int Length
+        {
+            get { return @in.Length; }
+        }
+    }
+
+    /// <summary>
     /// A <see cref="FilterAtomicReader"/> that can be used to apply
     /// additional checks for tests.
     /// </summary>
@@ -56,61 +393,11 @@ namespace Lucene.Net.Index
             return fields == null ? null : new AssertingFields(fields);
         }
 
-        /// <summary>
-        /// Wraps a <see cref="Index.Fields"/> but with additional asserts
-        /// </summary>
-        public class AssertingFields : FilterFields
-        {
-            public AssertingFields(Fields input)
-                : base(input)
-            {
-            }
+        // LUCENENET specific - de-nested AssertingFields
 
-            public override IEnumerator<string> GetEnumerator()
-            {
-                IEnumerator<string> iterator = base.GetEnumerator();
-                Debug.Assert(iterator != null);
-                return iterator;
-            }
+        // LUCENENET specific - de-nested AssertingTerms
 
-            public override Terms GetTerms(string field)
-            {
-                Terms terms = base.GetTerms(field);
-                return terms == null ? null : new AssertingTerms(terms);
-            }
-        }
-
-        /// <summary>
-        /// Wraps a <see cref="Terms"/> but with additional asserts
-        /// </summary>
-        public class AssertingTerms : FilterTerms
-        {
-            public AssertingTerms(Terms input)
-                : base(input)
-            {
-            }
-
-            public override TermsEnum Intersect(CompiledAutomaton automaton, BytesRef bytes)
-            {
-                TermsEnum termsEnum = m_input.Intersect(automaton, bytes);
-                Debug.Assert(termsEnum != null);
-                Debug.Assert(bytes == null || bytes.IsValid());
-                return new AssertingTermsEnum(termsEnum);
-            }
-
-            public override TermsEnum GetIterator(TermsEnum reuse)
-            {
-                // TODO: should we give this thing a random to be super-evil,
-                // and randomly *not* unwrap?
-                if (reuse is AssertingTermsEnum)
-                {
-                    reuse = ((AssertingTermsEnum)reuse).m_input;
-                }
-                TermsEnum termsEnum = base.GetIterator(reuse);
-                Debug.Assert(termsEnum != null);
-                return new AssertingTermsEnum(termsEnum);
-            }
-        }
+        // LUCENENET specific - de-nested AssertingTermsEnum
 
         internal class AssertingTermsEnum : FilterTermsEnum
         {
@@ -262,99 +549,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal enum DocsEnumState
-        {
-            START,
-            ITERATING,
-            FINISHED
-        }
+        // LUCENENET specific - de-nested DocsEnumState
 
-        /// <summary>
-        /// Wraps a <see cref="DocsEnum"/> with additional checks </summary>
-        public class AssertingDocsEnum : FilterDocsEnum
-        {
-            internal DocsEnumState state = DocsEnumState.START;
-            internal int doc;
-
-            public AssertingDocsEnum(DocsEnum @in)
-                : this(@in, true)
-            {
-            }
-
-            public AssertingDocsEnum(DocsEnum @in, bool failOnUnsupportedDocID)
-                : base(@in)
-            {
-                try
-                {
-                    int docid = @in.DocID;
-                    Debug.Assert(docid == -1, @in.GetType() + ": invalid initial doc id: " + docid);
-                }
-                catch (System.NotSupportedException /*e*/)
-                {
-                    if (failOnUnsupportedDocID)
-                    {
-                        throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
-                    }
-                }
-                doc = -1;
-            }
-
-            public override int NextDoc()
-            {
-                Debug.Assert(state != DocsEnumState.FINISHED, "NextDoc() called after NO_MORE_DOCS");
-                int nextDoc = base.NextDoc();
-                Debug.Assert(nextDoc > doc, "backwards nextDoc from " + doc + " to " + nextDoc + " " + m_input);
-                if (nextDoc == DocIdSetIterator.NO_MORE_DOCS)
-                {
-                    state = DocsEnumState.FINISHED;
-                }
-                else
-                {
-                    state = DocsEnumState.ITERATING;
-                }
-                Debug.Assert(base.DocID == nextDoc);
-                return doc = nextDoc;
-            }
-
-            public override int Advance(int target)
-            {
-                Debug.Assert(state != DocsEnumState.FINISHED, "Advance() called after NO_MORE_DOCS");
-                Debug.Assert(target > doc, "target must be > DocID, got " + target + " <= " + doc);
-                int advanced = base.Advance(target);
-                Debug.Assert(advanced >= target, "backwards advance from: " + target + " to: " + advanced);
-                if (advanced == DocIdSetIterator.NO_MORE_DOCS)
-                {
-                    state = DocsEnumState.FINISHED;
-                }
-                else
-                {
-                    state = DocsEnumState.ITERATING;
-                }
-                Debug.Assert(base.DocID == advanced);
-                return doc = advanced;
-            }
-
-            public override int DocID
-            {
-                get
-                {
-                    Debug.Assert(doc == base.DocID, " invalid DocID in " + m_input.GetType() + " " + base.DocID + " instead of " + doc);
-                    return doc;
-                }
-            }
-
-            public override int Freq
-            {
-                get
-                {
-                    Debug.Assert(state != DocsEnumState.START, "Freq called before NextDoc()/Advance()");
-                    Debug.Assert(state != DocsEnumState.FINISHED, "Freq called after NO_MORE_DOCS");
-                    int freq = base.Freq;
-                    Debug.Assert(freq > 0);
-                    return freq;
-                }
-            }
-        }
+        // LUCENENET specific - de-nested AssertingDocsEnum
 
         internal class AssertingDocsAndPositionsEnum : FilterDocsAndPositionsEnum
         {
@@ -477,169 +674,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        /// <summary>
-        /// Wraps a <see cref="NumericDocValues"/> but with additional asserts </summary>
-        public class AssertingNumericDocValues : NumericDocValues
-        {
-            internal readonly NumericDocValues @in;
-            internal readonly int maxDoc;
+        // LUCENENET specific - de-nested AssertingNumericDocValues
 
-            public AssertingNumericDocValues(NumericDocValues @in, int maxDoc)
-            {
-                this.@in = @in;
-                this.maxDoc = maxDoc;
-            }
+        // LUCENENET specific - de-nested AssertingBinaryDocValues
 
-            public override long Get(int docID)
-            {
-                Debug.Assert(docID >= 0 && docID < maxDoc);
-                return @in.Get(docID);
-            }
-        }
+        // LUCENENET specific - de-nested AssertingSortedDocValues
 
-        /// <summary>
-        /// Wraps a <see cref="BinaryDocValues"/> but with additional asserts </summary>
-        public class AssertingBinaryDocValues : BinaryDocValues
-        {
-            internal readonly BinaryDocValues @in;
-            internal readonly int maxDoc;
+        // LUCENENET specific - de-nested AssertingSortedSetDocValues
 
-            public AssertingBinaryDocValues(BinaryDocValues @in, int maxDoc)
-            {
-                this.@in = @in;
-                this.maxDoc = maxDoc;
-            }
-
-            public override void Get(int docID, BytesRef result)
-            {
-                Debug.Assert(docID >= 0 && docID < maxDoc);
-                Debug.Assert(result.IsValid());
-                @in.Get(docID, result);
-                Debug.Assert(result.IsValid());
-            }
-        }
-
-        /// <summary>
-        /// Wraps a <see cref="SortedDocValues"/> but with additional asserts </summary>
-        public class AssertingSortedDocValues : SortedDocValues
-        {
-            internal readonly SortedDocValues @in;
-            internal readonly int maxDoc;
-            internal readonly int valueCount;
-
-            public AssertingSortedDocValues(SortedDocValues @in, int maxDoc)
-            {
-                this.@in = @in;
-                this.maxDoc = maxDoc;
-                this.valueCount = @in.ValueCount;
-                Debug.Assert(valueCount >= 0 && valueCount <= maxDoc);
-            }
-
-            public override int GetOrd(int docID)
-            {
-                Debug.Assert(docID >= 0 && docID < maxDoc);
-                int ord = @in.GetOrd(docID);
-                Debug.Assert(ord >= -1 && ord < valueCount);
-                return ord;
-            }
-
-            public override void LookupOrd(int ord, BytesRef result)
-            {
-                Debug.Assert(ord >= 0 && ord < valueCount);
-                Debug.Assert(result.IsValid());
-                @in.LookupOrd(ord, result);
-                Debug.Assert(result.IsValid());
-            }
-
-            public override int ValueCount
-            {
-                get
-                {
-                    int valueCount = @in.ValueCount;
-                    Debug.Assert(valueCount == this.valueCount); // should not change
-                    return valueCount;
-                }
-            }
-
-            public override void Get(int docID, BytesRef result)
-            {
-                Debug.Assert(docID >= 0 && docID < maxDoc);
-                Debug.Assert(result.IsValid());
-                @in.Get(docID, result);
-                Debug.Assert(result.IsValid());
-            }
-
-            public override int LookupTerm(BytesRef key)
-            {
-                Debug.Assert(key.IsValid());
-                int result = @in.LookupTerm(key);
-                Debug.Assert(result < valueCount);
-                Debug.Assert(key.IsValid());
-                return result;
-            }
-        }
-
-        /// <summary>
-        /// Wraps a <see cref="SortedSetDocValues"/> but with additional asserts </summary>
-        public class AssertingSortedSetDocValues : SortedSetDocValues
-        {
-            internal readonly SortedSetDocValues @in;
-            internal readonly int maxDoc;
-            internal readonly long valueCount;
-            internal long lastOrd = NO_MORE_ORDS;
-
-            public AssertingSortedSetDocValues(SortedSetDocValues @in, int maxDoc)
-            {
-                this.@in = @in;
-                this.maxDoc = maxDoc;
-                this.valueCount = @in.ValueCount;
-                Debug.Assert(valueCount >= 0);
-            }
-
-            public override long NextOrd()
-            {
-                Debug.Assert(lastOrd != NO_MORE_ORDS);
-                long ord = @in.NextOrd();
-                Debug.Assert(ord < valueCount);
-                Debug.Assert(ord == NO_MORE_ORDS || ord > lastOrd);
-                lastOrd = ord;
-                return ord;
-            }
-
-            public override void SetDocument(int docID)
-            {
-                Debug.Assert(docID >= 0 && docID < maxDoc, "docid=" + docID + ",maxDoc=" + maxDoc);
-                @in.SetDocument(docID);
-                lastOrd = -2;
-            }
-
-            public override void LookupOrd(long ord, BytesRef result)
-            {
-                Debug.Assert(ord >= 0 && ord < valueCount);
-                Debug.Assert(result.IsValid());
-                @in.LookupOrd(ord, result);
-                Debug.Assert(result.IsValid());
-            }
-
-            public override long ValueCount
-            {
-                get
-                {
-                    long valueCount = @in.ValueCount;
-                    Debug.Assert(valueCount == this.valueCount); // should not change
-                    return valueCount;
-                }
-            }
-
-            public override long LookupTerm(BytesRef key)
-            {
-                Debug.Assert(key.IsValid());
-                long result = @in.LookupTerm(key);
-                Debug.Assert(result < valueCount);
-                Debug.Assert(key.IsValid());
-                return result;
-            }
-        }
 
         public override NumericDocValues GetNumericDocValues(string field)
         {
@@ -726,28 +768,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        /// <summary>
-        /// Wraps a <see cref="IBits"/> but with additional asserts </summary>
-        public class AssertingBits : IBits
-        {
-            internal readonly IBits @in;
-
-            public AssertingBits(IBits @in)
-            {
-                this.@in = @in;
-            }
-
-            public bool Get(int index)
-            {
-                Debug.Assert(index >= 0 && index < Length);
-                return @in.Get(index);
-            }
-
-            public int Length
-            {
-                get { return @in.Length; }
-            }
-        }
+        // LUCENENET specific - de-nested AssertingBits
 
         public override IBits LiveDocs
         {

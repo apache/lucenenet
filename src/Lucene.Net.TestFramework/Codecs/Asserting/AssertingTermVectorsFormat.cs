@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -66,7 +67,7 @@ namespace Lucene.Net.Codecs.Asserting
             public override Fields Get(int doc)
             {
                 Fields fields = @in.Get(doc);
-                return fields == null ? null : new AssertingAtomicReader.AssertingFields(fields);
+                return fields == null ? null : new AssertingFields(fields);
             }
 
             public override object Clone()

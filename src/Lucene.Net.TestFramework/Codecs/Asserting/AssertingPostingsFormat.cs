@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -82,7 +83,7 @@ namespace Lucene.Net.Codecs.Asserting
             public override Terms GetTerms(string field)
             {
                 Terms terms = @in.GetTerms(field);
-                return terms == null ? null : new AssertingAtomicReader.AssertingTerms(terms);
+                return terms == null ? null : new AssertingTerms(terms);
             }
 
             public override int Count

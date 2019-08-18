@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -68,14 +69,14 @@ namespace Lucene.Net.Search
 
         internal readonly Random random;
         internal readonly Scorer @in;
-        internal readonly AssertingAtomicReader.AssertingDocsEnum docsEnumIn;
+        internal readonly AssertingDocsEnum docsEnumIn;
 
         private AssertingScorer(Random random, Scorer @in)
             : base(@in.Weight)
         {
             this.random = random;
             this.@in = @in;
-            this.docsEnumIn = new AssertingAtomicReader.AssertingDocsEnum(@in);
+            this.docsEnumIn = new AssertingDocsEnum(@in);
         }
 
         public virtual Scorer In
