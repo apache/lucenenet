@@ -22,7 +22,7 @@
 using NUnit.Framework;
 
 
-namespace Lucene.Net.TestFramework.Support
+namespace Lucene.Net.Randomized
 {
     public class RandomizedTest
     {

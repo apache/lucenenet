@@ -26,7 +26,6 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Support.Threading;
-using Lucene.Net.TestFramework.Support;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
