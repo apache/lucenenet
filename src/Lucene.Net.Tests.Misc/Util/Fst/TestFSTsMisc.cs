@@ -90,7 +90,7 @@ namespace Lucene.Net.Util.Fst
                     Console.WriteLine("TEST: now test UpToTwoPositiveIntOutputs");
                 }
                 UpToTwoPositiveInt64Outputs outputs = UpToTwoPositiveInt64Outputs.GetSingleton(true);
-                List<Lucene.Net.Util.Fst.FSTTester<object>.InputOutput<object>> pairs = new List<Lucene.Net.Util.Fst.FSTTester<object>.InputOutput<object>>(terms.Length);
+                List<InputOutput<object>> pairs = new List<InputOutput<object>>(terms.Length);
                 long lastOutput = 0;
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
@@ -117,7 +117,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         output = outputs.Get(value);
                     }
-                    pairs.Add(new FSTTester<object>.InputOutput<object>(terms[idx], output));
+                    pairs.Add(new InputOutput<object>(terms[idx], output));
                 }
                 new FSTTesterHelper<object>(Random(), dir, inputMode, pairs, outputs, false).DoTest(false);
 
@@ -130,7 +130,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     PositiveInt32Outputs _outputs = PositiveInt32Outputs.Singleton; 
                     ListOfOutputs<long?> outputs2 = new ListOfOutputs<long?>(_outputs);
-                    List<FSTTester<object>.InputOutput<object>> pairs2 = new List<FSTTester<object>.InputOutput<object>>(terms.Length);
+                    List<InputOutput<object>> pairs2 = new List<InputOutput<object>>(terms.Length);
                     long lastOutput2 = 0;
                     for (int idx = 0; idx < terms.Length; idx++)
                     {
@@ -159,7 +159,7 @@ namespace Lucene.Net.Util.Fst
                             output = values;
                         }
 
-                        pairs2.Add(new FSTTester<object>.InputOutput<object>(terms[idx], output));
+                        pairs2.Add(new InputOutput<object>(terms[idx], output));
                     }
                     new FSTTester<object>(Random(), dir, inputMode, pairs2, outputs2, false).DoTest(false);
                 }

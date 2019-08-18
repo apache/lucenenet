@@ -122,10 +122,10 @@ namespace Lucene.Net.Util.Fst
                 {
                     Outputs<object> outputs = NoOutputs.Singleton;
                     object NO_OUTPUT = outputs.NoOutput;
-                    List<FSTTester<object>.InputOutput<object>> pairs = new List<FSTTester<object>.InputOutput<object>>(terms2.Length);
+                    List<InputOutput<object>> pairs = new List<InputOutput<object>>(terms2.Length);
                     foreach (Int32sRef term in terms2)
                     {
-                        pairs.Add(new FSTTester<object>.InputOutput<object>(term, NO_OUTPUT));
+                        pairs.Add(new InputOutput<object>(term, NO_OUTPUT));
                     }
                     FST<object> fst = (new FSTTester<object>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(0, 0, false);
                     Assert.IsNotNull(fst);
@@ -136,10 +136,10 @@ namespace Lucene.Net.Util.Fst
                 // FST ord pos int
                 {
                     PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-                    List<FSTTester<long?>.InputOutput<long?>> pairs = new List<FSTTester<long?>.InputOutput<long?>>(terms2.Length);
+                    List<InputOutput<long?>> pairs = new List<InputOutput<long?>>(terms2.Length);
                     for (int idx = 0; idx < terms2.Length; idx++)
                     {
-                        pairs.Add(new FSTTester<long?>.InputOutput<long?>(terms2[idx], (long?)idx));
+                        pairs.Add(new InputOutput<long?>(terms2[idx], (long?)idx));
                     }
                     FST<long?> fst = (new FSTTester<long?>(Random(), Dir, inputMode, pairs, outputs, true)).DoTest(0, 0, false);
                     Assert.IsNotNull(fst);
@@ -151,11 +151,11 @@ namespace Lucene.Net.Util.Fst
                 {
                     ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
                     BytesRef NO_OUTPUT = outputs.NoOutput;
-                    List<FSTTester<BytesRef>.InputOutput<BytesRef>> pairs = new List<FSTTester<BytesRef>.InputOutput<BytesRef>>(terms2.Length);
+                    List<InputOutput<BytesRef>> pairs = new List<InputOutput<BytesRef>>(terms2.Length);
                     for (int idx = 0; idx < terms2.Length; idx++)
                     {
                         BytesRef output = Random().Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
-                        pairs.Add(new FSTTester<BytesRef>.InputOutput<BytesRef>(terms2[idx], output));
+                        pairs.Add(new InputOutput<BytesRef>(terms2[idx], output));
                     }
                     FST<BytesRef> fst = (new FSTTester<BytesRef>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(0, 0, false);
                     Assert.IsNotNull(fst);
@@ -174,10 +174,10 @@ namespace Lucene.Net.Util.Fst
             {
                 Outputs<object> outputs = NoOutputs.Singleton;
                 object NO_OUTPUT = outputs.NoOutput;
-                List<FSTTester<object>.InputOutput<object>> pairs = new List<FSTTester<object>.InputOutput<object>>(terms.Length);
+                List<InputOutput<object>> pairs = new List<InputOutput<object>>(terms.Length);
                 foreach (Int32sRef term in terms)
                 {
-                    pairs.Add(new FSTTester<object>.InputOutput<object>(term, NO_OUTPUT));
+                    pairs.Add(new InputOutput<object>(term, NO_OUTPUT));
                 }
                 (new FSTTester<object>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
             }
@@ -185,10 +185,10 @@ namespace Lucene.Net.Util.Fst
             // PositiveIntOutput (ord)
             {
                 PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-                List<FSTTester<long?>.InputOutput<long?>> pairs = new List<FSTTester<long?>.InputOutput<long?>>(terms.Length);
+                List<InputOutput<long?>> pairs = new List<InputOutput<long?>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
-                    pairs.Add(new FSTTester<long?>.InputOutput<long?>(terms[idx], (long?)idx));
+                    pairs.Add(new InputOutput<long?>(terms[idx], (long?)idx));
                 }
                 (new FSTTester<long?>(Random(), Dir, inputMode, pairs, outputs, true)).DoTest(true);
             }
@@ -196,13 +196,13 @@ namespace Lucene.Net.Util.Fst
             // PositiveIntOutput (random monotonically increasing positive number)
             {
                 PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-                List<FSTTester<long?>.InputOutput<long?>> pairs = new List<FSTTester<long?>.InputOutput<long?>>(terms.Length);
+                List<InputOutput<long?>> pairs = new List<InputOutput<long?>>(terms.Length);
                 long lastOutput = 0;
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
                     long value = lastOutput + TestUtil.NextInt32(Random(), 1, 1000);
                     lastOutput = value;
-                    pairs.Add(new FSTTester<long?>.InputOutput<long?>(terms[idx], value));
+                    pairs.Add(new InputOutput<long?>(terms[idx], value));
                 }
                 (new FSTTester<long?>(Random(), Dir, inputMode, pairs, outputs, true)).DoTest(true);
             }
@@ -210,10 +210,10 @@ namespace Lucene.Net.Util.Fst
             // PositiveIntOutput (random positive number)
             {
                 PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-                List<FSTTester<long?>.InputOutput<long?>> pairs = new List<FSTTester<long?>.InputOutput<long?>>(terms.Length);
+                List<InputOutput<long?>> pairs = new List<InputOutput<long?>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
-                    pairs.Add(new FSTTester<long?>.InputOutput<long?>(terms[idx], TestUtil.NextInt64(Random(), 0, long.MaxValue)));
+                    pairs.Add(new InputOutput<long?>(terms[idx], TestUtil.NextInt64(Random(), 0, long.MaxValue)));
                 }
                 (new FSTTester<long?>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
             }
@@ -223,13 +223,13 @@ namespace Lucene.Net.Util.Fst
                 PositiveInt32Outputs o1 = PositiveInt32Outputs.Singleton;
                 PositiveInt32Outputs o2 = PositiveInt32Outputs.Singleton;
                 PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(o1, o2);
-                List<FSTTester<Pair>.InputOutput<Pair>> pairs = new List<FSTTester<Pair>.InputOutput<Pair>>(terms.Length);
+                List<InputOutput<Pair>> pairs = new List<InputOutput<Pair>>(terms.Length);
                 long lastOutput = 0;
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
                     long value = lastOutput + TestUtil.NextInt32(Random(), 1, 1000);
                     lastOutput = value;
-                    pairs.Add(new FSTTester<Pair>.InputOutput<Pair>(terms[idx], outputs.NewPair((long?)idx, value)));
+                    pairs.Add(new InputOutput<Pair>(terms[idx], outputs.NewPair((long?)idx, value)));
                 }
                 (new FSTTester<Pair>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
             }
@@ -238,11 +238,11 @@ namespace Lucene.Net.Util.Fst
             {
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
                 BytesRef NO_OUTPUT = outputs.NoOutput;
-                List<FSTTester<BytesRef>.InputOutput<BytesRef>> pairs = new List<FSTTester<BytesRef>.InputOutput<BytesRef>>(terms.Length);
+                List<InputOutput<BytesRef>> pairs = new List<InputOutput<BytesRef>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
                     BytesRef output = Random().Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
-                    pairs.Add(new FSTTester<BytesRef>.InputOutput<BytesRef>(terms[idx], output));
+                    pairs.Add(new InputOutput<BytesRef>(terms[idx], output));
                 }
                 (new FSTTester<BytesRef>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
             }
@@ -250,7 +250,7 @@ namespace Lucene.Net.Util.Fst
             // Sequence-of-ints
             {
                 Int32SequenceOutputs outputs = Int32SequenceOutputs.Singleton;
-                List<FSTTester<Int32sRef>.InputOutput<Int32sRef>> pairs = new List<FSTTester<Int32sRef>.InputOutput<Int32sRef>>(terms.Length);
+                List<InputOutput<Int32sRef>> pairs = new List<InputOutput<Int32sRef>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
                     string s = Convert.ToString(idx);
@@ -260,7 +260,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         output.Int32s[idx2] = s[idx2];
                     }
-                    pairs.Add(new FSTTester<Int32sRef>.InputOutput<Int32sRef>(terms[idx], output));
+                    pairs.Add(new InputOutput<Int32sRef>(terms[idx], output));
                 }
                 (new FSTTester<Int32sRef>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
             }

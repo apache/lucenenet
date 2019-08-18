@@ -36,6 +36,25 @@ namespace Lucene.Net.Util.Fst
     using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     /// <summary>
+    /// Holds one input/output pair. </summary>
+    public class InputOutput<T> : IComparable<InputOutput<T>>
+    {
+        public Int32sRef Input { get; private set; }
+        public T Output { get; private set; }
+
+        public InputOutput(Int32sRef input, T output)
+        {
+            this.Input = input;
+            this.Output = output;
+        }
+
+        public virtual int CompareTo(InputOutput<T> other)
+        {
+            return this.Input.CompareTo(other.Input);
+        }
+    }
+
+    /// <summary>
     /// Helper class to test FSTs. </summary>
     public class FSTTester<T>
     {
@@ -178,24 +197,7 @@ namespace Lucene.Net.Util.Fst
             return ir;
         }
 
-        /// <summary>
-        /// Holds one input/output pair. </summary>
-        public class InputOutput<T1> : IComparable<InputOutput<T1>>
-        {
-            public Int32sRef Input { get; private set; }
-            public T1 Output { get; private set; }
-
-            public InputOutput(Int32sRef input, T1 output)
-            {
-                this.Input = input;
-                this.Output = output;
-            }
-
-            public virtual int CompareTo(InputOutput<T1> other)
-            {
-                return this.Input.CompareTo(other.Input);
-            }
-        }
+        // LUCENENET specific - de-nested InputOutput<T>
 
         public virtual void DoTest(bool testPruning)
         {
