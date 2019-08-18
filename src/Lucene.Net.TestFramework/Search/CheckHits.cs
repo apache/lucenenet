@@ -241,7 +241,7 @@ namespace Lucene.Net.Search
             return sb.ToString();
         }
 
-        public static string TopdocsString(TopDocs docs, int start, int end) // LUCENENET TODO: API - rename TopDocsString
+        public static string TopDocsString(TopDocs docs, int start, int end) // LUCENENET specific - renamed from TopdocsString
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("TopDocs totalHits=").Append(docs.TotalHits).Append(" top=").Append(docs.ScoreDocs.Length).Append('\n');

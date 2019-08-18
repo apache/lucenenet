@@ -409,7 +409,7 @@ namespace Lucene.Net.Search
             // should be a subset to the unconstrained query.
             if (top2.TotalHits > top1.TotalHits)
             {
-                Assert.Fail("Constrained results not a subset:\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q.ToString());
+                Assert.Fail("Constrained results not a subset:\n" + CheckHits.TopDocsString(top1, 0, 0) + CheckHits.TopDocsString(top2, 0, 0) + "for query:" + q.ToString());
             }
 
             for (int hit = 0; hit < top2.TotalHits; hit++)
@@ -425,14 +425,14 @@ namespace Lucene.Net.Search
                         found = true;
                         float otherScore = top1.ScoreDocs[other].Score;
                         // check if scores match
-                        Assert.AreEqual(score, otherScore, CheckHits.ExplainToleranceDelta(score, otherScore), "Doc " + id + " scores don't match\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q.ToString());
+                        Assert.AreEqual(score, otherScore, CheckHits.ExplainToleranceDelta(score, otherScore), "Doc " + id + " scores don't match\n" + CheckHits.TopDocsString(top1, 0, 0) + CheckHits.TopDocsString(top2, 0, 0) + "for query:" + q.ToString());
                     }
                 }
 
                 // check if subset
                 if (!found)
                 {
-                    Assert.Fail("Doc " + id + " not found\n" + CheckHits.TopdocsString(top1, 0, 0) + CheckHits.TopdocsString(top2, 0, 0) + "for query:" + q.ToString());
+                    Assert.Fail("Doc " + id + " not found\n" + CheckHits.TopDocsString(top1, 0, 0) + CheckHits.TopDocsString(top2, 0, 0) + "for query:" + q.ToString());
                 }
             }
         }
