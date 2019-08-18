@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
             private readonly TestLazyProxSkipping OuterInstance;
 
             public SeekCountingDirectory(TestLazyProxSkipping outerInstance, Directory @delegate)
-                : base(Random(), @delegate)
+                : base(Random, @delegate)
             {
                 this.OuterInstance = outerInstance;
             }
@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
         public virtual void TestSeek()
         {
             Directory directory = NewDirectory();
-            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             for (int i = 0; i < 10; i++)
             {
                 Document doc = new Document();

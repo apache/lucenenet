@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
         public virtual void TestPhrasePrefix()
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
             Document doc1 = new Document();
             Document doc2 = new Document();
             Document doc3 = new Document();

@@ -61,7 +61,7 @@ namespace Lucene.Net.Codecs.PerField
         [SetUp]
         public override void SetUp()
         {
-            Codec_Renamed = new RandomCodec(new Random(Random().Next()), new HashSet<string>());
+            Codec_Renamed = new RandomCodec(new Random(Random.Next()), new HashSet<string>());
             base.SetUp();
         }
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.PerField
         [Test]
         public virtual void TestTwoFieldsTwoFormats()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             // we don't use RandomIndexWriter because it might add more docvalues than we expect !!!!1

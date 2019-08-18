@@ -344,7 +344,7 @@ namespace Lucene.Net.Util
             long num = (long)AtLeast(10);
             for (long i = 0; i < num; i++)
             {
-                ExecuteOneRandomSplit(Random());
+                ExecuteOneRandomSplit(Random);
             }
         }
 

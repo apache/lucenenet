@@ -43,7 +43,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             savedCodec = Codec.Default;
             // currently only these codecs that support random access ordinals
-            int victim = Random().nextInt(3);
+            int victim = Random.nextInt(3);
             switch (victim)
             {
                 case 0: Codec.Default = (TestUtil.AlwaysDocValuesFormat(new DirectDocValuesFormat())); break;
@@ -77,7 +77,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMax()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("foo")));
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("bar")));
@@ -110,7 +110,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMaxReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("foo")));
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("bar")));
@@ -143,7 +143,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMaxMissingFirst()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
@@ -183,7 +183,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMaxMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
@@ -223,7 +223,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMaxSingleton()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("baz")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -254,7 +254,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMiddleMin()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("c")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -288,7 +288,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMiddleMinReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("a")));
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("b")));
@@ -322,7 +322,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMiddleMinMissingFirst()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("id", "3", Field.Store.YES));
             writer.AddDocument(doc);
@@ -363,7 +363,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMiddleMinMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("id", "3", Field.Store.YES));
             writer.AddDocument(doc);
@@ -404,7 +404,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMiddleMinSingleton()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("baz")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -435,7 +435,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMiddleMax()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("a")));
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("b")));
@@ -469,7 +469,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMiddleMaxReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("b")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -503,7 +503,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMiddleMaxMissingFirst()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("id", "3", Field.Store.YES));
             writer.AddDocument(doc);
@@ -544,7 +544,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMiddleMaxMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("id", "3", Field.Store.YES));
             writer.AddDocument(doc);
@@ -585,7 +585,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMiddleMaxSingleton()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("baz")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));

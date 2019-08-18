@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
         public virtual void Test()
         {
             Directory dir = NewFSDirectory(CreateTempDir("livefieldupdates"));
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
 
             IndexWriter w = new IndexWriter(dir, iwc);
 
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
 
             LiveFieldValues<IndexSearcher, int?> rt = new LiveFieldValuesAnonymousInnerClassHelper(mgr, missing);
 
-            int numThreads = TestUtil.NextInt32(Random(), 2, 5);
+            int numThreads = TestUtil.NextInt32(Random, 2, 5);
             if (VERBOSE)
             {
                 Console.WriteLine(numThreads + " threads");
@@ -68,16 +68,16 @@ namespace Lucene.Net.Search
             IList<ThreadClass> threads = new List<ThreadClass>();
 
             int iters = AtLeast(1000);
-            int idCount = TestUtil.NextInt32(Random(), 100, 10000);
+            int idCount = TestUtil.NextInt32(Random, 100, 10000);
 
-            double reopenChance = Random().NextDouble() * 0.01;
-            double deleteChance = Random().NextDouble() * 0.25;
-            double addChance = Random().NextDouble() * 0.5;
+            double reopenChance = Random.NextDouble() * 0.01;
+            double deleteChance = Random.NextDouble() * 0.25;
+            double addChance = Random.NextDouble() * 0.5;
 
             for (int t = 0; t < numThreads; t++)
             {
                 int threadID = t;
-                Random threadRandom = new Random(Random().Next());
+                Random threadRandom = new Random(Random.Next());
                 ThreadClass thread = new ThreadAnonymousInnerClassHelper(w, mgr, missing, rt, startingGun, iters, idCount, reopenChance, deleteChance, addChance, t, threadID, threadRandom);
                 threads.Add(thread);
                 thread.Start();

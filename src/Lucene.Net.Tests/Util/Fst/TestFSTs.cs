@@ -127,7 +127,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         pairs.Add(new InputOutput<object>(term, NO_OUTPUT));
                     }
-                    FST<object> fst = (new FSTTester<object>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(0, 0, false);
+                    FST<object> fst = (new FSTTester<object>(Random, Dir, inputMode, pairs, outputs, false)).DoTest(0, 0, false);
                     Assert.IsNotNull(fst);
                     Assert.AreEqual(22, fst.NodeCount);
                     Assert.AreEqual(27, fst.ArcCount);
@@ -141,7 +141,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         pairs.Add(new InputOutput<long?>(terms2[idx], (long?)idx));
                     }
-                    FST<long?> fst = (new FSTTester<long?>(Random(), Dir, inputMode, pairs, outputs, true)).DoTest(0, 0, false);
+                    FST<long?> fst = (new FSTTester<long?>(Random, Dir, inputMode, pairs, outputs, true)).DoTest(0, 0, false);
                     Assert.IsNotNull(fst);
                     Assert.AreEqual(22, fst.NodeCount);
                     Assert.AreEqual(27, fst.ArcCount);
@@ -154,10 +154,10 @@ namespace Lucene.Net.Util.Fst
                     List<InputOutput<BytesRef>> pairs = new List<InputOutput<BytesRef>>(terms2.Length);
                     for (int idx = 0; idx < terms2.Length; idx++)
                     {
-                        BytesRef output = Random().Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
+                        BytesRef output = Random.Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
                         pairs.Add(new InputOutput<BytesRef>(terms2[idx], output));
                     }
-                    FST<BytesRef> fst = (new FSTTester<BytesRef>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(0, 0, false);
+                    FST<BytesRef> fst = (new FSTTester<BytesRef>(Random, Dir, inputMode, pairs, outputs, false)).DoTest(0, 0, false);
                     Assert.IsNotNull(fst);
                     Assert.AreEqual(24, fst.NodeCount);
                     Assert.AreEqual(30, fst.ArcCount);
@@ -179,7 +179,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     pairs.Add(new InputOutput<object>(term, NO_OUTPUT));
                 }
-                (new FSTTester<object>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
+                (new FSTTester<object>(Random, Dir, inputMode, pairs, outputs, false)).DoTest(true);
             }
 
             // PositiveIntOutput (ord)
@@ -190,7 +190,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     pairs.Add(new InputOutput<long?>(terms[idx], (long?)idx));
                 }
-                (new FSTTester<long?>(Random(), Dir, inputMode, pairs, outputs, true)).DoTest(true);
+                (new FSTTester<long?>(Random, Dir, inputMode, pairs, outputs, true)).DoTest(true);
             }
 
             // PositiveIntOutput (random monotonically increasing positive number)
@@ -200,11 +200,11 @@ namespace Lucene.Net.Util.Fst
                 long lastOutput = 0;
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
-                    long value = lastOutput + TestUtil.NextInt32(Random(), 1, 1000);
+                    long value = lastOutput + TestUtil.NextInt32(Random, 1, 1000);
                     lastOutput = value;
                     pairs.Add(new InputOutput<long?>(terms[idx], value));
                 }
-                (new FSTTester<long?>(Random(), Dir, inputMode, pairs, outputs, true)).DoTest(true);
+                (new FSTTester<long?>(Random, Dir, inputMode, pairs, outputs, true)).DoTest(true);
             }
 
             // PositiveIntOutput (random positive number)
@@ -213,9 +213,9 @@ namespace Lucene.Net.Util.Fst
                 List<InputOutput<long?>> pairs = new List<InputOutput<long?>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
-                    pairs.Add(new InputOutput<long?>(terms[idx], TestUtil.NextInt64(Random(), 0, long.MaxValue)));
+                    pairs.Add(new InputOutput<long?>(terms[idx], TestUtil.NextInt64(Random, 0, long.MaxValue)));
                 }
-                (new FSTTester<long?>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
+                (new FSTTester<long?>(Random, Dir, inputMode, pairs, outputs, false)).DoTest(true);
             }
 
             // Pair<ord, (random monotonically increasing positive number>
@@ -227,11 +227,11 @@ namespace Lucene.Net.Util.Fst
                 long lastOutput = 0;
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
-                    long value = lastOutput + TestUtil.NextInt32(Random(), 1, 1000);
+                    long value = lastOutput + TestUtil.NextInt32(Random, 1, 1000);
                     lastOutput = value;
                     pairs.Add(new InputOutput<Pair>(terms[idx], outputs.NewPair((long?)idx, value)));
                 }
-                (new FSTTester<Pair>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
+                (new FSTTester<Pair>(Random, Dir, inputMode, pairs, outputs, false)).DoTest(true);
             }
 
             // Sequence-of-bytes
@@ -241,10 +241,10 @@ namespace Lucene.Net.Util.Fst
                 List<InputOutput<BytesRef>> pairs = new List<InputOutput<BytesRef>>(terms.Length);
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
-                    BytesRef output = Random().Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
+                    BytesRef output = Random.Next(30) == 17 ? NO_OUTPUT : new BytesRef(Convert.ToString(idx));
                     pairs.Add(new InputOutput<BytesRef>(terms[idx], output));
                 }
-                (new FSTTester<BytesRef>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
+                (new FSTTester<BytesRef>(Random, Dir, inputMode, pairs, outputs, false)).DoTest(true);
             }
 
             // Sequence-of-ints
@@ -262,7 +262,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     pairs.Add(new InputOutput<Int32sRef>(terms[idx], output));
                 }
-                (new FSTTester<Int32sRef>(Random(), Dir, inputMode, pairs, outputs, false)).DoTest(true);
+                (new FSTTester<Int32sRef>(Random, Dir, inputMode, pairs, outputs, false)).DoTest(true);
             }
 
         }
@@ -297,7 +297,7 @@ namespace Lucene.Net.Util.Fst
 
         private void TestRandomWords(int maxNumWords, int numIter, bool VERBOSE)
         {
-            Random random = new Random(Random().Next());
+            Random random = new Random(Random.Next());
             for (int iter = 0; iter < numIter; iter++)
             {
                 if (VERBOSE)
@@ -323,7 +323,7 @@ namespace Lucene.Net.Util.Fst
         [Ignore("This test will take around 10-14 hours to finish. It was marked with a Nightly attribute in the original Java source, but we don't currently have a corresponding attribute")]
         public virtual void TestBigSet()
         {
-            TestRandomWords(TestUtil.NextInt32(Random(), 50000, 60000), 1, false);
+            TestRandomWords(TestUtil.NextInt32(Random, 50000, 60000), 1, false);
         }
 
         // Build FST for all unique terms in the test line docs
@@ -332,10 +332,10 @@ namespace Lucene.Net.Util.Fst
         public virtual void TestRealTerms()
         {
 
-            LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues);
+            LineFileDocs docs = new LineFileDocs(Random, DefaultCodecSupportsDocValues);
             int RUN_TIME_MSEC = AtLeast(500);
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
 
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(-1).SetRAMBufferSizeMB(64);
             DirectoryInfo tempDir = CreateTempDir("fstlines");
@@ -353,11 +353,11 @@ namespace Lucene.Net.Util.Fst
             writer.Dispose();
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
 
-            bool doRewrite = Random().NextBoolean();
+            bool doRewrite = Random.NextBoolean();
 
             Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doRewrite, PackedInt32s.DEFAULT, true, 15);
 
-            bool storeOrd = Random().NextBoolean();
+            bool storeOrd = Random.NextBoolean();
             if (VERBOSE)
             {
                 if (storeOrd)
@@ -433,7 +433,7 @@ namespace Lucene.Net.Util.Fst
 
                 if (ord > 0)
                 {
-                    Random random = new Random(Random().Next());
+                    Random random = new Random(Random.Next());
                     // Now confirm BytesRefFSTEnum and TermsEnum act the
                     // same:
                     BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
@@ -1028,7 +1028,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     Console.WriteLine("TEST: cycle=" + cycle);
                 }
-                RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
+                RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
                 Document doc = new Document();
                 Field idField = NewStringField("id", "", Field.Store.NO);
                 doc.Add(idField);
@@ -1052,7 +1052,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         while (true)
                         {
-                            string s = Convert.ToString(Random().NextInt64());
+                            string s = Convert.ToString(Random.NextInt64());
                             if (!allIDs.Contains(s))
                             {
                                 idString = s;
@@ -1089,7 +1089,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         while (true)
                         {
-                            idString = Convert.ToString(Random().NextInt64());
+                            idString = Convert.ToString(Random.NextInt64());
                             if (!allIDs.Contains(idString))
                             {
                                 break;
@@ -1103,7 +1103,7 @@ namespace Lucene.Net.Util.Fst
                 // Verify w/ TermQuery
                 for (int iter = 0; iter < 2 * NUM_IDS; iter++)
                 {
-                    string id = allIDsList[Random().Next(allIDsList.Count)];
+                    string id = allIDsList[Random.Next(allIDsList.Count)];
                     bool exists = !outOfBounds.Contains(id);
                     if (VERBOSE)
                     {
@@ -1120,9 +1120,9 @@ namespace Lucene.Net.Util.Fst
                     string nextID;
                     bool exists;
 
-                    if (Random().NextBoolean())
+                    if (Random.NextBoolean())
                     {
-                        id = allIDsList[Random().Next(allIDsList.Count)];
+                        id = allIDsList[Random.Next(allIDsList.Count)];
                         exists = !outOfBounds.Contains(id);
                         nextID = null;
                         if (VERBOSE)
@@ -1134,7 +1134,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         // Pick ID between two IDs:
                         exists = false;
-                        int idv = Random().Next(NUM_IDS - 1);
+                        int idv = Random.Next(NUM_IDS - 1);
                         if (cycle == 0)
                         {
                             id = string.Format(CultureInfo.InvariantCulture, "{0:0000000}a", idv);
@@ -1193,13 +1193,13 @@ namespace Lucene.Net.Util.Fst
         {
             Directory dir = NewDirectory();
 
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                 .SetOpenMode(OpenMode.CREATE));
             Document doc = new Document();
             Field f = NewStringField("field", "", Field.Store.NO);
             doc.Add(f);
 
-            int NUM_TERMS = (int)(1000 * RANDOM_MULTIPLIER * (1 + Random().NextDouble()));
+            int NUM_TERMS = (int)(1000 * RANDOM_MULTIPLIER * (1 + Random.NextDouble()));
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: NUM_TERMS=" + NUM_TERMS);
@@ -1208,7 +1208,7 @@ namespace Lucene.Net.Util.Fst
             HashSet<string> allTerms = new HashSet<string>();
             while (allTerms.Count < NUM_TERMS)
             {
-                allTerms.Add(FSTTester<object>.SimpleRandomString(Random()));
+                allTerms.Add(FSTTester<object>.SimpleRandomString(Random));
             }
 
             foreach (string term in allTerms)
@@ -1345,7 +1345,7 @@ namespace Lucene.Net.Util.Fst
         {
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
 
-            Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE4, 2, 0, true, true, int.MaxValue, outputs, null, Random().NextBoolean(), PackedInt32s.DEFAULT, true, 15);
+            Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE4, 2, 0, true, true, int.MaxValue, outputs, null, Random.NextBoolean(), PackedInt32s.DEFAULT, true, 15);
             builder.Add(Util.ToUTF32("stat", new Int32sRef()), 17L);
             builder.Add(Util.ToUTF32("station", new Int32sRef()), 10L);
             FST<long?> fst = builder.Finish();
@@ -1361,7 +1361,7 @@ namespace Lucene.Net.Util.Fst
         public virtual void TestInternalFinalState()
         {
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
-            bool willRewrite = Random().NextBoolean();
+            bool willRewrite = Random.NextBoolean();
             Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, willRewrite, PackedInt32s.DEFAULT, true, 15);
             builder.Add(Util.ToInt32sRef(new BytesRef("stat"), new Int32sRef()), outputs.NoOutput);
             builder.Add(Util.ToInt32sRef(new BytesRef("station"), new Int32sRef()), outputs.NoOutput);
@@ -1633,7 +1633,7 @@ namespace Lucene.Net.Util.Fst
         [Test]
         public virtual void TestShortestPathsRandom()
         {
-            Random random = Random();
+            Random random = Random;
             int numWords = AtLeast(1000);
 
             SortedDictionary<string, long> slowCompletor = new SortedDictionary<string, long>(StringComparer.Ordinal);
@@ -1782,7 +1782,7 @@ namespace Lucene.Net.Util.Fst
             Builder<Pair> builder = new Builder<Pair>(FST.INPUT_TYPE.BYTE1, outputs);
             Int32sRef scratch = new Int32sRef();
 
-            Random random = Random();
+            Random random = Random;
             for (int i = 0; i < numWords; i++)
             {
                 string s;

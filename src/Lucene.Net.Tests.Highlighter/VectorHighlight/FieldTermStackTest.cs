@@ -198,10 +198,10 @@ namespace Lucene.Net.Search.VectorHighlight
 
         public void TestTermInfoComparisonConsistency()
         {
-            TermInfo a = new TermInfo(TestUtil.RandomUnicodeString(Random()), 0, 0, 0, 1);
-            TermInfo b = new TermInfo(TestUtil.RandomUnicodeString(Random()), 0, 0, 1, 1);
-            TermInfo c = new TermInfo(TestUtil.RandomUnicodeString(Random()), 0, 0, 2, 1);
-            TermInfo d = new TermInfo(TestUtil.RandomUnicodeString(Random()), 0, 0, 0, 1);
+            TermInfo a = new TermInfo(TestUtil.RandomUnicodeString(Random), 0, 0, 0, 1);
+            TermInfo b = new TermInfo(TestUtil.RandomUnicodeString(Random), 0, 0, 1, 1);
+            TermInfo c = new TermInfo(TestUtil.RandomUnicodeString(Random), 0, 0, 2, 1);
+            TermInfo d = new TermInfo(TestUtil.RandomUnicodeString(Random), 0, 0, 0, 1);
 
             assertConsistentEquals(a, a);
             assertConsistentEquals(b, b);

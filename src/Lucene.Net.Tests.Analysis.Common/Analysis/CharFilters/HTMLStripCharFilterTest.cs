@@ -372,7 +372,7 @@ namespace Lucene.Net.Analysis.CharFilters
             AssertHTMLStripsTo(test, gold, null);
 
             StringBuilder testBuilder = new StringBuilder("<!--");
-            AppendChars(testBuilder, TestUtil.NextInt32(Random(), 0, 1000));
+            AppendChars(testBuilder, TestUtil.NextInt32(Random, 0, 1000));
             gold = "";
             AssertHTMLStripsTo(testBuilder.ToString(), gold, null);
         }
@@ -434,20 +434,20 @@ namespace Lucene.Net.Analysis.CharFilters
         public virtual void TestRandom()
         {
             int numRounds = RANDOM_MULTIPLIER * 1000;
-            CheckRandomData(Random(), NewTestAnalyzer(), numRounds);
+            CheckRandomData(Random, NewTestAnalyzer(), numRounds);
         }
 
         [Test]
         public virtual void TestRandomHugeStrings()
         {
             int numRounds = RANDOM_MULTIPLIER * 100;
-            CheckRandomData(Random(), NewTestAnalyzer(), numRounds, 8192);
+            CheckRandomData(Random, NewTestAnalyzer(), numRounds, 8192);
         }
 
         [Test]
         public virtual void TestCloseBR()
         {
-            CheckAnalysisConsistency(Random(), NewTestAnalyzer(), Random().nextBoolean(), " Secretary)</br> [[M");
+            CheckAnalysisConsistency(Random, NewTestAnalyzer(), Random.nextBoolean(), " Secretary)</br> [[M");
         }
 
         [Test]
@@ -543,11 +543,11 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             int maxNumElems = 100;
             string randomHtmlishString1 // Don't create a comment (disallow "<!--") and don't include a closing ">"
-                = TestUtil.RandomHtmlishString(Random(), maxNumElems).Replace(">", " ").replaceFirst("^--", "__");
+                = TestUtil.RandomHtmlishString(Random, maxNumElems).Replace(">", " ").replaceFirst("^--", "__");
             string closedAngleBangNonCDATA = "<!" + randomHtmlishString1 + "-[CDATA[&]]>";
 
             string randomHtmlishString2 // Don't create a comment (disallow "<!--") and don't include a closing ">"
-                = TestUtil.RandomHtmlishString(Random(), maxNumElems).Replace(">", " ").replaceFirst("^--", "__");
+                = TestUtil.RandomHtmlishString(Random, maxNumElems).Replace(">", " ").replaceFirst("^--", "__");
             string unclosedAngleBangNonCDATA = "<!" + randomHtmlishString1 + "-[CDATA[";
 
             string[] testGold = {
@@ -613,8 +613,8 @@ namespace Lucene.Net.Analysis.CharFilters
         public virtual void TestRandomBrokenHTML()
         {
             int maxNumElements = 10000;
-            string text = TestUtil.RandomHtmlishString(Random(), maxNumElements);
-            CheckAnalysisConsistency(Random(), NewTestAnalyzer(), Random().nextBoolean(), text);
+            string text = TestUtil.RandomHtmlishString(Random, maxNumElements);
+            CheckAnalysisConsistency(Random, NewTestAnalyzer(), Random.nextBoolean(), text);
         }
 
         [Test]
@@ -625,14 +625,14 @@ namespace Lucene.Net.Analysis.CharFilters
             int maxNumWords = 10000;
             int minWordLength = 3;
             int maxWordLength = 20;
-            int numWords = TestUtil.NextInt32(Random(), minNumWords, maxNumWords);
-            switch (TestUtil.NextInt32(Random(), 0, 4))
+            int numWords = TestUtil.NextInt32(Random, minNumWords, maxNumWords);
+            switch (TestUtil.NextInt32(Random, 0, 4))
             {
                 case 0:
                     {
                         for (int wordNum = 0; wordNum < numWords; ++wordNum)
                         {
-                            text.Append(TestUtil.RandomUnicodeString(Random(), maxWordLength));
+                            text.Append(TestUtil.RandomUnicodeString(Random, maxWordLength));
                             text.Append(' ');
                         }
                         break;
@@ -641,7 +641,7 @@ namespace Lucene.Net.Analysis.CharFilters
                     {
                         for (int wordNum = 0; wordNum < numWords; ++wordNum)
                         {
-                            text.Append(TestUtil.RandomRealisticUnicodeString(Random(), minWordLength, maxWordLength));
+                            text.Append(TestUtil.RandomRealisticUnicodeString(Random, minWordLength, maxWordLength));
                             text.Append(' ');
                         }
                         break;
@@ -650,7 +650,7 @@ namespace Lucene.Net.Analysis.CharFilters
                     { // ASCII 50% of the time
                         for (int wordNum = 0; wordNum < numWords; ++wordNum)
                         {
-                            text.Append(TestUtil.RandomSimpleString(Random()));
+                            text.Append(TestUtil.RandomSimpleString(Random));
                             text.Append(' ');
                         }
                     }

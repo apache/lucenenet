@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         public virtual void TestBasic()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
             ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
 
             Assert.IsNull(MultiFields.GetTermPositionsEnum(reader, null, "foo", new BytesRef("test")));
 
-            DocsEnum de = TestUtil.Docs(Random(), reader, "foo", new BytesRef("test"), null, null, DocsFlags.FREQS);
+            DocsEnum de = TestUtil.Docs(Random, reader, "foo", new BytesRef("test"), null, null, DocsFlags.FREQS);
             while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {
                 Assert.AreEqual(2, de.Freq);
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
         public virtual void TestPositions()
         {
             Directory ram = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             Document d = new Document();
 
@@ -205,7 +205,7 @@ namespace Lucene.Net.Index
         public virtual void TestNoPrxFile()
         {
             Directory ram = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(3).SetMergePolicy(NewLogMergePolicy()));
             LogMergePolicy lmp = (LogMergePolicy)writer.Config.MergePolicy;
             lmp.MergeFactor = 2;
@@ -255,12 +255,12 @@ namespace Lucene.Net.Index
             ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             for (int i = 0; i < 20; i++)
             {
                 Document doc = new Document();
-                if (i < 19 && Random().NextBoolean())
+                if (i < 19 && Random.NextBoolean())
                 {
                     for (int j = 0; j < 50; j++)
                     {
@@ -278,7 +278,7 @@ namespace Lucene.Net.Index
                 iw.Commit();
             }
 
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 iw.ForceMerge(1);
             }

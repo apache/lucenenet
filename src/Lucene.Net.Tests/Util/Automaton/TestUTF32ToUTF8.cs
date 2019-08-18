@@ -155,7 +155,7 @@ namespace Lucene.Net.Util.Automaton
         [Test]
         public void TestRandomRanges()
         {
-            Random r = Random();
+            Random r = Random;
             int ITERS = AtLeast(10);
             int ITERS_PER_DFA = AtLeast(100);
             for (int iter = 0; iter < ITERS; iter++)
@@ -243,7 +243,7 @@ namespace Lucene.Net.Util.Automaton
             int num = AtLeast(250);
             for (int i = 0; i < num; i++)
             {
-                AssertAutomaton((new RegExp(AutomatonTestUtil.RandomRegexp(Random()), RegExpSyntax.NONE)).ToAutomaton());
+                AssertAutomaton((new RegExp(AutomatonTestUtil.RandomRegexp(Random), RegExpSyntax.NONE)).ToAutomaton());
             }
         }
 
@@ -257,15 +257,15 @@ namespace Lucene.Net.Util.Automaton
             for (int i = 0; i < num; i++)
             {
                 string s;
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     // likely not accepted
-                    s = TestUtil.RandomUnicodeString(Random());
+                    s = TestUtil.RandomUnicodeString(Random);
                 }
                 else
                 {
                     // will be accepted
-                    int[] codepoints = ras.GetRandomAcceptedString(Random());
+                    int[] codepoints = ras.GetRandomAcceptedString(Random);
                     try
                     {
                         s = UnicodeUtil.NewString(codepoints, 0, codepoints.Length);

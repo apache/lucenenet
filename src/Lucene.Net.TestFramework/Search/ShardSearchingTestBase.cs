@@ -576,8 +576,8 @@ namespace Lucene.Net.Search
                 MyNodeID = nodeID;
                 Dir = NewFSDirectory(CreateTempDir("ShardSearchingTestBase"));
                 // TODO: set warmer
-                MockAnalyzer analyzer = new MockAnalyzer(Random());
-                analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+                MockAnalyzer analyzer = new MockAnalyzer(LuceneTestCase.Random);
+                analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
                 IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
                 iwc.SetOpenMode(OpenMode.CREATE);
                 if (VERBOSE)
@@ -697,12 +697,12 @@ namespace Lucene.Net.Search
             {
                 try
                 {
-                    LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues);
+                    LineFileDocs docs = new LineFileDocs(Random, DefaultCodecSupportsDocValues);
                     int numDocs = 0;
                     while (Time.NanoTime() < outerInstance.endTimeNanos)
                     {
-                        int what = Random().Next(3);
-                        NodeState node = outerInstance.m_nodes[Random().Next(outerInstance.m_nodes.Length)];
+                        int what = Random.Next(3);
+                        NodeState node = outerInstance.m_nodes[Random.Next(outerInstance.m_nodes.Length)];
                         if (numDocs == 0 || what == 0)
                         {
                             node.Writer.AddDocument(docs.NextDoc());
@@ -710,23 +710,23 @@ namespace Lucene.Net.Search
                         }
                         else if (what == 1)
                         {
-                            node.Writer.UpdateDocument(new Term("docid", "" + Random().Next(numDocs)), docs.NextDoc());
+                            node.Writer.UpdateDocument(new Term("docid", "" + Random.Next(numDocs)), docs.NextDoc());
                             numDocs++;
                         }
                         else
                         {
-                            node.Writer.DeleteDocuments(new Term("docid", "" + Random().Next(numDocs)));
+                            node.Writer.DeleteDocuments(new Term("docid", "" + Random.Next(numDocs)));
                         }
                         // TODO: doc blocks too
 
-                        if (Random().Next(17) == 12)
+                        if (Random.Next(17) == 12)
                         {
                             node.Writer.Commit();
                         }
 
-                        if (Random().Next(17) == 12)
+                        if (Random.Next(17) == 12)
                         {
-                            outerInstance.m_nodes[Random().Next(outerInstance.m_nodes.Length)].Reopen();
+                            outerInstance.m_nodes[Random.Next(outerInstance.m_nodes.Length)].Reopen();
                         }
                     }
                 }
@@ -752,7 +752,7 @@ namespace Lucene.Net.Search
             m_nodes = new NodeState[numNodes];
             for (int nodeID = 0; nodeID < numNodes; nodeID++)
             {
-                m_nodes[nodeID] = new NodeState(this, Random(), nodeID, numNodes);
+                m_nodes[nodeID] = new NodeState(this, Random, nodeID, numNodes);
             }
 
             long[] nodeVersions = new long[m_nodes.Length];

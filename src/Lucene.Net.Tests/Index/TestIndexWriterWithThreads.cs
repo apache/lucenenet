@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
                 MockDirectoryWrapper dir = NewMockDirectory();
-                var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                                 .SetMaxBufferedDocs(2)
                                 .SetMergeScheduler(newScheduler())
                                 .SetMergePolicy(NewLogMergePolicy(4));
@@ -229,7 +229,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
                 Directory dir = NewDirectory();
-                var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                                 .SetMaxBufferedDocs(10)
                                 .SetMergeScheduler(newScheduler())
                                 .SetMergePolicy(NewLogMergePolicy(4));
@@ -297,7 +297,7 @@ namespace Lucene.Net.Index
 
                 // Quick test to make sure index is not corrupt:
                 IndexReader reader = DirectoryReader.Open(dir);
-                DocsEnum tdocs = TestUtil.Docs(Random(), reader, "field", new BytesRef("aaa"), MultiFields.GetLiveDocs(reader), null, 0);
+                DocsEnum tdocs = TestUtil.Docs(Random, reader, "field", new BytesRef("aaa"), MultiFields.GetLiveDocs(reader), null, 0);
                 int count = 0;
                 while (tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {
@@ -323,7 +323,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: iter=" + iter);
                 }
                 MockDirectoryWrapper dir = NewMockDirectory();
-                var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                                 .SetMaxBufferedDocs(2)
                                 .SetMergeScheduler(newScheduler())
                                 .SetMergePolicy(NewLogMergePolicy(4));
@@ -398,7 +398,7 @@ namespace Lucene.Net.Index
         {
             MockDirectoryWrapper dir = NewMockDirectory();
 
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergeScheduler(newScheduler()));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergeScheduler(newScheduler()));
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             customType.StoreTermVectors = true;
@@ -636,7 +636,7 @@ namespace Lucene.Net.Index
                     Document doc = new Document();
                     Field field = OuterInstance.NewTextField("field", "testData", Field.Store.YES);
                     doc.Add(field);
-                    using (IndexWriter writer = new IndexWriter(Dir, OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))))
+                    using (IndexWriter writer = new IndexWriter(Dir, OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))))
                     {
                         if (IwConstructed.CurrentCount > 0)
                         {
@@ -666,14 +666,14 @@ namespace Lucene.Net.Index
                 ((MockDirectoryWrapper)d).PreventDoubleWrite = false;
             }
 
-            int threadCount = TestUtil.NextInt32(Random(), 2, 6);
+            int threadCount = TestUtil.NextInt32(Random, 2, 6);
 
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
             AtomicObject<IndexWriter> writerRef =
                 new AtomicObject<IndexWriter>(new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)));
 
-            LineFileDocs docs = new LineFileDocs(Random());
+            LineFileDocs docs = new LineFileDocs(Random);
             ThreadClass[] threads = new ThreadClass[threadCount];
             int iters = AtLeast(100);
             AtomicBoolean failed = new AtomicBoolean();
@@ -731,7 +731,7 @@ namespace Lucene.Net.Index
                 for (int iter = 0; iter < Iters && !Failed.Get(); iter++)
                 {
                     //final int x = Random().nextInt(5);
-                    int x = Random().Next(3);
+                    int x = Random.Next(3);
                     try
                     {
                         switch (x)
@@ -750,7 +750,7 @@ namespace Lucene.Net.Index
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": rollback done; now open new writer");
                                     }
                                     WriterRef.Value = 
-                                        new IndexWriter(d, OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                                        new IndexWriter(d, OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                                 }
                                 finally
                                 {
@@ -766,7 +766,7 @@ namespace Lucene.Net.Index
                                 }
                                 try
                                 {
-                                    if (Random().NextBoolean())
+                                    if (Random.NextBoolean())
                                     {
                                         WriterRef.Value.PrepareCommit();
                                     }

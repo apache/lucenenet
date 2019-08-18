@@ -193,7 +193,7 @@ namespace Lucene.Net.Documents
         public virtual void TestGetValuesForIndexedDocument()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             writer.AddDocument(MakeDocumentWithFields());
             IndexReader reader = writer.Reader;
 
@@ -226,7 +226,7 @@ namespace Lucene.Net.Documents
         public virtual void TestPositionIncrementMultiFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             writer.AddDocument(MakeDocumentWithFields());
             IndexReader reader = writer.Reader;
 
@@ -306,7 +306,7 @@ namespace Lucene.Net.Documents
             doc.Add(new StringField("keyword", "test", Field.Store.YES));
 
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             writer.AddDocument(doc);
             field.SetStringValue("id2");
             writer.AddDocument(doc);
@@ -361,7 +361,7 @@ namespace Lucene.Net.Documents
         public virtual void TestTransitionAPI()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             Documents.Document doc = new Documents.Document();
 #pragma warning disable 612, 618
@@ -440,7 +440,7 @@ namespace Lucene.Net.Documents
             Assert.AreEqual(new string[] { "5", "4" }, doc.GetValues("int"));
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             iw.AddDocument(doc);
             DirectoryReader ir = iw.Reader;
             Documents.Document sdoc = ir.Document(0);

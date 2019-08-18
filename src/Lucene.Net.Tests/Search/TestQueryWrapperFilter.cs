@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
         public virtual void TestBasic()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "value", Field.Store.NO));
             writer.AddDocument(doc);
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
         public virtual void TestRandom()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d, Similarity, TimeZone);
             w.IndexWriter.Config.SetMaxBufferedDocs(17);
             int numDocs = AtLeast(100);
             HashSet<string> aDocs = new HashSet<string>();
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
             {
                 Document doc = new Document();
                 string v;
-                if (Random().Next(5) == 4)
+                if (Random.Next(5) == 4)
                 {
                     v = "a";
                     aDocs.Add("" + i);
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
             int numDelDocs = AtLeast(10);
             for (int i = 0; i < numDelDocs; i++)
             {
-                string delID = "" + Random().Next(numDocs);
+                string delID = "" + Random.Next(numDocs);
                 w.DeleteDocuments(new Term("id", delID));
                 aDocs.Remove(delID);
             }
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
         public virtual void TestThousandDocuments()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             for (int i = 0; i < 1000; i++)
             {
                 Document doc = new Document();

@@ -86,9 +86,9 @@ namespace Lucene.Net.Analysis.Core
             writer.Dispose();
 
             IndexReader reader = DirectoryReader.Open(dir);
-            DocsEnum td = TestUtil.Docs(Random(), reader, "partnum", new BytesRef("Q36"), MultiFields.GetLiveDocs(reader), null, 0);
+            DocsEnum td = TestUtil.Docs(Random, reader, "partnum", new BytesRef("Q36"), MultiFields.GetLiveDocs(reader), null, 0);
             assertTrue(td.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            td = TestUtil.Docs(Random(), reader, "partnum", new BytesRef("Q37"), MultiFields.GetLiveDocs(reader), null, 0);
+            td = TestUtil.Docs(Random, reader, "partnum", new BytesRef("Q37"), MultiFields.GetLiveDocs(reader), null, 0);
             assertTrue(td.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
         }
 
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new KeywordAnalyzer(), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new KeywordAnalyzer(), 1000 * RANDOM_MULTIPLIER);
         }
     }
 }

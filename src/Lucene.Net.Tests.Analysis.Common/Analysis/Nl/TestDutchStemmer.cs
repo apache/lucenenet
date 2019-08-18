@@ -233,7 +233,7 @@ namespace Lucene.Net.Analysis.Nl
         /// blast some random strings through the analyzer </summary>
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new DutchAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new DutchAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Lucene.Net.Collation
         public void TestBasic()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             Field field = NewField("field", "", StringField.TYPE_STORED);
             ICUCollationDocValuesField collationField = new ICUCollationDocValuesField("collated", Collator.GetInstance(new CultureInfo("en")));
@@ -70,11 +70,11 @@ namespace Lucene.Net.Collation
         public void TestRanges()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             Field field = NewField("field", "", StringField.TYPE_STORED);
             Collator collator = Collator.GetInstance(CultureInfo.CurrentCulture); // uses -Dtests.locale
-            if (Random().nextBoolean())
+            if (Random.nextBoolean())
             {
                 collator.Strength = CollationStrength.Primary;
             }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Collation
             int numDocs = AtLeast(500);
             for (int i = 0; i < numDocs; i++)
             {
-                String value = TestUtil.RandomSimpleString(Random());
+                String value = TestUtil.RandomSimpleString(Random);
                 field.SetStringValue(value);
                 collationField.SetStringValue(value);
                 iw.AddDocument(doc);
@@ -98,8 +98,8 @@ namespace Lucene.Net.Collation
             int numChecks = AtLeast(100);
             for (int i = 0; i < numChecks; i++)
             {
-                String start = TestUtil.RandomSimpleString(Random());
-                String end = TestUtil.RandomSimpleString(Random());
+                String start = TestUtil.RandomSimpleString(Random);
+                String end = TestUtil.RandomSimpleString(Random);
                 BytesRef lowerVal = new BytesRef(collator.GetCollationKey(start).ToByteArray());
                 BytesRef upperVal = new BytesRef(collator.GetCollationKey(end).ToByteArray());
                 Query query = new ConstantScoreQuery(FieldCacheRangeFilter.NewBytesRefRange("collated", lowerVal, upperVal, true, true));

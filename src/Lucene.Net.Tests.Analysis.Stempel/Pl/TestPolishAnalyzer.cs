@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Pl
         [Test]
         public void TestRandomStrings()
         {
-            CheckRandomData(Random(), new PolishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new PolishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
 
         /// <summary>

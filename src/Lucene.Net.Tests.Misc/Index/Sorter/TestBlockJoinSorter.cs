@@ -60,9 +60,9 @@ namespace Lucene.Net.Index.Sorter
             RandomIndexWriter writer;
             DirectoryReader indexReader;
             int numParents = AtLeast(200);
-            IndexWriterConfig cfg = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig cfg = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             cfg.SetMergePolicy(NewLogMergePolicy());
-            using (writer = new RandomIndexWriter(Random(), NewDirectory(), cfg))
+            using (writer = new RandomIndexWriter(Random, NewDirectory(), cfg))
             {
                 Document parentDoc = new Document();
                 NumericDocValuesField parentVal = new NumericDocValuesField("parent_val", 0L);
@@ -72,14 +72,14 @@ namespace Lucene.Net.Index.Sorter
                 for (int i = 0; i < numParents; ++i)
                 {
                     List<Document> documents = new List<Document>();
-                    int numChildren = Random().nextInt(10);
+                    int numChildren = Random.nextInt(10);
                     for (int j = 0; j < numChildren; ++j)
                     {
                         Document childDoc = new Document();
-                        childDoc.Add(new NumericDocValuesField("child_val", Random().nextInt(5)));
+                        childDoc.Add(new NumericDocValuesField("child_val", Random.nextInt(5)));
                         documents.Add(childDoc);
                     }
-                    parentVal.SetInt64Value(Random().nextInt(50));
+                    parentVal.SetInt64Value(Random.nextInt(50));
                     documents.Add(parentDoc);
                     writer.AddDocuments(documents);
                 }

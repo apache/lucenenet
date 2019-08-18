@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestDefaults()
         {
-            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             Assert.AreEqual(typeof(MockAnalyzer), conf.Analyzer.GetType());
             Assert.IsNull(conf.IndexCommit);
             Assert.AreEqual(typeof(KeepOnlyLastCommitDeletionPolicy), conf.IndexDeletionPolicy.GetType());
@@ -162,12 +162,12 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             // test that IWC cannot be reused across two IWs
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-            (new RandomIndexWriter(Random(), dir, conf)).Dispose();
+            (new RandomIndexWriter(Random, dir, conf)).Dispose();
 
             // this should fail
             try
             {
-                Assert.IsNotNull(new RandomIndexWriter(Random(), dir, conf));
+                Assert.IsNotNull(new RandomIndexWriter(Random, dir, conf));
                 Assert.Fail("should have hit AlreadySetException");
             }
 #pragma warning disable 168
@@ -180,7 +180,7 @@ namespace Lucene.Net.Index
             // also cloning it won't help, after it has been used already
             try
             {
-                Assert.IsNotNull(new RandomIndexWriter(Random(), dir, (IndexWriterConfig)conf.Clone()));
+                Assert.IsNotNull(new RandomIndexWriter(Random, dir, (IndexWriterConfig)conf.Clone()));
                 Assert.Fail("should have hit AlreadySetException");
             }
 #pragma warning disable 168
@@ -192,8 +192,8 @@ namespace Lucene.Net.Index
 
             // if it's cloned in advance, it should be ok
             conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-            (new RandomIndexWriter(Random(), dir, (IndexWriterConfig)conf.Clone())).Dispose();
-            (new RandomIndexWriter(Random(), dir, (IndexWriterConfig)conf.Clone())).Dispose();
+            (new RandomIndexWriter(Random, dir, (IndexWriterConfig)conf.Clone())).Dispose();
+            (new RandomIndexWriter(Random, dir, (IndexWriterConfig)conf.Clone())).Dispose();
 
             dir.Dispose();
         }
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestToString()
         {
-            string str = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).ToString();
+            string str = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).ToString();
             foreach (System.Reflection.FieldInfo f in (typeof(IndexWriterConfig).GetFields(
                 BindingFlags.Instance |
                 BindingFlags.NonPublic |
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestClone()
         {
-            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             IndexWriterConfig clone = (IndexWriterConfig)conf.Clone();
 
             // Make sure parameters that can't be reused are cloned
@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestInvalidValues()
         {
-            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
 
             // Test IndexDeletionPolicy
             Assert.AreEqual(typeof(KeepOnlyLastCommitDeletionPolicy), conf.IndexDeletionPolicy.GetType());
@@ -502,7 +502,7 @@ namespace Lucene.Net.Index
         public virtual void TestLiveChangeToCFS()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy(true));
             // Start false:
             iwc.SetUseCompoundFile(false);

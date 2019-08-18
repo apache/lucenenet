@@ -50,7 +50,7 @@ namespace Lucene.Net.Index.Sorter
                     values.Add(int.Parse(reader.Document(i).Get(ID_FIELD), CultureInfo.InvariantCulture));
                 }
             }
-            int idx = Random().nextInt(SORT.Length);
+            int idx = Random.nextInt(SORT.Length);
             Sort sorter = SORT[idx];
             if (idx == 1)
             { // reverse doc sort
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index.Sorter
             else
             {
                 values.Sort();
-                if (Random().nextBoolean())
+                if (Random.nextBoolean())
                 {
                     sorter = new Sort(new SortField(NUMERIC_DV_FIELD, SortFieldType.INT64, true)); // descending
                     values.Reverse();

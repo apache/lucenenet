@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             string testFile = "i-pod, ipod, ipoooood\n" + "foo => foo bar\n" + "foo => baz\n" + "this test, that testing";
 
-            SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random()));
+            SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random));
             parser.Parse(new StringReader(testFile));
             SynonymMap map = parser.Build();
 
@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Synonym
         public virtual void TestInvalidDoubleMap()
         {
             string testFile = "a => b => c";
-            SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random()));
+            SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random));
             Assert.Throws<Exception>(() => parser.Parse(new StringReader(testFile)));
         }
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Synonym
         public virtual void TestInvalidAnalyzesToNothingOutput()
         {
             string testFile = "a => 1";
-            SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, false));
+            SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random, MockTokenizer.SIMPLE, false));
             Assert.Throws<Exception>(() => parser.Parse(new StringReader(testFile)));
         }
 
@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Synonym
         public virtual void TestInvalidAnalyzesToNothingInput()
         {
             string testFile = "1 => a";
-            SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, false));
+            SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random, MockTokenizer.SIMPLE, false));
             Assert.Throws<Exception>(() => parser.Parse(new StringReader(testFile)));
         }
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis.Synonym
         public virtual void TestEscapedStuff()
         {
             string testFile = "a\\=>a => b\\=>b\n" + "a\\,a => b\\,b";
-            SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false));
+            SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false));
             parser.Parse(new StringReader(testFile));
             SynonymMap map = parser.Build();
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this, map);

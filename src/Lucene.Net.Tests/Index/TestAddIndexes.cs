@@ -65,27 +65,27 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = null;
 
-            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
+            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
             // add 100 documents
             AddDocs(writer, 100);
             Assert.AreEqual(100, writer.MaxDoc);
             writer.Dispose();
             TestUtil.CheckIndex(dir);
 
-            writer = NewWriter(aux, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMergePolicy(NewLogMergePolicy(false)));
+            writer = NewWriter(aux, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMergePolicy(NewLogMergePolicy(false)));
             // add 40 documents in separate files
             AddDocs(writer, 40);
             Assert.AreEqual(40, writer.MaxDoc);
             writer.Dispose();
 
-            writer = NewWriter(aux2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
+            writer = NewWriter(aux2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
             // add 50 documents in compound files
             AddDocs2(writer, 50);
             Assert.AreEqual(50, writer.MaxDoc);
             writer.Dispose();
 
             // test doc count before segments are merged
-            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             Assert.AreEqual(100, writer.MaxDoc);
             writer.AddIndexes(aux, aux2);
             Assert.AreEqual(190, writer.MaxDoc);
@@ -100,14 +100,14 @@ namespace Lucene.Net.Index
 
             // now add another set in.
             Directory aux3 = NewDirectory();
-            writer = NewWriter(aux3, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            writer = NewWriter(aux3, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             // add 40 documents
             AddDocs(writer, 40);
             Assert.AreEqual(40, writer.MaxDoc);
             writer.Dispose();
 
             // test doc count before segments are merged
-            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             Assert.AreEqual(190, writer.MaxDoc);
             writer.AddIndexes(aux3);
             Assert.AreEqual(230, writer.MaxDoc);
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
             VerifyTermDocs(dir, new Term("content", "bbb"), 50);
 
             // now fully merge it.
-            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
             writer.Dispose();
 
@@ -134,11 +134,11 @@ namespace Lucene.Net.Index
 
             // now add a single document
             Directory aux4 = NewDirectory();
-            writer = NewWriter(aux4, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            writer = NewWriter(aux4, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             AddDocs2(writer, 1);
             writer.Dispose();
 
-            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             Assert.AreEqual(230, writer.MaxDoc);
             writer.AddIndexes(aux4);
             Assert.AreEqual(231, writer.MaxDoc);
@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
             Directory aux = NewDirectory();
 
             SetUpDirs(dir, aux);
-            IndexWriter writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            IndexWriter writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             writer.AddIndexes(aux);
 
             // Adds 10 docs, then replaces them with another 10
@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
             Directory aux = NewDirectory();
 
             SetUpDirs(dir, aux);
-            IndexWriter writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            IndexWriter writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
 
             // Adds 10 docs, then replaces them with another 10
             // docs, so 10 pending deletes:
@@ -243,7 +243,7 @@ namespace Lucene.Net.Index
             Directory aux = NewDirectory();
 
             SetUpDirs(dir, aux);
-            IndexWriter writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            IndexWriter writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
 
             // Adds 10 docs, then replaces them with another 10
             // docs, so 10 pending deletes:
@@ -286,21 +286,21 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = null;
 
-            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             // add 100 documents
             AddDocs(writer, 100);
             Assert.AreEqual(100, writer.MaxDoc);
             writer.Dispose();
 
-            writer = NewWriter(aux, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(1000).SetMergePolicy(NewLogMergePolicy(false)));
+            writer = NewWriter(aux, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(1000).SetMergePolicy(NewLogMergePolicy(false)));
             // add 140 documents in separate files
             AddDocs(writer, 40);
             writer.Dispose();
-            writer = NewWriter(aux, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(1000).SetMergePolicy(NewLogMergePolicy(false)));
+            writer = NewWriter(aux, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(1000).SetMergePolicy(NewLogMergePolicy(false)));
             AddDocs(writer, 100);
             writer.Dispose();
 
-            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             try
             {
                 // cannot add self
@@ -334,7 +334,7 @@ namespace Lucene.Net.Index
 
             SetUpDirs(dir, aux);
 
-            IndexWriter writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(4)));
+            IndexWriter writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(4)));
             AddDocs(writer, 10);
 
             writer.AddIndexes(aux);
@@ -359,7 +359,7 @@ namespace Lucene.Net.Index
 
             SetUpDirs(dir, aux);
 
-            IndexWriter writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(9).SetMergePolicy(NewLogMergePolicy(4)));
+            IndexWriter writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(9).SetMergePolicy(NewLogMergePolicy(4)));
             AddDocs(writer, 2);
 
             writer.AddIndexes(aux);
@@ -384,9 +384,9 @@ namespace Lucene.Net.Index
 
             SetUpDirs(dir, aux);
 
-            IndexWriter writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(4)));
+            IndexWriter writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(4)));
 
-            writer.AddIndexes(aux, new MockDirectoryWrapper(Random(), new RAMDirectory(aux, NewIOContext(Random()))));
+            writer.AddIndexes(aux, new MockDirectoryWrapper(Random, new RAMDirectory(aux, NewIOContext(Random))));
             Assert.AreEqual(1060, writer.MaxDoc);
             Assert.AreEqual(1000, writer.GetDocCount(0));
             writer.Dispose();
@@ -408,7 +408,7 @@ namespace Lucene.Net.Index
 
             SetUpDirs(dir, aux, true);
 
-            IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
+            IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
             IndexWriter writer = new IndexWriter(aux, dontMergeConfig);
             for (int i = 0; i < 20; i++)
             {
@@ -419,13 +419,13 @@ namespace Lucene.Net.Index
             Assert.AreEqual(10, reader.NumDocs);
             reader.Dispose();
 
-            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(4).SetMergePolicy(NewLogMergePolicy(4)));
+            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(4).SetMergePolicy(NewLogMergePolicy(4)));
 
             if (VERBOSE)
             {
                 Console.WriteLine("\nTEST: now addIndexes");
             }
-            writer.AddIndexes(aux, new MockDirectoryWrapper(Random(), new RAMDirectory(aux, NewIOContext(Random()))));
+            writer.AddIndexes(aux, new MockDirectoryWrapper(Random, new RAMDirectory(aux, NewIOContext(Random))));
             Assert.AreEqual(1020, writer.MaxDoc);
             Assert.AreEqual(1000, writer.GetDocCount(0));
             writer.Dispose();
@@ -445,13 +445,13 @@ namespace Lucene.Net.Index
 
             SetUpDirs(dir, aux, true);
 
-            IndexWriter writer = NewWriter(aux2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(100).SetMergePolicy(NewLogMergePolicy(10)));
+            IndexWriter writer = NewWriter(aux2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(100).SetMergePolicy(NewLogMergePolicy(10)));
             writer.AddIndexes(aux);
             Assert.AreEqual(30, writer.MaxDoc);
             Assert.AreEqual(3, writer.SegmentCount);
             writer.Dispose();
 
-            IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
+            IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
             writer = new IndexWriter(aux, dontMergeConfig);
             for (int i = 0; i < 27; i++)
             {
@@ -462,7 +462,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(3, reader.NumDocs);
             reader.Dispose();
 
-            dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
+            dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
             writer = new IndexWriter(aux2, dontMergeConfig);
             for (int i = 0; i < 8; i++)
             {
@@ -473,7 +473,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(22, reader.NumDocs);
             reader.Dispose();
 
-            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(6).SetMergePolicy(NewLogMergePolicy(4)));
+            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(6).SetMergePolicy(NewLogMergePolicy(4)));
 
             writer.AddIndexes(aux, aux2);
             Assert.AreEqual(1040, writer.MaxDoc);
@@ -522,7 +522,7 @@ namespace Lucene.Net.Index
         private void VerifyTermDocs(Directory dir, Term term, int numDocs)
         {
             IndexReader reader = DirectoryReader.Open(dir);
-            DocsEnum docsEnum = TestUtil.Docs(Random(), reader, term.Field, term.Bytes, null, null, DocsFlags.NONE);
+            DocsEnum docsEnum = TestUtil.Docs(Random, reader, term.Field, term.Bytes, null, null, DocsFlags.NONE);
             int count = 0;
             while (docsEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {
@@ -541,7 +541,7 @@ namespace Lucene.Net.Index
         {
             IndexWriter writer = null;
 
-            writer = NewWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(1000));
+            writer = NewWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(1000));
             // add 1000 documents in 1 segment
             if (withID)
             {
@@ -555,7 +555,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, writer.SegmentCount);
             writer.Dispose();
 
-            writer = NewWriter(aux, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(1000).SetMergePolicy(NewLogMergePolicy(false, 10)));
+            writer = NewWriter(aux, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(1000).SetMergePolicy(NewLogMergePolicy(false, 10)));
             // add 30 documents in 3 segments
             for (int i = 0; i < 3; i++)
             {
@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
                     AddDocs(writer, 10);
                 }
                 writer.Dispose();
-                writer = NewWriter(aux, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(1000).SetMergePolicy(NewLogMergePolicy(false, 10)));
+                writer = NewWriter(aux, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(1000).SetMergePolicy(NewLogMergePolicy(false, 10)));
             }
             Assert.AreEqual(30, writer.MaxDoc);
             Assert.AreEqual(3, writer.SegmentCount);
@@ -583,7 +583,7 @@ namespace Lucene.Net.Index
             LogByteSizeMergePolicy lmp = new LogByteSizeMergePolicy();
             lmp.NoCFSRatio = 0.0;
             lmp.MergeFactor = 100;
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(5).SetMergePolicy(lmp));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(5).SetMergePolicy(lmp));
 
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -614,7 +614,7 @@ namespace Lucene.Net.Index
             lmp.MinMergeMB = 0.0001;
             lmp.NoCFSRatio = 0.0;
             lmp.MergeFactor = 4;
-            writer = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(lmp));
+            writer = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new SerialMergeScheduler()).SetMergePolicy(lmp));
             writer.AddIndexes(dir);
             writer.Dispose();
             dir.Dispose();
@@ -648,8 +648,8 @@ namespace Lucene.Net.Index
             {
                 this.OuterInstance = outerInstance;
                 NUM_COPY = numCopy;
-                Dir = new MockDirectoryWrapper(Random(), new RAMDirectory());
-                IndexWriter writer = new IndexWriter(Dir, (IndexWriterConfig)new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
+                Dir = new MockDirectoryWrapper(Random, new RAMDirectory());
+                IndexWriter writer = new IndexWriter(Dir, (IndexWriterConfig)new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
                 for (int i = 0; i < NUM_INIT_DOCS; i++)
                 {
                     outerInstance.AddDoc(writer);
@@ -657,7 +657,7 @@ namespace Lucene.Net.Index
                 writer.Dispose();
 
                 Dir2 = NewDirectory();
-                Writer2 = new IndexWriter(Dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                Writer2 = new IndexWriter(Dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                 Writer2.Commit();
 
                 Readers = new IndexReader[NUM_COPY];
@@ -699,7 +699,7 @@ namespace Lucene.Net.Index
                         Directory[] dirs = new Directory[OuterInstance.NUM_COPY];
                         for (int k = 0; k < OuterInstance.NUM_COPY; k++)
                         {
-                            dirs[k] = new MockDirectoryWrapper(Random(), new RAMDirectory(OuterInstance.Dir, NewIOContext(Random())));
+                            dirs[k] = new MockDirectoryWrapper(Random, new RAMDirectory(OuterInstance.Dir, NewIOContext(Random)));
                         }
 
                         int j = 0;
@@ -990,7 +990,7 @@ namespace Lucene.Net.Index
             CommitAndAddIndexes3 c = new CommitAndAddIndexes3(this, NUM_COPY);
             c.LaunchThreads(-1);
 
-            Thread.Sleep(TestUtil.NextInt32(Random(), 10, 500));
+            Thread.Sleep(TestUtil.NextInt32(Random, 10, 500));
 
             // Close w/o first stopping/joining the threads
             if (VERBOSE)
@@ -1018,7 +1018,7 @@ namespace Lucene.Net.Index
             CommitAndAddIndexes3 c = new CommitAndAddIndexes3(this, NUM_COPY);
             c.LaunchThreads(-1);
 
-            Thread.Sleep(TestUtil.NextInt32(Random(), 10, 500));
+            Thread.Sleep(TestUtil.NextInt32(Random, 10, 500));
 
             // Close w/o first stopping/joining the threads
             if (VERBOSE)
@@ -1043,7 +1043,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < dirs.Length; i++)
             {
                 dirs[i] = NewDirectory();
-                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
                 IndexWriter writer = new IndexWriter(dirs[i], conf);
                 Document doc = new Document();
                 doc.Add(new StringField("id", "myid", Field.Store.NO));
@@ -1051,7 +1051,7 @@ namespace Lucene.Net.Index
                 writer.Dispose();
             }
 
-            IndexWriterConfig conf_ = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf_ = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             IndexWriter writer_ = new IndexWriter(dirs[0], conf_);
 
             // Now delete the document
@@ -1098,7 +1098,7 @@ namespace Lucene.Net.Index
             Codec codec = new CustomPerFieldCodec();
             IndexWriter writer = null;
 
-            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetCodec(codec));
+            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetCodec(codec));
             // add 100 documents
             AddDocsWithID(writer, 100, 0);
             Assert.AreEqual(100, writer.MaxDoc);
@@ -1106,14 +1106,14 @@ namespace Lucene.Net.Index
             writer.Dispose();
             TestUtil.CheckIndex(dir);
 
-            writer = NewWriter(aux, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetCodec(codec).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(false)));
+            writer = NewWriter(aux, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetCodec(codec).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(false)));
             // add 40 documents in separate files
             AddDocs(writer, 40);
             Assert.AreEqual(40, writer.MaxDoc);
             writer.Commit();
             writer.Dispose();
 
-            writer = NewWriter(aux2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetCodec(codec));
+            writer = NewWriter(aux2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetCodec(codec));
             // add 40 documents in compound files
             AddDocs2(writer, 50);
             Assert.AreEqual(50, writer.MaxDoc);
@@ -1121,7 +1121,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             // test doc count before segments are merged
-            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetCodec(codec));
+            writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetCodec(codec));
             Assert.AreEqual(100, writer.MaxDoc);
             writer.AddIndexes(aux, aux2);
             Assert.AreEqual(190, writer.MaxDoc);
@@ -1170,7 +1170,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < dirs.Length; i++)
             {
                 dirs[i] = new RAMDirectory();
-                IndexWriter w = new IndexWriter(dirs[i], new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                IndexWriter w = new IndexWriter(dirs[i], new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                 Document d = new Document();
                 FieldType customType = new FieldType(TextField.TYPE_STORED);
                 customType.StoreTermVectors = true;
@@ -1181,8 +1181,8 @@ namespace Lucene.Net.Index
 
             IndexReader[] readers = new IndexReader[] { DirectoryReader.Open(dirs[0]), DirectoryReader.Open(dirs[1]) };
 
-            Directory dir = new MockDirectoryWrapper(Random(), new RAMDirectory());
-            IndexWriterConfig conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NewLogMergePolicy(true));
+            Directory dir = new MockDirectoryWrapper(Random, new RAMDirectory());
+            IndexWriterConfig conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NewLogMergePolicy(true));
             MergePolicy lmp = conf.MergePolicy;
             // Force creation of CFS:
             lmp.NoCFSRatio = 1.0;
@@ -1216,7 +1216,7 @@ namespace Lucene.Net.Index
             // of the unregistered codec:
             toAdd.CheckIndexOnDispose = false;
             {
-                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
                 conf.SetCodec(new UnRegisteredCodec());
                 using (var w = new IndexWriter(toAdd, conf))
                 {
@@ -1231,8 +1231,8 @@ namespace Lucene.Net.Index
             {
                 using (Directory dir = NewDirectory())
                 {
-                    IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-                    conf.SetCodec(TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(1 + Random().Next(20))));
+                    IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+                    conf.SetCodec(TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(1 + Random.Next(20))));
                     IndexWriter w = new IndexWriter(dir, conf);
                     try
                     {
@@ -1275,7 +1275,7 @@ namespace Lucene.Net.Index
         public virtual void TestFieldNamesChanged()
         {
             Directory d1 = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d1, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d1, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("f1", "doc1 field1", Field.Store.YES));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
@@ -1284,7 +1284,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             Directory d2 = NewDirectory();
-            w = new RandomIndexWriter(Random(), d2, Similarity, TimeZone);
+            w = new RandomIndexWriter(Random, d2, Similarity, TimeZone);
             doc = new Document();
             doc.Add(NewStringField("f2", "doc2 field2", Field.Store.YES));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -1293,7 +1293,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             Directory d3 = NewDirectory();
-            w = new RandomIndexWriter(Random(), d3, Similarity, TimeZone);
+            w = new RandomIndexWriter(Random, d3, Similarity, TimeZone);
             w.AddIndexes(r1, r2);
             r1.Dispose();
             d1.Dispose();
@@ -1323,7 +1323,7 @@ namespace Lucene.Net.Index
         public virtual void TestAddEmpty()
         {
             Directory d1 = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d1, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d1, Similarity, TimeZone);
             MultiReader empty = new MultiReader();
             w.AddIndexes(empty);
             w.Dispose();
@@ -1344,12 +1344,12 @@ namespace Lucene.Net.Index
         public virtual void TestFakeAllDeleted()
         {
             Directory src = NewDirectory(), dest = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), src, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, src, Similarity, TimeZone);
             w.AddDocument(new Document());
             IndexReader allDeletedReader = new AllDeletedFilterReader((AtomicReader)w.Reader.Leaves[0].Reader);
             w.Dispose();
 
-            w = new RandomIndexWriter(Random(), dest, Similarity, TimeZone);
+            w = new RandomIndexWriter(Random, dest, Similarity, TimeZone);
             w.AddIndexes(allDeletedReader);
             w.Dispose();
             DirectoryReader dr = DirectoryReader.Open(src);
@@ -1371,15 +1371,15 @@ namespace Lucene.Net.Index
         public virtual void TestLocksBlock()
         {
             Directory src = NewDirectory();
-            RandomIndexWriter w1 = new RandomIndexWriter(Random(), src, Similarity, TimeZone);
+            RandomIndexWriter w1 = new RandomIndexWriter(Random, src, Similarity, TimeZone);
             w1.AddDocument(new Document());
             w1.Commit();
 
             Directory dest = NewDirectory();
 
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetWriteLockTimeout(1);
-            RandomIndexWriter w2 = new RandomIndexWriter(Random(), dest, iwc);
+            RandomIndexWriter w2 = new RandomIndexWriter(Random, dest, iwc);
 
             try
             {

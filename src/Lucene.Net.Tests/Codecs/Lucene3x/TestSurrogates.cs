@@ -344,10 +344,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         public virtual void TestSurrogatesOrder()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                 .SetCodec(new PreFlexRWCodec()));
 
-            int numField = TestUtil.NextInt32(Random(), 2, 5);
+            int numField = TestUtil.NextInt32(Random, 2, 5);
 
             int uniqueTermCount = 0;
 
@@ -364,7 +364,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 for (int i = 0; i < numTerms; i++)
                 {
-                    string term = GetRandomString(Random()) + "_ " + (tc++);
+                    string term = GetRandomString(Random) + "_ " + (tc++);
                     uniqueTerms.Add(term);
                     fieldTerms.Add(new Term(field, term));
                     Documents.Document doc = new Documents.Document();
@@ -407,8 +407,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             //Assert.IsNotNull(fields);
 
             DoTestStraightEnum(fieldTerms, reader, uniqueTermCount);
-            DoTestSeekExists(Random(), fieldTerms, reader);
-            DoTestSeekDoesNotExist(Random(), numField, fieldTerms, fieldTermsArray, reader);
+            DoTestSeekExists(Random, fieldTerms, reader);
+            DoTestSeekDoesNotExist(Random, numField, fieldTerms, fieldTermsArray, reader);
 
             reader.Dispose();
             w.Dispose();

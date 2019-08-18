@@ -284,14 +284,14 @@ namespace Lucene.Net.Analysis.Compound
         {
             CharArraySet dict = makeDictionary("a", "e", "i", "o", "u", "y", "bc", "def");
             Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, dict);
-            CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
 
             //InputSource @is = new InputSource(this.GetType().getResource("da_UTF8.xml").toExternalForm());
             using (var @is = this.GetType().getResourceAsStream("da_UTF8.xml"))
             {
                 HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
                 Analyzer b = new AnalyzerAnonymousInnerClassHelper3(this, hyphenator);
-                CheckRandomData(Random(), b, 1000 * RANDOM_MULTIPLIER);
+                CheckRandomData(Random, b, 1000 * RANDOM_MULTIPLIER);
             }
         }
 

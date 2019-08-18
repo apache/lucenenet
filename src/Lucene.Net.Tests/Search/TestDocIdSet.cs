@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
             // Tests that if a Filter produces a null DocIdSet, which is given to
             // IndexSearcher, everything works fine. this came up in LUCENE-1754.
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("c", "val", Field.Store.NO));
             writer.AddDocument(doc);
@@ -186,7 +186,7 @@ namespace Lucene.Net.Search
         public virtual void TestNullIteratorFilteredDocIdSet()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("c", "val", Field.Store.NO));
             writer.AddDocument(doc);

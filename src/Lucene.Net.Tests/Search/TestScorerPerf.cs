@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
             // Create a dummy index with nothing in it.
             // this could possibly fail if Lucene starts checking for docid ranges...
             d = NewDirectory();
-            IndexWriter iw = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter iw = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             iw.AddDocument(new Document());
             iw.Dispose();
             r = DirectoryReader.Open(d);
@@ -74,13 +74,13 @@ namespace Lucene.Net.Search
                 Terms[i] = new Term("f", char.ToString((char)('A' + i)));
             }
 
-            IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
+            IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
             for (int i = 0; i < nDocs; i++)
             {
                 Document d = new Document();
                 for (int j = 0; j < nTerms; j++)
                 {
-                    if (Random().Next(freq[j]) == 0)
+                    if (Random.Next(freq[j]) == 0)
                     {
                         d.Add(NewStringField("f", Terms[j].Text(), Field.Store.NO));
                         //System.out.println(d);
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
             BitArray set = new BitArray(sz);
             for (int i = 0; i < numBitsToSet; i++)
             {
-                set.SafeSet(Random().Next(sz), true);
+                set.SafeSet(Random.Next(sz), true);
             }
             return set;
         }
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
             BitArray[] sets = new BitArray[numSets];
             for (int i = 0; i < sets.Length; i++)
             {
-                sets[i] = RandBitSet(setSize, Random().Next(setSize));
+                sets[i] = RandBitSet(setSize, Random.Next(setSize));
             }
             return sets;
         }
@@ -178,7 +178,7 @@ namespace Lucene.Net.Search
 
         internal virtual BitArray AddClause(BooleanQuery bq, BitArray result)
         {
-            BitArray rnd = Sets[Random().Next(Sets.Length)];
+            BitArray rnd = Sets[Random.Next(Sets.Length)];
             Query q = new ConstantScoreQuery(new FilterAnonymousInnerClassHelper(this, rnd));
             bq.Add(q, Occur.MUST);
             if (Validate)
@@ -220,7 +220,7 @@ namespace Lucene.Net.Search
 
             for (int i = 0; i < iter; i++)
             {
-                int nClauses = Random().Next(maxClauses - 1) + 2; // min 2 clauses
+                int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
                 BooleanQuery bq = new BooleanQuery();
                 BitArray result = null;
                 for (int j = 0; j < nClauses; j++)
@@ -249,13 +249,13 @@ namespace Lucene.Net.Search
 
             for (int i = 0; i < iter; i++)
             {
-                int oClauses = Random().Next(maxOuterClauses - 1) + 2;
+                int oClauses = Random.Next(maxOuterClauses - 1) + 2;
                 BooleanQuery oq = new BooleanQuery();
                 BitArray result = null;
 
                 for (int o = 0; o < oClauses; o++)
                 {
-                    int nClauses = Random().Next(maxClauses - 1) + 2; // min 2 clauses
+                    int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
                     BooleanQuery bq = new BooleanQuery();
                     for (int j = 0; j < nClauses; j++)
                     {
@@ -289,14 +289,14 @@ namespace Lucene.Net.Search
             long nMatches = 0;
             for (int i = 0; i < iter; i++)
             {
-                int nClauses = Random().Next(maxClauses - 1) + 2; // min 2 clauses
+                int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
                 BooleanQuery bq = new BooleanQuery();
                 BitArray termflag = new BitArray(termsInIndex);
                 for (int j = 0; j < nClauses; j++)
                 {
                     int tnum;
                     // don't pick same clause twice
-                    tnum = Random().Next(termsInIndex);
+                    tnum = Random.Next(termsInIndex);
                     if (termflag.SafeGet(tnum))
                     {
                         tnum = termflag.NextClearBit(tnum);
@@ -329,18 +329,18 @@ namespace Lucene.Net.Search
             long nMatches = 0;
             for (int i = 0; i < iter; i++)
             {
-                int oClauses = Random().Next(maxOuterClauses - 1) + 2;
+                int oClauses = Random.Next(maxOuterClauses - 1) + 2;
                 BooleanQuery oq = new BooleanQuery();
                 for (int o = 0; o < oClauses; o++)
                 {
-                    int nClauses = Random().Next(maxClauses - 1) + 2; // min 2 clauses
+                    int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
                     BooleanQuery bq = new BooleanQuery();
                     BitArray termflag = new BitArray(termsInIndex);
                     for (int j = 0; j < nClauses; j++)
                     {
                         int tnum;
                         // don't pick same clause twice
-                        tnum = Random().Next(termsInIndex);
+                        tnum = Random.Next(termsInIndex);
                         if (termflag.SafeGet(tnum))
                         {
                             tnum = termflag.NextClearBit(tnum);
@@ -375,11 +375,11 @@ namespace Lucene.Net.Search
 
             for (int i = 0; i < iter; i++)
             {
-                int nClauses = Random().Next(maxClauses - 1) + 2; // min 2 clauses
+                int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
                 PhraseQuery q = new PhraseQuery();
                 for (int j = 0; j < nClauses; j++)
                 {
-                    int tnum = Random().Next(termsInIndex);
+                    int tnum = Random.Next(termsInIndex);
                     q.Add(new Term("f", char.ToString((char)(tnum + 'A'))), j);
                 }
                 q.Slop = termsInIndex; // this could be random too

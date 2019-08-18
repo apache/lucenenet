@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Grouping
         [Test]
         public virtual void TestSimple()
         {
-            Random random = Random();
+            Random random = Random;
             DocValuesType[] dvTypes = new DocValuesType[]{
                 DocValuesType.NUMERIC,
                 DocValuesType.BINARY,
@@ -246,7 +246,7 @@ namespace Lucene.Net.Search.Grouping
         [Test]
         public virtual void TestRandom()
         {
-            Random random = Random();
+            Random random = Random;
             int numberOfRuns = TestUtil.NextInt32(random, 3, 6);
             for (int indexIter = 0; indexIter < numberOfRuns; indexIter++)
             {
@@ -435,7 +435,7 @@ namespace Lucene.Net.Search.Grouping
                                                                             string countField,
                                                                             DocValuesType dvType)
         {
-            Random random = Random();
+            Random random = Random;
             IEnumerable<ISearchGroup<T>> searchGroups = firstPassGroupingCollector.GetTopGroups(0, false);
             if (typeof(FunctionFirstPassGroupingCollector).IsAssignableFrom(firstPassGroupingCollector.GetType()))
             {
@@ -449,7 +449,7 @@ namespace Lucene.Net.Search.Grouping
 
         private IAbstractFirstPassGroupingCollector<IComparable> CreateRandomFirstPassCollector(DocValuesType dvType, Sort groupSort, string groupField, int topNGroups)
         {
-            Random random = Random();
+            Random random = Random;
             if (dvType != DocValuesType.NONE)
             {
                 if (random.nextBoolean())
@@ -511,7 +511,7 @@ namespace Lucene.Net.Search.Grouping
 
         private IndexContext CreateIndexContext()
         {
-            Random random = Random();
+            Random random = Random;
                 DocValuesType[] dvTypes = new DocValuesType[]{
                 DocValuesType.BINARY,
                 DocValuesType.SORTED

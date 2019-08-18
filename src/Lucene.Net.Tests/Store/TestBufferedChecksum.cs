@@ -43,20 +43,20 @@ namespace Lucene.Net.Store
             int iterations = AtLeast(10000);
             for (int i = 0; i < iterations; i++)
             {
-                switch (Random().Next(4))
+                switch (Random.Next(4))
                 {
                     case 0:
                         // update(byte[], int, int)
-                        int length = Random().Next(1024);
+                        int length = Random.Next(1024);
                         byte[] bytes = new byte[length];
-                        Random().NextBytes(bytes);
+                        Random.NextBytes(bytes);
                         c1.Update(bytes, 0, bytes.Length);
                         c2.Update(bytes, 0, bytes.Length);
                         break;
 
                     case 1:
                         // update(int)
-                        int b = Random().Next(256);
+                        int b = Random.Next(256);
                         c1.Update(b);
                         c2.Update(b);
                         break;

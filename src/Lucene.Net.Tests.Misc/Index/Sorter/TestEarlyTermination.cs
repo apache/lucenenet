@@ -47,9 +47,9 @@ namespace Lucene.Net.Index.Sorter
         private Document RandomDocument()
         {
             Document doc = new Document();
-            doc.Add(new NumericDocValuesField("ndv1", Random().nextInt(10)));
-            doc.Add(new NumericDocValuesField("ndv2", Random().nextInt(10)));
-            doc.Add(new StringField("s", RandomInts.RandomFrom(Random(), terms), Field.Store.YES));
+            doc.Add(new NumericDocValuesField("ndv1", Random.nextInt(10)));
+            doc.Add(new NumericDocValuesField("ndv2", Random.nextInt(10)));
+            doc.Add(new StringField("s", RandomInts.RandomFrom(Random, terms), Field.Store.YES));
             return doc;
         }
 
@@ -57,14 +57,14 @@ namespace Lucene.Net.Index.Sorter
         {
             dir = NewDirectory();
             numDocs = AtLeast(150);
-            int numTerms = TestUtil.NextInt32(Random(), 1, numDocs / 5);
+            int numTerms = TestUtil.NextInt32(Random, 1, numDocs / 5);
             ISet<string> randomTerms = new HashSet<string>();
             while (randomTerms.size() < numTerms)
             {
-                randomTerms.add(TestUtil.RandomSimpleString(Random()));
+                randomTerms.add(TestUtil.RandomSimpleString(Random));
             }
             terms = new List<string>(randomTerms);
-            int seed = Random().Next();
+            int seed = Random.Next();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new Random(seed)));
             iwc.SetMergePolicy(TestSortingMergePolicy.NewSortingMergePolicy(sort));
             iw = new RandomIndexWriter(new Random(seed), dir, iwc);
@@ -72,13 +72,13 @@ namespace Lucene.Net.Index.Sorter
             {
                 Document doc = RandomDocument();
                 iw.AddDocument(doc);
-                if (i == numDocs / 2 || (i != numDocs - 1 && Random().nextInt(8) == 0))
+                if (i == numDocs / 2 || (i != numDocs - 1 && Random.nextInt(8) == 0))
                 {
                     iw.Commit();
                 }
-                if (Random().nextInt(15) == 0)
+                if (Random.nextInt(15) == 0)
                 {
-                    string term = RandomInts.RandomFrom(Random(), terms);
+                    string term = RandomInts.RandomFrom(Random, terms);
                     iw.DeleteDocuments(new Term("s", term));
                 }
             }
@@ -97,12 +97,12 @@ namespace Lucene.Net.Index.Sorter
         public void TestEarlyTermination_()
         {
             CreateRandomIndexes(5);
-            int numHits = TestUtil.NextInt32(Random(), 1, numDocs / 10);
+            int numHits = TestUtil.NextInt32(Random, 1, numDocs / 10);
             Sort sort = new Sort(new SortField("ndv1", SortFieldType.INT64, false));
-            bool fillFields = Random().nextBoolean();
-            bool trackDocScores = Random().nextBoolean();
-            bool trackMaxScore = Random().nextBoolean();
-            bool inOrder = Random().nextBoolean();
+            bool fillFields = Random.nextBoolean();
+            bool trackDocScores = Random.nextBoolean();
+            bool trackMaxScore = Random.nextBoolean();
+            bool inOrder = Random.nextBoolean();
             TopFieldCollector collector1 = Search.TopFieldCollector.Create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
             TopFieldCollector collector2 = Search.TopFieldCollector.Create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
 
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index.Sorter
             int iters = AtLeast(5);
             for (int i = 0; i < iters; ++i)
             {
-                TermQuery query = new TermQuery(new Term("s", RandomInts.RandomFrom(Random(), terms)));
+                TermQuery query = new TermQuery(new Term("s", RandomInts.RandomFrom(Random, terms)));
                 searcher.Search(query, collector1);
                 searcher.Search(query, new EarlyTerminatingSortingCollector(collector2, sort, numHits));
             }
@@ -124,12 +124,12 @@ namespace Lucene.Net.Index.Sorter
             // test that the collector works correctly when the index was sorted by a
             // different sorter than the one specified in the ctor.
             CreateRandomIndexes(5);
-            int numHits = TestUtil.NextInt32(Random(), 1, numDocs / 10);
+            int numHits = TestUtil.NextInt32(Random, 1, numDocs / 10);
             Sort sort = new Sort(new SortField("ndv2", SortFieldType.INT64, false));
-            bool fillFields = Random().nextBoolean();
-            bool trackDocScores = Random().nextBoolean();
-            bool trackMaxScore = Random().nextBoolean();
-            bool inOrder = Random().nextBoolean();
+            bool fillFields = Random.nextBoolean();
+            bool trackDocScores = Random.nextBoolean();
+            bool trackMaxScore = Random.nextBoolean();
+            bool inOrder = Random.nextBoolean();
             // LUCENENET specific:
             // we are changing this test to use Lucene.Net 4.9-like behavior rather than going through all of the effort to
             // fix a hard-to-find null reference exception problem.
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index.Sorter
                 TopFieldCollector collector1 = TopFieldCollector.Create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
                 TopFieldCollector collector2 = TopFieldCollector.Create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
 
-                TermQuery query = new TermQuery(new Term("s", RandomInts.RandomFrom(Random(), terms)));
+                TermQuery query = new TermQuery(new Term("s", RandomInts.RandomFrom(Random, terms)));
                 searcher.Search(query, collector1);
                 Sort different = new Sort(new SortField("ndv2", SortFieldType.INT64));
                 searcher.Search(query, new EarlyTerminatingSortingCollectorHelper(collector2, different, numHits));

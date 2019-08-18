@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
             Counter bytesUsed = Util.Counter.NewCounter();
             ByteBlockPool pool = new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(bytesUsed));
             pool.NextBuffer();
-            bool reuseFirst = Random().NextBoolean();
+            bool reuseFirst = Random.NextBoolean();
             for (int j = 0; j < 2; j++)
             {
                 IList<BytesRef> list = new List<BytesRef>();
@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
                 BytesRef @ref = new BytesRef();
                 for (int i = 0; i < numValues; i++)
                 {
-                    string value = TestUtil.RandomRealisticUnicodeString(Random(), maxLength);
+                    string value = TestUtil.RandomRealisticUnicodeString(Random, maxLength);
                     list.Add(new BytesRef(value));
                     @ref.CopyChars(value);
                     pool.Append(@ref);
@@ -54,7 +54,7 @@ namespace Lucene.Net.Util
                     Assert.AreEqual(expected, @ref);
                     position += @ref.Length;
                 }
-                pool.Reset(Random().NextBoolean(), reuseFirst);
+                pool.Reset(Random.NextBoolean(), reuseFirst);
                 if (reuseFirst)
                 {
                     Assert.AreEqual(ByteBlockPool.BYTE_BLOCK_SIZE, bytesUsed.Get());

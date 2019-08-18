@@ -49,10 +49,10 @@ namespace Lucene.Net.Index
         public virtual void TestUniqueValuesCompression()
         {
             Directory dir = new RAMDirectory();
-            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             IndexWriter iwriter = new IndexWriter(dir, iwc);
 
-            int uniqueValueCount = TestUtil.NextInt32(Random(), 1, 256);
+            int uniqueValueCount = TestUtil.NextInt32(Random, 1, 256);
             IList<long> values = new List<long>();
 
             Document doc = new Document();
@@ -63,12 +63,12 @@ namespace Lucene.Net.Index
                 long value;
                 if (values.Count < uniqueValueCount)
                 {
-                    value = Random().NextInt64();
+                    value = Random.NextInt64();
                     values.Add(value);
                 }
                 else
                 {
-                    value = RandomInts.RandomFrom(Random(), values);
+                    value = RandomInts.RandomFrom(Random, values);
                 }
                 dvf.SetInt64Value(value);
                 iwriter.AddDocument(doc);
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
             long size1 = DirSize(dir);
             for (int i = 0; i < 20; ++i)
             {
-                dvf.SetInt64Value(RandomInts.RandomFrom(Random(), values));
+                dvf.SetInt64Value(RandomInts.RandomFrom(Random, values));
                 iwriter.AddDocument(doc);
             }
             iwriter.ForceMerge(1);
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
         public virtual void TestDateCompression()
         {
             Directory dir = new RAMDirectory();
-            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             IndexWriter iwriter = new IndexWriter(dir, iwc);
 
             const long @base = 13; // prime
@@ -101,14 +101,14 @@ namespace Lucene.Net.Index
             doc.Add(dvf);
             for (int i = 0; i < 300; ++i)
             {
-                dvf.SetInt64Value(@base + Random().Next(1000) * day);
+                dvf.SetInt64Value(@base + Random.Next(1000) * day);
                 iwriter.AddDocument(doc);
             }
             iwriter.ForceMerge(1);
             long size1 = DirSize(dir);
             for (int i = 0; i < 50; ++i)
             {
-                dvf.SetInt64Value(@base + Random().Next(1000) * day);
+                dvf.SetInt64Value(@base + Random.Next(1000) * day);
                 iwriter.AddDocument(doc);
             }
             iwriter.ForceMerge(1);
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
         public virtual void TestSingleBigValueCompression()
         {
             Directory dir = new RAMDirectory();
-            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             IndexWriter iwriter = new IndexWriter(dir, iwc);
 
             Document doc = new Document();

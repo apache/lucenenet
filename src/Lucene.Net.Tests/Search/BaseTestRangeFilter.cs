@@ -107,10 +107,10 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             MaxId = AtLeast(500);
-            SignedIndexDir = new TestIndex(Random(), int.MaxValue, int.MinValue, true);
-            UnsignedIndexDir = new TestIndex(Random(), int.MaxValue, 0, false);
-            SignedIndexReader = Build(Random(), SignedIndexDir);
-            UnsignedIndexReader = Build(Random(), UnsignedIndexDir);
+            SignedIndexDir = new TestIndex(Random, int.MaxValue, int.MinValue, true);
+            UnsignedIndexDir = new TestIndex(Random, int.MaxValue, 0, false);
+            SignedIndexReader = Build(Random, SignedIndexDir);
+            UnsignedIndexReader = Build(Random, UnsignedIndexDir);
         }
 
         [OneTimeTearDown]

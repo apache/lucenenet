@@ -238,7 +238,7 @@ namespace Lucene.Net.Analysis.Fa
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new PersianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new PersianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
     }
 }

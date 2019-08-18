@@ -63,7 +63,7 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            var iw = new RandomIndexWriter(Random(), indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            var iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
             var config = Config;
@@ -96,7 +96,7 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
@@ -135,7 +135,7 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
@@ -191,7 +191,7 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            var iw = new RandomIndexWriter(Random(), indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            var iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
@@ -232,7 +232,7 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             ITaxonomyWriter tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 

@@ -57,7 +57,7 @@ namespace Lucene.Net.Facet.SortedSet
 
             FacetsConfig config = new FacetsConfig();
             config.SetMultiValued("a", true);
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesFacetField("a", "foo"));
@@ -65,7 +65,7 @@ namespace Lucene.Net.Facet.SortedSet
             doc.Add(new SortedSetDocValuesFacetField("a", "zoo"));
             doc.Add(new SortedSetDocValuesFacetField("b", "baz"));
             writer.AddDocument(config.Build(doc));
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 writer.Commit();
             }
@@ -106,7 +106,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -162,7 +162,7 @@ namespace Lucene.Net.Facet.SortedSet
             doc.Add(new SortedSetDocValuesFacetField("a", "foo1"));
             writer.AddDocument(config.Build(doc));
 
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 writer.Commit();
             }
@@ -172,7 +172,7 @@ namespace Lucene.Net.Facet.SortedSet
             doc.Add(new SortedSetDocValuesFacetField("b", "bar1"));
             writer.AddDocument(config.Build(doc));
 
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 writer.Commit();
             }
@@ -212,7 +212,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -254,7 +254,7 @@ namespace Lucene.Net.Facet.SortedSet
             AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -293,10 +293,10 @@ namespace Lucene.Net.Facet.SortedSet
             Directory indexDir = NewDirectory();
             Directory taxoDir = NewDirectory();
 
-            RandomIndexWriter w = new RandomIndexWriter(Random(), indexDir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, indexDir, Similarity, TimeZone);
             FacetsConfig config = new FacetsConfig();
             int numDocs = AtLeast(1000);
-            int numDims = TestUtil.NextInt32(Random(), 1, 7);
+            int numDims = TestUtil.NextInt32(Random, 1, 7);
             IList<TestDoc> testDocs = GetRandomDocs(tokens, numDocs, numDims);
             foreach (TestDoc testDoc in testDocs)
             {
@@ -321,7 +321,7 @@ namespace Lucene.Net.Facet.SortedSet
             int iters = AtLeast(100);
             for (int iter = 0; iter < iters; iter++)
             {
-                string searchToken = tokens[Random().Next(tokens.Length)];
+                string searchToken = tokens[Random.Next(tokens.Length)];
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: iter content=" + searchToken);

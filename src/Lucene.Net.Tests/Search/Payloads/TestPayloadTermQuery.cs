@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Payloads
             base.BeforeClass();
 
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(similarity).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(similarity).SetMergePolicy(NewLogMergePolicy()));
             //writer.infoStream = System.out;
             for (int i = 0; i < 1000; i++)
             {
@@ -314,7 +314,7 @@ namespace Lucene.Net.Search.Payloads
             Assert.IsTrue(hits.TotalHits == 1, "hits Size: " + hits.TotalHits + " is not: " + 1);
             int[] results = new int[1];
             results[0] = 0; //hits.ScoreDocs[0].Doc;
-            CheckHits.CheckHitCollector(Random(), query, PayloadHelper.NO_PAYLOAD_FIELD, Searcher, results, Similarity);
+            CheckHits.CheckHitCollector(Random, query, PayloadHelper.NO_PAYLOAD_FIELD, Searcher, results, Similarity);
         }
 
         internal class BoostingSimilarity : DefaultSimilarity

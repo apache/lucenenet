@@ -35,7 +35,7 @@ namespace Lucene.Net.Util.Automaton
             int num = AtLeast(500);
             for (int i = 0; i < num; i++)
             {
-                AssertAutomaton((new RegExp(AutomatonTestUtil.RandomRegexp(Random()), RegExpSyntax.NONE)).ToAutomaton());
+                AssertAutomaton((new RegExp(AutomatonTestUtil.RandomRegexp(Random), RegExpSyntax.NONE)).ToAutomaton());
             }
         }
 
@@ -47,7 +47,7 @@ namespace Lucene.Net.Util.Automaton
             int num = AtLeast(200);
             for (int i = 0; i < num; i++)
             {
-                Automaton a = AutomatonTestUtil.RandomAutomaton(Random());
+                Automaton a = AutomatonTestUtil.RandomAutomaton(Random);
                 Automaton b = (Automaton)a.Clone();
                 AutomatonTestUtil.DeterminizeSimple(a);
                 b.IsDeterministic = false; // force det

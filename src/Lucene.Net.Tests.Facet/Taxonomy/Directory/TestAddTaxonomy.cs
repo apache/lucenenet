@@ -92,7 +92,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             public override void Run()
             {
-                Random random = Random();
+                Random random = Random;
                 while (numCats.DecrementAndGet() > 0)
                 {
                     string cat = Convert.ToString(random.Next(range));
@@ -111,7 +111,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private IOrdinalMap randomOrdinalMap()
         {
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 return new DiskOrdinalMap(CreateTempFile("taxoMap", "").FullName);
             }
@@ -202,7 +202,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         [Test]
         public virtual void TestMedium()
         {
-            Random random = Random();
+            Random random = Random;
             int numTests = AtLeast(3);
             for (int i = 0; i < numTests; i++)
             {

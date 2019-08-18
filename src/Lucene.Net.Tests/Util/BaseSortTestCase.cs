@@ -48,7 +48,7 @@ namespace Lucene.Net.Util
         protected BaseSortTestCase(bool stable)
         {
             this.Stable = stable;
-            this.random = Random();
+            this.random = Random;
         }
 
         public abstract Sorter NewSorter(Entry[] arr);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Util
 
         private void DoTest(Strategy strategy)
         {
-            DoTest(strategy, Random().Next(20000));
+            DoTest(strategy, Random.Next(20000));
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass

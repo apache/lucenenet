@@ -42,7 +42,7 @@ namespace Lucene.Net.Tests.Queries.Function
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             iwc.SetMergePolicy(NewLogMergePolicy()); // depends on docid order
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
 
             Document doc = new Document();
             Field field = new StringField("value", "", Field.Store.YES);

@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
     {
         public override WAH8DocIdSet CopyOf(BitArray bs, int length)
         {
-            int indexInterval = TestUtil.NextInt32(Random(), 8, 256);
+            int indexInterval = TestUtil.NextInt32(Random, 8, 256);
             WAH8DocIdSet.Builder builder = (WAH8DocIdSet.Builder)(new WAH8DocIdSet.Builder()).SetIndexInterval(indexInterval);
             for (int i = bs.NextSetBit(0); i != -1; i = bs.NextSetBit(i + 1))
             {
@@ -45,12 +45,12 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestUnion()
         {
-            int numBits = TestUtil.NextInt32(Random(), 100, 1 << 20);
-            int numDocIdSets = TestUtil.NextInt32(Random(), 0, 4);
+            int numBits = TestUtil.NextInt32(Random, 100, 1 << 20);
+            int numDocIdSets = TestUtil.NextInt32(Random, 0, 4);
             IList<BitArray> fixedSets = new List<BitArray>(numDocIdSets);
             for (int i = 0; i < numDocIdSets; ++i)
             {
-                fixedSets.Add(RandomSet(numBits, (float)Random().NextDouble() / 16));
+                fixedSets.Add(RandomSet(numBits, (float)Random.NextDouble() / 16));
             }
             IList<WAH8DocIdSet> compressedSets = new List<WAH8DocIdSet>(numDocIdSets);
             foreach (BitArray set in fixedSets)
@@ -73,12 +73,12 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestIntersection()
         {
-            int numBits = TestUtil.NextInt32(Random(), 100, 1 << 20);
-            int numDocIdSets = TestUtil.NextInt32(Random(), 1, 4);
+            int numBits = TestUtil.NextInt32(Random, 100, 1 << 20);
+            int numDocIdSets = TestUtil.NextInt32(Random, 1, 4);
             IList<BitArray> fixedSets = new List<BitArray>(numDocIdSets);
             for (int i = 0; i < numDocIdSets; ++i)
             {
-                fixedSets.Add(RandomSet(numBits, (float)Random().NextDouble()));
+                fixedSets.Add(RandomSet(numBits, (float)Random.NextDouble()));
             }
             IList<WAH8DocIdSet> compressedSets = new List<WAH8DocIdSet>(numDocIdSets);
             foreach (BitArray set in fixedSets)

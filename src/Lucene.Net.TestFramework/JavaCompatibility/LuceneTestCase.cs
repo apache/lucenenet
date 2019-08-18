@@ -181,11 +181,11 @@ namespace Lucene.Net.Util
             long range = (long)max - (long)min;
             if (range < int.MaxValue)
             {
-                return min + Random().nextInt(1 + (int)range);
+                return min + random().nextInt(1 + (int)range);
             }
             else
             {
-                return toIntExact(min + Random().Next(1 + (int)range));
+                return toIntExact(min + random().Next(1 + (int)range));
             }
         }
 
@@ -263,8 +263,8 @@ namespace Lucene.Net.Util
                 double v1, v2, s;
                 do
                 {
-                    v1 = 2 * Random().NextDouble() - 1; // between -1 and 1
-                    v2 = 2 * Random().NextDouble() - 1; // between -1 and 1
+                    v1 = 2 * random().NextDouble() - 1; // between -1 and 1
+                    v2 = 2 * random().NextDouble() - 1; // between -1 and 1
                     s = v1 * v1 + v2 * v2;
                 } while (s >= 1 || s == 0);
                 double multiplier = Math.Sqrt(-2 * Math.Log(s) / s);

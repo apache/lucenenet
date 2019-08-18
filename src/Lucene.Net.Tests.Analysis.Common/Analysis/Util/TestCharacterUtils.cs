@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Util
             var java4 = CharacterUtils.GetJava4Instance(TEST_VERSION_CURRENT);
             var java5 = CharacterUtils.GetInstance(TEST_VERSION_CURRENT);
             
-            var s = TestUtil.RandomUnicodeString(Random());
+            var s = TestUtil.RandomUnicodeString(Random);
             assertEquals(s.Length, java4.CodePointCount(s));
             assertEquals(Character.CodePointCount(s, 0, s.Length), java5.CodePointCount(s));
         }
@@ -101,9 +101,9 @@ namespace Lucene.Net.Analysis.Util
             var java5 = CharacterUtils.GetInstance(TEST_VERSION_CURRENT);
             for (int i = 0; i < 10; ++i)
             {
-                var s = TestUtil.RandomUnicodeString(Random()).toCharArray();
-                var index = TestUtil.NextInt32(Random(), 0, s.Length);
-                var offset = Random().Next(7) - 3;
+                var s = TestUtil.RandomUnicodeString(Random).toCharArray();
+                var index = TestUtil.NextInt32(Random, 0, s.Length);
+                var offset = Random.Next(7) - 3;
                 try
                 {
                     var to = java4.OffsetByCodePoints(s, 0, s.Length, index, offset);
@@ -150,15 +150,15 @@ namespace Lucene.Net.Analysis.Util
 
         private void TestConversions(CharacterUtils charUtils)
         {
-            var orig = TestUtil.RandomUnicodeString(Random(), 100).toCharArray();
+            var orig = TestUtil.RandomUnicodeString(Random, 100).toCharArray();
             
             var buf = new int[orig.Length];
             
             var restored = new char[buf.Length];
             
-            var o1 = TestUtil.NextInt32(Random(), 0, Math.Min(5, orig.Length));
-            var o2 = TestUtil.NextInt32(Random(), 0, o1);
-            var o3 = TestUtil.NextInt32(Random(), 0, o1);
+            var o1 = TestUtil.NextInt32(Random, 0, Math.Min(5, orig.Length));
+            var o2 = TestUtil.NextInt32(Random, 0, o1);
+            var o3 = TestUtil.NextInt32(Random, 0, o1);
             var codePointCount = charUtils.ToCodePoints(orig, o1, orig.Length - o1, buf, o2);
             var charCount = charUtils.ToChars(buf, o2, codePointCount, restored, o3);
             assertEquals(orig.Length - o1, charCount);

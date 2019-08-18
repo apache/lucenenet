@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
             int nterms = AtLeast(10000);
             for (int i = 0; i < nterms; i++)
             {
-                Term term = new Term(TestUtil.RandomUnicodeString(Random(), 2), TestUtil.RandomUnicodeString(Random()));
+                Term term = new Term(TestUtil.RandomUnicodeString(Random, 2), TestUtil.RandomUnicodeString(Random));
                 terms.Add(term);
             }
 
@@ -101,16 +101,16 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestMergeRandom()
         {
-            PrefixCodedTerms[] pb = new PrefixCodedTerms[TestUtil.NextInt32(Random(), 2, 10)];
+            PrefixCodedTerms[] pb = new PrefixCodedTerms[TestUtil.NextInt32(Random, 2, 10)];
             SortedSet<Term> superSet = new SortedSet<Term>();
 
             for (int i = 0; i < pb.Length; i++)
             {
                 SortedSet<Term> terms = new SortedSet<Term>();
-                int nterms = TestUtil.NextInt32(Random(), 0, 10000);
+                int nterms = TestUtil.NextInt32(Random, 0, 10000);
                 for (int j = 0; j < nterms; j++)
                 {
-                    Term term = new Term(TestUtil.RandomUnicodeString(Random(), 2), TestUtil.RandomUnicodeString(Random(), 4));
+                    Term term = new Term(TestUtil.RandomUnicodeString(Random, 2), TestUtil.RandomUnicodeString(Random, 4));
                     terms.Add(term);
                 }
                 superSet.AddAll(terms);

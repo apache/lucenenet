@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
             ThreadClass[] stallThreads = new ThreadClass[AtLeast(3)];
             for (int i = 0; i < stallThreads.Length; i++)
             {
-                int stallProbability = 1 + Random().Next(10);
+                int stallProbability = 1 + Random.Next(10);
                 stallThreads[i] = new ThreadAnonymousInnerClassHelper(ctrl, stallProbability);
             }
             Start(stallThreads);
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
             while ((Environment.TickCount - time) < 100 * 1000 && !Terminated(stallThreads))
             {
                 ctrl.UpdateStalled(false);
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     Thread.Sleep(0);
                 }
@@ -107,8 +107,8 @@ namespace Lucene.Net.Index
                 int iters = AtLeast(1000);
                 for (int j = 0; j < iters; j++)
                 {
-                    Ctrl.UpdateStalled(Random().Next(StallProbability) == 0);
-                    if (Random().Next(5) == 0) // thread 0 only updates
+                    Ctrl.UpdateStalled(Random.Next(StallProbability) == 0);
+                    if (Random.Next(5) == 0) // thread 0 only updates
                     {
                         Ctrl.WaitIfStalled();
                     }
@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
                 }
                 Assert.IsFalse(checkPoint.Get());
                 Assert.AreEqual(0, sync.Waiter.CurrentCount);
-                if (checkPointProbability >= (float)Random().NextDouble())
+                if (checkPointProbability >= (float)Random.NextDouble())
                 {
                     sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
                     checkPoint.Set(true);
@@ -316,10 +316,10 @@ namespace Lucene.Net.Index
                 {
                     while (!Stop.Get())
                     {
-                        int internalIters = Release && Random().NextBoolean() ? AtLeast(5) : 1;
+                        int internalIters = Release && Random.NextBoolean() ? AtLeast(5) : 1;
                         for (int i = 0; i < internalIters; i++)
                         {
-                            Ctrl.UpdateStalled(Random().NextBoolean());
+                            Ctrl.UpdateStalled(Random.NextBoolean());
                         }
                         if (CheckPoint.Get())
                         {
@@ -344,7 +344,7 @@ namespace Lucene.Net.Index
 
                             Sync.LeftCheckpoint.Signal();
                         }
-                        if (Random().NextBoolean())
+                        if (Random.NextBoolean())
                         {
                             Thread.Sleep(0);
                         }
@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
                 {
                     return;
                 }
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     Thread.Sleep(0);
                 }

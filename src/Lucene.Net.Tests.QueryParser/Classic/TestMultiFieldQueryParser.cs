@@ -69,7 +69,7 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual void TestSimple()
         {
             string[] fields = { "b", "t" };
-            MultiFieldQueryParser mfqp = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, new MockAnalyzer(Random()));
+            MultiFieldQueryParser mfqp = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, new MockAnalyzer(Random));
 
             Query q = mfqp.Parse("one");
             assertEquals("b:one t:one", q.toString());
@@ -133,7 +133,7 @@ namespace Lucene.Net.QueryParsers.Classic
             boosts["b"] = (float)5;
             boosts["t"] = (float)10;
             string[] fields = { "b", "t" };
-            MultiFieldQueryParser mfqp = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, new MockAnalyzer(Random()), boosts);
+            MultiFieldQueryParser mfqp = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, new MockAnalyzer(Random), boosts);
 
 
             //Check for simple
@@ -161,25 +161,25 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             string[] fields = { "b", "t" };
             string[] queries = { "one", "two" };
-            Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, new MockAnalyzer(Random()));
+            Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, new MockAnalyzer(Random));
             assertEquals("b:one t:two", q.toString());
 
             string[] queries2 = { "+one", "+two" };
-            q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries2, fields, new MockAnalyzer(Random()));
+            q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries2, fields, new MockAnalyzer(Random));
             assertEquals("(+b:one) (+t:two)", q.toString());
 
             string[] queries3 = { "one", "+two" };
-            q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries3, fields, new MockAnalyzer(Random()));
+            q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries3, fields, new MockAnalyzer(Random));
             assertEquals("b:one (+t:two)", q.toString());
 
             string[] queries4 = { "one +more", "+two" };
-            q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries4, fields, new MockAnalyzer(Random()));
+            q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries4, fields, new MockAnalyzer(Random));
             assertEquals("(b:one +b:more) (+t:two)", q.toString());
 
             string[] queries5 = { "blah" };
             try
             {
-                q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries5, fields, new MockAnalyzer(Random()));
+                q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries5, fields, new MockAnalyzer(Random));
                 fail();
             }
             catch (ArgumentException /*e*/)
@@ -204,16 +204,16 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             string[] fields = { "b", "t" };
             Occur[] flags = { Occur.MUST, Occur.MUST_NOT };
-            Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "one", fields, flags, new MockAnalyzer(Random()));
+            Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "one", fields, flags, new MockAnalyzer(Random));
             assertEquals("+b:one -t:one", q.toString());
 
-            q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "one two", fields, flags, new MockAnalyzer(Random()));
+            q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "one two", fields, flags, new MockAnalyzer(Random));
             assertEquals("+(b:one b:two) -(t:one t:two)", q.toString());
 
             try
             {
                 Occur[] flags2 = { Occur.MUST };
-                q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "blah", fields, flags2, new MockAnalyzer(Random()));
+                q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "blah", fields, flags2, new MockAnalyzer(Random));
                 fail();
             }
             catch (ArgumentException /*e*/)
@@ -229,16 +229,16 @@ namespace Lucene.Net.QueryParsers.Classic
             //int[] flags = {MultiFieldQueryParser.REQUIRED_FIELD, MultiFieldQueryParser.PROHIBITED_FIELD};
             Occur[] flags = { Occur.MUST, Occur.MUST_NOT };
 
-            Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "one", fields, flags, new MockAnalyzer(Random()));//, fields, flags, new MockAnalyzer(random));
+            Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "one", fields, flags, new MockAnalyzer(Random));//, fields, flags, new MockAnalyzer(random));
             assertEquals("+b:one -t:one", q.toString());
 
-            q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "one two", fields, flags, new MockAnalyzer(Random()));
+            q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "one two", fields, flags, new MockAnalyzer(Random));
             assertEquals("+(b:one b:two) -(t:one t:two)", q.toString());
 
             try
             {
                 Occur[] flags2 = { Occur.MUST };
-                q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "blah", fields, flags2, new MockAnalyzer(Random()));
+                q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, "blah", fields, flags2, new MockAnalyzer(Random));
                 fail();
             }
             catch (ArgumentException /*e*/)
@@ -254,13 +254,13 @@ namespace Lucene.Net.QueryParsers.Classic
             string[] fields = { "f1", "f2", "f3" };
             Occur[] flags = {Occur.MUST,
                 Occur.MUST_NOT, Occur.SHOULD};
-            Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags, new MockAnalyzer(Random()));
+            Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags, new MockAnalyzer(Random));
             assertEquals("+f1:one -f2:two f3:three", q.toString());
 
             try
             {
                 Occur[] flags2 = { Occur.MUST };
-                q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags2, new MockAnalyzer(Random()));
+                q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags2, new MockAnalyzer(Random));
                 fail();
             }
             catch (ArgumentException /*e*/)
@@ -275,13 +275,13 @@ namespace Lucene.Net.QueryParsers.Classic
             string[] queries = { "one", "two" };
             string[] fields = { "b", "t" };
             Occur[] flags = { Occur.MUST, Occur.MUST_NOT };
-            Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags, new MockAnalyzer(Random()));
+            Query q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags, new MockAnalyzer(Random));
             assertEquals("+b:one -t:two", q.toString());
 
             try
             {
                 Occur[] flags2 = { Occur.MUST };
-                q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags2, new MockAnalyzer(Random()));
+                q = MultiFieldQueryParser.Parse(TEST_VERSION_CURRENT, queries, fields, flags2, new MockAnalyzer(Random));
                 fail();
             }
             catch (ArgumentException /*e*/)
@@ -309,7 +309,7 @@ namespace Lucene.Net.QueryParsers.Classic
         [Test]
         public virtual void TestStopWordSearching()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             using (var ramDir = NewDirectory())
             {
                 using (IndexWriter iw = new IndexWriter(ramDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)))
@@ -334,7 +334,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         private class AnalyzerReturningNull : Analyzer
         {
-            MockAnalyzer stdAnalyzer = new MockAnalyzer(Random());
+            MockAnalyzer stdAnalyzer = new MockAnalyzer(Random);
 
             public AnalyzerReturningNull()
                 : base(PER_FIELD_REUSE_STRATEGY)
@@ -365,7 +365,7 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual void TestSimpleRegex()
         {
             string[] fields = new string[] { "a", "b" };
-            MultiFieldQueryParser mfqp = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, new MockAnalyzer(Random()));
+            MultiFieldQueryParser mfqp = new MultiFieldQueryParser(TEST_VERSION_CURRENT, fields, new MockAnalyzer(Random));
 
             BooleanQuery bq = new BooleanQuery(true);
             bq.Add(new RegexpQuery(new Term("a", "[a-z][123]")), Occur.SHOULD);

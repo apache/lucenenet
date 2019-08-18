@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy()));
             //writer.setNoCFSRatio(1.0);
             //writer.infoStream = System.out;
             for (int i = 0; i < 1000; i++)
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestMixedVectrosVectors()
         {
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true)).SetOpenMode(OpenMode.CREATE));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true)).SetOpenMode(OpenMode.CREATE));
             Document doc = new Document();
 
             FieldType ft2 = new FieldType(TextField.TYPE_STORED);
@@ -180,7 +180,7 @@ namespace Lucene.Net.Search
 
         private IndexWriter CreateWriter(Directory dir)
         {
-            return new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
+            return new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
         }
 
         private void CreateDir(Directory dir)

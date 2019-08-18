@@ -35,7 +35,7 @@ namespace Lucene.Net.Tests.Join
         public void TestNestedSorting()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
 
             IList<Document> docs = new List<Document>();
             Document document = new Document();
@@ -272,7 +272,7 @@ namespace Lucene.Net.Tests.Join
 
         private Filter Wrap(Filter filter)
         {
-            return Random().NextBoolean() ? new FixedBitSetCachingWrapperFilter(filter) : filter;
+            return Random.NextBoolean() ? new FixedBitSetCachingWrapperFilter(filter) : filter;
         }
     }
 }

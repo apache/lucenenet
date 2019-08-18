@@ -42,9 +42,9 @@ namespace Lucene.Net.Expressions
 			base.SetUp();
 			dir = NewDirectory();
 			IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer
-				(Random()));
+				(Random));
 			iwc.SetMergePolicy(NewLogMergePolicy());
-			var iw = new RandomIndexWriter(Random(), dir, iwc);
+			var iw = new RandomIndexWriter(Random, dir, iwc);
 			var doc = new Document
 			{
 			    NewStringField("id", "1", Field.Store.YES),

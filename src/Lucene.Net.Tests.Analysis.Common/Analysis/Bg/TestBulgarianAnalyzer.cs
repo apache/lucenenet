@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Bg
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new BulgarianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new BulgarianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
     }
 }

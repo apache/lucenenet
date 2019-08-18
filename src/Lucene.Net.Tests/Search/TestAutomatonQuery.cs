@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, Similarity, TimeZone);
             Document doc = new Document();
             Field titleField = NewTextField("title", "some title", Field.Store.NO);
             Field field = NewTextField(FN, "this is document one 2345", Field.Store.NO);
@@ -230,10 +230,10 @@ namespace Lucene.Net.Search
             AutomatonQuery[] queries = new AutomatonQuery[1000];
             for (int i = 0; i < queries.Length; i++)
             {
-                queries[i] = new AutomatonQuery(new Term("bogus", "bogus"), AutomatonTestUtil.RandomAutomaton(Random()));
+                queries[i] = new AutomatonQuery(new Term("bogus", "bogus"), AutomatonTestUtil.RandomAutomaton(Random));
             }
             CountdownEvent startingGun = new CountdownEvent(1);
-            int numThreads = TestUtil.NextInt32(Random(), 2, 5);
+            int numThreads = TestUtil.NextInt32(Random, 2, 5);
             ThreadClass[] threads = new ThreadClass[numThreads];
             for (int threadID = 0; threadID < numThreads; threadID++)
             {

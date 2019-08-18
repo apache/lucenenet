@@ -38,7 +38,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
     {
         public StandardQueryParser GetParser(Analyzer a)
         {
-            if (a == null) a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            if (a == null) a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             StandardQueryParser qp = new StandardQueryParser(a);
             qp.DefaultOperator = (Operator.OR);
 
@@ -149,7 +149,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         public override void TestEscapedVsQuestionMarkAsWildcard()
         {
-            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             AssertQueryEquals("a:b\\-?c", a, "a:b-?c");
             AssertQueryEquals("a:b\\+?c", a, "a:b+?c");
             AssertQueryEquals("a:b\\:?c", a, "a:b:?c");
@@ -161,7 +161,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         public override void TestEscapedWildcard()
         {
-            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
+            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
             WildcardQuery q = new WildcardQuery(new Term("field", "foo?ba?r"));//TODO not correct!!
             assertEquals(q, GetQuery("foo\\?ba?r", qp));
         }
@@ -207,7 +207,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         public override void TestDefaultOperator()
         {
-            StandardQueryParser qp = GetParser(new MockAnalyzer(Random()));
+            StandardQueryParser qp = GetParser(new MockAnalyzer(Random));
             // make sure OR is the default:
             assertEquals(StandardQueryConfigHandler.Operator.OR, qp.DefaultOperator);
             SetDefaultOperatorAND(qp);

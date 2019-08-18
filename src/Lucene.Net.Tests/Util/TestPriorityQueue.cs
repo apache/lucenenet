@@ -48,7 +48,7 @@ namespace Lucene.Net.Util
 
         public void TestPQ()
         {
-            TestPQ(AtLeast(10000), Random());
+            TestPQ(AtLeast(10000), Random);
         }
 
         public static void TestPQ(int count, Random gen)
@@ -536,7 +536,7 @@ namespace Lucene.Net.Util
             int?[] elements = new int?[maxSize];
             for (int i = 0; i < maxSize; i++)
             {
-                elements[i] = Random().Next();
+                elements[i] = Random.Next();
             }
 
             AddElements(pq, elements);
@@ -556,7 +556,7 @@ namespace Lucene.Net.Util
             // Add a lot of elements
             for (int i = 0; i < maxSize; i++)
             {
-                pq.Add(Random().Next());
+                pq.Add(Random.Next());
             }
 
             // Pop some of them
@@ -568,7 +568,7 @@ namespace Lucene.Net.Util
             // Add some more
             while (pq.Count < (atLeast*3)/4)
             {
-                pq.Add(Random().Next());
+                pq.Add(Random.Next());
             }
 
             PopAndTestElements(pq);
@@ -578,7 +578,7 @@ namespace Lucene.Net.Util
             // We fill it again
             for (int i = 0; 2 * i < maxSize; i++)
             {
-                pq.Add(Random().Next());
+                pq.Add(Random.Next());
             }
 
             Assert.AreEqual(pq.Count, (maxSize + 1) / 2);
@@ -588,7 +588,7 @@ namespace Lucene.Net.Util
             // One last time
             for (int i = 0; 2 * i < maxSize; i++)
             {
-                pq.Add(Random().Next());
+                pq.Add(Random.Next());
             }
 
             PopAndTestElements(pq);
@@ -606,7 +606,7 @@ namespace Lucene.Net.Util
 
             for (int i = 0; i < maxSize; i++)
             {
-                elements[i] = Random().Next();
+                elements[i] = Random.Next();
             }
 
             Console.WriteLine("Random list of elements...");

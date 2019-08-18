@@ -51,8 +51,8 @@ namespace Lucene.Net.Util
             // pass thru to Math.cos() instead of doing some huperduper arg reduction
             for (int i = 0; i < 10000; i++)
             {
-                double d = Random().NextDouble() * SloppyMath.SIN_COS_MAX_VALUE_FOR_INT_MODULO;
-                if (Random().NextBoolean())
+                double d = Random.NextDouble() * SloppyMath.SIN_COS_MAX_VALUE_FOR_INT_MODULO;
+                if (Random.NextBoolean())
                 {
                     d = -d;
                 }
@@ -78,8 +78,8 @@ namespace Lucene.Net.Util
             // only values -1..1 are useful
             for (int i = 0; i < 10000; i++)
             {
-                double d = Random().NextDouble();
-                if (Random().NextBoolean())
+                double d = Random.NextDouble();
+                if (Random.NextBoolean())
                 {
                     d = -d;
                 }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Util
             double halfCircle = earthRadiusKMs * Math.PI;
             Assert.AreEqual(halfCircle, SloppyMath.Haversin(0, 0, 0, 180), 0D);
 
-            Random r = Random();
+            Random r = Random;
             double randomLat1 = 40.7143528 + (r.Next(10) - 5) * 360;
             double randomLon1 = -74.0059731 + (r.Next(10) - 5) * 360;
 

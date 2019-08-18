@@ -79,7 +79,7 @@ namespace Lucene.Net.Store
         public virtual void TestReadBytes()
         {
             MyBufferedIndexInput input = new MyBufferedIndexInput();
-            RunReadBytes(input, BufferedIndexInput.BUFFER_SIZE, Random());
+            RunReadBytes(input, BufferedIndexInput.BUFFER_SIZE, Random);
         }
 
         private void RunReadBytesAndClose(IndexInput input, int bufferSize, Random r)
@@ -266,12 +266,12 @@ namespace Lucene.Net.Store
         public virtual void TestSetBufferSize()
         {
             var indexDir = CreateTempDir("testSetBufferSize");
-            var dir = new MockFSDirectory(indexDir, Random());
+            var dir = new MockFSDirectory(indexDir, Random);
             try
             {
                 var writer = new IndexWriter(
                     dir,
-                    new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                    new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                         .SetOpenMode(OpenMode.CREATE)
                         .SetMergePolicy(NewLogMergePolicy(false)));
                     

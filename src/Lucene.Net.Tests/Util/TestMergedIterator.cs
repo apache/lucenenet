@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
             merged = new MergedIterator<int>((new List<int>()).GetEnumerator());
             Assert.IsFalse(merged.MoveNext());
 
-            IEnumerator<int>[] itrs = new IEnumerator<int>[Random().Next(100)];
+            IEnumerator<int>[] itrs = new IEnumerator<int>[Random.Next(100)];
             for (int i = 0; i < itrs.Length; i++)
             {
                 itrs[i] = (new List<int>()).GetEnumerator();
@@ -122,7 +122,7 @@ namespace Lucene.Net.Util
         {
             // Build a random number of lists
             IList<int?> expected = new List<int?>();
-            Random random = new Random(Random().Next());
+            Random random = new Random(Random.Next());
             int numLists = itrsWithVal + random.Next(1000 - itrsWithVal);
             IList<int>[] lists = new IList<int>[numLists];
             for (int i = 0; i < numLists; i++)

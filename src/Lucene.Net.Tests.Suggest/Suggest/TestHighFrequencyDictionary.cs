@@ -30,7 +30,7 @@ namespace Lucene.Net.Search.Suggest
         public void TestEmpty()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer.Commit();
             writer.Dispose();
             IndexReader ir = DirectoryReader.Open(dir);

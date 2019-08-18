@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
         {
             base.BeforeClass();
 
-            Random random = Random();
+            Random random = Random;
             INTS = new int[COUNT];
             LONGS = new long[COUNT];
             RANDOM_TEST_BYTES = new byte[COUNT * (5 + 4 + 9 + 8)];
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRawIndexInputRead()
         {
-            Random random = Random();
+            Random random = Random;
             RAMDirectory dir = new RAMDirectory();
             IndexOutput os = dir.CreateOutput("foo", NewIOContext(random));
             os.WriteBytes(READ_TEST_BYTES, READ_TEST_BYTES.Length);

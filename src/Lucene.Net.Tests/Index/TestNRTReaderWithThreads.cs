@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
             {
                 wrapper.AssertNoDeleteOpenFile = true;
             }
-            var writer = new IndexWriter(mainDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(false, 2)));
+            var writer = new IndexWriter(mainDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(false, 2)));
             IndexReader reader = writer.GetReader(); // start pooling readers
             reader.Dispose();
             var indexThreads = new RunThread[4];
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
             internal int DelCount = 0;
             internal int AddCount = 0;
             internal int Type;
-            internal readonly Random r = new Random(Random().Next());
+            internal readonly Random r = new Random(Random.Next());
 
             public RunThread(TestNRTReaderWithThreads outerInstance, int type, IndexWriter writer)
             {

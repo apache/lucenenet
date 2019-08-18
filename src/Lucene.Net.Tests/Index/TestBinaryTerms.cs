@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
         public virtual void TestBinary()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             BytesRef bytes = new BytesRef(2);
             BinaryTokenStream tokenStream = new BinaryTokenStream(bytes);
 

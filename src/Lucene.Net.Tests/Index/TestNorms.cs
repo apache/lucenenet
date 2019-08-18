@@ -111,11 +111,11 @@ namespace Lucene.Net.Index
         public virtual void TestCustomEncoder()
         {
             Directory dir = NewDirectory();
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
 
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             config.SetSimilarity(new CustomNormEncodingSimilarity(this));
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, config);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, config);
             Document doc = new Document();
             Field foo = NewTextField("foo", "", Field.Store.NO);
             Field bar = NewTextField("bar", "", Field.Store.NO);
@@ -169,9 +169,9 @@ namespace Lucene.Net.Index
 
         public virtual void BuildIndex(Directory dir)
         {
-            Random random = Random();
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            Random random = Random;
+            MockAnalyzer analyzer = new MockAnalyzer(LuceneTestCase.Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             Similarity provider = new MySimProvider(this);
             config.SetSimilarity(provider);
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < num; i++)
             {
                 Document doc = docs.NextDoc();
-                int boost = Random().Next(255);
+                int boost = LuceneTestCase.Random.Next(255);
                 Field f = new TextField(ByteTestField, "" + boost, Field.Store.YES);
                 f.Boost = boost;
                 doc.Add(f);

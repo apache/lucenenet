@@ -209,7 +209,7 @@ namespace Lucene.Net.Tests.Support
         {
             public override int GetHashCode()
             {
-                return Random().nextInt(); // Random garbage to ensure it is not equal
+                return Random.nextInt(); // Random garbage to ensure it is not equal
             }
 
             public override bool Equals(object obj)

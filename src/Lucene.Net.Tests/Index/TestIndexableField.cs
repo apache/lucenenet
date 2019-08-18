@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
 
             public float Boost
             {
-                get { return 1.0f + (float)Random().NextDouble(); }
+                get { return 1.0f + (float)Random.NextDouble(); }
             }
 
             public BytesRef GetBinaryValue()
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
         public virtual void TestArbitraryFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             int NUM_DOCS = AtLeast(27);
             if (VERBOSE)
@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
 
             for (int docCount = 0; docCount < NUM_DOCS; docCount++)
             {
-                int fieldCount = TestUtil.NextInt32(Random(), 1, 17);
+                int fieldCount = TestUtil.NextInt32(Random, 1, 17);
                 fieldsPerDoc[docCount] = fieldCount - 1;
 
                 int finalDocCount = docCount;

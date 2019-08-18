@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSearcherManager_Mem()
         {
-            pruner = new SearcherLifetimeManager.PruneByAge(TEST_NIGHTLY ? TestUtil.NextInt32(Random(), 1, 20) : 1);
+            pruner = new SearcherLifetimeManager.PruneByAge(TEST_NIGHTLY ? TestUtil.NextInt32(Random, 1, 20) : 1);
             RunTest("TestSearcherManager");
         }
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
         protected internal override void DoAfterWriter(TaskScheduler es)
         {
             SearcherFactory factory = new SearcherFactoryAnonymousInnerClassHelper(this, es);
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 // TODO: can we randomize the applyAllDeletes?  But
                 // somehow for final searcher we must apply
@@ -154,10 +154,10 @@ namespace Lucene.Net.Search
 
                     while (Environment.TickCount < stopTime)
                     {
-                        Thread.Sleep(TestUtil.NextInt32(Random(), 1, 100));
+                        Thread.Sleep(TestUtil.NextInt32(Random, 1, 100));
                         outerInstance.m_writer.Commit();
-                        Thread.Sleep(TestUtil.NextInt32(Random(), 1, 5));
-                        bool block = Random().NextBoolean();
+                        Thread.Sleep(TestUtil.NextInt32(Random, 1, 5));
+                        bool block = Random.NextBoolean();
                         if (block)
                         {
                             outerInstance.mgr.MaybeRefreshBlocking();
@@ -186,7 +186,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                if (Random().Next(10) == 7)
+                if (Random.Next(10) == 7)
                 {
                     // NOTE: not best practice to call maybeReopen
                     // synchronous to your search threads, but still we
@@ -202,13 +202,13 @@ namespace Lucene.Net.Search
 
                 lock (pastSearchers)
                 {
-                    while (pastSearchers.Count != 0 && Random().NextDouble() < 0.25)
+                    while (pastSearchers.Count != 0 && Random.NextDouble() < 0.25)
                     {
                         // 1/4 of the time pull an old searcher, ie, simulate
                         // a user doing a follow-on action on a previous
                         // search (drilling down/up, clicking next/prev page,
                         // etc.)
-                        long token = pastSearchers[Random().Next(pastSearchers.Count)];
+                        long token = pastSearchers[Random.Next(pastSearchers.Count)];
                         s = lifetimeMGR.Acquire(token);
                         if (s == null)
                         {
@@ -269,16 +269,16 @@ namespace Lucene.Net.Search
 #else
             scheduler = new ConcurrentMergeScheduler();
 #endif
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(scheduler));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(scheduler));
             writer.AddDocument(new Document());
             writer.Commit();
             CountdownEvent awaitEnterWarm = new CountdownEvent(1);
             CountdownEvent awaitClose = new CountdownEvent(1);
             AtomicBoolean triedReopen = new AtomicBoolean(false);
             //TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory("testIntermediateClose"));
-            TaskScheduler es = Random().NextBoolean() ? null : TaskScheduler.Default;
+            TaskScheduler es = Random.NextBoolean() ? null : TaskScheduler.Default;
             SearcherFactory factory = new SearcherFactoryAnonymousInnerClassHelper2(this, awaitEnterWarm, awaitClose, triedReopen, es);
-            SearcherManager searcherManager = Random().NextBoolean() ? new SearcherManager(dir, factory) : new SearcherManager(writer, Random().NextBoolean(), factory);
+            SearcherManager searcherManager = Random.NextBoolean() ? new SearcherManager(dir, factory) : new SearcherManager(writer, Random.NextBoolean(), factory);
             if (VERBOSE)
             {
                 Console.WriteLine("sm created");
@@ -439,7 +439,7 @@ namespace Lucene.Net.Search
         public virtual void TestReferenceDecrementIllegally([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             Directory dir = NewDirectory();
-            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMergeScheduler(newScheduler());
             IndexWriter writer = new IndexWriter(dir, config);
             SearcherManager sm = new SearcherManager(writer, false, new SearcherFactory());
@@ -547,7 +547,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestEvilSearcherFactory()
         {
-            Random random = Random();
+            Random random = Random;
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(random, dir, Similarity, TimeZone);
             w.Commit();
@@ -605,7 +605,7 @@ namespace Lucene.Net.Search
             // make sure that maybeRefreshBlocking releases the lock, otherwise other
             // threads cannot obtain it.
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             w.Dispose();
 
             SearcherManager sm = new SearcherManager(dir, null);

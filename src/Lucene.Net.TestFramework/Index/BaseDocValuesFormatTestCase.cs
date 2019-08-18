@@ -71,16 +71,16 @@ namespace Lucene.Net.Index
         {
             if (Usually())
             {
-                doc.Add(new NumericDocValuesField("ndv", Random().Next(1 << 12)));
-                doc.Add(new BinaryDocValuesField("bdv", new BytesRef(TestUtil.RandomSimpleString(Random()))));
-                doc.Add(new SortedDocValuesField("sdv", new BytesRef(TestUtil.RandomSimpleString(Random(), 2))));
+                doc.Add(new NumericDocValuesField("ndv", Random.Next(1 << 12)));
+                doc.Add(new BinaryDocValuesField("bdv", new BytesRef(TestUtil.RandomSimpleString(Random))));
+                doc.Add(new SortedDocValuesField("sdv", new BytesRef(TestUtil.RandomSimpleString(Random, 2))));
             }
             if (DefaultCodecSupportsSortedSet)
             {
-                int numValues = Random().Next(5);
+                int numValues = Random.Next(5);
                 for (int i = 0; i < numValues; ++i)
                 {
-                    doc.Add(new SortedSetDocValuesField("ssdv", new BytesRef(TestUtil.RandomSimpleString(Random(), 2))));
+                    doc.Add(new SortedSetDocValuesField("ssdv", new BytesRef(TestUtil.RandomSimpleString(Random, 2))));
                 }
             }
         }
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
         public virtual void TestOneNumber()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
         public virtual void TestOneSingle() // LUCENENET specific - renamed from TestOneFloat
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
         public virtual void TestTwoNumbers()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
         public virtual void TestTwoBinaryValues()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -238,7 +238,7 @@ namespace Lucene.Net.Index
         public virtual void TestTwoFieldsMixed()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -278,7 +278,7 @@ namespace Lucene.Net.Index
         public virtual void TestThreeFieldsMixed()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -323,7 +323,7 @@ namespace Lucene.Net.Index
         public virtual void TestThreeFieldsMixed2()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -367,12 +367,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwoDocumentsNumeric()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("dv", 1));
             iwriter.AddDocument(doc);
@@ -396,12 +396,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwoDocumentsMerged()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(NewField("id", "0", StringField.TYPE_STORED));
             doc.Add(new NumericDocValuesField("dv", -10));
@@ -440,12 +440,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestBigNumericRange()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("dv", long.MinValue));
             iwriter.AddDocument(doc);
@@ -469,12 +469,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestBigNumericRange2()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new NumericDocValuesField("dv", -8841491950446638677L));
             iwriter.AddDocument(doc);
@@ -498,11 +498,11 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestBytes()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -538,12 +538,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestBytesTwoDocumentsMerged()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(NewField("id", "0", StringField.TYPE_STORED));
             doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello world 1")));
@@ -584,11 +584,11 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedBytes()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
@@ -624,12 +624,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedBytesTwoDocuments()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 1")));
             iwriter.AddDocument(doc);
@@ -656,12 +656,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedBytesThreeDocuments()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 1")));
             iwriter.AddDocument(doc);
@@ -695,12 +695,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedBytesTwoDocumentsMerged()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(NewField("id", "0", StringField.TYPE_STORED));
             doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 1")));
@@ -747,10 +747,10 @@ namespace Lucene.Net.Index
         public virtual void TestSortedMergeAwayAllValues()
         {
             Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, iwconfig);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
 
             Document doc = new Document();
             doc.Add(new StringField("id", "0", Field.Store.NO));
@@ -788,12 +788,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestBytesWithNewline()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello\nworld\r1")));
             iwriter.AddDocument(doc);
@@ -814,12 +814,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestMissingSortedBytes()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 2")));
             iwriter.AddDocument(doc);
@@ -848,10 +848,10 @@ namespace Lucene.Net.Index
         public virtual void TestSortedTermsEnum()
         {
             Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, iwconfig);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
 
             Document doc = new Document();
             doc.Add(new SortedDocValuesField("field", new BytesRef("hello")));
@@ -920,12 +920,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestEmptySortedBytes()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new SortedDocValuesField("dv", new BytesRef("")));
             iwriter.AddDocument(doc);
@@ -952,12 +952,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestEmptyBytes()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new BinaryDocValuesField("dv", new BytesRef("")));
             iwriter.AddDocument(doc);
@@ -984,16 +984,16 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestVeryLargeButLegalBytes()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             var bytes = new byte[32766];
             BytesRef b = new BytesRef(bytes);
-            Random().NextBytes(bytes);
+            Random.NextBytes(bytes);
             doc.Add(new BinaryDocValuesField("dv", b));
             iwriter.AddDocument(doc);
             iwriter.Dispose();
@@ -1013,16 +1013,16 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestVeryLargeButLegalSortedBytes()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             var bytes = new byte[32766];
             BytesRef b = new BytesRef(bytes);
-            Random().NextBytes(bytes);
+            Random.NextBytes(bytes);
             doc.Add(new SortedDocValuesField("dv", b));
             iwriter.AddDocument(doc);
             iwriter.Dispose();
@@ -1041,12 +1041,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestCodecUsesOwnBytes()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new BinaryDocValuesField("dv", new BytesRef("boo!")));
             iwriter.AddDocument(doc);
@@ -1069,12 +1069,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestCodecUsesOwnSortedBytes()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new SortedDocValuesField("dv", new BytesRef("boo!")));
             iwriter.AddDocument(doc);
@@ -1097,12 +1097,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestCodecUsesOwnBytesEachTime()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new BinaryDocValuesField("dv", new BytesRef("foo!")));
             iwriter.AddDocument(doc);
@@ -1132,12 +1132,12 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestCodecUsesOwnSortedBytesEachTime()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new SortedDocValuesField("dv", new BytesRef("foo!")));
             iwriter.AddDocument(doc);
@@ -1171,7 +1171,7 @@ namespace Lucene.Net.Index
         public virtual void TestDocValuesSimple()
         {
             Directory dir = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMergePolicy(NewLogMergePolicy());
             IndexWriter writer = new IndexWriter(dir, conf);
@@ -1216,23 +1216,23 @@ namespace Lucene.Net.Index
         public virtual void TestRandomSortedBytes()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig cfg = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig cfg = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             if (!DefaultCodecSupportsDocsWithField)
             {
                 // if the codec doesnt support missing, we expect missing to be mapped to byte[]
                 // by the impersonator, but we have to give it a chance to merge them to this
                 cfg.SetMergePolicy(NewLogMergePolicy());
             }
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, cfg);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, cfg);
             int numDocs = AtLeast(100);
             BytesRefHash hash = new BytesRefHash();
             IDictionary<string, string> docToString = new Dictionary<string, string>();
-            int maxLength = TestUtil.NextInt32(Random(), 1, 50);
+            int maxLength = TestUtil.NextInt32(Random, 1, 50);
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
                 doc.Add(NewTextField("id", "" + i, Field.Store.YES));
-                string @string = TestUtil.RandomRealisticUnicodeString(Random(), 1, maxLength);
+                string @string = TestUtil.RandomRealisticUnicodeString(Random, 1, maxLength);
                 BytesRef br = new BytesRef(@string);
                 doc.Add(new SortedDocValuesField("field", br));
                 hash.Add(br);
@@ -1270,7 +1270,7 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 string id = "" + i + numDocs;
                 doc.Add(NewTextField("id", id, Field.Store.YES));
-                string @string = TestUtil.RandomRealisticUnicodeString(Random(), 1, maxLength);
+                string @string = TestUtil.RandomRealisticUnicodeString(Random, 1, maxLength);
                 BytesRef br = new BytesRef(@string);
                 hash.Add(br);
                 docToString[id] = @string;
@@ -1336,15 +1336,15 @@ namespace Lucene.Net.Index
 
             internal override long Next()
             {
-                return TestUtil.NextInt64(Random(), minValue, maxValue);
+                return TestUtil.NextInt64(Random, minValue, maxValue);
             }
         }
 
         private void DoTestNumericsVsStoredFields(Int64Producer longs)
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
             Document doc = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
             Field storedField = NewStringField("stored", "", Field.Store.YES);
@@ -1365,17 +1365,17 @@ namespace Lucene.Net.Index
                 storedField.SetStringValue(Convert.ToString(value, CultureInfo.InvariantCulture));
                 dvField.SetInt64Value(value);
                 writer.AddDocument(doc);
-                if (Random().Next(31) == 0)
+                if (Random.Next(31) == 0)
                 {
                     writer.Commit();
                 }
             }
 
             // delete some docs
-            int numDeletions = Random().Next(numDocs / 10);
+            int numDeletions = Random.Next(numDocs / 10);
             for (int i = 0; i < numDeletions; i++)
             {
-                int id = Random().Next(numDocs);
+                int id = Random.Next(numDocs);
                 writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
 
@@ -1422,7 +1422,7 @@ namespace Lucene.Net.Index
 
             internal override long Next()
             {
-                return TestUtil.NextInt64(Random(), minValue, maxValue);
+                return TestUtil.NextInt64(Random, minValue, maxValue);
             }
         }
 
@@ -1430,8 +1430,8 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
             Field idField = new StringField("id", "", Field.Store.NO);
             Field indexedField = NewStringField("indexed", "", Field.Store.NO);
             Field dvField = new NumericDocValuesField("dv", 0);
@@ -1450,23 +1450,23 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 doc.Add(idField);
                 // 1/4 of the time we neglect to add the fields
-                if (Random().Next(4) > 0)
+                if (Random.Next(4) > 0)
                 {
                     doc.Add(indexedField);
                     doc.Add(dvField);
                 }
                 writer.AddDocument(doc);
-                if (Random().Next(31) == 0)
+                if (Random.Next(31) == 0)
                 {
                     writer.Commit();
                 }
             }
 
             // delete some docs
-            int numDeletions = Random().Next(numDocs / 10);
+            int numDeletions = Random.Next(numDocs / 10);
             for (int i = 0; i < numDeletions; i++)
             {
-                int id = Random().Next(numDocs);
+                int id = Random.Next(numDocs);
                 writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
 
@@ -1582,8 +1582,8 @@ namespace Lucene.Net.Index
         private void DoTestBinaryVsStoredFields(int minLength, int maxLength)
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
             Document doc = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
             Field storedField = new StoredField("stored", new byte[0]);
@@ -1604,24 +1604,24 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    length = TestUtil.NextInt32(Random(), minLength, maxLength);
+                    length = TestUtil.NextInt32(Random, minLength, maxLength);
                 }
                 var buffer = new byte[length];
-                Random().NextBytes(buffer);
+                Random.NextBytes(buffer);
                 storedField.SetBytesValue(new BytesRef(buffer));
                 dvField.SetBytesValue(new BytesRef(buffer));
                 writer.AddDocument(doc);
-                if (Random().Next(31) == 0)
+                if (Random.Next(31) == 0)
                 {
                     writer.Commit();
                 }
             }
 
             // delete some docs
-            int numDeletions = Random().Next(numDocs / 10);
+            int numDeletions = Random.Next(numDocs / 10);
             for (int i = 0; i < numDeletions; i++)
             {
-                int id = Random().Next(numDocs);
+                int id = Random.Next(numDocs);
                 writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             writer.Dispose();
@@ -1650,7 +1650,7 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                int fixedLength = TestUtil.NextInt32(Random(), 0, 10);
+                int fixedLength = TestUtil.NextInt32(Random, 0, 10);
                 DoTestBinaryVsStoredFields(fixedLength, fixedLength);
             }
         }
@@ -1668,8 +1668,8 @@ namespace Lucene.Net.Index
         private void DoTestSortedVsStoredFields(int minLength, int maxLength)
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
             Document doc = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
             Field storedField = new StoredField("stored", new byte[0]);
@@ -1690,24 +1690,24 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    length = TestUtil.NextInt32(Random(), minLength, maxLength);
+                    length = TestUtil.NextInt32(Random, minLength, maxLength);
                 }
                 var buffer = new byte[length];
-                Random().NextBytes(buffer);
+                Random.NextBytes(buffer);
                 storedField.SetBytesValue(new BytesRef(buffer));
                 dvField.SetBytesValue(new BytesRef(buffer));
                 writer.AddDocument(doc);
-                if (Random().Next(31) == 0)
+                if (Random.Next(31) == 0)
                 {
                     writer.Commit();
                 }
             }
 
             // delete some docs
-            int numDeletions = Random().Next(numDocs / 10);
+            int numDeletions = Random.Next(numDocs / 10);
             for (int i = 0; i < numDeletions; i++)
             {
-                int id = Random().Next(numDocs);
+                int id = Random.Next(numDocs);
                 writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             writer.Dispose();
@@ -1733,8 +1733,8 @@ namespace Lucene.Net.Index
         private void DoTestSortedVsFieldCache(int minLength, int maxLength)
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
             Document doc = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
             Field indexedField = new StringField("indexed", "", Field.Store.NO);
@@ -1755,23 +1755,23 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    length = TestUtil.NextInt32(Random(), minLength, maxLength);
+                    length = TestUtil.NextInt32(Random, minLength, maxLength);
                 }
-                string value = TestUtil.RandomSimpleString(Random(), length);
+                string value = TestUtil.RandomSimpleString(Random, length);
                 indexedField.SetStringValue(value);
                 dvField.SetBytesValue(new BytesRef(value));
                 writer.AddDocument(doc);
-                if (Random().Next(31) == 0)
+                if (Random.Next(31) == 0)
                 {
                     writer.Commit();
                 }
             }
 
             // delete some docs
-            int numDeletions = Random().Next(numDocs / 10);
+            int numDeletions = Random.Next(numDocs / 10);
             for (int i = 0; i < numDeletions; i++)
             {
-                int id = Random().Next(numDocs);
+                int id = Random.Next(numDocs);
                 writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             writer.Dispose();
@@ -1795,7 +1795,7 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                int fixedLength = TestUtil.NextInt32(Random(), 1, 10);
+                int fixedLength = TestUtil.NextInt32(Random, 1, 10);
                 DoTestSortedVsStoredFields(fixedLength, fixedLength);
             }
         }
@@ -1806,7 +1806,7 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                int fixedLength = TestUtil.NextInt32(Random(), 1, 10);
+                int fixedLength = TestUtil.NextInt32(Random, 1, 10);
                 DoTestSortedVsFieldCache(fixedLength, fixedLength);
             }
         }
@@ -1836,7 +1836,7 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
@@ -1864,7 +1864,7 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
@@ -1902,10 +1902,10 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, iwconfig);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
@@ -1947,7 +1947,7 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
@@ -1980,7 +1980,7 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
@@ -2013,10 +2013,10 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, iwconfig);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
@@ -2065,10 +2065,10 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, iwconfig);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
@@ -2100,10 +2100,10 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, iwconfig);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
@@ -2137,10 +2137,10 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, iwconfig);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
 
             Document doc = new Document();
             iwriter.AddDocument(doc);
@@ -2173,10 +2173,10 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, iwconfig);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
 
             Document doc = new Document();
             iwriter.AddDocument(doc);
@@ -2210,10 +2210,10 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, iwconfig);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
 
             Document doc = new Document();
             doc.Add(new StringField("id", "0", Field.Store.NO));
@@ -2241,10 +2241,10 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, iwconfig);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
 
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
@@ -2306,8 +2306,8 @@ namespace Lucene.Net.Index
         private void DoTestSortedSetVsStoredFields(int minLength, int maxLength, int maxValuesPerDoc)
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
+            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
 
             // index some docs
             int numDocs = AtLeast(300);
@@ -2323,16 +2323,16 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    length = TestUtil.NextInt32(Random(), minLength, maxLength);
+                    length = TestUtil.NextInt32(Random, minLength, maxLength);
                 }
-                int numValues = TestUtil.NextInt32(Random(), 0, maxValuesPerDoc);
+                int numValues = TestUtil.NextInt32(Random, 0, maxValuesPerDoc);
 
                 // create a random set of strings
                 // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
                 SortedSet<string> values = new SortedSet<string>(StringComparer.Ordinal);
                 for (int v = 0; v < numValues; v++)
                 {
-                    values.Add(TestUtil.RandomSimpleString(Random(), length));
+                    values.Add(TestUtil.RandomSimpleString(Random, length));
                 }
 
                 // add ordered to the stored field
@@ -2350,17 +2350,17 @@ namespace Lucene.Net.Index
                 }
 
                 writer.AddDocument(doc);
-                if (Random().Next(31) == 0)
+                if (Random.Next(31) == 0)
                 {
                     writer.Commit();
                 }
             }
 
             // delete some docs
-            int numDeletions = Random().Next(numDocs / 10);
+            int numDeletions = Random.Next(numDocs / 10);
             for (int i = 0; i < numDeletions; i++)
             {
-                int id = Random().Next(numDocs);
+                int id = Random.Next(numDocs);
                 writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             writer.Dispose();
@@ -2401,7 +2401,7 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                int fixedLength = TestUtil.NextInt32(Random(), 1, 10);
+                int fixedLength = TestUtil.NextInt32(Random, 1, 10);
                 DoTestSortedSetVsStoredFields(fixedLength, fixedLength, 16);
             }
         }
@@ -2424,7 +2424,7 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                int fixedLength = TestUtil.NextInt32(Random(), 1, 10);
+                int fixedLength = TestUtil.NextInt32(Random, 1, 10);
                 DoTestSortedSetVsStoredFields(fixedLength, fixedLength, 1);
             }
         }
@@ -2534,7 +2534,7 @@ namespace Lucene.Net.Index
             // random seekExact(ord)
             for (long i = 0; i < numOrds; i++)
             {
-                long randomOrd = TestUtil.NextInt64(Random(), 0, numOrds - 1);
+                long randomOrd = TestUtil.NextInt64(Random, 0, numOrds - 1);
                 expected.SeekExact(randomOrd);
                 actual.SeekExact(randomOrd);
                 Assert.AreEqual(expected.Ord, actual.Ord);
@@ -2544,7 +2544,7 @@ namespace Lucene.Net.Index
             // random seekExact(BytesRef)
             for (long i = 0; i < numOrds; i++)
             {
-                long randomOrd = TestUtil.NextInt64(Random(), 0, numOrds - 1);
+                long randomOrd = TestUtil.NextInt64(Random, 0, numOrds - 1);
                 expected.SeekExact(randomOrd);
                 actual.SeekExact(expected.Term);
                 Assert.AreEqual(expected.Ord, actual.Ord);
@@ -2554,7 +2554,7 @@ namespace Lucene.Net.Index
             // random seekCeil(BytesRef)
             for (long i = 0; i < numOrds; i++)
             {
-                BytesRef target = new BytesRef(TestUtil.RandomUnicodeString(Random()));
+                BytesRef target = new BytesRef(TestUtil.RandomUnicodeString(Random));
                 SeekStatus expectedStatus = expected.SeekCeil(target);
                 Assert.AreEqual(expectedStatus, actual.SeekCeil(target));
                 if (expectedStatus != SeekStatus.END)
@@ -2568,8 +2568,8 @@ namespace Lucene.Net.Index
         private void DoTestSortedSetVsUninvertedField(int minLength, int maxLength)
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
+            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
 
             // index some docs
             int numDocs = AtLeast(300);
@@ -2585,14 +2585,14 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    length = TestUtil.NextInt32(Random(), minLength, maxLength);
+                    length = TestUtil.NextInt32(Random, minLength, maxLength);
                 }
-                int numValues = Random().Next(17);
+                int numValues = Random.Next(17);
                 // create a random list of strings
                 IList<string> values = new List<string>();
                 for (int v = 0; v < numValues; v++)
                 {
-                    values.Add(TestUtil.RandomSimpleString(Random(), length));
+                    values.Add(TestUtil.RandomSimpleString(Random, length));
                 }
 
                 // add in any order to the indexed field
@@ -2612,17 +2612,17 @@ namespace Lucene.Net.Index
                 }
 
                 writer.AddDocument(doc);
-                if (Random().Next(31) == 0)
+                if (Random.Next(31) == 0)
                 {
                     writer.Commit();
                 }
             }
 
             // delete some docs
-            int numDeletions = Random().Next(numDocs / 10);
+            int numDeletions = Random.Next(numDocs / 10);
             for (int i = 0; i < numDeletions; i++)
             {
-                int id = Random().Next(numDocs);
+                int id = Random.Next(numDocs);
                 writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
 
@@ -2658,7 +2658,7 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                int fixedLength = TestUtil.NextInt32(Random(), 1, 10);
+                int fixedLength = TestUtil.NextInt32(Random, 1, 10);
                 DoTestSortedSetVsUninvertedField(fixedLength, fixedLength);
             }
         }
@@ -2680,8 +2680,8 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                long min = -(((long)Random().Next(1 << 30)) << 32);
-                long mul = Random().Next() & 0xFFFFFFFFL;
+                long min = -(((long)Random.Next(1 << 30)) << 32);
+                long mul = Random.Next() & 0xFFFFFFFFL;
                 Int64Producer longs = new Int64ProducerAnonymousInnerClassHelper3(this, min, mul);
                 DoTestNumericsVsStoredFields(longs);
             }
@@ -2703,7 +2703,7 @@ namespace Lucene.Net.Index
 
             internal override long Next()
             {
-                return min + mul * Random().Next(1 << 20);
+                return min + mul * Random.Next(1 << 20);
             }
         }
 
@@ -2737,7 +2737,7 @@ namespace Lucene.Net.Index
 
             internal override long Next()
             {
-                return Random().NextBoolean() ? 0 : long.MinValue;
+                return Random.NextBoolean() ? 0 : long.MinValue;
             }
         }
 
@@ -2748,7 +2748,7 @@ namespace Lucene.Net.Index
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new StringField("id", "0", Field.Store.YES));
             doc.Add(new NumericDocValuesField("dv1", 0));
@@ -2779,7 +2779,7 @@ namespace Lucene.Net.Index
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new StringField("id", "0", Field.Store.YES));
             doc.Add(new NumericDocValuesField("dv1", 0));
@@ -2811,7 +2811,7 @@ namespace Lucene.Net.Index
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new StringField("id", "0", Field.Store.YES));
             doc.Add(new NumericDocValuesField("dv1", 0));
@@ -2849,7 +2849,7 @@ namespace Lucene.Net.Index
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new StringField("id", "0", Field.Store.YES));
             doc.Add(new BinaryDocValuesField("dv1", new BytesRef()));
@@ -2883,7 +2883,7 @@ namespace Lucene.Net.Index
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new StringField("id", "0", Field.Store.YES));
             doc.Add(new BinaryDocValuesField("dv1", new BytesRef()));
@@ -2918,7 +2918,7 @@ namespace Lucene.Net.Index
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), directory, conf);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf);
             Document doc = new Document();
             doc.Add(new StringField("id", "0", Field.Store.YES));
             doc.Add(new BinaryDocValuesField("dv1", new BytesRef()));
@@ -2957,23 +2957,23 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestHugeBinaryValues()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             // FSDirectory because SimpleText will consume gobbs of
             // space when storing big binary values:
             Directory d = NewFSDirectory(CreateTempDir("hugeBinaryValues"));
-            bool doFixed = Random().NextBoolean();
+            bool doFixed = Random.NextBoolean();
             int numDocs;
             int fixedLength = 0;
             if (doFixed)
             {
                 // Sometimes make all values fixed length since some
                 // codecs have different code paths for this:
-                numDocs = TestUtil.NextInt32(Random(), 10, 20);
-                fixedLength = TestUtil.NextInt32(Random(), 65537, 256 * 1024);
+                numDocs = TestUtil.NextInt32(Random, 10, 20);
+                fixedLength = TestUtil.NextInt32(Random, 65537, 256 * 1024);
             }
             else
             {
-                numDocs = TestUtil.NextInt32(Random(), 100, 200);
+                numDocs = TestUtil.NextInt32(Random, 100, 200);
             }
             IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             var docBytes = new List<byte[]>();
@@ -2990,13 +2990,13 @@ namespace Lucene.Net.Index
                 {
                     numBytes = fixedLength;
                 }
-                else if (docID == 0 || Random().Next(5) == 3)
+                else if (docID == 0 || Random.Next(5) == 3)
                 {
-                    numBytes = TestUtil.NextInt32(Random(), 65537, 3 * 1024 * 1024);
+                    numBytes = TestUtil.NextInt32(Random, 65537, 3 * 1024 * 1024);
                 }
                 else
                 {
-                    numBytes = TestUtil.NextInt32(Random(), 1, 1024 * 1024);
+                    numBytes = TestUtil.NextInt32(Random, 1, 1024 * 1024);
                 }
                 totalBytes += numBytes;
                 if (totalBytes > 5 * 1024 * 1024)
@@ -3004,7 +3004,7 @@ namespace Lucene.Net.Index
                     break;
                 }
                 var bytes = new byte[numBytes];
-                Random().NextBytes(bytes);
+                Random.NextBytes(bytes);
                 docBytes.Add(bytes);
                 Document doc = new Document();
                 BytesRef b = new BytesRef(bytes);
@@ -3080,23 +3080,23 @@ namespace Lucene.Net.Index
         {
             // We only test DVFormats that have a limit
             AssumeFalse("test requires codec with limits on max binary field length", CodecAcceptsHugeBinaryValues("field"));
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             // FSDirectory because SimpleText will consume gobbs of
             // space when storing big binary values:
             Directory d = NewFSDirectory(CreateTempDir("hugeBinaryValues"));
-            bool doFixed = Random().NextBoolean();
+            bool doFixed = Random.NextBoolean();
             int numDocs;
             int fixedLength = 0;
             if (doFixed)
             {
                 // Sometimes make all values fixed length since some
                 // codecs have different code paths for this:
-                numDocs = TestUtil.NextInt32(Random(), 10, 20);
+                numDocs = TestUtil.NextInt32(Random, 10, 20);
                 fixedLength = Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH;
             }
             else
             {
-                numDocs = TestUtil.NextInt32(Random(), 100, 200);
+                numDocs = TestUtil.NextInt32(Random, 100, 200);
             }
             IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             var docBytes = new List<byte[]>();
@@ -3113,13 +3113,13 @@ namespace Lucene.Net.Index
                 {
                     numBytes = fixedLength;
                 }
-                else if (docID == 0 || Random().Next(5) == 3)
+                else if (docID == 0 || Random.Next(5) == 3)
                 {
                     numBytes = Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH;
                 }
                 else
                 {
-                    numBytes = TestUtil.NextInt32(Random(), 1, Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
+                    numBytes = TestUtil.NextInt32(Random, 1, Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
                 }
                 totalBytes += numBytes;
                 if (totalBytes > 5 * 1024 * 1024)
@@ -3127,7 +3127,7 @@ namespace Lucene.Net.Index
                     break;
                 }
                 var bytes = new byte[numBytes];
-                Random().NextBytes(bytes);
+                Random.NextBytes(bytes);
                 docBytes.Add(bytes);
                 Document doc = new Document();
                 BytesRef b = new BytesRef(bytes);
@@ -3164,8 +3164,8 @@ namespace Lucene.Net.Index
         public virtual void TestThreads()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
             Document doc = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
             Field storedBinField = new StoredField("storedBin", new byte[0]);
@@ -3185,34 +3185,34 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
-                int length = TestUtil.NextInt32(Random(), 0, 8);
+                int length = TestUtil.NextInt32(Random, 0, 8);
                 var buffer = new byte[length];
-                Random().NextBytes(buffer);
+                Random.NextBytes(buffer);
                 storedBinField.SetBytesValue(buffer);
                 dvBinField.SetBytesValue(buffer);
                 dvSortedField.SetBytesValue(buffer);
-                long numericValue = Random().NextInt64();
+                long numericValue = Random.NextInt64();
                 storedNumericField.SetStringValue(Convert.ToString(numericValue, CultureInfo.InvariantCulture));
                 dvNumericField.SetInt64Value(numericValue);
                 writer.AddDocument(doc);
-                if (Random().Next(31) == 0)
+                if (Random.Next(31) == 0)
                 {
                     writer.Commit();
                 }
             }
 
             // delete some docs
-            int numDeletions = Random().Next(numDocs / 10);
+            int numDeletions = Random.Next(numDocs / 10);
             for (int i = 0; i < numDeletions; i++)
             {
-                int id = Random().Next(numDocs);
+                int id = Random.Next(numDocs);
                 writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             writer.Dispose();
 
             // compare
             DirectoryReader ir = DirectoryReader.Open(dir);
-            int numThreads = TestUtil.NextInt32(Random(), 2, 7);
+            int numThreads = TestUtil.NextInt32(Random, 2, 7);
             ThreadClass[] threads = new ThreadClass[numThreads];
             CountdownEvent startingGun = new CountdownEvent(1);
 
@@ -3285,8 +3285,8 @@ namespace Lucene.Net.Index
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
             Field idField = new StringField("id", "", Field.Store.NO);
             Field storedBinField = new StoredField("storedBin", new byte[0]);
             Field dvBinField = new BinaryDocValuesField("dvBin", new BytesRef());
@@ -3299,35 +3299,35 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
-                int length = TestUtil.NextInt32(Random(), 0, 8);
+                int length = TestUtil.NextInt32(Random, 0, 8);
                 var buffer = new byte[length];
-                Random().NextBytes(buffer);
+                Random.NextBytes(buffer);
                 storedBinField.SetBytesValue(buffer);
                 dvBinField.SetBytesValue(buffer);
                 dvSortedField.SetBytesValue(buffer);
-                long numericValue = Random().NextInt64();
+                long numericValue = Random.NextInt64();
                 storedNumericField.SetStringValue(Convert.ToString(numericValue, CultureInfo.InvariantCulture));
                 dvNumericField.SetInt64Value(numericValue);
                 Document doc = new Document();
                 doc.Add(idField);
-                if (Random().Next(4) > 0)
+                if (Random.Next(4) > 0)
                 {
                     doc.Add(storedBinField);
                     doc.Add(dvBinField);
                     doc.Add(dvSortedField);
                 }
-                if (Random().Next(4) > 0)
+                if (Random.Next(4) > 0)
                 {
                     doc.Add(storedNumericField);
                     doc.Add(dvNumericField);
                 }
-                int numSortedSetFields = Random().Next(3);
+                int numSortedSetFields = Random.Next(3);
 
                 // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
                 SortedSet<string> values = new SortedSet<string>(StringComparer.Ordinal);
                 for (int j = 0; j < numSortedSetFields; j++)
                 {
-                    values.Add(TestUtil.RandomSimpleString(Random()));
+                    values.Add(TestUtil.RandomSimpleString(Random));
                 }
                 foreach (string v in values)
                 {
@@ -3335,24 +3335,24 @@ namespace Lucene.Net.Index
                     doc.Add(new StoredField("storedSortedSet", v));
                 }
                 writer.AddDocument(doc);
-                if (Random().Next(31) == 0)
+                if (Random.Next(31) == 0)
                 {
                     writer.Commit();
                 }
             }
 
             // delete some docs
-            int numDeletions = Random().Next(numDocs / 10);
+            int numDeletions = Random.Next(numDocs / 10);
             for (int i = 0; i < numDeletions; i++)
             {
-                int id = Random().Next(numDocs);
+                int id = Random.Next(numDocs);
                 writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             writer.Dispose();
 
             // compare
             DirectoryReader ir = DirectoryReader.Open(dir);
-            int numThreads = TestUtil.NextInt32(Random(), 2, 7);
+            int numThreads = TestUtil.NextInt32(Random, 2, 7);
             ThreadClass[] threads = new ThreadClass[numThreads];
             CountdownEvent startingGun = new CountdownEvent(1);
 
@@ -3483,7 +3483,7 @@ namespace Lucene.Net.Index
                     break;
                 }
                 Directory dir = NewDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+                RandomIndexWriter w = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
                 BytesRef bytes = new BytesRef();
                 bytes.Bytes = new byte[1 << i];
                 bytes.Length = 1 << i;

@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
         public virtual void TestOmitNorms_Mem()
         {
             Directory ram = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             Document d = new Document();
 
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
         public virtual void TestMixedMerge()
         {
             Directory ram = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(3).SetMergePolicy(NewLogMergePolicy(2)));
             Document d = new Document();
 
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
         public virtual void TestMixedRAM()
         {
             Directory ram = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(2)));
             Document d = new Document();
 
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
         public virtual void TestNoNrmFile()
         {
             Directory ram = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriter writer = new IndexWriter(ram, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(3).SetMergePolicy(NewLogMergePolicy()));
             LogMergePolicy lmp = (LogMergePolicy)writer.Config.MergePolicy;
             lmp.MergeFactor = 2;
@@ -280,8 +280,8 @@ namespace Lucene.Net.Index
         internal virtual NumericDocValues GetNorms(string field, Field f1, Field f2)
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, iwc);
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy());
+            RandomIndexWriter riw = new RandomIndexWriter(Random, dir, iwc);
 
             // add f1
             Document d = new Document();
@@ -294,11 +294,11 @@ namespace Lucene.Net.Index
             riw.AddDocument(d);
 
             // add a mix of f1's and f2's
-            int numExtraDocs = TestUtil.NextInt32(Random(), 1, 1000);
+            int numExtraDocs = TestUtil.NextInt32(Random, 1, 1000);
             for (int i = 0; i < numExtraDocs; i++)
             {
                 d = new Document();
-                d.Add(Random().NextBoolean() ? f1 : f2);
+                d.Add(Random.NextBoolean() ? f1 : f2);
                 riw.AddDocument(d);
             }
 

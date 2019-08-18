@@ -48,16 +48,16 @@ namespace Lucene.Net.Store
             fileExtensions.Add(Lucene40StoredFieldsWriter.FIELDS_EXTENSION);
             fileExtensions.Add(Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION);
 
-            MockDirectoryWrapper primaryDir = new MockDirectoryWrapper(Random(), new RAMDirectory());
+            MockDirectoryWrapper primaryDir = new MockDirectoryWrapper(Random, new RAMDirectory());
             primaryDir.CheckIndexOnDispose = false; // only part of an index
-            MockDirectoryWrapper secondaryDir = new MockDirectoryWrapper(Random(), new RAMDirectory());
+            MockDirectoryWrapper secondaryDir = new MockDirectoryWrapper(Random, new RAMDirectory());
             secondaryDir.CheckIndexOnDispose = false; // only part of an index
 
             FileSwitchDirectory fsd = new FileSwitchDirectory(fileExtensions, primaryDir, secondaryDir, true);
             // for now we wire Lucene40Codec because we rely upon its specific impl
             bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
-            IndexWriter writer = new IndexWriter(fsd, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NewLogMergePolicy(false)).SetCodec(Codec.ForName("Lucene40")).SetUseCompoundFile(false));
+            IndexWriter writer = new IndexWriter(fsd, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NewLogMergePolicy(false)).SetCodec(Codec.ForName("Lucene40")).SetUseCompoundFile(false));
             TestIndexWriterReader.CreateIndexNoClose(true, "ram", writer);
             IndexReader reader = DirectoryReader.Open(writer, true);
             Assert.AreEqual(100, reader.MaxDoc);
@@ -102,7 +102,7 @@ namespace Lucene.Net.Store
             Directory a = new SimpleFSDirectory(aDir);
             Directory b = new SimpleFSDirectory(bDir);
             FileSwitchDirectory switchDir = new FileSwitchDirectory(primaryExtensions, a, b, true);
-            return new MockDirectoryWrapper(Random(), switchDir);
+            return new MockDirectoryWrapper(Random, switchDir);
         }
 
         // LUCENE-3380 -- make sure we get exception if the directory really does not exist.
@@ -135,7 +135,7 @@ namespace Lucene.Net.Store
             string name = "file";
             try
             {
-                dir.CreateOutput(name, NewIOContext(Random())).Dispose();
+                dir.CreateOutput(name, NewIOContext(Random)).Dispose();
                 Assert.IsTrue(SlowFileExists(dir, name));
                 Assert.IsTrue(Arrays.AsList(dir.ListAll()).Contains(name));
             }
@@ -150,9 +150,9 @@ namespace Lucene.Net.Store
         public virtual void TestCompoundFileAppendTwice()
         {
             Directory newDir = NewFSSwitchDirectory(Collections.Singleton("cfs"));
-            var csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
+            var csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random), true);
             CreateSequenceFile(newDir, "d1", (sbyte)0, 15);
-            IndexOutput @out = csw.CreateOutput("d.xyz", NewIOContext(Random()));
+            IndexOutput @out = csw.CreateOutput("d.xyz", NewIOContext(Random));
             @out.WriteInt32(0);
             @out.Dispose();
             Assert.AreEqual(1, csw.ListAll().Length);
@@ -160,7 +160,7 @@ namespace Lucene.Net.Store
 
             csw.Dispose();
 
-            CompoundFileDirectory cfr = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), false);
+            CompoundFileDirectory cfr = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random), false);
             Assert.AreEqual(1, cfr.ListAll().Length);
             Assert.AreEqual("d.xyz", cfr.ListAll()[0]);
             cfr.Dispose();
@@ -174,7 +174,7 @@ namespace Lucene.Net.Store
         /// </summary>
         private void CreateSequenceFile(Directory dir, string name, sbyte start, int size)
         {
-            IndexOutput os = dir.CreateOutput(name, NewIOContext(Random()));
+            IndexOutput os = dir.CreateOutput(name, NewIOContext(Random));
             for (int i = 0; i < size; i++)
             {
                 os.WriteByte((byte)start);

@@ -379,7 +379,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new StandardAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new StandardAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
 
         /// <summary>
@@ -387,7 +387,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestRandomHugeStrings()
         {
-            Random random = Random();
+            Random random = Random;
             CheckRandomData(random, new StandardAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
         }
 
@@ -395,7 +395,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestRandomHugeStringsGraphAfter()
         {
-            Random random = Random();
+            Random random = Random;
             CheckRandomData(random, new AnalyzerAnonymousInnerClassHelper4(this), 100 * RANDOM_MULTIPLIER, 8192);
         }
 
@@ -411,7 +411,7 @@ namespace Lucene.Net.Analysis.Core
             protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-                TokenStream tokenStream = new MockGraphTokenFilter(Random(), tokenizer);
+                TokenStream tokenStream = new MockGraphTokenFilter(Random, tokenizer);
                 return new TokenStreamComponents(tokenizer, tokenStream);
             }
         }

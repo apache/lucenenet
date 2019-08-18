@@ -47,9 +47,9 @@ namespace Lucene.Net.Tests.Queries.Function
         {
             base.SetUp();
             dir = NewDirectory();
-            IndexWriterConfig iwConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwConfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConfig);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConfig);
             Document document = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
             document.Add(idField);
@@ -93,7 +93,7 @@ namespace Lucene.Net.Tests.Queries.Function
                 expected[i] = new ScoreDoc(i, scores[i]);
             }
             TopDocs docs = @is.Search(q, 10, new Sort(new SortField("id", SortFieldType.STRING)));
-            CheckHits.DoCheckHits(Random(), q, "", @is, expectedDocs, Similarity);
+            CheckHits.DoCheckHits(Random, q, "", @is, expectedDocs, Similarity);
             CheckHits.CheckHitsQuery(q, expected, docs.ScoreDocs, expectedDocs);
             CheckHits.CheckExplanations(q, "", @is);
         }

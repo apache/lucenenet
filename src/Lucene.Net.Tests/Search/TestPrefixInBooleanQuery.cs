@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, Similarity, TimeZone);
 
             Document doc = new Document();
             Field field = NewStringField(FIELD, "meaninglessnames", Field.Store.NO);

@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
                 ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
 
-            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                                 .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
                                 .SetRAMBufferSizeMB(256.0)
                                 .SetMergeScheduler(newScheduler())
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
                 ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
 
-            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
                             .SetRAMBufferSizeMB(256.0)
                             .SetMergeScheduler(newScheduler())

@@ -54,7 +54,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         public virtual QueryParser GetParser(Analyzer a)
         {
-            if (a == null) a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            if (a == null) a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, DefaultField, a);
             qp.DefaultOperator = (QueryParserBase.OR_OPERATOR);
             return qp;
@@ -121,7 +121,7 @@ namespace Lucene.Net.QueryParsers.Classic
         [Test]
         public override void TestDefaultOperator()
         {
-            QueryParser qp = GetParser(new MockAnalyzer(Random()));
+            QueryParser qp = GetParser(new MockAnalyzer(Random));
             // make sure OR is the default:
             assertEquals(QueryParserBase.OR_OPERATOR, qp.DefaultOperator);
             SetDefaultOperatorAND(qp);
@@ -166,7 +166,7 @@ namespace Lucene.Net.QueryParsers.Classic
         private class TestFuzzySlopeExtendabilityQueryParser : QueryParser
         {
             public TestFuzzySlopeExtendabilityQueryParser()
-                : base(TEST_VERSION_CURRENT, "a", new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
+                : base(TEST_VERSION_CURRENT, "a", new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
             {}
 
             internal override Query HandleBareFuzzy(string qfield, Token fuzzySlop, string termImage)
@@ -198,7 +198,7 @@ namespace Lucene.Net.QueryParsers.Classic
             public readonly int[] type = new int[1];
 
             public TestStarParsingQueryParser()
-                : base(TEST_VERSION_CURRENT, "field", new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
+                : base(TEST_VERSION_CURRENT, "field", new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
             { }
 
             protected internal override Query GetWildcardQuery(string field, string termStr)
@@ -269,7 +269,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             try
             {
-                new QPTestParser("contents", new MockAnalyzer(Random(),
+                new QPTestParser("contents", new MockAnalyzer(Random,
                     MockTokenizer.WHITESPACE, false)).Parse("a?t");
                 fail("Wildcard queries should not be allowed");
             }
@@ -284,7 +284,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             try
             {
-                new QPTestParser("contents", new MockAnalyzer(Random(),
+                new QPTestParser("contents", new MockAnalyzer(Random,
                     MockTokenizer.WHITESPACE, false)).Parse("xunit~");
                 fail("Fuzzy queries should not be allowed");
             }

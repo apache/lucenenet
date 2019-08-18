@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Spans
             base.BeforeClass();
 
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
 
             writer.AddDocument(Doc(new Field[] { GetField("id", "0"), GetField("gender", "male"), GetField("first", "james"), GetField("last", "jones") }));
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Spans
 
         protected internal virtual void Check(SpanQuery q, int[] docs)
         {
-            CheckHits.CheckHitCollector(Random(), q, null, Searcher, docs, Similarity);
+            CheckHits.CheckHitCollector(Random, q, null, Searcher, docs, Similarity);
         }
 
         [Test]

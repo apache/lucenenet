@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
             try
             {
                 directory = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, Similarity, TimeZone);
+                RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
 
                 Document doc = new Document();
                 doc.Add(NewStringField("field", "term", Field.Store.NO));
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
         public virtual void TestConstantScoreQueryAndFilter()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("field", "a", Field.Store.NO));
             w.AddDocument(doc);
@@ -216,14 +216,14 @@ namespace Lucene.Net.Search
         public virtual void TestQueryWrapperFilter()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("field", "a", Field.Store.NO));
             w.AddDocument(doc);
             IndexReader r = w.Reader;
             w.Dispose();
 
-            Filter filter = new QueryWrapperFilter(AssertingQuery.Wrap(Random(), new TermQuery(new Term("field", "a"))));
+            Filter filter = new QueryWrapperFilter(AssertingQuery.Wrap(Random, new TermQuery(new Term("field", "a"))));
             IndexSearcher s = NewSearcher(r);
             Debug.Assert(s is AssertingIndexSearcher);
             // this used to fail

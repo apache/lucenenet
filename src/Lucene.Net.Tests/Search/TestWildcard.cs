@@ -262,7 +262,7 @@ namespace Lucene.Net.Search
         private Directory GetIndexStore(string field, string[] contents)
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
             for (int i = 0; i < contents.Length; ++i)
             {
                 Document doc = new Document();
@@ -304,7 +304,7 @@ namespace Lucene.Net.Search
 
             // prepare the index
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             for (int i = 0; i < docs.Length; i++)
             {
                 Document doc = new Document();

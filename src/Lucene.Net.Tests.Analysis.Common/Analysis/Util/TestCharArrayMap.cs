@@ -35,16 +35,16 @@ namespace Lucene.Net.Analysis.Util
             char[] key;
             for (int i = 0; i < iter; i++)
             {
-                int len = Random().Next(5);
+                int len = Random.Next(5);
                 key = new char[len];
                 for (int j = 0; j < key.Length; j++)
                 {
-                    key[j] = (char)Random().Next(127);
+                    key[j] = (char)Random.Next(127);
                 }
                 string keyStr = new string(key);
                 string hmapKey = ignoreCase ? keyStr.ToLowerInvariant() : keyStr;
 
-                int val = Random().Next();
+                int val = Random.Next();
 
                 object o1 = map.Put(key, val);
                 object o2 = hmap.Put(hmapKey, val);

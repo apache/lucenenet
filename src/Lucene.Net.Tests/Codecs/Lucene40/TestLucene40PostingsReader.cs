@@ -68,9 +68,9 @@ namespace Lucene.Net.Codecs.Lucene40
         public virtual void TestPostings()
         {
             Directory dir = NewFSDirectory(CreateTempDir("postings"));
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetCodec(Codec.ForName("Lucene40"));
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             Document doc = new Document();
 
@@ -105,15 +105,15 @@ namespace Lucene.Net.Codecs.Lucene40
                 titleField.SetStringValue(FieldValue(1));
                 bodyField.SetStringValue(FieldValue(3));
                 iw.AddDocument(doc);
-                if (Random().Next(20) == 0)
+                if (Random.Next(20) == 0)
                 {
                     iw.DeleteDocuments(new Term("id", Convert.ToString(i)));
                 }
             }
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 // delete 1-100% of docs
-                iw.DeleteDocuments(new Term("title", Terms[Random().Next(Terms.Length)]));
+                iw.DeleteDocuments(new Term("title", Terms[Random.Next(Terms.Length)]));
             }
             iw.Dispose();
             dir.Dispose(); // checkindex
@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         internal virtual IndexOptions IndexOptions()
         {
-            switch (Random().Next(4))
+            switch (Random.Next(4))
             {
                 case 0:
                     return Index.IndexOptions.DOCS_ONLY;
@@ -141,10 +141,10 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             IList<string> shuffled = new List<string>();
             StringBuilder sb = new StringBuilder();
-            int i = Random().Next(Terms.Length);
+            int i = Random.Next(Terms.Length);
             while (i < Terms.Length)
             {
-                int tf = TestUtil.NextInt32(Random(), 1, maxTF);
+                int tf = TestUtil.NextInt32(Random, 1, maxTF);
                 for (int j = 0; j < tf; j++)
                 {
                     shuffled.Add(Terms[i]);

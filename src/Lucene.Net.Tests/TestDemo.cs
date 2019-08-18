@@ -43,7 +43,7 @@ namespace Lucene.Net
         [Test]
         public virtual void TestDemo()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             // Store the index in memory:
             using (Directory directory = NewDirectory())
@@ -53,7 +53,7 @@ namespace Lucene.Net
 
                 // To store an index on disk, use this instead:
                 // Directory directory = FSDirectory.open(new File("/tmp/testindex"));
-                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, analyzer)))
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, analyzer)))
                 {
                     Documents.Document doc = new Documents.Document();
                     doc.Add(NewTextField("fieldname", text, Field.Store.YES));

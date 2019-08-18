@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
         {
             Directory directory = NewDirectory();
 
-            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             Document d1 = new Document();
             d1.Add(NewTextField("default", "one two", Field.Store.YES));
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
             // We mess with the postings so this can fail:
             ((BaseDirectoryWrapper)target).CrossCheckTermVectorsOnDispose = false;
 
-            writer = new IndexWriter(target, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            writer = new IndexWriter(target, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             IndexReader reader = new TestReader(DirectoryReader.Open(directory));
             writer.AddIndexes(reader);
             writer.Dispose();

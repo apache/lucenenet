@@ -1147,7 +1147,7 @@ namespace Lucene.Net.Analysis.Core
         public void TestRandomChains_()
         {
             int numIterations = AtLeast(20);
-            Random random = Random();
+            Random random = Random;
             for (int i = 0; i < numIterations; i++)
             {
                 MockRandomAnalyzer a = new MockRandomAnalyzer(random.Next());
@@ -1173,7 +1173,7 @@ namespace Lucene.Net.Analysis.Core
         public void TestRandomChainsWithLargeStrings()
         {
             int numIterations = AtLeast(20);
-            Random random = Random();
+            Random random = Random;
             for (int i = 0; i < numIterations; i++)
             {
                 MockRandomAnalyzer a = new MockRandomAnalyzer(random.Next());

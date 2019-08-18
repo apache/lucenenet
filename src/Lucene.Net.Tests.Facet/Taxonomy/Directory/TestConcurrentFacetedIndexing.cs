@@ -77,7 +77,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         internal static FacetField NewCategory()
         {
-            Random r = Random();
+            Random r = Random;
             string l1 = "l1." + r.Next(10); // l1.0-l1.9 (10 categories)
             string l2 = "l2." + r.Next(30); // l2.0-l2.29 (30 categories)
             string l3 = "l3." + r.Next(100); // l3.0-l3.99 (100 categories)
@@ -86,7 +86,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         internal static ITaxonomyWriterCache NewTaxoWriterCache(int ndocs)
         {
-            double d = Random().NextDouble();
+            double d = Random.NextDouble();
             if (d < 0.7)
             {
                 // this is the fastest, yet most memory consuming
@@ -193,7 +193,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             public override void Run()
             {
-                Random random = Random();
+                Random random = Random;
                 while (numDocs.DecrementAndGet() > 0)
                 {
                     try

@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
     {
         protected internal override MergePolicy NewMergePolicy()
         {
-            return NewLogMergePolicy(Random());
+            return NewLogMergePolicy(Random);
         }
 
         #region BaseMergePolicyTestCase

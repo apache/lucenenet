@@ -31,16 +31,16 @@ namespace Lucene.Net.Util
 
         internal static long RandomLong()
         {
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 long l = 1;
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     l *= -1;
                 }
                 foreach (long i in PRIMES)
                 {
-                    int m = Random().Next(3);
+                    int m = Random.Next(3);
                     for (int j = 0; j < m; ++j)
                     {
                         l *= i;
@@ -48,13 +48,13 @@ namespace Lucene.Net.Util
                 }
                 return l;
             }
-            else if (Random().NextBoolean())
+            else if (Random.NextBoolean())
             {
-                return Random().NextInt64();
+                return Random.NextInt64();
             }
             else
             {
-                return RandomInts.RandomFrom(Random(), Arrays.AsList(long.MinValue, long.MaxValue, 0L, -1L, 1L));
+                return RandomInts.RandomFrom(Random, Arrays.AsList(long.MinValue, long.MaxValue, 0L, -1L, 1L));
             }
         }
 

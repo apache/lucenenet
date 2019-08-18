@@ -160,7 +160,7 @@ namespace Lucene.Net.Analysis
         public virtual void TestCollationKeySort(Analyzer usAnalyzer, Analyzer franceAnalyzer, Analyzer swedenAnalyzer, Analyzer denmarkAnalyzer, string usResult, string frResult, string svResult, string dkResult)
         {
             Directory indexStore = NewDirectory();
-            IndexWriter writer = new IndexWriter(indexStore, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            IndexWriter writer = new IndexWriter(indexStore, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
 
             // document data:
             // the tracer field is used to determine which document was hit
@@ -240,7 +240,7 @@ namespace Lucene.Net.Analysis
         public virtual void AssertThreadSafe(Analyzer analyzer)
         {
             int numTestPoints = 100;
-            int numThreads = TestUtil.NextInt32(Random(), 3, 5);
+            int numThreads = TestUtil.NextInt32(Random, 3, 5);
             Dictionary<string, BytesRef> map = new Dictionary<string, BytesRef>();
 
             // create a map<String,SortKey> up front.
@@ -249,7 +249,7 @@ namespace Lucene.Net.Analysis
 
             for (int i = 0; i < numTestPoints; i++)
             {
-                string term = TestUtil.RandomSimpleString(Random());
+                string term = TestUtil.RandomSimpleString(Random);
                 IOException priorException = null;
                 TokenStream ts = analyzer.GetTokenStream("fake", new StringReader(term));
                 try

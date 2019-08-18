@@ -41,7 +41,7 @@ namespace Lucene.Net.QueryParsers.Simple
         /// <returns></returns>
         private Query Parse(string text)
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             SimpleQueryParser parser = new SimpleQueryParser(analyzer, "field");
             parser.DefaultOperator = Occur.MUST;
             return parser.Parse(text);
@@ -56,7 +56,7 @@ namespace Lucene.Net.QueryParsers.Simple
         /// <returns></returns>
         private Query Parse(string text, Operator flags)
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             SimpleQueryParser parser = new SimpleQueryParser(analyzer, new HashMap<string, float>() { { "field", 1f } }, flags);
             parser.DefaultOperator = Occur.MUST;
             return parser.Parse(text);
@@ -209,7 +209,7 @@ namespace Lucene.Net.QueryParsers.Simple
             expected.Add(new TermQuery(new Term("field", "foo")), Occur.SHOULD);
             expected.Add(new TermQuery(new Term("field", "bar")), Occur.SHOULD);
 
-            SimpleQueryParser parser = new SimpleQueryParser(new MockAnalyzer(Random()), "field");
+            SimpleQueryParser parser = new SimpleQueryParser(new MockAnalyzer(Random), "field");
             assertEquals(expected, parser.Parse("foo bar"));
         }
 
@@ -553,7 +553,7 @@ namespace Lucene.Net.QueryParsers.Simple
             field1.Boost = (10f);
             expected.Add(field1, Occur.SHOULD);
 
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             SimpleQueryParser parser = new SimpleQueryParser(analyzer, weights);
             assertEquals(expected, parser.Parse("foo"));
         }
@@ -585,7 +585,7 @@ namespace Lucene.Net.QueryParsers.Simple
             bar.Add(field1, Occur.SHOULD);
             expected.Add(bar, Occur.SHOULD);
 
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             SimpleQueryParser parser = new SimpleQueryParser(analyzer, weights);
             assertEquals(expected, parser.Parse("foo|bar"));
         }
@@ -593,7 +593,7 @@ namespace Lucene.Net.QueryParsers.Simple
         /** helper to parse a query with keyword analyzer across "field" */
         private Query ParseKeyword(string text, Operator flags)
         {
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.KEYWORD, false);
             SimpleQueryParser parser = new SimpleQueryParser(analyzer,
                 new HashMap<string, float>() { { "field", 1f } },
                 flags);
@@ -701,9 +701,9 @@ namespace Lucene.Net.QueryParsers.Simple
         {
             for (int i = 0; i < 1000; i++)
             {
-                string query = TestUtil.RandomUnicodeString(Random());
+                string query = TestUtil.RandomUnicodeString(Random);
                 Parse(query); // no exception
-                ParseKeyword(query, (Operator)TestUtil.NextInt32(Random(), 0, 1024)); // no exception
+                ParseKeyword(query, (Operator)TestUtil.NextInt32(Random, 0, 1024)); // no exception
             }
         }
 
@@ -715,13 +715,13 @@ namespace Lucene.Net.QueryParsers.Simple
             for (int i = 0; i < 1000; i++)
             {
                 sb.Length = (0);
-                int queryLength = Random().Next(20);
+                int queryLength = Random.Next(20);
                 for (int j = 0; j < queryLength; j++)
                 {
-                    sb.append(chars[Random().Next(chars.Length)]);
+                    sb.append(chars[Random.Next(chars.Length)]);
                 }
                 Parse(sb.toString()); // no exception
-                ParseKeyword(sb.toString(), (Operator)TestUtil.NextInt32(Random(), 0, 1024)); // no exception
+                ParseKeyword(sb.toString(), (Operator)TestUtil.NextInt32(Random, 0, 1024)); // no exception
             }
         }
     }

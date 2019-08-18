@@ -1323,7 +1323,7 @@ namespace Lucene.Net.Util
 
             protected override bool UseRandomAccess(IBits bits, int firstFilterDoc)
             {
-                return LuceneTestCase.Random().NextBoolean();
+                return LuceneTestCase.Random.NextBoolean();
             }
         }
 

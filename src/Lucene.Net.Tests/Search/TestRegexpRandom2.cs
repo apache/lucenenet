@@ -68,8 +68,8 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            FieldName = Random().NextBoolean() ? "field" : ""; // sometimes use an empty string as field name
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 50, 1000)));
+            FieldName = Random.NextBoolean() ? "field" : ""; // sometimes use an empty string as field name
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
             Document doc = new Document();
             Field field = NewStringField(FieldName, "", Field.Store.NO);
             doc.Add(field);
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
             int num = AtLeast(200);
             for (int i = 0; i < num; i++)
             {
-                string s = TestUtil.RandomUnicodeString(Random());
+                string s = TestUtil.RandomUnicodeString(Random);
                 field.SetStringValue(s);
                 terms.Add(s);
                 writer.AddDocument(doc);
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
             int num = Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal) ? 100 * RANDOM_MULTIPLIER : AtLeast(1000);
             for (int i = 0; i < num; i++)
             {
-                string reg = AutomatonTestUtil.RandomRegexp(Random());
+                string reg = AutomatonTestUtil.RandomRegexp(Random);
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: regexp=" + reg);

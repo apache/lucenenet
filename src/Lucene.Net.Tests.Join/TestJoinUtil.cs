@@ -41,8 +41,8 @@ namespace Lucene.Net.Tests.Join
             const string toField = "productId";
 
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir,
-                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                     .SetMergePolicy(NewLogMergePolicy()));
 
             // 0
@@ -129,7 +129,7 @@ namespace Lucene.Net.Tests.Join
         public void TestOverflowTermsWithScoreCollectorRandom()
         {
             var scoreModeLength = Enum.GetNames(typeof(ScoreMode)).Length;
-            Test300spartans(Random().NextBoolean(), (ScoreMode) Random().Next(scoreModeLength));
+            Test300spartans(Random.NextBoolean(), (ScoreMode) Random.Next(scoreModeLength));
         }
 
         protected virtual void Test300spartans(bool multipleValues, ScoreMode scoreMode)
@@ -138,8 +138,8 @@ namespace Lucene.Net.Tests.Join
             const string toField = "productId";
 
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir,
-                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                     .SetMergePolicy(NewLogMergePolicy()));
 
             // 0
@@ -189,8 +189,8 @@ namespace Lucene.Net.Tests.Join
             const string toField = "productId";
 
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir,
-                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                     .SetMergePolicy(NewLogMergePolicy()));
 
             // 0
@@ -302,8 +302,8 @@ namespace Lucene.Net.Tests.Join
             const string toField = "movieId";
 
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir,
-                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                     .SetMergePolicy(NewLogMergePolicy()));
 
             // 0
@@ -391,18 +391,18 @@ namespace Lucene.Net.Tests.Join
         [Test]
         public void TestSingleValueRandomJoin()
         {
-            int maxIndexIter = TestUtil.NextInt32(Random(), 6, 12);
-            int maxSearchIter = TestUtil.NextInt32(Random(), 13, 26);
-            ExecuteRandomJoin(false, maxIndexIter, maxSearchIter, TestUtil.NextInt32(Random(), 87, 764));
+            int maxIndexIter = TestUtil.NextInt32(Random, 6, 12);
+            int maxSearchIter = TestUtil.NextInt32(Random, 13, 26);
+            ExecuteRandomJoin(false, maxIndexIter, maxSearchIter, TestUtil.NextInt32(Random, 87, 764));
         }
 
         [Test]
         public void TestMultiValueRandomJoin()
             // this test really takes more time, that is why the number of iterations are smaller.
         {
-            int maxIndexIter = TestUtil.NextInt32(Random(), 3, 6);
-            int maxSearchIter = TestUtil.NextInt32(Random(), 6, 12);
-            ExecuteRandomJoin(true, maxIndexIter, maxSearchIter, TestUtil.NextInt32(Random(), 11, 57));
+            int maxIndexIter = TestUtil.NextInt32(Random, 3, 6);
+            int maxSearchIter = TestUtil.NextInt32(Random, 6, 12);
+            ExecuteRandomJoin(true, maxIndexIter, maxSearchIter, TestUtil.NextInt32(Random, 11, 57));
         }
         
         private void ExecuteRandomJoin(bool multipleValuesPerDocument, int maxIndexIter, int maxSearchIter,
@@ -415,10 +415,10 @@ namespace Lucene.Net.Tests.Join
                     Console.WriteLine("indexIter=" + indexIter);
                 }
                 Directory dir = NewDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(Random(), dir,
-                    NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false))
+                RandomIndexWriter w = new RandomIndexWriter(Random, dir,
+                    NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false))
                         .SetMergePolicy(NewLogMergePolicy()));
-                bool scoreDocsInOrder = TestJoinUtil.Random().NextBoolean();
+                bool scoreDocsInOrder = TestJoinUtil.Random.NextBoolean();
                 IndexIterationContext context = CreateContext(numberOfDocumentsToIndex, w, multipleValuesPerDocument,
                     scoreDocsInOrder);
 
@@ -432,7 +432,7 @@ namespace Lucene.Net.Tests.Join
                     }
                     IndexSearcher indexSearcher = NewSearcher(topLevelReader);
 
-                    int r = Random().Next(context.RandomUniqueValues.Length);
+                    int r = Random.Next(context.RandomUniqueValues.Length);
                     bool from = context.RandomFrom[r];
                     string randomValue = context.RandomUniqueValues[r];
                     FixedBitSet expectedResult = CreateExpectedResult(randomValue, from, indexSearcher.IndexReader,
@@ -445,7 +445,7 @@ namespace Lucene.Net.Tests.Join
                     }
                     
                     var scoreModeLength = Enum.GetNames(typeof(ScoreMode)).Length;
-                    ScoreMode scoreMode = (ScoreMode) Random().Next(scoreModeLength);
+                    ScoreMode scoreMode = (ScoreMode) Random.Next(scoreModeLength);
                     if (VERBOSE)
                     {
                         Console.WriteLine("scoreMode=" + scoreMode);
@@ -589,12 +589,12 @@ namespace Lucene.Net.Tests.Join
                 string uniqueRandomValue;
                 do
                 {
-                    uniqueRandomValue = TestUtil.RandomRealisticUnicodeString(Random());
+                    uniqueRandomValue = TestUtil.RandomRealisticUnicodeString(Random);
                     //        uniqueRandomValue = TestUtil.randomSimpleString(random);
                 } while ("".Equals(uniqueRandomValue, StringComparison.Ordinal) || trackSet.Contains(uniqueRandomValue));
                 // Generate unique values and empty strings aren't allowed.
                 trackSet.Add(uniqueRandomValue);
-                context.RandomFrom[i] = Random().NextBoolean();
+                context.RandomFrom[i] = Random.NextBoolean();
                 context.RandomUniqueValues[i] = uniqueRandomValue;
             }
 
@@ -602,18 +602,18 @@ namespace Lucene.Net.Tests.Join
             for (int i = 0; i < nDocs; i++)
             {
                 string id = Convert.ToString(i);
-                int randomI = Random().Next(context.RandomUniqueValues.Length);
+                int randomI = Random.Next(context.RandomUniqueValues.Length);
                 string value = context.RandomUniqueValues[randomI];
                 Document document = new Document();
-                document.Add(NewTextField(Random(), "id", id, Field.Store.NO));
-                document.Add(NewTextField(Random(), "value", value, Field.Store.NO));
+                document.Add(NewTextField(Random, "id", id, Field.Store.NO));
+                document.Add(NewTextField(Random, "value", value, Field.Store.NO));
 
                 bool from = context.RandomFrom[randomI];
-                int numberOfLinkValues = multipleValuesPerDocument ? 2 + Random().Next(10) : 1;
+                int numberOfLinkValues = multipleValuesPerDocument ? 2 + Random.Next(10) : 1;
                 docs[i] = new RandomDoc(id, numberOfLinkValues, value, from);
                 for (int j = 0; j < numberOfLinkValues; j++)
                 {
-                    string linkValue = context.RandomUniqueValues[Random().Next(context.RandomUniqueValues.Length)];
+                    string linkValue = context.RandomUniqueValues[Random.Next(context.RandomUniqueValues.Length)];
                     docs[i].LinkValues.Add(linkValue);
                     if (from)
                     {
@@ -628,7 +628,7 @@ namespace Lucene.Net.Tests.Join
 
                         context.FromDocuments[linkValue].Add(docs[i]);
                         context.RandomValueFromDocs[value].Add(docs[i]);
-                        document.Add(NewTextField(Random(), "from", linkValue, Field.Store.NO));
+                        document.Add(NewTextField(Random, "from", linkValue, Field.Store.NO));
                     }
                     else
                     {
@@ -643,7 +643,7 @@ namespace Lucene.Net.Tests.Join
 
                         context.ToDocuments[linkValue].Add(docs[i]);
                         context.RandomValueToDocs[value].Add(docs[i]);
-                        document.Add(NewTextField(Random(), "to", linkValue, Field.Store.NO));
+                        document.Add(NewTextField(Random, "to", linkValue, Field.Store.NO));
                     }
                 }
 
@@ -658,7 +658,7 @@ namespace Lucene.Net.Tests.Join
                 }
 
                 w.AddDocument(document);
-                if (Random().Next(10) == 4)
+                if (Random.Next(10) == 4)
                 {
                     w.Commit();
                 }

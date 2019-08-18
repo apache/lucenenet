@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.Icu
         [Test]
         public void TestRandomStrings()
         {
-            CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
         }
 
         [Test]

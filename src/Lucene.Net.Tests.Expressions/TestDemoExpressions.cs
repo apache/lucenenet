@@ -42,7 +42,7 @@ namespace Lucene.Net.Expressions
 		{
 			base.SetUp();
 			dir = NewDirectory();
-			var iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+			var iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 			var doc = new Document
 			{
 			    NewStringField("id", "1", Field.Store.YES),

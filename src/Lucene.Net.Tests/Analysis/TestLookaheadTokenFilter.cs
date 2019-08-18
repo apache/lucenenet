@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis
         public virtual void TestRandomStrings()
         {
             Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random(), a, 200 * RANDOM_MULTIPLIER, 8192);
+            CheckRandomData(Random, a, 200 * RANDOM_MULTIPLIER, 8192);
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
-                Random random = Random();
+                Random random = Random;
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, random.NextBoolean());
                 TokenStream output = new MockRandomLookaheadTokenFilter(random, tokenizer);
                 return new TokenStreamComponents(tokenizer, output);
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis
         public virtual void TestNeverCallingPeek()
         {
             Analyzer a = new NCPAnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random(), a, 200 * RANDOM_MULTIPLIER, 8192);
+            CheckRandomData(Random, a, 200 * RANDOM_MULTIPLIER, 8192);
         }
 
         private class NCPAnalyzerAnonymousInnerClassHelper : Analyzer
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, Random().NextBoolean());
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, Random.NextBoolean());
                 TokenStream output = new NeverPeeksLookaheadTokenFilter(tokenizer);
                 return new TokenStreamComponents(tokenizer, output);
             }

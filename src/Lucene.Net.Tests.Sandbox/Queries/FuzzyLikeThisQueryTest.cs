@@ -38,9 +38,9 @@ namespace Lucene.Net.Sandbox.Queries
         {
             base.SetUp();
 
-            analyzer = new MockAnalyzer(Random());
+            analyzer = new MockAnalyzer(Random);
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
 
             //Add series of docs with misspelt names
             AddDoc(writer, "jonathon smythe", "1");
@@ -148,7 +148,7 @@ namespace Lucene.Net.Sandbox.Queries
         [Test]
         public void TestFuzzyLikeThisQueryEquals()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             FuzzyLikeThisQuery fltq1 = new FuzzyLikeThisQuery(10, analyzer);
             fltq1.AddTerms("javi", "subject", 0.5f, 2);
             FuzzyLikeThisQuery fltq2 = new FuzzyLikeThisQuery(10, analyzer);

@@ -63,11 +63,11 @@ namespace Lucene.Net.Index
             Merge1Dir = NewDirectory();
             Merge2Dir = NewDirectory();
             DocHelper.SetupDoc(Doc1);
-            SegmentCommitInfo info1 = DocHelper.WriteDoc(Random(), Merge1Dir, Doc1);
+            SegmentCommitInfo info1 = DocHelper.WriteDoc(Random, Merge1Dir, Doc1);
             DocHelper.SetupDoc(Doc2);
-            SegmentCommitInfo info2 = DocHelper.WriteDoc(Random(), Merge2Dir, Doc2);
-            Reader1 = new SegmentReader(info1, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
-            Reader2 = new SegmentReader(info2, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
+            SegmentCommitInfo info2 = DocHelper.WriteDoc(Random, Merge2Dir, Doc2);
+            Reader1 = new SegmentReader(info1, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
+            Reader2 = new SegmentReader(info2, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
         }
 
         [TearDown]
@@ -97,12 +97,12 @@ namespace Lucene.Net.Index
             Codec codec = Codec.Default;
             SegmentInfo si = new SegmentInfo(MergedDir, Constants.LUCENE_MAIN_VERSION, MergedSegment, -1, false, codec, null);
 
-            SegmentMerger merger = new SegmentMerger(Arrays.AsList<AtomicReader>(Reader1, Reader2), si, InfoStream.Default, MergedDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, CheckAbort.NONE, new FieldInfos.FieldNumbers(), NewIOContext(Random()), true);
+            SegmentMerger merger = new SegmentMerger(Arrays.AsList<AtomicReader>(Reader1, Reader2), si, InfoStream.Default, MergedDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, CheckAbort.NONE, new FieldInfos.FieldNumbers(), NewIOContext(Random), true);
             MergeState mergeState = merger.Merge();
             int docsMerged = mergeState.SegmentInfo.DocCount;
             Assert.IsTrue(docsMerged == 2);
             //Should be able to open a new SegmentReader against the new directory
-            SegmentReader mergedReader = new SegmentReader(new SegmentCommitInfo(new SegmentInfo(MergedDir, Constants.LUCENE_MAIN_VERSION, MergedSegment, docsMerged, false, codec, null), 0, -1L, -1L), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
+            SegmentReader mergedReader = new SegmentReader(new SegmentCommitInfo(new SegmentInfo(MergedDir, Constants.LUCENE_MAIN_VERSION, MergedSegment, docsMerged, false, codec, null), 0, -1L, -1L), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
             Assert.IsTrue(mergedReader != null);
             Assert.IsTrue(mergedReader.NumDocs == 2);
             Document newDoc1 = mergedReader.Document(0);
@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(newDoc2 != null);
             Assert.IsTrue(DocHelper.NumFields(newDoc2) == DocHelper.NumFields(Doc2) - DocHelper.Unstored.Count);
 
-            DocsEnum termDocs = TestUtil.Docs(Random(), mergedReader, DocHelper.TEXT_FIELD_2_KEY, new BytesRef("field"), MultiFields.GetLiveDocs(mergedReader), null, 0);
+            DocsEnum termDocs = TestUtil.Docs(Random, mergedReader, DocHelper.TEXT_FIELD_2_KEY, new BytesRef("field"), MultiFields.GetLiveDocs(mergedReader), null, 0);
             Assert.IsTrue(termDocs != null);
             Assert.IsTrue(termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
@@ -168,15 +168,15 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestBuildDocMap()
         {
-            int maxDoc = TestUtil.NextInt32(Random(), 1, 128);
-            int numDocs = TestUtil.NextInt32(Random(), 0, maxDoc);
+            int maxDoc = TestUtil.NextInt32(Random, 1, 128);
+            int numDocs = TestUtil.NextInt32(Random, 0, maxDoc);
             int numDeletedDocs = maxDoc - numDocs;
             FixedBitSet liveDocs = new FixedBitSet(maxDoc);
             for (int i = 0; i < numDocs; ++i)
             {
                 while (true)
                 {
-                    int docID = Random().Next(maxDoc);
+                    int docID = Random.Next(maxDoc);
                     if (!liveDocs.Get(docID))
                     {
                         liveDocs.Set(docID);

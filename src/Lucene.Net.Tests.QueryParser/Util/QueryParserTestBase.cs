@@ -220,7 +220,7 @@ namespace Lucene.Net.QueryParsers.Util
         public Query GetQueryDOA(string query, Analyzer a)
         {
             if (a == null)
-                a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+                a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             ICommonQueryParserConfiguration qp = GetParserConfig(a);
             SetDefaultOperatorAND(qp);
             return GetQuery(query, qp);
@@ -361,8 +361,8 @@ namespace Lucene.Net.QueryParsers.Util
         public virtual void TestSimple()
         {
             AssertQueryEquals("term term term", null, "term term term");
-            AssertQueryEquals("türm term term", new MockAnalyzer(Random()), "türm term term");
-            AssertQueryEquals("ümlaut", new MockAnalyzer(Random()), "ümlaut");
+            AssertQueryEquals("türm term term", new MockAnalyzer(Random), "türm term term");
+            AssertQueryEquals("ümlaut", new MockAnalyzer(Random), "ümlaut");
 
             // FIXME: enhance MockAnalyzer to be able to support this
             // it must no longer extend CharTokenizer
@@ -436,7 +436,7 @@ namespace Lucene.Net.QueryParsers.Util
         [Test]
         public virtual void TestPunct()
         {
-            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             AssertQueryEquals("a&b", a, "a&b");
             AssertQueryEquals("a&&b", a, "a&&b");
             AssertQueryEquals(".NET", a, ".NET");
@@ -460,7 +460,7 @@ namespace Lucene.Net.QueryParsers.Util
             AssertQueryEquals("term 1.0 1 2", null, "term");
             AssertQueryEquals("term term1 term2", null, "term term term");
 
-            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true);
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true);
             AssertQueryEquals("3", a, "3");
             AssertQueryEquals("term 1.0 1 2", a, "term 1.0 1 2");
             AssertQueryEquals("term term1 term2", a, "term term1 term2");
@@ -617,7 +617,7 @@ namespace Lucene.Net.QueryParsers.Util
 
             assertEquals(MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT, ((TermRangeQuery)GetQuery("[ a TO z]")).MultiTermRewriteMethod);
 
-            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true));
+            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random, MockTokenizer.SIMPLE, true));
 
             qp.MultiTermRewriteMethod=(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
             assertEquals(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE, ((TermRangeQuery)GetQuery("[ a TO z]", qp)).MultiTermRewriteMethod);
@@ -716,7 +716,7 @@ namespace Lucene.Net.QueryParsers.Util
             string defaultField = "default";
             string monthField = "month";
             string hourField = "hour";
-            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             ICommonQueryParserConfiguration qp = GetParserConfig(a);
 
             // set a field specific date resolution
@@ -753,7 +753,7 @@ namespace Lucene.Net.QueryParsers.Util
         [Test]
         public virtual void TestEscaped()
         {
-            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
 
             /*AssertQueryEquals("\\[brackets", a, "\\[brackets");
             AssertQueryEquals("\\[brackets", null, "brackets");
@@ -843,7 +843,7 @@ namespace Lucene.Net.QueryParsers.Util
         [Test]
         public virtual void TestEscapedVsQuestionMarkAsWildcard()
         {
-            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             AssertQueryEquals("a:b\\-?c", a, "a:b\\-?c");
             AssertQueryEquals("a:b\\+?c", a, "a:b\\+?c");
             AssertQueryEquals("a:b\\:?c", a, "a:b\\:?c");
@@ -854,7 +854,7 @@ namespace Lucene.Net.QueryParsers.Util
         [Test]
         public virtual void TestQueryStringEscaping()
         {
-            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
 
             AssertEscapedQueryEquals("a-b:c", a, "a\\-b\\:c");
             AssertEscapedQueryEquals("a+b:c", a, "a\\+b\\:c");
@@ -943,7 +943,7 @@ namespace Lucene.Net.QueryParsers.Util
         public virtual void TestBoost()
         {
             CharacterRunAutomaton stopWords = new CharacterRunAutomaton(BasicAutomata.MakeString("on"));
-            Analyzer oneStopAnalyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, stopWords);
+            Analyzer oneStopAnalyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, stopWords);
             ICommonQueryParserConfiguration qp = GetParserConfig(oneStopAnalyzer);
             Query q = GetQuery("on^1.0", qp);
             assertNotNull(q);
@@ -956,7 +956,7 @@ namespace Lucene.Net.QueryParsers.Util
             q = GetQuery("\"on\"^1.0", qp);
             assertNotNull(q);
 
-            Analyzer a2 = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
+            Analyzer a2 = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
             ICommonQueryParserConfiguration qp2 = GetParserConfig(a2);
             q = GetQuery("the^3", qp2);
             // "the" is a stop word so the result is an empty query:
@@ -1012,14 +1012,14 @@ namespace Lucene.Net.QueryParsers.Util
         public virtual void TestBooleanQuery()
         {
             BooleanQuery.MaxClauseCount = (2);
-            Analyzer purWhitespaceAnalyzer = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+            Analyzer purWhitespaceAnalyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             AssertParseException("one two three", purWhitespaceAnalyzer);
         }
 
         [Test]
         public virtual void TestPrecedence()
         {
-            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
+            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
             Query query1 = GetQuery("A AND B OR C AND D", qp);
             Query query2 = GetQuery("+A +B +C +D", qp);
             assertEquals(query1, query2);
@@ -1058,7 +1058,7 @@ namespace Lucene.Net.QueryParsers.Util
         [Test]
         public virtual void TestEscapedWildcard()
         {
-            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
+            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
             WildcardQuery q = new WildcardQuery(new Term("field", "foo\\?ba?r"));
             assertEquals(q, GetQuery("foo\\?ba?r", qp));
         }
@@ -1066,7 +1066,7 @@ namespace Lucene.Net.QueryParsers.Util
         [Test]
         public virtual void TestRegexps()
         {
-            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
+            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
             RegexpQuery q = new RegexpQuery(new Term("field", "[a-z][123]"));
             assertEquals(q, GetQuery("/[a-z][123]/", qp));
             qp.LowercaseExpandedTerms = (true);
@@ -1117,7 +1117,7 @@ namespace Lucene.Net.QueryParsers.Util
         public virtual void TestStopwords()
         {
             CharacterRunAutomaton stopSet = new CharacterRunAutomaton(new RegExp("the|foo").ToAutomaton());
-            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, stopSet));
+            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, stopSet));
             Query result = GetQuery("field:the OR field:foo", qp);
             assertNotNull("result is null and it shouldn't be", result);
             assertTrue("result is not a BooleanQuery", result is BooleanQuery);
@@ -1135,7 +1135,7 @@ namespace Lucene.Net.QueryParsers.Util
         [Test]
         public virtual void TestPositionIncrement()
         {
-            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET));
+            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET));
             qp.EnablePositionIncrements = (true);
             String qtxt = "\"the words in poisitions pos02578 are stopped in this phrasequery\"";
             //               0         2                      5           7  8
@@ -1155,7 +1155,7 @@ namespace Lucene.Net.QueryParsers.Util
         [Test]
         public virtual void TestMatchAllDocs()
         {
-            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
+            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
             assertEquals(new MatchAllDocsQuery(), GetQuery("*:*", qp));
             assertEquals(new MatchAllDocsQuery(), GetQuery("(*:*)", qp));
             BooleanQuery bq = (BooleanQuery)GetQuery("+*:* -*:*", qp);
@@ -1167,7 +1167,7 @@ namespace Lucene.Net.QueryParsers.Util
         {
             string oldDefaultField = DefaultField;
             DefaultField = "date";
-            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
+            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
             qp.Locale = new CultureInfo("en");
             Query q = GetQuery(query, qp);
             ScoreDoc[] hits = @is.Search(q, null, 1000).ScoreDocs;
@@ -1189,7 +1189,7 @@ namespace Lucene.Net.QueryParsers.Util
         {
             using (Directory dir = NewDirectory())
             {
-                Analyzer a = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
+                Analyzer a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
                 using (IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, a)))
                 {
                     Document doc = new Document();
@@ -1326,14 +1326,14 @@ namespace Lucene.Net.QueryParsers.Util
         [Test]
         public virtual void TestDistanceAsEditsParsing()
         {
-            FuzzyQuery q = (FuzzyQuery)GetQuery("foobar~2", new MockAnalyzer(Random()));
+            FuzzyQuery q = (FuzzyQuery)GetQuery("foobar~2", new MockAnalyzer(Random));
             assertEquals(2, q.MaxEdits);
         }
 
         [Test]
         public virtual void TestPhraseQueryToString()
         {
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
             ICommonQueryParserConfiguration qp = GetParserConfig(analyzer);
             qp.EnablePositionIncrements = (true);
             PhraseQuery q = (PhraseQuery)GetQuery("\"this hi this is a test is\"", qp);
@@ -1346,7 +1346,7 @@ namespace Lucene.Net.QueryParsers.Util
             string field = "content";
             string oldDefaultField = DefaultField;
             DefaultField = (field);
-            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random()));
+            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random));
             qp.AllowLeadingWildcard=(true);
 
             string[][] prefixQueries = new string[3][] {
@@ -1391,10 +1391,10 @@ namespace Lucene.Net.QueryParsers.Util
             CharacterRunAutomaton stopStopList =
             new CharacterRunAutomaton(new RegExp("[sS][tT][oO][pP]").ToAutomaton());
 
-            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false, stopStopList));
+            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false, stopStopList));
 
             qp = GetParserConfig(
-                                 new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false, stopStopList));
+                                 new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false, stopStopList));
             qp.EnablePositionIncrements=(true);
 
             PhraseQuery phraseQuery = new PhraseQuery();
@@ -1409,7 +1409,7 @@ namespace Lucene.Net.QueryParsers.Util
             // test simple parsing of MatchAllDocsQuery
             string oldDefaultField = DefaultField;
             DefaultField = ("key");
-            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random()));
+            ICommonQueryParserConfiguration qp = GetParserConfig(new MockAnalyzer(Random));
             assertEquals(new MatchAllDocsQuery(), GetQuery(new MatchAllDocsQuery().toString(), qp));
 
             // test parsing with non-default boost
@@ -1429,7 +1429,7 @@ namespace Lucene.Net.QueryParsers.Util
             bq.Add(TermRangeQuery.NewStringRange("field1", null, "2", true, true), Occur.MUST);
             q.Add(bq, Occur.MUST);
             q.Add(new TermQuery(new Term("field2", "z")), Occur.MUST);
-            assertEquals(q, GetQuery(query, new MockAnalyzer(Random())));
+            assertEquals(q, GetQuery(query, new MockAnalyzer(Random)));
         }
     }
 }

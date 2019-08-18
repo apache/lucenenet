@@ -740,17 +740,17 @@ namespace Lucene.Net.Util
         /// invocations are present or create a derivative local <see cref="System.Random"/> for millions of calls
         /// like this:
         /// <code>
-        /// Random random = new Random(GetRandom().Next());
+        /// Random random = new Random(Random.Next());
         /// // tight loop with many invocations.
         /// </code>
         /// </summary>
-        public static Random Random() // LUCENENET TODO: API - make property
+        public static Random Random
         {
-            //get
-            //{
+            get
+            {
                 return _random ?? (_random = new Random(/* LUCENENET TODO seed */));
                 //return RandomizedContext.Current.Random;
-            //}
+            }
         }
 
         [ThreadStatic]
@@ -893,7 +893,7 @@ namespace Lucene.Net.Util
 
         public static int AtLeast(int i)
         {
-            return AtLeast(Random(), i);
+            return AtLeast(Random, i);
         }
 
         /// <summary>
@@ -912,7 +912,7 @@ namespace Lucene.Net.Util
 
         public static bool Rarely()
         {
-            return Rarely(Random());
+            return Rarely(Random);
         }
 
         public static bool Usually(Random random)
@@ -922,7 +922,7 @@ namespace Lucene.Net.Util
 
         public static bool Usually()
         {
-            return Usually(Random());
+            return Usually(Random);
         }
 
         public static void AssumeTrue(string msg, bool condition)
@@ -990,7 +990,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
         {
-            return NewIndexWriterConfig(Random(), v, a);
+            return NewIndexWriterConfig(Random, v, a);
         }
 
         /// <summary>
@@ -1030,8 +1030,8 @@ namespace Lucene.Net.Util
             }
             else if (Rarely(r))
             {
-                int maxThreadCount = TestUtil.NextInt32(Random(), 1, 4);
-                int maxMergeCount = TestUtil.NextInt32(Random(), maxThreadCount, maxThreadCount + 4);
+                int maxThreadCount = TestUtil.NextInt32(Random, 1, 4);
+                int maxMergeCount = TestUtil.NextInt32(Random, maxThreadCount, maxThreadCount + 4);
                 IConcurrentMergeScheduler mergeScheduler;
 
 #if !FEATURE_CONCURRENTMERGESCHEDULER
@@ -1147,22 +1147,22 @@ namespace Lucene.Net.Util
         /// </param>
         public static MergePolicy NewMergePolicy(TimeZoneInfo timezone)
         {
-            return NewMergePolicy(Random(), timezone);
+            return NewMergePolicy(Random, timezone);
         }
 
         public static LogMergePolicy NewLogMergePolicy()
         {
-            return NewLogMergePolicy(Random());
+            return NewLogMergePolicy(Random);
         }
 
         public static TieredMergePolicy NewTieredMergePolicy()
         {
-            return NewTieredMergePolicy(Random());
+            return NewTieredMergePolicy(Random);
         }
 
         public AlcoholicMergePolicy NewAlcoholicMergePolicy()
         {
-            return NewAlcoholicMergePolicy(Random());
+            return NewAlcoholicMergePolicy(Random);
         }
 
         public static AlcoholicMergePolicy NewAlcoholicMergePolicy(Random r)
@@ -1278,7 +1278,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static BaseDirectoryWrapper NewDirectory()
         {
-            return NewDirectory(Random());
+            return NewDirectory(Random);
         }
 
         /// <summary>
@@ -1294,7 +1294,7 @@ namespace Lucene.Net.Util
 
         public static MockDirectoryWrapper NewMockDirectory()
         {
-            return NewMockDirectory(Random());
+            return NewMockDirectory(Random);
         }
 
         public static MockDirectoryWrapper NewMockDirectory(Random r)
@@ -1314,7 +1314,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static BaseDirectoryWrapper NewDirectory(Directory d)
         {
-            return NewDirectory(Random(), d);
+            return NewDirectory(Random, d);
         }
 
         /// <summary>
@@ -1336,7 +1336,7 @@ namespace Lucene.Net.Util
             string fsdirClass = TEST_DIRECTORY;
             if (fsdirClass.Equals("random", StringComparison.Ordinal))
             {
-                fsdirClass = RandomInts.RandomFrom(Random(), FS_DIRECTORIES);
+                fsdirClass = RandomInts.RandomFrom(Random, FS_DIRECTORIES);
             }
 
             // LUCENENET specific - .NET will not throw an exception if the
@@ -1348,12 +1348,12 @@ namespace Lucene.Net.Util
             if (clazz == null || !(typeof(FSDirectory).IsAssignableFrom(clazz)))
             {
                 // TEST_DIRECTORY is not a sub-class of FSDirectory, so draw one at random
-                fsdirClass = RandomInts.RandomFrom(Random(), FS_DIRECTORIES);
+                fsdirClass = RandomInts.RandomFrom(Random, FS_DIRECTORIES);
                 clazz = CommandLineUtil.LoadFSDirectoryClass(fsdirClass);
             }
 
             Directory fsdir = NewFSDirectoryImpl(clazz, d);
-            BaseDirectoryWrapper wrapped = WrapDirectory(Random(), fsdir, bare);
+            BaseDirectoryWrapper wrapped = WrapDirectory(Random, fsdir, bare);
             if (lf != null)
             {
                 wrapped.SetLockFactory(lf);
@@ -1429,13 +1429,13 @@ namespace Lucene.Net.Util
         // LUCENENET specific: non-static
         public Field NewStringField(string name, string value, Field.Store stored)
         {
-            return NewField(Random(), name, value, stored == Field.Store.YES ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED);
+            return NewField(Random, name, value, stored == Field.Store.YES ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED);
         }
 
         // LUCENENET specific: non-static
         public Field NewTextField(string name, string value, Field.Store stored)
         {
-            return NewField(Random(), name, value, stored == Field.Store.YES ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED);
+            return NewField(Random, name, value, stored == Field.Store.YES ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED);
         }
 
         // LUCENENET specific: non-static
@@ -1453,7 +1453,7 @@ namespace Lucene.Net.Util
         // LUCENENET specific: non-static
         public Field NewField(string name, string value, FieldType type)
         {
-            return NewField(Random(), name, value, type);
+            return NewField(Random, name, value, type);
         }
 
         // LUCENENET specific: non-static
@@ -1600,7 +1600,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static IndexReader MaybeWrapReader(IndexReader r)
         {
-            Random random = Random();
+            Random random = Random;
             if (Rarely())
             {
                 // TODO: remove this, and fix those tests to wrap before putting slow around:
@@ -1795,7 +1795,7 @@ namespace Lucene.Net.Util
         /// </param>
         public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions, Similarity similarity)
         {
-            Random random = Random();
+            Random random = Random;
             if (Usually())
             {
                 if (maybeWrap)
@@ -2055,7 +2055,7 @@ namespace Lucene.Net.Util
                 int numIntersections = AtLeast(3);
                 for (int i = 0; i < numIntersections; i++)
                 {
-                    string re = AutomatonTestUtil.RandomRegexp(Random());
+                    string re = AutomatonTestUtil.RandomRegexp(Random);
                     CompiledAutomaton automaton = new CompiledAutomaton((new RegExp(re, RegExpSyntax.NONE)).ToAutomaton());
                     if (automaton.Type == CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
                     {
@@ -2126,7 +2126,7 @@ namespace Lucene.Net.Util
         public void AssertTermsEnumEquals(string info, IndexReader leftReader, TermsEnum leftTermsEnum, TermsEnum rightTermsEnum, bool deep)
         {
             BytesRef term;
-            IBits randomBits = new RandomBits(leftReader.MaxDoc, Random().NextDouble(), Random());
+            IBits randomBits = new RandomBits(leftReader.MaxDoc, Random.NextDouble(), Random);
             DocsAndPositionsEnum leftPositions = null;
             DocsAndPositionsEnum rightPositions = null;
             DocsEnum leftDocs = null;
@@ -2234,7 +2234,7 @@ namespace Lucene.Net.Util
 
             while (true)
             {
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     // nextDoc()
                     docid = leftDocs.NextDoc();
@@ -2243,7 +2243,7 @@ namespace Lucene.Net.Util
                 else
                 {
                     // advance()
-                    int skip = docid + (int)Math.Ceiling(Math.Abs(skipInterval + Random().NextDouble() * averageGap));
+                    int skip = docid + (int)Math.Ceiling(Math.Abs(skipInterval + Random.NextDouble() * averageGap));
                     docid = leftDocs.Advance(skip);
                     Assert.AreEqual(docid, rightDocs.Advance(skip), info);
                 }
@@ -2277,7 +2277,7 @@ namespace Lucene.Net.Util
 
             while (true)
             {
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     // nextDoc()
                     docid = leftDocs.NextDoc();
@@ -2286,7 +2286,7 @@ namespace Lucene.Net.Util
                 else
                 {
                     // advance()
-                    int skip = docid + (int)Math.Ceiling(Math.Abs(skipInterval + Random().NextDouble() * averageGap));
+                    int skip = docid + (int)Math.Ceiling(Math.Abs(skipInterval + Random.NextDouble() * averageGap));
                     docid = leftDocs.Advance(skip);
                     Assert.AreEqual(docid, rightDocs.Advance(skip), info);
                 }
@@ -2312,7 +2312,7 @@ namespace Lucene.Net.Util
 
             // just an upper bound
             int numTests = AtLeast(20);
-            Random random = Random();
+            Random random = Random;
 
             // collect this number of terms from the left side
             HashSet<BytesRef> tests = new HashSet<BytesRef>();
@@ -2348,7 +2348,7 @@ namespace Lucene.Net.Util
                     }
                     else if (code == 3)
                     {
-                        switch (Random().Next(3))
+                        switch (LuceneTestCase.Random.Next(3))
                         {
                             case 0:
                                 tests.Add(new BytesRef()); // before the first term
@@ -2359,7 +2359,7 @@ namespace Lucene.Net.Util
                                 break;
 
                             case 2:
-                                tests.Add(new BytesRef(TestUtil.RandomSimpleString(Random()))); // random term
+                                tests.Add(new BytesRef(TestUtil.RandomSimpleString(LuceneTestCase.Random))); // random term
                                 break;
 
                             default:
@@ -2384,7 +2384,7 @@ namespace Lucene.Net.Util
                     rightEnum = rightTerms.GetIterator(rightEnum);
                 }
 
-                bool seekExact = Random().NextBoolean();
+                bool seekExact = LuceneTestCase.Random.NextBoolean();
 
                 if (seekExact)
                 {

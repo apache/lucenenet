@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 
         private int NextInt(int lim)
         {
-            return Random().Next(lim);
+            return Random.Next(lim);
         }
 
         private int NextInt(int start, int end)
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
                     // Illegal unpaired surrogate
                     if (NextInt(10) == 7)
                     {
-                        if (Random().NextBoolean())
+                        if (Random.NextBoolean())
                         {
                             buffer[i] = (char)NextInt(0xd800, 0xdc00);
                         }
@@ -270,7 +270,7 @@ namespace Lucene.Net.Index
         public virtual void TestEmbeddedFFFF()
         {
             Directory d = NewDirectory();
-            IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             doc.Add(NewTextField("field", "a a\uffffb", Field.Store.NO));
             w.AddDocument(doc);
@@ -316,7 +316,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTermUTF16SortOrder()
         {
-            Random rnd = Random();
+            Random rnd = Random;
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(rnd, dir, Similarity, TimeZone);
             Document d = new Document();

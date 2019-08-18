@@ -214,7 +214,7 @@ namespace Lucene.Net.Analysis.CharFilters
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
 
             int numRounds = RANDOM_MULTIPLIER * 10000;
-            CheckRandomData(Random(), analyzer, numRounds);
+            CheckRandomData(Random, analyzer, numRounds);
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -253,7 +253,7 @@ namespace Lucene.Net.Analysis.CharFilters
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this, map);
 
             string text = "gzw f quaxot";
-            CheckAnalysisConsistency(Random(), analyzer, false, text);
+            CheckAnalysisConsistency(Random, analyzer, false, text);
         }
 
         private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
@@ -290,7 +290,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 NormalizeCharMap map = RandomMap();
                 Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper3(this, map);
                 int numRounds = 100;
-                CheckRandomData(Random(), analyzer, numRounds);
+                CheckRandomData(Random, analyzer, numRounds);
             }
         }
 
@@ -320,7 +320,7 @@ namespace Lucene.Net.Analysis.CharFilters
 
         private NormalizeCharMap RandomMap()
         {
-            Random random = Random();
+            Random random = Random;
             NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
             // we can't add duplicate keys, or NormalizeCharMap gets angry
             ISet<string> keys = new HashSet<string>();
@@ -343,7 +343,7 @@ namespace Lucene.Net.Analysis.CharFilters
         [Test]
         public virtual void TestRandomMaps2()
         {
-            Random random = Random();
+            Random random = Random;
             int numIterations = AtLeast(3);
             for (int iter = 0; iter < numIterations; iter++)
             {

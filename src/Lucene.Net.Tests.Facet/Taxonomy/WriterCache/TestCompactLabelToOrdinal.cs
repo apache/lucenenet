@@ -51,7 +51,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             //     new EncoderReplacementFallback("?"), 
             //     new DecoderReplacementFallback("?"));
 
-            Random random = Random();
+            Random random = Random;
             for (int i = 0; i < numUniqueValues;)
             {
                 random.NextBytes(buffer);

@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
         public virtual void TestSorting()
         {
             Directory directory = NewDirectory();
-            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(1000)).SetSimilarity(new DefaultSimilarity()));
+            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(1000)).SetSimilarity(new DefaultSimilarity()));
             writer.AddDocument(Adoc(new string[] { "id", "a", "title", "ipod", "str_s", "a" }));
             writer.AddDocument(Adoc(new string[] { "id", "b", "title", "ipod ipod", "str_s", "b" }));
             writer.AddDocument(Adoc(new string[] { "id", "c", "title", "ipod ipod ipod", "str_s", "c" }));

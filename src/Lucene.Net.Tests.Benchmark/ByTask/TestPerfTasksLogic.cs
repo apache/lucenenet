@@ -88,7 +88,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             assertTrue("Index does not exist?...!", DirectoryReader.IndexExists(benchmark.RunData.Directory));
             // now we should be able to open the index for write. 
             IndexWriter iw = new IndexWriter(benchmark.RunData.Directory,
-                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                 .SetOpenMode(OpenMode.APPEND));
             iw.Dispose();
             IndexReader ir = DirectoryReader.Open(benchmark.RunData.Directory);
@@ -186,7 +186,7 @@ namespace Lucene.Net.Benchmarks.ByTask
 
             assertTrue("Index does not exist?...!", DirectoryReader.IndexExists(benchmark.RunData.Directory));
             // now we should be able to open the index for write.
-            IndexWriter iw = new IndexWriter(benchmark.RunData.Directory, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            IndexWriter iw = new IndexWriter(benchmark.RunData.Directory, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             iw.Dispose();
             IndexReader ir = DirectoryReader.Open(benchmark.RunData.Directory);
             assertEquals("100 docs were added to the index, this is what we expect to find!", 100, ir.NumDocs);
@@ -228,7 +228,7 @@ namespace Lucene.Net.Benchmarks.ByTask
 
             assertTrue("Index does not exist?...!", DirectoryReader.IndexExists(benchmark.RunData.Directory));
             // now we should be able to open the index for write.
-            IndexWriter iw = new IndexWriter(benchmark.RunData.Directory, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            IndexWriter iw = new IndexWriter(benchmark.RunData.Directory, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             iw.Dispose();
             IndexReader ir = DirectoryReader.Open(benchmark.RunData.Directory);
             assertEquals("1000 docs were added to the index, this is what we expect to find!", 1000, ir.NumDocs);
@@ -310,7 +310,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             assertEquals("TestSearchTask was supposed to be called!", 139, CountingSearchTestTask.numSearches);
             assertTrue("Index does not exist?...!", DirectoryReader.IndexExists(benchmark.RunData.Directory));
             // now we should be able to open the index for write. 
-            IndexWriter iw = new IndexWriter(benchmark.RunData.Directory, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            IndexWriter iw = new IndexWriter(benchmark.RunData.Directory, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             iw.Dispose();
             IndexReader ir = DirectoryReader.Open(benchmark.RunData.Directory);
             assertEquals("1 docs were added to the index, this is what we expect to find!", 1, ir.NumDocs);
@@ -450,7 +450,7 @@ namespace Lucene.Net.Benchmarks.ByTask
 
             // now we should be able to open the index for write. 
             IndexWriter iw = new IndexWriter(benchmark.RunData.Directory,
-                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                     .SetOpenMode(OpenMode.APPEND));
             iw.Dispose();
 
@@ -524,7 +524,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                 DocsEnum docs = null;
                 while (termsEnum.Next() != null)
                 {
-                    docs = TestUtil.Docs(Random(), termsEnum, MultiFields.GetLiveDocs(reader), docs, DocsFlags.FREQS);
+                    docs = TestUtil.Docs(Random, termsEnum, MultiFields.GetLiveDocs(reader), docs, DocsFlags.FREQS);
                     while (docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         totalTokenCount2 += docs.Freq;

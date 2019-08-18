@@ -62,15 +62,15 @@ namespace Lucene.Net.Index
             // codecs we should probably pick 2 from Codec.availableCodecs()
 
             LeftCodec = Codec.ForName("SimpleText");
-            RightCodec = new RandomCodec(Random());
+            RightCodec = new RandomCodec(Random);
 
             LeftDir = NewDirectory();
             RightDir = NewDirectory();
 
-            long seed = Random().Next();
+            long seed = Random.Next();
 
             // must use same seed because of random payloads, etc
-            int maxTermLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            int maxTermLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
             MockAnalyzer leftAnalyzer = new MockAnalyzer(new Random((int)seed));
             leftAnalyzer.MaxTokenLength = maxTermLength;
             MockAnalyzer rightAnalyzer = new MockAnalyzer(new Random((int)seed));

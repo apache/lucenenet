@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestRandomStringSort()
         {
-            Random random = new Random(Random().Next());
+            Random random = new Random(Random.Next());
 
             int NUM_DOCS = AtLeast(100);
             Directory dir = NewDirectory();
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
 
                 // 10% of the time, the document is missing the value:
                 BytesRef br;
-                if (Random().Next(10) != 7)
+                if (LuceneTestCase.Random.Next(10) != 7)
                 {
                     string s;
                     if (random.NextBoolean())
@@ -163,13 +163,13 @@ namespace Lucene.Net.Search
                     sf = new SortField("stringdv", SortFieldType.STRING, reverse);
                     // Can only use sort missing if the DVFormat
                     // supports docsWithField:
-                    sortMissingLast = DefaultCodecSupportsDocsWithField && Random().NextBoolean();
+                    sortMissingLast = DefaultCodecSupportsDocsWithField && Random.NextBoolean();
                     missingIsNull = DefaultCodecSupportsDocsWithField;
                 }
                 else
                 {
                     sf = new SortField("string", SortFieldType.STRING, reverse);
-                    sortMissingLast = Random().NextBoolean();
+                    sortMissingLast = Random.NextBoolean();
                     missingIsNull = true;
                 }
                 if (sortMissingLast)

@@ -46,9 +46,9 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             conf.SetCodec(new Lucene46Codec());
-            RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, conf);
+            RandomIndexWriter riw = new RandomIndexWriter(Random, dir, conf);
             Document doc = new Document();
             // these fields should sometimes get term vectors, etc
             Field idField = NewStringField("id", "", Field.Store.NO);
@@ -60,9 +60,9 @@ namespace Lucene.Net.Index
             for (int i = 0; i < 100; i++)
             {
                 idField.SetStringValue(Convert.ToString(i));
-                bodyField.SetStringValue(TestUtil.RandomUnicodeString(Random()));
+                bodyField.SetStringValue(TestUtil.RandomUnicodeString(Random));
                 riw.AddDocument(doc);
-                if (Random().Next(7) == 0)
+                if (Random.Next(7) == 0)
                 {
                     riw.Commit();
                 }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
                 }
                 if (file.EndsWith(IndexFileNames.COMPOUND_FILE_EXTENSION, StringComparison.Ordinal))
                 {
-                    CompoundFileDirectory cfsDir = new CompoundFileDirectory(dir, file, NewIOContext(Random()), false);
+                    CompoundFileDirectory cfsDir = new CompoundFileDirectory(dir, file, NewIOContext(Random), false);
                     CheckHeaders(cfsDir); // recurse into cfs
                     cfsDir.Dispose();
                 }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    @in = dir.OpenInput(file, NewIOContext(Random()));
+                    @in = dir.OpenInput(file, NewIOContext(Random));
                     int val = @in.ReadInt32();
                     Assert.AreEqual(CodecUtil.CODEC_MAGIC, val, file + " has no codec header, instead found: " + val);
                     success = true;

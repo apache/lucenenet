@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
         [SetUp]
         public static void Setup()
         {
-            ANALYZER = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            ANALYZER = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
         }
 
         private void SetFailed()
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
         public virtual void TestThreadedForceMerge_Mem()
         {
             Directory directory = NewDirectory();
-            RunTest(Random(), directory);
+            RunTest(Random, directory);
             directory.Dispose();
         }
     }

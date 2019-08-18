@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         public virtual void TestManyReopensAndFields()
         {
             Directory dir = NewDirectory();
-            Random random = Random();
+            Random random = Random;
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
             LogMergePolicy lmp = NewLogMergePolicy();
             lmp.MergeFactor = 3; // merge often
@@ -228,17 +228,17 @@ namespace Lucene.Net.Index
         public virtual void TestStressMultiThreading()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             IndexWriter writer = new IndexWriter(dir, conf);
 
             // create index
-            int numThreads = TestUtil.NextInt32(Random(), 3, 6);
+            int numThreads = TestUtil.NextInt32(Random, 3, 6);
             int numDocs = AtLeast(2000);
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
                 doc.Add(new StringField("id", "doc" + i, Store.NO));
-                double group = Random().NextDouble();
+                double group = Random.NextDouble();
                 string g;
                 if (group < 0.1)
                 {
@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
                 doc.Add(new StringField("updKey", g, Store.NO));
                 for (int j = 0; j < numThreads; j++)
                 {
-                    long value = Random().Next();
+                    long value = Random.Next();
                     doc.Add(new BinaryDocValuesField("f" + j, TestBinaryDocValuesUpdates.ToBytes(value)));
                     doc.Add(new NumericDocValuesField("cf" + j, value * 2)); // control, always updated to f * 2
                 }
@@ -349,7 +349,7 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    Random random = Random();
+                    Random random = Random;
                     while (NumUpdates.GetAndDecrement() > 0)
                     {
                         double group = random.NextDouble();
@@ -451,7 +451,7 @@ namespace Lucene.Net.Index
         {
             // update same document multiple times across generations
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             conf.SetMaxBufferedDocs(4);
             IndexWriter writer = new IndexWriter(dir, conf);
             int numDocs = AtLeast(10);
@@ -459,7 +459,7 @@ namespace Lucene.Net.Index
             {
                 Document doc = new Document();
                 doc.Add(new StringField("id", "doc" + i, Store.NO));
-                long value = Random().Next();
+                long value = Random.Next();
                 doc.Add(new BinaryDocValuesField("f", TestBinaryDocValuesUpdates.ToBytes(value)));
                 doc.Add(new NumericDocValuesField("cf", value * 2));
                 writer.AddDocument(doc);
@@ -469,9 +469,9 @@ namespace Lucene.Net.Index
             BytesRef scratch = new BytesRef();
             for (int i = 0; i < numGens; i++)
             {
-                int doc = Random().Next(numDocs);
+                int doc = Random.Next(numDocs);
                 Term t = new Term("id", "doc" + doc);
-                long value = Random().NextInt64();
+                long value = Random.NextInt64();
                 writer.UpdateBinaryDocValue(t, "f", TestBinaryDocValuesUpdates.ToBytes(value));
                 writer.UpdateNumericDocValue(t, "cf", value * 2);
                 DirectoryReader reader = DirectoryReader.Open(writer, true);
@@ -496,7 +496,7 @@ namespace Lucene.Net.Index
         {
             // LUCENE-5248: make sure that when there are many updates, we don't use too much RAM
             Directory dir = NewDirectory();
-            Random random = Random();
+            Random random = Random;
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
             conf.SetRAMBufferSizeMB(IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB);
             conf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH); // don't flush by doc

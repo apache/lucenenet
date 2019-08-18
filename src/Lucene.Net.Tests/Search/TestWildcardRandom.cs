@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 50, 1000)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
 
             Document doc = new Document();
             Field field = NewStringField("field", "", Field.Store.NO);
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
 
         private char N()
         {
-            return (char)(0x30 + Random().Next(10));
+            return (char)(0x30 + Random.Next(10));
         }
 
         private string FillPattern(string wildcardPattern)

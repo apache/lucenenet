@@ -49,7 +49,7 @@ namespace Lucene.Net.Tests.Queries
         {
             string fieldName = @"field1";
             Directory rd = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), rd, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, rd, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField(fieldName, @"value1", Field.Store.NO));
             w.AddDocument(doc);
@@ -74,13 +74,13 @@ namespace Lucene.Net.Tests.Queries
         public void TestRandom()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             int num = AtLeast(100);
             var terms = new List<Term>();
             for (int i = 0; i < num; i++)
             {
                 string field = @"field" + i;
-                string str = TestUtil.RandomRealisticUnicodeString(Random());
+                string str = TestUtil.RandomRealisticUnicodeString(Random);
                 terms.Add(new Term(field, str));
                 Document doc = new Document();
                 doc.Add(NewStringField(field, str, Field.Store.NO));
@@ -93,7 +93,7 @@ namespace Lucene.Net.Tests.Queries
             int numQueries = AtLeast(10);
             for (int i = 0; i < numQueries; i++)
             {
-                Term term = terms[Random().nextInt(num)];
+                Term term = terms[Random.nextInt(num)];
                 TopDocs queryResult = searcher.Search(new TermQuery(term), reader.MaxDoc);
                 MatchAllDocsQuery matchAll = new MatchAllDocsQuery();
                 TermFilter filter = TermFilter(term);
@@ -118,7 +118,7 @@ namespace Lucene.Net.Tests.Queries
             {
                 string field1 = @"field" + i;
                 string field2 = @"field" + i + num;
-                string value1 = TestUtil.RandomRealisticUnicodeString(Random());
+                string value1 = TestUtil.RandomRealisticUnicodeString(Random);
                 string value2 = value1 + @"x";
                 TermFilter filter1 = TermFilter(field1, value1);
                 TermFilter filter2 = TermFilter(field1, value2);

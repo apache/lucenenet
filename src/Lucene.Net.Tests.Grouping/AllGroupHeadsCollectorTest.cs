@@ -49,12 +49,12 @@ namespace Lucene.Net.Search.Grouping
             string groupField = "author";
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-                Random(),
+                Random,
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
-                    new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+                    new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             bool canUseIDV = !"Lucene3x".Equals(w.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
-            DocValuesType valueType = vts[Random().nextInt(vts.Length)];
+            DocValuesType valueType = vts[Random.nextInt(vts.Length)];
 
             // 0
             Document doc = new Document();
@@ -162,7 +162,7 @@ namespace Lucene.Net.Search.Grouping
         [Test]
         public void TestRandom()
         {
-            int numberOfRuns = TestUtil.NextInt32(Random(), 3, 6);
+            int numberOfRuns = TestUtil.NextInt32(Random, 3, 6);
             for (int iter = 0; iter < numberOfRuns; iter++)
             {
                 if (VERBOSE)
@@ -170,8 +170,8 @@ namespace Lucene.Net.Search.Grouping
                     Console.WriteLine(string.Format("TEST: iter={0} total={1}", iter, numberOfRuns));
                 }
 
-                int numDocs = TestUtil.NextInt32(Random(), 100, 1000) * RANDOM_MULTIPLIER;
-                int numGroups = TestUtil.NextInt32(Random(), 1, numDocs);
+                int numDocs = TestUtil.NextInt32(Random, 100, 1000) * RANDOM_MULTIPLIER;
+                int numGroups = TestUtil.NextInt32(Random, 1, numDocs);
 
                 if (VERBOSE)
                 {
@@ -186,11 +186,11 @@ namespace Lucene.Net.Search.Grouping
                     {
                         // B/c of DV based impl we can't see the difference between an empty string and a null value.
                         // For that reason we don't generate empty string groups.
-                        randomValue = TestUtil.RandomRealisticUnicodeString(Random());
+                        randomValue = TestUtil.RandomRealisticUnicodeString(Random);
                     } while ("".Equals(randomValue, StringComparison.Ordinal));
                     groups.Add(new BytesRef(randomValue));
                 }
-                string[] contentStrings = new string[TestUtil.NextInt32(Random(), 2, 20)];
+                string[] contentStrings = new string[TestUtil.NextInt32(Random, 2, 20)];
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: create fake content");
@@ -198,8 +198,8 @@ namespace Lucene.Net.Search.Grouping
                 for (int contentIDX = 0; contentIDX < contentStrings.Length; contentIDX++)
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.append("real").append(Random().nextInt(3)).append(' ');
-                    int fakeCount = Random().nextInt(10);
+                    sb.append("real").append(Random.nextInt(3)).append(' ');
+                    int fakeCount = Random.nextInt(10);
                     for (int fakeIDX = 0; fakeIDX < fakeCount; fakeIDX++)
                     {
                         sb.append("fake ");
@@ -213,13 +213,13 @@ namespace Lucene.Net.Search.Grouping
 
                 Directory dir = NewDirectory();
                 RandomIndexWriter w = new RandomIndexWriter(
-                    Random(),
+                    Random,
                     dir,
                     NewIndexWriterConfig(TEST_VERSION_CURRENT,
-                        new MockAnalyzer(Random())));
+                        new MockAnalyzer(Random)));
                 bool preFlex = "Lucene3x".Equals(w.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
                 bool canUseIDV = !preFlex;
-                DocValuesType valueType = vts[Random().nextInt(vts.Length)];
+                DocValuesType valueType = vts[Random.nextInt(vts.Length)];
 
                 Document doc = new Document();
                 Document docNoGroup = new Document();
@@ -261,7 +261,7 @@ namespace Lucene.Net.Search.Grouping
                 for (int i = 0; i < numDocs; i++)
                 {
                     BytesRef groupValue;
-                    if (Random().nextInt(24) == 17)
+                    if (Random.nextInt(24) == 17)
                     {
                         // So we test the "doc doesn't have the group'd
                         // field" case:
@@ -269,16 +269,16 @@ namespace Lucene.Net.Search.Grouping
                     }
                     else
                     {
-                        groupValue = groups[Random().nextInt(groups.size())];
+                        groupValue = groups[Random.nextInt(groups.size())];
                     }
 
                     GroupDoc groupDoc = new GroupDoc(
                         i,
                         groupValue,
-                        groups[Random().nextInt(groups.size())],
-                        groups[Random().nextInt(groups.size())],
+                        groups[Random.nextInt(groups.size())],
+                        groups[Random.nextInt(groups.size())],
                         new BytesRef(string.Format(CultureInfo.InvariantCulture, "{0:D5}", i)),
-                        contentStrings[Random().nextInt(contentStrings.Length)]
+                        contentStrings[Random.nextInt(contentStrings.Length)]
                     );
 
                     if (VERBOSE)
@@ -360,8 +360,8 @@ namespace Lucene.Net.Search.Grouping
                             Console.WriteLine("TEST: searchIter=" + searchIter);
                         }
 
-                        string searchTerm = "real" + Random().nextInt(3);
-                        bool sortByScoreOnly = Random().nextBoolean();
+                        string searchTerm = "real" + Random.nextInt(3);
+                        bool sortByScoreOnly = Random.nextBoolean();
                         Sort sortWithinGroup = GetRandomSort(sortByScoreOnly);
                         AbstractAllGroupHeadsCollector allGroupHeadsCollector = CreateRandomCollector("group", sortWithinGroup, canUseIDV, valueType);
                         s.Search(new TermQuery(new Term("content", searchTerm)), allGroupHeadsCollector);
@@ -521,31 +521,31 @@ namespace Lucene.Net.Search.Grouping
         private Sort GetRandomSort(bool scoreOnly)
         {
             List<SortField> sortFields = new List<SortField>();
-            if (Random().nextInt(7) == 2 || scoreOnly)
+            if (Random.nextInt(7) == 2 || scoreOnly)
             {
                 sortFields.Add(SortField.FIELD_SCORE);
             }
             else
             {
-                if (Random().nextBoolean())
+                if (Random.nextBoolean())
                 {
-                    if (Random().nextBoolean())
+                    if (Random.nextBoolean())
                     {
-                        sortFields.Add(new SortField("sort1", SortFieldType.STRING, Random().nextBoolean()));
+                        sortFields.Add(new SortField("sort1", SortFieldType.STRING, Random.nextBoolean()));
                     }
                     else
                     {
-                        sortFields.Add(new SortField("sort2", SortFieldType.STRING, Random().nextBoolean()));
+                        sortFields.Add(new SortField("sort2", SortFieldType.STRING, Random.nextBoolean()));
                     }
                 }
-                else if (Random().nextBoolean())
+                else if (Random.nextBoolean())
                 {
-                    sortFields.Add(new SortField("sort1", SortFieldType.STRING, Random().nextBoolean()));
-                    sortFields.Add(new SortField("sort2", SortFieldType.STRING, Random().nextBoolean()));
+                    sortFields.Add(new SortField("sort1", SortFieldType.STRING, Random.nextBoolean()));
+                    sortFields.Add(new SortField("sort2", SortFieldType.STRING, Random.nextBoolean()));
                 }
             }
             // Break ties:
-            if (Random().nextBoolean() && !scoreOnly)
+            if (Random.nextBoolean() && !scoreOnly)
             {
                 sortFields.Add(new SortField("sort3", SortFieldType.STRING));
             }
@@ -628,7 +628,7 @@ namespace Lucene.Net.Search.Grouping
         private AbstractAllGroupHeadsCollector CreateRandomCollector(string groupField, Sort sortWithinGroup, bool canUseIDV, DocValuesType valueType)
         {
             AbstractAllGroupHeadsCollector collector;
-            if (Random().nextBoolean())
+            if (Random.nextBoolean())
             {
                 ValueSource vs = new BytesRefFieldSource(groupField);
                 collector = new FunctionAllGroupHeadsCollector(vs, new Hashtable(), sortWithinGroup);

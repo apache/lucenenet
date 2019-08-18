@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             int maxNumSentences = 20;
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true), Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true), Similarity, TimeZone);
             Document document = new Document();
             Field id = new StringField("id", "", Field.Store.NO);
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
@@ -73,10 +73,10 @@ namespace Lucene.Net.Search.PostingsHighlight
             for (int i = 0; i < numDocs; i++)
             {
                 StringBuilder bodyText = new StringBuilder();
-                int numSentences = TestUtil.NextInt32(Random(), 1, maxNumSentences);
+                int numSentences = TestUtil.NextInt32(Random, 1, maxNumSentences);
                 for (int j = 0; j < numSentences; j++)
                 {
-                    bodyText.Append(newSentence(Random(), maxSentenceLength));
+                    bodyText.Append(newSentence(Random, maxSentenceLength));
                 }
                 body.SetStringValue(bodyText.ToString());
                 id.SetStringValue(i.ToString(CultureInfo.InvariantCulture));
@@ -272,9 +272,9 @@ namespace Lucene.Net.Search.PostingsHighlight
         public void TestCustomB()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -315,9 +315,9 @@ namespace Lucene.Net.Search.PostingsHighlight
         public void TestCustomK1()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);

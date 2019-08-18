@@ -40,7 +40,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             base.SetUp();
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
 
             //Add series of docs with filterable fields : url, text and dates  flags
             AddDoc(writer, "http://lucene.apache.org", "lucene 1.4.3 available", "20040101");
@@ -142,7 +142,7 @@ namespace Lucene.Net.Sandbox.Queries
             {
                 Document d = searcher.Doc(hit.Doc);
                 string url = d.Get(KEY_FIELD);
-                DocsEnum td = TestUtil.Docs(Random(), reader,
+                DocsEnum td = TestUtil.Docs(Random, reader,
                     KEY_FIELD,
                     new BytesRef(url),
                     MultiFields.GetLiveDocs(reader),
@@ -169,7 +169,7 @@ namespace Lucene.Net.Sandbox.Queries
             {
                 Document d = searcher.Doc(hit.Doc);
                 string url = d.Get(KEY_FIELD);
-                DocsEnum td = TestUtil.Docs(Random(), reader,
+                DocsEnum td = TestUtil.Docs(Random, reader,
                     KEY_FIELD,
                     new BytesRef(url),
                     MultiFields.GetLiveDocs(reader),

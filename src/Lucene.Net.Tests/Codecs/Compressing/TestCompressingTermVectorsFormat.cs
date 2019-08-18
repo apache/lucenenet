@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.Compressing
     {
         protected override Codec GetCodec()
         {
-            return CompressingCodec.RandomInstance(Random());
+            return CompressingCodec.RandomInstance(Random);
         }
 
         // https://issues.apache.org/jira/browse/LUCENE-5156
@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.Compressing
         public virtual void TestNoOrds()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
             ft.StoreTermVectors = true;

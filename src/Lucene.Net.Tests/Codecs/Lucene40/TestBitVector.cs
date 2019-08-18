@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private void DoTestWriteRead(int n)
         {
-            MockDirectoryWrapper d = new MockDirectoryWrapper(Random(), new RAMDirectory());
+            MockDirectoryWrapper d = new MockDirectoryWrapper(Random, new RAMDirectory());
             d.PreventDoubleWrite = false;
             BitVector bv = new BitVector(n);
             // test count when incrementally setting bits
@@ -164,8 +164,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 bv.Set(i);
                 Assert.IsTrue(bv.Get(i));
                 Assert.AreEqual(i + 1, bv.Count());
-                bv.Write(d, "TESTBV", NewIOContext(Random()));
-                BitVector compare = new BitVector(d, "TESTBV", NewIOContext(Random()));
+                bv.Write(d, "TESTBV", NewIOContext(Random));
+                BitVector compare = new BitVector(d, "TESTBV", NewIOContext(Random));
                 // compare bit vectors with bits set incrementally
                 Assert.IsTrue(DoCompare(bv, compare));
             }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Codecs.Lucene40
             DoTestDgaps(100000, 415, 418);
             DoTestDgaps(1000000, 3123, 3126);
             // now exercise skipping of fully populated byte in the bitset (they are omitted if bitset is sparse)
-            MockDirectoryWrapper d = new MockDirectoryWrapper(Random(), new RAMDirectory());
+            MockDirectoryWrapper d = new MockDirectoryWrapper(Random, new RAMDirectory());
             d.PreventDoubleWrite = false;
             BitVector bv = new BitVector(10000);
             bv.Set(0);
@@ -200,19 +200,19 @@ namespace Lucene.Net.Codecs.Lucene40
             // add some more bits here
             for (int i = 40; i < 10000; i++)
             {
-                if (Random().Next(1000) == 0)
+                if (Random.Next(1000) == 0)
                 {
                     bv.Set(i);
                 }
             }
-            bv.Write(d, "TESTBV", NewIOContext(Random()));
-            BitVector compare = new BitVector(d, "TESTBV", NewIOContext(Random()));
+            bv.Write(d, "TESTBV", NewIOContext(Random));
+            BitVector compare = new BitVector(d, "TESTBV", NewIOContext(Random));
             Assert.IsTrue(DoCompare(bv, compare));
         }
 
         private void DoTestDgaps(int size, int count1, int count2)
         {
-            MockDirectoryWrapper d = new MockDirectoryWrapper(Random(), new RAMDirectory());
+            MockDirectoryWrapper d = new MockDirectoryWrapper(Random, new RAMDirectory());
             d.PreventDoubleWrite = false;
             BitVector bv = new BitVector(size);
             bv.InvertAll();
@@ -221,26 +221,26 @@ namespace Lucene.Net.Codecs.Lucene40
                 bv.Clear(i);
                 Assert.AreEqual(i + 1, size - bv.Count());
             }
-            bv.Write(d, "TESTBV", NewIOContext(Random()));
+            bv.Write(d, "TESTBV", NewIOContext(Random));
             // gradually increase number of set bits
             for (int i = count1; i < count2; i++)
             {
-                BitVector bv2 = new BitVector(d, "TESTBV", NewIOContext(Random()));
+                BitVector bv2 = new BitVector(d, "TESTBV", NewIOContext(Random));
                 Assert.IsTrue(DoCompare(bv, bv2));
                 bv = bv2;
                 bv.Clear(i);
                 Assert.AreEqual(i + 1, size - bv.Count());
-                bv.Write(d, "TESTBV", NewIOContext(Random()));
+                bv.Write(d, "TESTBV", NewIOContext(Random));
             }
             // now start decreasing number of set bits
             for (int i = count2 - 1; i >= count1; i--)
             {
-                BitVector bv2 = new BitVector(d, "TESTBV", NewIOContext(Random()));
+                BitVector bv2 = new BitVector(d, "TESTBV", NewIOContext(Random));
                 Assert.IsTrue(DoCompare(bv, bv2));
                 bv = bv2;
                 bv.Set(i);
                 Assert.AreEqual(i, size - bv.Count());
-                bv.Write(d, "TESTBV", NewIOContext(Random()));
+                bv.Write(d, "TESTBV", NewIOContext(Random));
             }
         }
 
@@ -251,12 +251,12 @@ namespace Lucene.Net.Codecs.Lucene40
             const int numBits = 10240;
             BitVector bv = new BitVector(numBits);
             bv.InvertAll();
-            int numToClear = Random().Next(5);
+            int numToClear = Random.Next(5);
             for (int i = 0; i < numToClear; i++)
             {
-                bv.Clear(Random().Next(numBits));
+                bv.Clear(Random.Next(numBits));
             }
-            bv.Write(d, "test", NewIOContext(Random()));
+            bv.Write(d, "test", NewIOContext(Random));
             long size = d.FileLength("test");
             Assert.IsTrue(size < 100, "size=" + size);
             d.Dispose();
@@ -266,11 +266,11 @@ namespace Lucene.Net.Codecs.Lucene40
         public virtual void TestClearedBitNearEnd()
         {
             Directory d = NewDirectory();
-            int numBits = TestUtil.NextInt32(Random(), 7, 1000);
+            int numBits = TestUtil.NextInt32(Random, 7, 1000);
             BitVector bv = new BitVector(numBits);
             bv.InvertAll();
-            bv.Clear(numBits - TestUtil.NextInt32(Random(), 1, 7));
-            bv.Write(d, "test", NewIOContext(Random()));
+            bv.Clear(numBits - TestUtil.NextInt32(Random, 1, 7));
+            bv.Write(d, "test", NewIOContext(Random));
             Assert.AreEqual(numBits - 1, bv.Count());
             d.Dispose();
         }
@@ -279,7 +279,7 @@ namespace Lucene.Net.Codecs.Lucene40
         public virtual void TestMostlySet()
         {
             Directory d = NewDirectory();
-            int numBits = TestUtil.NextInt32(Random(), 30, 1000);
+            int numBits = TestUtil.NextInt32(Random, 30, 1000);
             for (int numClear = 0; numClear < 20; numClear++)
             {
                 BitVector bv = new BitVector(numBits);
@@ -287,7 +287,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 int count = 0;
                 while (count < numClear)
                 {
-                    int bit = Random().Next(numBits);
+                    int bit = Random.Next(numBits);
                     // Don't use getAndClear, so that count is recomputed
                     if (bv.Get(bit))
                     {

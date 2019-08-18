@@ -49,7 +49,7 @@ namespace Lucene.Net.Search.Spell
             //create a user index
             userindex = NewDirectory();
             IndexWriter writer = new IndexWriter(userindex, new IndexWriterConfig(
-                TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             for (int i = 0; i < 1000; i++)
             {
@@ -479,7 +479,7 @@ namespace Lucene.Net.Search.Spell
                 assertEquals(4, searchers.Count);
                 int num_field2 = this.NumDoc();
                 assertEquals(num_field2, num_field1 + 1);
-                int numThreads = 5 + Random().nextInt(5);
+                int numThreads = 5 + Random.nextInt(5);
                 SpellCheckWorker[] workers = new SpellCheckWorker[numThreads];
                 var stop = new AtomicBoolean(false);
                 for (int i = 0; i < numThreads; i++)
@@ -488,7 +488,7 @@ namespace Lucene.Net.Search.Spell
                     workers[i] = spellCheckWorker;
                     spellCheckWorker.Start();
                 }
-                int iterations = 5 + Random().nextInt(5);
+                int iterations = 5 + Random.nextInt(5);
                 for (int i = 0; i < iterations; i++)
                 {
                     Thread.Sleep(100);

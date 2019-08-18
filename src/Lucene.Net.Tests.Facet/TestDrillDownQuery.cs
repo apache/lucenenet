@@ -75,7 +75,7 @@ namespace Lucene.Net.Facet
             base.BeforeClass();
 
             dir = NewDirectory();
-            Random r = Random();
+            Random r = Random;
             RandomIndexWriter writer = new RandomIndexWriter(r, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(r, MockTokenizer.KEYWORD, false)));
 
             taxoDir = NewDirectory();
@@ -83,17 +83,17 @@ namespace Lucene.Net.Facet
             config = new FacetsConfig();
 
             // Randomize the per-dim config:
-            config.SetHierarchical("a", Random().NextBoolean());
-            config.SetMultiValued("a", Random().NextBoolean());
-            if (Random().NextBoolean())
+            config.SetHierarchical("a", Random.NextBoolean());
+            config.SetMultiValued("a", Random.NextBoolean());
+            if (Random.NextBoolean())
             {
                 config.SetIndexFieldName("a", "$a");
             }
             config.SetRequireDimCount("a", true);
 
-            config.SetHierarchical("b", Random().NextBoolean());
-            config.SetMultiValued("b", Random().NextBoolean());
-            if (Random().NextBoolean())
+            config.SetHierarchical("b", Random.NextBoolean());
+            config.SetMultiValued("b", Random.NextBoolean());
+            if (Random.NextBoolean())
             {
                 config.SetIndexFieldName("b", "$b");
             }

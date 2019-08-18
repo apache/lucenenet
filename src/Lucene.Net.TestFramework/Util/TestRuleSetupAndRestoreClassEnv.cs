@@ -108,7 +108,7 @@ namespace Lucene.Net.Util
             }
 
             savedInfoStream = InfoStream.Default;
-            Random random = LuceneTestCase.Random(); 
+            Random random = LuceneTestCase.Random; 
             bool v = random.NextBoolean();
             if (LuceneTestCase.INFOSTREAM)
             {

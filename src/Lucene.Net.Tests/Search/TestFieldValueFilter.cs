@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
         public virtual void TestFieldValueFilterNoValue()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             int docs = AtLeast(10);
             int[] docStates = BuildIndex(writer, docs);
             int numDocsNoValue = 0;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
         public virtual void TestFieldValueFilter_Mem()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             int docs = AtLeast(10);
             int[] docStates = BuildIndex(writer, docs);
             int numDocsWithValue = 0;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < docs; i++)
             {
                 Document doc = new Document();
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     docStates[i] = 1;
                     doc.Add(NewTextField("some", "value", Field.Store.YES));
@@ -113,10 +113,10 @@ namespace Lucene.Net.Search
                 writer.AddDocument(doc);
             }
             writer.Commit();
-            int numDeletes = Random().Next(docs);
+            int numDeletes = Random.Next(docs);
             for (int i = 0; i < numDeletes; i++)
             {
-                int docID = Random().Next(docs);
+                int docID = Random.Next(docs);
                 writer.DeleteDocuments(new Term("id", "" + docID));
                 docStates[docID] = 2;
             }

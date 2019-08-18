@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
             base.SetUp();
             // Create an index writer.
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, Similarity, TimeZone);
 
             // oldest doc:
             // Add the first document.  text = "Document 1"  dateTime = Oct 10 03:25:22 EDT 2007

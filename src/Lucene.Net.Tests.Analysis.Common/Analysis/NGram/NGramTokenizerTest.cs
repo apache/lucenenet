@@ -111,11 +111,11 @@ namespace Lucene.Net.Analysis.NGram
         {
             for (int i = 0; i < 10; i++)
             {
-                int min = TestUtil.NextInt32(Random(), 2, 10);
-                int max = TestUtil.NextInt32(Random(), min, 20);
+                int min = TestUtil.NextInt32(Random, 2, 10);
+                int max = TestUtil.NextInt32(Random, min, 20);
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, min, max);
-                CheckRandomData(Random(), a, 200 * RANDOM_MULTIPLIER, 20);
-                CheckRandomData(Random(), a, 10 * RANDOM_MULTIPLIER, 1027);
+                CheckRandomData(Random, a, 200 * RANDOM_MULTIPLIER, 20);
+                CheckRandomData(Random, a, 10 * RANDOM_MULTIPLIER, 1027);
             }
         }
 
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.NGram
         private static void TestNGrams(int minGram, int maxGram, int length, string nonTokenChars)
         {
             //string s = RandomStrings.randomAsciiOfLength(Random(), length);
-            string s = TestUtil.RandomAnalysisString(Random(), length, true);
+            string s = TestUtil.RandomAnalysisString(Random, length, true);
             TestNGrams(minGram, maxGram, s, nonTokenChars);
         }
 
@@ -244,59 +244,59 @@ namespace Lucene.Net.Analysis.NGram
         public virtual void TestLargeInput()
         {
             // test sliding
-            int minGram = TestUtil.NextInt32(Random(), 1, 100);
-            int maxGram = TestUtil.NextInt32(Random(), minGram, 100);
-            TestNGrams(minGram, maxGram, TestUtil.NextInt32(Random(), 3 * 1024, 4 * 1024), "");
+            int minGram = TestUtil.NextInt32(Random, 1, 100);
+            int maxGram = TestUtil.NextInt32(Random, minGram, 100);
+            TestNGrams(minGram, maxGram, TestUtil.NextInt32(Random, 3 * 1024, 4 * 1024), "");
         }
 
         [Test]
         public virtual void TestLargeMaxGram()
         {
             // test sliding with maxGram > 1024
-            int minGram = TestUtil.NextInt32(Random(), 1290, 1300);
-            int maxGram = TestUtil.NextInt32(Random(), minGram, 1300);
-            TestNGrams(minGram, maxGram, TestUtil.NextInt32(Random(), 3 * 1024, 4 * 1024), "");
+            int minGram = TestUtil.NextInt32(Random, 1290, 1300);
+            int maxGram = TestUtil.NextInt32(Random, minGram, 1300);
+            TestNGrams(minGram, maxGram, TestUtil.NextInt32(Random, 3 * 1024, 4 * 1024), "");
         }
 
         [Test]
         public virtual void TestPreTokenization()
         {
-            int minGram = TestUtil.NextInt32(Random(), 1, 100);
-            int maxGram = TestUtil.NextInt32(Random(), minGram, 100);
-            TestNGrams(minGram, maxGram, TestUtil.NextInt32(Random(), 0, 4 * 1024), "a");
+            int minGram = TestUtil.NextInt32(Random, 1, 100);
+            int maxGram = TestUtil.NextInt32(Random, minGram, 100);
+            TestNGrams(minGram, maxGram, TestUtil.NextInt32(Random, 0, 4 * 1024), "a");
         }
 
         [Test]
         public virtual void TestHeavyPreTokenization()
         {
-            int minGram = TestUtil.NextInt32(Random(), 1, 100);
-            int maxGram = TestUtil.NextInt32(Random(), minGram, 100);
-            TestNGrams(minGram, maxGram, TestUtil.NextInt32(Random(), 0, 4 * 1024), "abcdef");
+            int minGram = TestUtil.NextInt32(Random, 1, 100);
+            int maxGram = TestUtil.NextInt32(Random, minGram, 100);
+            TestNGrams(minGram, maxGram, TestUtil.NextInt32(Random, 0, 4 * 1024), "abcdef");
         }
 
         [Test]
         public virtual void TestFewTokenChars()
         {
-            char[] chrs = new char[TestUtil.NextInt32(Random(), 4000, 5000)];
+            char[] chrs = new char[TestUtil.NextInt32(Random, 4000, 5000)];
             Arrays.Fill(chrs, ' ');
             for (int i = 0; i < chrs.Length; ++i)
             {
-                if (Random().NextDouble() < 0.1)
+                if (Random.NextDouble() < 0.1)
                 {
                     chrs[i] = 'a';
                 }
             }
-            int minGram = TestUtil.NextInt32(Random(), 1, 2);
-            int maxGram = TestUtil.NextInt32(Random(), minGram, 2);
+            int minGram = TestUtil.NextInt32(Random, 1, 2);
+            int maxGram = TestUtil.NextInt32(Random, minGram, 2);
             TestNGrams(minGram, maxGram, new string(chrs), " ");
         }
 
         [Test, LongRunningTest]
         public virtual void TestFullUTF8Range()
         {
-            int minGram = TestUtil.NextInt32(Random(), 1, 100);
-            int maxGram = TestUtil.NextInt32(Random(), minGram, 100);
-            string s = TestUtil.RandomUnicodeString(Random(), 4 * 1024);
+            int minGram = TestUtil.NextInt32(Random, 1, 100);
+            int maxGram = TestUtil.NextInt32(Random, minGram, 100);
+            string s = TestUtil.RandomUnicodeString(Random, 4 * 1024);
             TestNGrams(minGram, maxGram, s, "");
             TestNGrams(minGram, maxGram, s, "abcdef");
         }

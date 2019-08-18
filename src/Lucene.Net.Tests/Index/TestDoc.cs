@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
                 wrapper.AssertNoUnreferencedFilesOnClose = false;
             }
 
-            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
+            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
 
             SegmentCommitInfo si1 = IndexDoc(writer, "test.txt");
             PrintSegment(@out, si1);
@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
                 wrapper.AssertNoUnreferencedFilesOnClose = false;
             }
 
-            writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
+            writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(10)));
 
             si1 = IndexDoc(writer, "test.txt");
             PrintSegment(@out, si1);
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
 
         private SegmentCommitInfo Merge(Directory dir, SegmentCommitInfo si1, SegmentCommitInfo si2, string merged, bool useCompoundFile)
         {
-            IOContext context = NewIOContext(Random());
+            IOContext context = NewIOContext(Random);
             SegmentReader r1 = new SegmentReader(si1, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, context);
             SegmentReader r2 = new SegmentReader(si2, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, context);
 
@@ -225,7 +225,7 @@ namespace Lucene.Net.Index
 
             if (useCompoundFile)
             {
-                ICollection<string> filesToDelete = IndexWriter.CreateCompoundFile(InfoStream.Default, dir, CheckAbort.NONE, info, NewIOContext(Random()));
+                ICollection<string> filesToDelete = IndexWriter.CreateCompoundFile(InfoStream.Default, dir, CheckAbort.NONE, info, NewIOContext(Random));
                 info.UseCompoundFile = true;
                 foreach (String fileToDelete in filesToDelete)
                 {
@@ -238,7 +238,7 @@ namespace Lucene.Net.Index
 
         private void PrintSegment(StreamWriter @out, SegmentCommitInfo si)
         {
-            SegmentReader reader = new SegmentReader(si, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
+            SegmentReader reader = new SegmentReader(si, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
 
             for (int i = 0; i < reader.NumDocs; i++)
             {

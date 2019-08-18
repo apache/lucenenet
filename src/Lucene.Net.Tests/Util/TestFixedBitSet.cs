@@ -66,7 +66,7 @@ namespace Lucene.Net.Util
 
         internal virtual void DoPrevSetBit(BitArray a, FixedBitSet b)
         {
-            int aa = a.Length + Random().Next(100);
+            int aa = a.Length + Random.Next(100);
             int bb = aa;
             do
             {
@@ -116,7 +116,7 @@ namespace Lucene.Net.Util
             do
             {
                 aa = a.NextSetBit(aa + 1);
-                bb = (bb < b.Length && Random().NextBoolean()) ? iterator.NextDoc() : iterator.Advance(bb + 1);
+                bb = (bb < b.Length && Random.NextBoolean()) ? iterator.NextDoc() : iterator.Advance(bb + 1);
                 Assert.AreEqual(aa == -1 ? DocIdSetIterator.NO_MORE_DOCS : aa, bb);
             } while (aa >= 0);
         }
@@ -128,7 +128,7 @@ namespace Lucene.Net.Util
             do
             {
                 aa = a.NextSetBit(aa + 1);
-                bb = Random().NextBoolean() ? iterator.NextDoc() : iterator.Advance(bb + 1);
+                bb = Random.NextBoolean() ? iterator.NextDoc() : iterator.Advance(bb + 1);
                 Assert.AreEqual(aa == -1 ? DocIdSetIterator.NO_MORE_DOCS : aa, bb);
             } while (aa >= 0);
         }
@@ -140,31 +140,31 @@ namespace Lucene.Net.Util
 
             for (int i = 0; i < iter; i++)
             {
-                int sz = TestUtil.NextInt32(Random(), 2, maxSize);
+                int sz = TestUtil.NextInt32(Random, 2, maxSize);
                 BitArray a = new BitArray(sz);
                 FixedBitSet b = new FixedBitSet(sz);
 
                 // test the various ways of setting bits
                 if (sz > 0)
                 {
-                    int nOper = Random().Next(sz);
+                    int nOper = Random.Next(sz);
                     for (int j = 0; j < nOper; j++)
                     {
                         int idx;
 
-                        idx = Random().Next(sz);
+                        idx = Random.Next(sz);
                         a.SafeSet(idx, true);
                         b.Set(idx);
 
-                        idx = Random().Next(sz);
+                        idx = Random.Next(sz);
                         a.SafeSet(idx, false);
                         b.Clear(idx);
 
-                        idx = Random().Next(sz);
+                        idx = Random.Next(sz);
                         a.SafeSet(idx, !a.SafeGet(idx));
                         b.Flip(idx, idx + 1);
 
-                        idx = Random().Next(sz);
+                        idx = Random.Next(sz);
                         a.SafeSet(idx, !a.SafeGet(idx));
                         b.Flip(idx, idx + 1);
 
@@ -186,8 +186,8 @@ namespace Lucene.Net.Util
 
                 // test ranges, including possible extension
                 int fromIndex, toIndex;
-                fromIndex = Random().Next(sz / 2);
-                toIndex = fromIndex + Random().Next(sz - fromIndex);
+                fromIndex = Random.Next(sz / 2);
+                toIndex = fromIndex + Random.Next(sz - fromIndex);
                 BitArray aa = new BitArray(a);
                 aa.Flip(fromIndex, toIndex);
                 FixedBitSet bb = b.Clone();
@@ -195,8 +195,8 @@ namespace Lucene.Net.Util
 
                 DoIterate(aa, bb, mode); // a problem here is from flip or doIterate
 
-                fromIndex = Random().Next(sz / 2);
-                toIndex = fromIndex + Random().Next(sz - fromIndex);
+                fromIndex = Random.Next(sz / 2);
+                toIndex = fromIndex + Random.Next(sz - fromIndex);
                 aa = new BitArray(a);
                 aa.Clear(fromIndex, toIndex);
                 bb = b.Clone();
@@ -206,8 +206,8 @@ namespace Lucene.Net.Util
 
                 DoPrevSetBit(aa, bb);
 
-                fromIndex = Random().Next(sz / 2);
-                toIndex = fromIndex + Random().Next(sz - fromIndex);
+                fromIndex = Random.Next(sz / 2);
+                toIndex = fromIndex + Random.Next(sz - fromIndex);
                 aa = new BitArray(a);
                 aa.Set(fromIndex, toIndex);
                 bb = b.Clone();
@@ -338,14 +338,14 @@ namespace Lucene.Net.Util
         public virtual void TestEquals()
         {
             // this test can't handle numBits==0:
-            int numBits = Random().Next(2000) + 1;
+            int numBits = Random.Next(2000) + 1;
             FixedBitSet b1 = new FixedBitSet(numBits);
             FixedBitSet b2 = new FixedBitSet(numBits);
             Assert.IsTrue(b1.Equals(b2));
             Assert.IsTrue(b2.Equals(b1));
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
             {
-                int idx = Random().Next(numBits);
+                int idx = Random.Next(numBits);
                 if (!b1.Get(idx))
                 {
                     b1.Set(idx);
@@ -365,14 +365,14 @@ namespace Lucene.Net.Util
         public virtual void TestHashCodeEquals()
         {
             // this test can't handle numBits==0:
-            int numBits = Random().Next(2000) + 1;
+            int numBits = Random.Next(2000) + 1;
             FixedBitSet b1 = new FixedBitSet(numBits);
             FixedBitSet b2 = new FixedBitSet(numBits);
             Assert.IsTrue(b1.Equals(b2));
             Assert.IsTrue(b2.Equals(b1));
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
             {
-                int idx = Random().Next(numBits);
+                int idx = Random.Next(numBits);
                 if (!b1.Get(idx))
                 {
                     b1.Set(idx);
@@ -409,13 +409,13 @@ namespace Lucene.Net.Util
         private FixedBitSet MakeFixedBitSet(int[] a, int numBits)
         {
             FixedBitSet bs;
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 int bits2words = FixedBitSet.Bits2words(numBits);
-                long[] words = new long[bits2words + Random().Next(100)];
+                long[] words = new long[bits2words + Random.Next(100)];
                 for (int i = bits2words; i < words.Length; i++)
                 {
-                    words[i] = Random().NextInt64();
+                    words[i] = Random.NextInt64();
                 }
                 bs = new FixedBitSet(words, numBits);
             }
@@ -473,14 +473,14 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestNextBitSet()
         {
-            int[] setBits = new int[0 + Random().Next(1000)];
+            int[] setBits = new int[0 + Random.Next(1000)];
             for (int i = 0; i < setBits.Length; i++)
             {
-                setBits[i] = Random().Next(setBits.Length);
+                setBits[i] = Random.Next(setBits.Length);
             }
-            CheckNextSetBitArray(setBits, setBits.Length + Random().Next(10));
+            CheckNextSetBitArray(setBits, setBits.Length + Random.Next(10));
 
-            CheckNextSetBitArray(new int[0], setBits.Length + Random().Next(10));
+            CheckNextSetBitArray(new int[0], setBits.Length + Random.Next(10));
         }
 
         [Test]

@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
         {
             base.BeforeClass();
 
-            Random random = Random();
+            Random random = Random;
             m_directory = NewDirectory();
             m_stopword = "" + RandomChar();
             CharacterRunAutomaton stopset = new CharacterRunAutomaton(BasicAutomata.MakeString(m_stopword));
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search
         {
             // TODO: zipf-like distribution
             StringBuilder sb = new StringBuilder();
-            int numTerms = Random().Next(15);
+            int numTerms = Random.Next(15);
             for (int i = 0; i < numTerms; i++)
             {
                 if (sb.Length > 0)
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
         /// </summary>
         internal static char RandomChar()
         {
-            return (char)TestUtil.NextInt32(Random(), 'a', 'z');
+            return (char)TestUtil.NextInt32(Random, 'a', 'z');
         }
 
         /// <summary>
@@ -200,10 +200,10 @@ namespace Lucene.Net.Search
         protected internal virtual void AssertSubsetOf(Query q1, Query q2, Filter filter)
         {
             // TRUNK ONLY: test both filter code paths
-            if (filter != null && Random().NextBoolean())
+            if (filter != null && Random.NextBoolean())
             {
-                q1 = new FilteredQuery(q1, filter, TestUtil.RandomFilterStrategy(Random()));
-                q2 = new FilteredQuery(q2, filter, TestUtil.RandomFilterStrategy(Random()));
+                q1 = new FilteredQuery(q1, filter, TestUtil.RandomFilterStrategy(Random));
+                q2 = new FilteredQuery(q2, filter, TestUtil.RandomFilterStrategy(Random));
                 filter = null;
             }
 

@@ -78,14 +78,14 @@ namespace Lucene.Net.Analysis.Phonetic
         [Test]
         public void TestRandom()
         {
-            int codeLen = TestUtil.NextInt32(Random(), 1, 8);
+            int codeLen = TestUtil.NextInt32(Random, 1, 8);
             Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new DoubleMetaphoneFilter(tokenizer, codeLen, false));
             });
 
-            CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
 
             Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Phonetic
                 return new TokenStreamComponents(tokenizer, new DoubleMetaphoneFilter(tokenizer, codeLen, true));
             });
 
-            CheckRandomData(Random(), b, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, b, 1000 * RANDOM_MULTIPLIER);
         }
 
         [Test]
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Phonetic
             Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new TokenStreamComponents(tokenizer, new DoubleMetaphoneFilter(tokenizer, 8, Random().nextBoolean()));
+                return new TokenStreamComponents(tokenizer, new DoubleMetaphoneFilter(tokenizer, 8, Random.nextBoolean()));
             });
 
             CheckOneTerm(a, "", "");

@@ -37,8 +37,8 @@ namespace Lucene.Net.Codecs.Compressing
 
         internal static byte[] RandomArray()
         {
-            int max = Random().NextBoolean() ? Random().Next(4) : Random().Next(256);
-            int length = Random().NextBoolean() ? Random().Next(20) : Random().Next(192 * 1024);
+            int max = Random.NextBoolean() ? Random.Next(4) : Random.Next(256);
+            int length = Random.NextBoolean() ? Random.Next(20) : Random.Next(192 * 1024);
             return RandomArray(length, max);
         }
 
@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.Compressing
             var arr = new byte[length];
             for (int i = 0; i < arr.Length; ++i)
             {
-                arr[i] = (byte)RandomInts.NextInt32Between(Random(), 0, max);
+                arr[i] = (byte)RandomInts.NextInt32Between(Random, 0, max);
             }
             return arr;
         }
@@ -95,8 +95,8 @@ namespace Lucene.Net.Codecs.Compressing
             for (int i = 0; i < iterations; ++i)
             {
                 var decompressed = RandomArray();
-                int off = Random().NextBoolean() ? 0 : TestUtil.NextInt32(Random(), 0, decompressed.Length);
-                int len = Random().NextBoolean() ? decompressed.Length - off : TestUtil.NextInt32(Random(), 0, decompressed.Length - off);
+                int off = Random.NextBoolean() ? 0 : TestUtil.NextInt32(Random, 0, decompressed.Length);
+                int len = Random.NextBoolean() ? decompressed.Length - off : TestUtil.NextInt32(Random, 0, decompressed.Length - off);
                 var compressed = Compress(decompressed, off, len);
                 var restored = Decompress(compressed, len);
                 Assert.AreEqual(Arrays.CopyOfRange(decompressed, off, off + len), restored);//was AssertArrayEquals
@@ -118,8 +118,8 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 else
                 {
-                    offset = Random().Next(decompressed.Length);
-                    length = Random().Next(decompressed.Length - offset);
+                    offset = Random.Next(decompressed.Length);
+                    length = Random.Next(decompressed.Length - offset);
                 }
                 var restored = Decompress(compressed, decompressed.Length, offset, length);
                 Assert.AreEqual(Arrays.CopyOfRange(decompressed, offset, offset + length), restored); //was AssertArrayEquals
@@ -148,13 +148,13 @@ namespace Lucene.Net.Codecs.Compressing
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestShortSequence()
         {
-            Test(new[] { (byte)Random().Next(256) });
+            Test(new[] { (byte)Random.Next(256) });
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestIncompressible()
         {
-            var decompressed = new byte[RandomInts.NextInt32Between(Random(), 20, 256)];
+            var decompressed = new byte[RandomInts.NextInt32Between(Random, 20, 256)];
             for (int i = 0; i < decompressed.Length; ++i)
             {
                 decompressed[i] = (byte)i;
@@ -165,8 +165,8 @@ namespace Lucene.Net.Codecs.Compressing
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestConstant()
         {
-            var decompressed = new byte[TestUtil.NextInt32(Random(), 1, 10000)];
-            Arrays.Fill(decompressed, (byte)Random().Next());
+            var decompressed = new byte[TestUtil.NextInt32(Random, 1, 10000)];
+            Arrays.Fill(decompressed, (byte)Random.Next());
             Test(decompressed);
         }
 

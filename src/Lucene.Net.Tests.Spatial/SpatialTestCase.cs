@@ -49,7 +49,7 @@ namespace Lucene.Net.Spatial
             base.SetUp();
 
             directory = NewDirectory();
-            Random random = Random();
+            Random random = Random;
             indexWriter = new RandomIndexWriter(random, directory, newIndexWriterConfig(random));
             indexReader = indexWriter.Reader;
             indexSearcher = NewSearcher(indexReader);

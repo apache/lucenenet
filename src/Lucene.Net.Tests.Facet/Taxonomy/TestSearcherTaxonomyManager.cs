@@ -74,14 +74,14 @@ namespace Lucene.Net.Facet.Taxonomy
                     while (true)
                     {
                         Document doc = new Document();
-                        int numPaths = TestUtil.NextInt32(Random(), 1, 5);
+                        int numPaths = TestUtil.NextInt32(Random, 1, 5);
                         for (int i = 0; i < numPaths; i++)
                         {
                             string path;
-                            if (paths.Count > 0 && Random().Next(5) != 4)
+                            if (paths.Count > 0 && Random.Next(5) != 4)
                             {
                                 // Use previous path
-                                path = paths[Random().Next(paths.Count)];
+                                path = paths[Random.Next(paths.Count)];
                             }
                             else
                             {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Facet.Taxonomy
                                 path = null;
                                 while (true)
                                 {
-                                    path = TestUtil.RandomRealisticUnicodeString(Random());
+                                    path = TestUtil.RandomRealisticUnicodeString(Random);
                                     if (path.Length != 0 && !seen.Contains(path))
                                     {
                                         seen.Add(path);
@@ -103,7 +103,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         try
                         {
                             w.AddDocument(config.Build(tw, doc));
-                            if (mgr != null && Random().NextDouble() < 0.02)
+                            if (mgr != null && Random.NextDouble() < 0.02)
                             {
                                 w.Commit();
                                 tw.Commit();
@@ -139,7 +139,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             // Don't allow tiny maxBufferedDocs; it can make this
             // test too slow:
             iwc.SetMaxBufferedDocs(Math.Max(500, iwc.MaxBufferedDocs));
@@ -233,7 +233,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     try
                     {
                         // Sleep for up to 20 msec:
-                        Thread.Sleep(Random().Next(20));
+                        Thread.Sleep(Random.Next(20));
 
                         if (VERBOSE)
                         {
@@ -261,7 +261,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             Store.Directory indexDir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
-            IndexWriter w = new IndexWriter(indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             var tw = new DirectoryTaxonomyWriter(taxoDir);
             // first empty commit
             w.Commit();
@@ -324,7 +324,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             var tw = new DirectoryTaxonomyWriter(taxoDir);
 
             Store.Directory taxoDir2 = NewDirectory();
@@ -354,7 +354,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             Store.Directory indexDir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
-            IndexWriter w = new IndexWriter(indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             var tw = new DirectoryTaxonomyWriter(taxoDir);
             w.Commit();
             tw.Commit();

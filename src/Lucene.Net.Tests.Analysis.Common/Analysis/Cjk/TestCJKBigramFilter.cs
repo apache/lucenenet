@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis.Cjk
         [Test]
         public virtual void TestRandomUnibiStrings()
         {
-            CheckRandomData(Random(), unibiAnalyzer, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, unibiAnalyzer, 1000 * RANDOM_MULTIPLIER);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace Lucene.Net.Analysis.Cjk
         [Test]
         public virtual void TestRandomUnibiHugeStrings()
         {
-            Random random = Random();
+            Random random = Random;
             CheckRandomData(random, unibiAnalyzer, 100 * RANDOM_MULTIPLIER, 8192);
         }
     }

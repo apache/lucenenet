@@ -72,10 +72,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -121,10 +121,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -170,10 +170,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -219,10 +219,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -277,10 +277,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -384,10 +384,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -434,10 +434,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -473,10 +473,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -511,10 +511,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -550,10 +550,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -589,10 +589,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -629,10 +629,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -731,10 +731,10 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             // use simpleanalyzer for more natural tokenization (else "test." is a token)
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);

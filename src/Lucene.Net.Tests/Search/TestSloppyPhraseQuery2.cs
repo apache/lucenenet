@@ -104,8 +104,8 @@ namespace Lucene.Net.Search
             Term t1 = RandomTerm();
             Term t2 = RandomTerm();
             Term t3 = RandomTerm();
-            int pos1 = 1 + Random().Next(3);
-            int pos2 = pos1 + 1 + Random().Next(3);
+            int pos1 = 1 + Random.Next(3);
+            int pos2 = pos1 + 1 + Random.Next(3);
             PhraseQuery q1 = new PhraseQuery();
             q1.Add(t1);
             q1.Add(t2, pos1);
@@ -190,8 +190,8 @@ namespace Lucene.Net.Search
         public virtual void TestRepetitiveIncreasingSloppiness3WithHoles()
         {
             Term t = RandomTerm();
-            int pos1 = 1 + Random().Next(3);
-            int pos2 = pos1 + 1 + Random().Next(3);
+            int pos1 = 1 + Random.Next(3);
+            int pos2 = pos1 + 1 + Random.Next(3);
             PhraseQuery q1 = new PhraseQuery();
             q1.Add(t);
             q1.Add(t, pos1);
@@ -213,7 +213,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestRandomIncreasingSloppiness()
         {
-            int seed = Random().Next();
+            int seed = Random.Next();
             MultiPhraseQuery q1 = RandomPhraseQuery(seed);
             MultiPhraseQuery q2 = RandomPhraseQuery(seed);
             for (int i = 0; i < 10; i++)

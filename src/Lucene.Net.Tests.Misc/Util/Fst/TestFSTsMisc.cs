@@ -49,13 +49,13 @@ namespace Lucene.Net.Util.Fst
         [Test]
         public void TestRandomWords()
         {
-            TestRandomWords(1000, LuceneTestCase.AtLeast(Random(), 2));
+            TestRandomWords(1000, LuceneTestCase.AtLeast(Random, 2));
             //TestRandomWords(100, 1);
         }
 
         private void TestRandomWords(int maxNumWords, int numIter)
         {
-            Random random = new Random(Random().Next());
+            Random random = new Random(Random.Next());
             for (int iter = 0; iter < numIter; iter++)
             {
                 if (VERBOSE)
@@ -95,18 +95,18 @@ namespace Lucene.Net.Util.Fst
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
                     // Sometimes go backwards
-                    long value = lastOutput + TestUtil.NextInt32(Random(), -100, 1000);
+                    long value = lastOutput + TestUtil.NextInt32(Random, -100, 1000);
                     while (value < 0)
                     {
-                        value = lastOutput + TestUtil.NextInt32(Random(), -100, 1000);
+                        value = lastOutput + TestUtil.NextInt32(Random, -100, 1000);
                     }
                     object output;
-                    if (Random().nextInt(5) == 3)
+                    if (Random.nextInt(5) == 3)
                     {
-                        long value2 = lastOutput + TestUtil.NextInt32(Random(), -100, 1000);
+                        long value2 = lastOutput + TestUtil.NextInt32(Random, -100, 1000);
                         while (value2 < 0)
                         {
-                            value2 = lastOutput + TestUtil.NextInt32(Random(), -100, 1000);
+                            value2 = lastOutput + TestUtil.NextInt32(Random, -100, 1000);
                         }
                         List<long> values = new List<long>();
                         values.Add(value);
@@ -119,7 +119,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     pairs.Add(new InputOutput<object>(terms[idx], output));
                 }
-                new FSTTesterHelper<object>(Random(), dir, inputMode, pairs, outputs, false).DoTest(false);
+                new FSTTesterHelper<object>(Random, dir, inputMode, pairs, outputs, false).DoTest(false);
 
                 // ListOfOutputs(PositiveIntOutputs), generally but not
                 // monotonically increasing
@@ -135,15 +135,15 @@ namespace Lucene.Net.Util.Fst
                     for (int idx = 0; idx < terms.Length; idx++)
                     {
 
-                        int outputCount = TestUtil.NextInt32(Random(), 1, 7);
+                        int outputCount = TestUtil.NextInt32(Random, 1, 7);
                         List<long?> values = new List<long?>();
                         for (int i = 0; i < outputCount; i++)
                         {
                             // Sometimes go backwards
-                            long value = lastOutput2 + TestUtil.NextInt32(Random(), -100, 1000);
+                            long value = lastOutput2 + TestUtil.NextInt32(Random, -100, 1000);
                             while (value < 0)
                             {
-                                value = lastOutput2 + TestUtil.NextInt32(Random(), -100, 1000);
+                                value = lastOutput2 + TestUtil.NextInt32(Random, -100, 1000);
                             }
                             values.Add(value);
                             lastOutput2 = value;
@@ -161,7 +161,7 @@ namespace Lucene.Net.Util.Fst
 
                         pairs2.Add(new InputOutput<object>(terms[idx], output));
                     }
-                    new FSTTester<object>(Random(), dir, inputMode, pairs2, outputs2, false).DoTest(false);
+                    new FSTTester<object>(Random, dir, inputMode, pairs2, outputs2, false).DoTest(false);
                 }
             }
         }

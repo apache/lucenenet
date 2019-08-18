@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
             // populate an index with 30 documents, this should be enough for the test.
             // The documents have no content - the test uses MatchAllDocsQuery().
             Dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, Similarity, TimeZone);
             for (int i = 0; i < 30; i++)
             {
                 writer.AddDocument(new Document());

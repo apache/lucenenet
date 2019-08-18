@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Util
             var ci = CharArrayIterator.NewWordInstance();
             for (var i = 0; i < 10000; i++)
             {
-                var text = TestUtil.RandomUnicodeString(Random()).toCharArray();
+                var text = TestUtil.RandomUnicodeString(Random).toCharArray();
                 ci.SetText(text, 0, text.Length);
                 Consume(bi, ci);
             }
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Util
             var ci = CharArrayIterator.NewSentenceInstance();
             for (var i = 0; i < 10000; i++)
             {
-                var text = TestUtil.RandomUnicodeString(Random()).toCharArray();
+                var text = TestUtil.RandomUnicodeString(Random).toCharArray();
                 ci.SetText(text, 0, text.Length);
                 Consume(bi, ci);
             }

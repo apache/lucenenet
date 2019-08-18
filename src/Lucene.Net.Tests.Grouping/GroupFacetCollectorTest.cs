@@ -43,12 +43,12 @@ namespace Lucene.Net.Search.Grouping
 
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-                Random(),
+                Random,
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
-                    new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+                    new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             bool canUseDV = !"Lucene3x".Equals(w.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
-            bool useDv = canUseDV && Random().nextBoolean();
+            bool useDv = canUseDV && Random.nextBoolean();
 
             // 0
             Document doc = new Document();
@@ -280,10 +280,10 @@ namespace Lucene.Net.Search.Grouping
 
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-                Random(),
+                Random,
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
-                    new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
+                    new MockAnalyzer(Random)).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
             bool useDv = false;
 
             // Cannot assert this since we use NoMergePolicy:
@@ -372,7 +372,7 @@ namespace Lucene.Net.Search.Grouping
         [Test]
         public void TestRandom()
         {
-            Random random = Random();
+            Random random = Random;
             int numberOfRuns = TestUtil.NextInt32(random, 3, 6);
             for (int indexIter = 0; indexIter < numberOfRuns; indexIter++)
             {
@@ -516,7 +516,7 @@ namespace Lucene.Net.Search.Grouping
 
         private IndexContext CreateIndexContext(bool multipleFacetValuesPerDocument)
         {
-            Random random = Random();
+            Random random = Random;
             int numDocs = TestUtil.NextInt32(random, 138, 1145) * RANDOM_MULTIPLIER;
             int numGroups = TestUtil.NextInt32(random, 1, numDocs / 4);
             int numFacets = TestUtil.NextInt32(random, 1, numDocs / 6);
@@ -840,7 +840,7 @@ namespace Lucene.Net.Search.Grouping
             BytesRef facetPrefixBR = facetPrefix == null ? null : new BytesRef(facetPrefix);
             // DocValues cannot be multi-valued:
             Debug.Assert(!multipleFacetsPerDocument || !groupField.EndsWith("_dv", StringComparison.Ordinal));
-            return TermGroupFacetCollector.CreateTermGroupFacetCollector(groupField, facetField, multipleFacetsPerDocument, facetPrefixBR, Random().nextInt(1024));
+            return TermGroupFacetCollector.CreateTermGroupFacetCollector(groupField, facetField, multipleFacetsPerDocument, facetPrefixBR, Random.nextInt(1024));
         }
 
         private string GetFromSet(ISet<string> set, int index)

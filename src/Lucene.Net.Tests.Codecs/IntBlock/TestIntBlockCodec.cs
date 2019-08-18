@@ -33,14 +33,14 @@ namespace Lucene.Net.Codecs.IntBlock
 
             Int32StreamFactory f = (new MockFixedInt32BlockPostingsFormat(128)).GetInt32Factory();
 
-            Int32IndexOutput @out = f.CreateOutput(dir, "test", NewIOContext(Random()));
+            Int32IndexOutput @out = f.CreateOutput(dir, "test", NewIOContext(Random));
             for (int i = 0; i < 11777; i++)
             {
                 @out.Write(i);
             }
             @out.Dispose();
 
-            Int32IndexInput @in = f.OpenInput(dir, "test", NewIOContext(Random()));
+            Int32IndexInput @in = f.OpenInput(dir, "test", NewIOContext(Random));
             Int32IndexInput.Reader r = @in.GetReader();
 
             for (int i = 0; i < 11777; i++)
@@ -58,12 +58,12 @@ namespace Lucene.Net.Codecs.IntBlock
             Directory dir = NewDirectory();
 
             Int32StreamFactory f = (new MockFixedInt32BlockPostingsFormat(128)).GetInt32Factory();
-            Int32IndexOutput @out = f.CreateOutput(dir, "test", NewIOContext(Random()));
+            Int32IndexOutput @out = f.CreateOutput(dir, "test", NewIOContext(Random));
 
             // write no ints
             @out.Dispose();
 
-            Int32IndexInput @in = f.OpenInput(dir, "test", NewIOContext(Random()));
+            Int32IndexInput @in = f.OpenInput(dir, "test", NewIOContext(Random));
             @in.GetReader();
             // read no ints
             @in.Dispose();

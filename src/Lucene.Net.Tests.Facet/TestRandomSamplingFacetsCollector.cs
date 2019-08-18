@@ -49,7 +49,7 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Util.LuceneTestCase.Random, dir, Similarity, TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Facet
                 doc.Add(new FacetField("iMod10", Convert.ToString(i % 10)));
                 writer.AddDocument(config.Build(taxoWriter, doc));
             }
-            Random random = Random();
+            Random random = Random;
 
             // NRT open
             IndexSearcher searcher = NewSearcher(writer.Reader);

@@ -52,14 +52,14 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestCustomLockFactory()
         {
-            Directory dir = new MockDirectoryWrapper(Random(), new RAMDirectory());
+            Directory dir = new MockDirectoryWrapper(Random, new RAMDirectory());
             MockLockFactory lf = new MockLockFactory(this);
             dir.SetLockFactory(lf);
 
             // Lock prefix should have been set:
             Assert.IsTrue(lf.LockPrefixSet, "lock prefix was not set by the RAMDirectory");
 
-            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             // add 100 documents (so that commit lock is used)
             for (int i = 0; i < 100; i++)
@@ -86,19 +86,19 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestRAMDirectoryNoLocking()
         {
-            MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new RAMDirectory());
+            MockDirectoryWrapper dir = new MockDirectoryWrapper(Random, new RAMDirectory());
             dir.SetLockFactory(NoLockFactory.GetNoLockFactory());
             dir.WrapLockFactory = false; // we are gonna explicitly test we get this back
             Assert.IsTrue(typeof(NoLockFactory).IsInstanceOfType(dir.LockFactory), "RAMDirectory.setLockFactory did not take");
 
-            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer.Commit(); // required so the second open succeed
             // Create a 2nd IndexWriter.  this is normally not allowed but it should run through since we're not
             // using any locks:
             IndexWriter writer2 = null;
             try
             {
-                writer2 = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
+                writer2 = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
             }
             catch (Exception e)
             {
@@ -122,13 +122,13 @@ namespace Lucene.Net.Store
 
             Assert.IsTrue(typeof(SingleInstanceLockFactory).IsInstanceOfType(dir.LockFactory), "RAMDirectory did not use correct LockFactory: got " + dir.LockFactory);
 
-            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             // Create a 2nd IndexWriter.  this should fail:
             IndexWriter writer2 = null;
             try
             {
-                writer2 = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
+                writer2 = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
                 Assert.Fail("Should have hit an IOException with two IndexWriters on default SingleInstanceLockFactory");
             }
 #pragma warning disable 168
@@ -176,7 +176,7 @@ namespace Lucene.Net.Store
             Directory dir = NewFSDirectory(indexDir, lockFactory);
 
             // First create a 1 doc index:
-            IndexWriter w = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.CREATE));
+            IndexWriter w = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.CREATE));
             AddDoc(w);
             w.Dispose();
 
@@ -311,7 +311,7 @@ namespace Lucene.Net.Store
                 {
                     try
                     {
-                        writer = new IndexWriter(Dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
+                        writer = new IndexWriter(Dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
                     }
                     catch (IOException e)
                     {

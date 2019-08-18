@@ -45,7 +45,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestForward()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("baz")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -76,7 +76,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("foo")));
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("bar")));
@@ -108,7 +108,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMissingFirst()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("baz")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -146,7 +146,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("baz")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -184,7 +184,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestSingleton()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("baz")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));

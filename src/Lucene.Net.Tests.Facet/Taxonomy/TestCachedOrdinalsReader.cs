@@ -43,7 +43,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // LUCENE-5303: OrdinalsCache used the ThreadLocal BinaryDV instead of reader.getCoreCacheKey().
             Store.Directory indexDir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             IndexWriter writer = new IndexWriter(indexDir, conf);
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
             FacetsConfig config = new FacetsConfig();

@@ -314,7 +314,7 @@ namespace Lucene.Net.Replicator
             sourceDirFactory = new SourceDirectoryFactoryAnonymousInnerClass(this, @in, failures);
             handler = new IndexAndTaxonomyReplicationHandler(handlerIndexDir, handlerTaxoDir, () =>
             {
-                if (Random().NextDouble() < 0.2 && failures.Get() > 0)
+                if (Random.NextDouble() < 0.2 && failures.Get() > 0)
                     throw new Exception("random exception from callback");
                 return null;
             });
@@ -363,9 +363,9 @@ namespace Lucene.Net.Replicator
             public Directory GetDirectory(string sessionId, string source)
             {
                 Directory dir = @in.GetDirectory(sessionId, source);
-                if (Random().nextBoolean() && failures.Get() > 0)
+                if (Random.nextBoolean() && failures.Get() > 0)
                 { // client should fail, return wrapped dir
-                    MockDirectoryWrapper mdw = new MockDirectoryWrapper(Random(), dir);
+                    MockDirectoryWrapper mdw = new MockDirectoryWrapper(Random, dir);
                     mdw.RandomIOExceptionRateOnOpen = clientExRate;
                     mdw.MaxSizeInBytes = clientMaxSize;
                     mdw.RandomIOExceptionRate = clientExRate;
@@ -375,9 +375,9 @@ namespace Lucene.Net.Replicator
                     return mdw;
                 }
 
-                if (failures.Get() > 0 && Random().nextBoolean())
+                if (failures.Get() > 0 && Random.nextBoolean())
                 { // handler should fail
-                    if (Random().nextBoolean())
+                    if (Random.nextBoolean())
                     { // index dir fail
                         test.handlerIndexDir.MaxSizeInBytes = (handlerIndexMaxSize);
                         test.handlerIndexDir.RandomIOExceptionRate = (handlerIndexExRate);

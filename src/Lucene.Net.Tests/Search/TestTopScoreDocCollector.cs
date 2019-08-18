@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
         public virtual void TestOutOfOrderCollection()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             for (int i = 0; i < 10; i++)
             {
                 writer.AddDocument(new Document());

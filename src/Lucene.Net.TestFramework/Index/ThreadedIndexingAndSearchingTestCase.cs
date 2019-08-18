@@ -181,19 +181,19 @@ namespace Lucene.Net.Index
                     {
                         // Occasional longish pause if running
                         // nightly
-                        if (LuceneTestCase.TEST_NIGHTLY && Random().Next(6) == 3)
+                        if (LuceneTestCase.TEST_NIGHTLY && Random.Next(6) == 3)
                         {
                             if (VERBOSE)
                             {
                                 Console.WriteLine(Thread.CurrentThread.Name + ": now long sleep");
                             }
-                            Thread.Sleep(TestUtil.NextInt32(Random(), 50, 500));
+                            Thread.Sleep(TestUtil.NextInt32(Random, 50, 500));
                         }
 
                         // Rate limit ingest rate:
-                        if (Random().Next(7) == 5)
+                        if (Random.Next(7) == 5)
                         {
-                            Thread.Sleep(TestUtil.NextInt32(Random(), 1, 10));
+                            Thread.Sleep(TestUtil.NextInt32(Random, 1, 10));
                             if (VERBOSE)
                             {
                                 Console.WriteLine(Thread.CurrentThread.Name + ": done sleep");
@@ -208,9 +208,9 @@ namespace Lucene.Net.Index
 
                         // Maybe add randomly named field
                         string addedField;
-                        if (Random().NextBoolean())
+                        if (Random.NextBoolean())
                         {
-                            addedField = "extra" + Random().Next(40);
+                            addedField = "extra" + Random.Next(40);
                             doc.Add(outerInstance.NewTextField(addedField, "a random field", Field.Store.YES));
                         }
                         else
@@ -218,16 +218,16 @@ namespace Lucene.Net.Index
                             addedField = null;
                         }
 
-                        if (Random().NextBoolean())
+                        if (Random.NextBoolean())
                         {
-                            if (Random().NextBoolean())
+                            if (Random.NextBoolean())
                             {
                                 // Add/update doc block:
                                 string packID;
                                 SubDocs delSubDocs;
-                                if (toDeleteSubDocs.Count > 0 && Random().NextBoolean())
+                                if (toDeleteSubDocs.Count > 0 && Random.NextBoolean())
                                 {
-                                    delSubDocs = toDeleteSubDocs[Random().Next(toDeleteSubDocs.Count)];
+                                    delSubDocs = toDeleteSubDocs[Random.Next(toDeleteSubDocs.Count)];
                                     Debug.Assert(!delSubDocs.Deleted);
                                     toDeleteSubDocs.Remove(delSubDocs);
                                     // Update doc block, replacing prior packID
@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
                                 docsList.Add(TestUtil.CloneDocument(doc));
                                 docIDs.Add(doc.Get("docid"));
 
-                                int maxDocCount = TestUtil.NextInt32(Random(), 1, 10);
+                                int maxDocCount = TestUtil.NextInt32(Random, 1, 10);
                                 while (docsList.Count < maxDocCount)
                                 {
                                     doc = docs.NextDoc();
@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
                                 }
                                 doc.RemoveField("packID");
 
-                                if (Random().Next(5) == 2)
+                                if (Random.Next(5) == 2)
                                 {
                                     if (VERBOSE)
                                     {
@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
                                 outerInstance.AddDocument(new Term("docid", docid), doc);
                                 outerInstance.m_addCount.GetAndIncrement();
 
-                                if (Random().Next(5) == 3)
+                                if (Random.Next(5) == 3)
                                 {
                                     if (VERBOSE)
                                     {
@@ -329,7 +329,7 @@ namespace Lucene.Net.Index
                             outerInstance.UpdateDocument(new Term("docid", docid), doc);
                             outerInstance.m_addCount.GetAndIncrement();
 
-                            if (Random().Next(5) == 3)
+                            if (Random.Next(5) == 3)
                             {
                                 if (VERBOSE)
                                 {
@@ -339,7 +339,7 @@ namespace Lucene.Net.Index
                             }
                         }
 
-                        if (Random().Next(30) == 17)
+                        if (Random.Next(30) == 17)
                         {
                             if (VERBOSE)
                             {
@@ -401,7 +401,7 @@ namespace Lucene.Net.Index
 
         protected internal virtual void RunSearchThreads(long stopTime)
         {
-            int numThreads = TestUtil.NextInt32(Random(), 1, 5);
+            int numThreads = TestUtil.NextInt32(Random, 1, 5);
             ThreadClass[] searchThreads = new ThreadClass[numThreads];
             AtomicInt32 totHits = new AtomicInt32();
 
@@ -498,7 +498,7 @@ namespace Lucene.Net.Index
                                 else
                                 {
                                     trigger = totTermCount.Get() / 30;
-                                    shift = Random().Next(trigger);
+                                    shift = Random.Next(trigger);
                                 }
                                 while (Environment.TickCount < stopTimeMS)
                                 {
@@ -561,7 +561,7 @@ namespace Lucene.Net.Index
 
             long t0 = Environment.TickCount;
 
-            Random random = new Random(Random().Next());
+            Random random = new Random(Random.Next());
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
             DirectoryInfo tempDir = CreateTempDir(testName);
             m_dir = GetDirectory(NewMockFSDirectory(tempDir)); // some subclasses rely on this being MDW
@@ -569,8 +569,8 @@ namespace Lucene.Net.Index
             {
                 ((BaseDirectoryWrapper)m_dir).CheckIndexOnDispose = false; // don't double-checkIndex, we do it ourselves.
             }
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            MockAnalyzer analyzer = new MockAnalyzer(LuceneTestCase.Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetInfoStream(new FailOnNonBulkMergesInfoStream());
 
             if (LuceneTestCase.TEST_NIGHTLY)
@@ -602,11 +602,11 @@ namespace Lucene.Net.Index
             m_writer = new IndexWriter(m_dir, conf);
             TestUtil.ReduceOpenFiles(m_writer);
 
-            TaskScheduler es = Random().NextBoolean() ? null : TaskScheduler.Default;
+            TaskScheduler es = LuceneTestCase.Random.NextBoolean() ? null : TaskScheduler.Default;
 
             DoAfterWriter(es);
 
-            int NUM_INDEX_THREADS = TestUtil.NextInt32(Random(), 2, 4);
+            int NUM_INDEX_THREADS = TestUtil.NextInt32(LuceneTestCase.Random, 2, 4);
 
             int RUN_TIME_SEC = LuceneTestCase.TEST_NIGHTLY ? 300 : RANDOM_MULTIPLIER;
 

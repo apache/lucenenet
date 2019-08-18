@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public virtual void testLatin1Accents()
         {
             TokenStream stream = new MockTokenizer(new StringReader("Des mot clés À LA CHAÎNE À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï Ĳ Ð Ñ" + " Ò Ó Ô Õ Ö Ø Œ Þ Ù Ú Û Ü Ý Ÿ à á â ã ä å æ ç è é ê ë ì í î ï ĳ" + " ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ ﬁ ﬂ"), MockTokenizer.WHITESPACE, false);
-            ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream, Random().nextBoolean());
+            ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream, Random.nextBoolean());
 
             ICharTermAttribute termAtt = filter.GetAttribute<ICharTermAttribute>();
             filter.Reset();
@@ -212,7 +212,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
 
             TokenStream stream = new MockTokenizer(new StringReader(inputText.ToString()), MockTokenizer.WHITESPACE, false);
-            ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream, Random().nextBoolean());
+            ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream, Random.nextBoolean());
             ICharTermAttribute termAtt = filter.GetAttribute<ICharTermAttribute>();
             IEnumerator<string> unfoldedIter = expectedUnfoldedTokens.GetEnumerator();
             IEnumerator<string> foldedIter = expectedFoldedTokens.GetEnumerator();
@@ -231,7 +231,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public virtual void testRandomStrings()
         {
             Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -246,7 +246,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new ASCIIFoldingFilter(tokenizer, Random().nextBoolean()));
+                return new TokenStreamComponents(tokenizer, new ASCIIFoldingFilter(tokenizer, Random.nextBoolean()));
             }
         }
 
@@ -269,7 +269,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new TokenStreamComponents(tokenizer, new ASCIIFoldingFilter(tokenizer, Random().nextBoolean()));
+                return new TokenStreamComponents(tokenizer, new ASCIIFoldingFilter(tokenizer, Random.nextBoolean()));
             }
         }
     }

@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Sinks
         public virtual void TestEndOffsetPositionWithTeeSinkTokenFilter()
         {
             Store.Directory dir = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             Document doc = new Document();
             TokenStream tokenStream = analyzer.GetTokenStream("field", "abcd   ");

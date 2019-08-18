@@ -79,7 +79,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             base.BeforeClass();
 
-            ANALYZER = new MockAnalyzer(Random());
+            ANALYZER = new MockAnalyzer(Random);
 
             qp = new StandardQueryParser(ANALYZER);
 
@@ -98,10 +98,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 }
 
                 dateFormatSanityCheckPass = true;
-                LOCALE = RandomCulture(Random());
-                TIMEZONE = RandomTimeZone(Random());
-                DATE_STYLE = randomDateStyle(Random());
-                TIME_STYLE = randomDateStyle(Random());
+                LOCALE = RandomCulture(Random);
+                TIMEZONE = RandomTimeZone(Random);
+                DATE_STYLE = randomDateStyle(Random);
+                TIME_STYLE = randomDateStyle(Random);
 
                 //// assumes localized date pattern will have at least year, month, day,
                 //// hour, minute
@@ -129,7 +129,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
                 do
                 {
-                    randomDate = Random().nextLong();
+                    randomDate = Random.nextLong();
 
                     // prune date value so it doesn't pass in insane values to some
                     // calendars.
@@ -165,16 +165,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             int randomInt;
             float randomFloat;
 
-            while ((randomLong = Convert.ToInt64(NormalizeNumber(Math.Abs(Random().nextLong()))
+            while ((randomLong = Convert.ToInt64(NormalizeNumber(Math.Abs(Random.nextLong()))
                 )) == 0L)
                 ;
-            while ((randomDouble = Convert.ToDouble(NormalizeNumber(Math.Abs(Random().NextDouble()))
+            while ((randomDouble = Convert.ToDouble(NormalizeNumber(Math.Abs(Random.NextDouble()))
                 )) == 0.0)
                 ;
-            while ((randomFloat = Convert.ToSingle(NormalizeNumber(Math.Abs(Random().nextFloat()))
+            while ((randomFloat = Convert.ToSingle(NormalizeNumber(Math.Abs(Random.nextFloat()))
                 )) == 0.0f)
                 ;
-            while ((randomInt = Convert.ToInt32(NormalizeNumber(Math.Abs(Random().nextInt())))) == 0)
+            while ((randomInt = Convert.ToInt32(NormalizeNumber(Math.Abs(Random.nextInt())))) == 0)
                 ;
 
             randomNumberMap.Put(NumericType.INT64.ToString(), randomLong);
@@ -186,9 +186,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             RANDOM_NUMBER_MAP = Collections.UnmodifiableMap(randomNumberMap);
 
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory,
-                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-                    .SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 50, 1000))
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                    .SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000))
                     .SetMergePolicy(NewLogMergePolicy()));
 
             Document doc = new Document();

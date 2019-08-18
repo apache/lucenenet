@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
         protected internal override Directory GetDirectory(Directory @in)
         {
             // Randomly swap in NRTCachingDir
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 if (VERBOSE)
                 {
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
             long gen = genWriter.UpdateDocuments(id, docs);
 
             // Randomly verify the update "took":
-            if (Random().Next(20) == 2)
+            if (Random.Next(20) == 2)
             {
                 if (VERBOSE)
                 {
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
         {
             long gen = genWriter.AddDocuments(docs);
             // Randomly verify the add "took":
-            if (Random().Next(20) == 2)
+            if (Random.Next(20) == 2)
             {
                 if (VERBOSE)
                 {
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
             long gen = genWriter.AddDocument(doc);
 
             // Randomly verify the add "took":
-            if (Random().Next(20) == 2)
+            if (Random.Next(20) == 2)
             {
                 if (VERBOSE)
                 {
@@ -205,7 +205,7 @@ namespace Lucene.Net.Search
         {
             long gen = genWriter.UpdateDocument(id, doc);
             // Randomly verify the udpate "took":
-            if (Random().Next(20) == 2)
+            if (Random.Next(20) == 2)
             {
                 if (VERBOSE)
                 {
@@ -233,7 +233,7 @@ namespace Lucene.Net.Search
         {
             long gen = genWriter.DeleteDocuments(id);
             // randomly verify the delete "took":
-            if (Random().Next(20) == 7)
+            if (Random.Next(20) == 7)
             {
                 if (VERBOSE)
                 {
@@ -259,8 +259,8 @@ namespace Lucene.Net.Search
 
         protected internal override void DoAfterWriter(TaskScheduler es)
         {
-            double minReopenSec = 0.01 + 0.05 * Random().NextDouble();
-            double maxReopenSec = minReopenSec * (1.0 + 10 * Random().NextDouble());
+            double minReopenSec = 0.01 + 0.05 * Random.NextDouble();
+            double maxReopenSec = minReopenSec * (1.0 + 10 * Random.NextDouble());
 
             if (VERBOSE)
             {
@@ -343,7 +343,7 @@ namespace Lucene.Net.Search
                 // Test doesn't assert deletions until the end, so we
                 // can randomize whether dels must be applied
                 SearcherManager nrt;
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     nrt = nrtDeletes;
                 }
@@ -384,8 +384,8 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestThreadStarvationNoDeleteNRTReader()
         {
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            conf.SetMergePolicy(Random().NextBoolean() ? NoMergePolicy.COMPOUND_FILES : NoMergePolicy.NO_COMPOUND_FILES);
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            conf.SetMergePolicy(Random.NextBoolean() ? NoMergePolicy.COMPOUND_FILES : NoMergePolicy.NO_COMPOUND_FILES);
             Directory d = NewDirectory();
             CountdownEvent latch = new CountdownEvent(1);
             CountdownEvent signal = new CountdownEvent(1);
@@ -550,7 +550,7 @@ namespace Lucene.Net.Search
         public virtual void TestEvilSearcherFactory()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             w.Commit();
 
             IndexReader other = DirectoryReader.Open(dir);
@@ -648,7 +648,7 @@ namespace Lucene.Net.Search
             StringBuilder builder = new StringBuilder(2048);
             for (int i = 0; i < 2048; i++)
             {
-                builder.Append(chars[Random().Next(chars.Length)]);
+                builder.Append(chars[Random.Next(chars.Length)]);
             }
             string content = builder.ToString();
 
@@ -658,7 +658,7 @@ namespace Lucene.Net.Search
 #pragma warning disable 612, 618
                 Version.LUCENE_46,
 #pragma warning restore 612, 618
-                new MockAnalyzer(Random()));
+                new MockAnalyzer(Random));
             config.SetIndexDeletionPolicy(sdp);
             config.SetOpenMode(OpenMode.CREATE_OR_APPEND);
             IndexWriter iw = new IndexWriter(dir, config);

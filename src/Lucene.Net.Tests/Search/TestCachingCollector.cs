@@ -215,7 +215,7 @@ namespace Lucene.Net.Search
             // caching would terminate even if a smaller length would suffice.
 
             // set RAM limit enough for 150 docs + random(10000)
-            int numDocs = Random().Next(10000) + 150;
+            int numDocs = Random.Next(10000) + 150;
             foreach (bool cacheScores in new bool[] { false, true })
             {
                 int bytesPerDoc = cacheScores ? 8 : 4;

@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
         {
             IndexWriter writer = null;
 
-            writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             // ADD 100 documents with term : aaa
             // add 100 documents with terms: aaa bbb
@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
             VerifyDocFreq();
 
             // merge segments
-            writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
             writer.Dispose();
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestPrevTermAtEnd()
         {
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())));
+            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())));
             AddDoc(writer, "aaa bbb");
             writer.Dispose();
             SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(Dir));

@@ -46,16 +46,16 @@ namespace Lucene.Net.Search
         public virtual void TestMultiValuedNRQ()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 50, 1000)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
             const string format = "D11";
 
             int num = AtLeast(500);
             for (int l = 0; l < num; l++)
             {
                 Document doc = new Document();
-                for (int m = 0, c = Random().Next(10); m <= c; m++)
+                for (int m = 0, c = Random.Next(10); m <= c; m++)
                 {
-                    int value = Random().Next(int.MaxValue);
+                    int value = Random.Next(int.MaxValue);
                     doc.Add(NewStringField("asc", value.ToString(format), Field.Store.NO));
                     doc.Add(new Int32Field("trie", value, Field.Store.NO));
                 }
@@ -68,8 +68,8 @@ namespace Lucene.Net.Search
             num = AtLeast(50);
             for (int i = 0; i < num; i++)
             {
-                int lower = Random().Next(int.MaxValue);
-                int upper = Random().Next(int.MaxValue);
+                int lower = Random.Next(int.MaxValue);
+                int upper = Random.Next(int.MaxValue);
                 if (lower > upper)
                 {
                     int a = lower;

@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
             mergePolicy.MaxCFSSegmentSizeMB = double.PositiveInfinity;
             IndexWriter iw = new IndexWriter(
                 fsDir,
-                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).
+                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).
                     SetOpenMode(OpenMode.CREATE).
                     SetMergePolicy(mergePolicy)
             );

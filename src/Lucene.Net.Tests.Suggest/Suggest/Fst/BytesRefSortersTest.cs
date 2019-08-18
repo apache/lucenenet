@@ -41,8 +41,8 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             for (int i = 0; i < 100; i++)
             {
-                byte[] current = new byte[Random().nextInt(256)];
-                Random().NextBytes(current);
+                byte[] current = new byte[Random.nextInt(256)];
+                Random.NextBytes(current);
                 sorter.Add(new BytesRef(current));
             }
 

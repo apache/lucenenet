@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Highlight
             String TEXT = "the fox jumped";
             Directory directory = NewDirectory();
             IndexWriter indexWriter = new IndexWriter(directory,
-               NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+               NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             try
             {
                 Document document = new Document();
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search.Highlight
             String TEXT = "the fox jumped";
             Directory directory = NewDirectory();
             IndexWriter indexWriter = new IndexWriter(directory,
-               NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+               NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             try
             {
                 Document document = new Document();
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search.Highlight
             String TEXT = "the fox did not jump";
             Directory directory = NewDirectory();
             IndexWriter indexWriter = new IndexWriter(directory,
-               NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+               NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             try
             {
                 Document document = new Document();
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search.Highlight
             String TEXT = "the fox did not jump";
             Directory directory = NewDirectory();
             IndexWriter indexWriter = new IndexWriter(directory,
-               NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+               NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             try
             {
                 Document document = new Document();
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search.Highlight
             String TEXT = "the fox did not jump";
             Directory directory = NewDirectory();
             IndexWriter indexWriter = new IndexWriter(directory,
-               NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+               NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             try
             {
                 Document document = new Document();

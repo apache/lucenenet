@@ -75,7 +75,7 @@ namespace Lucene.Net.Util.Automaton
 
             for (int iter = 0; iter < 100 * RANDOM_MULTIPLIER; iter++)
             {
-                string s = Random().Next(10) == 1 ? terms[Random().Next(terms.Length)] : RandomString();
+                string s = Random.Next(10) == 1 ? terms[Random.Next(terms.Length)] : RandomString();
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: floor(" + s + ")");
@@ -127,7 +127,7 @@ namespace Lucene.Net.Util.Automaton
         private string RandomString()
         {
             // return TestUtil.randomSimpleString(random);
-            return TestUtil.RandomRealisticUnicodeString(Random());
+            return TestUtil.RandomRealisticUnicodeString(Random);
         }
 
         [Test]

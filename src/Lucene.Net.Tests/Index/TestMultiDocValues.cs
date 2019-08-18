@@ -50,16 +50,16 @@ namespace Lucene.Net.Index
             Field field = new NumericDocValuesField("numbers", 0);
             doc.Add(field);
 
-            IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+            IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, null);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             int numDocs = AtLeast(500);
             for (int i = 0; i < numDocs; i++)
             {
-                field.SetInt64Value(Random().NextInt64());
+                field.SetInt64Value(Random.NextInt64());
                 iw.AddDocument(doc);
-                if (Random().Next(17) == 0)
+                if (Random.Next(17) == 0)
                 {
                     iw.Commit();
                 }
@@ -90,16 +90,16 @@ namespace Lucene.Net.Index
             Field field = new BinaryDocValuesField("bytes", @ref);
             doc.Add(field);
 
-            IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+            IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, null);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             int numDocs = AtLeast(500);
             for (int i = 0; i < numDocs; i++)
             {
-                @ref.CopyChars(TestUtil.RandomUnicodeString(Random()));
+                @ref.CopyChars(TestUtil.RandomUnicodeString(Random));
                 iw.AddDocument(doc);
-                if (Random().Next(17) == 0)
+                if (Random.Next(17) == 0)
                 {
                     iw.Commit();
                 }
@@ -134,20 +134,20 @@ namespace Lucene.Net.Index
             Field field = new SortedDocValuesField("bytes", @ref);
             doc.Add(field);
 
-            IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+            IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, null);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             int numDocs = AtLeast(500);
             for (int i = 0; i < numDocs; i++)
             {
-                @ref.CopyChars(TestUtil.RandomUnicodeString(Random()));
-                if (DefaultCodecSupportsDocsWithField && Random().Next(7) == 0)
+                @ref.CopyChars(TestUtil.RandomUnicodeString(Random));
+                if (DefaultCodecSupportsDocsWithField && Random.Next(7) == 0)
                 {
                     iw.AddDocument(new Document());
                 }
                 iw.AddDocument(doc);
-                if (Random().Next(17) == 0)
+                if (Random.Next(17) == 0)
                 {
                     iw.Commit();
                 }
@@ -187,16 +187,16 @@ namespace Lucene.Net.Index
             Field field = new SortedDocValuesField("bytes", @ref);
             doc.Add(field);
 
-            IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+            IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, null);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             int numDocs = AtLeast(500);
             for (int i = 0; i < numDocs; i++)
             {
-                @ref.CopyChars(TestUtil.RandomSimpleString(Random(), 2));
+                @ref.CopyChars(TestUtil.RandomSimpleString(Random, 2));
                 iw.AddDocument(doc);
-                if (Random().Next(17) == 0)
+                if (Random.Next(17) == 0)
                 {
                     iw.Commit();
                 }
@@ -232,21 +232,21 @@ namespace Lucene.Net.Index
             AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
-            IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+            IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, null);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             int numDocs = AtLeast(500);
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                int numValues = Random().Next(5);
+                int numValues = Random.Next(5);
                 for (int j = 0; j < numValues; j++)
                 {
-                    doc.Add(new SortedSetDocValuesField("bytes", new BytesRef(TestUtil.RandomUnicodeString(Random()))));
+                    doc.Add(new SortedSetDocValuesField("bytes", new BytesRef(TestUtil.RandomUnicodeString(Random))));
                 }
                 iw.AddDocument(doc);
-                if (Random().Next(17) == 0)
+                if (Random.Next(17) == 0)
                 {
                     iw.Commit();
                 }
@@ -309,21 +309,21 @@ namespace Lucene.Net.Index
             AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
-            IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+            IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, null);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             int numDocs = AtLeast(500);
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                int numValues = Random().Next(5);
+                int numValues = Random.Next(5);
                 for (int j = 0; j < numValues; j++)
                 {
-                    doc.Add(new SortedSetDocValuesField("bytes", new BytesRef(TestUtil.RandomSimpleString(Random(), 2))));
+                    doc.Add(new SortedSetDocValuesField("bytes", new BytesRef(TestUtil.RandomSimpleString(Random, 2))));
                 }
                 iw.AddDocument(doc);
-                if (Random().Next(17) == 0)
+                if (Random.Next(17) == 0)
                 {
                     iw.Commit();
                 }
@@ -385,21 +385,21 @@ namespace Lucene.Net.Index
             AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField);
             Directory dir = NewDirectory();
 
-            IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
+            IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, null);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             int numDocs = AtLeast(500);
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                if (Random().Next(4) >= 0)
+                if (Random.Next(4) >= 0)
                 {
-                    doc.Add(new NumericDocValuesField("numbers", Random().NextInt64()));
+                    doc.Add(new NumericDocValuesField("numbers", Random.NextInt64()));
                 }
-                doc.Add(new NumericDocValuesField("numbersAlways", Random().NextInt64()));
+                doc.Add(new NumericDocValuesField("numbersAlways", Random.NextInt64()));
                 iw.AddDocument(doc);
-                if (Random().Next(17) == 0)
+                if (Random.Next(17) == 0)
                 {
                     iw.Commit();
                 }

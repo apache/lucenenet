@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
         public virtual void TestDocBoost_Mem()
         {
             Directory store = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), store, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, store, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
 
             Field f1 = NewTextField("field", "word", Field.Store.YES);
             Field f2 = NewTextField("field", "word", Field.Store.YES);

@@ -31,13 +31,13 @@ namespace Lucene.Net.Search.Suggest
         {
             List<string> entryValues = new List<string>();
             StringBuilder sb = new StringBuilder();
-            string term = TestUtil.RandomSimpleString(Random(), 1, 300);
+            string term = TestUtil.RandomSimpleString(Random, 1, 300);
             sb.Append(term);
             entryValues.Add(term);
             if (hasWeight)
             {
                 sb.Append(fieldDelimiter);
-                long weight = TestUtil.NextInt64(Random(), long.MinValue, long.MaxValue);
+                long weight = TestUtil.NextInt64(Random, long.MinValue, long.MaxValue);
                 // LUCENENET: We need to explicitly use invariant culture here,
                 // as that is what is expected in Java
                 sb.Append(weight.ToString(CultureInfo.InvariantCulture));
@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Suggest
             if (hasPayload)
             {
                 sb.Append(fieldDelimiter);
-                string payload = TestUtil.RandomSimpleString(Random(), 1, 300);
+                string payload = TestUtil.RandomSimpleString(Random, 1, 300);
                 sb.Append(payload);
                 entryValues.Add(payload);
             }
@@ -63,9 +63,9 @@ namespace Lucene.Net.Search.Suggest
             {
                 if (hasPayloads)
                 {
-                    hasPayload = (i == 0) ? true : Random().nextBoolean();
+                    hasPayload = (i == 0) ? true : Random.nextBoolean();
                 }
-                KeyValuePair<List<string>, string> entrySet = GenerateFileEntry(fieldDelimiter, (!hasPayloads && hasWeights) ? Random().nextBoolean() : hasWeights, hasPayload);
+                KeyValuePair<List<string>, string> entrySet = GenerateFileEntry(fieldDelimiter, (!hasPayloads && hasWeights) ? Random.nextBoolean() : hasWeights, hasPayload);
                 entries.Add(entrySet.Key);
                 sb.Append(entrySet.Value);
             }

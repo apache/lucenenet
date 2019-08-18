@@ -41,20 +41,20 @@ namespace Lucene.Net.Codecs.Compressing
     {
         protected override Codec GetCodec()
         {
-            return CompressingCodec.RandomInstance(Random());
+            return CompressingCodec.RandomInstance(Random);
         }
 
         [Test]
         public virtual void TestDeletePartiallyWrittenFilesIfAbort()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random(), 2, 30));
-            iwConf.SetCodec(CompressingCodec.RandomInstance(Random()));
+            IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random, 2, 30));
+            iwConf.SetCodec(CompressingCodec.RandomInstance(Random));
             // disable CFS because this test checks file names
             iwConf.SetMergePolicy(NewLogMergePolicy(false));
             iwConf.SetUseCompoundFile(false);
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConf);
 
             Document validDoc = new Document();
             validDoc.Add(new Int32Field("id", 0, Field.Store.YES));

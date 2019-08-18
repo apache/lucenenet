@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
                 for (int j = 0; j < 10; j++)
                 {
                     Documents.Document d = new Documents.Document();
-                    int n = Random().Next();
+                    int n = Random.Next();
                     d.Add(NewStringFieldFunc("id", Convert.ToString(NextID++), Field.Store.YES));
                     d.Add(NewTextFieldFunc("contents", English.Int32ToEnglish(n), Field.Store.NO));
                     Writer.AddDocument(d);
@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
 
         public virtual void RunStressTest(Directory directory, IConcurrentMergeScheduler mergeScheduler)
         {
-            IndexWriter modifier = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(10).SetMergeScheduler(mergeScheduler));
+            IndexWriter modifier = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(10).SetMergeScheduler(mergeScheduler));
             modifier.Commit();
 
             TimedThread[] threads = new TimedThread[4];

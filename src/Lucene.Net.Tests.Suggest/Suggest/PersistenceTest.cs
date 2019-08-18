@@ -84,7 +84,7 @@ namespace Lucene.Net.Search.Suggest
             lookup.Load(new FileStream(Path.Combine(storeDir.FullName, "lookup.dat"), FileMode.Open));
 
             // Assert validity.
-            Random random = Random();
+            Random random = Random;
             long previous = long.MinValue;
             foreach (Input k in keys)
             {

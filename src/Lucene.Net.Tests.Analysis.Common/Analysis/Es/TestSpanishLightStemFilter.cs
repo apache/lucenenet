@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Es
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, analyzer, 1000 * RANDOM_MULTIPLIER);
         }
 
         [Test]

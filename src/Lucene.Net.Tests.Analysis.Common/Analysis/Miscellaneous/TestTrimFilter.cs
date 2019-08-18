@@ -110,10 +110,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public virtual void TestRandomStrings()
         {
             Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
 
             Analyzer b = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckRandomData(Random(), b, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, b, 1000 * RANDOM_MULTIPLIER);
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
-                bool updateOffsets = Random().nextBoolean();
+                bool updateOffsets = Random.nextBoolean();
                 LuceneVersion version = updateOffsets ? LuceneVersion.LUCENE_43 : TEST_VERSION_CURRENT;
                 return new TokenStreamComponents(tokenizer, new TrimFilter(version, tokenizer, updateOffsets));
             }

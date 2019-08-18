@@ -65,7 +65,7 @@ namespace Lucene.Net.Search.Spans
             base.SetUp();
             // create test index
             MDirectory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), MDirectory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, MDirectory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
             AddDocument(writer, "1", "I think it should work.");
             AddDocument(writer, "2", "I think it should work.");
             AddDocument(writer, "3", "I think it should work.");
@@ -141,7 +141,7 @@ namespace Lucene.Net.Search.Spans
         /// <param name="expectedScores"> the expected scores of the hits </param>
         protected internal void AssertHits(IndexSearcher s, Query query, string description, string[] expectedIds, float[] expectedScores)
         {
-            QueryUtils.Check(Random(), query, s, Similarity);
+            QueryUtils.Check(Random, query, s, Similarity);
 
             const float tolerance = 1e-5f;
 

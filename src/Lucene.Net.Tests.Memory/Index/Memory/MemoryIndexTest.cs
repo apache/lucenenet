@@ -80,7 +80,7 @@ namespace Lucene.Net.Index.Memory
          [Test]
         public void TestRandomQueries()
         {
-            MemoryIndex index = new MemoryIndex(Random().nextBoolean(), Random().nextInt(50) * 1024 * 1024);
+            MemoryIndex index = new MemoryIndex(Random.nextBoolean(), Random.nextInt(50) * 1024 * 1024);
             for (int i = 0; i < ITERATIONS; i++)
             {
                 AssertAgainstRAMDirectory(index);
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index.Memory
             StringBuilder termField = new StringBuilder();
 
             // add up to 250 terms to field "foo"
-            int numFooTerms = Random().nextInt(250 * RANDOM_MULTIPLIER);
+            int numFooTerms = Random.nextInt(250 * RANDOM_MULTIPLIER);
             for (int i = 0; i < numFooTerms; i++)
             {
                 fooField.append(" ");
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index.Memory
             }
 
             // add up to 250 terms to field "term"
-            int numTermTerms = Random().nextInt(250 * RANDOM_MULTIPLIER);
+            int numTermTerms = Random.nextInt(250 * RANDOM_MULTIPLIER);
             for (int i = 0; i < numTermTerms; i++)
             {
                 termField.append(" ");
@@ -267,10 +267,10 @@ namespace Lucene.Net.Index.Memory
          */
         private Analyzer RandomAnalyzer()
         {
-            switch (Random().nextInt(4))
+            switch (Random.nextInt(4))
             {
-                case 0: return new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
-                case 1: return new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
+                case 0: return new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
+                case 1: return new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
                 case 2: return new RandomAnalyzerHelper(this);
                 //            return new Analyzer() {
 
@@ -280,7 +280,7 @@ namespace Lucene.Net.Index.Memory
                 //    return new TokenStreamComponents(tokenizer, new CrazyTokenFilter(tokenizer));
                 //}
                 //      };
-                default: return new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+                default: return new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             }
         }
 
@@ -331,26 +331,26 @@ namespace Lucene.Net.Index.Memory
          */
         private string RandomTerm()
         {
-            if (Random().nextBoolean())
+            if (Random.nextBoolean())
             {
                 // return a random TEST_TERM
-                return TEST_TERMS[Random().nextInt(TEST_TERMS.Length)];
+                return TEST_TERMS[Random.nextInt(TEST_TERMS.Length)];
             }
             else
             {
                 // return a random unicode term
-                return TestUtil.RandomUnicodeString(Random());
+                return TestUtil.RandomUnicodeString(Random);
             }
         }
 
         [Test]
         public void TestDocsEnumStart()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
-            MemoryIndex memory = new MemoryIndex(Random().nextBoolean(), Random().nextInt(50) * 1024 * 1024);
+            Analyzer analyzer = new MockAnalyzer(Random);
+            MemoryIndex memory = new MemoryIndex(Random.nextBoolean(), Random.nextInt(50) * 1024 * 1024);
             memory.AddField("foo", "bar", analyzer);
             AtomicReader reader = (AtomicReader)memory.CreateSearcher().IndexReader;
-            DocsEnum disi = TestUtil.Docs(Random(), reader, "foo", new BytesRef("bar"), null, null, DocsFlags.NONE);
+            DocsEnum disi = TestUtil.Docs(Random, reader, "foo", new BytesRef("bar"), null, null, DocsFlags.NONE);
             int docid = disi.DocID;
             assertEquals(-1, docid);
             assertTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
@@ -367,7 +367,7 @@ namespace Lucene.Net.Index.Memory
 
         private ByteBlockPool.Allocator RandomByteBlockAllocator()
         {
-            if (Random().nextBoolean())
+            if (Random.nextBoolean())
             {
                 return new RecyclingByteBlockAllocator();
             }
@@ -380,9 +380,9 @@ namespace Lucene.Net.Index.Memory
         [Test]
         public void RestDocsAndPositionsEnumStart()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             int numIters = AtLeast(3);
-            MemoryIndex memory = new MemoryIndex(true, Random().nextInt(50) * 1024 * 1024);
+            MemoryIndex memory = new MemoryIndex(true, Random.nextInt(50) * 1024 * 1024);
             for (int i = 0; i < numIters; i++)
             { // check reuse
                 memory.AddField("foo", "bar", analyzer);
@@ -415,8 +415,8 @@ namespace Lucene.Net.Index.Memory
             RegexpQuery regex = new RegexpQuery(new Term("field", "worl."));
             SpanQuery wrappedquery = new SpanMultiTermQueryWrapper<RegexpQuery>(regex);
 
-            MemoryIndex mindex = new MemoryIndex(Random().nextBoolean(), Random().nextInt(50) * 1024 * 1024);
-            mindex.AddField("field", new MockAnalyzer(Random()).GetTokenStream("field", "hello there"));
+            MemoryIndex mindex = new MemoryIndex(Random.nextBoolean(), Random.nextInt(50) * 1024 * 1024);
+            mindex.AddField("field", new MockAnalyzer(Random).GetTokenStream("field", "hello there"));
 
             // This throws an NPE
             assertEquals(0, mindex.Search(wrappedquery), 0.00001f);
@@ -429,8 +429,8 @@ namespace Lucene.Net.Index.Memory
             RegexpQuery regex = new RegexpQuery(new Term("field", "worl."));
             SpanQuery wrappedquery = new SpanOrQuery(new SpanMultiTermQueryWrapper<RegexpQuery>(regex));
 
-            MemoryIndex mindex = new MemoryIndex(Random().nextBoolean(), Random().nextInt(50) * 1024 * 1024);
-            mindex.AddField("field", new MockAnalyzer(Random()).GetTokenStream("field", "hello there"));
+            MemoryIndex mindex = new MemoryIndex(Random.nextBoolean(), Random.nextInt(50) * 1024 * 1024);
+            mindex.AddField("field", new MockAnalyzer(Random).GetTokenStream("field", "hello there"));
 
             // This passes though
             assertEquals(0, mindex.Search(wrappedquery), 0.00001f);
@@ -439,8 +439,8 @@ namespace Lucene.Net.Index.Memory
         [Test]
         public void TestSameFieldAddedMultipleTimes()
         {
-            MemoryIndex mindex = new MemoryIndex(Random().nextBoolean(), Random().nextInt(50) * 1024 * 1024);
-            MockAnalyzer mockAnalyzer = new MockAnalyzer(Random());
+            MemoryIndex mindex = new MemoryIndex(Random.nextBoolean(), Random.nextInt(50) * 1024 * 1024);
+            MockAnalyzer mockAnalyzer = new MockAnalyzer(Random);
             mindex.AddField("field", "the quick brown fox", mockAnalyzer);
             mindex.AddField("field", "jumps over the", mockAnalyzer);
             AtomicReader reader = (AtomicReader)mindex.CreateSearcher().IndexReader;
@@ -450,7 +450,7 @@ namespace Lucene.Net.Index.Memory
             query.Add(new Term("field", "jumps"));
             assertTrue(mindex.Search(query) > 0.1);
             mindex.Reset();
-            mockAnalyzer.SetPositionIncrementGap(1 + Random().nextInt(10));
+            mockAnalyzer.SetPositionIncrementGap(1 + Random.nextInt(10));
             mindex.AddField("field", "the quick brown fox", mockAnalyzer);
             mindex.AddField("field", "jumps over the", mockAnalyzer);
             assertEquals(0, mindex.Search(query), 0.00001f);
@@ -461,8 +461,8 @@ namespace Lucene.Net.Index.Memory
         [Test]
         public void TestNonExistingsField()
         {
-            MemoryIndex mindex = new MemoryIndex(Random().nextBoolean(), Random().nextInt(50) * 1024 * 1024);
-            MockAnalyzer mockAnalyzer = new MockAnalyzer(Random());
+            MemoryIndex mindex = new MemoryIndex(Random.nextBoolean(), Random.nextInt(50) * 1024 * 1024);
+            MockAnalyzer mockAnalyzer = new MockAnalyzer(Random);
             mindex.AddField("field", "the quick brown fox", mockAnalyzer);
             AtomicReader reader = (AtomicReader)mindex.CreateSearcher().IndexReader;
             assertNull(reader.GetNumericDocValues("not-in-index"));
@@ -475,15 +475,15 @@ namespace Lucene.Net.Index.Memory
         [Test]
         public void TestDuellMemIndex()
         {
-            LineFileDocs lineFileDocs = new LineFileDocs(Random());
+            LineFileDocs lineFileDocs = new LineFileDocs(Random);
             int numDocs = AtLeast(10);
-            MemoryIndex memory = new MemoryIndex(Random().nextBoolean(), Random().nextInt(50) * 1024 * 1024);
+            MemoryIndex memory = new MemoryIndex(Random.nextBoolean(), Random.nextInt(50) * 1024 * 1024);
             for (int i = 0; i < numDocs; i++)
             {
                 Store.Directory dir = NewDirectory();
-                MockAnalyzer mockAnalyzer = new MockAnalyzer(Random());
-                mockAnalyzer.MaxTokenLength = (TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH));
-                IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, mockAnalyzer));
+                MockAnalyzer mockAnalyzer = new MockAnalyzer(Random);
+                mockAnalyzer.MaxTokenLength = (TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH));
+                IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, mockAnalyzer));
                 Document nextDoc = lineFileDocs.NextDoc();
                 Document doc = new Document();
                 foreach (IIndexableField field in nextDoc.Fields)
@@ -491,7 +491,7 @@ namespace Lucene.Net.Index.Memory
                     if (field.IndexableFieldType.IsIndexed)
                     {
                         doc.Add(field);
-                        if (Random().nextInt(3) == 0)
+                        if (Random.nextInt(3) == 0)
                         {
                             doc.Add(field);  // randomly add the same field twice
                         }
@@ -530,10 +530,10 @@ namespace Lucene.Net.Index.Memory
         {
 
             string field_name = "text";
-            MockAnalyzer mockAnalyzer = new MockAnalyzer(Random());
-            if (Random().nextBoolean())
+            MockAnalyzer mockAnalyzer = new MockAnalyzer(Random);
+            if (Random.nextBoolean())
             {
-                mockAnalyzer.SetOffsetGap(Random().nextInt(100));
+                mockAnalyzer.SetOffsetGap(Random.nextInt(100));
             }
             //index into a random directory
             FieldType type = new FieldType(TextField.TYPE_STORED);
@@ -548,7 +548,7 @@ namespace Lucene.Net.Index.Memory
             doc.Add(new Field(field_name, "foo bar foo bar foo", type));
 
             Store.Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, mockAnalyzer));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, mockAnalyzer));
             writer.UpdateDocument(new Term("id", "1"), doc);
             writer.Commit();
             writer.Dispose();

@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Spell
         {
             base.SetUp();
             dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true), Similarity, TimeZone);
 
             for (int i = 900; i < 1112; i++)
             {
@@ -276,7 +276,7 @@ namespace Lucene.Net.Search.Spell
         [Test]
         public void TestRandom()
         {
-            int numDocs = TestUtil.NextInt32(Random(), (10 * RANDOM_MULTIPLIER),
+            int numDocs = TestUtil.NextInt32(Random, (10 * RANDOM_MULTIPLIER),
                 (100 * RANDOM_MULTIPLIER));
             Directory dir = null;
             RandomIndexWriter writer = null;
@@ -284,32 +284,32 @@ namespace Lucene.Net.Search.Spell
             try
             {
                 dir = NewDirectory();
-                writer = new RandomIndexWriter(Random(), dir, new MockAnalyzer(Random(),
+                writer = new RandomIndexWriter(Random, dir, new MockAnalyzer(Random,
                     MockTokenizer.WHITESPACE, false), Similarity, TimeZone);
-                int maxLength = TestUtil.NextInt32(Random(), 5, 50);
+                int maxLength = TestUtil.NextInt32(Random, 5, 50);
                 List<string> originals = new List<string>(numDocs);
                 List<string[]> breaks = new List<string[]>(numDocs);
                 for (int i = 0; i < numDocs; i++)
                 {
                     string orig = "";
-                    if (Random().nextBoolean())
+                    if (Random.nextBoolean())
                     {
                         while (!GoodTestString(orig))
                         {
-                            orig = TestUtil.RandomSimpleString(Random(), maxLength);
+                            orig = TestUtil.RandomSimpleString(Random, maxLength);
                         }
                     }
                     else
                     {
                         while (!GoodTestString(orig))
                         {
-                            orig = TestUtil.RandomUnicodeString(Random(), maxLength);
+                            orig = TestUtil.RandomUnicodeString(Random, maxLength);
                         }
                     }
                     originals.Add(orig);
                     int totalLength = orig.CodePointCount(0, orig.Length);
                     int breakAt = orig.OffsetByCodePoints(0,
-                        TestUtil.NextInt32(Random(), 1, totalLength - 1));
+                        TestUtil.NextInt32(Random, 1, totalLength - 1));
                     string[] broken = new string[2];
                     broken[0] = orig.Substring(0, breakAt - 0);
                     broken[1] = orig.Substring(breakAt);

@@ -72,13 +72,13 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSimple()
         {
-            int numNodes = TestUtil.NextInt32(Random(), 1, 10);
+            int numNodes = TestUtil.NextInt32(Random, 1, 10);
 
             double runTimeSec = AtLeast(3);
 
-            int minDocsToMakeTerms = TestUtil.NextInt32(Random(), 5, 20);
+            int minDocsToMakeTerms = TestUtil.NextInt32(Random, 5, 20);
 
-            int maxSearcherAgeSeconds = TestUtil.NextInt32(Random(), 1, 3);
+            int maxSearcherAgeSeconds = TestUtil.NextInt32(Random, 1, 3);
 
             if (VERBOSE)
             {
@@ -91,10 +91,10 @@ namespace Lucene.Net.Search
             List<BytesRef> terms = null;
             while (Time.NanoTime() < endTimeNanos)
             {
-                bool doFollowon = priorSearches.Count > 0 && Random().Next(7) == 1;
+                bool doFollowon = priorSearches.Count > 0 && Random.Next(7) == 1;
 
                 // Pick a random node; we will run the query on this node:
-                int myNodeID = Random().Next(numNodes);
+                int myNodeID = Random.Next(numNodes);
 
                 NodeState.ShardIndexSearcher localShardSearcher;
 
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
                 if (doFollowon)
                 {
                     // Pretend user issued a followon query:
-                    prevSearchState = priorSearches[Random().Next(priorSearches.Count)];
+                    prevSearchState = priorSearches[Random.Next(priorSearches.Count)];
 
                     if (VERBOSE)
                     {
@@ -222,13 +222,13 @@ namespace Lucene.Net.Search
 
                         if (terms != null)
                         {
-                            if (Random().NextBoolean())
+                            if (Random.NextBoolean())
                             {
-                                query = new TermQuery(new Term("body", terms[Random().Next(terms.Count)]));
+                                query = new TermQuery(new Term("body", terms[Random.Next(terms.Count)]));
                             }
                             else
                             {
-                                string t = terms[Random().Next(terms.Count)].Utf8ToString();
+                                string t = terms[Random.Next(terms.Count)].Utf8ToString();
                                 string prefix;
                                 if (t.Length <= 1)
                                 {
@@ -236,19 +236,19 @@ namespace Lucene.Net.Search
                                 }
                                 else
                                 {
-                                    prefix = t.Substring(0, TestUtil.NextInt32(Random(), 1, 2));
+                                    prefix = t.Substring(0, TestUtil.NextInt32(Random, 1, 2));
                                 }
                                 query = new PrefixQuery(new Term("body", prefix));
                             }
 
-                            if (Random().NextBoolean())
+                            if (Random.NextBoolean())
                             {
                                 sort = null;
                             }
                             else
                             {
                                 // TODO: sort by more than 1 field
-                                int what = Random().Next(3);
+                                int what = Random.Next(3);
                                 if (what == 0)
                                 {
                                     sort = new Sort(SortField.FIELD_SCORE);
@@ -263,11 +263,11 @@ namespace Lucene.Net.Search
                                 }
                                 else if (what == 2)
                                 {
-                                    sort = new Sort(new SortField[] { new SortField("docid", SortFieldType.INT32, Random().NextBoolean()) });
+                                    sort = new Sort(new SortField[] { new SortField("docid", SortFieldType.INT32, Random.NextBoolean()) });
                                 }
                                 else
                                 {
-                                    sort = new Sort(new SortField[] { new SortField("title", SortFieldType.STRING, Random().NextBoolean()) });
+                                    sort = new Sort(new SortField[] { new SortField("title", SortFieldType.STRING, Random.NextBoolean()) });
                                 }
                             }
                         }
@@ -319,7 +319,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                if (searchState != null && searchState.SearchAfterLocal != null && Random().Next(5) == 3)
+                if (searchState != null && searchState.SearchAfterLocal != null && Random.Next(5) == 3)
                 {
                     priorSearches.Add(searchState);
                     if (priorSearches.Count > 200)
@@ -335,7 +335,7 @@ namespace Lucene.Net.Search
 
         private PreviousSearchState AssertSame(IndexSearcher mockSearcher, NodeState.ShardIndexSearcher shardSearcher, Query q, Sort sort, PreviousSearchState state)
         {
-            int numHits = TestUtil.NextInt32(Random(), 1, 100);
+            int numHits = TestUtil.NextInt32(Random, 1, 100);
             if (state != null && state.SearchAfterLocal == null)
             {
                 // In addition to what we last searched:

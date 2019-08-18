@@ -49,15 +49,15 @@ namespace Lucene.Net.Index
         public virtual void TestMixupDocs()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
             customType.StoreTermVectors = true;
             customType.StoreTermVectorPositions = true;
             customType.StoreTermVectorPayloads = true;
-            customType.StoreTermVectorOffsets = Random().NextBoolean();
+            customType.StoreTermVectorOffsets = Random.NextBoolean();
             Field field = new Field("field", "", customType);
             TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
             Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
@@ -97,13 +97,13 @@ namespace Lucene.Net.Index
         public virtual void TestMixupMultiValued()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
             customType.StoreTermVectors = true;
             customType.StoreTermVectorPositions = true;
             customType.StoreTermVectorPayloads = true;
-            customType.StoreTermVectorOffsets = Random().NextBoolean();
+            customType.StoreTermVectorOffsets = Random.NextBoolean();
             Field field = new Field("field", "", customType);
             TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
             Assert.IsFalse(ts.HasAttribute<IPayloadAttribute>());
@@ -140,13 +140,13 @@ namespace Lucene.Net.Index
         public virtual void TestPayloadsWithoutPositions()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
             customType.StoreTermVectors = true;
             customType.StoreTermVectorPositions = false;
             customType.StoreTermVectorPayloads = true;
-            customType.StoreTermVectorOffsets = Random().NextBoolean();
+            customType.StoreTermVectorOffsets = Random.NextBoolean();
             doc.Add(new Field("field", "foo", customType));
             try
             {

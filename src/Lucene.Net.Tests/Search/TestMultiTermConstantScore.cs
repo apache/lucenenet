@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
             string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
 
             Small = NewDirectory();
-            using (RandomIndexWriter writer = new RandomIndexWriter(Random(), Small, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMergePolicy(NewLogMergePolicy())))
+            using (RandomIndexWriter writer = new RandomIndexWriter(Random, Small, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMergePolicy(NewLogMergePolicy())))
             {
 
                 FieldType customType = new FieldType(TextField.TYPE_STORED);

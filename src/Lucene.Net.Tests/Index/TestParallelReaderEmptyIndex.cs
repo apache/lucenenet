@@ -46,14 +46,14 @@ namespace Lucene.Net.Index
         public virtual void TestEmptyIndex()
         {
             Directory rd1 = NewDirectory();
-            IndexWriter iw = new IndexWriter(rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter iw = new IndexWriter(rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             iw.Dispose();
             // create a copy:
             Directory rd2 = NewDirectory(rd1);
 
             Directory rdOut = NewDirectory();
 
-            IndexWriter iwOut = new IndexWriter(rdOut, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter iwOut = new IndexWriter(rdOut, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             ParallelAtomicReader apr = new ParallelAtomicReader(SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(rd1)), SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(rd2)));
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("\nTEST: make 1st writer");
                 }
-                IndexWriter iw = new IndexWriter(rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                IndexWriter iw = new IndexWriter(rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                 Document doc = new Document();
                 Field idField = NewTextField("id", "", Field.Store.NO);
                 doc.Add(idField);
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
                 iw.AddDocument(doc);
                 iw.Dispose();
 
-                IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
+                IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: make 2nd writer");
@@ -123,14 +123,14 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(1, ir.NumDocs);
                 ir.Dispose();
 
-                iw = new IndexWriter(rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+                iw = new IndexWriter(rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
                 iw.ForceMerge(1);
                 iw.Dispose();
             }
 
             Directory rd2 = NewDirectory();
             {
-                IndexWriter iw = new IndexWriter(rd2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                IndexWriter iw = new IndexWriter(rd2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                 Document doc = new Document();
                 iw.AddDocument(doc);
                 iw.Dispose();
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
 
             Directory rdOut = NewDirectory();
 
-            IndexWriter iwOut = new IndexWriter(rdOut, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter iwOut = new IndexWriter(rdOut, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             DirectoryReader reader1, reader2;
             ParallelAtomicReader pr = new ParallelAtomicReader(SlowCompositeReaderWrapper.Wrap(reader1 = DirectoryReader.Open(rd1)), SlowCompositeReaderWrapper.Wrap(reader2 = DirectoryReader.Open(rd2)));
 

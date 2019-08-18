@@ -29,7 +29,7 @@ namespace Lucene.Net.Util
     {
         private List<int> CreateRandomList(int maxSize)
         {
-            Random rnd = Random();
+            Random rnd = Random;
             int[] a = new int[rnd.Next(maxSize) + 1];
             for (int i = 0; i < a.Length; i++)
             {

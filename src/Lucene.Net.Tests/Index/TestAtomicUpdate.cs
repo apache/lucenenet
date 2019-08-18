@@ -136,9 +136,9 @@ namespace Lucene.Net.Index
         {
             TimedThread[] threads = new TimedThread[4];
 
-            IndexWriterConfig conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMaxBufferedDocs(7);
+            IndexWriterConfig conf = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMaxBufferedDocs(7);
             ((TieredMergePolicy)conf.MergePolicy).MaxMergeAtOnce = 3;
-            IndexWriter writer = RandomIndexWriter.MockIndexWriter(directory, conf, Random());
+            IndexWriter writer = RandomIndexWriter.MockIndexWriter(directory, conf, Random);
 
             // Establish a base index of 100 docs:
             for (int i = 0; i < 100; i++)
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
             Directory directory;
 
             // First in a RAM directory:
-            using (directory = new MockDirectoryWrapper(Random(), new RAMDirectory()))
+            using (directory = new MockDirectoryWrapper(Random, new RAMDirectory()))
             {
                 RunTest(directory);
             }

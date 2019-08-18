@@ -177,7 +177,7 @@ namespace Lucene.Net.Analysis.Fr
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new FrenchAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new FrenchAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
 
         /// <summary>

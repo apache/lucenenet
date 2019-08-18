@@ -424,9 +424,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
             int numIterations = AtLeast(5);
             for (int i = 0; i < numIterations; i++)
             {
-                WordDelimiterFlags flags = (WordDelimiterFlags)Random().Next(512);
+                WordDelimiterFlags flags = (WordDelimiterFlags)Random.Next(512);
                 CharArraySet protectedWords;
-                if (Random().nextBoolean())
+                if (Random.nextBoolean())
                 {
                     protectedWords = new CharArraySet(TEST_VERSION_CURRENT, new string[] { "a", "b", "cd" }, false);
                 }
@@ -436,7 +436,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
 
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper6(this, flags, protectedWords);
-                CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+                CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
             }
         }
 
@@ -469,9 +469,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
             int numIterations = AtLeast(5);
             for (int i = 0; i < numIterations; i++)
             {
-                WordDelimiterFlags flags = (WordDelimiterFlags)Random().Next(512);
+                WordDelimiterFlags flags = (WordDelimiterFlags)Random.Next(512);
                 CharArraySet protectedWords;
-                if (Random().nextBoolean())
+                if (Random.nextBoolean())
                 {
                     protectedWords = new CharArraySet(TEST_VERSION_CURRENT, new string[] { "a", "b", "cd" }, false);
                 }
@@ -481,7 +481,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
 
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper7(this, flags, protectedWords);
-                CheckRandomData(Random(), a, 100 * RANDOM_MULTIPLIER, 8192);
+                CheckRandomData(Random, a, 100 * RANDOM_MULTIPLIER, 8192);
             }
         }
 
@@ -510,7 +510,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Random random = Random();
+            Random random = Random;
             for (int i = 0; i < 512; i++)
             {
                 WordDelimiterFlags flags = (WordDelimiterFlags)i;

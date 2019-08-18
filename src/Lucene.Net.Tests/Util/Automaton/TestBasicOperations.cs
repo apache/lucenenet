@@ -34,9 +34,9 @@ namespace Lucene.Net.Util.Automaton
         public virtual void TestStringUnion()
         {
             List<BytesRef> strings = new List<BytesRef>();
-            for (int i = RandomInts.NextInt32Between(Random(), 0, 1000); --i >= 0; )
+            for (int i = RandomInts.NextInt32Between(Random, 0, 1000); --i >= 0; )
             {
-                strings.Add(new BytesRef(TestUtil.RandomUnicodeString(Random())));
+                strings.Add(new BytesRef(TestUtil.RandomUnicodeString(Random)));
             }
 
             strings.Sort();
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util.Automaton
             int ITER2 = AtLeast(100);
             for (int i = 0; i < ITER1; i++)
             {
-                RegExp re = new RegExp(AutomatonTestUtil.RandomRegexp(Random()), RegExpSyntax.NONE);
+                RegExp re = new RegExp(AutomatonTestUtil.RandomRegexp(Random), RegExpSyntax.NONE);
                 Automaton a = re.ToAutomaton();
                 Assert.IsFalse(BasicOperations.IsEmpty(a));
 
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util.Automaton
                     int[] acc = null;
                     try
                     {
-                        acc = rx.GetRandomAcceptedString(Random());
+                        acc = rx.GetRandomAcceptedString(Random);
                         string s = UnicodeUtil.NewString(acc, 0, acc.Length);
                         Assert.IsTrue(BasicOperations.Run(a, s));
                     }

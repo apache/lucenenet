@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.PerField
     {
         protected override Codec GetCodec()
         {
-            return new RandomCodec(new Random(Random().Next()), new HashSet<string>());
+            return new RandomCodec(new Random(Random.Next()), new HashSet<string>());
         }
 
         [Test]

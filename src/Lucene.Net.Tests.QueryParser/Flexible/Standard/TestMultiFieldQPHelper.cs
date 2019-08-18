@@ -78,7 +78,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             fields = { "b", "t" };
             StandardQueryParser mfqp = new StandardQueryParser();
             mfqp.SetMultiFields(fields);
-            mfqp.Analyzer = (new MockAnalyzer(Random()));
+            mfqp.Analyzer = (new MockAnalyzer(Random));
 
             Query q = mfqp.Parse("one", null);
             assertEquals("b:one t:one", q.toString());
@@ -150,7 +150,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             StandardQueryParser mfqp = new StandardQueryParser();
             mfqp.SetMultiFields(fields);
             mfqp.FieldsBoost = (boosts);
-            mfqp.Analyzer = (new MockAnalyzer(Random()));
+            mfqp.Analyzer = (new MockAnalyzer(Random));
 
             // Check for simple
             Query q = mfqp.Parse("one", null);
@@ -182,25 +182,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             fields = { "b", "t" };
             String[]
             queries = { "one", "two" };
-            Query q = QueryParserUtil.Parse(queries, fields, new MockAnalyzer(Random()));
+            Query q = QueryParserUtil.Parse(queries, fields, new MockAnalyzer(Random));
             assertEquals("b:one t:two", q.toString());
 
             String[] queries2 = { "+one", "+two" };
-            q = QueryParserUtil.Parse(queries2, fields, new MockAnalyzer(Random()));
+            q = QueryParserUtil.Parse(queries2, fields, new MockAnalyzer(Random));
             assertEquals("b:one t:two", q.toString());
 
             String[] queries3 = { "one", "+two" };
-            q = QueryParserUtil.Parse(queries3, fields, new MockAnalyzer(Random()));
+            q = QueryParserUtil.Parse(queries3, fields, new MockAnalyzer(Random));
             assertEquals("b:one t:two", q.toString());
 
             String[] queries4 = { "one +more", "+two" };
-            q = QueryParserUtil.Parse(queries4, fields, new MockAnalyzer(Random()));
+            q = QueryParserUtil.Parse(queries4, fields, new MockAnalyzer(Random));
             assertEquals("(b:one +b:more) t:two", q.toString());
 
             String[] queries5 = { "blah" };
             try
             {
-                q = QueryParserUtil.Parse(queries5, fields, new MockAnalyzer(Random()));
+                q = QueryParserUtil.Parse(queries5, fields, new MockAnalyzer(Random));
                 fail();
             }
 #pragma warning disable 168
@@ -233,16 +233,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 Occur.MUST,
                 Occur.MUST_NOT };
             Query q = QueryParserUtil.Parse("one", fields, flags,
-                new MockAnalyzer(Random()));
+                new MockAnalyzer(Random));
             assertEquals("+b:one -t:one", q.toString());
 
-            q = QueryParserUtil.Parse("one two", fields, flags, new MockAnalyzer(Random()));
+            q = QueryParserUtil.Parse("one two", fields, flags, new MockAnalyzer(Random));
             assertEquals("+(b:one b:two) -(t:one t:two)", q.toString());
 
             try
             {
                 Occur[] flags2 = { Occur.MUST };
-                q = QueryParserUtil.Parse("blah", fields, flags2, new MockAnalyzer(Random()));
+                q = QueryParserUtil.Parse("blah", fields, flags2, new MockAnalyzer(Random));
                 fail();
             }
 #pragma warning disable 168
@@ -264,20 +264,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         Occur.MUST_NOT };
             StandardQueryParser parser = new StandardQueryParser();
             parser.SetMultiFields(fields);
-            parser.Analyzer = (new MockAnalyzer(Random()));
+            parser.Analyzer = (new MockAnalyzer(Random));
 
             Query q = QueryParserUtil.Parse("one", fields, flags,
-                new MockAnalyzer(Random()));// , fields, flags, new
+                new MockAnalyzer(Random));// , fields, flags, new
                                             // MockAnalyzer());
             assertEquals("+b:one -t:one", q.toString());
 
-            q = QueryParserUtil.Parse("one two", fields, flags, new MockAnalyzer(Random()));
+            q = QueryParserUtil.Parse("one two", fields, flags, new MockAnalyzer(Random));
             assertEquals("+(b:one b:two) -(t:one t:two)", q.toString());
 
             try
             {
                 Occur[] flags2 = { Occur.MUST };
-                q = QueryParserUtil.Parse("blah", fields, flags2, new MockAnalyzer(Random()));
+                q = QueryParserUtil.Parse("blah", fields, flags2, new MockAnalyzer(Random));
                 fail();
             }
 #pragma warning disable 168
@@ -300,14 +300,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 Occur.MUST,
                 Occur.MUST_NOT, Occur.SHOULD };
             Query q = QueryParserUtil.Parse(queries, fields, flags,
-                new MockAnalyzer(Random()));
+                new MockAnalyzer(Random));
             assertEquals("+f1:one -f2:two f3:three", q.toString());
 
             try
             {
                 Occur[] flags2 = { Occur.MUST };
                 q = QueryParserUtil
-                    .Parse(queries, fields, flags2, new MockAnalyzer(Random()));
+                    .Parse(queries, fields, flags2, new MockAnalyzer(Random));
                 fail();
             }
 #pragma warning disable 168
@@ -330,14 +330,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 Occur.MUST,
                 Occur.MUST_NOT };
             Query q = QueryParserUtil.Parse(queries, fields, flags,
-                new MockAnalyzer(Random()));
+                new MockAnalyzer(Random));
             assertEquals("+b:one -t:two", q.toString());
 
             try
             {
                 Occur[] flags2 = { Occur.MUST };
                 q = QueryParserUtil
-                    .Parse(queries, fields, flags2, new MockAnalyzer(Random()));
+                    .Parse(queries, fields, flags2, new MockAnalyzer(Random));
                 fail();
             }
 #pragma warning disable 168
@@ -372,7 +372,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         public void TestStopWordSearching()
         {
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             Store.Directory ramDir = NewDirectory();
             IndexWriter iw = new IndexWriter(ramDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             Document doc = new Document();
@@ -399,7 +399,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
          */
         private class AnalyzerReturningNull : Analyzer
         {
-            MockAnalyzer stdAnalyzer = new MockAnalyzer(Random());
+            MockAnalyzer stdAnalyzer = new MockAnalyzer(Random);
 
             public AnalyzerReturningNull()
                         : base(PER_FIELD_REUSE_STRATEGY)

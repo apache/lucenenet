@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
         public override void SetUp()
         {
             base.SetUp();
-            UseNonNrtReaders = Random().NextBoolean();
+            UseNonNrtReaders = Random.NextBoolean();
         }
 
         protected internal override void DoSearching(TaskScheduler es, long stopTime)
@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
 
             while (Environment.TickCount < stopTime && !m_failed.Get())
             {
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     if (VERBOSE)
                     {
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
                 IndexReader r2;
                 if (UseNonNrtReaders)
                 {
-                    if (Random().NextBoolean())
+                    if (Random.NextBoolean())
                     {
                         r2 = m_writer.GetReader();
                     }

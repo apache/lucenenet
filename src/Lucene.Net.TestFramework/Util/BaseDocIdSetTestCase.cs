@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
         {
             Debug.Assert(numBitsSet <= numBits);
             BitArray set = new BitArray(numBits);
-            Random random = Random();
+            Random random = Random;
             if (numBitsSet == numBits)
             {
                 set.SafeSet(0, numBits != 0); //convert int to boolean
@@ -92,7 +92,7 @@ namespace Lucene.Net.Util
         public virtual void Test1Bit()
         {
             BitArray bs = new BitArray(1);
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 bs.SafeSet(0, true);
             }
@@ -107,11 +107,11 @@ namespace Lucene.Net.Util
         public virtual void Test2Bits()
         {
             BitArray bs = new BitArray(2);
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 bs.SafeSet(0, true);
             }
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 bs.SafeSet(1, true);
             }
@@ -125,9 +125,9 @@ namespace Lucene.Net.Util
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestAgainstBitSet()
         {
-            int numBits = TestUtil.NextInt32(Random(), 100, 1 << 20);
+            int numBits = TestUtil.NextInt32(Random, 100, 1 << 20);
             // test various random sets with various load factors
-            foreach (float percentSet in new float[] { 0f, 0.0001f, (float)Random().NextDouble() / 2, 0.9f, 1f })
+            foreach (float percentSet in new float[] { 0f, 0.0001f, (float)Random.NextDouble() / 2, 0.9f, 1f })
             {
                 BitArray set = RandomSet(numBits, percentSet);
                 T copy = CopyOf(set, numBits);
@@ -139,14 +139,14 @@ namespace Lucene.Net.Util
             T copy_ = CopyOf(set_, numBits);
             AssertEquals(numBits, set_, copy_);
             set_.SafeSet(0, false);
-            set_.SafeSet(Random().Next(numBits), true);
+            set_.SafeSet(Random.Next(numBits), true);
             copy_ = CopyOf(set_, numBits); // then random index
             AssertEquals(numBits, set_, copy_);
             // test regular increments
-            for (int inc = 2; inc < 1000; inc += TestUtil.NextInt32(Random(), 1, 100))
+            for (int inc = 2; inc < 1000; inc += TestUtil.NextInt32(Random, 1, 100))
             {
                 set_ = new BitArray(numBits);
-                for (int d = Random().Next(10); d < numBits; d += inc)
+                for (int d = Random.Next(10); d < numBits; d += inc)
                 {
                     set_.SafeSet(d, true);
                 }
@@ -188,7 +188,7 @@ namespace Lucene.Net.Util
             {
                 for (int doc = -1; doc != DocIdSetIterator.NO_MORE_DOCS; )
                 {
-                    if (Random().NextBoolean())
+                    if (Random.NextBoolean())
                     {
                         doc = ds1.NextSetBit(doc + 1);
                         if (doc == -1)
@@ -200,7 +200,7 @@ namespace Lucene.Net.Util
                     }
                     else
                     {
-                        int target = doc + 1 + Random().Next(Random().NextBoolean() ? 64 : Math.Max(numBits / 8, 1));
+                        int target = doc + 1 + Random.Next(Random.NextBoolean() ? 64 : Math.Max(numBits / 8, 1));
                         doc = ds1.NextSetBit(target);
                         if (doc == -1)
                         {

@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public void TestSimpleHighlightTest()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType type = new FieldType(TextField.TYPE_STORED);
             type.StoreTermVectorOffsets = (true);
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public void TestPhraseHighlightLongTextTest()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType type = new FieldType(TextField.TYPE_STORED);
             type.StoreTermVectorOffsets = (true);
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public void TestPhraseHighlightTest()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType type = new FieldType(TextField.TYPE_STORED);
             type.StoreTermVectorOffsets = (true);
@@ -246,7 +246,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public void TestBoostedPhraseHighlightTest()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType type = new FieldType(TextField.TYPE_STORED);
             type.StoreTermVectorOffsets = (true);
@@ -295,7 +295,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public void TestCommonTermsQueryHighlight()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)));
             FieldType type = new FieldType(TextField.TYPE_STORED);
             type.StoreTermVectorOffsets = (true);
             type.StoreTermVectorPositions = (true);
@@ -453,7 +453,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public void TestMultiValuedSortByScore()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType type = new FieldType(TextField.TYPE_STORED);
             type.StoreTermVectorOffsets = (true);
@@ -504,7 +504,7 @@ namespace Lucene.Net.Search.VectorHighlight
         public void TestBooleanPhraseWithSynonym()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType type = new FieldType(TextField.TYPE_NOT_STORED);
             type.StoreTermVectorOffsets = (true);
@@ -648,11 +648,11 @@ namespace Lucene.Net.Search.VectorHighlight
 #pragma warning disable 612, 618 // LUCENENET NOTE: Class calls obsolete (default) constructor
             public AnalyzerWrapperAnonymousHelper()
             {
-                fieldAnalyzers.Put("field", new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET));
-                fieldAnalyzers.Put("field_exact", new MockAnalyzer(Random()));
-                fieldAnalyzers.Put("field_super_exact", new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
-                fieldAnalyzers.Put("field_characters", new MockAnalyzer(Random(), new CharacterRunAutomaton(new RegExp(".").ToAutomaton()), true));
-                fieldAnalyzers.Put("field_tripples", new MockAnalyzer(Random(), new CharacterRunAutomaton(new RegExp("...").ToAutomaton()), true));
+                fieldAnalyzers.Put("field", new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET));
+                fieldAnalyzers.Put("field_exact", new MockAnalyzer(Random));
+                fieldAnalyzers.Put("field_super_exact", new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
+                fieldAnalyzers.Put("field_characters", new MockAnalyzer(Random, new CharacterRunAutomaton(new RegExp(".").ToAutomaton()), true));
+                fieldAnalyzers.Put("field_tripples", new MockAnalyzer(Random, new CharacterRunAutomaton(new RegExp("...").ToAutomaton()), true));
                 fieldAnalyzers.Put("field_sliced", fieldAnalyzers["field"]);
                 fieldAnalyzers.Put("field_der_red", fieldAnalyzers["field"]);  // This is required even though we provide a token stream
             }

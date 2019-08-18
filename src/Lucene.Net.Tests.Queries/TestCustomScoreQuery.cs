@@ -353,11 +353,11 @@ namespace Lucene.Net.Tests.Queries
             assertEquals("queries should have same #hits", h1.Count, h4CustomAdd.Count);
             assertEquals("queries should have same #hits", h1.Count, h5CustomMulAdd.Count);
 
-            QueryUtils.Check(Random(), q1, s, Rarely(), Similarity);
-            QueryUtils.Check(Random(), q2, s, Rarely(), Similarity);
-            QueryUtils.Check(Random(), q3, s, Rarely(), Similarity);
-            QueryUtils.Check(Random(), q4, s, Rarely(), Similarity);
-            QueryUtils.Check(Random(), q5, s, Rarely(), Similarity);
+            QueryUtils.Check(Random, q1, s, Rarely(), Similarity);
+            QueryUtils.Check(Random, q2, s, Rarely(), Similarity);
+            QueryUtils.Check(Random, q3, s, Rarely(), Similarity);
+            QueryUtils.Check(Random, q4, s, Rarely(), Similarity);
+            QueryUtils.Check(Random, q5, s, Rarely(), Similarity);
 
             // verify scores ratios
             foreach (int doc in h1.Keys)

@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
         {
             base.SetUp();
             dir = NewDirectory();
-            using (IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES)))
+            using (IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NoMergePolicy.COMPOUND_FILES)))
             {
                 Document doc;
                 for (int i = 0; i < NUM_DOCS; i++)

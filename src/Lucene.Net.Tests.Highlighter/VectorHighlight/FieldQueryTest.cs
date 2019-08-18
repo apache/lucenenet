@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.VectorHighlight
          */
         private void initBoost()
         {
-            boost = Usually() ? 1F : ((float)(Random().NextDouble() / 2)) * 10000;
+            boost = Usually() ? 1F : ((float)(Random.NextDouble() / 2)) * 10000;
         }
 
         [Test]

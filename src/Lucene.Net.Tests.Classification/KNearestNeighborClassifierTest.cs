@@ -32,21 +32,21 @@ namespace Lucene.Net.Classification
         public void TestBasicUsage()
         {
             // usage with default MLT min docs / term freq
-            CheckCorrectClassification(new KNearestNeighborClassifier(3), POLITICS_INPUT, POLITICS_RESULT, new MockAnalyzer(Random()), textFieldName, categoryFieldName);
+            CheckCorrectClassification(new KNearestNeighborClassifier(3), POLITICS_INPUT, POLITICS_RESULT, new MockAnalyzer(Random), textFieldName, categoryFieldName);
             // usage without custom min docs / term freq for MLT
-            CheckCorrectClassification(new KNearestNeighborClassifier(3, 2, 1), TECHNOLOGY_INPUT, TECHNOLOGY_RESULT, new MockAnalyzer(Random()), textFieldName, categoryFieldName);
+            CheckCorrectClassification(new KNearestNeighborClassifier(3, 2, 1), TECHNOLOGY_INPUT, TECHNOLOGY_RESULT, new MockAnalyzer(Random), textFieldName, categoryFieldName);
         }
 
         [Test]
         public void TestBasicUsageWithQuery()
         {
-            CheckCorrectClassification(new KNearestNeighborClassifier(1), TECHNOLOGY_INPUT, TECHNOLOGY_RESULT, new MockAnalyzer(Random()), textFieldName, categoryFieldName, new TermQuery(new Term(textFieldName, "it")));
+            CheckCorrectClassification(new KNearestNeighborClassifier(1), TECHNOLOGY_INPUT, TECHNOLOGY_RESULT, new MockAnalyzer(Random), textFieldName, categoryFieldName, new TermQuery(new Term(textFieldName, "it")));
         }
 
         [Test]
         public void TestPerformance()
         {
-            CheckPerformance(new KNearestNeighborClassifier(100), new MockAnalyzer(Random()), categoryFieldName);
+            CheckPerformance(new KNearestNeighborClassifier(100), new MockAnalyzer(Random), categoryFieldName);
         }
     }
 }

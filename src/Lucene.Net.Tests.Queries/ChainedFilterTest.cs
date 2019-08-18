@@ -49,7 +49,7 @@ namespace Lucene.Net.Tests.Queries
         {
             base.SetUp();
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
             // we use the default Locale/TZ since LuceneTestCase randomizes it
             var cal = new GregorianCalendar().ToDateTime(2003, 1, 1, 0, 0, 0, 0); // 2003 January 01
             cal = TimeZoneInfo.ConvertTime(cal, TimeZoneInfo.Local);
@@ -182,7 +182,7 @@ namespace Lucene.Net.Tests.Queries
         public virtual void TestWithCachingFilter()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             IndexReader reader = writer.Reader;
             writer.Dispose();
 

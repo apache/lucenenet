@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         {
             base.SetUp();
             Dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 50, 1000)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
 
             Document doc = new Document();
             Field field = NewStringField("field", "", Field.Store.NO);
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
             int num = AtLeast(10);
             for (int i = 0; i < num; i++)
             {
-                field.SetStringValue(TestUtil.RandomUnicodeString(Random(), 10));
+                field.SetStringValue(TestUtil.RandomUnicodeString(Random, 10));
                 writer.AddDocument(doc);
             }
             Reader = writer.Reader;

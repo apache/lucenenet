@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
         private void GenerateRandomData(byte[] data)
         {
             // this test needs the random data to be valid unicode
-            string s = TestUtil.RandomFixedByteLengthUnicodeString(Random(), data.Length);
+            string s = TestUtil.RandomFixedByteLengthUnicodeString(Random, data.Length);
             var b = s.GetBytes(Utf8);
             Debug.Assert(b.Length == data.Length);
             System.Buffer.BlockCopy(b, 0, data, 0, b.Length);
@@ -479,7 +479,7 @@ namespace Lucene.Net.Index
             ByteArrayPool pool = new ByteArrayPool(numThreads, 5);
 
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             const string field = "test";
 
             ThreadClass[] ingesters = new ThreadClass[numThreads];
@@ -649,13 +649,13 @@ namespace Lucene.Net.Index
         public virtual void TestAcrossFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true), Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new TextField("hasMaybepayload", "here we go", Field.Store.YES));
             writer.AddDocument(doc);
             writer.Dispose();
 
-            writer = new RandomIndexWriter(Random(), dir, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true), Similarity, TimeZone);
+            writer = new RandomIndexWriter(Random, dir, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true), Similarity, TimeZone);
             doc = new Document();
             doc.Add(new TextField("hasMaybepayload2", "here we go", Field.Store.YES));
             writer.AddDocument(doc);
@@ -674,7 +674,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             Document doc = new Document();
             Field field = new TextField("field", "", Field.Store.NO);
             TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);
@@ -709,7 +709,7 @@ namespace Lucene.Net.Index
         public virtual void TestMixupMultiValued()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             Field field = new TextField("field", "", Field.Store.NO);
             TokenStream ts = new MockTokenizer(new StringReader("here we go"), MockTokenizer.WHITESPACE, true);

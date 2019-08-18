@@ -55,10 +55,10 @@ namespace Lucene.Net.Index
         {
             IList<string> postingsList = new List<string>();
             int numTerms = AtLeast(300);
-            int maxTermsPerDoc = TestUtil.NextInt32(Random(), 10, 20);
+            int maxTermsPerDoc = TestUtil.NextInt32(Random, 10, 20);
             bool isSimpleText = "SimpleText".Equals(TestUtil.GetPostingsFormat("field"), StringComparison.Ordinal);
 
-            IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random));
 
             if ((isSimpleText || iwc.MergePolicy is MockRandomMergePolicy) && (TEST_NIGHTLY || RANDOM_MULTIPLIER > 1))
             {
@@ -85,9 +85,9 @@ namespace Lucene.Net.Index
 
             Directory dir = NewFSDirectory(CreateTempDir(GetFullMethodName()));
 
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
-            int threadCount = TestUtil.NextInt32(Random(), 1, 5);
+            int threadCount = TestUtil.NextInt32(Random, 1, 5);
             if (VERBOSE)
             {
                 Console.WriteLine("config: " + iw.IndexWriter.Config);
@@ -96,11 +96,11 @@ namespace Lucene.Net.Index
 
             Field prototype = NewTextField("field", "", Field.Store.NO);
             FieldType fieldType = new FieldType(prototype.FieldType);
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 fieldType.OmitNorms = true;
             }
-            int options = Random().Next(3);
+            int options = Random.Next(3);
             if (options == 0)
             {
                 fieldType.IndexOptions = IndexOptions.DOCS_AND_FREQS; // we dont actually need positions
@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
 
             for (int threadID = 0; threadID < threadCount; threadID++)
             {
-                Random threadRandom = new Random(Random().Next());
+                Random threadRandom = new Random(Random.Next());
                 Document document = new Document();
                 Field field = new Field("field", "", fieldType);
                 document.Add(field);

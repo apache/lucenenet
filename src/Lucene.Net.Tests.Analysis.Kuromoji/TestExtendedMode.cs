@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Ja
             int numIterations = AtLeast(1000);
             for (int i = 0; i < numIterations; i++)
             {
-                String s = TestUtil.RandomUnicodeString(Random(), 100);
+                String s = TestUtil.RandomUnicodeString(Random, 100);
                 TokenStream ts = analyzer.GetTokenStream("foo", s);
                 try
                 {
@@ -68,14 +68,14 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestRandomStrings()
         {
-            Random random = Random();
+            Random random = Random;
             CheckRandomData(random, analyzer, 1000 * RANDOM_MULTIPLIER);
         }
 
         /** blast some random large strings through the analyzer */
         public void TestRandomHugeStrings()
         {
-            Random random = Random();
+            Random random = Random;
             CheckRandomData(random, analyzer, 100 * RANDOM_MULTIPLIER, 8192);
         }
     }

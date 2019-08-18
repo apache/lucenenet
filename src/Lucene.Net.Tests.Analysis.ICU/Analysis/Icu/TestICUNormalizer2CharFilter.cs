@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis.Icu
 
                 for (int i = 0; i < iterations; i++)
                 {
-                    String input = TestUtil.RandomUnicodeString(Random(), maxLength);
+                    String input = TestUtil.RandomUnicodeString(Random, maxLength);
                     if (input.Length == 0)
                     {
                         continue;
@@ -210,9 +210,9 @@ namespace Lucene.Net.Analysis.Icu
                 return new ICUNormalizer2CharFilter(reader, Normalizer2.GetInstance(null, "nfkc_cf", Normalizer2Mode.Compose));
             }))
             {
-                CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+                CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
                 // huge strings
-                CheckRandomData(Random(), a, 100 * RANDOM_MULTIPLIER, 8192);
+                CheckRandomData(Random, a, 100 * RANDOM_MULTIPLIER, 8192);
             }
 
             // nfkd
@@ -224,9 +224,9 @@ namespace Lucene.Net.Analysis.Icu
                 return new ICUNormalizer2CharFilter(reader, Normalizer2.GetInstance(null, "nfkc", Normalizer2Mode.Decompose));
             }))
             {
-                CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+                CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
                 // huge strings
-                CheckRandomData(Random(), a, 100 * RANDOM_MULTIPLIER, 8192);
+                CheckRandomData(Random, a, 100 * RANDOM_MULTIPLIER, 8192);
             }
         }
 
@@ -244,7 +244,7 @@ namespace Lucene.Net.Analysis.Icu
             {
                 for (int i = 0; i < 1000; i++)
                 {
-                    CheckAnalysisConsistency(Random(), a, false, text);
+                    CheckAnalysisConsistency(Random, a, false, text);
                 }
             }
         }
@@ -435,7 +435,7 @@ namespace Lucene.Net.Analysis.Icu
             {
                 for (int i = 0; i < 25; i++)
                 {
-                    CheckAnalysisConsistency(Random(), a, false, text);
+                    CheckAnalysisConsistency(Random, a, false, text);
                 }
             }
         }
@@ -455,7 +455,7 @@ namespace Lucene.Net.Analysis.Icu
                 return new ICUNormalizer2CharFilter(reader, Normalizer2.GetInstance(null, "nfkc_cf", Normalizer2Mode.Compose));
             }))
             {
-                CheckAnalysisConsistency(Random(), a, false, new string(text));
+                CheckAnalysisConsistency(Random, a, false, new string(text));
             }
         }
     }

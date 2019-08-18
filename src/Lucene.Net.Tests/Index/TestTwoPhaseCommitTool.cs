@@ -111,14 +111,14 @@ namespace Lucene.Net.Index
         public virtual void TestRollback()
         {
             // tests that rollback is called if failure occurs at any stage
-            int numObjects = Random().Next(8) + 3; // between [3, 10]
+            int numObjects = Random.Next(8) + 3; // between [3, 10]
             TwoPhaseCommitImpl[] objects = new TwoPhaseCommitImpl[numObjects];
             for (int i = 0; i < objects.Length; i++)
             {
-                bool failOnPrepare = Random().NextBoolean();
+                bool failOnPrepare = Random.NextBoolean();
                 // we should not hit failures on commit usually
-                bool failOnCommit = Random().NextDouble() < 0.05;
-                bool railOnRollback = Random().NextBoolean();
+                bool failOnCommit = Random.NextDouble() < 0.05;
+                bool railOnRollback = Random.NextBoolean();
                 objects[i] = new TwoPhaseCommitImpl(failOnPrepare, failOnCommit, railOnRollback);
             }
 
@@ -147,12 +147,12 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestNullTPCs()
         {
-            int numObjects = Random().Next(4) + 3; // between [3, 6]
+            int numObjects = Random.Next(4) + 3; // between [3, 6]
             ITwoPhaseCommit[] tpcs = new ITwoPhaseCommit[numObjects];
             bool setNull = false;
             for (int i = 0; i < tpcs.Length; i++)
             {
-                bool isNull = Random().NextDouble() < 0.3;
+                bool isNull = Random.NextDouble() < 0.3;
                 if (isNull)
                 {
                     setNull = true;
@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
             if (!setNull)
             {
                 // none of the TPCs were picked to be null, pick one at random
-                int idx = Random().Next(numObjects);
+                int idx = Random.Next(numObjects);
                 tpcs[idx] = null;
             }
 

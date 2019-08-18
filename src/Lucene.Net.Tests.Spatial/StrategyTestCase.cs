@@ -242,7 +242,7 @@ namespace Lucene.Net.Spatial
             //    for (int i = 0; i < expectedDocs.length; i++) {
             //      expectedDocs[i] = i;
             //    }
-            //    CheckHits.checkHits(random(), q, "", indexSearcher, expectedDocs);
+            //    CheckHits.checkHits(Random, q, "", indexSearcher, expectedDocs);
 
             TopDocs docs = indexSearcher.Search(q, 1000);//calculates the score
             for (int i = 0; i < docs.ScoreDocs.Length; i++)
