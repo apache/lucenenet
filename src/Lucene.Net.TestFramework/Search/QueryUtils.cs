@@ -149,26 +149,25 @@ namespace Lucene.Net.Search
         /// Various query sanity checks on a searcher, some checks are only done for
         /// instance of <see cref="IndexSearcher"/>.
         /// </summary>
-        /// <param name="similarity">
-        /// LUCENENET specific
-        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        /// </param>
+        /// <param name="random">A random instance (usually <see cref="LuceneTestCase.Random"/>).</param>
+        /// <param name="q1">A <see cref="Query"/>.</param>
+        /// <param name="s">An <see cref="IndexSearcher"/>.</param>
+        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
         /// <seealso cref="Check(Query)"/>
         /// <seealso cref="CheckFirstSkipTo(Query, IndexSearcher, Similarity)"/>
         /// <seealso cref="CheckSkipTo(Query, IndexSearcher, Similarity)"/>
         /// <seealso cref="CheckExplanations(Query, IndexSearcher)"/>
         /// <seealso cref="CheckEqual(Query, Query)"/>
-        // LUCENENET TODO: API remove Similarity
+        // LUCENENET specific
+        // Removes static dependency on <see cref="LuceneTestCase.ClassEnvRule.Similarity"/>
         public static void Check(Random random, Query q1, IndexSearcher s, Similarity similarity)
         {
             Check(random, q1, s, true, similarity);
         }
 
-        /// <param name = "similarity" >
-        /// LUCENENET specific
-        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        /// </param>
-        // LUCENENET TODO: API remove Similarity
+        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        // LUCENENET specific
+        // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         public static void Check(Random random, Query q1, IndexSearcher s, bool wrap, Similarity similarity)
         {
             try
@@ -212,11 +211,9 @@ namespace Lucene.Net.Search
         /// behave exactly the same as the original <see cref="IndexSearcher"/>. </summary>
         /// <param name="s"> The searcher to wrap. </param>
         /// <param name="edge"> If negative, s will be the first sub; if 0, s will be in the middle, if positive s will be the last sub. </param>
-        /// <param name="similarity">
-        /// LUCENENET specific
-        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        /// </param>
-        // LUCENENET TODO: API remove Similarity
+        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        // LUCENENET specific
+        // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         public static IndexSearcher WrapUnderlyingReader(Random random, IndexSearcher s, int edge, Similarity similarity)
         {
             IndexReader r = s.IndexReader;
@@ -268,11 +265,11 @@ namespace Lucene.Net.Search
         /// Alternate scorer skipTo(),skipTo(),next(),next(),skipTo(),skipTo(), etc
         /// and ensure a hitcollector receives same docs and scores.
         /// </summary>
-        /// <param name = "similarity" >
-        /// LUCENENET specific
-        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        /// </param>
-        // LUCENENET TODO: API remove Similarity
+        /// <param name="q"></param>
+        /// <param name="s"></param>
+        /// <param name="similarity">Generally, should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        // LUCENENET specific
+        // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         public static void CheckSkipTo(Query q, IndexSearcher s, Similarity similarity)
         {
             //System.out.println("Checking "+q);
@@ -429,11 +426,11 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Check that first skip on just created scorers always goes to the right doc.</summary>
-        /// <param name = "similarity" >
-        /// LUCENENET specific
-        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        /// </param>
-        // LUCENENET TODO: API remove Similarity
+        /// <param name="q"></param>
+        /// <param name="s"></param>
+        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        // LUCENENET specific
+        // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         public static void CheckFirstSkipTo(Query q, IndexSearcher s, Similarity similarity)
         {
             //System.out.println("checkFirstSkipTo: "+q);

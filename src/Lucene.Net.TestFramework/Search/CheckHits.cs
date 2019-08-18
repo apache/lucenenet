@@ -91,12 +91,10 @@ namespace Lucene.Net.Search
         /// <param name="searcher"> The searcher to test the query against. </param>
         /// <param name="defaultFieldName"> Used for displaying the query in assertion messages. </param>
         /// <param name="results"> A list of documentIds that must match the query. </param>
-        /// <param name="similarity">
-        /// LUCENENET specific
-        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        /// </param>
+        /// <param name="similarity">Generally, should always be <see cref="LuceneTestCase.Similarity"/>.</param>
         /// <seealso cref="DoCheckHits(Random, Query, string, IndexSearcher, int[], Similarity)"/>
-        // LUCENENET TODO: API - get rid of Similarity from the param list
+        // LUCENENET specific
+        // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         public static void CheckHitCollector(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results, Similarity similarity)
         {
             QueryUtils.Check(random, query, searcher, similarity);
@@ -129,20 +127,18 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Tests that a query matches the an expected set of documents using Hits.
         ///
-        /// <p>
-        /// Note that when using the Hits API, documents will only be returned
+        /// <para>Note that when using the Hits API, documents will only be returned
         /// if they have a positive normalized score.
-        /// </p> </summary>
+        /// </para>
+        /// </summary>
         /// <param name="query"> the query to test </param>
         /// <param name="searcher"> the searcher to test the query against </param>
         /// <param name="defaultFieldName"> used for displaing the query in assertion messages </param>
         /// <param name="results"> a list of documentIds that must match the query </param>
-        /// <param name="similarity">
-        /// LUCENENET specific
-        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        /// </param>
+        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
         /// <seealso cref="CheckHitCollector(Random, Query, string, IndexSearcher, int[], Similarity)"/>
-        // LUCENENET TODO: API - get rid of Similarity from the param list
+        // LUCENENET specific
+        // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         public static void DoCheckHits(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results, Similarity similarity)
         {
             ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;

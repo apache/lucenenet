@@ -1003,13 +1003,19 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// create a new index writer config with random defaults using the specified random
-        /// 
+        /// Create a new <see cref="IndexWriterConfig"/> with random defaults using the specified <paramref name="random"/>.
+        /// <para/>
         /// LUCENENET specific
         /// This is the only static ctor for IndexWriterConfig because it removes the dependency
         /// on ClassEnvRule by using parameters Similarity and TimeZone.
         /// </summary>
-        public static IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a, Similarity similarity, TimeZoneInfo timezone) // LUCENENET TODO: API - Investigate how to eliminate these extra parameters, similarity and timezone
+        /// <param name="random">A random instance (usually <see cref="LuceneTestCase.Random"/>).</param>
+        /// <param name="v"></param>
+        /// <param name="a"></param>
+        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        /// <param name="timezone">Generally, this should always be <see cref="LuceneTestCase.TimeZone"/>.</param>
+        /// <returns></returns>
+        public static IndexWriterConfig NewIndexWriterConfig(Random random, LuceneVersion v, Analyzer a, Similarity similarity, TimeZoneInfo timezone)
         {
             IndexWriterConfig c = new IndexWriterConfig(v, a);
             c.SetSimilarity(similarity);
@@ -1024,11 +1030,11 @@ namespace Lucene.Net.Util
                 c.SetInfoStream(new TestRuleSetupAndRestoreClassEnv.ThreadNameFixingPrintStreamInfoStream(Console.Out));
             }
 
-            if (r.NextBoolean())
+            if (random.NextBoolean())
             {
                 c.SetMergeScheduler(new SerialMergeScheduler());
             }
-            else if (Rarely(r))
+            else if (Rarely(random))
             {
                 int maxThreadCount = TestUtil.NextInt32(Random, 1, 4);
                 int maxMergeCount = TestUtil.NextInt32(Random, maxThreadCount, maxThreadCount + 4);
@@ -1037,7 +1043,7 @@ namespace Lucene.Net.Util
 #if !FEATURE_CONCURRENTMERGESCHEDULER
                 mergeScheduler = new TaskMergeScheduler();
 #else
-                if (r.NextBoolean())
+                if (random.NextBoolean())
                 {
                     mergeScheduler = new ConcurrentMergeScheduler();
                 }
@@ -1049,37 +1055,37 @@ namespace Lucene.Net.Util
                 mergeScheduler.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
                 c.SetMergeScheduler(mergeScheduler);
             }
-            if (r.NextBoolean())
+            if (random.NextBoolean())
             {
-                if (Rarely(r))
+                if (Rarely(random))
                 {
                     // crazy value
-                    c.SetMaxBufferedDocs(TestUtil.NextInt32(r, 2, 15));
+                    c.SetMaxBufferedDocs(TestUtil.NextInt32(random, 2, 15));
                 }
                 else
                 {
                     // reasonable value
-                    c.SetMaxBufferedDocs(TestUtil.NextInt32(r, 16, 1000));
+                    c.SetMaxBufferedDocs(TestUtil.NextInt32(random, 16, 1000));
                 }
             }
-            if (r.NextBoolean())
+            if (random.NextBoolean())
             {
-                if (Rarely(r))
+                if (Rarely(random))
                 {
                     // crazy value
-                    c.SetTermIndexInterval(r.NextBoolean() ? TestUtil.NextInt32(r, 1, 31) : TestUtil.NextInt32(r, 129, 1000));
+                    c.SetTermIndexInterval(random.NextBoolean() ? TestUtil.NextInt32(random, 1, 31) : TestUtil.NextInt32(random, 129, 1000));
                 }
                 else
                 {
                     // reasonable value
-                    c.SetTermIndexInterval(TestUtil.NextInt32(r, 32, 128));
+                    c.SetTermIndexInterval(TestUtil.NextInt32(random, 32, 128));
                 }
             }
-            if (r.NextBoolean())
+            if (random.NextBoolean())
             {
-                int maxNumThreadStates = Rarely(r) ? TestUtil.NextInt32(r, 5, 20) : TestUtil.NextInt32(r, 1, 4); // reasonable value -  crazy value
+                int maxNumThreadStates = Rarely(random) ? TestUtil.NextInt32(random, 5, 20) : TestUtil.NextInt32(random, 1, 4); // reasonable value -  crazy value
 
-                if (Rarely(r))
+                if (Rarely(random))
                 {
                     //// Retrieve the package-private setIndexerThreadPool
                     //// method:
@@ -1098,7 +1104,7 @@ namespace Lucene.Net.Util
                     //setIndexerThreadPoolMethod.Invoke(c, new[] { ctor.Invoke(new object[] { maxNumThreadStates, r }) });
 
                     // LUCENENET specific: Since we are using InternalsVisibleTo, there is no need for Reflection
-                    c.SetIndexerThreadPool(new RandomDocumentsWriterPerThreadPool(maxNumThreadStates, r));
+                    c.SetIndexerThreadPool(new RandomDocumentsWriterPerThreadPool(maxNumThreadStates, random));
                 }
                 else
                 {
@@ -1107,16 +1113,16 @@ namespace Lucene.Net.Util
                 }
             }
 
-            c.SetMergePolicy(NewMergePolicy(r, timezone));
+            c.SetMergePolicy(NewMergePolicy(random, timezone));
 
-            if (Rarely(r))
+            if (Rarely(random))
             {
                 c.SetMergedSegmentWarmer(new SimpleMergedSegmentWarmer(c.InfoStream));
             }
-            c.SetUseCompoundFile(r.NextBoolean());
-            c.SetReaderPooling(r.NextBoolean());
-            c.SetReaderTermsIndexDivisor(TestUtil.NextInt32(r, 1, 4));
-            c.SetCheckIntegrityAtMerge(r.NextBoolean());
+            c.SetUseCompoundFile(random.NextBoolean());
+            c.SetReaderPooling(random.NextBoolean());
+            c.SetReaderTermsIndexDivisor(TestUtil.NextInt32(random, 1, 4));
+            c.SetCheckIntegrityAtMerge(random.NextBoolean());
             return c;
         }
 
@@ -1141,10 +1147,11 @@ namespace Lucene.Net.Util
             return NewLogMergePolicy(r);
         }
 
-        /// <param name="timezone">
-        /// LUCENENET specific
-        /// Timezone added to remove dependency on the then-static <see cref="ClassEnvRule"/>
-        /// </param>
+
+        /// <param name="timezone">Generally, this should always be <see cref="LuceneTestCase.TimeZone"/>.</param>
+        // LUCENENET specific
+        // Timezone added to remove dependency on the then-static <see cref="ClassEnvRule"/>
+        //
         public static MergePolicy NewMergePolicy(TimeZoneInfo timezone)
         {
             return NewMergePolicy(Random, timezone);
@@ -1746,10 +1753,10 @@ namespace Lucene.Net.Util
             return NewSearcher(r, ClassEnvRule.similarity);
         }
 
-        /// <param name="similarity">
-        /// LUCENENET specific
-        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        /// </param>
+        /// <param name="r"></param>
+        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        // LUCENENET specific
+        // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
         public static IndexSearcher NewSearcher(IndexReader r, Similarity similarity)
         {
             return NewSearcher(r, true, similarity);
@@ -1759,10 +1766,10 @@ namespace Lucene.Net.Util
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
         /// </summary>
-        /// <param name="similarity">
-        /// LUCENENET specific
-        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        /// </param>
+        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        // LUCENENET specific
+        // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+
         public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, Similarity similarity)
         {
             return NewSearcher(r, maybeWrap, true, similarity);
@@ -1789,10 +1796,10 @@ namespace Lucene.Net.Util
         /// <paramref name="wrapWithAssertions"/> is true, this searcher might be an
         /// <see cref="AssertingIndexSearcher"/> instance.
         /// </summary>
-        /// <param name="similarity">
-        /// LUCENENET specific
-        /// Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        /// </param>
+        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        // LUCENENET specific
+        // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+
         public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions, Similarity similarity)
         {
             Random random = Random;
