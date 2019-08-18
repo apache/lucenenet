@@ -33,7 +33,11 @@ using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net
 {
-    public static class SystemTypesHelpers
+    /// <summary>
+    /// LUCENENET specific extensions to various .NET types to make it easier to port tests
+    /// from Java with fewer changes.
+    /// </summary>
+    internal static class SystemTypesHelpers
     {
         public static char[] toCharArray(this string str)
         {
