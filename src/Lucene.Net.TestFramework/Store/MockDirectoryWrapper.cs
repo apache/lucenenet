@@ -119,7 +119,7 @@ namespace Lucene.Net.Store
         internal volatile bool crashed;
         private ThrottledIndexOutput throttledOutput;
         private Throttling throttling = Throttling.SOMETIMES;
-        protected internal LockFactory m_lockFactory;
+        protected LockFactory m_lockFactory;
 
         internal readonly AtomicInt64 inputCloneCount = new AtomicInt64();
 
@@ -325,7 +325,7 @@ namespace Lucene.Net.Store
         /// Simulates a crash of OS or machine by overwriting
         /// unsynced files.
         /// </summary>
-        public void Crash()
+        public virtual void Crash()
         {
             lock (this)
             {
@@ -675,7 +675,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public virtual ISet<string> OpenDeletedFiles
+        public virtual ISet<string> OpenDeletedFiles // LUCENENET TODO: API - expand to ICollection<T>
         {
             get
             {
@@ -932,7 +932,7 @@ namespace Lucene.Net.Store
         // NOTE: this is off by default; see LUCENE-5574
         private bool assertNoUnreferencedFilesOnClose;
 
-        public virtual bool AssertNoUnreferencedFilesOnClose
+        public virtual bool AssertNoUnreferencedFilesOnClose // LUCENENET TODO: Rename AssertNoUnreferencedFilesOnDispose ?
         {
             get // LUCENENET specific - added getter (to follow MSDN property guidelines)
             {
@@ -1146,7 +1146,7 @@ namespace Lucene.Net.Store
                             }
                         }
                     }
-                    m_input.Dispose();
+                    m_input.Dispose(); // LUCENENET TODO: using blocks in this entire class
                 }
             }
         }
@@ -1401,7 +1401,7 @@ namespace Lucene.Net.Store
         {
             private readonly MockDirectoryWrapper outerInstance;
 
-            internal readonly IndexOutput io;
+            private readonly IndexOutput io;
 
             public BufferedIndexOutputWrapper(MockDirectoryWrapper outerInstance, int bufferSize, IndexOutput io)
                 : base(bufferSize)

@@ -23,13 +23,8 @@ namespace Lucene.Net.Store
     /// This class provides access to namespace-level features defined in the
     /// Store namespace. It is used for testing only.
     /// </summary>
-    public sealed class TestHelper
+    public static class TestHelper // LUCENENET specific - made static and remoed private constructor since all members are static
     {
-        private TestHelper()
-        {
-            //
-        }
-
         /// <summary>
         /// Returns true if the instance of the provided input stream is actually
         /// an <see cref="SimpleFSIndexInput"/>.

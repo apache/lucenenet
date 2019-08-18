@@ -21,7 +21,7 @@ namespace Lucene.Net.Store
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// Calls check index on close.
+    /// Calls check index on dispose.
     /// </summary>
     // do NOT make any methods in this class synchronized, volatile
     // do NOT import anything from the concurrency package.
@@ -30,7 +30,7 @@ namespace Lucene.Net.Store
     {
         private bool checkIndexOnClose = true;
         private bool crossCheckTermVectorsOnClose = true;
-        protected internal volatile bool m_isOpen = true;
+        protected volatile bool m_isOpen = true;
 
         public BaseDirectoryWrapper(Directory @delegate)
             : base(@delegate)
