@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -558,7 +559,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class FailTwiceDuringMerge : MockDirectoryWrapper.Failure
+        private class FailTwiceDuringMerge : Failure
         {
             public bool DidFail1;
             public bool DidFail2;

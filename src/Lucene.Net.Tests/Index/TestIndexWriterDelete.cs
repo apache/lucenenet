@@ -2,6 +2,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Support.Threading;
@@ -825,7 +826,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestErrorAfterApplyDeletes()
         {
-            MockDirectoryWrapper.Failure failure = new FailureAnonymousInnerClassHelper(this);
+            Failure failure = new FailureAnonymousInnerClassHelper(this);
 
             // create a couple of files
 
@@ -940,7 +941,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousInnerClassHelper : MockDirectoryWrapper.Failure
+        private class FailureAnonymousInnerClassHelper : Failure
         {
             private readonly TestIndexWriterDelete OuterInstance;
 
@@ -955,7 +956,7 @@ namespace Lucene.Net.Index
             internal bool failed;
             internal Thread thread;
 
-            public override MockDirectoryWrapper.Failure Reset()
+            public override Failure Reset()
             {
                 thread = Thread.CurrentThread;
                 sawMaybe = false;
@@ -1012,7 +1013,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestErrorInDocsWriterAdd()
         {
-            MockDirectoryWrapper.Failure failure = new FailureAnonymousInnerClassHelper2(this);
+            Failure failure = new FailureAnonymousInnerClassHelper2(this);
 
             // create a couple of files
 
@@ -1055,7 +1056,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousInnerClassHelper2 : MockDirectoryWrapper.Failure
+        private class FailureAnonymousInnerClassHelper2 : Failure
         {
             private readonly TestIndexWriterDelete OuterInstance;
 
@@ -1067,7 +1068,7 @@ namespace Lucene.Net.Index
 
             internal bool failed;
 
-            public override MockDirectoryWrapper.Failure Reset()
+            public override Failure Reset()
             {
                 failed = false;
                 return this;

@@ -2,6 +2,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
@@ -715,7 +716,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class FailOnlyOnFlush : MockDirectoryWrapper.Failure
+        private class FailOnlyOnFlush : Failure
         {
             new internal bool DoFail = false;
             internal int Count;
@@ -1071,7 +1072,7 @@ namespace Lucene.Net.Index
         }
 
         // Throws IOException during MockDirectoryWrapper.sync
-        private class FailOnlyInSync : MockDirectoryWrapper.Failure
+        private class FailOnlyInSync : Failure
         {
             internal bool DidFail;
 
@@ -1151,7 +1152,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailOnlyInCommit : MockDirectoryWrapper.Failure
+        private class FailOnlyInCommit : Failure
         {
             internal bool FailOnCommit, FailOnDeleteFile;
             internal readonly bool DontFailDuringGlobalFieldMap;
@@ -1692,7 +1693,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class FailOnTermVectors : MockDirectoryWrapper.Failure
+        private class FailOnTermVectors : Failure
         {
             internal const string INIT_STAGE = "InitTermVectorsWriter";
             internal const string AFTER_INIT_STAGE = "FinishDocument";
@@ -2116,7 +2117,7 @@ namespace Lucene.Net.Index
         public virtual void TestTooManyFileException()
         {
             // Create failure that throws Too many open files exception randomly
-            MockDirectoryWrapper.Failure failure = new FailureAnonymousInnerClassHelper(this);
+            Failure failure = new FailureAnonymousInnerClassHelper(this);
 
             MockDirectoryWrapper dir = NewMockDirectory();
             // The exception is only thrown on open input
@@ -2179,7 +2180,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousInnerClassHelper : MockDirectoryWrapper.Failure
+        private class FailureAnonymousInnerClassHelper : Failure
         {
             private readonly TestIndexWriterExceptions OuterInstance;
 
@@ -2188,7 +2189,7 @@ namespace Lucene.Net.Index
                 this.OuterInstance = outerInstance;
             }
 
-            public override MockDirectoryWrapper.Failure Reset()
+            public override Failure Reset()
             {
                 m_doFail = false;
                 return this;
@@ -2349,7 +2350,7 @@ namespace Lucene.Net.Index
                     // FakeIOException can be thrown from mergeMiddle, in which case IW
                     // registers it before our CMS gets to suppress it. IW.forceMerge later
                     // throws it as a wrapped IOE, so don't fail in this case.
-                    if (ioe is MockDirectoryWrapper.FakeIOException || (ioe.InnerException != null && ioe.InnerException is MockDirectoryWrapper.FakeIOException))
+                    if (ioe is FakeIOException || (ioe.InnerException != null && ioe.InnerException is FakeIOException))
                     {
                         // expected
                         if (VERBOSE)
@@ -2450,7 +2451,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousInnerClassHelper2 : MockDirectoryWrapper.Failure
+        private class FailureAnonymousInnerClassHelper2 : Failure
         {
             private AtomicBoolean ShouldFail;
 
@@ -2485,7 +2486,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine((new Exception()).StackTrace);
                     }
                     ShouldFail.Set(false);
-                    throw new MockDirectoryWrapper.FakeIOException();
+                    throw new FakeIOException();
                 }
             }
         }
@@ -2507,7 +2508,7 @@ namespace Lucene.Net.Index
             protected override void HandleMergeException(Exception exc)
             {
                 // suppress only FakeIOException:
-                if (!(exc is MockDirectoryWrapper.FakeIOException))
+                if (!(exc is FakeIOException))
                 {
                     base.HandleMergeException(exc);
                 }
@@ -2637,7 +2638,7 @@ namespace Lucene.Net.Index
                     iw.Rollback();
                 }
 #pragma warning disable 168
-                catch (MockDirectoryWrapper.FakeIOException expected)
+                catch (FakeIOException expected)
 #pragma warning restore 168
                 {
                 }
@@ -2657,7 +2658,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class FailureAnonymousInnerClassHelper3 : MockDirectoryWrapper.Failure
+        private class FailureAnonymousInnerClassHelper3 : Failure
         {
             private readonly TestIndexWriterExceptions OuterInstance;
 
@@ -2682,7 +2683,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: now fail; thread=" + Thread.CurrentThread.Name + " exc:");
                         Console.WriteLine((new Exception()).StackTrace);
                     }
-                    throw new MockDirectoryWrapper.FakeIOException();
+                    throw new FakeIOException();
                 }
             }
         }

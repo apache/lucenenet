@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Lucene.Net.Documents;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -99,7 +100,7 @@ namespace Lucene.Net
             }
         }
 
-        private class FailOnlyOnMerge : MockDirectoryWrapper.Failure
+        private class FailOnlyOnMerge : Failure
         {
             public override void Eval(MockDirectoryWrapper dir)
             {

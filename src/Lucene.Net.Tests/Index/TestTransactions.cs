@@ -1,4 +1,5 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
@@ -43,7 +44,7 @@ namespace Lucene.Net.Index
     {
         private static volatile bool DoFail;
 
-        private class RandomFailure : MockDirectoryWrapper.Failure
+        private class RandomFailure : Failure
         {
             private readonly TestTransactions OuterInstance;
 

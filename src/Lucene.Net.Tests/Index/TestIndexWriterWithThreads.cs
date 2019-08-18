@@ -1,6 +1,7 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
@@ -311,7 +312,7 @@ namespace Lucene.Net.Index
 
         // Runs test, with multiple threads, using the specific
         // failure to trigger an IOException
-        public virtual void TestMultipleThreadsFailure(Func<IConcurrentMergeScheduler> newScheduler, MockDirectoryWrapper.Failure failure)
+        public virtual void TestMultipleThreadsFailure(Func<IConcurrentMergeScheduler> newScheduler, Failure failure)
         {
             int NUM_THREADS = 3;
 
@@ -393,7 +394,7 @@ namespace Lucene.Net.Index
 
         // Runs test, with one thread, using the specific failure
         // to trigger an IOException
-        public virtual void TestSingleThreadFailure(Func<IConcurrentMergeScheduler> newScheduler, MockDirectoryWrapper.Failure failure)
+        public virtual void TestSingleThreadFailure(Func<IConcurrentMergeScheduler> newScheduler, Failure failure)
         {
             MockDirectoryWrapper dir = NewMockDirectory();
 
@@ -429,7 +430,7 @@ namespace Lucene.Net.Index
         }
 
         // Throws IOException during FieldsWriter.flushDocument and during DocumentsWriter.abort
-        private class FailOnlyOnAbortOrFlush : MockDirectoryWrapper.Failure
+        private class FailOnlyOnAbortOrFlush : Failure
         {
             internal bool OnlyOnce;
 
@@ -502,7 +503,7 @@ namespace Lucene.Net.Index
         }
 
         // Throws IOException during DocumentsWriter.writeSegment
-        private class FailOnlyInWriteSegment : MockDirectoryWrapper.Failure
+        private class FailOnlyInWriteSegment : Failure
         {
             internal bool OnlyOnce;
 

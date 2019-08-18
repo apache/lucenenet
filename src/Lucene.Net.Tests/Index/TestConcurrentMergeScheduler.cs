@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestConcurrentMergeScheduler : LuceneTestCase
     {
-        private class FailOnlyOnFlush : MockDirectoryWrapper.Failure
+        private class FailOnlyOnFlush : Failure
         {
             private readonly TestConcurrentMergeScheduler OuterInstance;
 
@@ -435,7 +435,7 @@ namespace Lucene.Net.Index
 
 
         // LUCENENET specific
-        private class FailOnlyOnMerge : MockDirectoryWrapper.Failure
+        private class FailOnlyOnMerge : Failure
         {
             public override void Eval(MockDirectoryWrapper dir)
             {

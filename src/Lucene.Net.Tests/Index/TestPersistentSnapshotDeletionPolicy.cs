@@ -2,6 +2,7 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
+    using Lucene.Net.Store;
     using NUnit.Framework;
     using System;
     using System.IO;
@@ -153,7 +154,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class FailureAnonymousInnerClassHelper : MockDirectoryWrapper.Failure
+        private class FailureAnonymousInnerClassHelper : Failure
         {
             private readonly TestPersistentSnapshotDeletionPolicy OuterInstance;
 

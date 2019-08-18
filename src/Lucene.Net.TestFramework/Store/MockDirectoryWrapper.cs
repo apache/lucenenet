@@ -241,6 +241,8 @@ namespace Lucene.Net.Store
             }
         }
 
+        // LUCENENET specific - de-nested Throttling enum
+
         public virtual Throttling Throttling
         {
             get // LUCENENET specific - added getter (to follow MSDN property guidelines)
@@ -1193,53 +1195,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        /// <summary>
-        /// Objects that represent fail-able conditions. Objects of a derived
-        /// class are created and registered with the mock directory. After
-        /// register, each object will be invoked once for each first write
-        /// of a file, giving the object a chance to throw an <see cref="IOException"/>.
-        /// </summary>
-        public class Failure // LUCENENET TDOO: API - de-nest
-        {
-            /// <summary>
-            /// Eval is called on the first write of every new file.
-            /// </summary>
-            public virtual void Eval(MockDirectoryWrapper dir)
-            {
-            }
-
-            /// <summary>
-            /// Reset should set the state of the failure to its default
-            /// (freshly constructed) state. Reset is convenient for tests
-            /// that want to create one failure object and then reuse it in
-            /// multiple cases. This, combined with the fact that <see cref="Failure"/>
-            /// subclasses are often anonymous classes makes reset difficult to
-            /// do otherwise.
-            /// <para/>
-            /// A typical example of use is
-            /// <code>
-            /// Failure failure = new Failure() { ... };
-            /// ...
-            /// mock.FailOn(failure.Reset())
-            /// </code>
-            /// </summary>
-            public virtual Failure Reset()
-            {
-                return this;
-            }
-
-            protected internal bool m_doFail;
-
-            public virtual void SetDoFail()
-            {
-                m_doFail = true;
-            }
-
-            public virtual void ClearDoFail()
-            {
-                m_doFail = false;
-            }
-        }
+        // LUCENENET specific - de-nested Failure
 
         internal List<Failure> failures;
 
@@ -1502,30 +1458,80 @@ namespace Lucene.Net.Store
             }
         }
 
+        // LUCENENET specific - de-nested FakeIOException
+    }
+
+    /// <summary>
+    /// Objects that represent fail-able conditions. Objects of a derived
+    /// class are created and registered with the mock directory. After
+    /// register, each object will be invoked once for each first write
+    /// of a file, giving the object a chance to throw an <see cref="IOException"/>.
+    /// </summary>
+    public class Failure
+    {
         /// <summary>
-        /// Use this when throwing fake <see cref="IOException"/>,
-        /// e.g. from <see cref="MockDirectoryWrapper.Failure"/>.
+        /// Eval is called on the first write of every new file.
         /// </summary>
-        // LUCENENET: It is no longer good practice to use binary serialization. 
-        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
-#if FEATURE_SERIALIZABLE_EXCEPTIONS
-        [Serializable]
-#endif
-        public class FakeIOException : System.IO.IOException // LUCENENET TDOO: API - de-nest
+        public virtual void Eval(MockDirectoryWrapper dir)
         {
-            public FakeIOException() { } // LUCENENET specific - added public constructor for serialization
+        }
+
+        /// <summary>
+        /// Reset should set the state of the failure to its default
+        /// (freshly constructed) state. Reset is convenient for tests
+        /// that want to create one failure object and then reuse it in
+        /// multiple cases. This, combined with the fact that <see cref="Failure"/>
+        /// subclasses are often anonymous classes makes reset difficult to
+        /// do otherwise.
+        /// <para/>
+        /// A typical example of use is
+        /// <code>
+        /// Failure failure = new Failure() { ... };
+        /// ...
+        /// mock.FailOn(failure.Reset())
+        /// </code>
+        /// </summary>
+        public virtual Failure Reset()
+        {
+            return this;
+        }
+
+        protected internal bool m_doFail;
+
+        public virtual void SetDoFail()
+        {
+            m_doFail = true;
+        }
+
+        public virtual void ClearDoFail()
+        {
+            m_doFail = false;
+        }
+    }
+
+    /// <summary>
+    /// Use this when throwing fake <see cref="IOException"/>,
+    /// e.g. from <see cref="MockDirectoryWrapper.Failure"/>.
+    /// </summary>
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+    [Serializable]
+#endif
+    public class FakeIOException : IOException
+    {
+        public FakeIOException() { } // LUCENENET specific - added public constructor for serialization
 
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
-            /// <summary>
-            /// Initializes a new instance of this class with serialized data.
-            /// </summary>
-            /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-            /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-            protected FakeIOException(SerializationInfo info, StreamingContext context)
-                : base(info, context)
-            {
-            }
-#endif
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        protected FakeIOException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
         }
+#endif
     }
 }
