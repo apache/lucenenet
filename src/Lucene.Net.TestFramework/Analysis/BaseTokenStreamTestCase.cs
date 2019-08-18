@@ -47,6 +47,54 @@ namespace Lucene.Net.Analysis
     using TextField = TextField;
 
     /// <summary>
+    /// Attribute that records if it was cleared or not.  this is used
+    /// for testing that <see cref="Lucene.Net.Util.AttributeSource.ClearAttributes()"/> was called correctly.
+    /// </summary>
+    public interface ICheckClearAttributesAttribute : IAttribute
+    {
+        bool AndResetClearCalled { get; }
+    }
+
+    /// <summary>
+    /// Attribute that records if it was cleared or not.  this is used
+    /// for testing that <see cref="Lucene.Net.Util.AttributeSource.ClearAttributes()"/> was called correctly.
+    /// </summary>
+    public sealed class CheckClearAttributesAttribute : Attribute, ICheckClearAttributesAttribute
+    {
+        private bool clearCalled = false;
+
+        public bool AndResetClearCalled
+        {
+            get
+            {
+                bool old = clearCalled;
+                clearCalled = false;
+                return old;
+            }
+        }
+
+        public override void Clear()
+        {
+            clearCalled = true;
+        }
+
+        public override bool Equals(object other)
+        {
+            return (other is CheckClearAttributesAttribute && ((CheckClearAttributesAttribute)other).clearCalled == this.clearCalled);
+        }
+
+        public override int GetHashCode()
+        {
+            return 76137213 ^ clearCalled.GetHashCode();
+        }
+
+        public override void CopyTo(IAttribute target)
+        {
+            ((CheckClearAttributesAttribute)target).Clear();
+        }
+    }
+
+    /// <summary>
     /// Base class for all Lucene unit tests that use <see cref="TokenStream"/>s.
     /// <p>
     /// When writing unit tests for analysis components, its highly recommended
@@ -60,53 +108,9 @@ namespace Lucene.Net.Analysis
     {
         // some helpers to test Analyzers and TokenStreams:
 
-        /// <summary>
-        /// Attribute that records if it was cleared or not.  this is used
-        /// for testing that <see cref="Lucene.Net.Util.AttributeSource.ClearAttributes()"/> was called correctly.
-        /// </summary>
-        public interface ICheckClearAttributesAttribute : IAttribute // LUCENENET TODO: API - de-nest
-        {
-            bool AndResetClearCalled { get; }
-        }
+        // LUCENENET specific - de-nested ICheckClearAttributesAttribute
 
-        /// <summary>
-        /// Attribute that records if it was cleared or not.  this is used
-        /// for testing that <see cref="Lucene.Net.Util.AttributeSource.ClearAttributes()"/> was called correctly.
-        /// </summary>
-        public sealed class CheckClearAttributesAttribute : Attribute, ICheckClearAttributesAttribute // LUCENENET TODO: API - de-nest
-        {
-            private bool clearCalled = false;
-
-            public bool AndResetClearCalled
-            {
-                get
-                {
-                    bool old = clearCalled;
-                    clearCalled = false;
-                    return old;
-                }
-            }
-
-            public override void Clear()
-            {
-                clearCalled = true;
-            }
-
-            public override bool Equals(object other)
-            {
-                return (other is CheckClearAttributesAttribute && ((CheckClearAttributesAttribute)other).clearCalled == this.clearCalled);
-            }
-
-            public override int GetHashCode()
-            {
-                return 76137213 ^ clearCalled.GetHashCode();
-            }
-
-            public override void CopyTo(IAttribute target)
-            {
-                ((CheckClearAttributesAttribute)target).Clear();
-            }
-        }
+        // LUCENENET specific - de-nested CheckClearAttributesAttribute
 
         // offsetsAreCorrect also validates:
         //   - graph offsets are correct (all tokens leaving from
