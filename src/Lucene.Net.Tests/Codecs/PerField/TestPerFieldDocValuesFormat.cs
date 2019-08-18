@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.PerField
             return Codec_Renamed;
         }
 
-        protected internal override bool CodecAcceptsHugeBinaryValues(string field)
+        protected override bool CodecAcceptsHugeBinaryValues(string field)
         {
             return TestUtil.FieldSupportsHugeBinaryDocValues(field);
         }

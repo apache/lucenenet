@@ -3513,7 +3513,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal virtual bool CodecAcceptsHugeBinaryValues(string field)
+        protected virtual bool CodecAcceptsHugeBinaryValues(string field)
         {
             return true;
         }

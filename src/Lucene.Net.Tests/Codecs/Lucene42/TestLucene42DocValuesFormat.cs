@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.Lucene42
             return codec;
         }
 
-        protected internal override bool CodecAcceptsHugeBinaryValues(string field)
+        protected override bool CodecAcceptsHugeBinaryValues(string field)
         {
             return false;
         }
