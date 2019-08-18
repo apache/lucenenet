@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class BaseDocValuesFormatTestCase : BaseIndexFileFormatTestCase
     {
-        protected internal override void AddRandomFields(Document doc)
+        protected override void AddRandomFields(Document doc)
         {
             if (Usually())
             {
@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
             }
 
             ireader.Dispose();
-            directory.Dispose();
+            directory.Dispose(); // LUCENENET TODO: using blocks in this whole class
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass

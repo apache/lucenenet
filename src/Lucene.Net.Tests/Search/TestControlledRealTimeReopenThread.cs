@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
             RunTest("TestControlledRealTimeReopenThread");
         }
 
-        protected internal override IndexSearcher FinalSearcher
+        protected override IndexSearcher FinalSearcher
         {
             get
             {
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override Directory GetDirectory(Directory @in)
+        protected override Directory GetDirectory(Directory @in)
         {
             // Randomly swap in NRTCachingDir
             if (Random.NextBoolean())
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override void UpdateDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
+        protected override void UpdateDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             long gen = genWriter.UpdateDocuments(id, docs);
 
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
 
         }
 
-        protected internal override void AddDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
+        protected override void AddDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             long gen = genWriter.AddDocuments(docs);
             // Randomly verify the add "took":
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search
             lastGens.Value = gen;
         }
 
-        protected internal override void AddDocument(Term id, IEnumerable<IIndexableField> doc)
+        protected override void AddDocument(Term id, IEnumerable<IIndexableField> doc)
         {
             long gen = genWriter.AddDocument(doc);
 
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
             lastGens.Value = gen;
         }
 
-        protected internal override void UpdateDocument(Term id, IEnumerable<IIndexableField> doc)
+        protected override void UpdateDocument(Term id, IEnumerable<IIndexableField> doc)
         {
             long gen = genWriter.UpdateDocument(id, doc);
             // Randomly verify the udpate "took":
@@ -229,7 +229,7 @@ namespace Lucene.Net.Search
             lastGens.Value = gen;
         }
 
-        protected internal override void DeleteDocuments(Term id)
+        protected override void DeleteDocuments(Term id)
         {
             long gen = genWriter.DeleteDocuments(id);
             // randomly verify the delete "took":
@@ -257,7 +257,7 @@ namespace Lucene.Net.Search
             lastGens.Value = gen;
         }
 
-        protected internal override void DoAfterWriter(TaskScheduler es)
+        protected override void DoAfterWriter(TaskScheduler es)
         {
             double minReopenSec = 0.01 + 0.05 * Random.NextDouble();
             double maxReopenSec = minReopenSec * (1.0 + 10 * Random.NextDouble());
@@ -312,7 +312,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override void DoAfterIndexingThreadDone()
+        protected override void DoAfterIndexingThreadDone()
         {
             long? gen = lastGens.Value;
             if (gen != null)
@@ -331,12 +331,12 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override void DoSearching(TaskScheduler es, long stopTime)
+        protected override void DoSearching(TaskScheduler es, long stopTime)
         {
             RunSearchThreads(stopTime);
         }
 
-        protected internal override IndexSearcher CurrentSearcher
+        protected override IndexSearcher CurrentSearcher
         {
             get
             {
@@ -356,7 +356,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override void ReleaseSearcher(IndexSearcher s)
+        protected override void ReleaseSearcher(IndexSearcher s)
         {
             // NOTE: a bit iffy... technically you should release
             // against the same SearcherManager you acquired from... but
@@ -365,7 +365,7 @@ namespace Lucene.Net.Search
             nrtNoDeletes.Release(s);
         }
 
-        protected internal override void DoClose()
+        protected override void DoClose()
         {
             Assert.IsTrue(warmCalled);
             if (VERBOSE)

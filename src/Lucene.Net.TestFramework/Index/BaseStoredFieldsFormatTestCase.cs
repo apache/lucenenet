@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class BaseStoredFieldsFormatTestCase : BaseIndexFileFormatTestCase
     {
-        protected internal override void AddRandomFields(Document d)
+        protected override void AddRandomFields(Document d)
         {
             int numValues = Random.Next(3);
             for (int i = 0; i < numValues; ++i)
@@ -753,7 +753,7 @@ namespace Lucene.Net.Index
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
-        public virtual void TestBulkMergeWithDeletes()
+        public virtual void TestBulkMergeWithDeletes() // LUCENENET TODO: using blocks in this whole class
         {
             int numDocs = AtLeast(200);
             Directory dir = NewDirectory();

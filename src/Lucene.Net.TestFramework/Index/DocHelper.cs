@@ -40,70 +40,70 @@ namespace Lucene.Net.Index
 
     internal class DocHelper
     {
-        public static readonly FieldType CustomType;
+        public static readonly FieldType CustomType; // LUCENENET TODO: API - property
         public const string FIELD_1_TEXT = "field one text";
         public const string TEXT_FIELD_1_KEY = "textField1";
         public static Field TextField1;
 
-        public static readonly FieldType CustomType2;
+        public static readonly FieldType CustomType2; // LUCENENET TODO: API - property
         public const string FIELD_2_TEXT = "field field field two text";
 
         //Fields will be lexicographically sorted.  So, the order is: field, text, two
         public static readonly int[] FIELD_2_FREQS = new int[] { 3, 1, 1 };
 
         public const string TEXT_FIELD_2_KEY = "textField2";
-        public static Field TextField2;
+        public static Field TextField2; // LUCENENET TODO: API - property
 
         public static readonly FieldType CustomType3;
         public const string FIELD_3_TEXT = "aaaNoNorms aaaNoNorms bbbNoNorms";
         public const string TEXT_FIELD_3_KEY = "textField3";
-        public static Field TextField3;
+        public static Field TextField3; // LUCENENET TODO: API - property
 
         public const string KEYWORD_TEXT = "Keyword";
         public const string KEYWORD_FIELD_KEY = "keyField";
-        public static Field KeyField;
+        public static Field KeyField; // LUCENENET TODO: API - property
 
         public static readonly FieldType CustomType5;
         public const string NO_NORMS_TEXT = "omitNormsText";
         public const string NO_NORMS_KEY = "omitNorms";
-        public static Field NoNormsField;
+        public static Field NoNormsField; // LUCENENET TODO: API - property
 
         public static readonly FieldType CustomType6;
         public const string NO_TF_TEXT = "analyzed with no tf and positions";
         public const string NO_TF_KEY = "omitTermFreqAndPositions";
-        public static Field NoTFField;
+        public static Field NoTFField; // LUCENENET TODO: API - property
 
         public static readonly FieldType CustomType7;
         public const string UNINDEXED_FIELD_TEXT = "unindexed field text";
         public const string UNINDEXED_FIELD_KEY = "unIndField";
-        public static Field UnIndField;
+        public static Field UnIndField; // LUCENENET TODO: API - property
 
         public const string UNSTORED_1_FIELD_TEXT = "unstored field text";
         public const string UNSTORED_FIELD_1_KEY = "unStoredField1";
-        public static Field UnStoredField1;// = new TextField(UNSTORED_FIELD_1_KEY, UNSTORED_1_FIELD_TEXT, Field.Store.NO);
+        public static Field UnStoredField1;// = new TextField(UNSTORED_FIELD_1_KEY, UNSTORED_1_FIELD_TEXT, Field.Store.NO); // LUCENENET TODO: API - property
 
         public static readonly FieldType CustomType8;
         public const string UNSTORED_2_FIELD_TEXT = "unstored field text";
         public const string UNSTORED_FIELD_2_KEY = "unStoredField2";
-        public static Field UnStoredField2;
+        public static Field UnStoredField2; // LUCENENET TODO: API - property
 
         public const string LAZY_FIELD_BINARY_KEY = "lazyFieldBinary";
         public static byte[] LAZY_FIELD_BINARY_BYTES;
-        public static Field LazyFieldBinary;
+        public static Field LazyFieldBinary; // LUCENENET TODO: API - property
 
         public const string LAZY_FIELD_KEY = "lazyField";
         public const string LAZY_FIELD_TEXT = "These are some field bytes";
-        public static Field LazyField;// = new Field(LAZY_FIELD_KEY, LAZY_FIELD_TEXT, CustomType);
+        public static Field LazyField;// = new Field(LAZY_FIELD_KEY, LAZY_FIELD_TEXT, CustomType); // LUCENENET TODO: API - property
 
         public const string LARGE_LAZY_FIELD_KEY = "largeLazyField";
         public static string LARGE_LAZY_FIELD_TEXT;
-        public static Field LargeLazyField;
+        public static Field LargeLazyField; // LUCENENET TODO: API - property
 
         //From Issue 509
         public const string FIELD_UTF1_TEXT = "field one \u4e00text";
 
         public const string TEXT_FIELD_UTF1_KEY = "textField1Utf8";
-        public static Field TextUtfField1;// = new Field(TEXT_FIELD_UTF1_KEY, FIELD_UTF1_TEXT, CustomType);
+        public static Field TextUtfField1;// = new Field(TEXT_FIELD_UTF1_KEY, FIELD_UTF1_TEXT, CustomType); // LUCENENET TODO: API - property
 
         public const string FIELD_UTF2_TEXT = "field field field \u4e00two text";
 
@@ -111,24 +111,24 @@ namespace Lucene.Net.Index
         public static readonly int[] FIELD_UTF2_FREQS = new int[] { 3, 1, 1 };
 
         public const string TEXT_FIELD_UTF2_KEY = "textField2Utf8";
-        public static Field TextUtfField2;// = new Field(TEXT_FIELD_UTF2_KEY, FIELD_UTF2_TEXT, CustomType2);
+        public static Field TextUtfField2;// = new Field(TEXT_FIELD_UTF2_KEY, FIELD_UTF2_TEXT, CustomType2); // LUCENENET TODO: API - property
 
-        public static IDictionary<string, object> NameValues = null;
+        public static IDictionary<string, object> NameValues = null; // LUCENENET TODO: API - property
 
         // ordered list of all the fields...
         // could use LinkedHashMap for this purpose if Java1.4 is OK
         public static Field[] Fields = null;
 
-        public static IDictionary<string, IIndexableField> All = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Indexed = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Stored = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Unstored = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Unindexed = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Termvector = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Notermvector = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> Lazy = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> NoNorms = new Dictionary<string, IIndexableField>();
-        public static IDictionary<string, IIndexableField> NoTf = new Dictionary<string, IIndexableField>();
+        public static IDictionary<string, IIndexableField> All = new Dictionary<string, IIndexableField>(); // LUCENENET TODO: API - property
+        public static IDictionary<string, IIndexableField> Indexed = new Dictionary<string, IIndexableField>(); // LUCENENET TODO: API - property
+        public static IDictionary<string, IIndexableField> Stored = new Dictionary<string, IIndexableField>(); // LUCENENET TODO: API - property
+        public static IDictionary<string, IIndexableField> Unstored = new Dictionary<string, IIndexableField>(); // LUCENENET TODO: API - property
+        public static IDictionary<string, IIndexableField> Unindexed = new Dictionary<string, IIndexableField>(); // LUCENENET TODO: API - property
+        public static IDictionary<string, IIndexableField> Termvector = new Dictionary<string, IIndexableField>(); // LUCENENET TODO: API - property
+        public static IDictionary<string, IIndexableField> Notermvector = new Dictionary<string, IIndexableField>(); // LUCENENET TODO: API - property
+        public static IDictionary<string, IIndexableField> Lazy = new Dictionary<string, IIndexableField>(); // LUCENENET TODO: API - property
+        public static IDictionary<string, IIndexableField> NoNorms = new Dictionary<string, IIndexableField>(); // LUCENENET TODO: API - property
+        public static IDictionary<string, IIndexableField> NoTf = new Dictionary<string, IIndexableField>(); // LUCENENET TODO: API - property
 
         private static void Add(IDictionary<string, IIndexableField> map, IIndexableField field)
         {

@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
             UseNonNrtReaders = Random.NextBoolean();
         }
 
-        protected internal override void DoSearching(TaskScheduler es, long stopTime)
+        protected override void DoSearching(TaskScheduler es, long stopTime)
         {
             bool anyOpenDelFiles = false;
 
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
             Assert.IsFalse(anyOpenDelFiles, "saw non-zero open-but-deleted count");
         }
 
-        protected internal override Directory GetDirectory(Directory @in)
+        protected override Directory GetDirectory(Directory @in)
         {
             Debug.Assert(@in is MockDirectoryWrapper);
             if (!UseNonNrtReaders)
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
             return @in;
         }
 
-        protected internal override void DoAfterWriter(TaskScheduler es)
+        protected override void DoAfterWriter(TaskScheduler es)
         {
             // Force writer to do reader pooling, always, so that
             // all merged segments, even for merges before
@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
 
         private IndexSearcher FixedSearcher;
 
-        protected internal override IndexSearcher CurrentSearcher
+        protected override IndexSearcher CurrentSearcher
         {
             get
             {
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal override void ReleaseSearcher(IndexSearcher s)
+        protected override void ReleaseSearcher(IndexSearcher s)
         {
             if (s != FixedSearcher)
             {
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal override IndexSearcher FinalSearcher
+        protected override IndexSearcher FinalSearcher
         {
             get
             {

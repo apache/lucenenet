@@ -185,8 +185,8 @@ namespace Lucene.Net.Index
                 new SimpleTextDocValuesFormat(), 
                 new AssertingDocValuesFormat());
 
-            Collections.Shuffle(formats);
-            Collections.Shuffle(dvFormats);
+            Collections.Shuffle(formats); // LUCENENET TODO: random
+            Collections.Shuffle(dvFormats); // LUCENENET TODO: random
 
             // Avoid too many open files:
             if (formats.Count > 4)
@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
         public override string ToString()
         {
             // LUCENENET NOTE: using toString() extension method on dictionaries to print out their contents
-            return base.ToString() + ": " + previousMappings.toString() + ", docValues:" + previousDVMappings.toString();
+            return base.ToString() + ": " + previousMappings.toString() + ", docValues:" + previousDVMappings.toString(); // LUCENENET TODO: Collections.ToString()
         }
     }
 }

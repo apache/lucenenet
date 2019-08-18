@@ -112,28 +112,28 @@ namespace Lucene.Net.Index
         {
             // Used only to generate docIDs; this way if you pull w/
             // or w/o positions you get the same docID sequence:
-            internal readonly Random docRandom;
+            private readonly Random docRandom;
 
-            internal readonly Random random;
+            private readonly Random random;
             public int DocFreq { get; set; }
-            internal readonly int maxDocSpacing;
-            internal readonly int payloadSize;
-            internal readonly bool fixedPayloads;
-            internal readonly IBits liveDocs;
-            internal readonly BytesRef payload;
-            internal readonly IndexOptions options;
-            internal readonly bool doPositions;
+            private readonly int maxDocSpacing;
+            private readonly int payloadSize;
+            private readonly bool fixedPayloads;
+            private readonly IBits liveDocs;
+            private readonly BytesRef payload;
+            private readonly IndexOptions options;
+            private readonly bool doPositions;
 
-            internal int docID;
+            private int docID;
             internal int freq;
             public int Upto { get; set; }
 
-            internal int pos;
-            internal int offset;
-            internal int startOffset;
-            internal int endOffset;
-            internal int posSpacing;
-            internal int posUpto;
+            private int pos;
+            private int offset;
+            private int startOffset;
+            private int endOffset;
+            private int posSpacing;
+            private int posUpto;
 
             public SeedPostings(long seed, int minDocFreq, int maxDocFreq, IBits liveDocs, IndexOptions options)
             {
@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal virtual int _nextDoc()
+            private int _nextDoc()
             {
                 // Must consume random:
                 while (posUpto < freq)
@@ -1072,14 +1072,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        new private class TestThread : ThreadClass
+        private class TestThread : ThreadClass
         {
-            internal Fields fieldsSource;
-            internal ISet<Option> options;
-            internal IndexOptions maxIndexOptions;
-            internal IndexOptions maxTestOptions;
-            internal bool alwaysTestMax;
-            internal BasePostingsFormatTestCase testCase;
+            private Fields fieldsSource;
+            private ISet<Option> options;
+            private IndexOptions maxIndexOptions;
+            private IndexOptions maxTestOptions;
+            private bool alwaysTestMax;
+            private BasePostingsFormatTestCase testCase;
 
             public TestThread(BasePostingsFormatTestCase testCase, Fields fieldsSource, ISet<Option> options, IndexOptions maxTestOptions, IndexOptions maxIndexOptions, bool alwaysTestMax)
             {
@@ -1286,7 +1286,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                fieldsProducer.Dispose();
+                fieldsProducer.Dispose(); // LUCENENET TODO: using block
             }
         }
 
@@ -1359,7 +1359,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal override void AddRandomFields(Document doc)
+        protected override void AddRandomFields(Document doc)
         {
             
             foreach (IndexOptions opts in Enum.GetValues(typeof(IndexOptions)))

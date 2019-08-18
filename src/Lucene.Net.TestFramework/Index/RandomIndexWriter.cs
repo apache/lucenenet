@@ -573,8 +573,8 @@ namespace Lucene.Net.Index
 
     public sealed class TestPointInfoStream : InfoStream
     {
-        internal readonly InfoStream @delegate;
-        internal readonly ITestPoint testPoint;
+        private readonly InfoStream @delegate;
+        private readonly ITestPoint testPoint;
 
         public TestPointInfoStream(InfoStream @delegate, ITestPoint testPoint)
         {

@@ -65,13 +65,13 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class ThreadedIndexingAndSearchingTestCase : LuceneTestCase
     {
-        protected internal readonly AtomicBoolean m_failed = new AtomicBoolean();
-        protected internal readonly AtomicInt32 m_addCount = new AtomicInt32();
-        protected internal readonly AtomicInt32 m_delCount = new AtomicInt32();
-        protected internal readonly AtomicInt32 m_packCount = new AtomicInt32();
+        protected readonly AtomicBoolean m_failed = new AtomicBoolean();
+        protected readonly AtomicInt32 m_addCount = new AtomicInt32();
+        protected readonly AtomicInt32 m_delCount = new AtomicInt32();
+        protected readonly AtomicInt32 m_packCount = new AtomicInt32();
 
-        protected internal Directory m_dir;
-        protected internal IndexWriter m_writer;
+        protected Directory m_dir;
+        protected IndexWriter m_writer;
 
         private class SubDocs
         {
@@ -87,48 +87,48 @@ namespace Lucene.Net.Index
         }
 
         // Called per-search
-        protected internal abstract IndexSearcher CurrentSearcher { get; }
+        protected abstract IndexSearcher CurrentSearcher { get; } // LUCENENET TODO: API - Make GetCurrentSearcher() method (non-deterministic)
 
-        protected internal abstract IndexSearcher FinalSearcher { get; }
+        protected abstract IndexSearcher FinalSearcher { get; } // LUCENENET TODO: API - Make GetFinalSearcher() method (non-deterministic)
 
-        protected internal virtual void ReleaseSearcher(IndexSearcher s)
+        protected virtual void ReleaseSearcher(IndexSearcher s)
         {
         }
 
         // Called once to run searching
-        protected internal abstract void DoSearching(TaskScheduler es, long stopTime);
+        protected abstract void DoSearching(TaskScheduler es, long stopTime);
 
-        protected internal virtual Directory GetDirectory(Directory @in)
+        protected virtual Directory GetDirectory(Directory @in)
         {
             return @in;
         }
 
-        protected internal virtual void UpdateDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
+        protected virtual void UpdateDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             m_writer.UpdateDocuments(id, docs);
         }
 
-        protected internal virtual void AddDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
+        protected virtual void AddDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             m_writer.AddDocuments(docs);
         }
 
-        protected internal virtual void AddDocument(Term id, IEnumerable<IIndexableField> doc)
+        protected virtual void AddDocument(Term id, IEnumerable<IIndexableField> doc)
         {
             m_writer.AddDocument(doc);
         }
 
-        protected internal virtual void UpdateDocument(Term term, IEnumerable<IIndexableField> doc)
+        protected virtual void UpdateDocument(Term term, IEnumerable<IIndexableField> doc)
         {
             m_writer.UpdateDocument(term, doc);
         }
 
-        protected internal virtual void DeleteDocuments(Term term)
+        protected virtual void DeleteDocuments(Term term)
         {
             m_writer.DeleteDocuments(term);
         }
 
-        protected internal virtual void DoAfterIndexingThreadDone()
+        protected virtual void DoAfterIndexingThreadDone()
         {
         }
 
@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal virtual void RunSearchThreads(long stopTime)
+        protected virtual void RunSearchThreads(long stopTime)
         {
             int numThreads = TestUtil.NextInt32(Random, 1, 5);
             ThreadClass[] searchThreads = new ThreadClass[numThreads];
@@ -539,15 +539,15 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal virtual void DoAfterWriter(TaskScheduler es)
+        protected virtual void DoAfterWriter(TaskScheduler es)
         {
         }
 
-        protected internal virtual void DoClose()
+        protected virtual void DoClose() // LUCENENET TODO: API - rename DoDispose() ?
         {
         }
 
-        protected internal bool m_assertMergedSegmentsWarmed = true;
+        protected bool m_assertMergedSegmentsWarmed = true;
 
         private readonly IDictionary<SegmentCoreReaders, bool?> warmed = new WeakDictionary<SegmentCoreReaders, bool?>(); //new ConcurrentHashMapWrapper<SegmentCoreReaders, bool?>(new HashMap<SegmentCoreReaders, bool?>());
         // Collections.synchronizedMap(new WeakHashMap<SegmentCoreReaders, bool?>());
@@ -855,7 +855,7 @@ namespace Lucene.Net.Index
             return hitCount;
         }
 
-        protected internal virtual void SmokeTestSearcher(IndexSearcher s)
+        protected virtual void SmokeTestSearcher(IndexSearcher s)
         {
             RunQuery(s, new TermQuery(new Term("body", "united")));
             RunQuery(s, new TermQuery(new Term("titleTokenized", "states")));

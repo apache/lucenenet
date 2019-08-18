@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = new RAMDirectory();
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            IndexWriter iwriter = new IndexWriter(dir, iwc);
+            IndexWriter iwriter = new IndexWriter(dir, iwc); // LUCENENET TODO: using blocks in this whole class
 
             int uniqueValueCount = TestUtil.NextInt32(Random, 1, 256);
             IList<long> values = new List<long>();

@@ -92,8 +92,8 @@ namespace Lucene.Net.Index
     /// Wraps a <see cref="DocsEnum"/> with additional checks </summary>
     public class AssertingDocsEnum : FilterAtomicReader.FilterDocsEnum
     {
-        internal DocsEnumState state = DocsEnumState.START;
-        internal int doc;
+        private DocsEnumState state = DocsEnumState.START;
+        private int doc;
 
         public AssertingDocsEnum(DocsEnum @in)
             : this(@in, true)
@@ -179,8 +179,8 @@ namespace Lucene.Net.Index
     /// Wraps a <see cref="NumericDocValues"/> but with additional asserts </summary>
     public class AssertingNumericDocValues : NumericDocValues
     {
-        internal readonly NumericDocValues @in;
-        internal readonly int maxDoc;
+        private readonly NumericDocValues @in;
+        private readonly int maxDoc;
 
         public AssertingNumericDocValues(NumericDocValues @in, int maxDoc)
         {
@@ -199,8 +199,8 @@ namespace Lucene.Net.Index
     /// Wraps a <see cref="BinaryDocValues"/> but with additional asserts </summary>
     public class AssertingBinaryDocValues : BinaryDocValues
     {
-        internal readonly BinaryDocValues @in;
-        internal readonly int maxDoc;
+        private readonly BinaryDocValues @in;
+        private readonly int maxDoc;
 
         public AssertingBinaryDocValues(BinaryDocValues @in, int maxDoc)
         {
@@ -221,9 +221,9 @@ namespace Lucene.Net.Index
     /// Wraps a <see cref="SortedDocValues"/> but with additional asserts </summary>
     public class AssertingSortedDocValues : SortedDocValues
     {
-        internal readonly SortedDocValues @in;
-        internal readonly int maxDoc;
-        internal readonly int valueCount;
+        private readonly SortedDocValues @in;
+        private readonly int maxDoc;
+        private readonly int valueCount;
 
         public AssertingSortedDocValues(SortedDocValues @in, int maxDoc)
         {
@@ -281,10 +281,10 @@ namespace Lucene.Net.Index
     /// Wraps a <see cref="SortedSetDocValues"/> but with additional asserts </summary>
     public class AssertingSortedSetDocValues : SortedSetDocValues
     {
-        internal readonly SortedSetDocValues @in;
-        internal readonly int maxDoc;
-        internal readonly long valueCount;
-        internal long lastOrd = NO_MORE_ORDS;
+        private readonly SortedSetDocValues @in;
+        private readonly int maxDoc;
+        private readonly long valueCount;
+        private long lastOrd = NO_MORE_ORDS;
 
         public AssertingSortedSetDocValues(SortedSetDocValues @in, int maxDoc)
         {
@@ -350,13 +350,13 @@ namespace Lucene.Net.Index
             this.@in = @in;
         }
 
-        public bool Get(int index)
+        public virtual bool Get(int index)
         {
             Debug.Assert(index >= 0 && index < Length);
             return @in.Get(index);
         }
 
-        public int Length
+        public virtual int Length
         {
             get { return @in.Length; }
         }
@@ -401,14 +401,14 @@ namespace Lucene.Net.Index
 
         internal class AssertingTermsEnum : FilterTermsEnum
         {
-            internal enum State
+            private enum State
             {
                 INITIAL,
                 POSITIONED,
                 UNPOSITIONED
             }
 
-            internal State state = State.INITIAL;
+            private State state = State.INITIAL;
 
             public AssertingTermsEnum(TermsEnum @in)
                 : base(@in)
@@ -555,10 +555,10 @@ namespace Lucene.Net.Index
 
         internal class AssertingDocsAndPositionsEnum : FilterDocsAndPositionsEnum
         {
-            internal DocsEnumState state = DocsEnumState.START;
-            internal int positionMax = 0;
-            internal int positionCount = 0;
-            internal int doc;
+            private DocsEnumState state = DocsEnumState.START;
+            private int positionMax = 0;
+            private int positionCount = 0;
+            private int doc;
 
             public AssertingDocsAndPositionsEnum(DocsAndPositionsEnum @in)
                 : base(@in)

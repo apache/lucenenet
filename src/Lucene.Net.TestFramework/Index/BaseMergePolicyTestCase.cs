@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Create a new <see cref="Index.MergePolicy"/> instance. </summary>
-        protected internal abstract MergePolicy NewMergePolicy(); // LUCENENET specific - renamed from MergePolicy() to be consistent
+        protected abstract MergePolicy NewMergePolicy(); // LUCENENET specific - renamed from MergePolicy() to be consistent
 
         [Test]
         public virtual void TestForceMergeNotNeeded()

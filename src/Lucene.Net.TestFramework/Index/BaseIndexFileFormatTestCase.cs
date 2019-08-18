@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Add random fields to the provided document. </summary>
-        protected internal abstract void AddRandomFields(Document doc);
+        protected abstract void AddRandomFields(Document doc);
 
         private IDictionary<string, long> BytesUsedByExtension(Directory d)
         {
@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
         /// Return the list of extensions that should be excluded from byte counts when
         /// comparing indices that store the same content.
         /// </summary>
-        protected internal virtual ICollection<string> ExcludedExtensionsFromByteCounts()
+        protected virtual ICollection<string> ExcludedExtensionsFromByteCounts()
         {
             return new HashSet<string>(Arrays.AsList(new string[] { "si", "lock" }));
             // segment infos store various pieces of information that don't solely depend

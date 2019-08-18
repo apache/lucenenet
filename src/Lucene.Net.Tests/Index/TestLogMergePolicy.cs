@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
 
     public class TestLogMergePolicy : BaseMergePolicyTestCase
     {
-        protected internal override MergePolicy NewMergePolicy()
+        protected override MergePolicy NewMergePolicy()
         {
             return NewLogMergePolicy(Random);
         }

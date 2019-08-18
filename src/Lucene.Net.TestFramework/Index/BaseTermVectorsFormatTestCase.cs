@@ -150,12 +150,12 @@ namespace Lucene.Net.Index
             return OptionsWrapper.GetAsEnumer(startInc, endInc);
         }
 
-        protected internal virtual Options RandomOptions()
+        protected virtual Options RandomOptions()
         {
             return RandomPicks.RandomFrom(Random, new List<Options>(ValidOptions()));
         }
 
-        protected internal virtual FieldType FieldType(Options options)
+        protected virtual FieldType FieldType(Options options)
         {
             var ft = new FieldType(TextField.TYPE_NOT_STORED)
             {
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
             return ft;
         }
 
-        protected internal virtual BytesRef RandomPayload()
+        protected virtual BytesRef RandomPayload()
         {
             int len = Random.Next(5);
             if (len == 0)
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
             return payload;
         }
 
-        protected internal override void AddRandomFields(Document doc)
+        protected override void AddRandomFields(Document doc)
         {
             foreach (Options opts in ValidOptions())
             {
@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
         }
 
         // custom impl to test cases that are forbidden by the default OffsetAttribute impl
-        private class PermissiveOffsetAttributeImpl : Attribute, IOffsetAttribute
+        private class PermissiveOffsetAttribute : Attribute, IOffsetAttribute // LUCENENET specific - renamed from PermissiveOffsetAttributeImpl
         {
             internal int start, end;
 
@@ -228,9 +228,9 @@ namespace Lucene.Net.Index
                     return true;
                 }
 
-                if (other is PermissiveOffsetAttributeImpl)
+                if (other is PermissiveOffsetAttribute)
                 {
-                    PermissiveOffsetAttributeImpl o = (PermissiveOffsetAttributeImpl)other;
+                    PermissiveOffsetAttribute o = (PermissiveOffsetAttribute)other;
                     return o.start == start && o.end == end;
                 }
 
@@ -364,7 +364,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                AddAttributeImpl(new PermissiveOffsetAttributeImpl());
+                AddAttributeImpl(new PermissiveOffsetAttribute());
 
                 termAtt = AddAttribute<ICharTermAttribute>();
                 piAtt = AddAttribute<IPositionIncrementAttribute>();
@@ -448,13 +448,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal class RandomDocumentFactory
+        protected class RandomDocumentFactory
         {
             private readonly BaseTermVectorsFormatTestCase outerInstance;
 
-            internal readonly string[] fieldNames;
-            internal readonly string[] terms;
-            internal readonly BytesRef[] termBytes;
+            private readonly string[] fieldNames;
+            private readonly string[] terms;
+            private readonly BytesRef[] termBytes;
 
             protected internal RandomDocumentFactory(BaseTermVectorsFormatTestCase outerInstance, int distinctFieldNames, int disctinctTerms)
             {
@@ -481,7 +481,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal virtual void AssertEquals(RandomDocument doc, Fields fields)
+        protected virtual void AssertEquals(RandomDocument doc, Fields fields)
         {
             // compare field names
             Assert.AreEqual(doc == null, fields == null);
@@ -522,7 +522,7 @@ namespace Lucene.Net.Index
         private readonly ThreadLocal<DocsEnum> docsEnum = new ThreadLocal<DocsEnum>();
         private readonly ThreadLocal<DocsAndPositionsEnum> docsAndPositionsEnum = new ThreadLocal<DocsAndPositionsEnum>();
 
-        protected internal virtual void AssertEquals(RandomTokenStream tk, FieldType ft, Terms terms)
+        protected virtual void AssertEquals(RandomTokenStream tk, FieldType ft, Terms terms)
         {
             Assert.AreEqual(1, terms.DocCount);
             int termCount = (new HashSet<string>(Arrays.AsList(tk.terms))).Count;
@@ -662,13 +662,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal virtual Document AddId(Document doc, string id)
+        protected virtual Document AddId(Document doc, string id)
         {
             doc.Add(new StringField("id", id, Field.Store.NO));
             return doc;
         }
 
-        protected internal virtual int DocID(IndexReader reader, string id)
+        protected virtual int DocID(IndexReader reader, string id)
         {
             return (new IndexSearcher(reader)).Search(new TermQuery(new Term("id", id)), 1).ScoreDocs[0].Doc;
         }
@@ -716,8 +716,8 @@ namespace Lucene.Net.Index
                 AssertEquals(doc, fields_);
                 reader.Dispose();
                 writer.Dispose();
-                dir.Dispose();
-            }
+                dir.Dispose(); // LUCENENET TODO: using blocks in this whole class
+    }
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -775,20 +775,18 @@ namespace Lucene.Net.Index
                         continue;
                     }
                     using (Directory dir = NewDirectory())
+                    using (var writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
                     {
-                        using (var writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                        RandomDocument doc1 = docFactory.NewDocument(numFields, 20, options1);
+                        RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
+                        writer.AddDocument(AddId(doc1.ToDocument(), "1"));
+                        writer.AddDocument(AddId(doc2.ToDocument(), "2"));
+                        using (IndexReader reader = writer.Reader)
                         {
-                            RandomDocument doc1 = docFactory.NewDocument(numFields, 20, options1);
-                            RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
-                            writer.AddDocument(AddId(doc1.ToDocument(), "1"));
-                            writer.AddDocument(AddId(doc2.ToDocument(), "2"));
-                            using (IndexReader reader = writer.Reader)
-                            {
-                                int doc1ID = DocID(reader, "1");
-                                AssertEquals(doc1, reader.GetTermVectors(doc1ID));
-                                int doc2ID = DocID(reader, "2");
-                                AssertEquals(doc2, reader.GetTermVectors(doc2ID));
-                            }
+                            int doc1ID = DocID(reader, "1");
+                            AssertEquals(doc1, reader.GetTermVectors(doc1ID));
+                            int doc2ID = DocID(reader, "2");
+                            AssertEquals(doc2, reader.GetTermVectors(doc2ID));
                         }
                     }
                 }
@@ -817,7 +815,7 @@ namespace Lucene.Net.Index
                 int docID = DocID(reader, "" + i);
                 AssertEquals(docs[i], reader.GetTermVectors(docID));
             }
-            reader.Dispose();
+            reader.Dispose(); // LUCENENET TODO: using blocks in this whole class
             writer.Dispose();
             dir.Dispose();
         }
