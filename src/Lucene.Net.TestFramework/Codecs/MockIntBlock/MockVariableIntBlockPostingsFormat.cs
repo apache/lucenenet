@@ -138,45 +138,45 @@ namespace Lucene.Net.Codecs.MockIntBlock
                     }
                 }
             }
-        }
 
-        private class VariableInt32BlockIndexOutputAnonymousHelper : VariableInt32BlockIndexOutput
-        {
-            private readonly int baseBlockSize;
-            private readonly IndexOutput output;
-            public VariableInt32BlockIndexOutputAnonymousHelper(IndexOutput output, int baseBlockSize)
-                : base(output, 2 * baseBlockSize)
+            private class VariableInt32BlockIndexOutputAnonymousHelper : VariableInt32BlockIndexOutput
             {
-                this.output = output;
-                this.baseBlockSize = baseBlockSize;
-                this.buffer = new int[2 + 2 * baseBlockSize];
-            }
-
-            private int pendingCount;
-            private readonly int[] buffer;
-
-            protected override int Add(int value)
-            {
-                buffer[pendingCount++] = value;
-                // silly variable block length int encoder: if
-                // first value <= 3, we write N vints at once;
-                // else, 2*N
-                int flushAt = buffer[0] <= 3 ? baseBlockSize : 2 * baseBlockSize;
-
-                // intentionally be non-causal here:
-                if (pendingCount == flushAt + 1)
+                private readonly int baseBlockSize;
+                private readonly IndexOutput output;
+                public VariableInt32BlockIndexOutputAnonymousHelper(IndexOutput output, int baseBlockSize)
+                    : base(output, 2 * baseBlockSize)
                 {
-                    for (int i = 0; i < flushAt; i++)
-                    {
-                        this.output.WriteVInt32(buffer[i]);
-                    }
-                    buffer[0] = buffer[flushAt];
-                    pendingCount = 1;
-                    return flushAt;
+                    this.output = output;
+                    this.baseBlockSize = baseBlockSize;
+                    this.buffer = new int[2 + 2 * baseBlockSize];
                 }
-                else
+
+                private int pendingCount;
+                private readonly int[] buffer;
+
+                protected override int Add(int value)
                 {
-                    return 0;
+                    buffer[pendingCount++] = value;
+                    // silly variable block length int encoder: if
+                    // first value <= 3, we write N vints at once;
+                    // else, 2*N
+                    int flushAt = buffer[0] <= 3 ? baseBlockSize : 2 * baseBlockSize;
+
+                    // intentionally be non-causal here:
+                    if (pendingCount == flushAt + 1)
+                    {
+                        for (int i = 0; i < flushAt; i++)
+                        {
+                            this.output.WriteVInt32(buffer[i]);
+                        }
+                        buffer[0] = buffer[flushAt];
+                        pendingCount = 1;
+                        return flushAt;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
                 }
             }
         }

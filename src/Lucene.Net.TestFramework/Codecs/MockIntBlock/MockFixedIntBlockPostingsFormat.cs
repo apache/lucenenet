@@ -134,19 +134,19 @@ namespace Lucene.Net.Codecs.MockIntBlock
                     }
                 }
             }
-        }
 
-        private class FixedInt32BlockIndexOutputAnonymousHelper : FixedInt32BlockIndexOutput
-        {
-            public FixedInt32BlockIndexOutputAnonymousHelper(IndexOutput output, int blockSize)
-                : base(output, blockSize)
+            private class FixedInt32BlockIndexOutputAnonymousHelper : FixedInt32BlockIndexOutput
             {
-            }
-            protected override void FlushBlock()
-            {
-                for (int i = 0; i < m_buffer.Length; i++)
+                public FixedInt32BlockIndexOutputAnonymousHelper(IndexOutput output, int blockSize)
+                    : base(output, blockSize)
                 {
-                    m_output.WriteVInt32(m_buffer[i]);
+                }
+                protected override void FlushBlock()
+                {
+                    for (int i = 0; i < m_buffer.Length; i++)
+                    {
+                        m_output.WriteVInt32(m_buffer[i]);
+                    }
                 }
             }
         }
