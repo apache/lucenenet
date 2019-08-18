@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using Document = Documents.Document;
-    using FCInvisibleMultiReader = Lucene.Net.Search.QueryUtils.FCInvisibleMultiReader;
+    using FCInvisibleMultiReader = Lucene.Net.Search.FCInvisibleMultiReader;
     using Field = Field;
     using FieldFilterAtomicReader = Lucene.Net.Index.FieldFilterAtomicReader;
     using FieldInfo = Lucene.Net.Index.FieldInfo;

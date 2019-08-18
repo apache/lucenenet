@@ -46,6 +46,37 @@ namespace Lucene.Net.Search
     using Similarities;
 
     /// <summary>
+    /// This is a <see cref="MultiReader"/> that can be used for randomly wrapping other readers
+    /// without creating <see cref="FieldCache"/> insanity.
+    /// The trick is to use an opaque/fake cache key.
+    /// </summary>
+    public class FCInvisibleMultiReader : MultiReader
+    {
+        internal readonly object cacheKey = new object();
+
+        public FCInvisibleMultiReader(params IndexReader[] readers)
+            : base(readers)
+        {
+        }
+
+        public override object CoreCacheKey
+        {
+            get
+            {
+                return cacheKey;
+            }
+        }
+
+        public override object CombinedCoreAndDeletesKey
+        {
+            get
+            {
+                return cacheKey;
+            }
+        }
+    }
+
+    /// <summary>
     /// Utility class for sanity-checking queries.
     /// </summary>
     public class QueryUtils
@@ -171,36 +202,7 @@ namespace Lucene.Net.Search
             FieldCache.DEFAULT.PurgeByCacheKey(SlowCompositeReaderWrapper.Wrap(r).CoreCacheKey);
         }
 
-        /// <summary>
-        /// This is a <see cref="MultiReader"/> that can be used for randomly wrapping other readers
-        /// without creating <see cref="FieldCache"/> insanity.
-        /// The trick is to use an opaque/fake cache key.
-        /// </summary>
-        public class FCInvisibleMultiReader : MultiReader
-        {
-            internal readonly object cacheKey = new object();
-
-            public FCInvisibleMultiReader(params IndexReader[] readers)
-                : base(readers)
-            {
-            }
-
-            public override object CoreCacheKey
-            {
-                get
-                {
-                    return cacheKey;
-                }
-            }
-
-            public override object CombinedCoreAndDeletesKey
-            {
-                get
-                {
-                    return cacheKey;
-                }
-            }
-        }
+        // LUCENENET specific - de-nested FCInvisibleMultiReader
 
         /// <summary>
         /// Given an <see cref="IndexSearcher"/>, returns a new <see cref="IndexSearcher"/> whose <see cref="IndexReader"/>
