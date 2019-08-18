@@ -245,12 +245,35 @@ namespace Lucene.Net.Util
         public const string SYSPROP_FAILFAST = "tests.failfast"; // LUCENENET TODO: API - fix docs when implemented
 
         // LUCENENET: Not Implemented
-        /////*     
+        /////// <summary>
+        /////// Annotation for tests that should only be run during nightly builds.
+        /////// </summary>
+        ////[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+        ////public class NightlyAttribute : System.Attribute { } // LUCENENET: API looks better with this nested
+
+        /////// <summary>
+        /////// Annotation for tests that should only be run during weekly builds.
+        /////// </summary>
+        ////[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+        ////public class WeeklyAttribute : System.Attribute { } // LUCENENET: API looks better with this nested
+
+        /////// <summary>
+        /////// Annotation for tests which exhibit a known issue and are temporarily disabled.
+        /////// </summary>
+        ////[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+        ////public class AwaitsFix : System.Attribute // LUCENENET: API looks better with this nested
+        ////{
+        ////    /// <summary>
+        ////    /// Point to issue tracker entry. </summary>
+        ////    public virtual string BugUrl { get; set; }
+        ////}
+
         /////// <summary>
         /////// Annotation for tests that are slow. Slow tests do run by default but can be
         /////// disabled if a quick run is needed.
         /////// </summary>
-        ////public class Slow : System.Attribute // LUCENENET TODO: API - de-nest
+        ////public class SlowAttribute : System.Attribute { } // LUCENENET: API looks better with this nested
+
         /////// <summary>
         /////// Annotation for tests that fail frequently and should
         /////// be moved to a <a href="https://builds.apache.org/job/Lucene-BadApples-trunk-java7/">"vault" plan in Jenkins</a>.
@@ -261,21 +284,19 @@ namespace Lucene.Net.Util
         /////// -Dtests.badapples=true
         /////// </pre>
         /////// </summary>
+        ////public class BadAppleAttribute : System.Attribute // LUCENENET: API looks better with this nested
         ////{
+        ////    /// <summary>
+        ////    /// Point to issue tracker entry. </summary>
+        ////    public virtual string BugUrl { get; set;}
         ////}
-        ////public class BadApple : System.Attribute // LUCENENET TODO: API - de-nest
-        ////{
-        /////// <summary>
-        /////// Point to JIRA entry. </summary>
-        ////public string bugUrl();
-        ////}*/
 
         /// <summary>
         /// Annotation for test classes that should avoid certain codec types
         /// (because they are expensive, for example).
         /// </summary>
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-        public class SuppressCodecsAttribute : System.Attribute // LUCENENET TODO: API - de-nest
+        public class SuppressCodecsAttribute : System.Attribute // LUCENENET: API looks better with this nested
         {
             public SuppressCodecsAttribute(params string[] value)
             {
@@ -295,14 +316,11 @@ namespace Lucene.Net.Util
         /// <seealso cref="LuceneTestCase.CreateTempDir()"/>
         /// <seealso cref= LuceneTestCase.CreateTempFile(String, String)"/>
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-        public class SuppressTempFileChecksAttribute : System.Attribute // LUCENENET TODO: API - de-nest
+        public class SuppressTempFileChecksAttribute : System.Attribute // LUCENENET: API looks better with this nested
         {
             /// <summary>
-            /// Point to JIRA entry. </summary>
-            public virtual string BugUrl // LUCENENT TODO: Point where?
-            {
-                get { return "None"; }
-            }
+            /// Point to issue tracker entry. </summary>
+            public virtual string BugUrl { get; set; } = "None";
         }
 
         // -----------------------------------------------------------------
@@ -2935,9 +2953,9 @@ namespace Lucene.Net.Util
         /// Delegate method allows them to be created on their target thread instead of the test thread
         /// and also ensures a separate instance is created in each case (which can affect the result of the test).
         /// <para/>
-        /// LUCENENET specific
+        /// LUCENENET specific for injection into tests (i.e. using NUnit.Framework.ValueSourceAttribute)
         /// </summary>
-        public static class ConcurrentMergeSchedulerFactories // LUCENENET TODO: API - make internal
+        public static class ConcurrentMergeSchedulerFactories
         {
             public static readonly Func<IConcurrentMergeScheduler>[] Values = new Func<IConcurrentMergeScheduler>[] {
 #if FEATURE_CONCURRENTMERGESCHEDULER
