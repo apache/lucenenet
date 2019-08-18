@@ -124,39 +124,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        /// <summary>
-        /// Just collects document ids into a set.
-        /// </summary>
-        public class SetCollector : ICollector // LUCENENET TODO: De-nest
-        {
-            internal readonly ISet<int?> bag;
-
-            public SetCollector(ISet<int?> bag)
-            {
-                this.bag = bag;
-            }
-
-            internal int @base = 0;
-
-            public virtual void SetScorer(Scorer scorer)
-            {
-            }
-
-            public virtual void Collect(int doc)
-            {
-                bag.Add(Convert.ToInt32(doc + @base, CultureInfo.InvariantCulture));
-            }
-
-            public virtual void SetNextReader(AtomicReaderContext context)
-            {
-                @base = context.DocBase;
-            }
-
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
-        }
+        // LUCENENET specific - de-nested SetCollector
 
         /// <summary>
         /// Tests that a query matches the an expected set of documents using Hits.
@@ -450,113 +418,151 @@ namespace Lucene.Net.Search
             }
         }
 
-        /// <summary>
-        /// An <see cref="IndexSearcher"/> that implicitly checks hte explanation of every match
-        /// whenever it executes a search.
-        /// </summary>
-        /// <seealso cref= ExplanationAsserter </seealso>
-        public class ExplanationAssertingSearcher : IndexSearcher // LUCENENET TODO: API De-nest
+        // LUCENENET specific - de-nested ExplanationAssertingSearcher
+
+        // LUCENENET specific - de-nested ExplanationAsserter
+    }
+
+    /// <summary>
+    /// Just collects document ids into a set.
+    /// </summary>
+    public class SetCollector : ICollector
+    {
+        internal readonly ISet<int?> bag;
+
+        public SetCollector(ISet<int?> bag)
         {
-            public ExplanationAssertingSearcher(IndexReader r)
-                : base(r)
-            {
-            }
-
-            protected internal virtual void CheckExplanations(Query q)
-            {
-                base.Search(q, null, new ExplanationAsserter(q, null, this));
-            }
-
-            public override TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
-            {
-                CheckExplanations(query);
-                return base.Search(query, filter, n, sort);
-            }
-
-            public override void Search(Query query, ICollector results)
-            {
-                CheckExplanations(query);
-                base.Search(query, results);
-            }
-
-            public override void Search(Query query, Filter filter, ICollector results)
-            {
-                CheckExplanations(query);
-                base.Search(query, filter, results);
-            }
-
-            public override TopDocs Search(Query query, Filter filter, int n)
-            {
-                CheckExplanations(query);
-                return base.Search(query, filter, n);
-            }
+            this.bag = bag;
         }
 
-        /// <summary>
-        /// Asserts that the score explanation for every document matching a
-        /// query corresponds with the true score.
-        /// <para/>
-        /// NOTE: this HitCollector should only be used with the <see cref="Query"/> and <see cref="IndexSearcher"/>
-        /// specified at when it is constructed.
-        /// </summary>
-        /// <seealso cref="CheckHits.VerifyExplanation(string, int, float, bool, Explanation)"/>
-        public class ExplanationAsserter : ICollector // LUCENENET TODO: API De-nest
+        internal int @base = 0;
+
+        public virtual void SetScorer(Scorer scorer)
         {
-            internal Query q;
-            internal IndexSearcher s;
-            internal string d;
-            internal bool deep;
+        }
 
-            internal Scorer scorer;
-            internal int @base = 0;
+        public virtual void Collect(int doc)
+        {
+            bag.Add(Convert.ToInt32(doc + @base, CultureInfo.InvariantCulture));
+        }
 
-            /// <summary>
-            /// Constructs an instance which does shallow tests on the Explanation </summary>
-            public ExplanationAsserter(Query q, string defaultFieldName, IndexSearcher s)
-                : this(q, defaultFieldName, s, false)
+        public virtual void SetNextReader(AtomicReaderContext context)
+        {
+            @base = context.DocBase;
+        }
+
+        public virtual bool AcceptsDocsOutOfOrder
+        {
+            get { return true; }
+        }
+    }
+
+    /// <summary>
+    /// An <see cref="IndexSearcher"/> that implicitly checks hte explanation of every match
+    /// whenever it executes a search.
+    /// </summary>
+    /// <seealso cref= ExplanationAsserter </seealso>
+    public class ExplanationAssertingSearcher : IndexSearcher
+    {
+        public ExplanationAssertingSearcher(IndexReader r)
+            : base(r)
+        {
+        }
+
+        protected internal virtual void CheckExplanations(Query q)
+        {
+            base.Search(q, null, new ExplanationAsserter(q, null, this));
+        }
+
+        public override TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
+        {
+            CheckExplanations(query);
+            return base.Search(query, filter, n, sort);
+        }
+
+        public override void Search(Query query, ICollector results)
+        {
+            CheckExplanations(query);
+            base.Search(query, results);
+        }
+
+        public override void Search(Query query, Filter filter, ICollector results)
+        {
+            CheckExplanations(query);
+            base.Search(query, filter, results);
+        }
+
+        public override TopDocs Search(Query query, Filter filter, int n)
+        {
+            CheckExplanations(query);
+            return base.Search(query, filter, n);
+        }
+    }
+
+    /// <summary>
+    /// Asserts that the score explanation for every document matching a
+    /// query corresponds with the true score.
+    /// <para/>
+    /// NOTE: this HitCollector should only be used with the <see cref="Query"/> and <see cref="IndexSearcher"/>
+    /// specified at when it is constructed.
+    /// </summary>
+    /// <seealso cref="CheckHits.VerifyExplanation(string, int, float, bool, Explanation)"/>
+    public class ExplanationAsserter : ICollector
+    {
+        internal Query q;
+        internal IndexSearcher s;
+        internal string d;
+        internal bool deep;
+
+        internal Scorer scorer;
+        internal int @base = 0;
+
+        /// <summary>
+        /// Constructs an instance which does shallow tests on the Explanation </summary>
+        public ExplanationAsserter(Query q, string defaultFieldName, IndexSearcher s)
+            : this(q, defaultFieldName, s, false)
+        {
+        }
+
+        public ExplanationAsserter(Query q, string defaultFieldName, IndexSearcher s, bool deep)
+        {
+            this.q = q;
+            this.s = s;
+            this.d = q.ToString(defaultFieldName);
+            this.deep = deep;
+        }
+
+        public virtual void SetScorer(Scorer scorer)
+        {
+            this.scorer = scorer;
+        }
+
+        public virtual void Collect(int doc)
+        {
+            Explanation exp = null;
+            doc = doc + @base;
+            try
             {
+                exp = s.Explain(q, doc);
+            }
+            catch (IOException e)
+            {
+                throw new Exception("exception in hitcollector of [[" + d + "]] for #" + doc, e);
             }
 
-            public ExplanationAsserter(Query q, string defaultFieldName, IndexSearcher s, bool deep)
-            {
-                this.q = q;
-                this.s = s;
-                this.d = q.ToString(defaultFieldName);
-                this.deep = deep;
-            }
+            Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
+            CheckHits.VerifyExplanation(d, doc, scorer.GetScore(), deep, exp);
+            Assert.IsTrue(exp.IsMatch, "Explanation of [[" + d + "]] for #" + doc + " does not indicate match: " + exp.ToString());
+        }
 
-            public virtual void SetScorer(Scorer scorer)
-            {
-                this.scorer = scorer;
-            }
+        public virtual void SetNextReader(AtomicReaderContext context)
+        {
+            @base = context.DocBase;
+        }
 
-            public virtual void Collect(int doc)
-            {
-                Explanation exp = null;
-                doc = doc + @base;
-                try
-                {
-                    exp = s.Explain(q, doc);
-                }
-                catch (IOException e)
-                {
-                    throw new Exception("exception in hitcollector of [[" + d + "]] for #" + doc, e);
-                }
-
-                Assert.IsNotNull(exp, "Explanation of [[" + d + "]] for #" + doc + " is null");
-                VerifyExplanation(d, doc, scorer.GetScore(), deep, exp);
-                Assert.IsTrue(exp.IsMatch, "Explanation of [[" + d + "]] for #" + doc + " does not indicate match: " + exp.ToString());
-            }
-
-            public virtual void SetNextReader(AtomicReaderContext context)
-            {
-                @base = context.DocBase;
-            }
-
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+        public virtual bool AcceptsDocsOutOfOrder
+        {
+            get { return true; }
         }
     }
 }
