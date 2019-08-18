@@ -147,7 +147,7 @@ namespace Lucene.Net.Index.Sorter
             doc.Add(new StringField(ID_FIELD, id.ToString(), Field.Store.YES));
             doc.Add(new StringField(DOCS_ENUM_FIELD, DOCS_ENUM_TERM, Field.Store.NO));
             positions.SetId(id);
-            if (m_doesntSupportOffsets.contains(TestUtil.GetPostingsFormat(DOC_POSITIONS_FIELD)))
+            if (DoesntSupportOffsets.Contains(TestUtil.GetPostingsFormat(DOC_POSITIONS_FIELD)))
             {
                 // codec doesnt support offsets: just index positions for the field
                 doc.Add(new Field(DOC_POSITIONS_FIELD, positions, TextField.TYPE_NOT_STORED));
@@ -263,7 +263,7 @@ namespace Lucene.Net.Index.Sorter
                 for (int i = 0; i < freq; i++)
                 {
                     assertEquals("incorrect position for doc=" + doc, i, sortedPositions.NextPosition());
-                    if (!m_doesntSupportOffsets.contains(TestUtil.GetPostingsFormat(DOC_POSITIONS_FIELD)))
+                    if (!DoesntSupportOffsets.Contains(TestUtil.GetPostingsFormat(DOC_POSITIONS_FIELD)))
                     {
                         assertEquals("incorrect startOffset for doc=" + doc, i, sortedPositions.StartOffset);
                         assertEquals("incorrect endOffset for doc=" + doc, i, sortedPositions.EndOffset);
@@ -287,7 +287,7 @@ namespace Lucene.Net.Index.Sorter
                 for (int i = 0; i < freq; i++)
                 {
                     assertEquals("incorrect position for doc=" + doc, i, sortedPositions.NextPosition());
-                    if (!m_doesntSupportOffsets.contains(TestUtil.GetPostingsFormat(DOC_POSITIONS_FIELD)))
+                    if (!DoesntSupportOffsets.Contains(TestUtil.GetPostingsFormat(DOC_POSITIONS_FIELD)))
                     {
                         assertEquals("incorrect startOffset for doc=" + doc, i, sortedPositions.StartOffset);
                         assertEquals("incorrect endOffset for doc=" + doc, i, sortedPositions.EndOffset);

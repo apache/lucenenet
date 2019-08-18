@@ -99,7 +99,11 @@ namespace Lucene.Net.Index
             string text = "this is the text to be indexed. " + longTerm;
             using (Directory directory = NewDirectory())
             {
-                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif 
+                    ))
                 {
                     Document doc = new Document();
                     doc.Add(NewTextField("fieldname", text, Field.Store.YES));
@@ -138,7 +142,11 @@ namespace Lucene.Net.Index
 
             using (Directory directory = NewDirectory())
             {
-                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                    ))
                 {
                     Document doc = new Document();
                     doc.Add(NewTextField("fieldname", text, Field.Store.YES));
@@ -175,7 +183,11 @@ namespace Lucene.Net.Index
             string text = "this is the text to be indexed. " + longTerm;
             using (Directory directory = NewDirectory())
             {
-                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                    ))
                 {
                     Document doc = new Document();
                     doc.Add(NewTextField("fieldname", text, Field.Store.YES));
@@ -216,7 +228,11 @@ namespace Lucene.Net.Index
             string text = "this is the text to be indexed. " + longTerm;
             using (Directory directory = NewDirectory())
             {
-                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                    ))
                 {
                     Document doc = new Document();
 
@@ -261,7 +277,11 @@ namespace Lucene.Net.Index
             string text = "this is the text to be indexed. " + longTerm;
             using (Directory directory = NewDirectory())
             {
-                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif               
+                    ))
                 {
                     Document doc = new Document();
 
@@ -305,7 +325,11 @@ namespace Lucene.Net.Index
             string text = "this is the text to be indexed. " + longTerm;
             using (Directory directory = NewDirectory())
             {
-                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif  
+                    ))
                 {
                     Document doc = new Document();
 
@@ -354,7 +378,11 @@ namespace Lucene.Net.Index
             string text = "this is the text to be indexed. " + longTerm;
             using (Directory directory = NewDirectory())
             {
-                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                    ))
                 {
                     Document doc = new Document();
 
@@ -1972,7 +2000,11 @@ namespace Lucene.Net.Index
                 DirectoryReader ireader = null;
                 try
                 {
-                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                        , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                        ))
                     {
 
                         Document doc = new Document();
@@ -2008,7 +2040,11 @@ namespace Lucene.Net.Index
                 DirectoryReader ireader = null;
                 try
                 {
-                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                        , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                        ))
                     {
 
                         Document doc = new Document();
@@ -2107,7 +2143,11 @@ namespace Lucene.Net.Index
                 DirectoryReader ireader = null;
                 try
                 {
-                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                        , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                        ))
                     {
 
                         Document doc = new Document();
@@ -2148,7 +2188,11 @@ namespace Lucene.Net.Index
                 DirectoryReader ireader = null;
                 try
                 {
-                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                        , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                        ))
                     {
 
                         Document doc = new Document();
@@ -3785,7 +3829,11 @@ namespace Lucene.Net.Index
                     IndexReader r = null;
                     try
                     {
-                        using (RandomIndexWriter w = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                        using (RandomIndexWriter w = new RandomIndexWriter(Random, dir
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                            , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif                     
+                            ))
                         {
                             BytesRef bytes = new BytesRef();
                             bytes.Bytes = new byte[1 << i];

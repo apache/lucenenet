@@ -376,10 +376,31 @@ namespace Lucene.Net.Index
             return new SeedPostings(seed, minDocFreq, maxDocFreq, withLiveDocs ? globalLiveDocs : null, options);
         }
 
+#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if TESTFRAMEWORK_MSTEST
+        private static readonly IList<string> initalizationLock = new List<string>();
+
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
+        {
+            lock (initalizationLock)
+            {
+                if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))
+                    initalizationLock.Add(context.FullyQualifiedTestClassName);
+                else
+                    return; // Only allow this class to initialize once (MSTest bug)
+            }
+#else
+        [OneTimeSetUp]
+        new public static void BeforeClass()
+        {
+#endif
+#else
         //[OneTimeSetUp]
         public override void BeforeClass() // Renamed from CreatePostings to ensure the base class setup is called before this one
         {
             base.BeforeClass();
+#endif
 
             totalPostings = 0;
             totalPayloadBytes = 0;
@@ -500,14 +521,25 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if TESTFRAMEWORK_MSTEST
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+#else
+        [OneTimeTearDown]
+#endif
+        new public static void AfterClass()
+#else
         //[OneTimeTearDown]
         public override void AfterClass()
+#endif
         {
             allTerms = null;
             fieldInfos = null;
             fields = null;
             globalLiveDocs = null;
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
             base.AfterClass();
+#endif
         }
 
         // TODO maybe instead of @BeforeClass just make a single test run: build postings & index & test it?
@@ -538,7 +570,7 @@ namespace Lucene.Net.Index
 
                 string pf = TestUtil.GetPostingsFormat(codec, oldFieldInfo.Name);
                 int fieldMaxIndexOption;
-                if (m_doesntSupportOffsets.Contains(pf))
+                if (DoesntSupportOffsets.Contains(pf))
                 {
                     fieldMaxIndexOption = Math.Min(maxIndexOptionNoOffsets, maxIndexOption);
                 }
@@ -1384,7 +1416,7 @@ namespace Lucene.Net.Index
 
                 string field = "f_" + opts;
                 string pf = TestUtil.GetPostingsFormat(Codec.Default, field);
-                if (opts == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS && m_doesntSupportOffsets.Contains(pf))
+                if (opts == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS && DoesntSupportOffsets.Contains(pf))
                 {
                     continue;
                 }

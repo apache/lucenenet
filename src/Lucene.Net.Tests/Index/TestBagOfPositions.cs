@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                 fieldType.IndexOptions = IndexOptions.DOCS_AND_FREQS; // we dont actually need positions
                 fieldType.StoreTermVectors = true; // but enforce term vectors when we do this so we check SOMETHING
             }
-            else if (options == 1 && !m_doesntSupportOffsets.Contains(TestUtil.GetPostingsFormat("field")))
+            else if (options == 1 && !DoesntSupportOffsets.Contains(TestUtil.GetPostingsFormat("field")))
             {
                 fieldType.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             }

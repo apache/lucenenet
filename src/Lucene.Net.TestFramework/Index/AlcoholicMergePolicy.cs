@@ -41,11 +41,12 @@ namespace Lucene.Net.Index
         private readonly Random random;
         private readonly DateTime calendar;
 
-        public AlcoholicMergePolicy(Random random)
+        public AlcoholicMergePolicy(TimeZoneInfo timeZone, Random random)
         {
             // LUCENENET NOTE: All we care about here is that we have a random distribution of "Hour", picking any valid
             // date at random achives this. We have no actual need to create a Calendar object in .NET.
-            this.calendar = new DateTime(TestUtil.NextInt64(random, DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks));
+            var randomTime = new DateTime(TestUtil.NextInt64(random, DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks));
+            this.calendar = TimeZoneInfo.ConvertTime(randomTime, TimeZoneInfo.Local, timeZone);
             this.random = random;
             m_maxMergeSize = TestUtil.NextInt32(random, 1024 * 1024, int.MaxValue);
         }

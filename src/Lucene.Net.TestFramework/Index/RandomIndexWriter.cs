@@ -82,6 +82,33 @@ namespace Lucene.Net.Index
             return new IndexWriter(dir, conf);
         }
 
+
+
+#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+        /// <summary>
+        /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/> and <see cref="MockAnalyzer"/>.
+        /// </summary>
+        public RandomIndexWriter(Random r, Directory dir)
+            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r)))
+        {
+        }
+
+        /// <summary>
+        /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/>.
+        /// </summary>
+        public RandomIndexWriter(Random r, Directory dir, Analyzer a)
+            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a))
+        {
+        }
+
+        /// <summary>
+        /// Creates a <see cref="RandomIndexWriter"/> with a random config.
+        /// </summary>
+        public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a)
+            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a))
+        {
+        }
+#else
         /// <summary>
         /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/> and <see cref="MockAnalyzer"/>.
         /// </summary>
@@ -136,6 +163,7 @@ namespace Lucene.Net.Index
             : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a, similarity, timezone))
         {
         }
+#endif
 
         /// <summary>
         /// Creates a <see cref="RandomIndexWriter"/> with the provided config </summary>

@@ -691,7 +691,11 @@ namespace Lucene.Net.Index
                 int docWithVectors = Random.Next(numDocs);
                 Document emptyDoc = new Document();
                 using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif         
+                    ))
                 {
                     RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), 20, options);
                     for (int i = 0; i < numDocs; ++i)
@@ -739,7 +743,11 @@ namespace Lucene.Net.Index
                     continue;
                 }
                 using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                    ))
                 {
                     RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 2), AtLeast(20000),
                         options);
@@ -757,7 +765,11 @@ namespace Lucene.Net.Index
             foreach (Options options in ValidOptions())
             {
                 using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                    ))
                 {
                     RandomDocument doc = docFactory.NewDocument(AtLeast(100), 5, options);
                     writer.AddDocument(doc.ToDocument());
@@ -783,7 +795,11 @@ namespace Lucene.Net.Index
                         continue;
                     }
                     using (Directory dir = NewDirectory())
-                    using (var writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                    using (var writer = new RandomIndexWriter(Random, dir
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                        , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                        ))
                     {
                         RandomDocument doc1 = docFactory.NewDocument(numFields, 20, options1);
                         RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
@@ -812,7 +828,11 @@ namespace Lucene.Net.Index
                 docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), TestUtil.NextInt32(Random, 10, 50), RandomOptions());
             }
             using (Directory dir = NewDirectory())
-            using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+            using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                ))
             {
                 for (int i = 0; i < numDocs; ++i)
                 {
@@ -848,7 +868,11 @@ namespace Lucene.Net.Index
                     docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), AtLeast(10), options);
                 }
                 using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                    ))
                 {
                     for (int i = 0; i < numDocs; ++i)
                     {
@@ -896,7 +920,11 @@ namespace Lucene.Net.Index
                 }
                 AtomicObject<Exception> exception = new AtomicObject<Exception>();
                 using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                    ))
                 {
                     for (int i = 0; i < numDocs; ++i)
                     {

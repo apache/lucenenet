@@ -126,7 +126,11 @@ namespace Lucene.Net.Util
             }
         }
 
-        public override void Before(LuceneTestCase testInstance)
+        public override void Before(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+            LuceneTestCase testInstance
+#endif
+            )
         {
             // LUCENENET specific - SOLR setup code removed
 
@@ -158,7 +162,11 @@ namespace Lucene.Net.Util
                 InfoStream.Default = new NullInfoStream();
             }
 
+#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+            Type targetClass = LuceneTestCase.GetTestClass();
+#else
             Type targetClass = testInstance.GetType();
+#endif
             avoidCodecs = new HashSet<string>();
             var suppressCodecsAttribute = targetClass.GetTypeInfo().GetCustomAttribute<LuceneTestCase.SuppressCodecsAttribute>();
             if (suppressCodecsAttribute != null)
@@ -305,7 +313,7 @@ namespace Lucene.Net.Util
             // TimeZone.getDefault will set user.timezone to the default timezone of the user's locale.
             // So store the original property value and restore it at end.
             restoreProperties["user.timezone"] = SystemProperties.GetProperty("user.timezone");
-            savedTimeZone = testInstance.TimeZone;
+            savedTimeZone = TimeZoneInfo.Local;
             TimeZoneInfo randomTimeZone = LuceneTestCase.RandomTimeZone(random);
             timeZone = testTimeZone.Equals("random", StringComparison.Ordinal) ? randomTimeZone : TimeZoneInfo.FindSystemTimeZoneById(testTimeZone);
             //TimeZone.Default = TimeZone; // LUCENENET NOTE: There doesn't seem to be an equivalent to this, but I don't think we need it.
@@ -378,7 +386,11 @@ namespace Lucene.Net.Util
         /// <summary>
         /// After suite cleanup (always invoked).
         /// </summary>
-        public override void After(LuceneTestCase testInstance)
+        public override void After(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+            LuceneTestCase testInstance
+#endif
+            )
         {
             foreach (KeyValuePair<string, string> e in restoreProperties)
             {

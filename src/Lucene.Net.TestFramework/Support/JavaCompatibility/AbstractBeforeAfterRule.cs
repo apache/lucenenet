@@ -29,11 +29,19 @@ namespace Lucene.Net.Support
     /// </summary>
     public abstract class AbstractBeforeAfterRule
     {
-        public virtual void Before(LuceneTestCase testInstance)
+        public virtual void Before(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+            LuceneTestCase testInstance
+#endif
+            )
         {
         }
 
-        public virtual void After(LuceneTestCase testInstance)
+        public virtual void After(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+            LuceneTestCase testInstance
+#endif
+            )
         {
         }
     }

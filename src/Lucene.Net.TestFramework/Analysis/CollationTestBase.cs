@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis
 
                 using (IndexReader reader = DirectoryReader.Open(farsiIndex))
                 {
-                    IndexSearcher search = this.NewSearcher(reader);
+                    IndexSearcher search = NewSearcher(reader);
 
                     // Unicode order would include U+0633 in [ U+062F - U+0698 ], but Farsi
                     // orders the U+0698 character before the U+0633 character, so the single

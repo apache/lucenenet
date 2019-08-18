@@ -37,6 +37,11 @@ namespace Lucene.Net.TestFramework
         {
         }
 
+        public SkipTestException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         public SkipTestException()
         { }

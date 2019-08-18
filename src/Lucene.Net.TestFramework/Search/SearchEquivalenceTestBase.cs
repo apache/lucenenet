@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -56,6 +57,25 @@ namespace Lucene.Net.Search
         protected static Analyzer m_analyzer;
         protected static string m_stopword; // we always pick a character as a stopword
 
+#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if TESTFRAMEWORK_MSTEST
+        private static readonly IList<string> initalizationLock = new List<string>();
+
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
+        {
+            lock (initalizationLock)
+            {
+                if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))
+                    initalizationLock.Add(context.FullyQualifiedTestClassName);
+                else
+                    return; // Only allow this class to initialize once (MSTest bug)
+            }
+#else
+        new public static void BeforeClass()
+        {
+#endif
+#else
         /// <summary>
         /// LUCENENET specific
         /// Is non-static because ClassEnvRule is no longer static.
@@ -64,13 +84,18 @@ namespace Lucene.Net.Search
         public override void BeforeClass()
         {
             base.BeforeClass();
+#endif
 
             Random random = Random;
             m_directory = NewDirectory();
-            m_stopword = "" + RandomChar();
+            m_stopword = "" + GetRandomChar();
             CharacterRunAutomaton stopset = new CharacterRunAutomaton(BasicAutomata.MakeString(m_stopword));
             m_analyzer = new MockAnalyzer(random, MockTokenizer.WHITESPACE, false, stopset);
-            RandomIndexWriter iw = new RandomIndexWriter(random, m_directory, m_analyzer, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(random, m_directory, m_analyzer
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                , ClassEnvRule.similarity, ClassEnvRule.timeZone
+#endif
+                );
             Document doc = new Document();
             Field id = new StringField("id", "", Field.Store.NO);
             Field field = new TextField("field", "", Field.Store.NO);
@@ -107,8 +132,17 @@ namespace Lucene.Net.Search
             iw.Dispose();
         }
 
+#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if TESTFRAMEWORK_MSTEST
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+#else
+        [OneTimeTearDown]
+#endif
+        new public static void AfterClass()
+#else
         //[OneTimeTearDown]
         public override void AfterClass()
+#endif
         {
             m_reader.Dispose();
             m_directory.Dispose();
@@ -117,7 +151,9 @@ namespace Lucene.Net.Search
             m_directory = null;
             m_analyzer = null;
             m_s1 = m_s2 = null;
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
             base.AfterClass();
+#endif
         }
 
         /// <summary>
@@ -136,7 +172,7 @@ namespace Lucene.Net.Search
                 {
                     sb.Append(' '); // whitespace
                 }
-                sb.Append(RandomChar());
+                sb.Append(GetRandomChar());
             }
             return sb.ToString();
         }
@@ -144,7 +180,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns random character (a-z)
         /// </summary>
-        internal static char RandomChar()
+        internal static char GetRandomChar()
         {
             return (char)TestUtil.NextInt32(Random, 'a', 'z');
         }
@@ -155,7 +191,7 @@ namespace Lucene.Net.Search
         /// </summary>
         protected virtual Term RandomTerm()
         {
-            return new Term("field", "" + RandomChar());
+            return new Term("field", "" + GetRandomChar());
         }
 
         /// <summary>
@@ -163,7 +199,7 @@ namespace Lucene.Net.Search
         /// </summary>
         protected virtual Filter RandomFilter()
         {
-            return new QueryWrapperFilter(TermRangeQuery.NewStringRange("field", "a", "" + RandomChar(), true, true));
+            return new QueryWrapperFilter(TermRangeQuery.NewStringRange("field", "a", "" + GetRandomChar(), true, true));
         }
 
         /// <summary>
