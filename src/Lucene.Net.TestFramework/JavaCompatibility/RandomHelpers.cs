@@ -24,7 +24,11 @@ using System;
 
 namespace Lucene.Net
 {
-    public static class RandomHelpers
+    /// <summary>
+    /// LUCENENET specific extensions to <see cref="Random"/> to make it easier to port tests
+    /// from Java with fewer changes.
+    /// </summary>
+    internal static class RandomHelpers
     {
         [ExceptionToNetNumericConvention] // LUCENENET: This is for making test porting easier, keeping as-is
         public static int nextInt(this Random random, int maxValue)
@@ -41,22 +45,20 @@ namespace Lucene.Net
         [ExceptionToNetNumericConvention] // LUCENENET: This is for making test porting easier, keeping as-is
         public static bool nextBoolean(this Random random)
         {
-            return (random.Next(1, 100) > 50);
+            return random.NextBoolean();
         }
 
         // http://stackoverflow.com/a/6651656
         [ExceptionToNetNumericConvention] // LUCENENET: This is for making test porting easier, keeping as-is
         public static long nextLong(this Random random)
         {
-            byte[] buffer = new byte[8];
-            random.NextBytes(buffer);
-            return BitConverter.ToInt64(buffer, 0);
+            return random.NextInt64();
         }
 
         [ExceptionToNetNumericConvention] // LUCENENET: This is for making test porting easier, keeping as-is
         public static float nextFloat(this Random random)
         {
-            return (float)random.NextDouble();
+            return random.NextSingle();
         }
     }
 }
