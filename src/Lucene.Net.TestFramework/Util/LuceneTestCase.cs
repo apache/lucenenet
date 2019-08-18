@@ -42,6 +42,9 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Console = Lucene.Net.Support.SystemConsole;
 
+// LUCENENET NOTE: These are primarily here because they are referred to
+// in the XML documentation. Be sure to add a new option if a new test framework
+// is being supported.
 #if TESTFRAMEWORK_MSTEST
 
 #elif TESTFRAMEWORK_XUNIT
@@ -232,17 +235,17 @@ namespace Lucene.Net.Util
         // Test groups, system properties and other annotations modifying tests
         // --------------------------------------------------------------------
 
-        public const string SYSPROP_NIGHTLY = "tests.nightly"; // LUCENENET TODO: API - mark internal
-        public const string SYSPROP_WEEKLY = "tests.weekly"; // LUCENENET TODO: API - mark internal
-        public const string SYSPROP_AWAITSFIX = "tests.awaitsfix"; // LUCENENET TODO: API - mark internal
-        public const string SYSPROP_SLOW = "tests.slow"; // LUCENENET TODO: API - perhaps merge with LongRunningTestAttribute?
-        public const string SYSPROP_BADAPPLES = "tests.badapples"; // LUCENENET TODO: API - mark internal
+        internal const string SYSPROP_NIGHTLY = "tests.nightly"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_WEEKLY = "tests.weekly"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_AWAITSFIX = "tests.awaitsfix"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_SLOW = "tests.slow"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_BADAPPLES = "tests.badapples"; // LUCENENET specific - made internal, because not fully implemented
 
-        /// <seealso> cref= #ignoreAfterMaxFailures </seealso>
-        public const string SYSPROP_MAXFAILURES = "tests.maxfailures"; // LUCENENET TODO: API - fix docs when implemented
+        ///// <seealso cref="IgnoreAfterMaxFailures"/>
+        internal const string SYSPROP_MAXFAILURES = "tests.maxfailures"; // LUCENENET specific - made internal, because not fully implemented
 
-        /// <seealso> cref= #ignoreAfterMaxFailures </seealso>
-        public const string SYSPROP_FAILFAST = "tests.failfast"; // LUCENENET TODO: API - fix docs when implemented
+        ///// <seealso cref="IgnoreAfterMaxFailures"/>
+        internal const string SYSPROP_FAILFAST = "tests.failfast"; // // LUCENENET specific - made internal, because not fully implemented
 
         // LUCENENET: Not Implemented
         /////// <summary>
@@ -448,13 +451,23 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Filesystem-based <see cref="Directory"/> implementations. </summary>
-        private static readonly IList<string> FS_DIRECTORIES = Arrays.AsList("SimpleFSDirectory", "NIOFSDirectory", "MMapDirectory");
+        private static readonly IList<string> FS_DIRECTORIES = Arrays.AsList(
+            "SimpleFSDirectory", 
+            "NIOFSDirectory", 
+            "MMapDirectory"
+        );
 
         /// <summary>
         /// All <see cref="Directory"/> implementations. </summary>
         private static readonly IList<string> CORE_DIRECTORIES;
 
-        protected static readonly HashSet<string> DoesntSupportOffsets = new HashSet<string>(Arrays.AsList("Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom"));
+        protected static readonly HashSet<string> m_doesntSupportOffsets = new HashSet<string>(Arrays.AsList(
+            "Lucene3x", 
+            "MockFixedIntBlock", 
+            "MockVariableIntBlock", 
+            "MockSep", 
+            "MockRandom"
+        ));
 
         // -----------------------------------------------------------------
         // Fields initialized in class or instance rules.
@@ -550,7 +563,6 @@ namespace Lucene.Net.Util
         /////// other.
         /////// </summary>
 
-        /////* LUCENE TODO: WTF is this???
         ////public static TestRule ClassRules = RuleChain
         ////  .outerRule(new TestRuleIgnoreTestSuites())
         ////  .around(IgnoreAfterMaxFailures)
@@ -609,7 +621,6 @@ namespace Lucene.Net.Util
         /////// _all_ rules declared in <seealso cref="LuceneTestCase"/> are executed in proper order
         /////// if they depend on each other.
         /////// </summary>
-        /////* LUCENE TODO: more wtf
         ////public TestRule ruleChain = RuleChain
         ////    .outerRule(TestFailureMarker)
         ////    .around(IgnoreAfterMaxFailures)
@@ -619,6 +630,7 @@ namespace Lucene.Net.Util
         ////    around(new TestRuleFieldCacheSanity()).
         ////    around(ParentChainCallRule);
         ////*/
+        
         // -----------------------------------------------------------------
         // Suite and test case setup/ cleanup.
         // -----------------------------------------------------------------
@@ -732,15 +744,13 @@ namespace Lucene.Net.Util
         /// // tight loop with many invocations.
         /// </code>
         /// </summary>
-        public static Random Random() // LUCENENET TODO: API - rename GetRandom()
+        public static Random Random() // LUCENENET TODO: API - make property
         {
-            return _random ?? (_random = new Random(/* LUCENENET TODO seed */));
-            //return RandomizedContext.Current.Random;
-        }
-
-        protected static Random randon() // LUCENET TODO: API - remove
-        {
-            return Random();
+            //get
+            //{
+                return _random ?? (_random = new Random(/* LUCENENET TODO seed */));
+                //return RandomizedContext.Current.Random;
+            //}
         }
 
         [ThreadStatic]
@@ -773,7 +783,7 @@ namespace Lucene.Net.Util
         {
             get
             {
-                return typeof(LuceneTestCase);
+                return typeof(LuceneTestCase); // LUCENENET TODO: return this.GetType();
             }
         }
 
@@ -785,7 +795,7 @@ namespace Lucene.Net.Util
             get
             {
                 //return ThreadAndTestNameRule.TestMethodName;
-                return "LuceneTestCase";
+                return "LuceneTestCase"; // LUCENENET TODO: return this.GetType().GetTypeInfo().Name
             }
         }
 

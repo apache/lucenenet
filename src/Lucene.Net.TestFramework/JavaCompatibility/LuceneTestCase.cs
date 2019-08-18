@@ -33,6 +33,11 @@ namespace Lucene.Net.Util
 {
     public abstract partial class LuceneTestCase
     {
+        public static Random random()
+        {
+            return Random;
+        }
+
         public static void assertTrue(bool condition)
         {
             Assert.IsTrue(condition);

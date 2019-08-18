@@ -766,7 +766,7 @@ namespace Lucene.Net.Analysis
                     ft.OmitNorms = true;
                 }
                 string pf = TestUtil.GetPostingsFormat("dummy");
-                bool supportsOffsets = !DoesntSupportOffsets.Contains(pf);
+                bool supportsOffsets = !m_doesntSupportOffsets.Contains(pf);
                 switch (random.Next(4))
                 {
                     case 0:
