@@ -2996,6 +2996,56 @@ namespace Lucene.Net.Util
                 () => new TaskMergeScheduler()
             };
         }
+
+        private double nextNextGaussian; // LUCENENET specific
+        private bool haveNextNextGaussian = false; // LUCENENET specific
+
+        /// <summary>
+        /// Returns the next pseudorandom, Gaussian ("normally") distributed
+        /// <c>double</c> value with mean <c>0.0</c> and standard
+        /// deviation <c>1.0</c> from this random number generator's sequence.
+        /// <para/>
+        /// The general contract of <c>nextGaussian</c> is that one
+        /// <see cref="double"/> value, chosen from (approximately) the usual
+        /// normal distribution with mean <c>0.0</c> and standard deviation
+        /// <c>1.0</c>, is pseudorandomly generated and returned.
+        /// 
+        /// <para/>This uses the <i>polar method</i> of G. E. P. Box, M. E. Muller, and
+        /// G. Marsaglia, as described by Donald E. Knuth in <i>The Art of
+        /// Computer Programming</i>, Volume 3: <i>Seminumerical Algorithms</i>,
+        /// section 3.4.1, subsection C, algorithm P. Note that it generates two
+        /// independent values at the cost of only one call to <c>StrictMath.log</c>
+        /// and one call to <c>StrictMath.sqrt</c>.
+        /// </summary>
+        /// <returns>The next pseudorandom, Gaussian ("normally") distributed
+        /// <see cref="double"/> value with mean <c>0.0</c> and
+        /// standard deviation <c>1.0</c> from this random number
+        /// generator's sequence.</returns>
+        // LUCENENET specific - moved this here, since this requires instance variables
+        // in order to work. Was originally in carrotsearch.randomizedtesting.RandomizedTest.
+        public double RandomGaussian()
+        {
+            // See Knuth, ACP, Section 3.4.1 Algorithm C.
+            if (haveNextNextGaussian)
+            {
+                haveNextNextGaussian = false;
+                return nextNextGaussian;
+            }
+            else
+            {
+                double v1, v2, s;
+                do
+                {
+                    v1 = 2 * Random.NextDouble() - 1; // between -1 and 1
+                    v2 = 2 * Random.NextDouble() - 1; // between -1 and 1
+                    s = v1 * v1 + v2 * v2;
+                } while (s >= 1 || s == 0);
+                double multiplier = Math.Sqrt(-2 * Math.Log(s) / s);
+                nextNextGaussian = v2 * multiplier;
+                haveNextNextGaussian = true;
+                return v1 * multiplier;
+            }
+        }
     }
 
     //internal class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.IReaderClosedListener
