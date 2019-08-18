@@ -34,7 +34,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Utility class for asserting expected hits in tests.
     /// </summary>
-    public class CheckHits
+    public static class CheckHits // LUCENENET specific - made static because all of its members are static
     {
         /// <summary>
         /// Some explains methods calculate their values though a slightly
@@ -465,7 +465,7 @@ namespace Lucene.Net.Search
         {
         }
 
-        protected internal virtual void CheckExplanations(Query q)
+        protected virtual void CheckExplanations(Query q)
         {
             base.Search(q, null, new ExplanationAsserter(q, null, this));
         }

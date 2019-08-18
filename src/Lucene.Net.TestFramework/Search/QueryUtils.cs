@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Utility class for sanity-checking queries.
     /// </summary>
-    public class QueryUtils
+    public static class QueryUtils // LUCENENET specific - made static because all members are static
     {
         /// <summary>
         /// Check the types of things query objects should be able to do. </summary>

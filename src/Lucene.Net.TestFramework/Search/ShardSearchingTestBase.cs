@@ -85,20 +85,20 @@ namespace Lucene.Net.Search
 
         internal class FieldAndShardVersion
         {
-            internal long Version { get; private set; }
-            internal int NodeID { get; private set; }
-            internal string Field { get; private set; }
+            private long version;
+            private int nodeID;
+            private string field;
 
             public FieldAndShardVersion(int nodeID, long version, string field)
             {
-                this.NodeID = nodeID;
-                this.Version = version;
-                this.Field = field;
+                this.nodeID = nodeID;
+                this.version = version;
+                this.field = field;
             }
 
             public override int GetHashCode()
             {
-                return (int)(Version * NodeID + Field.GetHashCode());
+                return (int)(version * nodeID + field.GetHashCode());
             }
 
             public override bool Equals(object other)
@@ -110,20 +110,20 @@ namespace Lucene.Net.Search
 
                 FieldAndShardVersion other_ = (FieldAndShardVersion)other;
 
-                return Field.Equals(other_.Field, StringComparison.Ordinal) && Version == other_.Version && NodeID == other_.NodeID;
+                return field.Equals(other_.field, StringComparison.Ordinal) && version == other_.version && nodeID == other_.nodeID;
             }
 
             public override string ToString()
             {
-                return "FieldAndShardVersion(field=" + Field + " nodeID=" + NodeID + " version=" + Version + ")";
+                return "FieldAndShardVersion(field=" + field + " nodeID=" + nodeID + " version=" + version + ")";
             }
         }
 
         internal class TermAndShardVersion
         {
-            internal readonly long version;
-            internal readonly int nodeID;
-            internal readonly Term term;
+            private readonly long version;
+            private readonly int nodeID;
+            private readonly Term term;
 
             public TermAndShardVersion(int nodeID, long version, Term term)
             {
@@ -247,7 +247,7 @@ namespace Lucene.Net.Search
             return stats;
         }
 
-        protected internal sealed class NodeState : IDisposable
+        protected sealed class NodeState : IDisposable
         {
             private readonly ShardSearchingTestBase outerInstance;
 
@@ -739,12 +739,12 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal NodeState[] m_nodes;
+        protected NodeState[] m_nodes;
         internal int maxSearcherAgeSeconds;
         internal long endTimeNanos;
         private ThreadClass changeIndicesThread;
 
-        protected internal virtual void Start(int numNodes, double runTimeSec, int maxSearcherAgeSeconds)
+        protected virtual void Start(int numNodes, double runTimeSec, int maxSearcherAgeSeconds)
         {
             endTimeNanos = Time.NanoTime() + (long)(runTimeSec * 1000000000);
             this.maxSearcherAgeSeconds = maxSearcherAgeSeconds;
@@ -788,7 +788,7 @@ namespace Lucene.Net.Search
             changeIndicesThread.Start();
         }
 
-        protected internal virtual void Finish()
+        protected virtual void Finish()
         {
             changeIndicesThread.Join();
             foreach (NodeState node in m_nodes)
@@ -800,7 +800,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// An <see cref="IndexSearcher"/> and associated version (lease)
         /// </summary>
-        protected internal class SearcherAndVersion
+        protected class SearcherAndVersion
         {
             public IndexSearcher Searcher { get; private set; }
             public long Version { get; private set; }

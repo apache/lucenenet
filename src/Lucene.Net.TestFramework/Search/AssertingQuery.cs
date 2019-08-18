@@ -37,7 +37,6 @@ namespace Lucene.Net.Search
         /// </summary>
         public AssertingQuery(Random random, Query @in)
         {
-            Debug.Assert(@in != null);
             this.random = random;
             this.@in = @in;
         }

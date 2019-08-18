@@ -52,11 +52,11 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class SearchEquivalenceTestBase : LuceneTestCase
     {
-        protected internal static IndexSearcher m_s1, m_s2;
-        protected internal static Directory m_directory;
-        protected internal static IndexReader m_reader;
-        protected internal static Analyzer m_analyzer;
-        protected internal static string m_stopword; // we always pick a character as a stopword
+        protected static IndexSearcher m_s1, m_s2;
+        protected static Directory m_directory;
+        protected static IndexReader m_reader;
+        protected static Analyzer m_analyzer;
+        protected static string m_stopword; // we always pick a character as a stopword
 
         /// <summary>
         /// LUCENENET specific
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
         /// Returns a term suitable for searching.
         /// Terms are single characters in lowercase (a-z).
         /// </summary>
-        protected internal virtual Term RandomTerm()
+        protected virtual Term RandomTerm()
         {
             return new Term("field", "" + RandomChar());
         }
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns a random filter over the document set.
         /// </summary>
-        protected internal virtual Filter RandomFilter()
+        protected virtual Filter RandomFilter()
         {
             return new QueryWrapperFilter(TermRangeQuery.NewStringRange("field", "a", "" + RandomChar(), true, true));
         }
@@ -197,7 +197,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// Both queries will be filtered by <paramref name="filter"/>.
         /// </summary>
-        protected internal virtual void AssertSubsetOf(Query q1, Query q2, Filter filter)
+        protected virtual void AssertSubsetOf(Query q1, Query q2, Filter filter)
         {
             // TRUNK ONLY: test both filter code paths
             if (filter != null && Random.NextBoolean())
