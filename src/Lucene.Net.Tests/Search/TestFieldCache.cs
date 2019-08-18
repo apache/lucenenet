@@ -595,7 +595,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestDocValuesIntegration()
         {
-            AssumeTrue("3.x does not support docvalues", DefaultCodecSupportsDocValues());
+            AssumeTrue("3.x does not support docvalues", DefaultCodecSupportsDocValues);
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
@@ -603,7 +603,7 @@ namespace Lucene.Net.Search
             doc.Add(new BinaryDocValuesField("binary", new BytesRef("binary value")));
             doc.Add(new SortedDocValuesField("sorted", new BytesRef("sorted value")));
             doc.Add(new NumericDocValuesField("numeric", 42));
-            if (DefaultCodecSupportsSortedSet())
+            if (DefaultCodecSupportsSortedSet)
             {
                 doc.Add(new SortedSetDocValuesField("sortedset", new BytesRef("sortedset value1")));
                 doc.Add(new SortedSetDocValuesField("sortedset", new BytesRef("sortedset value2")));
@@ -761,7 +761,7 @@ namespace Lucene.Net.Search
             Assert.IsTrue(bits.Get(0));
 
             // SortedSet type: can be retrieved via getDocTermOrds() 
-            if (DefaultCodecSupportsSortedSet())
+            if (DefaultCodecSupportsSortedSet)
             {
                 try
                 {

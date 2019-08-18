@@ -427,7 +427,7 @@ namespace Lucene.Net.Facet
         public virtual void TestRandom()
         {
 
-            bool canUseDV = DefaultCodecSupportsSortedSet();
+            bool canUseDV = DefaultCodecSupportsSortedSet;
 
             while (aChance == 0.0)
             {

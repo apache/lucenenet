@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
             //System.out.println("rate=" + rate);
             dir.RandomIOExceptionRateOnOpen = rate;
             int iters = AtLeast(20);
-            LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
+            LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues);
             IndexReader r = null;
             DirectoryReader r2 = null;
             bool any = false;

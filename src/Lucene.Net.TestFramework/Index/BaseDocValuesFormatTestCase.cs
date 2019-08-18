@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
                 doc.Add(new BinaryDocValuesField("bdv", new BytesRef(TestUtil.RandomSimpleString(Random()))));
                 doc.Add(new SortedDocValuesField("sdv", new BytesRef(TestUtil.RandomSimpleString(Random(), 2))));
             }
-            if (DefaultCodecSupportsSortedSet())
+            if (DefaultCodecSupportsSortedSet)
             {
                 int numValues = Random().Next(5);
                 for (int i = 0; i < numValues; ++i)
@@ -767,7 +767,7 @@ namespace Lucene.Net.Index
             iwriter.Dispose();
 
             SortedDocValues dv = GetOnlySegmentReader(ireader).GetSortedDocValues("field");
-            if (DefaultCodecSupportsDocsWithField())
+            if (DefaultCodecSupportsDocsWithField)
             {
                 Assert.AreEqual(-1, dv.GetOrd(0));
                 Assert.AreEqual(0, dv.ValueCount);
@@ -834,7 +834,7 @@ namespace Lucene.Net.Index
             BytesRef scratch = new BytesRef();
             dv.LookupOrd(dv.GetOrd(0), scratch);
             Assert.AreEqual(new BytesRef("hello world 2"), scratch);
-            if (DefaultCodecSupportsDocsWithField())
+            if (DefaultCodecSupportsDocsWithField)
             {
                 Assert.AreEqual(-1, dv.GetOrd(1));
             }
@@ -1217,7 +1217,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig cfg = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            if (!DefaultCodecSupportsDocsWithField())
+            if (!DefaultCodecSupportsDocsWithField)
             {
                 // if the codec doesnt support missing, we expect missing to be mapped to byte[]
                 // by the impersonator, but we have to give it a chance to merge them to this
@@ -1250,7 +1250,7 @@ namespace Lucene.Net.Index
                 doc.Add(NewTextField("id", "noValue", Field.Store.YES));
                 w.AddDocument(doc);
             }
-            if (!DefaultCodecSupportsDocsWithField())
+            if (!DefaultCodecSupportsDocsWithField)
             {
                 BytesRef bytesRef = new BytesRef();
                 hash.Add(bytesRef); // add empty value for the gaps
@@ -1259,7 +1259,7 @@ namespace Lucene.Net.Index
             {
                 w.Commit();
             }
-            if (!DefaultCodecSupportsDocsWithField())
+            if (!DefaultCodecSupportsDocsWithField)
             {
                 // if the codec doesnt support missing, we expect missing to be mapped to byte[]
                 // by the impersonator, but we have to give it a chance to merge them to this
@@ -1428,7 +1428,7 @@ namespace Lucene.Net.Index
 
         private void DoTestMissingVsFieldCache(Int64Producer longs)
         {
-            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
+            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);
@@ -1834,7 +1834,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetOneValue()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
 
@@ -1862,7 +1862,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoFields()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
 
@@ -1900,7 +1900,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoDocumentsMerged()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random());
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
@@ -1945,7 +1945,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoValues()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
 
@@ -1978,7 +1978,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoValuesUnordered()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
             RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
 
@@ -2011,7 +2011,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetThreeValuesTwoDocs()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random());
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
@@ -2063,7 +2063,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoDocumentsLastMissing()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random());
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
@@ -2098,7 +2098,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoDocumentsLastMissingMerge()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random());
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
@@ -2135,7 +2135,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoDocumentsFirstMissing()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random());
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
@@ -2171,7 +2171,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoDocumentsFirstMissingMerge()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random());
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
@@ -2208,7 +2208,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetMergeAwayAllValues()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random());
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
@@ -2239,7 +2239,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTermsEnum()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory directory = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random());
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
@@ -2397,7 +2397,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetFixedLengthVsStoredFields()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
@@ -2409,7 +2409,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetVariableLengthVsStoredFields()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
@@ -2420,7 +2420,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetFixedLengthSingleValuedVsStoredFields()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
@@ -2432,7 +2432,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetVariableLengthSingleValuedVsStoredFields()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
@@ -2654,7 +2654,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetFixedLengthVsUninvertedField()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
@@ -2666,7 +2666,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetVariableLengthVsUninvertedField()
         {
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
@@ -2744,7 +2744,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwoNumbersOneMissing()
         {
-            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
+            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMergePolicy(NewLogMergePolicy());
@@ -2775,7 +2775,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwoNumbersOneMissingWithMerging()
         {
-            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
+            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMergePolicy(NewLogMergePolicy());
@@ -2807,7 +2807,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestThreeNumbersOneMissingWithMerging()
         {
-            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
+            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMergePolicy(NewLogMergePolicy());
@@ -2845,7 +2845,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwoBytesOneMissing()
         {
-            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
+            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMergePolicy(NewLogMergePolicy());
@@ -2879,7 +2879,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwoBytesOneMissingWithMerging()
         {
-            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
+            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMergePolicy(NewLogMergePolicy());
@@ -2914,7 +2914,7 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestThreeBytesOneMissingWithMerging()
         {
-            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
+            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
             Directory directory = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
             conf.SetMergePolicy(NewLogMergePolicy());
@@ -3282,8 +3282,8 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestThreads2()
         {
-            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField());
-            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
+            AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, conf);

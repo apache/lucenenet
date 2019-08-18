@@ -406,7 +406,7 @@ namespace Lucene.Net.Index
                         doc.Add(OuterInstance.NewTextField("content", "aaa", Field.Store.NO));
                         doc.Add(OuterInstance.NewStringField("id", Convert.ToString(id++), Field.Store.YES));
                         doc.Add(OuterInstance.NewStringField("value", Convert.ToString(value), Field.Store.NO));
-                        if (DefaultCodecSupportsDocValues())
+                        if (DefaultCodecSupportsDocValues)
                         {
                             doc.Add(new NumericDocValuesField("dv", value));
                         }
@@ -517,7 +517,7 @@ namespace Lucene.Net.Index
             doc.Add(NewTextField("content", "aaa", Field.Store.NO));
             doc.Add(NewStringField("id", Convert.ToString(id), Field.Store.YES));
             doc.Add(NewStringField("value", Convert.ToString(value), Field.Store.NO));
-            if (DefaultCodecSupportsDocValues())
+            if (DefaultCodecSupportsDocValues)
             {
                 doc.Add(new NumericDocValuesField("dv", value));
             }
@@ -530,7 +530,7 @@ namespace Lucene.Net.Index
             doc.Add(NewTextField("content", "aaa", Field.Store.NO));
             doc.Add(NewStringField("id", Convert.ToString(id), Field.Store.YES));
             doc.Add(NewStringField("value", Convert.ToString(value), Field.Store.NO));
-            if (DefaultCodecSupportsDocValues())
+            if (DefaultCodecSupportsDocValues)
             {
                 doc.Add(new NumericDocValuesField("dv", value));
             }
@@ -580,7 +580,7 @@ namespace Lucene.Net.Index
                 Document d = new Document();
                 d.Add(NewStringField("id", Convert.ToString(i), Field.Store.YES));
                 d.Add(NewTextField("content", "aaa " + i, Field.Store.NO));
-                if (DefaultCodecSupportsDocValues())
+                if (DefaultCodecSupportsDocValues)
                 {
                     d.Add(new NumericDocValuesField("dv", i));
                 }
@@ -686,7 +686,7 @@ namespace Lucene.Net.Index
                                     Document d = new Document();
                                     d.Add(NewStringField("id", Convert.ToString(i), Field.Store.YES));
                                     d.Add(NewTextField("content", "bbb " + i, Field.Store.NO));
-                                    if (DefaultCodecSupportsDocValues())
+                                    if (DefaultCodecSupportsDocValues)
                                     {
                                         d.Add(new NumericDocValuesField("dv", i));
                                     }

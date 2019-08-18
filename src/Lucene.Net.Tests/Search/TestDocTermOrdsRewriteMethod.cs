@@ -75,7 +75,7 @@ namespace Lucene.Net.Search
                     string s = TestUtil.RandomUnicodeString(Random());
                     doc.Add(NewStringField(FieldName, s, Field.Store.NO));
                     // if the default codec doesn't support sortedset, we will uninvert at search time
-                    if (DefaultCodecSupportsSortedSet())
+                    if (DefaultCodecSupportsSortedSet)
                     {
                         doc.Add(new SortedSetDocValuesField(FieldName, new BytesRef(s)));
                     }

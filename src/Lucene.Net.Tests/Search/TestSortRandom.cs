@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
                     }
 
                     br = new BytesRef(s);
-                    if (DefaultCodecSupportsDocValues())
+                    if (DefaultCodecSupportsDocValues)
                     {
                         doc.Add(new SortedDocValuesField("stringdv", br));
                         doc.Add(new NumericDocValuesField("id", numDocs));
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
                         Console.WriteLine("  " + numDocs + ": <missing>");
                     }
                     docValues.Add(null);
-                    if (DefaultCodecSupportsDocValues())
+                    if (DefaultCodecSupportsDocValues)
                     {
                         doc.Add(new NumericDocValuesField("id", numDocs));
                     }
@@ -158,13 +158,13 @@ namespace Lucene.Net.Search
                 SortField sf;
                 bool sortMissingLast;
                 bool missingIsNull;
-                if (DefaultCodecSupportsDocValues() && random.NextBoolean())
+                if (DefaultCodecSupportsDocValues && random.NextBoolean())
                 {
                     sf = new SortField("stringdv", SortFieldType.STRING, reverse);
                     // Can only use sort missing if the DVFormat
                     // supports docsWithField:
-                    sortMissingLast = DefaultCodecSupportsDocsWithField() && Random().NextBoolean();
-                    missingIsNull = DefaultCodecSupportsDocsWithField();
+                    sortMissingLast = DefaultCodecSupportsDocsWithField && Random().NextBoolean();
+                    missingIsNull = DefaultCodecSupportsDocsWithField;
                 }
                 else
                 {

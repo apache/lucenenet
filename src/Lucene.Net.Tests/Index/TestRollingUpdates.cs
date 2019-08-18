@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
         {
             Random random = new Random(Random().Next());
             BaseDirectoryWrapper dir = NewDirectory();
-            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
+            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
 
             //provider.register(new MemoryCodec());
             if ((!"Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal)) && Random().NextBoolean())

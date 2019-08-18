@@ -123,7 +123,7 @@ namespace Lucene.Net.Index.Sorter
             iw1.IndexWriter.AddDocument(doc2);
             iw2.IndexWriter.AddDocument(doc2);
 
-            if (DefaultCodecSupportsFieldUpdates())
+            if (DefaultCodecSupportsFieldUpdates)
             {
                 // update NDV of docs belonging to one term (covers many documents)
                 long value = Random().NextInt64();

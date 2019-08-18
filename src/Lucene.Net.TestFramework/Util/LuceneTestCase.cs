@@ -1537,9 +1537,9 @@ namespace Lucene.Net.Util
             //}
         }
 
-        public static bool DefaultCodecSupportsDocValues() // LUCENENET TODO: API - make property
+        public static bool DefaultCodecSupportsDocValues
         {
-            return !Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal);
+            get{ return !Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal); }
         }
 
         private static Directory NewFSDirectoryImpl(Type clazz, DirectoryInfo file)
@@ -1869,74 +1869,86 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns true if the default codec supports single valued docvalues with missing values </summary>
-        public static bool DefaultCodecSupportsMissingDocValues() // LUCENENET TODO: API Make property
+        public static bool DefaultCodecSupportsMissingDocValues
         {
-            string name = Codec.Default.Name;
-            if (name.Equals("Lucene3x", StringComparison.Ordinal) 
-                || name.Equals("Lucene40", StringComparison.Ordinal) 
-                || name.Equals("Appending", StringComparison.Ordinal) 
-                || name.Equals("Lucene41", StringComparison.Ordinal) 
-                || name.Equals("Lucene42", StringComparison.Ordinal))
+            get
             {
-                return false;
+                string name = Codec.Default.Name;
+                if (name.Equals("Lucene3x", StringComparison.Ordinal)
+                    || name.Equals("Lucene40", StringComparison.Ordinal)
+                    || name.Equals("Appending", StringComparison.Ordinal)
+                    || name.Equals("Lucene41", StringComparison.Ordinal)
+                    || name.Equals("Lucene42", StringComparison.Ordinal))
+                {
+                    return false;
+                }
+                return true;
             }
-            return true;
         }
 
         /// <summary>
         /// Returns true if the default codec supports SORTED_SET docvalues </summary>
-        public static bool DefaultCodecSupportsSortedSet() // LUCENENET TODO: API Make property
+        public static bool DefaultCodecSupportsSortedSet
         {
-            if (!DefaultCodecSupportsDocValues())
+            get
             {
-                return false;
+                if (!DefaultCodecSupportsDocValues)
+                {
+                    return false;
+                }
+                string name = Codec.Default.Name;
+                if (name.Equals("Lucene40", StringComparison.Ordinal)
+                    || name.Equals("Lucene41", StringComparison.Ordinal)
+                    || name.Equals("Appending", StringComparison.Ordinal))
+                {
+                    return false;
+                }
+                return true;
             }
-            string name = Codec.Default.Name;
-            if (name.Equals("Lucene40", StringComparison.Ordinal) 
-                || name.Equals("Lucene41", StringComparison.Ordinal) 
-                || name.Equals("Appending", StringComparison.Ordinal))
-            {
-                return false;
-            }
-            return true;
         }
 
         /// <summary>
         /// Returns true if the codec "supports" docsWithField
         /// (other codecs return MatchAllBits, because you couldnt write missing values before)
         /// </summary>
-        public static bool DefaultCodecSupportsDocsWithField() // LUCENENET TODO: API Make property
+        public static bool DefaultCodecSupportsDocsWithField
         {
-            if (!DefaultCodecSupportsDocValues())
+            get
             {
-                return false;
+                if (!DefaultCodecSupportsDocValues)
+                {
+                    return false;
+                }
+                string name = Codec.Default.Name;
+                if (name.Equals("Appending", StringComparison.Ordinal)
+                    || name.Equals("Lucene40", StringComparison.Ordinal)
+                    || name.Equals("Lucene41", StringComparison.Ordinal)
+                    || name.Equals("Lucene42", StringComparison.Ordinal))
+                {
+                    return false;
+                }
+                return true;
             }
-            string name = Codec.Default.Name;
-            if (name.Equals("Appending", StringComparison.Ordinal) 
-                || name.Equals("Lucene40", StringComparison.Ordinal) 
-                || name.Equals("Lucene41", StringComparison.Ordinal) 
-                || name.Equals("Lucene42", StringComparison.Ordinal))
-            {
-                return false;
-            }
-            return true;
         }
 
         /// <summary>
         /// Returns true if the codec "supports" field updates. </summary>
-        public static bool DefaultCodecSupportsFieldUpdates() // LUCENENET TODO: API Make property
+        public static bool DefaultCodecSupportsFieldUpdates
         {
-            string name = Codec.Default.Name;
-            if (name.Equals("Lucene3x", StringComparison.Ordinal) 
-                || name.Equals("Appending", StringComparison.Ordinal) 
-                || name.Equals("Lucene40", StringComparison.Ordinal) 
-                || name.Equals("Lucene41", StringComparison.Ordinal) 
-                || name.Equals("Lucene42", StringComparison.Ordinal) 
-                || name.Equals("Lucene45", StringComparison.Ordinal))
+            get
             {
-                return false;
+                string name = Codec.Default.Name;
+                if (name.Equals("Lucene3x", StringComparison.Ordinal)
+                    || name.Equals("Appending", StringComparison.Ordinal)
+                    || name.Equals("Lucene40", StringComparison.Ordinal)
+                    || name.Equals("Lucene41", StringComparison.Ordinal)
+                    || name.Equals("Lucene42", StringComparison.Ordinal)
+                    || name.Equals("Lucene45", StringComparison.Ordinal))
+                {
+                    return false;
+                }
+                return true;
             }
-            return true;
         }
 
         public void AssertReaderEquals(string info, IndexReader leftReader, IndexReader rightReader)

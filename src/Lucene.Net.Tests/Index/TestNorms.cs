@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
             Similarity provider = new MySimProvider(this);
             config.SetSimilarity(provider);
             RandomIndexWriter writer = new RandomIndexWriter(random, dir, config);
-            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
+            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
             int num = AtLeast(100);
             for (int i = 0; i < num; i++)
             {

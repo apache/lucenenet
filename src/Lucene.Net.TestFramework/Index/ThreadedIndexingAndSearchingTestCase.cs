@@ -562,7 +562,7 @@ namespace Lucene.Net.Index
             long t0 = Environment.TickCount;
 
             Random random = new Random(Random().Next());
-            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
+            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
             DirectoryInfo tempDir = CreateTempDir(testName);
             m_dir = GetDirectory(NewMockFSDirectory(tempDir)); // some subclasses rely on this being MDW
             if (m_dir is BaseDirectoryWrapper)
@@ -846,7 +846,7 @@ namespace Lucene.Net.Index
         {
             s.Search(q, 10);
             int hitCount = s.Search(q, null, 10, new Sort(new SortField("title", SortFieldType.STRING))).TotalHits;
-            if (DefaultCodecSupportsDocValues())
+            if (DefaultCodecSupportsDocValues)
             {
                 Sort dvSort = new Sort(new SortField("title", SortFieldType.STRING));
                 int hitCount2 = s.Search(q, null, 10, dvSort).TotalHits;

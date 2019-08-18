@@ -970,7 +970,7 @@ namespace Lucene.Net.Facet.Range
         [Test]
         public virtual void TestMissingValues()
         {
-            AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
+            AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField);
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
             Document doc = new Document();

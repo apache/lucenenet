@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 @ref.CopyChars(TestUtil.RandomUnicodeString(Random()));
-                if (DefaultCodecSupportsDocsWithField() && Random().Next(7) == 0)
+                if (DefaultCodecSupportsDocsWithField && Random().Next(7) == 0)
                 {
                     iw.AddDocument(new Document());
                 }
@@ -229,7 +229,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestSortedSet()
         {
-            AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
             IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestSortedSetWithDups()
         {
-            AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
             IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);
@@ -382,7 +382,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestDocsWithField()
         {
-            AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
+            AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField);
             Directory dir = NewDirectory();
 
             IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, null);

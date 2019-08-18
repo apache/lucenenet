@@ -697,7 +697,7 @@ namespace Lucene.Net.Search
             {
                 try
                 {
-                    LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
+                    LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues);
                     int numDocs = 0;
                     while (Time.NanoTime() < outerInstance.endTimeNanos)
                     {

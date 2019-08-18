@@ -192,13 +192,13 @@ namespace Lucene.Net.Index
 
                 doc.Add(OuterInstance.NewTextField(r, "content4", "aaa bbb ccc ddd", Field.Store.NO));
                 doc.Add(OuterInstance.NewStringField(r, "content5", "aaa bbb ccc ddd", Field.Store.NO));
-                if (DefaultCodecSupportsDocValues())
+                if (DefaultCodecSupportsDocValues)
                 {
                     doc.Add(new NumericDocValuesField("numericdv", 5));
                     doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("hello")));
                     doc.Add(new SortedDocValuesField("sorteddv", new BytesRef("world")));
                 }
-                if (DefaultCodecSupportsSortedSet())
+                if (DefaultCodecSupportsSortedSet)
                 {
                     doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("hellllo")));
                     doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("again")));
@@ -2258,7 +2258,7 @@ namespace Lucene.Net.Index
                 {
                     Document doc = new Document();
                     doc.Add(new StringField("id", (docBase + i).ToString(), Field.Store.NO));
-                    if (DefaultCodecSupportsDocValues())
+                    if (DefaultCodecSupportsDocValues)
                     {
                         doc.Add(new NumericDocValuesField("f", 1L));
                         doc.Add(new NumericDocValuesField("cf", 2L));
@@ -2280,7 +2280,7 @@ namespace Lucene.Net.Index
 
                 try
                 {
-                    bool defaultCodecSupportsFieldUpdates = DefaultCodecSupportsFieldUpdates();
+                    bool defaultCodecSupportsFieldUpdates = DefaultCodecSupportsFieldUpdates;
                     for (int i = 0; i < numDocs; i++)
                     {
                         if (Random().Next(10) == 7)
@@ -2400,7 +2400,7 @@ namespace Lucene.Net.Index
                     ir = w.Reader;
                 }
                 Assert.AreEqual(docCount - deleteCount, ir.NumDocs);
-                if (DefaultCodecSupportsDocValues())
+                if (DefaultCodecSupportsDocValues)
                 {
                     BytesRef scratch = new BytesRef();
                     foreach (AtomicReaderContext context in ir.Leaves)

@@ -52,7 +52,7 @@ namespace Lucene.Net.Facet.SortedSet
         public virtual void TestBasic()
         {
 
-            AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
             FacetsConfig config = new FacetsConfig();
@@ -103,7 +103,7 @@ namespace Lucene.Net.Facet.SortedSet
         [Test]
         public virtual void TestStaleState()
         {
-            AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
@@ -151,7 +151,7 @@ namespace Lucene.Net.Facet.SortedSet
         [Test]
         public virtual void TestSparseFacets()
         {
-            AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
@@ -209,7 +209,7 @@ namespace Lucene.Net.Facet.SortedSet
         [Test]
         public virtual void TestSomeSegmentsMissing()
         {
-            AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
@@ -251,7 +251,7 @@ namespace Lucene.Net.Facet.SortedSet
         [Test]
         public virtual void TestSlowCompositeReaderWrapper()
         {
-            AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             Directory dir = NewDirectory();
 
             RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
@@ -288,7 +288,7 @@ namespace Lucene.Net.Facet.SortedSet
         [Test]
         public virtual void TestRandom()
         {
-            AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet());
+            AssumeTrue("Test requires SortedSetDV support", DefaultCodecSupportsSortedSet);
             string[] tokens = GetRandomTokens(10);
             Directory indexDir = NewDirectory();
             Directory taxoDir = NewDirectory();

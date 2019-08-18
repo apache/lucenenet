@@ -52,7 +52,7 @@ namespace Lucene.Net.Store
             analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             RandomIndexWriter w = new RandomIndexWriter(Random(), cachedDir, conf);
-            LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
+            LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues);
             int numDocs = TestUtil.NextInt32(Random(), 100, 400);
 
             if (VERBOSE)

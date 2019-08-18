@@ -1161,13 +1161,13 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 doc.Add(OuterInstance.NewStringField(this.Random, "id", "500", Field.Store.NO));
                 doc.Add(OuterInstance.NewField(this.Random, "field", "some prepackaged text contents", StoredTextType));
-                if (DefaultCodecSupportsDocValues())
+                if (DefaultCodecSupportsDocValues)
                 {
                     doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("500")));
                     doc.Add(new NumericDocValuesField("numericdv", 500));
                     doc.Add(new SortedDocValuesField("sorteddv", new BytesRef("500")));
                 }
-                if (DefaultCodecSupportsSortedSet())
+                if (DefaultCodecSupportsSortedSet)
                 {
                     doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("one")));
                     doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("two")));
@@ -1176,13 +1176,13 @@ namespace Lucene.Net.Index
                 doc = new Document();
                 doc.Add(OuterInstance.NewStringField(this.Random, "id", "501", Field.Store.NO));
                 doc.Add(OuterInstance.NewField(this.Random, "field", "some more contents", StoredTextType));
-                if (DefaultCodecSupportsDocValues())
+                if (DefaultCodecSupportsDocValues)
                 {
                     doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("501")));
                     doc.Add(new NumericDocValuesField("numericdv", 501));
                     doc.Add(new SortedDocValuesField("sorteddv", new BytesRef("501")));
                 }
-                if (DefaultCodecSupportsSortedSet())
+                if (DefaultCodecSupportsSortedSet)
                 {
                     doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("two")));
                     doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("three")));
@@ -1229,7 +1229,7 @@ namespace Lucene.Net.Index
                             Field sortedSetDVField = new SortedSetDocValuesField("sortedsetdv", new BytesRef());
                             doc.Add(idField);
                             doc.Add(OuterInstance.NewField(Random, "field", "some text contents", StoredTextType));
-                            if (DefaultCodecSupportsDocValues())
+                            if (DefaultCodecSupportsDocValues)
                             {
                                 binaryDVField = new BinaryDocValuesField("binarydv", new BytesRef());
                                 numericDVField = new NumericDocValuesField("numericdv", 0);
@@ -1238,14 +1238,14 @@ namespace Lucene.Net.Index
                                 doc.Add(numericDVField);
                                 doc.Add(sortedDVField);
                             }
-                            if (DefaultCodecSupportsSortedSet())
+                            if (DefaultCodecSupportsSortedSet)
                             {
                                 doc.Add(sortedSetDVField);
                             }
                             for (int i = 0; i < 100; i++)
                             {
                                 idField.SetStringValue(Convert.ToString(i));
-                                if (DefaultCodecSupportsDocValues())
+                                if (DefaultCodecSupportsDocValues)
                                 {
                                     binaryDVField.SetBytesValue(new BytesRef(idField.GetStringValue()));
                                     numericDVField.SetInt64Value(i);

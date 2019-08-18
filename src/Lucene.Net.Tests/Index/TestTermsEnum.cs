@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             Random random = new Random(Random().Next());
-            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
+            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
             Directory d = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);

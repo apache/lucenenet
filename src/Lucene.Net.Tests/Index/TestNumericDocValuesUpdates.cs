@@ -494,7 +494,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestUnsetValue()
         {
-            AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
+            AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField);
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             IndexWriter writer = new IndexWriter(dir, conf);
@@ -538,7 +538,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestUnsetAllValues()
         {
-            AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField());
+            AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField);
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             IndexWriter writer = new IndexWriter(dir, conf);

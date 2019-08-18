@@ -162,7 +162,7 @@ namespace Lucene.Net.Index.Sorter
             doc.Add(norms);
             doc.Add(new BinaryDocValuesField(BINARY_DV_FIELD, new BytesRef(id.ToString())));
             doc.Add(new SortedDocValuesField(SORTED_DV_FIELD, new BytesRef(id.ToString())));
-            if (DefaultCodecSupportsSortedSet())
+            if (DefaultCodecSupportsSortedSet)
             {
                 doc.Add(new SortedSetDocValuesField(SORTED_SET_DV_FIELD, new BytesRef(id.ToString())));
                 doc.Add(new SortedSetDocValuesField(SORTED_SET_DV_FIELD, new BytesRef((id + 1).ToString())));
@@ -412,7 +412,7 @@ namespace Lucene.Net.Index.Sorter
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetDocValuesField()
         {
-            AssumeTrue("default codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("default codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             SortedSetDocValues dv = reader.GetSortedSetDocValues(SORTED_SET_DV_FIELD);
             int maxDoc = reader.MaxDoc;
             BytesRef bytes = new BytesRef();

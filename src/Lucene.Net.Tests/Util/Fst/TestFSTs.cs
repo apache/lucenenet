@@ -332,7 +332,7 @@ namespace Lucene.Net.Util.Fst
         public virtual void TestRealTerms()
         {
 
-            LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
+            LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues);
             int RUN_TIME_MSEC = AtLeast(500);
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt32(Random(), 1, IndexWriter.MAX_TERM_LENGTH);

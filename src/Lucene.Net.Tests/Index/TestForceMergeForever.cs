@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
             // Try to make an index that requires merging:
             w.Config.SetMaxBufferedDocs(TestUtil.NextInt32(Random(), 2, 11));
             int numStartDocs = AtLeast(20);
-            LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
+            LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues);
             for (int docIDX = 0; docIDX < numStartDocs; docIDX++)
             {
                 w.AddDocument(docs.NextDoc());

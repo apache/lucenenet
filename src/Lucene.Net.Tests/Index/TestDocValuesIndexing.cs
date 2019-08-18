@@ -431,7 +431,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTooLargeTermSortedSetBytes()
         {
-            AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet());
+            AssumeTrue("codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
             Analyzer analyzer = new MockAnalyzer(Random());
 
             Directory directory = NewDirectory();

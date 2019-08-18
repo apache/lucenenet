@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         public override void BeforeClass()
         {
             base.BeforeClass();
-            LineDocFile = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
+            LineDocFile = new LineFileDocs(Random(), DefaultCodecSupportsDocValues);
         }
 
         [OneTimeTearDown]
