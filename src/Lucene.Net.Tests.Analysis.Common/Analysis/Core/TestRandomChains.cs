@@ -323,7 +323,7 @@ namespace Lucene.Net.Analysis.Core
                 return (CJKScript)random.Next(0, max + 1);
             }) },
             { typeof(CultureInfo), new AnonymousProducer((random) => {
-                return LuceneTestCase.RandomLocale(random);
+                return LuceneTestCase.RandomCulture(random);
             }) },
         };
 

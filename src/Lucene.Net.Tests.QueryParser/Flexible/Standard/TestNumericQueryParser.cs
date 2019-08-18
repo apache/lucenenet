@@ -98,7 +98,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 }
 
                 dateFormatSanityCheckPass = true;
-                LOCALE = RandomLocale(Random());
+                LOCALE = RandomCulture(Random());
                 TIMEZONE = RandomTimeZone(Random());
                 DATE_STYLE = randomDateStyle(Random());
                 TIME_STYLE = randomDateStyle(Random());

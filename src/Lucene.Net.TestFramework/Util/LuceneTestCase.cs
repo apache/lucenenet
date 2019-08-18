@@ -811,11 +811,14 @@ namespace Lucene.Net.Util
         /// <para/>
         /// LUCENENET: Not Implemented - always returns true
         /// </summary>
-        public static bool TestThread() // LUCENENET TODO: API - rename back to IsTestThread, make property
+        public static bool IsTestThread
         {
-            /*Assert.IsNotNull(ThreadAndTestNameRule.TestCaseThread, "Test case thread not set?");
-            return Thread.CurrentThread == ThreadAndTestNameRule.TestCaseThread;*/
-            return true;
+            get
+            {
+                /*Assert.IsNotNull(ThreadAndTestNameRule.TestCaseThread, "Test case thread not set?");
+                return Thread.CurrentThread == ThreadAndTestNameRule.TestCaseThread;*/
+                return true;
+            }
         }
 
         /// <summary>
@@ -942,7 +945,7 @@ namespace Lucene.Net.Util
         /// <param name="label">  String logged before/after the items in the enumerator. </param>
         /// <param name="iter">   Each element is ToString()ed and logged on it's own line. If iter is null this is logged differnetly then an empty enumerator. </param>
         /// <param name="stream"> Stream to log messages to. </param>
-        public static void DumpIterator(string label, IEnumerator iter, TextWriter stream) // LUCENENET TODO: API - rename DumpEnumerator
+        public static void DumpEnumerator(string label, IEnumerator iter, TextWriter stream) // LUCENENET specifc - renamed from DumpIterator
         {
             stream.WriteLine("*** BEGIN " + label + " ***");
             if (null == iter)
@@ -960,13 +963,13 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Convenience method for logging an array.  Wraps the array in an enumerator and delegates to <see cref="DumpIterator(string, IEnumerator, TextWriter)"/>
+        /// Convenience method for logging an array.  Wraps the array in an enumerator and delegates to <see cref="DumpEnumerator(string, IEnumerator, TextWriter)"/>
         /// </summary>
-        /// <seealso cref="DumpIterator(string, IEnumerator, TextWriter)"/>
+        /// <seealso cref="DumpEnumerator(string, IEnumerator, TextWriter)"/>
         public static void DumpArray(string label, Object[] objs, TextWriter stream)
         {
             IEnumerator iter = (null == objs) ? (IEnumerator)null : Arrays.AsList(objs).GetEnumerator();
-            DumpIterator(label, iter, stream);
+            DumpEnumerator(label, iter, stream);
         }
 
         /// <summary>
@@ -1498,7 +1501,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// See <a href="https://issues.apache.org/jira/browse/LUCENE-4020">https://issues.apache.org/jira/browse/LUCENE-4020</a>.
         /// </summary>
-        public static CultureInfo RandomLocale(Random random) // LUCENENET TODO: API Rename RandomCulture
+        public static CultureInfo RandomCulture(Random random) // LUCENENET specific renamed from RandomLocale
         {
             return RandomInts.RandomFrom(random, CultureInfoSupport.GetNeutralAndSpecificCultures());
         }
@@ -1515,7 +1518,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// return a <see cref="CultureInfo"/> object equivalent to its programmatic name. </summary>
-        public static CultureInfo LocaleForName(string localeName) // LUCENENET TODO: API - rename CultureForName
+        public static CultureInfo CultureForName(string localeName) // LUCENENET specific - renamed from LocaleForName
         {
             return new CultureInfo(localeName);
 

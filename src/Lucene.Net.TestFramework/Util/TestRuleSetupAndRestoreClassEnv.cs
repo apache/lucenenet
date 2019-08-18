@@ -255,8 +255,8 @@ namespace Lucene.Net.Util
 
             // Always pick a random one for consistency (whether tests.locale was specified or not).
             savedLocale = CultureInfo.CurrentCulture;
-            CultureInfo randomLocale = LuceneTestCase.RandomLocale(random);
-            locale = testLocale.Equals("random", StringComparison.Ordinal) ? randomLocale : LuceneTestCase.LocaleForName(testLocale);
+            CultureInfo randomLocale = LuceneTestCase.RandomCulture(random);
+            locale = testLocale.Equals("random", StringComparison.Ordinal) ? randomLocale : LuceneTestCase.CultureForName(testLocale);
 #if NETSTANDARD
             CultureInfo.CurrentCulture = locale;
 #else
