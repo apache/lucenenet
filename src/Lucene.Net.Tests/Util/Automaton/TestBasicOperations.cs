@@ -151,7 +151,7 @@ namespace Lucene.Net.Util.Automaton
                 Automaton a = re.ToAutomaton();
                 Assert.IsFalse(BasicOperations.IsEmpty(a));
 
-                AutomatonTestUtil.RandomAcceptedStrings rx = new AutomatonTestUtil.RandomAcceptedStrings(a);
+                RandomAcceptedStrings rx = new RandomAcceptedStrings(a);
                 for (int j = 0; j < ITER2; j++)
                 {
                     int[] acc = null;

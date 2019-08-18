@@ -251,7 +251,7 @@ namespace Lucene.Net.Util.Automaton
         {
             var cra = new CharacterRunAutomaton(automaton);
             var bra = new ByteRunAutomaton(automaton);
-            var ras = new AutomatonTestUtil.RandomAcceptedStrings(automaton);
+            var ras = new RandomAcceptedStrings(automaton);
 
             int num = AtLeast(1000);
             for (int i = 0; i < num; i++)
