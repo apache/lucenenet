@@ -556,50 +556,54 @@ namespace Lucene.Net.Index
             IndexWriter.ForceMerge(maxSegmentCount);
         }
 
-        public sealed class TestPointInfoStream : InfoStream
+        // LUCENENET specific - de-nested TestPointInfoStream
+
+        // LUCENENET specific - de-nested ITestPoint
+    }
+
+    public sealed class TestPointInfoStream : InfoStream
+    {
+        internal readonly InfoStream @delegate;
+        internal readonly ITestPoint testPoint;
+
+        public TestPointInfoStream(InfoStream @delegate, ITestPoint testPoint)
         {
-            internal readonly InfoStream @delegate;
-            internal readonly ITestPoint testPoint;
+            this.@delegate = @delegate ?? new NullInfoStream();
+            this.testPoint = testPoint;
+        }
 
-            public TestPointInfoStream(InfoStream @delegate, ITestPoint testPoint)
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                this.@delegate = @delegate ?? new NullInfoStream();
-                this.testPoint = testPoint;
-            }
-
-            protected override void Dispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    @delegate.Dispose();
-                }
-            }
-
-            public override void Message(string component, string message)
-            {
-                if ("TP".Equals(component, StringComparison.Ordinal))
-                {
-                    testPoint.Apply(message);
-                }
-                if (@delegate.IsEnabled(component))
-                {
-                    @delegate.Message(component, message);
-                }
-            }
-
-            public override bool IsEnabled(string component)
-            {
-                return "TP".Equals(component, StringComparison.Ordinal) || @delegate.IsEnabled(component);
+                @delegate.Dispose();
             }
         }
 
-        /// <summary>
-        /// Simple interface that is executed for each <c>TP</c> <see cref="InfoStream"/> component
-        /// message. See also <see cref="RandomIndexWriter.MockIndexWriter(Directory, IndexWriterConfig, ITestPoint)"/>.
-        /// </summary>
-        public interface ITestPoint // LUCENENET TODO: API de-nest
+        public override void Message(string component, string message)
         {
-            void Apply(string message);
+            if ("TP".Equals(component, StringComparison.Ordinal))
+            {
+                testPoint.Apply(message);
+            }
+            if (@delegate.IsEnabled(component))
+            {
+                @delegate.Message(component, message);
+            }
         }
+
+        public override bool IsEnabled(string component)
+        {
+            return "TP".Equals(component, StringComparison.Ordinal) || @delegate.IsEnabled(component);
+        }
+    }
+
+    /// <summary>
+    /// Simple interface that is executed for each <c>TP</c> <see cref="InfoStream"/> component
+    /// message. See also <see cref="RandomIndexWriter.MockIndexWriter(Directory, IndexWriterConfig, ITestPoint)"/>.
+    /// </summary>
+    public interface ITestPoint
+    {
+        void Apply(string message);
     }
 }

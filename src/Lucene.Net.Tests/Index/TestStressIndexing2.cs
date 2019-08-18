@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         internal static int MaxBufferedDocs = 3;
         internal static int Seed = 0;
 
-        public sealed class YieldTestPoint : RandomIndexWriter.ITestPoint
+        public sealed class YieldTestPoint : ITestPoint
         {
             private readonly TestStressIndexing2 OuterInstance;
 

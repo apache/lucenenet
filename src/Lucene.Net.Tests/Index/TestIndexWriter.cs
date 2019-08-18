@@ -2794,7 +2794,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             SetOnce<IndexWriter> iwRef = new SetOnce<IndexWriter>();
-            iwc.SetInfoStream(new RandomIndexWriter.TestPointInfoStream(iwc.InfoStream, new TestPointAnonymousInnerClassHelper(this, iwRef)));
+            iwc.SetInfoStream(new TestPointInfoStream(iwc.InfoStream, new TestPointAnonymousInnerClassHelper(this, iwRef)));
             IndexWriter evilWriter = new IndexWriter(dir, iwc);
             iwRef.Set(evilWriter);
             for (int i = 0; i < 1000; i++)
@@ -2811,7 +2811,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TestPointAnonymousInnerClassHelper : RandomIndexWriter.ITestPoint
+        private class TestPointAnonymousInnerClassHelper : ITestPoint
         {
             private readonly TestIndexWriter OuterInstance;
 
