@@ -28,7 +28,9 @@ namespace Lucene.Net.Codecs.Compressing
         /// <summary>
         /// Constructor that allows to configure the <paramref name="chunkSize"/>. </summary>
         public HighCompressionCompressingCodec(int chunkSize, bool withSegmentSuffix)
-            : base(withSegmentSuffix ? "HighCompressionCompressingStoredFields" : "", CompressionMode.HIGH_COMPRESSION, chunkSize)
+            : base(
+                  withSegmentSuffix ? "HighCompressionCompressingStoredFields" : "", 
+                  CompressionMode.HIGH_COMPRESSION, chunkSize)
         {
         }
 

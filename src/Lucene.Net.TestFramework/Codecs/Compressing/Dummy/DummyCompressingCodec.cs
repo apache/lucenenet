@@ -60,10 +60,6 @@ namespace Lucene.Net.Codecs.Compressing.Dummy
 
         private class DecompressorAnonymousInnerClassHelper : Decompressor
         {
-            public DecompressorAnonymousInnerClassHelper()
-            {
-            }
-
             public override void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes)
             {
                 Debug.Assert(offset + length <= originalLength);
@@ -86,10 +82,6 @@ namespace Lucene.Net.Codecs.Compressing.Dummy
 
         private class CompressorAnonymousInnerClassHelper : Compressor
         {
-            public CompressorAnonymousInnerClassHelper()
-            {
-            }
-
             public override void Compress(byte[] bytes, int off, int len, DataOutput @out)
             {
                 @out.WriteBytes(bytes, off, len);

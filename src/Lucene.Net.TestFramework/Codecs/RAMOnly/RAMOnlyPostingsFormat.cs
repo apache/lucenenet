@@ -297,8 +297,8 @@ namespace Lucene.Net.Codecs.RAMOnly
         // Classes for writing to the postings state
         private class RAMFieldsConsumer : FieldsConsumer
         {
-            internal readonly RAMPostings postings;
-            internal readonly RAMTermsConsumer termsConsumer = new RAMTermsConsumer();
+            private readonly RAMPostings postings;
+            private readonly RAMTermsConsumer termsConsumer = new RAMTermsConsumer();
 
             public RAMFieldsConsumer(RAMPostings postings)
             {
@@ -325,8 +325,8 @@ namespace Lucene.Net.Codecs.RAMOnly
 
         private class RAMTermsConsumer : TermsConsumer
         {
-            internal RAMField field;
-            internal readonly RAMPostingsWriterImpl postingsWriter = new RAMPostingsWriterImpl();
+            private RAMField field;
+            private readonly RAMPostingsWriterImpl postingsWriter = new RAMPostingsWriterImpl();
             internal RAMTerm current;
 
             internal virtual void Reset(RAMField field)
@@ -368,9 +368,9 @@ namespace Lucene.Net.Codecs.RAMOnly
 
         internal class RAMPostingsWriterImpl : PostingsConsumer
         {
-            internal RAMTerm term;
-            internal RAMDoc current;
-            internal int posUpto = 0;
+            private RAMTerm term;
+            private RAMDoc current;
+            private int posUpto = 0;
 
             public virtual void Reset(RAMTerm term)
             {
@@ -411,7 +411,7 @@ namespace Lucene.Net.Codecs.RAMOnly
         {
             internal IEnumerator<string> it;
             internal string current;
-            internal readonly RAMField ramField;
+            private readonly RAMField ramField;
 
             public RAMTermsEnum(RAMField field)
             {

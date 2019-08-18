@@ -113,12 +113,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             private readonly PreFlexRWFieldsWriter outerInstance;
 
-            internal readonly FieldInfo fieldInfo;
-            internal readonly bool omitTF;
-            internal readonly bool storePayloads;
+            private readonly FieldInfo fieldInfo;
+            private readonly bool omitTF;
+            private readonly bool storePayloads;
 
-            internal readonly TermInfo termInfo = new TermInfo();
-            internal PostingsWriter postingsWriter;
+            private readonly TermInfo termInfo = new TermInfo();
+            private PostingsWriter postingsWriter;
 
             public PreFlexTermsWriter(PreFlexRWFieldsWriter outerInstance, FieldInfo fieldInfo)
             {
@@ -139,10 +139,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                     this.outerInstance = outerInstance;
                 }
 
-                internal int lastDocID;
-                internal int lastPayloadLength = -1;
-                internal int lastPosition;
-                internal int df;
+                private int lastDocID;
+                private int lastPayloadLength = -1;
+                private int lastPosition;
+                private int df;
 
                 public PostingsWriter Reset()
                 {

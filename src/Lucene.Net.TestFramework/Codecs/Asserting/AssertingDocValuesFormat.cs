@@ -68,8 +68,8 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingDocValuesConsumer : DocValuesConsumer
         {
-            internal readonly DocValuesConsumer @in;
-            internal readonly int maxDoc;
+            private readonly DocValuesConsumer @in;
+            private readonly int maxDoc;
 
             internal AssertingDocValuesConsumer(DocValuesConsumer @in, int maxDoc)
             {
@@ -203,8 +203,8 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingNormsConsumer : DocValuesConsumer
         {
-            internal readonly DocValuesConsumer @in;
-            internal readonly int maxDoc;
+            private readonly DocValuesConsumer @in;
+            private readonly int maxDoc;
 
             internal AssertingNormsConsumer(DocValuesConsumer @in, int maxDoc)
             {
@@ -286,8 +286,8 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingDocValuesProducer : DocValuesProducer
         {
-            internal readonly DocValuesProducer @in;
-            internal readonly int maxDoc;
+            private readonly DocValuesProducer @in;
+            private readonly int maxDoc;
 
             internal AssertingDocValuesProducer(DocValuesProducer @in, int maxDoc)
             {

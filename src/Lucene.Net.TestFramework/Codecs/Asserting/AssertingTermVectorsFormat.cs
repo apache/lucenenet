@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingTermVectorsReader : TermVectorsReader
         {
-            internal readonly TermVectorsReader @in;
+            private readonly TermVectorsReader @in;
 
             internal AssertingTermVectorsReader(TermVectorsReader @in)
             {
@@ -95,10 +95,10 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingTermVectorsWriter : TermVectorsWriter
         {
-            internal readonly TermVectorsWriter @in;
-            internal Status docStatus, fieldStatus, termStatus;
-            internal int docCount, fieldCount, termCount, positionCount;
-            internal bool hasPositions;
+            private readonly TermVectorsWriter @in;
+            private Status docStatus, fieldStatus, termStatus;
+            private int docCount, fieldCount, termCount, positionCount;
+            private bool hasPositions;
 
             internal AssertingTermVectorsWriter(TermVectorsWriter @in)
             {

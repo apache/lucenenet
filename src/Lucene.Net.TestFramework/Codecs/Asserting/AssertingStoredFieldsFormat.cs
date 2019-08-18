@@ -48,8 +48,8 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingStoredFieldsReader : StoredFieldsReader
         {
-            internal readonly StoredFieldsReader @in;
-            internal readonly int maxDoc;
+            private readonly StoredFieldsReader @in;
+            private readonly int maxDoc;
 
             internal AssertingStoredFieldsReader(StoredFieldsReader @in, int maxDoc)
             {
@@ -94,10 +94,10 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingStoredFieldsWriter : StoredFieldsWriter
         {
-            internal readonly StoredFieldsWriter @in;
-            internal int numWritten;
-            internal int fieldCount;
-            internal Status docStatus;
+            private readonly StoredFieldsWriter @in;
+            private int numWritten;
+            private int fieldCount;
+            private Status docStatus;
 
             internal AssertingStoredFieldsWriter(StoredFieldsWriter @in)
             {

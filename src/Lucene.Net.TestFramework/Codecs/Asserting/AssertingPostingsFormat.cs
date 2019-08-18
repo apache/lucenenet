@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingFieldsProducer : FieldsProducer
         {
-            internal readonly FieldsProducer @in;
+            private readonly FieldsProducer @in;
 
             internal AssertingFieldsProducer(FieldsProducer @in)
             {
@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingFieldsConsumer : FieldsConsumer
         {
-            internal readonly FieldsConsumer @in;
+            private readonly FieldsConsumer @in;
 
             internal AssertingFieldsConsumer(FieldsConsumer @in)
             {
@@ -145,14 +145,14 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingTermsConsumer : TermsConsumer
         {
-            internal readonly TermsConsumer @in;
+            private readonly TermsConsumer @in;
             private readonly FieldInfo fieldInfo;
-            internal BytesRef lastTerm = null;
-            internal TermsConsumerState state = TermsConsumerState.INITIAL;
-            internal AssertingPostingsConsumer lastPostingsConsumer = null;
-            internal long sumTotalTermFreq = 0;
-            internal long sumDocFreq = 0;
-            internal OpenBitSet visitedDocs = new OpenBitSet();
+            private BytesRef lastTerm = null;
+            private TermsConsumerState state = TermsConsumerState.INITIAL;
+            private AssertingPostingsConsumer lastPostingsConsumer = null;
+            private long sumTotalTermFreq = 0;
+            private long sumDocFreq = 0;
+            private OpenBitSet visitedDocs = new OpenBitSet();
 
             internal AssertingTermsConsumer(TermsConsumer @in, FieldInfo fieldInfo)
             {
@@ -226,14 +226,14 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingPostingsConsumer : PostingsConsumer
         {
-            internal readonly PostingsConsumer @in;
+            private readonly PostingsConsumer @in;
             private readonly FieldInfo fieldInfo;
-            internal readonly OpenBitSet visitedDocs;
-            internal PostingsConsumerState state = PostingsConsumerState.INITIAL;
-            internal int freq;
-            internal int positionCount;
-            internal int lastPosition = 0;
-            internal int lastStartOffset = 0;
+            private readonly OpenBitSet visitedDocs;
+            private PostingsConsumerState state = PostingsConsumerState.INITIAL;
+            private int freq;
+            private int positionCount;
+            private int lastPosition = 0;
+            private int lastStartOffset = 0;
             internal int docFreq = 0;
             internal long totalTermFreq = 0;
 

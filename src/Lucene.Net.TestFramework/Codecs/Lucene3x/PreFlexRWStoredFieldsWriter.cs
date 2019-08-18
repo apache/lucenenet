@@ -104,7 +104,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 #pragma warning restore 168
             {
             }
-            IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
+            IOUtils.DeleteFilesIgnoringExceptions(directory, 
+                IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), 
+                IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
         }
 
         public override void WriteField(FieldInfo info, IIndexableField field)

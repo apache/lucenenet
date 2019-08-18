@@ -25,7 +25,7 @@ using System.Reflection;
 namespace Lucene.Net.Codecs
 {
     /// <summary>
-    /// LUCENENET specific class used to add the codecs from the test framework
+    /// LUCENENET specific class used to add the codecs from the test framework.
     /// </summary>
     public class TestCodecFactory : DefaultCodecFactory
     {
