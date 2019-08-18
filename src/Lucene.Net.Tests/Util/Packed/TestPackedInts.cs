@@ -48,7 +48,7 @@ namespace Lucene.Net.Util.Packed
             int iters = AtLeast(3);
             for (int i = 0; i < iters; ++i)
             {
-                int valueCount = RandomInts.NextInt32Between(Random, 1, int.MaxValue);
+                int valueCount = RandomInts.RandomInt32Between(Random, 1, int.MaxValue);
                 foreach (PackedInt32s.Format format in PackedInt32s.Format.Values)
                 {
                     for (int bpv = 1; bpv <= 64; ++bpv)
@@ -211,7 +211,7 @@ namespace Lucene.Net.Util.Packed
         public virtual void TestEndPointer()
         {
             Directory dir = NewDirectory();
-            int valueCount = RandomInts.NextInt32Between(Random, 1, 1000);
+            int valueCount = RandomInts.RandomInt32Between(Random, 1, 1000);
             IndexOutput @out = dir.CreateOutput("tests.bin", NewIOContext(Random));
             for (int i = 0; i < valueCount; ++i)
             {
@@ -234,7 +234,7 @@ namespace Lucene.Net.Util.Packed
 
                         // test iterator
                         @in.Seek(0L);
-                        PackedInt32s.IReaderIterator it = PackedInt32s.GetReaderIteratorNoHeader(@in, format, version, valueCount, bpv, RandomInts.NextInt32Between(Random, 1, 1 << 16));
+                        PackedInt32s.IReaderIterator it = PackedInt32s.GetReaderIteratorNoHeader(@in, format, version, valueCount, bpv, RandomInts.RandomInt32Between(Random, 1, 1 << 16));
                         for (int i = 0; i < valueCount; ++i)
                         {
                             it.Next();
@@ -1129,9 +1129,9 @@ namespace Lucene.Net.Util.Packed
         public virtual void TestAppendingLongBuffer()
         {
 
-            long[] arr = new long[RandomInts.NextInt32Between(Random, 1, 1000000)];
+            long[] arr = new long[RandomInts.RandomInt32Between(Random, 1, 1000000)];
             float[] ratioOptions = new float[] { PackedInt32s.DEFAULT, PackedInt32s.COMPACT, PackedInt32s.FAST };
-            foreach (int bpv in new int[] { 0, 1, 63, 64, RandomInts.NextInt32Between(Random, 2, 62) })
+            foreach (int bpv in new int[] { 0, 1, 63, 64, RandomInts.RandomInt32Between(Random, 2, 62) })
             {
                 foreach (DataType dataType in Enum.GetValues(typeof(DataType)))
                 {
@@ -1253,7 +1253,7 @@ namespace Lucene.Net.Util.Packed
             bool[] skip = new bool[longs.Length];
             for (int i = 0; i < longs.Length; ++i)
             {
-                int bpv = RandomInts.NextInt32Between(Random, 1, 64);
+                int bpv = RandomInts.RandomInt32Between(Random, 1, 64);
                 bitsPerValues[i] = Random.NextBoolean() ? bpv : TestUtil.NextInt32(Random, bpv, 64);
                 if (bpv == 64)
                 {

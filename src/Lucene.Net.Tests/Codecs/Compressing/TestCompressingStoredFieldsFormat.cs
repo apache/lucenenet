@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random, 2, 30));
+            iwConf.SetMaxBufferedDocs(RandomInts.RandomInt32Between(Random, 2, 30));
             iwConf.SetCodec(CompressingCodec.RandomInstance(Random));
             // disable CFS because this test checks file names
             iwConf.SetMergePolicy(NewLogMergePolicy(false));

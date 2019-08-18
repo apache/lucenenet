@@ -373,7 +373,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random, 2, 30));
+            iwConf.SetMaxBufferedDocs(RandomInts.RandomInt32Between(Random, 2, 30));
             RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConf);
 
             FieldType ft = new FieldType();
@@ -430,7 +430,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random, 2, 30));
+            iwConf.SetMaxBufferedDocs(RandomInts.RandomInt32Between(Random, 2, 30));
             RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConf);
 
             // make sure that the fact that documents might be empty is not a problem
@@ -459,7 +459,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random, 2, 30));
+            iwConf.SetMaxBufferedDocs(RandomInts.RandomInt32Between(Random, 2, 30));
             RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConf);
 
             // make sure the readers are properly cloned
@@ -584,14 +584,14 @@ namespace Lucene.Net.Index
             }
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random, 2, 30));
+            iwConf.SetMaxBufferedDocs(RandomInts.RandomInt32Between(Random, 2, 30));
             RandomIndexWriter iw = new RandomIndexWriter(Random, dir, (IndexWriterConfig)iwConf.Clone());
 
             int docCount = AtLeast(200);
             var data = new byte[docCount][][];
             for (int i = 0; i < docCount; ++i)
             {
-                int fieldCount = Rarely() ? RandomInts.NextInt32Between(Random, 1, 500) : RandomInts.NextInt32Between(Random, 1, 5);
+                int fieldCount = Rarely() ? RandomInts.RandomInt32Between(Random, 1, 500) : RandomInts.RandomInt32Between(Random, 1, 5);
                 data[i] = new byte[fieldCount][];
                 for (int j = 0; j < fieldCount; ++j)
                 {
@@ -684,7 +684,7 @@ namespace Lucene.Net.Index
             // so if we get NRTCachingDir+SimpleText, we make massive stored fields and OOM (LUCENE-4484)
             Directory dir = new MockDirectoryWrapper(Random, new MMapDirectory(CreateTempDir("testBigDocuments")));
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextInt32Between(Random, 2, 30));
+            iwConf.SetMaxBufferedDocs(RandomInts.RandomInt32Between(Random, 2, 30));
             RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConf);
 
             if (dir is MockDirectoryWrapper)
@@ -705,13 +705,13 @@ namespace Lucene.Net.Index
             onlyStored.IsIndexed = false;
 
             Field smallField = new Field("fld", RandomByteArray(Random.Next(10), 256), onlyStored);
-            int numFields = RandomInts.NextInt32Between(Random, 500000, 1000000);
+            int numFields = RandomInts.RandomInt32Between(Random, 500000, 1000000);
             for (int i = 0; i < numFields; ++i)
             {
                 bigDoc1.Add(smallField);
             }
 
-            Field bigField = new Field("fld", RandomByteArray(RandomInts.NextInt32Between(Random, 1000000, 5000000), 2), onlyStored);
+            Field bigField = new Field("fld", RandomByteArray(RandomInts.RandomInt32Between(Random, 1000000, 5000000), 2), onlyStored);
             bigDoc2.Add(bigField);
 
             int numDocs = AtLeast(5);

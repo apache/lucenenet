@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// </summary>
         public static CompressingCodec RandomInstance(Random random)
         {
-            return RandomInstance(random, RandomInts.NextInt32Between(random, 1, 500), false);
+            return RandomInstance(random, RandomInts.RandomInt32Between(random, 1, 500), false);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// </summary>
         public static CompressingCodec RandomInstance(Random random, bool withSegmentSuffix)
         {
-            return RandomInstance(random, RandomInts.NextInt32Between(random, 1, 500), withSegmentSuffix);
+            return RandomInstance(random, RandomInts.RandomInt32Between(random, 1, 500), withSegmentSuffix);
         }
 
         private readonly CompressingStoredFieldsFormat storedFieldsFormat;

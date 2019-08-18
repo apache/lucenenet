@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
             ft.IsIndexed = false;
             ft.IsStored = true;
             ft.Freeze();
-            int valueLength = RandomInts.NextInt32Between(Random, 1 << 13, 1 << 20);
+            int valueLength = RandomInts.RandomInt32Between(Random, 1 << 13, 1 << 20);
             var value = new byte[valueLength];
             for (int i = 0; i < valueLength; ++i)
             {

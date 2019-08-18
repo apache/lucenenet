@@ -288,7 +288,7 @@ namespace Lucene.Net.Util
         /// Start and end are BOTH inclusive </summary>
         public static int NextInt32(Random r, int start, int end)
         {
-            return RandomInts.NextInt32Between(r, start, end);
+            return RandomInts.RandomInt32Between(r, start, end);
         }
 
         /// <summary>
@@ -483,7 +483,7 @@ namespace Lucene.Net.Util
             {
                 if (r.NextBoolean())
                 {
-                    regexp.Append((char)RandomInts.NextInt32Between(r, 'a', 'z'));
+                    regexp.Append((char)RandomInts.RandomInt32Between(r, 'a', 'z'));
                 }
                 else
                 {

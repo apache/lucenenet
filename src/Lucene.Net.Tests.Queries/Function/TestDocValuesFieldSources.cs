@@ -80,7 +80,7 @@ namespace Lucene.Net.Tests.Queries.Function
                         f.SetBytesValue(new BytesRef((string)vals[i]));
                         break;
                     case DocValuesType.NUMERIC:
-                        int bitsPerValue = Random.NextInt32Between(1, 31); // keep it an int
+                        int bitsPerValue = RandomInts.RandomInt32Between(Random, 1, 31); // keep it an int
                         vals[i] = (long)Random.Next((int)PackedInt32s.MaxValue(bitsPerValue));
                         f.SetInt64Value((long) vals[i]);
                         break;

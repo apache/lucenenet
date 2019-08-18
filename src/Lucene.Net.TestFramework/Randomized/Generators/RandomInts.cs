@@ -27,10 +27,17 @@ using System.Linq;
 
 namespace Lucene.Net.Randomized.Generators
 {
+
+    /// <summary>
+    /// Utility class for random integer and integer sequences.
+    /// </summary>
     [ExceptionToNetNumericConvention]
     public static class RandomInts
     {
-        public static int NextInt32Between(this Random random, int min, int max)
+        /// <summary>
+        /// A random integer from <paramref name="min"/> to <paramref name="max"/> (inclusive).
+        /// </summary>
+        public static int RandomInt32Between(Random random, int min, int max)
         {
             Debug.Assert(min <= max, String.Format("Min must be less than or equal max int. min: {0}, max: {1}", min, max));
             var range = max - min;
