@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis
             return ret;
         }
 
-        protected internal virtual void AddOffCorrectMap(int off, int cumulativeDiff)
+        protected virtual void AddOffCorrectMap(int off, int cumulativeDiff)
         {
             corrections[off] = cumulativeDiff;
         }

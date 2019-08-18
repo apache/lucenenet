@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class MockHoleInjectingTokenFilter : TokenFilter
     {
-        private readonly int randomSeed;
+        private readonly int randomSeed; // LUCENENET specific - changed from long to int, as in .NET a System.Random seed is int
         private Random random;
         private readonly IPositionIncrementAttribute posIncAtt;
         private readonly IPositionLengthAttribute posLenAtt;

@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis
     /// Holds all state for a single position; subclass this
     /// to record other state at each position.
     /// </summary>
-    public class LookaheadTokenFilterPosition : Lucene.Net.Util.RollingBuffer.IResettable
+    public class LookaheadTokenFilterPosition : RollingBuffer.IResettable // LUCENENET TODO: API - Re-nest, change back to protected
     {
         // Buffered input tokens at this position:
         public IList<AttributeSource.State> InputTokens { get; private set; } = new List<AttributeSource.State>();
@@ -87,18 +87,18 @@ namespace Lucene.Net.Analysis
 #endif
             ;
 
-        protected internal readonly IPositionIncrementAttribute m_posIncAtt;// = AddAttribute<PositionIncrementAttribute>();
-        protected internal readonly IPositionLengthAttribute m_posLenAtt;// = addAttribute(typeof(PositionLengthAttribute));
-        protected internal readonly IOffsetAttribute m_offsetAtt;// = addAttribute(typeof(OffsetAttribute));
+        protected readonly IPositionIncrementAttribute m_posIncAtt;// = AddAttribute<PositionIncrementAttribute>();
+        protected readonly IPositionLengthAttribute m_posLenAtt;// = addAttribute(typeof(PositionLengthAttribute));
+        protected readonly IOffsetAttribute m_offsetAtt;// = addAttribute(typeof(OffsetAttribute));
 
         // Position of last read input token:
-        protected internal int m_inputPos;
+        protected int m_inputPos;
 
         // Position of next possible output token to return:
-        protected internal int m_outputPos;
+        protected int m_outputPos;
 
         // True if we hit end from our input:
-        protected internal bool m_end;
+        protected bool m_end;
 
         private bool tokenPending;
         private bool insertPending;
@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis
         /// token. After calling this you should set any
         /// necessary token you need.
         /// </summary>
-        protected internal virtual void InsertToken()
+        protected virtual void InsertToken()
         {
             if (tokenPending)
             {
@@ -135,13 +135,13 @@ namespace Lucene.Net.Analysis
         /// attributes you want, if you want to inject
         /// a token starting from this position.
         /// </summary>
-        protected internal virtual void AfterPosition()
+        protected virtual void AfterPosition()
         {
         }
 
-        protected internal abstract T NewPosition();
+        protected abstract T NewPosition();
 
-        protected internal RollingBuffer<LookaheadTokenFilterPosition> m_positions;
+        protected readonly RollingBuffer<LookaheadTokenFilterPosition> m_positions;
 
         private class RollingBufferAnonymousInnerClassHelper : RollingBuffer<LookaheadTokenFilterPosition>
         {
@@ -161,7 +161,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Returns true if there is a new token. </summary>
-        protected internal virtual bool PeekToken()
+        protected virtual bool PeekToken()
         {
             if (DEBUG)
             {
@@ -228,7 +228,7 @@ namespace Lucene.Net.Analysis
         /// the next token to return.  Return the boolean back to
         /// the caller.
         /// </summary>
-        protected internal virtual bool NextToken()
+        protected virtual bool NextToken()
         {
             //System.out.println("  nextToken: tokenPending=" + tokenPending);
             if (DEBUG)

@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class ValidatingTokenFilter : TokenFilter
     {
-        private void InitializeInstanceFields()
+        private void InitializeInstanceFields() // LUCENENT TODO: API - move these into constructor and make these members readonly
         {
             posIncAtt = GetAttrIfExists<PositionIncrementAttribute>();
             posLenAtt = GetAttrIfExists<PositionLengthAttribute>();

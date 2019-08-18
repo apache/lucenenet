@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis
 
         private readonly ICharTermAttribute termAtt;
 
-        private readonly long seed;
+        private readonly long seed; // LUCENENET TODO: redeclare as int, since .NET random seed is int, not long
         private Random random;
 
         public MockGraphTokenFilter(Random random, TokenStream input)
@@ -48,12 +48,12 @@ namespace Lucene.Net.Analysis
             termAtt = AddAttribute<ICharTermAttribute>();
         }
 
-        protected internal override LookaheadTokenFilterPosition NewPosition()
+        protected override LookaheadTokenFilterPosition NewPosition()
         {
             return new LookaheadTokenFilterPosition();
         }
 
-        protected internal override void AfterPosition()
+        protected override void AfterPosition()
         {
             if (DEBUG)
             {

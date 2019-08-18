@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis
     /// Wraps a <see cref="TextReader"/>, and can throw random or fixed
     /// exceptions, and spoon feed read chars.
     /// </summary>
-    public class MockReaderWrapper : StringReader
+    public class MockReaderWrapper : StringReader // LUCENENET TODO: API - this should be TextReader, or possibly CharFilter
     {
         private readonly Random random;
 
@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis
         private int readSoFar;
         private bool throwExcNext;
 
-        public MockReaderWrapper(Random random, string text)
+        public MockReaderWrapper(Random random, string text) // LUCENENET TODO: API - this should accept TextReader
             : base(text)
         {
             this.random = random;
@@ -57,7 +57,9 @@ namespace Lucene.Net.Analysis
             throwExcNext = true;
         }
 
-        public override int Read()
+        // LUCENENET TODO: Dispose()
+
+        public override int Read() // LUCENENET TODO: Check whether this is needed
         {
             ThrowExceptionIfApplicable();
 
@@ -84,10 +86,10 @@ namespace Lucene.Net.Analysis
             if (excAtChar != -1)
             {
                 int left = excAtChar - readSoFar;
-                Assert.True(left != 0);
+                Assert.True(left != 0); // LUCENENET TODO: This should be Debug.Assert
                 read = base.Read(cbuf, off, Math.Min(realLen, left));
                 //Characters are left
-                Assert.True(read != 0);
+                Assert.True(read != 0); // LUCENENET TODO: This should be Debug.Assert
                 readSoFar += read;
             }
             else
@@ -110,19 +112,19 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        public bool IsMarkSupported // LUCENENET specific - renamed from markSupported()
+        public virtual bool IsMarkSupported // LUCENENET specific - renamed from markSupported()
         {
             get { return false; }
         }
 
-        public bool IsReady // LUCENENET specific - renamed from ready()
+        public virtual bool IsReady // LUCENENET specific - renamed from ready()
         {
             get { return false; }
         }
 
         public static bool IsMyEvilException(Exception t)
         {
-            return (t != null) && "fake exception now!".Equals(t.Message, StringComparison.Ordinal);
+            return (t != null) && "fake exception now!".Equals(t.Message, StringComparison.Ordinal); // LUCENENET TODO: t is Exception (not t != null)
         }
     }
 }

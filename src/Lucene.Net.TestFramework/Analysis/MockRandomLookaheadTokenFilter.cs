@@ -30,8 +30,8 @@ namespace Lucene.Net.Analysis
     public sealed class MockRandomLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilterPosition>
     {
         private readonly ICharTermAttribute termAtt;// = addAttribute(typeof(CharTermAttribute));
-        private Random random; //not readonly to reset seed later
-        private readonly long seed;
+        private Random random; // LUCENENET: not readonly to reset seed later
+        private readonly long seed; // LUCENENET TODO: Change to int
 
         public MockRandomLookaheadTokenFilter(Random random, TokenStream @in)
             : base(@in)
@@ -41,12 +41,12 @@ namespace Lucene.Net.Analysis
             this.random = new Random((int)seed);
         }
 
-        protected internal override LookaheadTokenFilterPosition NewPosition()
+        protected override LookaheadTokenFilterPosition NewPosition()
         {
             return new LookaheadTokenFilterPosition();
         }
 
-        protected internal override void AfterPosition()
+        protected override void AfterPosition()
         {
             if (!m_end && random.Next(4) == 2)
             {

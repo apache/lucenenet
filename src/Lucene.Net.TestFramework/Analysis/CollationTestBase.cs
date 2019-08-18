@@ -35,15 +35,15 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public abstract class CollationTestBase : LuceneTestCase
     {
-        protected internal string m_firstRangeBeginningOriginal = "\u062F";
-        protected internal string m_firstRangeEndOriginal = "\u0698";
+        protected string m_firstRangeBeginningOriginal = "\u062F";
+        protected string m_firstRangeEndOriginal = "\u0698";
 
-        protected internal string m_secondRangeBeginningOriginal = "\u0633";
-        protected internal string m_secondRangeEndOriginal = "\u0638";
+        protected string m_secondRangeBeginningOriginal = "\u0633";
+        protected string m_secondRangeEndOriginal = "\u0638";
 
         // LUCENENET: The all locales may are not available for collation.
         // LUCENENET: Removed this (only) reference to the ICU library, since it has a lot of data and we don't
-        // want to unnecessarily reference it in all test projects.
+        // want to unnecessarily reference it in all test projects. 
         //protected readonly string[] availableCollationLocales = RuleBasedCollator.GetAvailableCollationLocales().ToArray();
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis
         /// <c>collator.GetCollationKey(original).ToByteArray()</c></param>
         /// <returns> The encoded collation key for the original string.</returns>
         [Obsolete("only for testing deprecated filters")]
-        protected internal virtual string EncodeCollationKey(byte[] keyBits)
+        protected virtual string EncodeCollationKey(byte[] keyBits)
         {
             // Ensure that the backing char[] array is large enough to hold the encoded
             // Binary String
@@ -157,7 +157,14 @@ namespace Lucene.Net.Analysis
         //
         // TODO: this test is really fragile. there are already 3 different cases,
         // depending upon unicode version.
-        public virtual void TestCollationKeySort(Analyzer usAnalyzer, Analyzer franceAnalyzer, Analyzer swedenAnalyzer, Analyzer denmarkAnalyzer, string usResult, string frResult, string svResult, string dkResult)
+        public virtual void TestCollationKeySort(Analyzer usAnalyzer, 
+                                                Analyzer franceAnalyzer, 
+                                                Analyzer swedenAnalyzer, 
+                                                Analyzer denmarkAnalyzer, 
+                                                string usResult, 
+                                                string frResult, 
+                                                string svResult, 
+                                                string dkResult)
         {
             Directory indexStore = NewDirectory();
             IndexWriter writer = new IndexWriter(indexStore, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));

@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis
     /// Implementation for <see cref="IBinaryTermAttribute"/>. </summary>
     public sealed class BinaryTermAttribute : Attribute, IBinaryTermAttribute
     {
-        internal readonly BytesRef bytes = new BytesRef();
+        private readonly BytesRef bytes = new BytesRef();
 
         public void FillBytesRef()
         {

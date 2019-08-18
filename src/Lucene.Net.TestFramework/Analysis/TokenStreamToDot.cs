@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis
         private readonly IPositionLengthAttribute posLengthAtt;
         private readonly IOffsetAttribute offsetAtt;
         private readonly string inputText;
-        protected internal readonly TextWriter m_out;
+        protected readonly TextWriter m_out;
 
         /// <summary>
         /// If inputText is non-null, and the <see cref="TokenStream"/> has
@@ -132,7 +132,7 @@ namespace Lucene.Net.Analysis
             WriteTrailer();
         }
 
-        protected internal virtual void WriteArc(int fromNode, int toNode, string label, string style)
+        protected virtual void WriteArc(int fromNode, int toNode, string label, string style)
         {
             m_out.Write("  " + fromNode + " -> " + toNode + " [");
             if (label != null)
@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis
             m_out.WriteLine("]");
         }
 
-        protected internal virtual void WriteNode(int name, string label)
+        protected virtual void WriteNode(int name, string label)
         {
             m_out.Write("  " + name);
             if (label != null)
@@ -164,7 +164,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Override to customize. </summary>
-        protected internal virtual void WriteHeader()
+        protected virtual void WriteHeader()
         {
             m_out.WriteLine("digraph tokens {");
             m_out.WriteLine("  graph [ fontsize=30 labelloc=\"t\" label=\"\" splines=true overlap=false rankdir = \"LR\" ];");
@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Override to customize. </summary>
-        protected internal virtual void WriteTrailer()
+        protected virtual void WriteTrailer()
         {
             m_out.WriteLine("}");
         }

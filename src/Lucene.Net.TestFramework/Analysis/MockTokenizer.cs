@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis
         // TODO: "register" with LuceneTestCase to ensure all streams are closed() ?
         // currently, we can only check that the lifecycle is correct if someone is reusing,
         // but not for "one-offs".
-        new private enum State
+        new private enum State // LUCENENET: new keyword required to hide AttributeSource.State
         {
             SETREADER, // consumer set a reader input either via ctor or via reset(Reader)
             RESET, // consumer has called reset()
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis
         private bool enableChecks = true;
 
         // evil: but we don't change the behavior with this random, we only switch up how we read
-        private readonly Random random = new Random(/*RandomizedContext.Current.Random.nextLong()*/);
+        private readonly Random random = new Random(/*RandomizedContext.Current.Random.nextLong()*/); // LUCENENET TODO: Random seed synchronization
 
         public MockTokenizer(AttributeFactory factory, TextReader input, CharacterRunAutomaton runAutomaton, bool lowerCase, int maxTokenLength)
             : base(factory, input)
@@ -215,7 +215,7 @@ namespace Lucene.Net.Analysis
             return false;
         }
 
-        protected internal virtual int ReadCodePoint()
+        protected virtual int ReadCodePoint()
         {
             int ch = ReadChar();
             if (ch < 0)
@@ -244,7 +244,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        protected internal virtual int ReadChar()
+        protected virtual int ReadChar()
         {
             switch (random.Next(0, 10))
             {
@@ -277,7 +277,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        protected internal virtual bool IsTokenChar(int c)
+        protected virtual bool IsTokenChar(int c)
         {
             if (state < 0)
             {
@@ -294,7 +294,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        protected internal virtual int Normalize(int c)
+        protected virtual int Normalize(int c)
         {
             return lowerCase ? Character.ToLower(c) : c;
         }
