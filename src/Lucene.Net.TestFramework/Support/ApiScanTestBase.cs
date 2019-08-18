@@ -36,8 +36,10 @@ namespace Lucene.Net.Support
     /// LUCENENET specific - functionality for scanning the API to ensure 
     /// naming and .NET conventions are followed consistently.
     /// </summary>
-    public abstract class ApiScanTestBase : LuceneTestCase // LUCENENET TODO: API - make internal
+    public abstract class ApiScanTestBase : LuceneTestCase
     {
+        internal ApiScanTestBase() { } // LUCENENET: Not for use by end users
+
         /// <summary>
         /// Private fields must be upper case separated with underscores, 
         /// must be camelCase (optionally may be prefixed with underscore, 
