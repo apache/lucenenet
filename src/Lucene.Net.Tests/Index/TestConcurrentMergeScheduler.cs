@@ -1,14 +1,15 @@
 #if FEATURE_CONCURRENTMERGESCHEDULER
-using System;
-using System.Diagnostics;
-using System.Threading;
 using Lucene.Net.Documents;
+using System;
+using System.Threading;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
+    using Attributes;
+    using Lucene.Net.Store;
     using Lucene.Net.Support;
+    using Lucene.Net.Util;
     using NUnit.Framework;
     using System.IO;
     using Directory = Lucene.Net.Store.Directory;
@@ -16,7 +17,6 @@ namespace Lucene.Net.Index
     using Field = Field;
     using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -39,39 +39,36 @@ namespace Lucene.Net.Index
     using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
-    using Attributes;
-    using Lucene.Net.Util;
-    using Lucene.Net.Store;
 
     [TestFixture]
     public class TestConcurrentMergeScheduler : LuceneTestCase
     {
         private class FailOnlyOnFlush : Failure
         {
-            private readonly TestConcurrentMergeScheduler OuterInstance;
+            private readonly TestConcurrentMergeScheduler outerInstance;
 
             public FailOnlyOnFlush(TestConcurrentMergeScheduler outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
-            new internal bool DoFail;
-            internal bool HitExc;
+            internal bool doFail;
+            internal bool hitExc;
 
             public override void SetDoFail()
             {
-                this.DoFail = true;
-                HitExc = false;
+                this.doFail = true;
+                hitExc = false;
             }
 
             public override void ClearDoFail()
             {
-                this.DoFail = false;
+                this.doFail = false;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (DoFail && IsTestThread)
+                if (doFail && IsTestThread)
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
@@ -81,7 +78,7 @@ namespace Lucene.Net.Index
 
                     if (isDoFlush && !isClose && Random.NextBoolean())
                     {
-                        HitExc = true;
+                        hitExc = true;
                         throw new IOException(Thread.CurrentThread.Name + ": now failing during flush");
                     }
                 }
@@ -126,7 +123,7 @@ namespace Lucene.Net.Index
                     try
                     {
                         writer.Flush(true, true);
-                        if (failure.HitExc)
+                        if (failure.hitExc)
                         {
                             Assert.Fail("failed to hit IOException");
                         }
