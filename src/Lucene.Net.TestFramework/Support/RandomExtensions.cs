@@ -218,7 +218,7 @@ namespace Lucene.Net
         /// </summary>        
         public static Regex NextRegex(this Random random)
         {
-            return TestUtil.RandomPattern(random);
+            return TestUtil.RandomRegex(random);
         }
 
         public static FilteredQuery.FilterStrategy NextFilterStrategy(this Random random)

@@ -1280,7 +1280,7 @@ namespace Lucene.Net.Util
         /// when applying random patterns to longer strings as certain types of patterns
         /// may explode into exponential times in backtracking implementations (such as Java's).
         /// </summary>        
-        public static Regex RandomPattern(Random random) // LUCENENET TODO: API - rename RandomRegex
+        public static Regex RandomRegex(Random random) // LUCENENET specific - renamed from RandomPattern()
         {
             const string nonBmpString = "AB\uD840\uDC00C";
             while (true)

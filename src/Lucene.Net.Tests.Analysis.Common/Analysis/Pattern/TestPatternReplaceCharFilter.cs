@@ -254,7 +254,7 @@ namespace Lucene.Net.Analysis.Pattern
             Random random = new Random(Random.nextInt(int.MaxValue));
             for (int i = 0; i < numPatterns; i++)
             {
-                Regex p = TestUtil.RandomPattern(LuceneTestCase.Random);
+                Regex p = TestUtil.RandomRegex(LuceneTestCase.Random);
 
                 string replacement = TestUtil.RandomSimpleString(random);
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, p, replacement);
