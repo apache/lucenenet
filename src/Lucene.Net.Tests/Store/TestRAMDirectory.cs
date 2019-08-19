@@ -160,7 +160,7 @@ namespace Lucene.Net.Store
                 for (int j = 1; j < OuterInstance.DocsPerThread; j++)
                 {
                     Document doc = new Document();
-                    doc.Add(OuterInstance.NewStringField("sizeContent", English.Int32ToEnglish(Num * OuterInstance.DocsPerThread + j).Trim(), Field.Store.YES));
+                    doc.Add(NewStringField("sizeContent", English.Int32ToEnglish(Num * OuterInstance.DocsPerThread + j).Trim(), Field.Store.YES));
                     try
                     {
                         Writer.AddDocument(doc);

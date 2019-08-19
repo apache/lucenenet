@@ -51,6 +51,8 @@ namespace Lucene.Net
             return BitConverter.ToInt64(buffer, 0);
         }
 
+        // LUCENENET TODO: API Make overload of NextInt64 that accepts min/max (call TestUtil.NextInt64)
+
         /// <summary>
         /// Generates a random <see cref="float"/>.
         /// </summary>
@@ -68,5 +70,8 @@ namespace Lucene.Net
         {
             return RandomPicks.RandomFrom(random, collection);
         }
+
+        // LUCENENET TODO: API make extension methods for all additional TestUtil members
+        // (simple string, htmlish string, regexpish string, etc)
     }
 }

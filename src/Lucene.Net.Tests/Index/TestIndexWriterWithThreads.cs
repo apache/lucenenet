@@ -634,7 +634,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     Document doc = new Document();
-                    Field field = OuterInstance.NewTextField("field", "testData", Field.Store.YES);
+                    Field field = NewTextField("field", "testData", Field.Store.YES);
                     doc.Add(field);
                     using (IndexWriter writer = new IndexWriter(Dir, OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))))
                     {

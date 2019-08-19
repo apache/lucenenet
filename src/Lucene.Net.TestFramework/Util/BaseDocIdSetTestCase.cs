@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Create a random set which has <paramref name="numBitsSet"/> of its <paramref name="numBits"/> bits set. </summary>
-        protected internal static BitArray RandomSet(int numBits, int numBitsSet)
+        protected static BitArray RandomSet(int numBits, int numBitsSet)
         {
             Debug.Assert(numBitsSet <= numBits);
             BitArray set = new BitArray(numBits);
@@ -69,7 +69,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Same as <see cref="RandomSet(int, int)"/> but given a load factor. </summary>
-        protected internal static BitArray RandomSet(int numBits, float percentSet)
+        protected static BitArray RandomSet(int numBits, float percentSet)
         {
             return RandomSet(numBits, (int)(percentSet * numBits));
         }

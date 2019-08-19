@@ -173,7 +173,7 @@ namespace Lucene.Net.Util.Fst
             {
             }
 
-            protected internal override bool OutputsEqual(T output1, T output2)
+            protected override bool OutputsEqual(T output1, T output2)
             {
                 if (output1 is UpToTwoPositiveInt64Outputs.TwoInt64s && output2 is IEnumerable<long>)
                 {

@@ -185,13 +185,13 @@ namespace Lucene.Net.Index
             {
                 Document doc = new Document();
 
-                doc.Add(OuterInstance.NewTextField(r, "content1", "aaa bbb ccc ddd", Field.Store.YES));
-                doc.Add(OuterInstance.NewField(r, "content6", "aaa bbb ccc ddd", DocCopyIterator.Custom1));
-                doc.Add(OuterInstance.NewField(r, "content2", "aaa bbb ccc ddd", DocCopyIterator.Custom2));
-                doc.Add(OuterInstance.NewField(r, "content3", "aaa bbb ccc ddd", DocCopyIterator.Custom3));
+                doc.Add(NewTextField(r, "content1", "aaa bbb ccc ddd", Field.Store.YES));
+                doc.Add(NewField(r, "content6", "aaa bbb ccc ddd", DocCopyIterator.Custom1));
+                doc.Add(NewField(r, "content2", "aaa bbb ccc ddd", DocCopyIterator.Custom2));
+                doc.Add(NewField(r, "content3", "aaa bbb ccc ddd", DocCopyIterator.Custom3));
 
-                doc.Add(OuterInstance.NewTextField(r, "content4", "aaa bbb ccc ddd", Field.Store.NO));
-                doc.Add(OuterInstance.NewStringField(r, "content5", "aaa bbb ccc ddd", Field.Store.NO));
+                doc.Add(NewTextField(r, "content4", "aaa bbb ccc ddd", Field.Store.NO));
+                doc.Add(NewStringField(r, "content5", "aaa bbb ccc ddd", Field.Store.NO));
                 if (DefaultCodecSupportsDocValues)
                 {
                     doc.Add(new NumericDocValuesField("numericdv", 5));
@@ -204,9 +204,9 @@ namespace Lucene.Net.Index
                     doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("again")));
                 }
 
-                doc.Add(OuterInstance.NewField(r, "content7", "aaa bbb ccc ddd", DocCopyIterator.Custom4));
+                doc.Add(NewField(r, "content7", "aaa bbb ccc ddd", DocCopyIterator.Custom4));
 
-                Field idField = OuterInstance.NewField(r, "id", "", DocCopyIterator.Custom2);
+                Field idField = NewField(r, "id", "", DocCopyIterator.Custom2);
                 doc.Add(idField);
 
                 long stopTime = ((long)(DateTime.UtcNow - unixEpoch).TotalMilliseconds) + 500;
@@ -1034,11 +1034,11 @@ namespace Lucene.Net.Index
                     for (int iter = 0; iter < NUM_ITER; iter++)
                     {
                         Document doc = new Document();
-                        doc.Add(OuterInstance.NewField("contents", "here are some contents", DocCopyIterator.Custom5));
+                        doc.Add(NewField("contents", "here are some contents", DocCopyIterator.Custom5));
                         Writer.AddDocument(doc);
                         Writer.AddDocument(doc);
-                        doc.Add(OuterInstance.NewField("crash", "this should crash after 4 terms", DocCopyIterator.Custom5));
-                        doc.Add(OuterInstance.NewField("other", "this will not get indexed", DocCopyIterator.Custom5));
+                        doc.Add(NewField("crash", "this should crash after 4 terms", DocCopyIterator.Custom5));
+                        doc.Add(NewField("other", "this will not get indexed", DocCopyIterator.Custom5));
                         try
                         {
                             Writer.AddDocument(doc);
@@ -1053,7 +1053,7 @@ namespace Lucene.Net.Index
                         if (0 == FinalI)
                         {
                             doc = new Document();
-                            doc.Add(OuterInstance.NewField("contents", "here are some contents", DocCopyIterator.Custom5));
+                            doc.Add(NewField("contents", "here are some contents", DocCopyIterator.Custom5));
                             Writer.AddDocument(doc);
                             Writer.AddDocument(doc);
                         }

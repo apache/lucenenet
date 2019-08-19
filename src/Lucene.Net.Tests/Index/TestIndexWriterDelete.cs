@@ -403,9 +403,9 @@ namespace Lucene.Net.Index
                     for (int j = 0; j < 1000; j++)
                     {
                         Document doc = new Document();
-                        doc.Add(OuterInstance.NewTextField("content", "aaa", Field.Store.NO));
-                        doc.Add(OuterInstance.NewStringField("id", Convert.ToString(id++), Field.Store.YES));
-                        doc.Add(OuterInstance.NewStringField("value", Convert.ToString(value), Field.Store.NO));
+                        doc.Add(NewTextField("content", "aaa", Field.Store.NO));
+                        doc.Add(NewStringField("id", Convert.ToString(id++), Field.Store.YES));
+                        doc.Add(NewStringField("value", Convert.ToString(value), Field.Store.NO));
                         if (DefaultCodecSupportsDocValues)
                         {
                             doc.Add(new NumericDocValuesField("dv", value));

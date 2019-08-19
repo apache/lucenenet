@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
                         if (Random.NextBoolean())
                         {
                             addedField = "extra" + Random.Next(40);
-                            doc.Add(outerInstance.NewTextField(addedField, "a random field", Field.Store.YES));
+                            doc.Add(NewTextField(addedField, "a random field", Field.Store.YES));
                         }
                         else
                         {
@@ -240,7 +240,7 @@ namespace Lucene.Net.Index
                                     packID = outerInstance.m_packCount.GetAndIncrement().ToString(CultureInfo.InvariantCulture);
                                 }
 
-                                Field packIDField = outerInstance.NewStringField("packID", packID, Field.Store.YES);
+                                Field packIDField = NewStringField("packID", packID, Field.Store.YES);
                                 IList<string> docIDs = new List<string>();
                                 SubDocs subDocs = new SubDocs(packID, docIDs);
                                 IList<Document> docsList = new List<Document>();

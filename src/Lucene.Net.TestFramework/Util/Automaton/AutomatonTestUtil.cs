@@ -31,7 +31,7 @@ namespace Lucene.Net.Util.Automaton
     /// and automata, and also provides a number of very
     /// basic unoptimized implementations (*slow) for testing.
     /// </summary>
-    public class AutomatonTestUtil
+    public static class AutomatonTestUtil // LUCENENET specific - made static because all members are static
     {
         /// <summary>
         /// Returns random string, including full unicode range. </summary>
@@ -414,8 +414,8 @@ namespace Lucene.Net.Util.Automaton
     /// </summary>
     public class RandomAcceptedStrings
     {
-        internal readonly IDictionary<Transition, bool?> leadsToAccept;
-        internal readonly Automaton a;
+        private readonly IDictionary<Transition, bool?> leadsToAccept;
+        private readonly Automaton a;
 
         private class ArrivingTransition
         {

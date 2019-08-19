@@ -409,7 +409,7 @@ namespace Lucene.Net.Util.Fst
             return fst;
         }
 
-        protected internal virtual bool OutputsEqual(T a, T b)
+        protected virtual bool OutputsEqual(T a, T b)
         {
             // LUCENENET: In .NET, IEnumerables do not automatically test to ensure
             // their values are equal, so we need to do that manually.

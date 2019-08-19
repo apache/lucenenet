@@ -149,8 +149,8 @@ namespace Lucene.Net.Index
                         for (int k = 0; k < 17 * (1 + IFinal); k++)
                         {
                             Document d = new Document();
-                            d.Add(OuterInstance.NewField("id", IterFinal + "_" + IFinal + "_" + j + "_" + k, CustomType));
-                            d.Add(OuterInstance.NewField("contents", English.Int32ToEnglish(IFinal + k), CustomType));
+                            d.Add(NewField("id", IterFinal + "_" + IFinal + "_" + j + "_" + k, CustomType));
+                            d.Add(NewField("contents", English.Int32ToEnglish(IFinal + k), CustomType));
                             WriterFinal.AddDocument(d);
                         }
                         for (int k = 0; k < 9 * (1 + IFinal); k++)

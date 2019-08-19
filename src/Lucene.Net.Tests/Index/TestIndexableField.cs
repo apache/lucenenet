@@ -462,7 +462,7 @@ namespace Lucene.Net.Index
                     if (fieldUpto == 0)
                     {
                         fieldUpto = 1;
-                        current = OuterTextIndexableField.NewStringField("id", "" + OuterInstance.FinalDocCount, Field.Store.YES);
+                        current = NewStringField("id", "" + OuterInstance.FinalDocCount, Field.Store.YES);
                     }
                     else
                     {

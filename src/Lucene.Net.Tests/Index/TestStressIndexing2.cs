@@ -923,7 +923,7 @@ namespace Lucene.Net.Index
 
                 List<Field> fields = new List<Field>();
                 string idString = IdString;
-                Field idField = OuterInstance.NewField("id", idString, customType1);
+                Field idField = NewField("id", idString, customType1);
                 fields.Add(idField);
 
                 int nFields = NextInt(MaxFields);
@@ -956,13 +956,13 @@ namespace Lucene.Net.Index
                             customType.IsStored = true;
                             customType.OmitNorms = true;
                             customType.IsIndexed = true;
-                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(1), customType));
+                            fields.Add(NewField("f" + NextInt(100), GetString(1), customType));
                             break;
 
                         case 1:
                             customType.IsIndexed = true;
                             customType.IsTokenized = true;
-                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(0), customType));
+                            fields.Add(NewField("f" + NextInt(100), GetString(0), customType));
                             break;
 
                         case 2:
@@ -970,14 +970,14 @@ namespace Lucene.Net.Index
                             customType.StoreTermVectors = false;
                             customType.StoreTermVectorOffsets = false;
                             customType.StoreTermVectorPositions = false;
-                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(0), customType));
+                            fields.Add(NewField("f" + NextInt(100), GetString(0), customType));
                             break;
 
                         case 3:
                             customType.IsStored = true;
                             customType.IsIndexed = true;
                             customType.IsTokenized = true;
-                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(BigFieldSize), customType));
+                            fields.Add(NewField("f" + NextInt(100), GetString(BigFieldSize), customType));
                             break;
                     }
                 }

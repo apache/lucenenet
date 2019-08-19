@@ -244,7 +244,7 @@ namespace Lucene.Net.Util
         internal const string SYSPROP_MAXFAILURES = "tests.maxfailures"; // LUCENENET specific - made internal, because not fully implemented
 
         ///// <seealso cref="IgnoreAfterMaxFailures"/>
-        internal const string SYSPROP_FAILFAST = "tests.failfast"; // // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_FAILFAST = "tests.failfast"; // LUCENENET specific - made internal, because not fully implemented
 
         // LUCENENET: Not Implemented
         /////// <summary>
@@ -389,32 +389,36 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Whether or not <see cref="Nightly"/> tests should run. </summary>
-        public static readonly bool TEST_NIGHTLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_NIGHTLY, false);
+        internal static readonly bool TEST_NIGHTLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_NIGHTLY, false); // LUCENENET specific - made internal, because not fully implemented
 
         /// <summary>
         /// Whether or not <see cref="Weekly"/> tests should run. </summary>
-        public static readonly bool TEST_WEEKLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_WEEKLY, false);
+        internal static readonly bool TEST_WEEKLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_WEEKLY, false); // LUCENENET specific - made internal, because not fully implemented
 
         /// <summary>
         /// Whether or not <see cref="AwaitsFix"/> tests should run. </summary>
-        public static readonly bool TEST_AWAITSFIX = SystemProperties.GetPropertyAsBoolean(SYSPROP_AWAITSFIX, false);
+        internal static readonly bool TEST_AWAITSFIX = SystemProperties.GetPropertyAsBoolean(SYSPROP_AWAITSFIX, false); // LUCENENET specific - made internal, because not fully implemented
 
         /// <summary>
         /// Whether or not <see cref="Slow"/> tests should run. </summary>
-        public static readonly bool TEST_SLOW = SystemProperties.GetPropertyAsBoolean(SYSPROP_SLOW, false);
+        internal static readonly bool TEST_SLOW = SystemProperties.GetPropertyAsBoolean(SYSPROP_SLOW, false); // LUCENENET specific - made internal, because not fully implemented
 
         /// <summary>
         /// Throttling, see <see cref="MockDirectoryWrapper.Throttling"/>. </summary>
-        public static readonly Throttling TEST_THROTTLING = TEST_NIGHTLY ? Throttling.SOMETIMES : Throttling.NEVER;
+        internal static readonly Throttling TEST_THROTTLING = TEST_NIGHTLY ? Throttling.SOMETIMES : Throttling.NEVER; // LUCENENET specific - made internal, because not fully implemented
 
         /// <summary>
         /// Leave temporary files on disk, even on successful runs. </summary>
         public static readonly bool LEAVE_TEMPORARY;
 
-        static LuceneTestCase()
+        static LuceneTestCase() // LUCENENET TODO: Make separate static initializer methods for each property instead of using a static constructor
         {
             bool defaultValue = false;
-            foreach (string property in Arrays.AsList("tests.leaveTemporary", "tests.leavetemporary", "tests.leavetmpdir", "solr.test.leavetmpdir")) // Solr's legacy -  default -  lowercase -  ANT tasks's (junit4) flag.
+            foreach (string property in Arrays.AsList(
+                "tests.leaveTemporary" /* ANT tasks's (junit4) flag. */,
+                "tests.leavetemporary" /* lowercase */,
+                "tests.leavetmpdir" /* default */,
+                "solr.test.leavetmpdir" /* Solr's legacy */))
             {
                 defaultValue |= SystemProperties.GetPropertyAsBoolean(property, false);
             }
@@ -562,7 +566,7 @@ namespace Lucene.Net.Util
         /////// other.
         /////// </summary>
 
-        ////public static TestRule ClassRules = RuleChain
+        ////public static TestRule classRules = RuleChain
         ////  .outerRule(new TestRuleIgnoreTestSuites())
         ////  .around(IgnoreAfterMaxFailures)
         ////  .around(SuiteFailureMarker = new TestRuleMarkFailure())
@@ -605,15 +609,15 @@ namespace Lucene.Net.Util
         // -----------------------------------------------------------------
         /////// <summary>
         /////// Enforces <seealso cref="#setUp()"/> and <seealso cref="#tearDown()"/> calls are chained. </summary>
-        /////*private TestRuleSetupTeardownChained ParentChainCallRule = new TestRuleSetupTeardownChained();
+        /////*private TestRuleSetupTeardownChained parentChainCallRule = new TestRuleSetupTeardownChained();
 
         /////// <summary>
         /////// Save test thread and name. </summary>
-        ////private TestRuleThreadAndTestName ThreadAndTestNameRule = new TestRuleThreadAndTestName();
+        ////private TestRuleThreadAndTestName threadAndTestNameRule = new TestRuleThreadAndTestName();
 
         /////// <summary>
         /////// Taint suite result with individual test failures. </summary>
-        ////private TestRuleMarkFailure TestFailureMarker = new TestRuleMarkFailure(SuiteFailureMarker);*/
+        ////private TestRuleMarkFailure testFailureMarker = new TestRuleMarkFailure(SuiteFailureMarker);*/
 
         /////// <summary>
         /////// this controls how individual test rules are nested. It is important that
@@ -673,17 +677,24 @@ namespace Lucene.Net.Util
                 */
         }
 
+        // LUCENENET TODO: API - make these settable by end users so additional codecs can be injected into tests
         // LUCENENET specific constants to scan the test framework for codecs/docvaluesformats/postingsformats only once
         private static readonly TestCodecFactory TEST_CODEC_FACTORY = new TestCodecFactory();
         private static readonly TestDocValuesFormatFactory TEST_DOCVALUES_FORMAT_FACTORY = new TestDocValuesFormatFactory();
         private static readonly TestPostingsFormatFactory TEST_POSTINGS_FORMAT_FACTORY = new TestPostingsFormatFactory();
 
 
+        /// <summary>
+        /// Sets up dependency injection of codec factories for running the test class,
+        /// and also picks random defaults for culture, time zone, similarity, and default codec.
+        /// <para/>
+        /// If you override this method, be sure to call <c>base.BeforeClass()</c> BEFORE setting
+        /// up your test fixture.
+        /// </summary>
         // LUCENENET specific method for setting up dependency injection of test classes.
         [OneTimeSetUp]
         public virtual void BeforeClass()
         {
-            
             try
             {
                 // Setup the factories
@@ -702,6 +713,13 @@ namespace Lucene.Net.Util
             }
         }
 
+        /// <summary>
+        /// Tears down random defaults and cleans up temporary files.
+        /// <para/>
+        /// If you override this method, be sure to call <c>base.AfterClass()</c> AFTER
+        /// tearing down your test fixture.
+        /// </summary>
+        // LUCENENET specific method for setting up dependency injection of test classes.
         [OneTimeTearDown]
         public virtual void AfterClass()
         {
@@ -779,7 +797,7 @@ namespace Lucene.Net.Util
         /// Return the current class being tested.
         /// </summary>
         public static Type TestClass //LUCENENET TODO: Either implement, or change the doc to indicate it is hard coded
-        {
+        { // LUCENENET TODO: API - rename TestType
             get
             {
                 return typeof(LuceneTestCase); // LUCENENET TODO: return this.GetType();
@@ -982,38 +1000,36 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Create a new index writer config with random defaults.
-        /// 
-        /// LUCENENET specific
-        /// Non-static so that we do not depend on any hidden static dependencies
+        /// Create a new <see cref="IndexWriterConfig"/> with random defaults.
         /// </summary>
+        // LUCENENET specific
+        // Non-static so that we do not depend on any hidden static dependencies
         public IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
         {
             return NewIndexWriterConfig(Random, v, a);
         }
 
         /// <summary>
-        /// LUCENENET specific
-        /// Non-static so that we do not depend on any hidden static dependencies
+        /// Create a new <see cref="IndexWriterConfig"/> with random defaults using the specified <paramref name="random"/>.
         /// </summary>
-        public IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
+        // LUCENENET specific
+        // Non-static so that we do not depend on any hidden static dependencies
+        public IndexWriterConfig NewIndexWriterConfig(Random random, LuceneVersion v, Analyzer a)
         {
-            return NewIndexWriterConfig(r, v, a, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            return NewIndexWriterConfig(random, v, a, ClassEnvRule.similarity, ClassEnvRule.timeZone);
         }
 
         /// <summary>
         /// Create a new <see cref="IndexWriterConfig"/> with random defaults using the specified <paramref name="random"/>.
-        /// <para/>
-        /// LUCENENET specific
-        /// This is the only static ctor for IndexWriterConfig because it removes the dependency
-        /// on ClassEnvRule by using parameters Similarity and TimeZone.
         /// </summary>
         /// <param name="random">A random instance (usually <see cref="LuceneTestCase.Random"/>).</param>
         /// <param name="v"></param>
         /// <param name="a"></param>
         /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
         /// <param name="timezone">Generally, this should always be <see cref="LuceneTestCase.TimeZone"/>.</param>
-        /// <returns></returns>
+        // LUCENENET specific
+        // This is the only static ctor for IndexWriterConfig because it removes the dependency
+        // on ClassEnvRule by using parameters Similarity and TimeZone.
         public static IndexWriterConfig NewIndexWriterConfig(Random random, LuceneVersion v, Analyzer a, Similarity similarity, TimeZoneInfo timezone)
         {
             IndexWriterConfig c = new IndexWriterConfig(v, a);
@@ -1166,7 +1182,7 @@ namespace Lucene.Net.Util
             return NewTieredMergePolicy(Random);
         }
 
-        public AlcoholicMergePolicy NewAlcoholicMergePolicy()
+        public static AlcoholicMergePolicy NewAlcoholicMergePolicy()
         {
             return NewAlcoholicMergePolicy(Random);
         }
@@ -1432,38 +1448,32 @@ namespace Lucene.Net.Util
         }
 
 
-        // LUCENENET specific: non-static
-        public Field NewStringField(string name, string value, Field.Store stored)
+        public static Field NewStringField(string name, string value, Field.Store stored)
         {
             return NewField(Random, name, value, stored == Field.Store.YES ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED);
         }
 
-        // LUCENENET specific: non-static
-        public Field NewTextField(string name, string value, Field.Store stored)
+        public static Field NewTextField(string name, string value, Field.Store stored)
         {
             return NewField(Random, name, value, stored == Field.Store.YES ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED);
         }
 
-        // LUCENENET specific: non-static
-        public Field NewStringField(Random random, string name, string value, Field.Store stored)
+        public static Field NewStringField(Random random, string name, string value, Field.Store stored)
         {
             return NewField(random, name, value, stored == Field.Store.YES ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED);
         }
 
-        // LUCENENET specific: non-static
-        public Field NewTextField(Random random, string name, string value, Field.Store stored)
+        public static Field NewTextField(Random random, string name, string value, Field.Store stored)
         {
             return NewField(random, name, value, stored == Field.Store.YES ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED);
         }
 
-        // LUCENENET specific: non-static
-        public Field NewField(string name, string value, FieldType type)
+        public static Field NewField(string name, string value, FieldType type)
         {
             return NewField(Random, name, value, type);
         }
 
-        // LUCENENET specific: non-static
-        public Field NewField(Random random, string name, string value, FieldType type)
+        public static Field NewField(Random random, string name, string value, FieldType type)
         {
             name = new string(name.ToCharArray());
             if (Usually(random) || !type.IsIndexed)
@@ -1743,10 +1753,9 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
-        /// 
-        /// LUCENENET specific
-        /// Is non-static because <see cref="ClassEnvRule"/> is now non-static.
         /// </summary>
+        // LUCENENET specific
+        // Is non-static because <see cref="ClassEnvRule"/> is now non-static.
         public IndexSearcher NewSearcher(IndexReader r)
         {
             return NewSearcher(r, ClassEnvRule.similarity);
@@ -1789,7 +1798,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Create a new searcher over the reader. this searcher might randomly use
+        /// Create a new searcher over the reader. This searcher might randomly use
         /// threads. If <paramref name="maybeWrap"/> is true, this searcher might wrap the
         /// reader with one that returns null for <see cref="CompositeReader.GetSequentialSubReaders()"/>. If
         /// <paramref name="wrapWithAssertions"/> is true, this searcher might be an
@@ -1872,7 +1881,7 @@ namespace Lucene.Net.Util
         /// <see cref="AssemblyExtensions.FindAndGetManifestResourceStream(Assembly, Type, string)"/> using 
         /// <c>this.GetType().Assembly</c> and <c>this.GetType()</c>.
         /// </summary>
-        protected Stream GetDataFile(string name)
+        protected virtual Stream GetDataFile(string name)
         {
             try
             {
@@ -1970,7 +1979,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public void AssertReaderEquals(string info, IndexReader leftReader, IndexReader rightReader)
+        public virtual void AssertReaderEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
             AssertReaderStatisticsEquals(info, leftReader, rightReader);
             AssertFieldsEquals(info, leftReader, MultiFields.GetFields(leftReader), MultiFields.GetFields(rightReader), true);
@@ -1985,7 +1994,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks that reader-level statistics are the same.
         /// </summary>
-        public void AssertReaderStatisticsEquals(string info, IndexReader leftReader, IndexReader rightReader)
+        public virtual void AssertReaderStatisticsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
             // Somewhat redundant: we never delete docs
             Assert.AreEqual(leftReader.MaxDoc, rightReader.MaxDoc, info);
@@ -1997,7 +2006,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Fields API equivalency.
         /// </summary>
-        public void AssertFieldsEquals(string info, IndexReader leftReader, Fields leftFields, Fields rightFields, bool deep)
+        public virtual void AssertFieldsEquals(string info, IndexReader leftReader, Fields leftFields, Fields rightFields, bool deep)
         {
             // Fields could be null if there are no postings,
             // but then it must be null for both
@@ -2026,7 +2035,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks that top-level statistics on <see cref="Fields"/> are the same.
         /// </summary>
-        public void AssertFieldStatisticsEquals(string info, Fields leftFields, Fields rightFields)
+        public virtual void AssertFieldStatisticsEquals(string info, Fields leftFields, Fields rightFields)
         {
             if (leftFields.Count != -1 && rightFields.Count != -1)
             {
@@ -2037,7 +2046,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// <see cref="Terms"/> API equivalency.
         /// </summary>
-        public void AssertTermsEquals(string info, IndexReader leftReader, Terms leftTerms, Terms rightTerms, bool deep)
+        public virtual void AssertTermsEquals(string info, IndexReader leftReader, Terms leftTerms, Terms rightTerms, bool deep)
         {
             if (leftTerms == null || rightTerms == null)
             {
@@ -2077,7 +2086,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks collection-level statistics on <see cref="Terms"/>.
         /// </summary>
-        public void AssertTermsStatisticsEquals(string info, Terms leftTerms, Terms rightTerms)
+        public virtual void AssertTermsStatisticsEquals(string info, Terms leftTerms, Terms rightTerms)
         {
             Debug.Assert(leftTerms.Comparer == rightTerms.Comparer);
             if (leftTerms.DocCount != -1 && rightTerms.DocCount != -1)
@@ -2129,7 +2138,7 @@ namespace Lucene.Net.Util
         /// Checks the terms enum sequentially.
         /// If <paramref name="deep"/> is false, it does a 'shallow' test that doesnt go down to the docsenums.
         /// </summary>
-        public void AssertTermsEnumEquals(string info, IndexReader leftReader, TermsEnum leftTermsEnum, TermsEnum rightTermsEnum, bool deep)
+        public virtual void AssertTermsEnumEquals(string info, IndexReader leftReader, TermsEnum leftTermsEnum, TermsEnum rightTermsEnum, bool deep)
         {
             BytesRef term;
             IBits randomBits = new RandomBits(leftReader.MaxDoc, Random.NextDouble(), Random);
@@ -2173,7 +2182,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks docs + freqs + positions + payloads, sequentially.
         /// </summary>
-        public void AssertDocsAndPositionsEnumEquals(string info, DocsAndPositionsEnum leftDocs, DocsAndPositionsEnum rightDocs)
+        public virtual void AssertDocsAndPositionsEnumEquals(string info, DocsAndPositionsEnum leftDocs, DocsAndPositionsEnum rightDocs)
         {
             if (leftDocs == null || rightDocs == null)
             {
@@ -2203,7 +2212,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks docs + freqs, sequentially.
         /// </summary>
-        public void AssertDocsEnumEquals(string info, DocsEnum leftDocs, DocsEnum rightDocs, bool hasFreqs)
+        public virtual void AssertDocsEnumEquals(string info, DocsEnum leftDocs, DocsEnum rightDocs, bool hasFreqs)
         {
             if (leftDocs == null)
             {
@@ -2227,7 +2236,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks advancing docs.
         /// </summary>
-        public void AssertDocsSkippingEquals(string info, IndexReader leftReader, int docFreq, DocsEnum leftDocs, DocsEnum rightDocs, bool hasFreqs)
+        public virtual void AssertDocsSkippingEquals(string info, IndexReader leftReader, int docFreq, DocsEnum leftDocs, DocsEnum rightDocs, bool hasFreqs)
         {
             if (leftDocs == null)
             {
@@ -2268,7 +2277,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks advancing docs + positions.
         /// </summary>
-        public void AssertPositionsSkippingEquals(string info, IndexReader leftReader, int docFreq, DocsAndPositionsEnum leftDocs, DocsAndPositionsEnum rightDocs)
+        public virtual void AssertPositionsSkippingEquals(string info, IndexReader leftReader, int docFreq, DocsAndPositionsEnum leftDocs, DocsAndPositionsEnum rightDocs)
         {
             if (leftDocs == null || rightDocs == null)
             {
@@ -2413,7 +2422,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks term-level statistics.
         /// </summary>
-        public void AssertTermStatsEquals(string info, TermsEnum leftTermsEnum, TermsEnum rightTermsEnum)
+        public virtual void AssertTermStatsEquals(string info, TermsEnum leftTermsEnum, TermsEnum rightTermsEnum)
         {
             Assert.AreEqual(leftTermsEnum.DocFreq, rightTermsEnum.DocFreq, info);
             if (leftTermsEnum.TotalTermFreq != -1 && rightTermsEnum.TotalTermFreq != -1)
@@ -2425,7 +2434,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks that norms are the same across all fields.
         /// </summary>
-        public void AssertNormsEquals(string info, IndexReader leftReader, IndexReader rightReader)
+        public virtual void AssertNormsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
             Fields leftFields = MultiFields.GetFields(leftReader);
             Fields rightFields = MultiFields.GetFields(rightReader);
@@ -2457,7 +2466,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks that stored fields of all documents are the same.
         /// </summary>
-        public void AssertStoredFieldsEquals(string info, IndexReader leftReader, IndexReader rightReader)
+        public virtual void AssertStoredFieldsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
             Debug.Assert(leftReader.MaxDoc == rightReader.MaxDoc);
             for (int i = 0; i < leftReader.MaxDoc; i++)
@@ -2490,7 +2499,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks that two stored fields are equivalent.
         /// </summary>
-        public void AssertStoredFieldEquals(string info, IIndexableField leftField, IIndexableField rightField)
+        public virtual void AssertStoredFieldEquals(string info, IIndexableField leftField, IIndexableField rightField)
         {
             Assert.AreEqual(leftField.Name, rightField.Name, info);
             Assert.AreEqual(leftField.GetBinaryValue(), rightField.GetBinaryValue(), info);
@@ -2504,7 +2513,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks that term vectors across all fields are equivalent.
         /// </summary>
-        public void AssertTermVectorsEquals(string info, IndexReader leftReader, IndexReader rightReader)
+        public virtual void AssertTermVectorsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
             Debug.Assert(leftReader.MaxDoc == rightReader.MaxDoc);
             for (int i = 0; i < leftReader.MaxDoc; i++)
@@ -2532,7 +2541,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Checks that docvalues across all fields are equivalent.
         /// </summary>
-        public void AssertDocValuesEquals(string info, IndexReader leftReader, IndexReader rightReader)
+        public virtual void AssertDocValuesEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
             ISet<string> leftFields = GetDVFields(leftReader);
             ISet<string> rightFields = GetDVFields(rightReader);
@@ -2663,7 +2672,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public void AssertDocValuesEquals(string info, int num, NumericDocValues leftDocValues, NumericDocValues rightDocValues)
+        public virtual void AssertDocValuesEquals(string info, int num, NumericDocValues leftDocValues, NumericDocValues rightDocValues)
         {
             Assert.IsNotNull(leftDocValues, info);
             Assert.IsNotNull(rightDocValues, info);
@@ -2674,7 +2683,7 @@ namespace Lucene.Net.Util
         }
 
         // TODO: this is kinda stupid, we don't delete documents in the test.
-        public void AssertDeletedDocsEquals(string info, IndexReader leftReader, IndexReader rightReader)
+        public virtual void AssertDeletedDocsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
             Debug.Assert(leftReader.NumDeletedDocs == rightReader.NumDeletedDocs);
             IBits leftBits = MultiFields.GetLiveDocs(leftReader);
@@ -2695,7 +2704,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public void AssertFieldInfosEquals(string info, IndexReader leftReader, IndexReader rightReader)
+        public virtual void AssertFieldInfosEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
             FieldInfos leftInfos = MultiFields.GetMergedFieldInfos(leftReader);
             FieldInfos rightInfos = MultiFields.GetMergedFieldInfos(rightReader);
@@ -2764,7 +2773,7 @@ namespace Lucene.Net.Util
         /////// or <seealso cref="#createTempDir(String)"/> or <seealso cref="#createTempFile(String, String)"/>.
         /////// </summary>
         /////*[Obsolete]
-        ////public static DirectoryInfo BaseTempDirForTestClass()
+        ////public static DirectoryInfo GetBaseTempDirForTestClass()
         ////{
         ////    lock (typeof(LuceneTestCase))
         ////    {

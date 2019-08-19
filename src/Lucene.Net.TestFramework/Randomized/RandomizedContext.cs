@@ -22,6 +22,8 @@ using System.Threading;
 
 namespace Lucene.Net.Randomized
 {
+    // LUCENENET TODO: Look into salvaging this. It would be better to have some sort of "randomized context" that runs the tests
+    // than to have extra Similarity and TimeZone parameters everywhere, if possible.
     public class RandomizedContext : IDisposable
     {
         private static readonly object globalLock = new object();

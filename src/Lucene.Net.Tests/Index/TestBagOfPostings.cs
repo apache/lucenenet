@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     Document document = new Document();
-                    Field field = OuterInstance.NewTextField("field", "", Field.Store.NO);
+                    Field field = NewTextField("field", "", Field.Store.NO);
                     document.Add(field);
                     StartingGun.Wait();
                     while (!(Postings.Count == 0))
