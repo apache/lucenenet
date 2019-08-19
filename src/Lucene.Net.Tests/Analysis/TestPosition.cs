@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis
     /// <summary>
     /// Trivial position class.
     /// </summary>
-    public class TestPosition : LookaheadTokenFilterPosition
+    public class TestPosition : LookaheadTokenFilter.Position
     {
         public virtual string Fact { get; set; }
     }
