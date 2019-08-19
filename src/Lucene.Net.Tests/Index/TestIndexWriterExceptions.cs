@@ -718,31 +718,31 @@ namespace Lucene.Net.Index
 
         private class FailOnlyOnFlush : Failure
         {
-            new internal bool DoFail = false;
-            internal int Count;
+            internal bool doFail = false;
+            internal int count;
 
             public override void SetDoFail()
             {
-                this.DoFail = true;
+                this.doFail = true;
             }
 
             public override void ClearDoFail()
             {
-                this.DoFail = false;
+                this.doFail = false;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (DoFail)
+                if (doFail)
                 {
                     // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     bool sawAppend = StackTraceHelper.DoesStackTraceContainMethod(typeof(FreqProxTermsWriterPerField).Name, "Flush");
                     bool sawFlush = StackTraceHelper.DoesStackTraceContainMethod("Flush");
 
-                    if (sawAppend && sawFlush && Count++ >= 30)
+                    if (sawAppend && sawFlush && count++ >= 30)
                     {
-                        DoFail = false;
+                        doFail = false;
                         throw new IOException("now failing during flush");
                     }
                 }
