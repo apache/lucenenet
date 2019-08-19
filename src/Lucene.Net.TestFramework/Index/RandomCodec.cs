@@ -97,23 +97,22 @@ namespace Lucene.Net.Index
 
         public override PostingsFormat GetPostingsFormatForField(string name)
         {
-            PostingsFormat codec;
-            if (!previousMappings.TryGetValue(name, out codec) || codec == null)
+            if (!previousMappings.TryGetValue(name, out PostingsFormat codec) || codec == null)
             {
                 codec = formats[Math.Abs(perFieldSeed ^ name.GetHashCode()) % formats.Count];
                 if (codec is SimpleTextPostingsFormat && perFieldSeed % 5 != 0)
                 {
-                  // make simpletext rarer, choose again
-                  codec = formats[Math.Abs(perFieldSeed ^ name.ToUpperInvariant().GetHashCode()) % formats.Count];
+                    // make simpletext rarer, choose again
+                    codec = formats[Math.Abs(perFieldSeed ^ name.ToUpperInvariant().GetHashCode()) % formats.Count];
                 }
                 previousMappings[name] = codec;
                 // Safety:
                 Debug.Assert(previousMappings.Count < 10000, "test went insane");
             }
 
-            //if (LuceneTestCase.VERBOSE) // LUCENENET TODO: Make this static again so we can access it
+            //if (LuceneTestCase.VERBOSE)
             //{
-                Console.WriteLine("RandomCodec.GetPostingsFormatForField(\"" + name + "\") returned '" + codec.Name + "' with underlying type '" + codec.GetType().ToString() + "'.");
+            Console.WriteLine("RandomCodec.GetPostingsFormatForField(\"" + name + "\") returned '" + codec.Name + "' with underlying type '" + codec.GetType().ToString() + "'.");
             //}
 
             return codec;
@@ -121,14 +120,13 @@ namespace Lucene.Net.Index
 
         public override DocValuesFormat GetDocValuesFormatForField(string name)
         {
-            DocValuesFormat codec;
-            if (!previousDVMappings.TryGetValue(name, out codec) || codec == null)
+            if (!previousDVMappings.TryGetValue(name, out DocValuesFormat codec) || codec == null)
             {
                 codec = dvFormats[Math.Abs(perFieldSeed ^ name.GetHashCode()) % dvFormats.Count];
                 if (codec is SimpleTextDocValuesFormat && perFieldSeed % 5 != 0)
                 {
-                  // make simpletext rarer, choose again
-                  codec = dvFormats[Math.Abs(perFieldSeed ^ name.ToUpperInvariant().GetHashCode()) % dvFormats.Count];
+                    // make simpletext rarer, choose again
+                    codec = dvFormats[Math.Abs(perFieldSeed ^ name.ToUpperInvariant().GetHashCode()) % dvFormats.Count];
                 }
                 previousDVMappings[name] = codec;
                 // Safety:
@@ -185,8 +183,8 @@ namespace Lucene.Net.Index
                 new SimpleTextDocValuesFormat(), 
                 new AssertingDocValuesFormat());
 
-            Collections.Shuffle(formats); // LUCENENET TODO: random
-            Collections.Shuffle(dvFormats); // LUCENENET TODO: random
+            Collections.Shuffle(formats, random);
+            Collections.Shuffle(dvFormats, random);
 
             // Avoid too many open files:
             if (formats.Count > 4)
@@ -230,8 +228,8 @@ namespace Lucene.Net.Index
 
         public override string ToString()
         {
-            // LUCENENET NOTE: using toString() extension method on dictionaries to print out their contents
-            return base.ToString() + ": " + previousMappings.toString() + ", docValues:" + previousDVMappings.toString(); // LUCENENET TODO: Collections.ToString()
+            // LUCENENET NOTE: using Collections.ToString() method on dictionaries to print out their contents
+            return base.ToString() + ": " + Collections.ToString(previousMappings) + ", docValues:" + Collections.ToString(previousDVMappings);
         }
     }
 }
