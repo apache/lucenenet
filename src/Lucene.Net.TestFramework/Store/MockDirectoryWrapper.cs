@@ -675,14 +675,11 @@ namespace Lucene.Net.Store
             }
         }
 
-        public virtual ISet<string> OpenDeletedFiles // LUCENENET TODO: API - expand to ICollection<T>
+        public virtual ICollection<string> GetOpenDeletedFiles()
         {
-            get
+            lock (this)
             {
-                lock (this)
-                {
-                    return new HashSet<string>(openFilesDeleted);
-                }
+                return new HashSet<string>(openFilesDeleted);
             }
         }
 

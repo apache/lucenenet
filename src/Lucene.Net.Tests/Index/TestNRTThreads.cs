@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
                     }
                     r.Dispose();
                     m_writer.Commit();
-                    ISet<string> openDeletedFiles = ((MockDirectoryWrapper)m_dir).OpenDeletedFiles;
+                    ICollection<string> openDeletedFiles = ((MockDirectoryWrapper)m_dir).GetOpenDeletedFiles();
                     if (openDeletedFiles.Count > 0)
                     {
                         Console.WriteLine("OBD files: " + openDeletedFiles);
@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
             r.Dispose();
 
             //System.out.println("numDocs=" + r.NumDocs + " openDelFileCount=" + dir.openDeleteFileCount());
-            ISet<string> openDeletedFiles_ = ((MockDirectoryWrapper)m_dir).OpenDeletedFiles;
+            ICollection<string> openDeletedFiles_ = ((MockDirectoryWrapper)m_dir).GetOpenDeletedFiles();
             if (openDeletedFiles_.Count > 0)
             {
                 Console.WriteLine("OBD files: " + openDeletedFiles_);

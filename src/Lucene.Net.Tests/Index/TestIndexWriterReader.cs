@@ -936,7 +936,7 @@ namespace Lucene.Net.Index
             r.Dispose();
             if (dir1 is MockDirectoryWrapper)
             {
-                ICollection<string> openDeletedFiles = ((MockDirectoryWrapper)dir1).OpenDeletedFiles;
+                ICollection<string> openDeletedFiles = ((MockDirectoryWrapper)dir1).GetOpenDeletedFiles();
                 Assert.AreEqual(0, openDeletedFiles.Count, "openDeleted=" + openDeletedFiles);
             }
 
