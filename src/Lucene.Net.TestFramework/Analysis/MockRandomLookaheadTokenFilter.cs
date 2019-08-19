@@ -31,14 +31,14 @@ namespace Lucene.Net.Analysis
     {
         private readonly ICharTermAttribute termAtt;// = addAttribute(typeof(CharTermAttribute));
         private Random random; // LUCENENET: not readonly to reset seed later
-        private readonly long seed; // LUCENENET TODO: Change to int
+        private readonly int seed; // LUCENENET specific: changed to int, since .NET random seed is int, not long
 
         public MockRandomLookaheadTokenFilter(Random random, TokenStream @in)
             : base(@in)
         {
             this.termAtt = AddAttribute<ICharTermAttribute>();
             this.seed = random.Next();
-            this.random = new Random((int)seed);
+            this.random = new Random(seed);
         }
 
         protected override Position NewPosition()
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis
         public override void Reset()
         {
             base.Reset();
-            random = new Random((int)seed);
+            random = new Random(seed);
         }
     }
 }

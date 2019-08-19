@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis
 
         private readonly ICharTermAttribute termAtt;
 
-        private readonly long seed; // LUCENENET TODO: redeclare as int, since .NET random seed is int, not long
+        private readonly int seed; // LUCENENET specific: changed to int, since .NET random seed is int, not long
         private Random random;
 
         public MockGraphTokenFilter(Random random, TokenStream input)
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis
             // NOTE: must be "deterministically random" because
             // baseTokenStreamTestCase pulls tokens twice on the
             // same input and asserts they are the same:
-            this.random = new Random((int)seed);
+            this.random = new Random(seed);
         }
 
         protected override void Dispose(bool disposing)
