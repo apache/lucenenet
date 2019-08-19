@@ -26,18 +26,18 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class TrivialLookaheadFilter : LookaheadTokenFilter<TestPosition>
     {
-        private readonly ICharTermAttribute TermAtt;
-        new private readonly IPositionIncrementAttribute PosIncAtt;
-        new private readonly IOffsetAttribute OffsetAtt;
+        private readonly ICharTermAttribute termAtt;
+        private readonly IPositionIncrementAttribute posIncAtt;
+        private readonly IOffsetAttribute offsetAtt;
 
         private int InsertUpto;
 
         internal TrivialLookaheadFilter(TokenStream input)
             : base(input)
         {
-            TermAtt = AddAttribute<ICharTermAttribute>();
-            PosIncAtt = AddAttribute<IPositionIncrementAttribute>();
-            OffsetAtt = AddAttribute<IOffsetAttribute>();
+            termAtt = AddAttribute<ICharTermAttribute>();
+            posIncAtt = AddAttribute<IPositionIncrementAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         protected override TestPosition NewPosition()
@@ -70,10 +70,10 @@ namespace Lucene.Net.Analysis
                 InsertToken();
                 // replace term with 'improved' term.
                 ClearAttributes();
-                TermAtt.SetEmpty();
-                PosIncAtt.PositionIncrement = 0;
-                TermAtt.Append(((TestPosition)m_positions.Get(m_outputPos)).Fact);
-                OffsetAtt.SetOffset(m_positions.Get(m_outputPos).StartOffset, m_positions.Get(m_outputPos + 1).EndOffset);
+                termAtt.SetEmpty();
+                posIncAtt.PositionIncrement = 0;
+                termAtt.Append(((TestPosition)m_positions.Get(m_outputPos)).Fact);
+                offsetAtt.SetOffset(m_positions.Get(m_outputPos).StartOffset, m_positions.Get(m_outputPos + 1).EndOffset);
                 InsertUpto = m_outputPos;
             }
         }
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis
             {
                 if (PeekToken())
                 {
-                    string term = new string(TermAtt.Buffer, 0, TermAtt.Length);
+                    string term = new string(termAtt.Buffer, 0, termAtt.Length);
                     facts.Add(term + "-huh?");
                     if (".".Equals(term, StringComparison.Ordinal))
                     {
