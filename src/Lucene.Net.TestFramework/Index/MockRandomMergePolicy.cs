@@ -60,7 +60,6 @@ namespace Lucene.Net.Index
 
             if (numSegments > 1 && (numSegments > 30 || random.Next(5) == 3))
             {
-                // LUCENENET TODO: API - Extension methods for Shuffle()
                 Collections.Shuffle(segments); // LUCENENET TODO: Collections.Shuffle(segments, random);
 
                 // TODO: sometimes make more than 1 merge?
