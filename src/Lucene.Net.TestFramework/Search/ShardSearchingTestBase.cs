@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
     /// </summary>
     public abstract class ShardSearchingTestBase : LuceneTestCase
     {
-        // LUCENENET speciic - de-nested SearcherExpiredException
+        // LUCENENET specific - de-nested SearcherExpiredException
 
         internal class FieldAndShardVersion
         {
@@ -291,13 +291,13 @@ namespace Lucene.Net.Search
 
                 public int MyNodeID { get; private set; }
 
-                public ShardIndexSearcher(ShardSearchingTestBase.NodeState outerInstance, long[] nodeVersions, IndexReader localReader, int nodeID) // LUCENENET TODO: API - we don't want outerInstance on the public API if possible
+                public ShardIndexSearcher(ShardSearchingTestBase.NodeState nodeState, long[] nodeVersions, IndexReader localReader, int nodeID)
                     : base(localReader)
                 {
-                    this.outerInstance = outerInstance;
+                    this.outerInstance = nodeState;
                     this.nodeVersions = nodeVersions;
                     MyNodeID = nodeID;
-                    Debug.Assert(MyNodeID == outerInstance.MyNodeID, "myNodeID=" + nodeID + " NodeState.this.myNodeID=" + outerInstance.MyNodeID);
+                    Debug.Assert(MyNodeID == nodeState.MyNodeID, "myNodeID=" + nodeID + " NodeState.this.myNodeID=" + nodeState.MyNodeID);
                 }
 
                 public override Query Rewrite(Query original)
@@ -570,9 +570,9 @@ namespace Lucene.Net.Search
 
             internal volatile ShardIndexSearcher currentShardSearcher;
 
-            public NodeState(ShardSearchingTestBase outerInstance, Random random, int nodeID, int numNodes) // LUCENENET TODO: API - we don't want outerInstance on the public API if possible
+            public NodeState(ShardSearchingTestBase shardSearchingTestBase, Random random, int nodeID, int numNodes)
             {
-                this.outerInstance = outerInstance;
+                this.outerInstance = shardSearchingTestBase;
                 MyNodeID = nodeID;
                 Dir = NewFSDirectory(CreateTempDir("ShardSearchingTestBase"));
                 // TODO: set warmer
