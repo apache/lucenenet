@@ -946,7 +946,7 @@ namespace Lucene.Net.Analysis
             IList<int> endOffsets = new List<int>();
 
             int remainder = random.Next(10);
-            StringReader reader = new StringReader(text);
+            TextReader reader = new StringReader(text);
 
             TokenStream ts;
             using (ts = a.GetTokenStream("dummy", useCharFilter ? (TextReader) new MockCharFilter(reader, remainder) : reader))
@@ -954,18 +954,10 @@ namespace Lucene.Net.Analysis
                 bool isReset = false;
                 try
                 {
-                    termAtt = ts.HasAttribute<ICharTermAttribute>()
-                       ? ts.GetAttribute<ICharTermAttribute>()
-                       : null;
-                    offsetAtt = ts.HasAttribute<IOffsetAttribute>()
-                        ? ts.GetAttribute<IOffsetAttribute>()
-                        : null;
-                    posIncAtt = ts.HasAttribute<IPositionIncrementAttribute>()
-                        ? ts.GetAttribute<IPositionIncrementAttribute>()
-                        : null;
-                    posLengthAtt = ts.HasAttribute<IPositionLengthAttribute>()
-                        ? ts.GetAttribute<IPositionLengthAttribute>()
-                        : null;
+                    termAtt = ts.HasAttribute<ICharTermAttribute>() ? ts.GetAttribute<ICharTermAttribute>() : null;
+                    offsetAtt = ts.HasAttribute<IOffsetAttribute>() ? ts.GetAttribute<IOffsetAttribute>() : null;
+                    posIncAtt = ts.HasAttribute<IPositionIncrementAttribute>() ? ts.GetAttribute<IPositionIncrementAttribute>() : null;
+                    posLengthAtt = ts.HasAttribute<IPositionLengthAttribute>() ? ts.GetAttribute<IPositionLengthAttribute>() : null;
                     typeAtt = ts.HasAttribute<ITypeAttribute>() ? ts.GetAttribute<ITypeAttribute>() : null;
 
                     ts.Reset();
@@ -1032,8 +1024,8 @@ namespace Lucene.Net.Analysis
                         }
                         // Throw an errant exception from the Reader:
 
-                        MockReaderWrapper evilReader = new MockReaderWrapper(random, text);
-                        evilReader.ThrowExcAfterChar(random.Next(text.Length));
+                        MockReaderWrapper evilReader = new MockReaderWrapper(random, new StringReader(text));
+                        evilReader.ThrowExcAfterChar(random.Next(text.Length)); // LUCENENET note, Next() is exclusive, so we don't need +1
                         reader = evilReader;
 
                         try
@@ -1139,7 +1131,7 @@ namespace Lucene.Net.Analysis
                     Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: using spoon-feed reader");
                 }
 
-                reader = new MockReaderWrapper(random, text);
+                reader = new MockReaderWrapper(random, reader);
             }
 
             ts = a.GetTokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
@@ -1185,7 +1177,7 @@ namespace Lucene.Net.Analysis
                         Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: indexing using spoon-feed reader");
                     }
 
-                    reader = new MockReaderWrapper(random, text);
+                    reader = new MockReaderWrapper(random, reader);
                 }
 
                 field.SetReaderValue(useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);

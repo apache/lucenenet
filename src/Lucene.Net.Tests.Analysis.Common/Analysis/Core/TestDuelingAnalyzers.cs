@@ -274,9 +274,9 @@ namespace Lucene.Net.Analysis.Core
         {
             Random random = Random;
             TextReader r = new StringReader(s);
-            if (random.Next(1) == 1)
+            if (random.NextBoolean())
             {
-                r = new MockReaderWrapper(random, s);
+                r = new MockReaderWrapper(random, r);
             }
             return r;
         }

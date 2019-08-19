@@ -29,17 +29,18 @@ namespace Lucene.Net.Analysis
     /// Wraps a <see cref="TextReader"/>, and can throw random or fixed
     /// exceptions, and spoon feed read chars.
     /// </summary>
-    public class MockReaderWrapper : StringReader // LUCENENET TODO: API - this should be TextReader, or possibly CharFilter
+    public class MockReaderWrapper : TextReader
     {
+        private readonly TextReader input;
         private readonly Random random;
 
         private int excAtChar = -1;
         private int readSoFar;
         private bool throwExcNext;
 
-        public MockReaderWrapper(Random random, string text) // LUCENENET TODO: API - this should accept TextReader
-            : base(text)
+        public MockReaderWrapper(Random random, TextReader input)
         {
+            this.input = input;
             this.random = random;
         }
 
@@ -49,7 +50,7 @@ namespace Lucene.Net.Analysis
         {
             excAtChar = charUpto;
             // You should only call this on init!:
-            Assert.AreEqual(0, readSoFar); // LUCENENET TODO: This should be Debug.Assert
+            Debug.Assert(0 == readSoFar);
         }
 
         public virtual void ThrowExcNext()
@@ -57,13 +58,20 @@ namespace Lucene.Net.Analysis
             throwExcNext = true;
         }
 
-        // LUCENENET TODO: Dispose()
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                input?.Dispose();
+            }
+        }
 
-        public override int Read() // LUCENENET TODO: Check whether this is needed
+        public override int Read()
         {
             ThrowExceptionIfApplicable();
 
-            var c = base.Read();
+            var c = input.Read();
             readSoFar += 1;
             return c;
         }
@@ -86,20 +94,20 @@ namespace Lucene.Net.Analysis
             if (excAtChar != -1)
             {
                 int left = excAtChar - readSoFar;
-                Assert.True(left != 0); // LUCENENET TODO: This should be Debug.Assert
-                read = base.Read(cbuf, off, Math.Min(realLen, left));
+                Debug.Assert(left != 0);
+                read = input.Read(cbuf, off, Math.Min(realLen, left));
                 //Characters are left
-                Assert.True(read != 0); // LUCENENET TODO: This should be Debug.Assert
+                Debug.Assert(read != 0);
                 readSoFar += read;
             }
             else
             {
-                read = base.Read(cbuf, off, realLen);
-                //Terrible TextReader::Read semantics
-                if (read == 0)
-                {
-                    read = -1;
-                }
+                // LUCENENET NOTE: In Java this returns -1 when done reading,
+                // but in .NET it returns 0. We are sticking with the .NET behavior
+                // for compatibility reasons, but all Java-ported tests need to be fixed
+                // to compensate for this (i.e. instead of checking x == -1, we should 
+                // check x <= 0 which covers both cases)
+                read = input.Read(cbuf, off, realLen);
             }
             return read;
         }
@@ -112,19 +120,22 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        public virtual bool IsMarkSupported // LUCENENET specific - renamed from markSupported()
-        {
-            get { return false; }
-        }
+        // LUCENENET: These are not supported by TextReader, so doesn't make much sense to include them.
+        // These were basically just to override the Java Reader class. In .NET, there is no Mark() method 
+        // to support, nor is there an IsReady. TextReader works happily without these.
+        //public virtual bool IsMarkSupported // LUCENENET specific - renamed from markSupported()
+        //{
+        //    get { return false; }
+        //}
 
-        public virtual bool IsReady // LUCENENET specific - renamed from ready()
-        {
-            get { return false; }
-        }
+        //public virtual bool IsReady // LUCENENET specific - renamed from ready()
+        //{
+        //    get { return false; }
+        //}
 
         public static bool IsMyEvilException(Exception t)
         {
-            return (t != null) && "fake exception now!".Equals(t.Message, StringComparison.Ordinal); // LUCENENET TODO: t is Exception (not t != null)
+            return (t != null) && "fake exception now!".Equals(t.Message, StringComparison.Ordinal);
         }
     }
 }
