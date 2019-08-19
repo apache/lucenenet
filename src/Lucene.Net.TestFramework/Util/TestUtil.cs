@@ -285,14 +285,14 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Start and end are BOTH inclusive </summary>
+        /// <paramref name="start"/> and <paramref name="end"/> are BOTH inclusive </summary>
         public static int NextInt32(Random r, int start, int end)
         {
             return RandomInts.RandomInt32Between(r, start, end);
         }
 
         /// <summary>
-        /// Start and end are BOTH inclusive </summary>
+        /// <paramref name="start"/> and <paramref name="end"/> are BOTH inclusive </summary>
         public static long NextInt64(Random r, long start, long end)
         {
             Assert.True(end >= start);
@@ -335,11 +335,17 @@ namespace Lucene.Net.Util
             }
         }
 
+        /// <summary>
+        /// Returns a random string consisting only of lowercase characters 'a' through 'z'.
+        /// </summary>
         public static string RandomSimpleString(Random r, int maxLength)
         {
             return RandomSimpleString(r, 0, maxLength);
         }
 
+        /// <summary>
+        /// Returns a random string consisting only of lowercase characters 'a' through 'z'.
+        /// </summary>
         public static string RandomSimpleString(Random r, int minLength, int maxLength)
         {
             int end = NextInt32(r, minLength, maxLength);
@@ -356,6 +362,9 @@ namespace Lucene.Net.Util
             return new string(buffer, 0, end);
         }
 
+        /// <summary>
+        /// Returns a random string consisting only of characters between <paramref name="minChar"/> and <paramref name="maxChar"/>.
+        /// </summary>
         public static string RandomSimpleStringRange(Random r, char minChar, char maxChar, int maxLength)
         {
             int end = NextInt32(r, 0, maxLength);
@@ -372,6 +381,10 @@ namespace Lucene.Net.Util
             return new string(buffer, 0, end);
         }
 
+        /// <summary>
+        /// Returns a random string consisting only of lowercase characters 'a' through 'z',
+        /// between 0 and 20 characters in length.
+        /// </summary>
         public static string RandomSimpleString(Random r)
         {
             return RandomSimpleString(r, 0, 20);
@@ -442,7 +455,7 @@ namespace Lucene.Net.Util
         /// Returns a <see cref="string"/> thats "regexpish" (contains lots of operators typically found in regular expressions)
         /// If you call this enough times, you might get a valid regex!
         /// </summary>
-        public static string RandomRegexpishString(Random r)
+        public static string RandomRegexpishString(Random r) // LUCENENET TODO: API - rename RandomRegexishString
         {
             return RandomRegexpishString(r, 20);
         }
@@ -476,7 +489,7 @@ namespace Lucene.Net.Util
         /// operators with bounded repetitions. See LUCENE-4111 for more info.
         /// </summary>
         /// <param name="maxLength"> A hint about maximum length of the regexpish string. It may be exceeded by a few characters. </param>
-        public static string RandomRegexpishString(Random r, int maxLength)
+        public static string RandomRegexpishString(Random r, int maxLength) // LUCENENET TODO: API - rename RandomRegexishString
         {
             StringBuilder regexp = new StringBuilder(maxLength);
             for (int i = NextInt32(r, 0, maxLength); i > 0; i--)
@@ -517,6 +530,9 @@ namespace Lucene.Net.Util
             "yacute", "yen", "yuml", "zeta", "zwj", "zwnj"
         };
 
+        /// <summary>
+        /// Returns a random HTML-like string.
+        /// </summary>
         public static string RandomHtmlishString(Random random, int numElements)
         {
             int end = NextInt32(random, 0, numElements);
@@ -817,7 +833,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns random string, with a given UTF-8 byte length </summary>
+        /// Returns random string, with a given UTF-8 byte <paramref name="length"/>. </summary>
         public static string RandomFixedByteLengthUnicodeString(Random r, int length)
         {
             char[] buffer = new char[length * 3];
@@ -1264,7 +1280,7 @@ namespace Lucene.Net.Util
         /// when applying random patterns to longer strings as certain types of patterns
         /// may explode into exponential times in backtracking implementations (such as Java's).
         /// </summary>        
-        public static Regex RandomPattern(Random random)
+        public static Regex RandomPattern(Random random) // LUCENENET TODO: API - rename RandomRegex
         {
             const string nonBmpString = "AB\uD840\uDC00C";
             while (true)
