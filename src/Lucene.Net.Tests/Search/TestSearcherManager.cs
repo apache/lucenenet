@@ -58,17 +58,14 @@ namespace Lucene.Net.Search
             RunTest("TestSearcherManager");
         }
 
-        protected override IndexSearcher FinalSearcher
+        protected override IndexSearcher GetFinalSearcher()
         {
-            get
+            if (!isNRT)
             {
-                if (!isNRT)
-                {
-                    m_writer.Commit();
-                }
-                assertTrue(mgr.MaybeRefresh() || mgr.IsSearcherCurrent());
-                return mgr.Acquire();
+                m_writer.Commit();
             }
+            assertTrue(mgr.MaybeRefresh() || mgr.IsSearcherCurrent());
+            return mgr.Acquire();
         }
 
         private SearcherManager mgr;
@@ -182,64 +179,61 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected override IndexSearcher CurrentSearcher
+        protected override IndexSearcher GetCurrentSearcher()
         {
-            get
+            if (Random.Next(10) == 7)
             {
-                if (Random.Next(10) == 7)
+                // NOTE: not best practice to call maybeReopen
+                // synchronous to your search threads, but still we
+                // test as apps will presumably do this for
+                // simplicity:
+                if (mgr.MaybeRefresh())
                 {
-                    // NOTE: not best practice to call maybeReopen
-                    // synchronous to your search threads, but still we
-                    // test as apps will presumably do this for
-                    // simplicity:
-                    if (mgr.MaybeRefresh())
-                    {
-                        lifetimeMGR.Prune(pruner);
-                    }
+                    lifetimeMGR.Prune(pruner);
                 }
-
-                IndexSearcher s = null;
-
-                lock (pastSearchers)
-                {
-                    while (pastSearchers.Count != 0 && Random.NextDouble() < 0.25)
-                    {
-                        // 1/4 of the time pull an old searcher, ie, simulate
-                        // a user doing a follow-on action on a previous
-                        // search (drilling down/up, clicking next/prev page,
-                        // etc.)
-                        long token = pastSearchers[Random.Next(pastSearchers.Count)];
-                        s = lifetimeMGR.Acquire(token);
-                        if (s == null)
-                        {
-                            // Searcher was pruned
-                            pastSearchers.Remove(token);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-
-                if (s == null)
-                {
-                    s = mgr.Acquire();
-                    if (s.IndexReader.NumDocs != 0)
-                    {
-                        long token = lifetimeMGR.Record(s);
-                        lock (pastSearchers)
-                        {
-                            if (!pastSearchers.Contains(token))
-                            {
-                                pastSearchers.Add(token);
-                            }
-                        }
-                    }
-                }
-
-                return s;
             }
+
+            IndexSearcher s = null;
+
+            lock (pastSearchers)
+            {
+                while (pastSearchers.Count != 0 && Random.NextDouble() < 0.25)
+                {
+                    // 1/4 of the time pull an old searcher, ie, simulate
+                    // a user doing a follow-on action on a previous
+                    // search (drilling down/up, clicking next/prev page,
+                    // etc.)
+                    long token = pastSearchers[Random.Next(pastSearchers.Count)];
+                    s = lifetimeMGR.Acquire(token);
+                    if (s == null)
+                    {
+                        // Searcher was pruned
+                        pastSearchers.Remove(token);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (s == null)
+            {
+                s = mgr.Acquire();
+                if (s.IndexReader.NumDocs != 0)
+                {
+                    long token = lifetimeMGR.Record(s);
+                    lock (pastSearchers)
+                    {
+                        if (!pastSearchers.Contains(token))
+                        {
+                            pastSearchers.Add(token);
+                        }
+                    }
+                }
+            }
+
+            return s;
         }
 
         protected override void ReleaseSearcher(IndexSearcher s)

@@ -82,17 +82,14 @@ namespace Lucene.Net.Search
             RunTest("TestControlledRealTimeReopenThread");
         }
 
-        protected override IndexSearcher FinalSearcher
+        protected override IndexSearcher GetFinalSearcher()
         {
-            get
+            if (VERBOSE)
             {
-                if (VERBOSE)
-                {
-                    Console.WriteLine("TEST: finalSearcher maxGen=" + MaxGen);
-                }
-                nrtDeletesThread.WaitForGeneration(MaxGen);
-                return nrtDeletes.Acquire();
+                Console.WriteLine("TEST: finalSearcher maxGen=" + MaxGen);
             }
+            nrtDeletesThread.WaitForGeneration(MaxGen);
+            return nrtDeletes.Acquire();
         }
 
         protected override Directory GetDirectory(Directory @in)
@@ -336,24 +333,21 @@ namespace Lucene.Net.Search
             RunSearchThreads(stopTime);
         }
 
-        protected override IndexSearcher CurrentSearcher
+        protected override IndexSearcher GetCurrentSearcher()
         {
-            get
+            // Test doesn't assert deletions until the end, so we
+            // can randomize whether dels must be applied
+            SearcherManager nrt;
+            if (Random.NextBoolean())
             {
-                // Test doesn't assert deletions until the end, so we
-                // can randomize whether dels must be applied
-                SearcherManager nrt;
-                if (Random.NextBoolean())
-                {
-                    nrt = nrtDeletes;
-                }
-                else
-                {
-                    nrt = nrtNoDeletes;
-                }
-
-                return nrt.Acquire();
+                nrt = nrtDeletes;
             }
+            else
+            {
+                nrt = nrtNoDeletes;
+            }
+
+            return nrt.Acquire();
         }
 
         protected override void ReleaseSearcher(IndexSearcher s)

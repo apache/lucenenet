@@ -135,12 +135,9 @@ namespace Lucene.Net.Index
 
         private IndexSearcher FixedSearcher;
 
-        protected override IndexSearcher CurrentSearcher
+        protected override IndexSearcher GetCurrentSearcher()
         {
-            get
-            {
-                return FixedSearcher;
-            }
+            return FixedSearcher;
         }
 
         protected override void ReleaseSearcher(IndexSearcher s)
@@ -152,29 +149,26 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected override IndexSearcher FinalSearcher
+        protected override IndexSearcher GetFinalSearcher()
         {
-            get
+            IndexReader r2;
+            if (UseNonNrtReaders)
             {
-                IndexReader r2;
-                if (UseNonNrtReaders)
-                {
-                    if (Random.NextBoolean())
-                    {
-                        r2 = m_writer.GetReader();
-                    }
-                    else
-                    {
-                        m_writer.Commit();
-                        r2 = DirectoryReader.Open(m_dir);
-                    }
-                }
-                else
+                if (Random.NextBoolean())
                 {
                     r2 = m_writer.GetReader();
                 }
-                return NewSearcher(r2);
+                else
+                {
+                    m_writer.Commit();
+                    r2 = DirectoryReader.Open(m_dir);
+                }
             }
+            else
+            {
+                r2 = m_writer.GetReader();
+            }
+            return NewSearcher(r2);
         }
 
         [Test]

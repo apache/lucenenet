@@ -87,9 +87,9 @@ namespace Lucene.Net.Index
         }
 
         // Called per-search
-        protected abstract IndexSearcher CurrentSearcher { get; } // LUCENENET TODO: API - Make GetCurrentSearcher() method (non-deterministic)
+        protected abstract IndexSearcher GetCurrentSearcher();
 
-        protected abstract IndexSearcher FinalSearcher { get; } // LUCENENET TODO: API - Make GetFinalSearcher() method (non-deterministic)
+        protected abstract IndexSearcher GetFinalSearcher();
 
         protected virtual void ReleaseSearcher(IndexSearcher s)
         {
@@ -453,7 +453,7 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-                        IndexSearcher s = outerInstance.CurrentSearcher;
+                        IndexSearcher s = outerInstance.GetCurrentSearcher();
                         try
                         {
                             // Verify 1) IW is correctly setting
@@ -643,7 +643,7 @@ namespace Lucene.Net.Index
                 Console.WriteLine("TEST: done join indexing threads [" + (Environment.TickCount - t0) + " ms]; addCount=" + m_addCount + " delCount=" + m_delCount);
             }
 
-            IndexSearcher s = FinalSearcher;
+            IndexSearcher s = GetFinalSearcher();
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: finalSearcher=" + s);
