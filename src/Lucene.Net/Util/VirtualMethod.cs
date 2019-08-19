@@ -62,7 +62,7 @@ namespace Lucene.Net.Util
     /// </summary>
     // LUCENENET NOTE: Pointless to make this class generic, since the generic type is never used (the Type class in .NET
     // is not generic).
-    public sealed class VirtualMethod // LUCENENET TODO: API - move back to its original Lucene home location, Lucene.Net.Util
+    public sealed class VirtualMethod
     {
         private static readonly ISet<MethodInfo> singletonSet = new ConcurrentHashSet<MethodInfo>(new HashSet<MethodInfo>());
 
