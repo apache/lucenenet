@@ -811,7 +811,7 @@ namespace Lucene.Net.Util
         /// Return the current class being tested.
         /// </summary>
         public static Type TestClass //LUCENENET TODO: Either implement, or change the doc to indicate it is hard coded
-        { // LUCENENET TODO: API - rename TestType
+        {
             get
             {
                 return typeof(LuceneTestCase); // LUCENENET TODO: return this.GetType();

@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
         {
         }
 
-        protected virtual void DoClose() // LUCENENET TODO: API - rename DoDispose() ?
+        protected virtual void DoClose()
         {
         }
 

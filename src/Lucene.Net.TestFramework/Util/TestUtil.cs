@@ -455,7 +455,7 @@ namespace Lucene.Net.Util
         /// Returns a <see cref="string"/> thats "regexpish" (contains lots of operators typically found in regular expressions)
         /// If you call this enough times, you might get a valid regex!
         /// </summary>
-        public static string RandomRegexpishString(Random r) // LUCENENET TODO: API - rename RandomRegexishString
+        public static string RandomRegexpishString(Random r)
         {
             return RandomRegexpishString(r, 20);
         }
@@ -489,7 +489,7 @@ namespace Lucene.Net.Util
         /// operators with bounded repetitions. See LUCENE-4111 for more info.
         /// </summary>
         /// <param name="maxLength"> A hint about maximum length of the regexpish string. It may be exceeded by a few characters. </param>
-        public static string RandomRegexpishString(Random r, int maxLength) // LUCENENET TODO: API - rename RandomRegexishString
+        public static string RandomRegexpishString(Random r, int maxLength)
         {
             StringBuilder regexp = new StringBuilder(maxLength);
             for (int i = NextInt32(r, 0, maxLength); i > 0; i--)
@@ -1052,7 +1052,7 @@ namespace Lucene.Net.Util
         /// Checks some basic behaviour of an <see cref="Attribute"/>. </summary>
         /// <param name="att"><see cref="Attribute"/> to reflect</param>
         /// <param name="reflectedValues"> Contains a <see cref="IDictionary{String, Object}"/> with "AttributeSubclassType/key" as values.</param>
-        public static void AssertAttributeReflection(Attribute att, IDictionary<string, object> reflectedValues) // LUCENENET TODO: API - object here should instead be Type, I think
+        public static void AssertAttributeReflection(Attribute att, IDictionary<string, object> reflectedValues)
         {
             IDictionary<string, object> map = new Dictionary<string, object>();
             att.ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(map));
