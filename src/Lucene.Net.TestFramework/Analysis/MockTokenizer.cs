@@ -1,5 +1,6 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -98,7 +99,7 @@ namespace Lucene.Net.Analysis
         private bool enableChecks = true;
 
         // evil: but we don't change the behavior with this random, we only switch up how we read
-        private readonly Random random = new Random(/*RandomizedContext.Current.Random.nextLong()*/); // LUCENENET TODO: Random seed synchronization
+        private readonly Random random = new Random(LuceneTestCase.Random.Next() /*RandomizedContext.Current.Random.nextLong()*/); // LUCENENET TODO: Random seed synchronization
 
         public MockTokenizer(AttributeFactory factory, TextReader input, CharacterRunAutomaton runAutomaton, bool lowerCase, int maxTokenLength)
             : base(factory, input)
@@ -145,7 +146,7 @@ namespace Lucene.Net.Analysis
         public sealed override bool IncrementToken()
         {
             // LUCENENET TODO: Enable this assert
-            //Debug.Assert(!EnableChecks_Renamed || (StreamState == State.RESET || StreamState == State.INCREMENT), "IncrementToken() called while in wrong state: " + StreamState);
+            //Debug.Assert(!enableChecks || (streamState == State.RESET || streamState == State.INCREMENT), "IncrementToken() called while in wrong state: " + streamState);
             ClearAttributes();
             for (; ; )
             {
@@ -305,7 +306,7 @@ namespace Lucene.Net.Analysis
             state = runAutomaton.InitialState;
             lastOffset = off = 0;
             bufferedCodePoint = -1;
-            Assert.True(!enableChecks || streamState != State.RESET, "double reset()"); // LUCENENET TODO: This should be Debug.Assert
+            Assert.True(!enableChecks || streamState != State.RESET, "double Reset()"); // LUCENENET TODO: This should be Debug.Assert
             streamState = State.RESET;
         }
 
@@ -317,14 +318,14 @@ namespace Lucene.Net.Analysis
                 // in some exceptional cases (e.g. TestIndexWriterExceptions) a test can prematurely close()
                 // these tests should disable this check, by default we check the normal workflow.
                 // TODO: investigate the CachingTokenFilter "double-close"... for now we ignore this
-                Assert.True(!enableChecks || streamState == State.END || streamState == State.CLOSE, "close() called in wrong state: " + streamState);
+                Assert.True(!enableChecks || streamState == State.END || streamState == State.CLOSE, "Dispose() called in wrong state: " + streamState);
                 streamState = State.CLOSE;
             }
         }
 
         internal override bool SetReaderTestPoint()
         {
-            Assert.True(!enableChecks || streamState == State.CLOSE, "setReader() called in wrong state: " + streamState); // LUCENENET TODO: This should be Debug.Assert
+            Assert.True(!enableChecks || streamState == State.CLOSE, "SetReader() called in wrong state: " + streamState); // LUCENENET TODO: This should be Debug.Assert
             streamState = State.SETREADER;
             return true;
         }
@@ -338,7 +339,7 @@ namespace Lucene.Net.Analysis
             // these tests should disable this check (in general you should consume the entire stream)
             try
             {
-                //Debug.Assert(!EnableChecks_Renamed || StreamState == State.INCREMENT_FALSE, "end() called before IncrementToken() returned false!"); // LUCENENET TODO: Enable this
+                //Assert.True(!enableChecks || streamState == State.INCREMENT_FALSE, "End() called before IncrementToken() returned false!"); // LUCENENET TODO: Enable this
             }
             finally
             {
