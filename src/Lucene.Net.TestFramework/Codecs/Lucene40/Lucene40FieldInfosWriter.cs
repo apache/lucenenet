@@ -93,8 +93,8 @@ namespace Lucene.Net.Codecs.Lucene40
                     output.WriteByte((byte)bits);
 
                     // pack the DV types in one byte
-                    sbyte dv = DocValuesByte(fi.DocValuesType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_DV_TYPE_KEY));
-                    sbyte nrm = DocValuesByte(fi.NormType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_NORM_TYPE_KEY));
+                    byte dv = DocValuesByte(fi.DocValuesType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_DV_TYPE_KEY));
+                    byte nrm = DocValuesByte(fi.NormType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_NORM_TYPE_KEY));
                     Debug.Assert((dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
                     var val = (byte)(0xff & ((nrm << 4) | (byte)dv));
                     output.WriteByte(val);
@@ -117,7 +117,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// 4.0-style docvalues byte </summary>
-        public virtual sbyte DocValuesByte(DocValuesType type, string legacyTypeAtt) // LUCENENET TODO: API CLS compliant return type
+        public virtual byte DocValuesByte(DocValuesType type, string legacyTypeAtt)
         {
             if (type == DocValuesType.NONE)
             {
@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 Debug.Assert(legacyTypeAtt != null);
                 //return (sbyte)LegacyDocValuesType.ordinalLookup[legacyTypeAtt];
-                return (sbyte)legacyTypeAtt.ToLegacyDocValuesType();
+                return (byte)legacyTypeAtt.ToLegacyDocValuesType();
             }
         }
     }
