@@ -37,10 +37,14 @@ namespace Lucene.Net.Util
     /// </summary>
     public abstract partial class LuceneTestCase
     {
-        internal static Random random()
-        {
-            return Random;
-        }
+        // LUCENENET NOTE: This was not added because it causes naming collisions with
+        // member variables "private readonly Random random;". Capitlizing it would collide
+        // with the Random property. Better (and safer) just to convert all of these 
+        // from "random()" to "Random" going forward.
+        //internal static Random random()
+        //{
+        //    return Random;
+        //}
 
         internal static void assertTrue(bool condition)
         {
@@ -185,11 +189,11 @@ namespace Lucene.Net.Util
             long range = (long)max - (long)min;
             if (range < int.MaxValue)
             {
-                return min + random().nextInt(1 + (int)range);
+                return min + Random.nextInt(1 + (int)range);
             }
             else
             {
-                return toIntExact(min + random().Next(1 + (int)range));
+                return toIntExact(min + Random.Next(1 + (int)range));
             }
         }
 
