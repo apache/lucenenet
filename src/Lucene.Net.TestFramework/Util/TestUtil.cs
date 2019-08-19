@@ -1493,12 +1493,5 @@ namespace Lucene.Net.Util
             '\u205F',
             '\u3000'
         };
-
-        public static byte[] ToByteArray(this sbyte[] arr) // LUCENENET TODO: API Not CLS compliant
-        {
-            var unsigned = new byte[arr.Length];
-            System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);
-            return unsigned;
-        }
     }
 }

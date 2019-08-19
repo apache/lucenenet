@@ -318,5 +318,12 @@ namespace Lucene.Net
             var regex = new Regex(search);
             return regex.Replace(text, replace, 1);
         }
+
+        public static byte[] ToByteArray(this sbyte[] arr)
+        {
+            var unsigned = new byte[arr.Length];
+            System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);
+            return unsigned;
+        }
     }
 }
