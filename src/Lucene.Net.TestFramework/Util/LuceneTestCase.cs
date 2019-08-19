@@ -409,9 +409,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Leave temporary files on disk, even on successful runs. </summary>
-        public static readonly bool LEAVE_TEMPORARY;
+        public static readonly bool LEAVE_TEMPORARY = LoadLeaveTemorary();
 
-        static LuceneTestCase() // LUCENENET TODO: Make separate static initializer methods for each property instead of using a static constructor
+        private static bool LoadLeaveTemorary()
         {
             bool defaultValue = false;
             foreach (string property in Arrays.AsList(
@@ -422,26 +422,7 @@ namespace Lucene.Net.Util
             {
                 defaultValue |= SystemProperties.GetPropertyAsBoolean(property, false);
             }
-            LEAVE_TEMPORARY = defaultValue;
-            CORE_DIRECTORIES = new List<string>(FS_DIRECTORIES);
-            CORE_DIRECTORIES.Add("RAMDirectory");
-            int maxFailures = SystemProperties.GetPropertyAsInt32(SYSPROP_MAXFAILURES, int.MaxValue);
-            bool failFast = SystemProperties.GetPropertyAsBoolean(SYSPROP_FAILFAST, false);
-
-            if (failFast)
-            {
-                if (maxFailures == int.MaxValue)
-                {
-                    maxFailures = 1;
-                }
-                else
-                {
-                    Console.Out.Write(typeof(LuceneTestCase).Name + " WARNING: Property '" + SYSPROP_MAXFAILURES + "'=" + maxFailures + ", 'failfast' is" + " ignored.");
-                }
-            }
-
-            //IgnoreAfterMaxFailuresDelegate = new AtomicReference<TestRuleIgnoreAfterMaxFailures>(new TestRuleIgnoreAfterMaxFailures(maxFailures));
-            //IgnoreAfterMaxFailures = TestRuleDelegate.Of(IgnoreAfterMaxFailuresDelegate);
+            return defaultValue;
         }
 
         // LUCENENET: Not Implemented
@@ -462,7 +443,15 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// All <see cref="Directory"/> implementations. </summary>
-        private static readonly IList<string> CORE_DIRECTORIES;
+        private static readonly IList<string> CORE_DIRECTORIES = LoadCoreDirectories();
+
+        private static IList<string> LoadCoreDirectories()
+        {
+            return new List<string>(FS_DIRECTORIES)
+            {
+                "RAMDirectory"
+            };
+        }
 
         protected static readonly HashSet<string> m_doesntSupportOffsets = new HashSet<string>(Arrays.AsList(
             "Lucene3x", 
@@ -536,9 +525,34 @@ namespace Lucene.Net.Util
         ///// a (possibly) changing reference to <see cref="TestRuleIgnoreAfterMaxFailures"/> and we
         ///// dispatch to its current value from the <see cref="#classRules"/> chain using <see cref="TestRuleDelegate"/>.
         ///// </summary>
-        ////private static AtomicReference<TestRuleIgnoreAfterMaxFailures> IgnoreAfterMaxFailuresDelegate;
+        ////private static AtomicReference<TestRuleIgnoreAfterMaxFailures> IgnoreAfterMaxFailuresDelegate = LoadMaxFailuresDelegate();
 
-        //////private static TestRule IgnoreAfterMaxFailures;
+        //////private static TestRule IgnoreAfterMaxFailures = LoadIgnoreAfterMaxFailures();
+
+        ////private static AtomicReference<TestRuleIgnoreAfterMaxFailures> LoadMaxFailuresDelegate()
+        ////{
+        ////    int maxFailures = SystemProperties.GetPropertyAsInt32(SYSPROP_MAXFAILURES, int.MaxValue);
+        ////    bool failFast = SystemProperties.GetPropertyAsBoolean(SYSPROP_FAILFAST, false);
+
+        ////    if (failFast)
+        ////    {
+        ////        if (maxFailures == int.MaxValue)
+        ////        {
+        ////            maxFailures = 1;
+        ////        }
+        ////        else
+        ////        {
+        ////            Console.Out.Write(typeof(LuceneTestCase).Name + " WARNING: Property '" + SYSPROP_MAXFAILURES + "'=" + maxFailures + ", 'failfast' is" + " ignored.");
+        ////        }
+        ////    }
+
+        ////    return new AtomicReference<TestRuleIgnoreAfterMaxFailures>(new TestRuleIgnoreAfterMaxFailures(maxFailures));
+        ////}
+
+        ////private static TestRule LoadIgnoreAfterMaxFailures()
+        ////{
+        ////    return TestRuleDelegate.Of(IgnoreAfterMaxFailuresDelegate);
+        ////}
 
         /////// <summary>
         /////// Temporarily substitute the global <seealso cref="TestRuleIgnoreAfterMaxFailures"/>. See
