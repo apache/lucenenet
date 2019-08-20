@@ -97,41 +97,44 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestMergeStability()
         {
-            Directory dir = NewDirectory();
-            // do not use newMergePolicy that might return a MockMergePolicy that ignores the no-CFS ratio
-            MergePolicy mp = NewTieredMergePolicy();
-            mp.NoCFSRatio = 0;
-            var cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetUseCompoundFile(false).SetMergePolicy(mp);
-            using (var w = new RandomIndexWriter(Random, dir, cfg))
+            using (Directory dir = NewDirectory())
             {
-                var numDocs = AtLeast(500);
-                for (var i = 0; i < numDocs; ++i)
+                // do not use newMergePolicy that might return a MockMergePolicy that ignores the no-CFS ratio
+                MergePolicy mp = NewTieredMergePolicy();
+                mp.NoCFSRatio = 0;
+                var cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetUseCompoundFile(false).SetMergePolicy(mp);
+                using (var w = new RandomIndexWriter(Random, dir, cfg))
                 {
-                    var d = new Document();
-                    AddRandomFields(d);
-                    w.AddDocument(d);
+                    var numDocs = AtLeast(500);
+                    for (var i = 0; i < numDocs; ++i)
+                    {
+                        var d = new Document();
+                        AddRandomFields(d);
+                        w.AddDocument(d);
+                    }
+                    w.ForceMerge(1);
+                    w.Commit();
                 }
-                w.ForceMerge(1);
-                w.Commit();
-            }
-            IndexReader reader = DirectoryReader.Open(dir);
+                using (IndexReader reader = DirectoryReader.Open(dir))
+                {
+                    using (Directory dir2 = NewDirectory())
+                    {
+                        mp = NewTieredMergePolicy();
+                        mp.NoCFSRatio = 0;
+                        cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetUseCompoundFile(false).SetMergePolicy(mp);
 
-            Directory dir2 = NewDirectory();
-            mp = NewTieredMergePolicy();
-            mp.NoCFSRatio = 0;
-            cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetUseCompoundFile(false).SetMergePolicy(mp);
+                        using (var w = new RandomIndexWriter(Random, dir2, cfg))
+                        {
+                            w.AddIndexes(reader);
+                            w.Commit();
+                        }
 
-            using (var w = new RandomIndexWriter(Random, dir2, cfg))
-            {
-                w.AddIndexes(reader);
-                w.Commit();
-            }
+                        assertEquals(BytesUsedByExtension(dir), BytesUsedByExtension(dir2));
 
-            assertEquals(BytesUsedByExtension(dir), BytesUsedByExtension(dir2));
-
-            reader.Dispose();
-            dir.Dispose();
-            dir2.Dispose();
+                    } // dir2.Dispose();
+                } // reader.Dispose();
+            } // dir.Dispose();
+            
         }
     }
 }
