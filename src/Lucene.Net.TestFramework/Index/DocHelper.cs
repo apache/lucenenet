@@ -163,13 +163,14 @@ namespace Lucene.Net.Index
         /// </summary>
         public static SegmentCommitInfo WriteDoc(Random random, Directory dir, Analyzer analyzer, Similarity similarity, Document doc)
         {
-            IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(Util.LuceneTestCase.TEST_VERSION_CURRENT, analyzer)).SetSimilarity(similarity ?? IndexSearcher.DefaultSimilarity)); // LuceneTestCase.newIndexWriterConfig(random,
-            //writer.SetNoCFSRatio(0.0);
-            writer.AddDocument(doc);
-            writer.Commit();
-            SegmentCommitInfo info = writer.NewestSegment();
-            writer.Dispose();
-            return info;
+            using (IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(Util.LuceneTestCase.TEST_VERSION_CURRENT, analyzer)).SetSimilarity(similarity ?? IndexSearcher.DefaultSimilarity))) // LuceneTestCase.newIndexWriterConfig(random,
+            {
+                //writer.SetNoCFSRatio(0.0);
+                writer.AddDocument(doc);
+                writer.Commit();
+                SegmentCommitInfo info = writer.NewestSegment();
+                return info;
+            } // writer.Dispose();
         }
 
         public static int NumFields(Document doc)
