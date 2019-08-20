@@ -552,12 +552,11 @@ namespace Lucene.Net.Store
         {
             if (randomState.NextDouble() < randomIOExceptionRate)
             {
-                // LUCENENET TODO: Finish implementation
-                /*if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.VERBOSE)
                 {
-                  Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception" + (message == null ? "" : " (" + message + ")"));
-                  (new Exception()).printStackTrace(System.out);
-                }*/
+                    Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception" + (message == null ? "" : " (" + message + ")"));
+                    //(new Exception()).printStackTrace(System.out);
+                }
                 throw new System.IO.IOException("a randomSystem.IO.IOException" + (message == null ? "" : " (" + message + ")"));
             }
         }
@@ -566,12 +565,11 @@ namespace Lucene.Net.Store
         {
             if (randomState.NextDouble() < randomIOExceptionRateOnOpen)
             {
-                // LUCENENET TODO: Finish implementation
-                /*if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.VERBOSE)
                 {
                   Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception during open file=" + name);
-                  (new Exception()).printStackTrace(System.out);
-                }*/
+                  //(new Exception()).printStackTrace(System.out);
+                }
                 if (allowRandomFileNotFoundException == false || randomState.NextBoolean())
                 {
                     throw new System.IO.IOException("a randomSystem.IO.IOException (" + name + ")");
