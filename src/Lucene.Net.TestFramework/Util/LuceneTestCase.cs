@@ -40,6 +40,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Console = Lucene.Net.Support.SystemConsole;
+using System.Text.RegularExpressions;
 
 // LUCENENET NOTE: These are primarily here because they are referred to
 // in the XML documentation. Be sure to add a new option if a new test framework
@@ -298,8 +299,19 @@ namespace Lucene.Net.Util
         /// (because they are expensive, for example).
         /// </summary>
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+        
         public class SuppressCodecsAttribute : System.Attribute // LUCENENET: API looks better with this nested
         {
+            /// <summary>
+            /// Constructor for CLS compliance.
+            /// </summary>
+            /// <param name="codecs">A comma-deliminated set of codec names.</param>
+            public SuppressCodecsAttribute(string codecs)
+            {
+                this.Value = Regex.Split(codecs, @"\s*,\s*");
+            }
+
+            [CLSCompliant(false)]
             public SuppressCodecsAttribute(params string[] value)
             {
                 this.Value = value;
