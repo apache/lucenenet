@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
             conf.SetMergePolicy(tmp);
 
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, conf);
-            w.RandomForceMerge = false;
+            w.DoRandomForceMerge = false;
 
             int numDocs = AtLeast(200);
             for (int i = 0; i < numDocs; i++)

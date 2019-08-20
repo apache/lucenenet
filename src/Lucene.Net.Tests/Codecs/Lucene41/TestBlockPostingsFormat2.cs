@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.Lucene41
             Iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             Iwc.SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()));
             Iw = new RandomIndexWriter(Random, Dir, (IndexWriterConfig)Iwc.Clone());
-            Iw.RandomForceMerge = false; // we will ourselves
+            Iw.DoRandomForceMerge = false; // we will ourselves
         }
 
         [TearDown]

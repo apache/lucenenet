@@ -193,7 +193,7 @@ namespace Lucene.Net.Index.Sorter
             conf.SetSimilarity(new NormsSimilarity(conf.Similarity)); // for testing norms field
             using (RandomIndexWriter writer = new RandomIndexWriter(random, dir, conf))
             {
-                writer.RandomForceMerge = (false);
+                writer.DoRandomForceMerge = (false);
                 foreach (int id in ids)
                 {
                     writer.AddDocument(Doc(id, positions));

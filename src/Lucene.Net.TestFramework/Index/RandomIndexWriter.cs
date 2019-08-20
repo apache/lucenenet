@@ -432,7 +432,7 @@ namespace Lucene.Net.Index
             IndexWriter.ForceMergeDeletes();
         }
 
-        public virtual bool RandomForceMerge // LUCENENET TODO: API - rename back to DoRandomForceMerge (and change private method name slightly so it doesn't collide)
+        public virtual bool DoRandomForceMerge
         {
             get // LUCENENET specific - added getter (to follow MSDN property guidelines)
             {
@@ -456,7 +456,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DoRandomForceMerge()
+        private void _DoRandomForceMerge() // LUCENENET specific - added leading underscore to keep this from colliding with the DoRandomForceMerge property
         {
             if (doRandomForceMerge)
             {
@@ -489,7 +489,7 @@ namespace Lucene.Net.Index
             getReaderCalled = true;
             if (r.Next(20) == 2)
             {
-                DoRandomForceMerge();
+                _DoRandomForceMerge();
             }
             // If we are writing with PreFlexRW, force a full
             // IndexReader.open so terms are sorted in codepoint
@@ -546,7 +546,7 @@ namespace Lucene.Net.Index
                 // forceMerge since presumably they might open a reader on the dir.
                 if (getReaderCalled == false && r.Next(8) == 2)
                 {
-                    DoRandomForceMerge();
+                    _DoRandomForceMerge();
                 }
                 IndexWriter.Dispose();
             }
