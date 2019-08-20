@@ -1247,8 +1247,8 @@ namespace Lucene.Net.Util
                     CharsRef chars = new CharsRef(@ref.Length);
                     UnicodeUtil.UTF8toUTF16(@ref.Bytes, @ref.Offset, @ref.Length, chars);
                     return chars;
-                //case 3:
-                //return CharBuffer.wrap(@ref.Utf8ToString()); // LUCENENET TODO: Add this now that CharBuffer is implemented
+                //case 3: // LUCENENET: Not ported
+                //    return CharBuffer.Wrap(@ref.Utf8ToString());
                 default:
                     return new StringCharSequenceWrapper(@ref.Utf8ToString());
             }
