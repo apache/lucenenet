@@ -37,9 +37,7 @@ on some of the conceptual or inner details of Lucene:
 * [Classic Scoring Formula](xref:Lucene.Net.Search.Similarities.TFIDFSimilarity): Formula of Lucene's classic [Vector Space](http://en.wikipedia.org/wiki/Vector_Space_Model) implementation. (look [here](xref:Lucene.Net.Search.Similarities) for other models)
 * [Classic QueryParser Syntax](xref:Lucene.Net.QueryParsers.Classic): Overview of the Classic QueryParser's syntax and features.
 
-## API Docs
-
-### Packages
+## Libraries
 
 * [Lucene.Net](xref:Lucene.Net): Lucene core library
 * [Lucene.Net.Analysis.Common](xref:Lucene.Net.Analysis): Analyzers for indexing content in different languages and domains.
