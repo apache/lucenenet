@@ -39,6 +39,8 @@ on some of the conceptual or inner details of Lucene:
 
 ## Libraries
 
+### Packages
+
 * [Lucene.Net](xref:Lucene.Net): Lucene core library
 * [Lucene.Net.Analysis.Common](xref:Lucene.Net.Analysis): Analyzers for indexing content in different languages and domains.
 * [Lucene.Net.ICU](xref:Lucene.Net.Analysis.Icu): Analysis integration with ICU (International Components for Unicode).
