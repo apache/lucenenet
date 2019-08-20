@@ -129,10 +129,12 @@
   <ItemGroup>
     <Compile Include="Formatters\CodeLinkReplacer.cs" />
     <Compile Include="DocConverter.cs" />
+    <Compile Include="Formatters\DivWrapperReplacer.cs" />
     <Compile Include="Formatters\DocTypeReplacer.cs" />
     <Compile Include="Formatters\ExtraHtmlElementReplacer.cs" />
     <Compile Include="Formatters\IReplacer.cs" />
     <Compile Include="Formatters\JavaDocFormatters.cs" />
+    <Compile Include="Formatters\NamedAnchorLinkReplacer.cs" />
     <Compile Include="Formatters\PatternReplacer.cs" />
     <Compile Include="Formatters\RepoLinkReplacer.cs" />
     <Compile Include="Program.cs" />

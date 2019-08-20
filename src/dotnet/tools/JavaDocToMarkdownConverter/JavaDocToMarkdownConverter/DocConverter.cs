@@ -83,9 +83,10 @@ namespace JavaDocToMarkdownConverter
             {
                 markdown = r.Replace(markdown);
             }
-            if (JavaDocFormatters.CustomReplacers.TryGetValue(ns, out var cr))
+            if (JavaDocFormatters.CustomReplacers.TryGetValue(ns, out var replacers))
             {
-                markdown = cr.Replace(markdown);
+                foreach(var r in replacers)
+                    markdown = r.Replace(markdown);
             }
 
             var appendYamlHeader = ShouldAppendYamlHeader(inputDoc, ns);

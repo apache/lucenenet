@@ -19,10 +19,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace JavaDocToMarkdownConverter.Formatters
 {
-    
+
     public class JavaDocFormatters
     {
         public static IEnumerable<IReplacer> Replacers => new IReplacer[]
@@ -30,15 +31,26 @@ namespace JavaDocToMarkdownConverter.Formatters
                 new CodeLinkReplacer(),
                 new RepoLinkReplacer(),
                 new DocTypeReplacer(),
-                new ExtraHtmlElementReplacer()
+                new ExtraHtmlElementReplacer(),
+                new NamedAnchorLinkReplacer(),
+                new DivWrapperReplacer()
             };
 
         /// <summary>
         /// A list of custom replacers for specific uid files
         /// </summary>
-        public static IDictionary<string, IReplacer> CustomReplacers => new Dictionary<string, IReplacer>(StringComparer.InvariantCultureIgnoreCase)
+        public static IDictionary<string, IReplacer[]> CustomReplacers => new Dictionary<string, IReplacer[]>(StringComparer.InvariantCultureIgnoreCase)
         {
-            ["Lucene.Net"] = new PatternReplacer(new System.Text.RegularExpressions.Regex("To demonstrate these, try something like:.*$", System.Text.RegularExpressions.RegexOptions.Singleline))
+            ["Lucene.Net"] = new IReplacer[]
+            {
+                new PatternReplacer(new Regex("To demonstrate these, try something like:.*$", RegexOptions.Singleline))
+            },
+            ["Lucene.Net.Demo"] = new IReplacer[]
+            {
+                new PatternReplacer(new Regex("(## Setting your CLASSPATH.*?)(##)", RegexOptions.Singleline), "$2"),
+                new PatternReplacer(new Regex(@"\[IndexFiles.*?\]\(.+?\)", RegexOptions.Singleline), "[IndexFiles](xref:Lucene.Net.Demo.IndexFiles)"),
+                new PatternReplacer(new Regex(@"\[SearchFiles.*?\]\(.+?\)", RegexOptions.Singleline), "[SearchFiles](xref:Lucene.Net.Demo.SearchFiles)")
+            },
         };
     }
 }

@@ -25,6 +25,7 @@ using System.Text.RegularExpressions;
 
 namespace JavaDocToMarkdownConverter.Formatters
 {
+
     /// <summary>
     /// For some reason the normal markdown converter doesn't get a few html elements so this removes those
     /// </summary>
