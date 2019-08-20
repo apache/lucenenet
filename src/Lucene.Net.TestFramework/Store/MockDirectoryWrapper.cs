@@ -993,7 +993,7 @@ namespace Lucene.Net.Store
                             + string.Join(" ,", openLocks.ToArray()));
                     }
 
-                    m_isOpen = false;
+                    IsOpen = false;
                     if (CheckIndexOnDispose)
                     {
                         randomIOExceptionRate = 0.0;

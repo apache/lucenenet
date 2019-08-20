@@ -30,7 +30,7 @@ namespace Lucene.Net.Store
     {
         private bool checkIndexOnClose = true;
         private bool crossCheckTermVectorsOnClose = true;
-        protected volatile bool m_isOpen = true;
+        private volatile bool isOpen = true; // LUCENENET specific - private because volatile is not CLS compliant, but made protected setter
 
         public BaseDirectoryWrapper(Directory @delegate)
             : base(@delegate)
@@ -41,7 +41,7 @@ namespace Lucene.Net.Store
         {
             if (disposing)
             {
-                m_isOpen = false;
+                isOpen = false;
                 if (checkIndexOnClose && DirectoryReader.IndexExists(this))
                 {
                     TestUtil.CheckIndex(this, crossCheckTermVectorsOnClose);
@@ -54,7 +54,11 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return m_isOpen;
+                return isOpen;
+            }
+            protected set // LUCENENET specific - added protected setter and marked isOpen private because volatile is not CLS compliant
+            {
+                isOpen = value;
             }
         }
 
