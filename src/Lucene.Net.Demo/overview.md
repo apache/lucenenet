@@ -25,8 +25,10 @@ The demo module offers simple example code to show the features of Lucene.
 # Apache Lucene - Building and Installing the Basic Demo
 
 
+
 *   [About this Document](#about-this-document)
 *   [About the Demo](#about-the-demo)
+*   [Setting your CLASSPATH](#setting-your-classpath)
 *   [Indexing Files](#indexing-files)
 *   [About the code](#about-the-code)
 *   [Location of the source](#location-of-the-source)
@@ -34,15 +36,26 @@ The demo module offers simple example code to show the features of Lucene.
 *   [Searching Files](#searching-files)
 
 
+
 ## About this Document
+
+
 
 This document is intended as a "getting started" guide to using and running the Lucene demos. It walks you through some basic installation and configuration.
 
+
+
 ## About the Demo
+
+
 
 The Lucene command-line demo code consists of an application that demonstrates various functionalities of Lucene and how you can add Lucene to your applications.
 
+
+
 ## Indexing Files
+
+
 
 Once you've gotten this far you're probably itching to go. Let's **build an index!** Assuming you've set your CLASSPATH correctly, just type:
 
@@ -64,13 +77,23 @@ you want more results.
 
 ## About the code
 
+
+
 In this section we walk through the sources behind the command-line Lucene demo: where to find them, their parts and their function. This section is intended for Java developers wishing to understand how to use Lucene in their applications.
+
+
 
 ## Location of the source
 
+
+
 The files discussed here are linked into this documentation directly: * [IndexFiles](xref:Lucene.Net.Demo.IndexFiles): code to create a Lucene index. [SearchFiles](xref:Lucene.Net.Demo.SearchFiles): code to search a Lucene index. 
 
+
+
 ## IndexFiles
+
+
 
 As we discussed in the previous walk-through, the [IndexFiles](xref:Lucene.Net.Demo.IndexFiles) class creates a Lucene Index. Let's take a look at how it does this.
 
@@ -90,9 +113,14 @@ The <span class="codefrag">IndexWriterConfig</span> instance holds all configura
 
 Looking further down in the file, after <span class="codefrag">IndexWriter</span> is instantiated, you should see the <span class="codefrag">indexDocs()</span> code. This recursive function crawls the directories and creates [Document](xref:Lucene.Net.Documents.Document) objects. The <span class="codefrag">Document</span> is simply a data object to represent the text content from the file as well as its creation time and location. These instances are added to the <span class="codefrag">IndexWriter</span>. If the <span class="codefrag">-update</span> command-line parameter is given, the <span class="codefrag">IndexWriterConfig</span> <span class="codefrag">OpenMode</span> will be set to [OpenMode.CREATE_OR_APPEND](xref:Lucene.Net.Index.IndexWriterConfig.OpenMode#methods), and rather than adding documents to the index, the <span class="codefrag">IndexWriter</span> will **update** them in the index by attempting to find an already-indexed document with the same identifier (in our case, the file path serves as the identifier); deleting it from the index if it exists; and then adding the new document to the index.
 
+
+
 ## Searching Files
+
+
 
 The [SearchFiles](xref:Lucene.Net.Demo.SearchFiles) class is quite simple. It primarily collaborates with an [IndexSearcher](xref:Lucene.Net.Search.IndexSearcher), [StandardAnalyzer](xref:Lucene.Net.Analysis.Standard.StandardAnalyzer), (which is used in the [IndexFiles](xref:Lucene.Net.Demo.IndexFiles) class as well) and a [QueryParser](xref:Lucene.Net.QueryParsers.Classic.QueryParser). The query parser is constructed with an analyzer used to interpret your query text in the same way the documents are interpreted: finding word boundaries, downcasing, and removing useless words like 'a', 'an' and 'the'. The <xref:Lucene.Net.Search.Query> object contains the results from the [QueryParser](xref:Lucene.Net.QueryParsers.Classic.QueryParser) which is passed to the searcher. Note that it's also possible to programmatically construct a rich <xref:Lucene.Net.Search.Query> object without using the query parser. The query parser just enables decoding the [ Lucene query syntax](../queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description) into the corresponding [Query](xref:Lucene.Net.Search.Query) object.
 
 <span class="codefrag">SearchFiles</span> uses the [IndexSearcher.search](xref:Lucene.Net.Search.IndexSearcher#methods) method that returns [TopDocs](xref:Lucene.Net.Search.TopDocs) with max <span class="codefrag">n</span> hits. The results are printed in pages, sorted by score (i.e. relevance).
+
 
