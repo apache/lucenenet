@@ -37,51 +37,51 @@ enabling substantial customization to how a query is created.
 ## Query Parser Syntax
 
 
-<div id="minitoc-area">
 
-*   [Overview](#Overview)
 
-*   [Terms](#Terms)
+*   [Overview](#overview)
 
-*   [Fields](#Fields)
+*   [Terms](#terms)
 
-*   [Term Modifiers](#Term_Modifiers)
+*   [Fields](#fields)
 
-    *   [Wildcard Searches](#Wildcard_Searches)
+*   [Term Modifiers](#term-modifiers)
 
-    *   [Regular expression Searches](#Regexp_Searches)
+    *   [Wildcard Searches](#wildcard-searches)
 
-    *   [Fuzzy Searches](#Fuzzy_Searches)
+    *   [Regular expression Searches](#regexp-searches)
 
-    *   [Proximity Searches](#Proximity_Searches)
+    *   [Fuzzy Searches](#fuzzy-searches)
 
-    *   [Range Searches](#Range_Searches)
+    *   [Proximity Searches](#proximity-searches)
 
-    *   [Boosting a Term](#Boosting_a_Term)
+    *   [Range Searches](#range-searches)
 
-*   [Boolean Operators](#Boolean_operators)
+    *   [Boosting a Term](#boosting-a-term)
 
-    *   [OR](#OR)
+*   [Boolean Operators](#boolean-operators)
 
-    *   [AND](#AND)
+    *   [OR](#or)
+
+    *   [AND](#and)
 
     *   [+](#+)
 
-    *   [NOT](#NOT)
+    *   [NOT](#not)
 
     *   [-](#-)
 
-*   [Grouping](#Grouping)
+*   [Grouping](#grouping)
 
-*   [Field Grouping](#Field_Grouping)
+*   [Field Grouping](#field-grouping)
 
-*   [Escaping Special Characters](#Escaping_Special_Characters)
+*   [Escaping Special Characters](#escaping-special-characters)
 
-</div>
+
 
 ## Overview
 
-<div class="section">
+
 
 Although Lucene provides the ability to create your own queries through its API, it also provides a rich query language through the Query Parser, a lexer which interprets a string into a Lucene Query using JavaCC. 
 
@@ -89,11 +89,11 @@ Generally, the query parser syntax may change from release to release. This page
 
  Before choosing to use the provided Query Parser, please consider the following: 1. If you are programmatically generating a query string and then parsing it with the query parser then you should seriously consider building your queries directly with the query API. In other words, the query parser is designed for human-entered text, not for program-generated text. 2. Untokenized fields are best added directly to queries, and not through the query parser. If a field's values are generated programmatically by the application, then so should query clauses for this field. An analyzer, which the query parser uses, is designed to convert human-entered text to terms. Program-generated values, like dates, keywords, etc., should be consistently program-generated. 3. In a query form, fields which are general text should use the query parser. All others, such as date ranges, keywords, etc. are better added directly through the query API. A field with a limit set of values, that can be specified with a pull-down menu should not be added to a query string which is subsequently parsed, but rather added as a TermQuery clause. 
 
-</div>
+
 
 ## Terms
 
-<div class="section">
+
 
 A query is broken up into terms and operators. There are two types of terms: Single Terms and Phrases.
 
@@ -105,11 +105,11 @@ Multiple terms can be combined together with Boolean operators to form a more co
 
 Note: The analyzer used to create the index will be used on the terms and phrases in the query string. So it is important to choose an analyzer that will not interfere with the terms used in the query string.
 
-</div>
+
 
 ## Fields
 
-<div class="section">
+
 
 Lucene supports fielded data. When performing a search you can either specify a field, or use the default field. The field names and default field is implementation specific.
 
@@ -131,11 +131,11 @@ title:The Right Way
 
 Will only find "The" in the title field. It will find "Right" and "Way" in the default field (in this case the text field). 
 
-</div>
+
 
 ## Term Modifiers
 
-<div class="section">
+
 
 Lucene supports modifying query terms to provide a wide range of searching options.
 
@@ -221,11 +221,11 @@ This will make documents with the term jakarta appear more relevant. You can als
 
 By default, the boost factor is 1. Although the boost factor must be positive, it can be less than 1 (e.g. 0.2)
 
-</div>
+
 
 ## Boolean Operators
 
-<div class="section">
+
 
 Boolean operators allow terms to be combined through logic operators. Lucene supports AND, "+", OR, NOT and "-" as Boolean operators(Note: Boolean operators must be ALL CAPS).
 
@@ -277,11 +277,11 @@ To search for documents that contain "jakarta apache" but not "Apache Lucene" us
 
 "jakarta apache" -"Apache Lucene"
 
-</div>
+
 
 ## Grouping
 
-<div class="section">
+
 
 Lucene supports using parentheses to group clauses to form sub queries. This can be very useful if you want to control the boolean logic for a query.
 
@@ -291,11 +291,11 @@ To search for either "jakarta" or "apache" and "website" use the query:
 
 This eliminates any confusion and makes sure you that website must exist and either term jakarta or apache may exist.
 
-</div>
+
 
 ## Field Grouping
 
-<div class="section">
+
 
 Lucene supports using parentheses to group multiple clauses to a single field.
 
@@ -303,11 +303,11 @@ To search for a title that contains both the word "return" and the phrase "pink 
 
 title:(+return +"pink panther")
 
-</div>
+
 
 ## Escaping Special Characters
 
-<div class="section">
+
 
 Lucene supports escaping special characters that are part of the query syntax. The current list special characters are
 
@@ -317,4 +317,3 @@ To escape these character use the \ before the character. For example to search 
 
 \(1\+1\)\:2
 
-</div>

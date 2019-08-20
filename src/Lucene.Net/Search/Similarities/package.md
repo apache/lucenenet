@@ -29,7 +29,7 @@ package.
 
 ## Table Of Contents
 
- 1. [Summary of the Ranking Methods](#sims) 2. [Changing the Similarity](#changingSimilarity) 
+ 1. [Summary of the Ranking Methods](#sims) 2. [Changing the Similarity](#changingsimilarity) 
 
 ## Summary of the Ranking Methods
 
@@ -37,7 +37,7 @@ package.
 
 <xref:Lucene.Net.Search.Similarities.BM25Similarity> is an optimized implementation of the successful Okapi BM25 model.
 
-<xref:Lucene.Net.Search.Similarities.SimilarityBase> provides a basic implementation of the Similarity contract and exposes a highly simplified interface, which makes it an ideal starting point for new ranking functions. Lucene ships the following methods built on <xref:Lucene.Net.Search.Similarities.SimilarityBase>: * Amati and Rijsbergen's {@linkplain org.apache.lucene.search.similarities.DFRSimilarity DFR} framework; * Clinchant and Gaussier's {@linkplain org.apache.lucene.search.similarities.IBSimilarity Information-based models} for IR; * The implementation of two {@linkplain org.apache.lucene.search.similarities.LMSimilarity language models} from Zhai and Lafferty's paper. Since <xref:Lucene.Net.Search.Similarities.SimilarityBase> is not optimized to the same extent as <xref:Lucene.Net.Search.Similarities.DefaultSimilarity> and <xref:Lucene.Net.Search.Similarities.BM25Similarity>, a difference in performance is to be expected when using the methods listed above. However, optimizations can always be implemented in subclasses; see [below](#changingSimilarity).
+<xref:Lucene.Net.Search.Similarities.SimilarityBase> provides a basic implementation of the Similarity contract and exposes a highly simplified interface, which makes it an ideal starting point for new ranking functions. Lucene ships the following methods built on <xref:Lucene.Net.Search.Similarities.SimilarityBase>: * Amati and Rijsbergen's {@linkplain org.apache.lucene.search.similarities.DFRSimilarity DFR} framework; * Clinchant and Gaussier's {@linkplain org.apache.lucene.search.similarities.IBSimilarity Information-based models} for IR; * The implementation of two {@linkplain org.apache.lucene.search.similarities.LMSimilarity language models} from Zhai and Lafferty's paper. Since <xref:Lucene.Net.Search.Similarities.SimilarityBase> is not optimized to the same extent as <xref:Lucene.Net.Search.Similarities.DefaultSimilarity> and <xref:Lucene.Net.Search.Similarities.BM25Similarity>, a difference in performance is to be expected when using the methods listed above. However, optimizations can always be implemented in subclasses; see [below](#changingsimilarity).
 
 ## Changing Similarity
 
