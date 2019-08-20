@@ -88,280 +88,305 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestOneNumber()
         {
-            Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-            Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
-            doc.Add(NewTextField("fieldname", text, Field.Store.YES));
-            doc.Add(new NumericDocValuesField("dv", 5));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
-
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            IndexSearcher isearcher = new IndexSearcher(ireader);
-
-            Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
-            Query query = new TermQuery(new Term("fieldname", "text"));
-            TopDocs hits = isearcher.Search(query, null, 1);
-            Assert.AreEqual(1, hits.TotalHits);
-            // Iterate through the results:
-            for (int i = 0; i < hits.ScoreDocs.Length; i++)
+            using (Directory directory = NewDirectory())
             {
-                Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
-                Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                Debug.Assert(ireader.Leaves.Count == 1);
-                NumericDocValues dv = ((AtomicReader)((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader))).GetNumericDocValues("dv");
-                Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
-            }
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                {
+                    Document doc = new Document();
+                    doc.Add(NewTextField("fieldname", text, Field.Store.YES));
+                    doc.Add(new NumericDocValuesField("dv", 5));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
 
-            ireader.Dispose();
-            directory.Dispose();
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    IndexSearcher isearcher = new IndexSearcher(ireader);
+
+                    Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
+                    Query query = new TermQuery(new Term("fieldname", "text"));
+                    TopDocs hits = isearcher.Search(query, null, 1);
+                    Assert.AreEqual(1, hits.TotalHits);
+                    // Iterate through the results:
+                    for (int i = 0; i < hits.ScoreDocs.Length; i++)
+                    {
+                        Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+                        Assert.AreEqual(text, hitDoc.Get("fieldname"));
+                        Debug.Assert(ireader.Leaves.Count == 1);
+                        NumericDocValues dv = ((AtomicReader)((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader))).GetNumericDocValues("dv");
+                        Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
+                    }
+
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestOneSingle() // LUCENENET specific - renamed from TestOneFloat
         {
-            Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-            Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
-            doc.Add(NewTextField("fieldname", text, Field.Store.YES));
-            doc.Add(new SingleDocValuesField("dv", 5.7f));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            IndexSearcher isearcher = new IndexSearcher(ireader);
-
-            Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
-            Query query = new TermQuery(new Term("fieldname", "text"));
-            TopDocs hits = isearcher.Search(query, null, 1);
-            Assert.AreEqual(1, hits.TotalHits);
-            // Iterate through the results:
-            for (int i = 0; i < hits.ScoreDocs.Length; i++)
+            using (Directory directory = NewDirectory())
             {
-                Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
-                Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                Debug.Assert(ireader.Leaves.Count == 1);
-                NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv");
-                Assert.AreEqual(Number.SingleToInt32Bits(5.7f), dv.Get(hits.ScoreDocs[i].Doc));
-            }
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                {
+                    Document doc = new Document();
+                    doc.Add(NewTextField("fieldname", text, Field.Store.YES));
+                    doc.Add(new SingleDocValuesField("dv", 5.7f));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
 
-            ireader.Dispose();
-            directory.Dispose();
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    IndexSearcher isearcher = new IndexSearcher(ireader);
+
+                    Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
+                    Query query = new TermQuery(new Term("fieldname", "text"));
+                    TopDocs hits = isearcher.Search(query, null, 1);
+                    Assert.AreEqual(1, hits.TotalHits);
+                    // Iterate through the results:
+                    for (int i = 0; i < hits.ScoreDocs.Length; i++)
+                    {
+                        Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+                        Assert.AreEqual(text, hitDoc.Get("fieldname"));
+                        Debug.Assert(ireader.Leaves.Count == 1);
+                        NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv");
+                        Assert.AreEqual(Number.SingleToInt32Bits(5.7f), dv.Get(hits.ScoreDocs[i].Doc));
+                    }
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwoNumbers()
         {
-            Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-            Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
-            doc.Add(NewTextField("fieldname", text, Field.Store.YES));
-            doc.Add(new NumericDocValuesField("dv1", 5));
-            doc.Add(new NumericDocValuesField("dv2", 17));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
-
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            IndexSearcher isearcher = new IndexSearcher(ireader);
-
-            Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
-            Query query = new TermQuery(new Term("fieldname", "text"));
-            TopDocs hits = isearcher.Search(query, null, 1);
-            Assert.AreEqual(1, hits.TotalHits);
-            // Iterate through the results:
-            for (int i = 0; i < hits.ScoreDocs.Length; i++)
+            using (Directory directory = NewDirectory())
             {
-                Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
-                Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                Debug.Assert(ireader.Leaves.Count == 1);
-                NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv1");
-                Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
-                dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv2");
-                Assert.AreEqual(17, dv.Get(hits.ScoreDocs[i].Doc));
-            }
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                {
+                    Document doc = new Document();
+                    doc.Add(NewTextField("fieldname", text, Field.Store.YES));
+                    doc.Add(new NumericDocValuesField("dv1", 5));
+                    doc.Add(new NumericDocValuesField("dv2", 17));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
 
-            ireader.Dispose();
-            directory.Dispose(); // LUCENENET TODO: using blocks in this whole class
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    IndexSearcher isearcher = new IndexSearcher(ireader);
+
+                    Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
+                    Query query = new TermQuery(new Term("fieldname", "text"));
+                    TopDocs hits = isearcher.Search(query, null, 1);
+                    Assert.AreEqual(1, hits.TotalHits);
+                    // Iterate through the results:
+                    for (int i = 0; i < hits.ScoreDocs.Length; i++)
+                    {
+                        Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+                        Assert.AreEqual(text, hitDoc.Get("fieldname"));
+                        Debug.Assert(ireader.Leaves.Count == 1);
+                        NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv1");
+                        Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
+                        dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv2");
+                        Assert.AreEqual(17, dv.Get(hits.ScoreDocs[i].Doc));
+                    }
+
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwoBinaryValues()
         {
-            Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-            Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
-            doc.Add(NewTextField("fieldname", text, Field.Store.YES));
-            doc.Add(new BinaryDocValuesField("dv1", new BytesRef(longTerm)));
-            doc.Add(new BinaryDocValuesField("dv2", new BytesRef(text)));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
-
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            IndexSearcher isearcher = new IndexSearcher(ireader);
-
-            Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
-            Query query = new TermQuery(new Term("fieldname", "text"));
-            TopDocs hits = isearcher.Search(query, null, 1);
-            Assert.AreEqual(1, hits.TotalHits);
-            // Iterate through the results:
-            for (int i = 0; i < hits.ScoreDocs.Length; i++)
+            using (Directory directory = NewDirectory())
             {
-                Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
-                Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                Debug.Assert(ireader.Leaves.Count == 1);
-                BinaryDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetBinaryDocValues("dv1");
-                BytesRef scratch = new BytesRef();
-                dv.Get(hits.ScoreDocs[i].Doc, scratch);
-                Assert.AreEqual(new BytesRef(longTerm), scratch);
-                dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetBinaryDocValues("dv2");
-                dv.Get(hits.ScoreDocs[i].Doc, scratch);
-                Assert.AreEqual(new BytesRef(text), scratch);
-            }
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                {
+                    Document doc = new Document();
 
-            ireader.Dispose();
-            directory.Dispose();
+                    doc.Add(NewTextField("fieldname", text, Field.Store.YES));
+                    doc.Add(new BinaryDocValuesField("dv1", new BytesRef(longTerm)));
+                    doc.Add(new BinaryDocValuesField("dv2", new BytesRef(text)));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
+
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    IndexSearcher isearcher = new IndexSearcher(ireader);
+
+                    Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
+                    Query query = new TermQuery(new Term("fieldname", "text"));
+                    TopDocs hits = isearcher.Search(query, null, 1);
+                    Assert.AreEqual(1, hits.TotalHits);
+                    // Iterate through the results:
+                    for (int i = 0; i < hits.ScoreDocs.Length; i++)
+                    {
+                        Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+                        Assert.AreEqual(text, hitDoc.Get("fieldname"));
+                        Debug.Assert(ireader.Leaves.Count == 1);
+                        BinaryDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetBinaryDocValues("dv1");
+                        BytesRef scratch = new BytesRef();
+                        dv.Get(hits.ScoreDocs[i].Doc, scratch);
+                        Assert.AreEqual(new BytesRef(longTerm), scratch);
+                        dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetBinaryDocValues("dv2");
+                        dv.Get(hits.ScoreDocs[i].Doc, scratch);
+                        Assert.AreEqual(new BytesRef(text), scratch);
+                    }
+
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwoFieldsMixed()
         {
-            Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-            Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
-            doc.Add(NewTextField("fieldname", text, Field.Store.YES));
-            doc.Add(new NumericDocValuesField("dv1", 5));
-            doc.Add(new BinaryDocValuesField("dv2", new BytesRef("hello world")));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
-
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            IndexSearcher isearcher = new IndexSearcher(ireader);
-
-            Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
-            Query query = new TermQuery(new Term("fieldname", "text"));
-            TopDocs hits = isearcher.Search(query, null, 1);
-            Assert.AreEqual(1, hits.TotalHits);
-            BytesRef scratch = new BytesRef();
-            // Iterate through the results:
-            for (int i = 0; i < hits.ScoreDocs.Length; i++)
+            using (Directory directory = NewDirectory())
             {
-                Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
-                Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                Debug.Assert(ireader.Leaves.Count == 1);
-                NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv1");
-                Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
-                BinaryDocValues dv2 = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetBinaryDocValues("dv2");
-                dv2.Get(hits.ScoreDocs[i].Doc, scratch);
-                Assert.AreEqual(new BytesRef("hello world"), scratch);
-            }
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                {
+                    Document doc = new Document();
 
-            ireader.Dispose();
-            directory.Dispose();
+                    doc.Add(NewTextField("fieldname", text, Field.Store.YES));
+                    doc.Add(new NumericDocValuesField("dv1", 5));
+                    doc.Add(new BinaryDocValuesField("dv2", new BytesRef("hello world")));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
+
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    IndexSearcher isearcher = new IndexSearcher(ireader);
+
+                    Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
+                    Query query = new TermQuery(new Term("fieldname", "text"));
+                    TopDocs hits = isearcher.Search(query, null, 1);
+                    Assert.AreEqual(1, hits.TotalHits);
+                    BytesRef scratch = new BytesRef();
+                    // Iterate through the results:
+                    for (int i = 0; i < hits.ScoreDocs.Length; i++)
+                    {
+                        Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+                        Assert.AreEqual(text, hitDoc.Get("fieldname"));
+                        Debug.Assert(ireader.Leaves.Count == 1);
+                        NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv1");
+                        Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
+                        BinaryDocValues dv2 = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetBinaryDocValues("dv2");
+                        dv2.Get(hits.ScoreDocs[i].Doc, scratch);
+                        Assert.AreEqual(new BytesRef("hello world"), scratch);
+                    }
+
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestThreeFieldsMixed()
         {
-            Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-            Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
-            doc.Add(NewTextField("fieldname", text, Field.Store.YES));
-            doc.Add(new SortedDocValuesField("dv1", new BytesRef("hello hello")));
-            doc.Add(new NumericDocValuesField("dv2", 5));
-            doc.Add(new BinaryDocValuesField("dv3", new BytesRef("hello world")));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
-
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            IndexSearcher isearcher = new IndexSearcher(ireader);
-
-            Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
-            Query query = new TermQuery(new Term("fieldname", "text"));
-            TopDocs hits = isearcher.Search(query, null, 1);
-            Assert.AreEqual(1, hits.TotalHits);
-            BytesRef scratch = new BytesRef();
-            // Iterate through the results:
-            for (int i = 0; i < hits.ScoreDocs.Length; i++)
+            using (Directory directory = NewDirectory())
             {
-                Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
-                Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                Debug.Assert(ireader.Leaves.Count == 1);
-                SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv1");
-                int ord = dv.GetOrd(0);
-                dv.LookupOrd(ord, scratch);
-                Assert.AreEqual(new BytesRef("hello hello"), scratch);
-                NumericDocValues dv2 = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv2");
-                Assert.AreEqual(5, dv2.Get(hits.ScoreDocs[i].Doc));
-                BinaryDocValues dv3 = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv3");
-                dv3.Get(hits.ScoreDocs[i].Doc, scratch);
-                Assert.AreEqual(new BytesRef("hello world"), scratch);
-            }
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                {
+                    Document doc = new Document();
 
-            ireader.Dispose();
-            directory.Dispose();
+                    doc.Add(NewTextField("fieldname", text, Field.Store.YES));
+                    doc.Add(new SortedDocValuesField("dv1", new BytesRef("hello hello")));
+                    doc.Add(new NumericDocValuesField("dv2", 5));
+                    doc.Add(new BinaryDocValuesField("dv3", new BytesRef("hello world")));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
+
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    IndexSearcher isearcher = new IndexSearcher(ireader);
+
+                    Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
+                    Query query = new TermQuery(new Term("fieldname", "text"));
+                    TopDocs hits = isearcher.Search(query, null, 1);
+                    Assert.AreEqual(1, hits.TotalHits);
+                    BytesRef scratch = new BytesRef();
+                    // Iterate through the results:
+                    for (int i = 0; i < hits.ScoreDocs.Length; i++)
+                    {
+                        Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+                        Assert.AreEqual(text, hitDoc.Get("fieldname"));
+                        Debug.Assert(ireader.Leaves.Count == 1);
+                        SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv1");
+                        int ord = dv.GetOrd(0);
+                        dv.LookupOrd(ord, scratch);
+                        Assert.AreEqual(new BytesRef("hello hello"), scratch);
+                        NumericDocValues dv2 = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv2");
+                        Assert.AreEqual(5, dv2.Get(hits.ScoreDocs[i].Doc));
+                        BinaryDocValues dv3 = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv3");
+                        dv3.Get(hits.ScoreDocs[i].Doc, scratch);
+                        Assert.AreEqual(new BytesRef("hello world"), scratch);
+                    }
+
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestThreeFieldsMixed2()
         {
-            Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-            Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
-            doc.Add(NewTextField("fieldname", text, Field.Store.YES));
-            doc.Add(new BinaryDocValuesField("dv1", new BytesRef("hello world")));
-            doc.Add(new SortedDocValuesField("dv2", new BytesRef("hello hello")));
-            doc.Add(new NumericDocValuesField("dv3", 5));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
-
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            IndexSearcher isearcher = new IndexSearcher(ireader);
-
-            Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
-            Query query = new TermQuery(new Term("fieldname", "text"));
-            TopDocs hits = isearcher.Search(query, null, 1);
-            Assert.AreEqual(1, hits.TotalHits);
-            BytesRef scratch = new BytesRef();
-            // Iterate through the results:
-            for (int i = 0; i < hits.ScoreDocs.Length; i++)
+            using (Directory directory = NewDirectory())
             {
-                Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
-                Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                Debug.Assert(ireader.Leaves.Count == 1);
-                SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv2");
-                int ord = dv.GetOrd(0);
-                dv.LookupOrd(ord, scratch);
-                Assert.AreEqual(new BytesRef("hello hello"), scratch);
-                NumericDocValues dv2 = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv3");
-                Assert.AreEqual(5, dv2.Get(hits.ScoreDocs[i].Doc));
-                BinaryDocValues dv3 = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv1");
-                dv3.Get(hits.ScoreDocs[i].Doc, scratch);
-                Assert.AreEqual(new BytesRef("hello world"), scratch);
-            }
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                {
+                    Document doc = new Document();
 
-            ireader.Dispose();
-            directory.Dispose();
+                    doc.Add(NewTextField("fieldname", text, Field.Store.YES));
+                    doc.Add(new BinaryDocValuesField("dv1", new BytesRef("hello world")));
+                    doc.Add(new SortedDocValuesField("dv2", new BytesRef("hello hello")));
+                    doc.Add(new NumericDocValuesField("dv3", 5));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
+
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    IndexSearcher isearcher = new IndexSearcher(ireader);
+
+                    Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
+                    Query query = new TermQuery(new Term("fieldname", "text"));
+                    TopDocs hits = isearcher.Search(query, null, 1);
+                    Assert.AreEqual(1, hits.TotalHits);
+                    BytesRef scratch = new BytesRef();
+                    // Iterate through the results:
+                    for (int i = 0; i < hits.ScoreDocs.Length; i++)
+                    {
+                        Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+                        Assert.AreEqual(text, hitDoc.Get("fieldname"));
+                        Debug.Assert(ireader.Leaves.Count == 1);
+                        SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv2");
+                        int ord = dv.GetOrd(0);
+                        dv.LookupOrd(ord, scratch);
+                        Assert.AreEqual(new BytesRef("hello hello"), scratch);
+                        NumericDocValues dv2 = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv3");
+                        Assert.AreEqual(5, dv2.Get(hits.ScoreDocs[i].Doc));
+                        BinaryDocValues dv3 = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv1");
+                        dv3.Get(hits.ScoreDocs[i].Doc, scratch);
+                        Assert.AreEqual(new BytesRef("hello world"), scratch);
+                    }
+
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -369,28 +394,31 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new NumericDocValuesField("dv", 1));
-            iwriter.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new NumericDocValuesField("dv", 2));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new NumericDocValuesField("dv", 1));
+                    iwriter.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new NumericDocValuesField("dv", 2));
+                    iwriter.AddDocument(doc);
+                    iwriter.ForceMerge(1);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
-            Assert.AreEqual(1, dv.Get(0));
-            Assert.AreEqual(2, dv.Get(1));
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
+                    Assert.AreEqual(1, dv.Get(0));
+                    Assert.AreEqual(2, dv.Get(1));
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -398,43 +426,46 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(NewField("id", "0", StringField.TYPE_STORED));
-            doc.Add(new NumericDocValuesField("dv", -10));
-            iwriter.AddDocument(doc);
-            iwriter.Commit();
-            doc = new Document();
-            doc.Add(NewField("id", "1", StringField.TYPE_STORED));
-            doc.Add(new NumericDocValuesField("dv", 99));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
-            iwriter.Dispose();
-
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
-            for (int i = 0; i < 2; i++)
+            using (Directory directory = NewDirectory())
             {
-                Document doc2 = ((AtomicReader)ireader.Leaves[0].Reader).Document(i);
-                long expected;
-                if (doc2.Get("id").Equals("0", StringComparison.Ordinal))
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
                 {
-                    expected = -10;
-                }
-                else
-                {
-                    expected = 99;
-                }
-                Assert.AreEqual(expected, dv.Get(i));
-            }
+                    Document doc = new Document();
+                    doc.Add(NewField("id", "0", StringField.TYPE_STORED));
+                    doc.Add(new NumericDocValuesField("dv", -10));
+                    iwriter.AddDocument(doc);
+                    iwriter.Commit();
+                    doc = new Document();
+                    doc.Add(NewField("id", "1", StringField.TYPE_STORED));
+                    doc.Add(new NumericDocValuesField("dv", 99));
+                    iwriter.AddDocument(doc);
+                    iwriter.ForceMerge(1);
+                } // iwriter.Dispose();
 
-            ireader.Dispose();
-            directory.Dispose();
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Document doc2 = ((AtomicReader)ireader.Leaves[0].Reader).Document(i);
+                        long expected;
+                        if (doc2.Get("id").Equals("0", StringComparison.Ordinal))
+                        {
+                            expected = -10;
+                        }
+                        else
+                        {
+                            expected = 99;
+                        }
+                        Assert.AreEqual(expected, dv.Get(i));
+                    }
+
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -442,28 +473,31 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new NumericDocValuesField("dv", long.MinValue));
-            iwriter.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new NumericDocValuesField("dv", long.MaxValue));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                { 
+                    Document doc = new Document();
+                    doc.Add(new NumericDocValuesField("dv", long.MinValue));
+                    iwriter.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new NumericDocValuesField("dv", long.MaxValue));
+                    iwriter.AddDocument(doc);
+                    iwriter.ForceMerge(1);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
-            Assert.AreEqual(long.MinValue, dv.Get(0));
-            Assert.AreEqual(long.MaxValue, dv.Get(1));
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
+                    Assert.AreEqual(long.MinValue, dv.Get(0));
+                    Assert.AreEqual(long.MaxValue, dv.Get(1));
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -471,68 +505,74 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new NumericDocValuesField("dv", -8841491950446638677L));
-            iwriter.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new NumericDocValuesField("dv", 9062230939892376225L));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new NumericDocValuesField("dv", -8841491950446638677L));
+                    iwriter.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new NumericDocValuesField("dv", 9062230939892376225L));
+                    iwriter.AddDocument(doc);
+                    iwriter.ForceMerge(1);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
-            Assert.AreEqual(-8841491950446638677L, dv.Get(0));
-            Assert.AreEqual(9062230939892376225L, dv.Get(1));
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
+                    Assert.AreEqual(-8841491950446638677L, dv.Get(0));
+                    Assert.AreEqual(9062230939892376225L, dv.Get(1));
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestBytes()
         {
-            Analyzer analyzer = new MockAnalyzer(Random);
-
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
-            doc.Add(NewTextField("fieldname", text, Field.Store.YES));
-            doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello world")));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
+            Analyzer analyzer = new MockAnalyzer(Random);
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            IndexSearcher isearcher = new IndexSearcher(ireader);
-
-            Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
-            Query query = new TermQuery(new Term("fieldname", "text"));
-            TopDocs hits = isearcher.Search(query, null, 1);
-            Assert.AreEqual(1, hits.TotalHits);
-            BytesRef scratch = new BytesRef();
-            // Iterate through the results:
-            for (int i = 0; i < hits.ScoreDocs.Length; i++)
+            using (Directory directory = NewDirectory())
             {
-                Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
-                Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                Debug.Assert(ireader.Leaves.Count == 1);
-                BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
-                dv.Get(hits.ScoreDocs[i].Doc, scratch);
-                Assert.AreEqual(new BytesRef("hello world"), scratch);
-            }
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(NewTextField("fieldname", text, Field.Store.YES));
+                    doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello world")));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
 
-            ireader.Dispose();
-            directory.Dispose();
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    IndexSearcher isearcher = new IndexSearcher(ireader);
+
+                    Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
+                    Query query = new TermQuery(new Term("fieldname", "text"));
+                    TopDocs hits = isearcher.Search(query, null, 1);
+                    Assert.AreEqual(1, hits.TotalHits);
+                    BytesRef scratch = new BytesRef();
+                    // Iterate through the results:
+                    for (int i = 0; i < hits.ScoreDocs.Length; i++)
+                    {
+                        Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+                        Assert.AreEqual(text, hitDoc.Get("fieldname"));
+                        Debug.Assert(ireader.Leaves.Count == 1);
+                        BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
+                        dv.Get(hits.ScoreDocs[i].Doc, scratch);
+                        Assert.AreEqual(new BytesRef("hello world"), scratch);
+                    }
+
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -540,85 +580,92 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(NewField("id", "0", StringField.TYPE_STORED));
-            doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello world 1")));
-            iwriter.AddDocument(doc);
-            iwriter.Commit();
-            doc = new Document();
-            doc.Add(NewField("id", "1", StringField.TYPE_STORED));
-            doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello 2")));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
-            iwriter.Dispose();
-
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
-            BytesRef scratch = new BytesRef();
-            for (int i = 0; i < 2; i++)
+            using (Directory directory = NewDirectory())
             {
-                Document doc2 = ((AtomicReader)ireader.Leaves[0].Reader).Document(i);
-                string expected;
-                if (doc2.Get("id").Equals("0", StringComparison.Ordinal))
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
                 {
-                    expected = "hello world 1";
-                }
-                else
-                {
-                    expected = "hello 2";
-                }
-                dv.Get(i, scratch);
-                Assert.AreEqual(expected, scratch.Utf8ToString());
-            }
+                    Document doc = new Document();
+                    doc.Add(NewField("id", "0", StringField.TYPE_STORED));
+                    doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello world 1")));
+                    iwriter.AddDocument(doc);
+                    iwriter.Commit();
+                    doc = new Document();
+                    doc.Add(NewField("id", "1", StringField.TYPE_STORED));
+                    doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello 2")));
+                    iwriter.AddDocument(doc);
+                    iwriter.ForceMerge(1);
+                } // iwriter.Dispose();
 
-            ireader.Dispose();
-            directory.Dispose();
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
+                    BytesRef scratch = new BytesRef();
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Document doc2 = ((AtomicReader)ireader.Leaves[0].Reader).Document(i);
+                        string expected;
+                        if (doc2.Get("id").Equals("0", StringComparison.Ordinal))
+                        {
+                            expected = "hello world 1";
+                        }
+                        else
+                        {
+                            expected = "hello 2";
+                        }
+                        dv.Get(i, scratch);
+                        Assert.AreEqual(expected, scratch.Utf8ToString());
+                    }
+
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedBytes()
         {
-            Analyzer analyzer = new MockAnalyzer(Random);
-
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
             string text = "this is the text to be indexed. " + longTerm;
-            doc.Add(NewTextField("fieldname", text, Field.Store.YES));
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world")));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
+            Analyzer analyzer = new MockAnalyzer(Random);
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            IndexSearcher isearcher = new IndexSearcher(ireader);
-
-            Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
-            Query query = new TermQuery(new Term("fieldname", "text"));
-            TopDocs hits = isearcher.Search(query, null, 1);
-            Assert.AreEqual(1, hits.TotalHits);
-            BytesRef scratch = new BytesRef();
-            // Iterate through the results:
-            for (int i = 0; i < hits.ScoreDocs.Length; i++)
+            using (Directory directory = NewDirectory())
             {
-                Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
-                Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                Debug.Assert(ireader.Leaves.Count == 1);
-                SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
-                dv.LookupOrd(dv.GetOrd(hits.ScoreDocs[i].Doc), scratch);
-                Assert.AreEqual(new BytesRef("hello world"), scratch);
-            }
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    
+                    doc.Add(NewTextField("fieldname", text, Field.Store.YES));
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world")));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
 
-            ireader.Dispose();
-            directory.Dispose();
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    IndexSearcher isearcher = new IndexSearcher(ireader);
+
+                    Assert.AreEqual(1, isearcher.Search(new TermQuery(new Term("fieldname", longTerm)), 1).TotalHits);
+                    Query query = new TermQuery(new Term("fieldname", "text"));
+                    TopDocs hits = isearcher.Search(query, null, 1);
+                    Assert.AreEqual(1, hits.TotalHits);
+                    BytesRef scratch = new BytesRef();
+                    // Iterate through the results:
+                    for (int i = 0; i < hits.ScoreDocs.Length; i++)
+                    {
+                        Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
+                        Assert.AreEqual(text, hitDoc.Get("fieldname"));
+                        Debug.Assert(ireader.Leaves.Count == 1);
+                        SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
+                        dv.LookupOrd(dv.GetOrd(hits.ScoreDocs[i].Doc), scratch);
+                        Assert.AreEqual(new BytesRef("hello world"), scratch);
+                    }
+
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -626,31 +673,34 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 1")));
-            iwriter.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 2")));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 1")));
+                    iwriter.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 2")));
+                    iwriter.AddDocument(doc);
+                    iwriter.ForceMerge(1);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
-            BytesRef scratch = new BytesRef();
-            dv.LookupOrd(dv.GetOrd(0), scratch);
-            Assert.AreEqual("hello world 1", scratch.Utf8ToString());
-            dv.LookupOrd(dv.GetOrd(1), scratch);
-            Assert.AreEqual("hello world 2", scratch.Utf8ToString());
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
+                    BytesRef scratch = new BytesRef();
+                    dv.LookupOrd(dv.GetOrd(0), scratch);
+                    Assert.AreEqual("hello world 1", scratch.Utf8ToString());
+                    dv.LookupOrd(dv.GetOrd(1), scratch);
+                    Assert.AreEqual("hello world 2", scratch.Utf8ToString());
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -658,38 +708,41 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 1")));
-            iwriter.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 2")));
-            iwriter.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 1")));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 1")));
+                    iwriter.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 2")));
+                    iwriter.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 1")));
+                    iwriter.AddDocument(doc);
+                    iwriter.ForceMerge(1);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
-            Assert.AreEqual(2, dv.ValueCount);
-            BytesRef scratch = new BytesRef();
-            Assert.AreEqual(0, dv.GetOrd(0));
-            dv.LookupOrd(0, scratch);
-            Assert.AreEqual("hello world 1", scratch.Utf8ToString());
-            Assert.AreEqual(1, dv.GetOrd(1));
-            dv.LookupOrd(1, scratch);
-            Assert.AreEqual("hello world 2", scratch.Utf8ToString());
-            Assert.AreEqual(0, dv.GetOrd(2));
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
+                    Assert.AreEqual(2, dv.ValueCount);
+                    BytesRef scratch = new BytesRef();
+                    Assert.AreEqual(0, dv.GetOrd(0));
+                    dv.LookupOrd(0, scratch);
+                    Assert.AreEqual("hello world 1", scratch.Utf8ToString());
+                    Assert.AreEqual(1, dv.GetOrd(1));
+                    dv.LookupOrd(1, scratch);
+                    Assert.AreEqual("hello world 2", scratch.Utf8ToString());
+                    Assert.AreEqual(0, dv.GetOrd(2));
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -697,92 +750,103 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(NewField("id", "0", StringField.TYPE_STORED));
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 1")));
-            iwriter.AddDocument(doc);
-            iwriter.Commit();
-            doc = new Document();
-            doc.Add(NewField("id", "1", StringField.TYPE_STORED));
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 2")));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
-            iwriter.Dispose();
-
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
-            Assert.AreEqual(2, dv.ValueCount); // 2 ords
-            BytesRef scratch = new BytesRef();
-            dv.LookupOrd(0, scratch);
-            Assert.AreEqual(new BytesRef("hello world 1"), scratch);
-            dv.LookupOrd(1, scratch);
-            Assert.AreEqual(new BytesRef("hello world 2"), scratch);
-            for (int i = 0; i < 2; i++)
+            using (Directory directory = NewDirectory())
             {
-                Document doc2 = ((AtomicReader)ireader.Leaves[0].Reader).Document(i);
-                string expected;
-                if (doc2.Get("id").Equals("0", StringComparison.Ordinal))
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
                 {
-                    expected = "hello world 1";
-                }
-                else
-                {
-                    expected = "hello world 2";
-                }
-                dv.LookupOrd(dv.GetOrd(i), scratch);
-                Assert.AreEqual(expected, scratch.Utf8ToString());
-            }
+                    Document doc = new Document();
+                    doc.Add(NewField("id", "0", StringField.TYPE_STORED));
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 1")));
+                    iwriter.AddDocument(doc);
+                    iwriter.Commit();
+                    doc = new Document();
+                    doc.Add(NewField("id", "1", StringField.TYPE_STORED));
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 2")));
+                    iwriter.AddDocument(doc);
+                    iwriter.ForceMerge(1);
+                } // iwriter.Dispose();
 
-            ireader.Dispose();
-            directory.Dispose();
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
+                    Assert.AreEqual(2, dv.ValueCount); // 2 ords
+                    BytesRef scratch = new BytesRef();
+                    dv.LookupOrd(0, scratch);
+                    Assert.AreEqual(new BytesRef("hello world 1"), scratch);
+                    dv.LookupOrd(1, scratch);
+                    Assert.AreEqual(new BytesRef("hello world 2"), scratch);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Document doc2 = ((AtomicReader)ireader.Leaves[0].Reader).Document(i);
+                        string expected;
+                        if (doc2.Get("id").Equals("0", StringComparison.Ordinal))
+                        {
+                            expected = "hello world 1";
+                        }
+                        else
+                        {
+                            expected = "hello world 2";
+                        }
+                        dv.LookupOrd(dv.GetOrd(i), scratch);
+                        Assert.AreEqual(expected, scratch.Utf8ToString());
+                    }
+
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedMergeAwayAllValues()
         {
-            Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
-
-            Document doc = new Document();
-            doc.Add(new StringField("id", "0", Field.Store.NO));
-            iwriter.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new StringField("id", "1", Field.Store.NO));
-            doc.Add(new SortedDocValuesField("field", new BytesRef("hello")));
-            iwriter.AddDocument(doc);
-            iwriter.Commit();
-            iwriter.DeleteDocuments(new Term("id", "1"));
-            iwriter.ForceMerge(1);
-
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
-
-            SortedDocValues dv = GetOnlySegmentReader(ireader).GetSortedDocValues("field");
-            if (DefaultCodecSupportsDocsWithField)
+            using (Directory directory = NewDirectory())
             {
-                Assert.AreEqual(-1, dv.GetOrd(0));
-                Assert.AreEqual(0, dv.ValueCount);
-            }
-            else
-            {
-                Assert.AreEqual(0, dv.GetOrd(0));
-                Assert.AreEqual(1, dv.ValueCount);
-                BytesRef @ref = new BytesRef();
-                dv.LookupOrd(0, @ref);
-                Assert.AreEqual(new BytesRef(), @ref);
-            }
+                Analyzer analyzer = new MockAnalyzer(Random);
+                IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                iwconfig.SetMergePolicy(NewLogMergePolicy());
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig))
+                    {
 
-            ireader.Dispose();
-            directory.Dispose();
+                        Document doc = new Document();
+                        doc.Add(new StringField("id", "0", Field.Store.NO));
+                        iwriter.AddDocument(doc);
+                        doc = new Document();
+                        doc.Add(new StringField("id", "1", Field.Store.NO));
+                        doc.Add(new SortedDocValuesField("field", new BytesRef("hello")));
+                        iwriter.AddDocument(doc);
+                        iwriter.Commit();
+                        iwriter.DeleteDocuments(new Term("id", "1"));
+                        iwriter.ForceMerge(1);
+
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
+
+                    SortedDocValues dv = GetOnlySegmentReader(ireader).GetSortedDocValues("field");
+                    if (DefaultCodecSupportsDocsWithField)
+                    {
+                        Assert.AreEqual(-1, dv.GetOrd(0));
+                        Assert.AreEqual(0, dv.ValueCount);
+                    }
+                    else
+                    {
+                        Assert.AreEqual(0, dv.GetOrd(0));
+                        Assert.AreEqual(1, dv.ValueCount);
+                        BytesRef @ref = new BytesRef();
+                        dv.LookupOrd(0, @ref);
+                        Assert.AreEqual(new BytesRef(), @ref);
+                    }
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -790,25 +854,28 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello\nworld\r1")));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new BinaryDocValuesField("dv", new BytesRef("hello\nworld\r1")));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
-            BytesRef scratch = new BytesRef();
-            dv.Get(0, scratch);
-            Assert.AreEqual(new BytesRef("hello\nworld\r1"), scratch);
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
+                    BytesRef scratch = new BytesRef();
+                    dv.Get(0, scratch);
+                    Assert.AreEqual(new BytesRef("hello\nworld\r1"), scratch);
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -816,105 +883,117 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 2")));
-            iwriter.AddDocument(doc);
-            // 2nd doc missing the DV field
-            iwriter.AddDocument(new Document());
-            iwriter.Dispose();
-
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
-            BytesRef scratch = new BytesRef();
-            dv.LookupOrd(dv.GetOrd(0), scratch);
-            Assert.AreEqual(new BytesRef("hello world 2"), scratch);
-            if (DefaultCodecSupportsDocsWithField)
+            using (Directory directory = NewDirectory())
             {
-                Assert.AreEqual(-1, dv.GetOrd(1));
-            }
-            dv.Get(1, scratch);
-            Assert.AreEqual(new BytesRef(""), scratch);
-            ireader.Dispose();
-            directory.Dispose();
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("hello world 2")));
+                    iwriter.AddDocument(doc);
+                    // 2nd doc missing the DV field
+                    iwriter.AddDocument(new Document());
+                } // iwriter.Dispose();
+
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
+                    BytesRef scratch = new BytesRef();
+                    dv.LookupOrd(dv.GetOrd(0), scratch);
+                    Assert.AreEqual(new BytesRef("hello world 2"), scratch);
+                    if (DefaultCodecSupportsDocsWithField)
+                    {
+                        Assert.AreEqual(-1, dv.GetOrd(1));
+                    }
+                    dv.Get(1, scratch);
+                    Assert.AreEqual(new BytesRef(""), scratch);
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedTermsEnum()
         {
-            Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
+            using (Directory directory = NewDirectory())
+            {
+                Analyzer analyzer = new MockAnalyzer(Random);
+                IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                iwconfig.SetMergePolicy(NewLogMergePolicy());
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig))
+                    {
 
-            Document doc = new Document();
-            doc.Add(new SortedDocValuesField("field", new BytesRef("hello")));
-            iwriter.AddDocument(doc);
+                        Document doc = new Document();
+                        doc.Add(new SortedDocValuesField("field", new BytesRef("hello")));
+                        iwriter.AddDocument(doc);
 
-            doc = new Document();
-            doc.Add(new SortedDocValuesField("field", new BytesRef("world")));
-            iwriter.AddDocument(doc);
+                        doc = new Document();
+                        doc.Add(new SortedDocValuesField("field", new BytesRef("world")));
+                        iwriter.AddDocument(doc);
 
-            doc = new Document();
-            doc.Add(new SortedDocValuesField("field", new BytesRef("beer")));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
+                        doc = new Document();
+                        doc.Add(new SortedDocValuesField("field", new BytesRef("beer")));
+                        iwriter.AddDocument(doc);
+                        iwriter.ForceMerge(1);
 
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
 
-            SortedDocValues dv = GetOnlySegmentReader(ireader).GetSortedDocValues("field");
-            Assert.AreEqual(3, dv.ValueCount);
+                    SortedDocValues dv = GetOnlySegmentReader(ireader).GetSortedDocValues("field");
+                    Assert.AreEqual(3, dv.ValueCount);
 
-            TermsEnum termsEnum = dv.GetTermsEnum();
+                    TermsEnum termsEnum = dv.GetTermsEnum();
 
-            // next()
-            Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());
-            Assert.AreEqual(0, termsEnum.Ord);
-            Assert.AreEqual("hello", termsEnum.Next().Utf8ToString());
-            Assert.AreEqual(1, termsEnum.Ord);
-            Assert.AreEqual("world", termsEnum.Next().Utf8ToString());
-            Assert.AreEqual(2, termsEnum.Ord);
+                    // next()
+                    Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());
+                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.AreEqual("hello", termsEnum.Next().Utf8ToString());
+                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.AreEqual("world", termsEnum.Next().Utf8ToString());
+                    Assert.AreEqual(2, termsEnum.Ord);
 
-            // seekCeil()
-            Assert.AreEqual(SeekStatus.NOT_FOUND, termsEnum.SeekCeil(new BytesRef("ha!")));
-            Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(1, termsEnum.Ord);
-            Assert.AreEqual(SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef("beer")));
-            Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(0, termsEnum.Ord);
-            Assert.AreEqual(SeekStatus.END, termsEnum.SeekCeil(new BytesRef("zzz")));
+                    // seekCeil()
+                    Assert.AreEqual(SeekStatus.NOT_FOUND, termsEnum.SeekCeil(new BytesRef("ha!")));
+                    Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.AreEqual(SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef("beer")));
+                    Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.AreEqual(SeekStatus.END, termsEnum.SeekCeil(new BytesRef("zzz")));
 
-            // seekExact()
-            Assert.IsTrue(termsEnum.SeekExact(new BytesRef("beer")));
-            Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(0, termsEnum.Ord);
-            Assert.IsTrue(termsEnum.SeekExact(new BytesRef("hello")));
-            Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(1, termsEnum.Ord);
-            Assert.IsTrue(termsEnum.SeekExact(new BytesRef("world")));
-            Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(2, termsEnum.Ord);
-            Assert.IsFalse(termsEnum.SeekExact(new BytesRef("bogus")));
+                    // seekExact()
+                    Assert.IsTrue(termsEnum.SeekExact(new BytesRef("beer")));
+                    Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.IsTrue(termsEnum.SeekExact(new BytesRef("hello")));
+                    Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.IsTrue(termsEnum.SeekExact(new BytesRef("world")));
+                    Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(2, termsEnum.Ord);
+                    Assert.IsFalse(termsEnum.SeekExact(new BytesRef("bogus")));
 
-            // seek(ord)
-            termsEnum.SeekExact(0);
-            Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(0, termsEnum.Ord);
-            termsEnum.SeekExact(1);
-            Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(1, termsEnum.Ord);
-            termsEnum.SeekExact(2);
-            Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(2, termsEnum.Ord);
-            ireader.Dispose();
-            directory.Dispose();
+                    // seek(ord)
+                    termsEnum.SeekExact(0);
+                    Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(0, termsEnum.Ord);
+                    termsEnum.SeekExact(1);
+                    Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(1, termsEnum.Ord);
+                    termsEnum.SeekExact(2);
+                    Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(2, termsEnum.Ord);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -922,31 +1001,34 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("")));
-            iwriter.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("")));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("")));
+                    iwriter.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("")));
+                    iwriter.AddDocument(doc);
+                    iwriter.ForceMerge(1);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
-            BytesRef scratch = new BytesRef();
-            Assert.AreEqual(0, dv.GetOrd(0));
-            Assert.AreEqual(0, dv.GetOrd(1));
-            dv.LookupOrd(dv.GetOrd(0), scratch);
-            Assert.AreEqual("", scratch.Utf8ToString());
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
+                    BytesRef scratch = new BytesRef();
+                    Assert.AreEqual(0, dv.GetOrd(0));
+                    Assert.AreEqual(0, dv.GetOrd(1));
+                    dv.LookupOrd(dv.GetOrd(0), scratch);
+                    Assert.AreEqual("", scratch.Utf8ToString());
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -954,31 +1036,34 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new BinaryDocValuesField("dv", new BytesRef("")));
-            iwriter.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new BinaryDocValuesField("dv", new BytesRef("")));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new BinaryDocValuesField("dv", new BytesRef("")));
+                    iwriter.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new BinaryDocValuesField("dv", new BytesRef("")));
+                    iwriter.AddDocument(doc);
+                    iwriter.ForceMerge(1);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
-            BytesRef scratch = new BytesRef();
-            dv.Get(0, scratch);
-            Assert.AreEqual("", scratch.Utf8ToString());
-            dv.Get(1, scratch);
-            Assert.AreEqual("", scratch.Utf8ToString());
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
+                    BytesRef scratch = new BytesRef();
+                    dv.Get(0, scratch);
+                    Assert.AreEqual("", scratch.Utf8ToString());
+                    dv.Get(1, scratch);
+                    Assert.AreEqual("", scratch.Utf8ToString());
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -986,28 +1071,31 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            var bytes = new byte[32766];
-            BytesRef b = new BytesRef(bytes);
-            Random.NextBytes(bytes);
-            doc.Add(new BinaryDocValuesField("dv", b));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                var bytes = new byte[32766];
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    BytesRef b = new BytesRef(bytes);
+                    Random.NextBytes(bytes);
+                    doc.Add(new BinaryDocValuesField("dv", b));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
-            BytesRef scratch = new BytesRef();
-            dv.Get(0, scratch);
-            Assert.AreEqual(new BytesRef(bytes), scratch);
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
+                    BytesRef scratch = new BytesRef();
+                    dv.Get(0, scratch);
+                    Assert.AreEqual(new BytesRef(bytes), scratch);
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -1015,27 +1103,30 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            var bytes = new byte[32766];
-            BytesRef b = new BytesRef(bytes);
-            Random.NextBytes(bytes);
-            doc.Add(new SortedDocValuesField("dv", b));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                var bytes = new byte[32766];
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    BytesRef b = new BytesRef(bytes);
+                    Random.NextBytes(bytes);
+                    doc.Add(new SortedDocValuesField("dv", b));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
-            BytesRef scratch = new BytesRef();
-            dv.Get(0, scratch);
-            Assert.AreEqual(new BytesRef(bytes), scratch);
-            ireader.Dispose();
-            directory.Dispose();
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
+                    BytesRef scratch = new BytesRef();
+                    dv.Get(0, scratch);
+                    Assert.AreEqual(new BytesRef(bytes), scratch);
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -1043,27 +1134,30 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new BinaryDocValuesField("dv", new BytesRef("boo!")));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new BinaryDocValuesField("dv", new BytesRef("boo!")));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
-            var mybytes = new byte[20];
-            BytesRef scratch = new BytesRef(mybytes);
-            dv.Get(0, scratch);
-            Assert.AreEqual("boo!", scratch.Utf8ToString());
-            Assert.IsFalse(scratch.Bytes == mybytes);
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
+                    var mybytes = new byte[20];
+                    BytesRef scratch = new BytesRef(mybytes);
+                    dv.Get(0, scratch);
+                    Assert.AreEqual("boo!", scratch.Utf8ToString());
+                    Assert.IsFalse(scratch.Bytes == mybytes);
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -1071,27 +1165,30 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("boo!")));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("boo!")));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
-            var mybytes = new byte[20];
-            BytesRef scratch = new BytesRef(mybytes);
-            dv.Get(0, scratch);
-            Assert.AreEqual("boo!", scratch.Utf8ToString());
-            Assert.IsFalse(scratch.Bytes == mybytes);
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
+                    var mybytes = new byte[20];
+                    BytesRef scratch = new BytesRef(mybytes);
+                    dv.Get(0, scratch);
+                    Assert.AreEqual("boo!", scratch.Utf8ToString());
+                    Assert.IsFalse(scratch.Bytes == mybytes);
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -1099,34 +1196,37 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new BinaryDocValuesField("dv", new BytesRef("foo!")));
-            iwriter.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new BinaryDocValuesField("dv", new BytesRef("bar!")));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new BinaryDocValuesField("dv", new BytesRef("foo!")));
+                    iwriter.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new BinaryDocValuesField("dv", new BytesRef("bar!")));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
-            BytesRef scratch = new BytesRef();
-            dv.Get(0, scratch);
-            Assert.AreEqual("foo!", scratch.Utf8ToString());
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
+                    BytesRef scratch = new BytesRef();
+                    dv.Get(0, scratch);
+                    Assert.AreEqual("foo!", scratch.Utf8ToString());
 
-            BytesRef scratch2 = new BytesRef();
-            dv.Get(1, scratch2);
-            Assert.AreEqual("bar!", scratch2.Utf8ToString());
-            // check scratch is still valid
-            Assert.AreEqual("foo!", scratch.Utf8ToString());
+                    BytesRef scratch2 = new BytesRef();
+                    dv.Get(1, scratch2);
+                    Assert.AreEqual("bar!", scratch2.Utf8ToString());
+                    // check scratch is still valid
+                    Assert.AreEqual("foo!", scratch.Utf8ToString());
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -1134,34 +1234,37 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new MockAnalyzer(Random);
 
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("foo!")));
-            iwriter.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new SortedDocValuesField("dv", new BytesRef("bar!")));
-            iwriter.AddDocument(doc);
-            iwriter.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("foo!")));
+                    iwriter.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new SortedDocValuesField("dv", new BytesRef("bar!")));
+                    iwriter.AddDocument(doc);
+                } // iwriter.Dispose();
 
-            // Now search the index:
-            IndexReader ireader = DirectoryReader.Open(directory); // read-only=true
-            Debug.Assert(ireader.Leaves.Count == 1);
-            BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
-            BytesRef scratch = new BytesRef();
-            dv.Get(0, scratch);
-            Assert.AreEqual("foo!", scratch.Utf8ToString());
+                // Now search the index:
+                using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
+                {
+                    Debug.Assert(ireader.Leaves.Count == 1);
+                    BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
+                    BytesRef scratch = new BytesRef();
+                    dv.Get(0, scratch);
+                    Assert.AreEqual("foo!", scratch.Utf8ToString());
 
-            BytesRef scratch2 = new BytesRef();
-            dv.Get(1, scratch2);
-            Assert.AreEqual("bar!", scratch2.Utf8ToString());
-            // check scratch is still valid
-            Assert.AreEqual("foo!", scratch.Utf8ToString());
+                    BytesRef scratch2 = new BytesRef();
+                    dv.Get(1, scratch2);
+                    Assert.AreEqual("bar!", scratch2.Utf8ToString());
+                    // check scratch is still valid
+                    Assert.AreEqual("foo!", scratch.Utf8ToString());
 
-            ireader.Dispose();
-            directory.Dispose();
+                } // ireader.Dispose();
+            } // directory.Dispose();
         }
 
         /// <summary>
@@ -1170,144 +1273,151 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestDocValuesSimple()
         {
-            Directory dir = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            IndexWriter writer = new IndexWriter(dir, conf);
-            for (int i = 0; i < 5; i++)
+            using (Directory dir = NewDirectory())
             {
-                Document doc = new Document();
-                doc.Add(new NumericDocValuesField("docId", i));
-                doc.Add(new TextField("docId", "" + i, Field.Store.NO));
-                writer.AddDocument(doc);
-            }
-            writer.Commit();
-            writer.ForceMerge(1, true);
+                Analyzer analyzer = new MockAnalyzer(Random);
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (IndexWriter writer = new IndexWriter(dir, conf))
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Document doc = new Document();
+                        doc.Add(new NumericDocValuesField("docId", i));
+                        doc.Add(new TextField("docId", "" + i, Field.Store.NO));
+                        writer.AddDocument(doc);
+                    }
+                    writer.Commit();
+                    writer.ForceMerge(1, true);
 
-            writer.Dispose();
+                } // writer.Dispose();
 
-            DirectoryReader reader = DirectoryReader.Open(dir, 1);
-            Assert.AreEqual(1, reader.Leaves.Count);
+                using (DirectoryReader reader = DirectoryReader.Open(dir, 1))
+                {
+                    Assert.AreEqual(1, reader.Leaves.Count);
 
-            IndexSearcher searcher = new IndexSearcher(reader);
+                    IndexSearcher searcher = new IndexSearcher(reader);
 
-            BooleanQuery query = new BooleanQuery();
-            query.Add(new TermQuery(new Term("docId", "0")), Occur.SHOULD);
-            query.Add(new TermQuery(new Term("docId", "1")), Occur.SHOULD);
-            query.Add(new TermQuery(new Term("docId", "2")), Occur.SHOULD);
-            query.Add(new TermQuery(new Term("docId", "3")), Occur.SHOULD);
-            query.Add(new TermQuery(new Term("docId", "4")), Occur.SHOULD);
+                    BooleanQuery query = new BooleanQuery();
+                    query.Add(new TermQuery(new Term("docId", "0")), Occur.SHOULD);
+                    query.Add(new TermQuery(new Term("docId", "1")), Occur.SHOULD);
+                    query.Add(new TermQuery(new Term("docId", "2")), Occur.SHOULD);
+                    query.Add(new TermQuery(new Term("docId", "3")), Occur.SHOULD);
+                    query.Add(new TermQuery(new Term("docId", "4")), Occur.SHOULD);
 
-            TopDocs search = searcher.Search(query, 10);
-            Assert.AreEqual(5, search.TotalHits);
-            ScoreDoc[] scoreDocs = search.ScoreDocs;
-            NumericDocValues docValues = GetOnlySegmentReader(reader).GetNumericDocValues("docId");
-            for (int i = 0; i < scoreDocs.Length; i++)
-            {
-                Assert.AreEqual(i, scoreDocs[i].Doc);
-                Assert.AreEqual(i, docValues.Get(scoreDocs[i].Doc));
-            }
-            reader.Dispose();
-            dir.Dispose();
+                    TopDocs search = searcher.Search(query, 10);
+                    Assert.AreEqual(5, search.TotalHits);
+                    ScoreDoc[] scoreDocs = search.ScoreDocs;
+                    NumericDocValues docValues = GetOnlySegmentReader(reader).GetNumericDocValues("docId");
+                    for (int i = 0; i < scoreDocs.Length; i++)
+                    {
+                        Assert.AreEqual(i, scoreDocs[i].Doc);
+                        Assert.AreEqual(i, docValues.Get(scoreDocs[i].Doc));
+                    }
+                } // reader.Dispose();
+            } // dir.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestRandomSortedBytes()
         {
-            Directory dir = NewDirectory();
-            IndexWriterConfig cfg = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            if (!DefaultCodecSupportsDocsWithField)
+            using (Directory dir = NewDirectory())
             {
-                // if the codec doesnt support missing, we expect missing to be mapped to byte[]
-                // by the impersonator, but we have to give it a chance to merge them to this
-                cfg.SetMergePolicy(NewLogMergePolicy());
-            }
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, cfg);
-            int numDocs = AtLeast(100);
-            BytesRefHash hash = new BytesRefHash();
-            IDictionary<string, string> docToString = new Dictionary<string, string>();
-            int maxLength = TestUtil.NextInt32(Random, 1, 50);
-            for (int i = 0; i < numDocs; i++)
-            {
-                Document doc = new Document();
-                doc.Add(NewTextField("id", "" + i, Field.Store.YES));
-                string @string = TestUtil.RandomRealisticUnicodeString(Random, 1, maxLength);
-                BytesRef br = new BytesRef(@string);
-                doc.Add(new SortedDocValuesField("field", br));
-                hash.Add(br);
-                docToString["" + i] = @string;
-                w.AddDocument(doc);
-            }
-            if (Rarely())
-            {
-                w.Commit();
-            }
-            int numDocsNoValue = AtLeast(10);
-            for (int i = 0; i < numDocsNoValue; i++)
-            {
-                Document doc = new Document();
-                doc.Add(NewTextField("id", "noValue", Field.Store.YES));
-                w.AddDocument(doc);
-            }
-            if (!DefaultCodecSupportsDocsWithField)
-            {
-                BytesRef bytesRef = new BytesRef();
-                hash.Add(bytesRef); // add empty value for the gaps
-            }
-            if (Rarely())
-            {
-                w.Commit();
-            }
-            if (!DefaultCodecSupportsDocsWithField)
-            {
-                // if the codec doesnt support missing, we expect missing to be mapped to byte[]
-                // by the impersonator, but we have to give it a chance to merge them to this
-                w.ForceMerge(1);
-            }
-            for (int i = 0; i < numDocs; i++)
-            {
-                Document doc = new Document();
-                string id = "" + i + numDocs;
-                doc.Add(NewTextField("id", id, Field.Store.YES));
-                string @string = TestUtil.RandomRealisticUnicodeString(Random, 1, maxLength);
-                BytesRef br = new BytesRef(@string);
-                hash.Add(br);
-                docToString[id] = @string;
-                doc.Add(new SortedDocValuesField("field", br));
-                w.AddDocument(doc);
-            }
-            w.Commit();
-            IndexReader reader = w.Reader;
-            SortedDocValues docValues = MultiDocValues.GetSortedValues(reader, "field");
-            int[] sort = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
-            BytesRef expected = new BytesRef();
-            BytesRef actual = new BytesRef();
-            Assert.AreEqual(hash.Count, docValues.ValueCount);
-            for (int i = 0; i < hash.Count; i++)
-            {
-                hash.Get(sort[i], expected);
-                docValues.LookupOrd(i, actual);
-                Assert.AreEqual(expected.Utf8ToString(), actual.Utf8ToString());
-                int ord = docValues.LookupTerm(expected);
-                Assert.AreEqual(i, ord);
-            }
-            AtomicReader slowR = SlowCompositeReaderWrapper.Wrap(reader);
-            ISet<KeyValuePair<string, string>> entrySet = docToString.EntrySet();
+                IndexWriterConfig cfg = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
 
-            foreach (KeyValuePair<string, string> entry in entrySet)
-            {
-                // pk lookup
-                DocsEnum termDocsEnum = slowR.GetTermDocsEnum(new Term("id", entry.Key));
-                int docId = termDocsEnum.NextDoc();
-                expected = new BytesRef(entry.Value);
-                docValues.Get(docId, actual);
-                Assert.AreEqual(expected, actual);
-            }
+                if (!DefaultCodecSupportsDocsWithField)
+                {
+                    // if the codec doesnt support missing, we expect missing to be mapped to byte[]
+                    // by the impersonator, but we have to give it a chance to merge them to this
+                    cfg.SetMergePolicy(NewLogMergePolicy());
+                }
+                using (RandomIndexWriter w = new RandomIndexWriter(Random, dir, cfg))
+                {
+                    int numDocs = AtLeast(100);
+                    BytesRefHash hash = new BytesRefHash();
+                    IDictionary<string, string> docToString = new Dictionary<string, string>();
+                    int maxLength = TestUtil.NextInt32(Random, 1, 50);
+                    for (int i = 0; i < numDocs; i++)
+                    {
+                        Document doc = new Document();
+                        doc.Add(NewTextField("id", "" + i, Field.Store.YES));
+                        string @string = TestUtil.RandomRealisticUnicodeString(Random, 1, maxLength);
+                        BytesRef br = new BytesRef(@string);
+                        doc.Add(new SortedDocValuesField("field", br));
+                        hash.Add(br);
+                        docToString["" + i] = @string;
+                        w.AddDocument(doc);
+                    }
+                    if (Rarely())
+                    {
+                        w.Commit();
+                    }
+                    int numDocsNoValue = AtLeast(10);
+                    for (int i = 0; i < numDocsNoValue; i++)
+                    {
+                        Document doc = new Document();
+                        doc.Add(NewTextField("id", "noValue", Field.Store.YES));
+                        w.AddDocument(doc);
+                    }
+                    if (!DefaultCodecSupportsDocsWithField)
+                    {
+                        BytesRef bytesRef = new BytesRef();
+                        hash.Add(bytesRef); // add empty value for the gaps
+                    }
+                    if (Rarely())
+                    {
+                        w.Commit();
+                    }
+                    if (!DefaultCodecSupportsDocsWithField)
+                    {
+                        // if the codec doesnt support missing, we expect missing to be mapped to byte[]
+                        // by the impersonator, but we have to give it a chance to merge them to this
+                        w.ForceMerge(1);
+                    }
+                    for (int i = 0; i < numDocs; i++)
+                    {
+                        Document doc = new Document();
+                        string id = "" + i + numDocs;
+                        doc.Add(NewTextField("id", id, Field.Store.YES));
+                        string @string = TestUtil.RandomRealisticUnicodeString(Random, 1, maxLength);
+                        BytesRef br = new BytesRef(@string);
+                        hash.Add(br);
+                        docToString[id] = @string;
+                        doc.Add(new SortedDocValuesField("field", br));
+                        w.AddDocument(doc);
+                    }
+                    w.Commit();
+                    using (IndexReader reader = w.Reader)
+                    {
+                        SortedDocValues docValues = MultiDocValues.GetSortedValues(reader, "field");
+                        int[] sort = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
+                        BytesRef expected = new BytesRef();
+                        BytesRef actual = new BytesRef();
+                        Assert.AreEqual(hash.Count, docValues.ValueCount);
+                        for (int i = 0; i < hash.Count; i++)
+                        {
+                            hash.Get(sort[i], expected);
+                            docValues.LookupOrd(i, actual);
+                            Assert.AreEqual(expected.Utf8ToString(), actual.Utf8ToString());
+                            int ord = docValues.LookupTerm(expected);
+                            Assert.AreEqual(i, ord);
+                        }
+                        AtomicReader slowR = SlowCompositeReaderWrapper.Wrap(reader);
+                        ISet<KeyValuePair<string, string>> entrySet = docToString.EntrySet();
 
-            reader.Dispose();
-            w.Dispose();
-            dir.Dispose();
+                        foreach (KeyValuePair<string, string> entry in entrySet)
+                        {
+                            // pk lookup
+                            DocsEnum termDocsEnum = slowR.GetTermDocsEnum(new Term("id", entry.Key));
+                            int docId = termDocsEnum.NextDoc();
+                            expected = new BytesRef(entry.Value);
+                            docValues.Get(docId, actual);
+                            Assert.AreEqual(expected, actual);
+                        }
+
+                    } // reader.Dispose();
+                } // w.Dispose();
+            } // dir.Dispose();
         }
 
         internal abstract class Int64Producer
@@ -1342,64 +1452,67 @@ namespace Lucene.Net.Index
 
         private void DoTestNumericsVsStoredFields(Int64Producer longs)
         {
-            Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
-            Document doc = new Document();
-            Field idField = new StringField("id", "", Field.Store.NO);
-            Field storedField = NewStringField("stored", "", Field.Store.YES);
-            Field dvField = new NumericDocValuesField("dv", 0);
-            doc.Add(idField);
-            doc.Add(storedField);
-            doc.Add(dvField);
-
-            // index some docs
-            int numDocs = AtLeast(300);
-            // numDocs should be always > 256 so that in case of a codec that optimizes
-            // for numbers of values <= 256, all storage layouts are tested
-            Debug.Assert(numDocs > 256);
-            for (int i = 0; i < numDocs; i++)
+            using (Directory dir = NewDirectory())
             {
-                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
-                long value = longs.Next();
-                storedField.SetStringValue(Convert.ToString(value, CultureInfo.InvariantCulture));
-                dvField.SetInt64Value(value);
-                writer.AddDocument(doc);
-                if (Random.Next(31) == 0)
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf))
                 {
-                    writer.Commit();
-                }
-            }
+                    Document doc = new Document();
+                    Field idField = new StringField("id", "", Field.Store.NO);
+                    Field storedField = NewStringField("stored", "", Field.Store.YES);
+                    Field dvField = new NumericDocValuesField("dv", 0);
+                    doc.Add(idField);
+                    doc.Add(storedField);
+                    doc.Add(dvField);
 
-            // delete some docs
-            int numDeletions = Random.Next(numDocs / 10);
-            for (int i = 0; i < numDeletions; i++)
-            {
-                int id = Random.Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
-            }
+                    // index some docs
+                    int numDocs = AtLeast(300);
+                    // numDocs should be always > 256 so that in case of a codec that optimizes
+                    // for numbers of values <= 256, all storage layouts are tested
+                    Debug.Assert(numDocs > 256);
+                    for (int i = 0; i < numDocs; i++)
+                    {
+                        idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
+                        long value = longs.Next();
+                        storedField.SetStringValue(Convert.ToString(value, CultureInfo.InvariantCulture));
+                        dvField.SetInt64Value(value);
+                        writer.AddDocument(doc);
+                        if (Random.Next(31) == 0)
+                        {
+                            writer.Commit();
+                        }
+                    }
 
-            // merge some segments and ensure that at least one of them has more than
-            // 256 values
-            writer.ForceMerge(numDocs / 256);
+                    // delete some docs
+                    int numDeletions = Random.Next(numDocs / 10);
+                    for (int i = 0; i < numDeletions; i++)
+                    {
+                        int id = Random.Next(numDocs);
+                        writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
+                    }
 
-            writer.Dispose();
+                    // merge some segments and ensure that at least one of them has more than
+                    // 256 values
+                    writer.ForceMerge(numDocs / 256);
 
-            // compare
-            DirectoryReader ir = DirectoryReader.Open(dir);
-            foreach (AtomicReaderContext context in ir.Leaves)
-            {
-                AtomicReader r = context.AtomicReader;
-                NumericDocValues docValues = r.GetNumericDocValues("dv");
-                for (int i = 0; i < r.MaxDoc; i++)
+                } // writer.Dispose();
+
+                // compare
+                using (DirectoryReader ir = DirectoryReader.Open(dir))
                 {
-                    long storedValue = Convert.ToInt64(r.Document(i).Get("stored"), CultureInfo.InvariantCulture);
-                    Assert.AreEqual(storedValue, docValues.Get(i));
-                }
-            }
-            ir.Dispose();
-            dir.Dispose();
-        }
+                    foreach (AtomicReaderContext context in ir.Leaves)
+                    {
+                        AtomicReader r = context.AtomicReader;
+                        NumericDocValues docValues = r.GetNumericDocValues("dv");
+                        for (int i = 0; i < r.MaxDoc; i++)
+                        {
+                            long storedValue = Convert.ToInt64(r.Document(i).Get("stored"), CultureInfo.InvariantCulture);
+                            Assert.AreEqual(storedValue, docValues.Get(i));
+                        }
+                    }
+                } // ir.Dispose();
+            } // dir.Dispose();
+         }
 
         private void DoTestMissingVsFieldCache(long minValue, long maxValue)
         {
@@ -1429,65 +1542,68 @@ namespace Lucene.Net.Index
         private void DoTestMissingVsFieldCache(Int64Producer longs)
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
-            Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
-            Field idField = new StringField("id", "", Field.Store.NO);
-            Field indexedField = NewStringField("indexed", "", Field.Store.NO);
-            Field dvField = new NumericDocValuesField("dv", 0);
-
-            // index some docs
-            int numDocs = AtLeast(300);
-            // numDocs should be always > 256 so that in case of a codec that optimizes
-            // for numbers of values <= 256, all storage layouts are tested
-            Debug.Assert(numDocs > 256);
-            for (int i = 0; i < numDocs; i++)
+            using (Directory dir = NewDirectory())
             {
-                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
-                long value = longs.Next();
-                indexedField.SetStringValue(Convert.ToString(value, CultureInfo.InvariantCulture));
-                dvField.SetInt64Value(value);
-                Document doc = new Document();
-                doc.Add(idField);
-                // 1/4 of the time we neglect to add the fields
-                if (Random.Next(4) > 0)
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf))
                 {
-                    doc.Add(indexedField);
-                    doc.Add(dvField);
-                }
-                writer.AddDocument(doc);
-                if (Random.Next(31) == 0)
+                    Field idField = new StringField("id", "", Field.Store.NO);
+                    Field indexedField = NewStringField("indexed", "", Field.Store.NO);
+                    Field dvField = new NumericDocValuesField("dv", 0);
+
+                    // index some docs
+                    int numDocs = AtLeast(300);
+                    // numDocs should be always > 256 so that in case of a codec that optimizes
+                    // for numbers of values <= 256, all storage layouts are tested
+                    Debug.Assert(numDocs > 256);
+                    for (int i = 0; i < numDocs; i++)
+                    {
+                        idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
+                        long value = longs.Next();
+                        indexedField.SetStringValue(Convert.ToString(value, CultureInfo.InvariantCulture));
+                        dvField.SetInt64Value(value);
+                        Document doc = new Document();
+                        doc.Add(idField);
+                        // 1/4 of the time we neglect to add the fields
+                        if (Random.Next(4) > 0)
+                        {
+                            doc.Add(indexedField);
+                            doc.Add(dvField);
+                        }
+                        writer.AddDocument(doc);
+                        if (Random.Next(31) == 0)
+                        {
+                            writer.Commit();
+                        }
+                    }
+
+                    // delete some docs
+                    int numDeletions = Random.Next(numDocs / 10);
+                    for (int i = 0; i < numDeletions; i++)
+                    {
+                        int id = Random.Next(numDocs);
+                        writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
+                    }
+
+                    // merge some segments and ensure that at least one of them has more than
+                    // 256 values
+                    writer.ForceMerge(numDocs / 256);
+
+                } // writer.Dispose();
+
+                // compare
+                using (DirectoryReader ir = DirectoryReader.Open(dir))
                 {
-                    writer.Commit();
-                }
-            }
-
-            // delete some docs
-            int numDeletions = Random.Next(numDocs / 10);
-            for (int i = 0; i < numDeletions; i++)
-            {
-                int id = Random.Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
-            }
-
-            // merge some segments and ensure that at least one of them has more than
-            // 256 values
-            writer.ForceMerge(numDocs / 256);
-
-            writer.Dispose();
-
-            // compare
-            DirectoryReader ir = DirectoryReader.Open(dir);
-            foreach (var context in ir.Leaves)
-            {
-                AtomicReader r = context.AtomicReader;
-                IBits expected = FieldCache.DEFAULT.GetDocsWithField(r, "indexed");
-                IBits actual = FieldCache.DEFAULT.GetDocsWithField(r, "dv");
-                AssertEquals(expected, actual);
-            }
-            ir.Dispose();
-            dir.Dispose();
-        }
+                    foreach (var context in ir.Leaves)
+                    {
+                        AtomicReader r = context.AtomicReader;
+                        IBits expected = FieldCache.DEFAULT.GetDocsWithField(r, "indexed");
+                        IBits actual = FieldCache.DEFAULT.GetDocsWithField(r, "dv");
+                        AssertEquals(expected, actual);
+                    }
+                } // ir.Dispose();
+            } // dir.Dispose();
+         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestBooleanNumericsVsStoredFields()
@@ -1581,67 +1697,70 @@ namespace Lucene.Net.Index
 
         private void DoTestBinaryVsStoredFields(int minLength, int maxLength)
         {
-            Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
-            Document doc = new Document();
-            Field idField = new StringField("id", "", Field.Store.NO);
-            Field storedField = new StoredField("stored", new byte[0]);
-            Field dvField = new BinaryDocValuesField("dv", new BytesRef());
-            doc.Add(idField);
-            doc.Add(storedField);
-            doc.Add(dvField);
-
-            // index some docs
-            int numDocs = AtLeast(300);
-            for (int i = 0; i < numDocs; i++)
+            using (Directory dir = NewDirectory())
             {
-                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
-                int length;
-                if (minLength == maxLength)
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf))
                 {
-                    length = minLength; // fixed length
-                }
-                else
-                {
-                    length = TestUtil.NextInt32(Random, minLength, maxLength);
-                }
-                var buffer = new byte[length];
-                Random.NextBytes(buffer);
-                storedField.SetBytesValue(new BytesRef(buffer));
-                dvField.SetBytesValue(new BytesRef(buffer));
-                writer.AddDocument(doc);
-                if (Random.Next(31) == 0)
-                {
-                    writer.Commit();
-                }
-            }
+                    Document doc = new Document();
+                    Field idField = new StringField("id", "", Field.Store.NO);
+                    Field storedField = new StoredField("stored", new byte[0]);
+                    Field dvField = new BinaryDocValuesField("dv", new BytesRef());
+                    doc.Add(idField);
+                    doc.Add(storedField);
+                    doc.Add(dvField);
 
-            // delete some docs
-            int numDeletions = Random.Next(numDocs / 10);
-            for (int i = 0; i < numDeletions; i++)
-            {
-                int id = Random.Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
-            }
-            writer.Dispose();
+                    // index some docs
+                    int numDocs = AtLeast(300);
+                    for (int i = 0; i < numDocs; i++)
+                    {
+                        idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
+                        int length;
+                        if (minLength == maxLength)
+                        {
+                            length = minLength; // fixed length
+                        }
+                        else
+                        {
+                            length = TestUtil.NextInt32(Random, minLength, maxLength);
+                        }
+                        var buffer = new byte[length];
+                        Random.NextBytes(buffer);
+                        storedField.SetBytesValue(new BytesRef(buffer));
+                        dvField.SetBytesValue(new BytesRef(buffer));
+                        writer.AddDocument(doc);
+                        if (Random.Next(31) == 0)
+                        {
+                            writer.Commit();
+                        }
+                    }
 
-            // compare
-            DirectoryReader ir = DirectoryReader.Open(dir);
-            foreach (AtomicReaderContext context in ir.Leaves)
-            {
-                AtomicReader r = context.AtomicReader;
-                BinaryDocValues docValues = r.GetBinaryDocValues("dv");
-                for (int i = 0; i < r.MaxDoc; i++)
+                    // delete some docs
+                    int numDeletions = Random.Next(numDocs / 10);
+                    for (int i = 0; i < numDeletions; i++)
+                    {
+                        int id = Random.Next(numDocs);
+                        writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
+                    }
+                } // writer.Dispose();
+
+                // compare
+                using (DirectoryReader ir = DirectoryReader.Open(dir))
                 {
-                    BytesRef binaryValue = r.Document(i).GetBinaryValue("stored");
-                    BytesRef scratch = new BytesRef();
-                    docValues.Get(i, scratch);
-                    Assert.AreEqual(binaryValue, scratch);
-                }
-            }
-            ir.Dispose();
-            dir.Dispose();
+                    foreach (AtomicReaderContext context in ir.Leaves)
+                    {
+                        AtomicReader r = context.AtomicReader;
+                        BinaryDocValues docValues = r.GetBinaryDocValues("dv");
+                        for (int i = 0; i < r.MaxDoc; i++)
+                        {
+                            BytesRef binaryValue = r.Document(i).GetBinaryValue("stored");
+                            BytesRef scratch = new BytesRef();
+                            docValues.Get(i, scratch);
+                            Assert.AreEqual(binaryValue, scratch);
+                        }
+                    }
+                } // ir.Dispose();
+            } // dir.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -1667,126 +1786,132 @@ namespace Lucene.Net.Index
 
         private void DoTestSortedVsStoredFields(int minLength, int maxLength)
         {
-            Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
-            Document doc = new Document();
-            Field idField = new StringField("id", "", Field.Store.NO);
-            Field storedField = new StoredField("stored", new byte[0]);
-            Field dvField = new SortedDocValuesField("dv", new BytesRef());
-            doc.Add(idField);
-            doc.Add(storedField);
-            doc.Add(dvField);
-
-            // index some docs
-            int numDocs = AtLeast(300);
-            for (int i = 0; i < numDocs; i++)
+            using (Directory dir = NewDirectory())
             {
-                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
-                int length;
-                if (minLength == maxLength)
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf))
                 {
-                    length = minLength; // fixed length
-                }
-                else
-                {
-                    length = TestUtil.NextInt32(Random, minLength, maxLength);
-                }
-                var buffer = new byte[length];
-                Random.NextBytes(buffer);
-                storedField.SetBytesValue(new BytesRef(buffer));
-                dvField.SetBytesValue(new BytesRef(buffer));
-                writer.AddDocument(doc);
-                if (Random.Next(31) == 0)
-                {
-                    writer.Commit();
-                }
-            }
+                    Document doc = new Document();
+                    Field idField = new StringField("id", "", Field.Store.NO);
+                    Field storedField = new StoredField("stored", new byte[0]);
+                    Field dvField = new SortedDocValuesField("dv", new BytesRef());
+                    doc.Add(idField);
+                    doc.Add(storedField);
+                    doc.Add(dvField);
 
-            // delete some docs
-            int numDeletions = Random.Next(numDocs / 10);
-            for (int i = 0; i < numDeletions; i++)
-            {
-                int id = Random.Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
-            }
-            writer.Dispose();
+                    // index some docs
+                    int numDocs = AtLeast(300);
+                    for (int i = 0; i < numDocs; i++)
+                    {
+                        idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
+                        int length;
+                        if (minLength == maxLength)
+                        {
+                            length = minLength; // fixed length
+                        }
+                        else
+                        {
+                            length = TestUtil.NextInt32(Random, minLength, maxLength);
+                        }
+                        var buffer = new byte[length];
+                        Random.NextBytes(buffer);
+                        storedField.SetBytesValue(new BytesRef(buffer));
+                        dvField.SetBytesValue(new BytesRef(buffer));
+                        writer.AddDocument(doc);
+                        if (Random.Next(31) == 0)
+                        {
+                            writer.Commit();
+                        }
+                    }
 
-            // compare
-            DirectoryReader ir = DirectoryReader.Open(dir);
-            foreach (AtomicReaderContext context in ir.Leaves)
-            {
-                AtomicReader r = context.AtomicReader;
-                BinaryDocValues docValues = r.GetSortedDocValues("dv");
-                for (int i = 0; i < r.MaxDoc; i++)
+                    // delete some docs
+                    int numDeletions = Random.Next(numDocs / 10);
+                    for (int i = 0; i < numDeletions; i++)
+                    {
+                        int id = Random.Next(numDocs);
+                        writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
+                    }
+                } // writer.Dispose();
+
+                // compare
+                using (DirectoryReader ir = DirectoryReader.Open(dir))
                 {
-                    BytesRef binaryValue = r.Document(i).GetBinaryValue("stored");
-                    BytesRef scratch = new BytesRef();
-                    docValues.Get(i, scratch);
-                    Assert.AreEqual(binaryValue, scratch);
-                }
-            }
-            ir.Dispose();
-            dir.Dispose();
+                    foreach (AtomicReaderContext context in ir.Leaves)
+                    {
+                        AtomicReader r = context.AtomicReader;
+                        BinaryDocValues docValues = r.GetSortedDocValues("dv");
+                        for (int i = 0; i < r.MaxDoc; i++)
+                        {
+                            BytesRef binaryValue = r.Document(i).GetBinaryValue("stored");
+                            BytesRef scratch = new BytesRef();
+                            docValues.Get(i, scratch);
+                            Assert.AreEqual(binaryValue, scratch);
+                        }
+                    }
+                } // ir.Dispose();
+            } // dir.Dispose();
         }
 
         private void DoTestSortedVsFieldCache(int minLength, int maxLength)
         {
-            Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
-            Document doc = new Document();
-            Field idField = new StringField("id", "", Field.Store.NO);
-            Field indexedField = new StringField("indexed", "", Field.Store.NO);
-            Field dvField = new SortedDocValuesField("dv", new BytesRef());
-            doc.Add(idField);
-            doc.Add(indexedField);
-            doc.Add(dvField);
-
-            // index some docs
-            int numDocs = AtLeast(300);
-            for (int i = 0; i < numDocs; i++)
+            using (Directory dir = NewDirectory())
             {
-                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
-                int length;
-                if (minLength == maxLength)
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf))
                 {
-                    length = minLength; // fixed length
-                }
-                else
-                {
-                    length = TestUtil.NextInt32(Random, minLength, maxLength);
-                }
-                string value = TestUtil.RandomSimpleString(Random, length);
-                indexedField.SetStringValue(value);
-                dvField.SetBytesValue(new BytesRef(value));
-                writer.AddDocument(doc);
-                if (Random.Next(31) == 0)
-                {
-                    writer.Commit();
-                }
-            }
+                    Document doc = new Document();
+                    Field idField = new StringField("id", "", Field.Store.NO);
+                    Field indexedField = new StringField("indexed", "", Field.Store.NO);
+                    Field dvField = new SortedDocValuesField("dv", new BytesRef());
+                    doc.Add(idField);
+                    doc.Add(indexedField);
+                    doc.Add(dvField);
 
-            // delete some docs
-            int numDeletions = Random.Next(numDocs / 10);
-            for (int i = 0; i < numDeletions; i++)
-            {
-                int id = Random.Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
-            }
-            writer.Dispose();
+                    // index some docs
+                    int numDocs = AtLeast(300);
+                    for (int i = 0; i < numDocs; i++)
+                    {
+                        idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
+                        int length;
+                        if (minLength == maxLength)
+                        {
+                            length = minLength; // fixed length
+                        }
+                        else
+                        {
+                            length = TestUtil.NextInt32(Random, minLength, maxLength);
+                        }
+                        string value = TestUtil.RandomSimpleString(Random, length);
+                        indexedField.SetStringValue(value);
+                        dvField.SetBytesValue(new BytesRef(value));
+                        writer.AddDocument(doc);
+                        if (Random.Next(31) == 0)
+                        {
+                            writer.Commit();
+                        }
+                    }
 
-            // compare
-            DirectoryReader ir = DirectoryReader.Open(dir);
-            foreach (AtomicReaderContext context in ir.Leaves)
-            {
-                AtomicReader r = context.AtomicReader;
-                SortedDocValues expected = FieldCache.DEFAULT.GetTermsIndex(r, "indexed");
-                SortedDocValues actual = r.GetSortedDocValues("dv");
-                AssertEquals(r.MaxDoc, expected, actual);
-            }
-            ir.Dispose();
-            dir.Dispose();
+                    // delete some docs
+                    int numDeletions = Random.Next(numDocs / 10);
+                    for (int i = 0; i < numDeletions; i++)
+                    {
+                        int id = Random.Next(numDocs);
+                        writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
+                    }
+                } // writer.Dispose();
+
+                // compare
+                using (DirectoryReader ir = DirectoryReader.Open(dir))
+                {
+                    foreach (AtomicReaderContext context in ir.Leaves)
+                    {
+                        AtomicReader r = context.AtomicReader;
+                        SortedDocValues expected = FieldCache.DEFAULT.GetTermsIndex(r, "indexed");
+                        SortedDocValues actual = r.GetSortedDocValues("dv");
+                        AssertEquals(r.MaxDoc, expected, actual);
+                    }
+                } // ir.Dispose();
+            } // dir.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -1835,563 +1960,663 @@ namespace Lucene.Net.Index
         public virtual void TestSortedSetOneValue()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            using (Directory directory = NewDirectory())
+            {
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                    {
 
-            Document doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            iwriter.AddDocument(doc);
+                        Document doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        iwriter.AddDocument(doc);
 
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
 
-            SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
+                    SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
-            dv.SetDocument(0);
-            Assert.AreEqual(0, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    dv.SetDocument(0);
+                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            BytesRef bytes = new BytesRef();
-            dv.LookupOrd(0, bytes);
-            Assert.AreEqual(new BytesRef("hello"), bytes);
-
-            ireader.Dispose();
-            directory.Dispose();
+                    BytesRef bytes = new BytesRef();
+                    dv.LookupOrd(0, bytes);
+                    Assert.AreEqual(new BytesRef("hello"), bytes);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoFields()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            using (Directory directory = NewDirectory())
+            {
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                    {
 
-            Document doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            doc.Add(new SortedSetDocValuesField("field2", new BytesRef("world")));
-            iwriter.AddDocument(doc);
+                        Document doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        doc.Add(new SortedSetDocValuesField("field2", new BytesRef("world")));
+                        iwriter.AddDocument(doc);
 
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
 
-            SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
+                    SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
-            dv.SetDocument(0);
-            Assert.AreEqual(0, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    dv.SetDocument(0);
+                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            BytesRef bytes = new BytesRef();
-            dv.LookupOrd(0, bytes);
-            Assert.AreEqual(new BytesRef("hello"), bytes);
+                    BytesRef bytes = new BytesRef();
+                    dv.LookupOrd(0, bytes);
+                    Assert.AreEqual(new BytesRef("hello"), bytes);
 
-            dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field2");
+                    dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field2");
 
-            dv.SetDocument(0);
-            Assert.AreEqual(0, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    dv.SetDocument(0);
+                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            dv.LookupOrd(0, bytes);
-            Assert.AreEqual(new BytesRef("world"), bytes);
-
-            ireader.Dispose();
-            directory.Dispose();
+                    dv.LookupOrd(0, bytes);
+                    Assert.AreEqual(new BytesRef("world"), bytes);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoDocumentsMerged()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
+            using (Directory directory = NewDirectory())
+            {
+                Analyzer analyzer = new MockAnalyzer(Random);
+                IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                iwconfig.SetMergePolicy(NewLogMergePolicy());
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig))
+                    {
 
-            Document doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            iwriter.AddDocument(doc);
-            iwriter.Commit();
+                        Document doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        iwriter.AddDocument(doc);
+                        iwriter.Commit();
 
-            doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
+                        doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
+                        iwriter.AddDocument(doc);
+                        iwriter.ForceMerge(1);
 
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
 
-            SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-            Assert.AreEqual(2, dv.ValueCount);
+                    SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
+                    Assert.AreEqual(2, dv.ValueCount);
 
-            dv.SetDocument(0);
-            Assert.AreEqual(0, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    dv.SetDocument(0);
+                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            BytesRef bytes = new BytesRef();
-            dv.LookupOrd(0, bytes);
-            Assert.AreEqual(new BytesRef("hello"), bytes);
+                    BytesRef bytes = new BytesRef();
+                    dv.LookupOrd(0, bytes);
+                    Assert.AreEqual(new BytesRef("hello"), bytes);
 
-            dv.SetDocument(1);
-            Assert.AreEqual(1, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    dv.SetDocument(1);
+                    Assert.AreEqual(1, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            dv.LookupOrd(1, bytes);
-            Assert.AreEqual(new BytesRef("world"), bytes);
-
-            ireader.Dispose();
-            directory.Dispose();
+                    dv.LookupOrd(1, bytes);
+                    Assert.AreEqual(new BytesRef("world"), bytes);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoValues()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            using (Directory directory = NewDirectory())
+            {
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                    {
 
-            Document doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
-            iwriter.AddDocument(doc);
+                        Document doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
+                        iwriter.AddDocument(doc);
 
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
+                
+                    SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
-            SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
+                    dv.SetDocument(0);
+                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(1, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            dv.SetDocument(0);
-            Assert.AreEqual(0, dv.NextOrd());
-            Assert.AreEqual(1, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    BytesRef bytes = new BytesRef();
+                    dv.LookupOrd(0, bytes);
+                    Assert.AreEqual(new BytesRef("hello"), bytes);
 
-            BytesRef bytes = new BytesRef();
-            dv.LookupOrd(0, bytes);
-            Assert.AreEqual(new BytesRef("hello"), bytes);
-
-            dv.LookupOrd(1, bytes);
-            Assert.AreEqual(new BytesRef("world"), bytes);
-
-            ireader.Dispose();
-            directory.Dispose();
+                    dv.LookupOrd(1, bytes);
+                    Assert.AreEqual(new BytesRef("world"), bytes);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoValuesUnordered()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory directory = NewDirectory();
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            using (Directory directory = NewDirectory())
+            {
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                    {
 
-            Document doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            iwriter.AddDocument(doc);
+                        Document doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        iwriter.AddDocument(doc);
 
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
 
-            SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
+                    SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
-            dv.SetDocument(0);
-            Assert.AreEqual(0, dv.NextOrd());
-            Assert.AreEqual(1, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    dv.SetDocument(0);
+                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(1, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            BytesRef bytes = new BytesRef();
-            dv.LookupOrd(0, bytes);
-            Assert.AreEqual(new BytesRef("hello"), bytes);
+                    BytesRef bytes = new BytesRef();
+                    dv.LookupOrd(0, bytes);
+                    Assert.AreEqual(new BytesRef("hello"), bytes);
 
-            dv.LookupOrd(1, bytes);
-            Assert.AreEqual(new BytesRef("world"), bytes);
-
-            ireader.Dispose();
-            directory.Dispose();
+                    dv.LookupOrd(1, bytes);
+                    Assert.AreEqual(new BytesRef("world"), bytes);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetThreeValuesTwoDocs()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
+            using (Directory directory = NewDirectory())
+            {
+                Analyzer analyzer = new MockAnalyzer(Random);
+                IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                iwconfig.SetMergePolicy(NewLogMergePolicy());
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig))
+                    {
 
-            Document doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
-            iwriter.AddDocument(doc);
-            iwriter.Commit();
+                        Document doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
+                        iwriter.AddDocument(doc);
+                        iwriter.Commit();
 
-            doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("beer")));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
+                        doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("beer")));
+                        iwriter.AddDocument(doc);
+                        iwriter.ForceMerge(1);
 
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
 
-            SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-            Assert.AreEqual(3, dv.ValueCount);
+                    SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
+                    Assert.AreEqual(3, dv.ValueCount);
 
-            dv.SetDocument(0);
-            Assert.AreEqual(1, dv.NextOrd());
-            Assert.AreEqual(2, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    dv.SetDocument(0);
+                    Assert.AreEqual(1, dv.NextOrd());
+                    Assert.AreEqual(2, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            dv.SetDocument(1);
-            Assert.AreEqual(0, dv.NextOrd());
-            Assert.AreEqual(1, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    dv.SetDocument(1);
+                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(1, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            BytesRef bytes = new BytesRef();
-            dv.LookupOrd(0, bytes);
-            Assert.AreEqual(new BytesRef("beer"), bytes);
+                    BytesRef bytes = new BytesRef();
+                    dv.LookupOrd(0, bytes);
+                    Assert.AreEqual(new BytesRef("beer"), bytes);
 
-            dv.LookupOrd(1, bytes);
-            Assert.AreEqual(new BytesRef("hello"), bytes);
+                    dv.LookupOrd(1, bytes);
+                    Assert.AreEqual(new BytesRef("hello"), bytes);
 
-            dv.LookupOrd(2, bytes);
-            Assert.AreEqual(new BytesRef("world"), bytes);
-
-            ireader.Dispose();
-            directory.Dispose();
+                    dv.LookupOrd(2, bytes);
+                    Assert.AreEqual(new BytesRef("world"), bytes);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoDocumentsLastMissing()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
+            using (Directory directory = NewDirectory())
+            {
+                Analyzer analyzer = new MockAnalyzer(Random);
+                IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                iwconfig.SetMergePolicy(NewLogMergePolicy());
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig))
+                    {
 
-            Document doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            iwriter.AddDocument(doc);
+                        Document doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        iwriter.AddDocument(doc);
 
-            doc = new Document();
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        doc = new Document();
+                        iwriter.AddDocument(doc);
+                        iwriter.ForceMerge(1);
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
 
-            SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-            Assert.AreEqual(1, dv.ValueCount);
+                    SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
+                    Assert.AreEqual(1, dv.ValueCount);
 
-            dv.SetDocument(0);
-            Assert.AreEqual(0, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    dv.SetDocument(0);
+                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            BytesRef bytes = new BytesRef();
-            dv.LookupOrd(0, bytes);
-            Assert.AreEqual(new BytesRef("hello"), bytes);
-
-            ireader.Dispose();
-            directory.Dispose();
+                    BytesRef bytes = new BytesRef();
+                    dv.LookupOrd(0, bytes);
+                    Assert.AreEqual(new BytesRef("hello"), bytes);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoDocumentsLastMissingMerge()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
+            using (Directory directory = NewDirectory())
+            {
+                Analyzer analyzer = new MockAnalyzer(Random);
+                IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                iwconfig.SetMergePolicy(NewLogMergePolicy());
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig))
+                    {
 
-            Document doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            iwriter.AddDocument(doc);
-            iwriter.Commit();
+                        Document doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        iwriter.AddDocument(doc);
+                        iwriter.Commit();
 
-            doc = new Document();
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
+                        doc = new Document();
+                        iwriter.AddDocument(doc);
+                        iwriter.ForceMerge(1);
 
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
 
-            SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-            Assert.AreEqual(1, dv.ValueCount);
+                    SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
+                    Assert.AreEqual(1, dv.ValueCount);
 
-            dv.SetDocument(0);
-            Assert.AreEqual(0, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    dv.SetDocument(0);
+                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            BytesRef bytes = new BytesRef();
-            dv.LookupOrd(0, bytes);
-            Assert.AreEqual(new BytesRef("hello"), bytes);
-
-            ireader.Dispose();
-            directory.Dispose();
+                    BytesRef bytes = new BytesRef();
+                    dv.LookupOrd(0, bytes);
+                    Assert.AreEqual(new BytesRef("hello"), bytes);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoDocumentsFirstMissing()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
+            using (Directory directory = NewDirectory())
+            {
+                Analyzer analyzer = new MockAnalyzer(Random);
+                IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                iwconfig.SetMergePolicy(NewLogMergePolicy());
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig))
+                    {
 
-            Document doc = new Document();
-            iwriter.AddDocument(doc);
+                        Document doc = new Document();
+                        iwriter.AddDocument(doc);
 
-            doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            iwriter.AddDocument(doc);
+                        doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        iwriter.AddDocument(doc);
 
-            iwriter.ForceMerge(1);
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        iwriter.ForceMerge(1);
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
 
-            SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-            Assert.AreEqual(1, dv.ValueCount);
+                    SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
+                    Assert.AreEqual(1, dv.ValueCount);
 
-            dv.SetDocument(1);
-            Assert.AreEqual(0, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    dv.SetDocument(1);
+                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            BytesRef bytes = new BytesRef();
-            dv.LookupOrd(0, bytes);
-            Assert.AreEqual(new BytesRef("hello"), bytes);
-
-            ireader.Dispose();
-            directory.Dispose();
+                    BytesRef bytes = new BytesRef();
+                    dv.LookupOrd(0, bytes);
+                    Assert.AreEqual(new BytesRef("hello"), bytes);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTwoDocumentsFirstMissingMerge()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
+            using (Directory directory = NewDirectory())
+            {
+                Analyzer analyzer = new MockAnalyzer(Random);
+                IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                iwconfig.SetMergePolicy(NewLogMergePolicy());
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig))
+                    {
 
-            Document doc = new Document();
-            iwriter.AddDocument(doc);
-            iwriter.Commit();
+                        Document doc = new Document();
+                        iwriter.AddDocument(doc);
+                        iwriter.Commit();
 
-            doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            iwriter.AddDocument(doc);
-            iwriter.ForceMerge(1);
+                        doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        iwriter.AddDocument(doc);
+                        iwriter.ForceMerge(1);
 
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
 
-            SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-            Assert.AreEqual(1, dv.ValueCount);
+                    SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
+                    Assert.AreEqual(1, dv.ValueCount);
 
-            dv.SetDocument(1);
-            Assert.AreEqual(0, dv.NextOrd());
-            Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
+                    dv.SetDocument(1);
+                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
-            BytesRef bytes = new BytesRef();
-            dv.LookupOrd(0, bytes);
-            Assert.AreEqual(new BytesRef("hello"), bytes);
-
-            ireader.Dispose();
-            directory.Dispose();
+                    BytesRef bytes = new BytesRef();
+                    dv.LookupOrd(0, bytes);
+                    Assert.AreEqual(new BytesRef("hello"), bytes);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetMergeAwayAllValues()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
+            using (Directory directory = NewDirectory())
+            {
+                Analyzer analyzer = new MockAnalyzer(Random);
+                IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                iwconfig.SetMergePolicy(NewLogMergePolicy());
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig))
+                    {
 
-            Document doc = new Document();
-            doc.Add(new StringField("id", "0", Field.Store.NO));
-            iwriter.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new StringField("id", "1", Field.Store.NO));
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            iwriter.AddDocument(doc);
-            iwriter.Commit();
-            iwriter.DeleteDocuments(new Term("id", "1"));
-            iwriter.ForceMerge(1);
+                        Document doc = new Document();
+                        doc.Add(new StringField("id", "0", Field.Store.NO));
+                        iwriter.AddDocument(doc);
+                        doc = new Document();
+                        doc.Add(new StringField("id", "1", Field.Store.NO));
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        iwriter.AddDocument(doc);
+                        iwriter.Commit();
+                        iwriter.DeleteDocuments(new Term("id", "1"));
+                        iwriter.ForceMerge(1);
 
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
 
-            SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-            Assert.AreEqual(0, dv.ValueCount);
-
-            ireader.Dispose();
-            directory.Dispose();
+                    SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
+                    Assert.AreEqual(0, dv.ValueCount);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestSortedSetTermsEnum()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random);
-            IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
+            using (Directory directory = NewDirectory())
+            {
+                Analyzer analyzer = new MockAnalyzer(Random);
+                IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+                iwconfig.SetMergePolicy(NewLogMergePolicy());
+                DirectoryReader ireader = null;
+                try
+                {
+                    using (RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig))
+                    {
 
-            Document doc = new Document();
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
-            doc.Add(new SortedSetDocValuesField("field", new BytesRef("beer")));
-            iwriter.AddDocument(doc);
+                        Document doc = new Document();
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
+                        doc.Add(new SortedSetDocValuesField("field", new BytesRef("beer")));
+                        iwriter.AddDocument(doc);
 
-            DirectoryReader ireader = iwriter.Reader;
-            iwriter.Dispose();
+                        ireader = iwriter.Reader;
+                    } // iwriter.Dispose();
 
-            SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-            Assert.AreEqual(3, dv.ValueCount);
+                    SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
+                    Assert.AreEqual(3, dv.ValueCount);
 
-            TermsEnum termsEnum = dv.GetTermsEnum();
+                    TermsEnum termsEnum = dv.GetTermsEnum();
 
-            // next()
-            Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());
-            Assert.AreEqual(0, termsEnum.Ord);
-            Assert.AreEqual("hello", termsEnum.Next().Utf8ToString());
-            Assert.AreEqual(1, termsEnum.Ord);
-            Assert.AreEqual("world", termsEnum.Next().Utf8ToString());
-            Assert.AreEqual(2, termsEnum.Ord);
+                    // next()
+                    Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());
+                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.AreEqual("hello", termsEnum.Next().Utf8ToString());
+                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.AreEqual("world", termsEnum.Next().Utf8ToString());
+                    Assert.AreEqual(2, termsEnum.Ord);
 
-            // seekCeil()
-            Assert.AreEqual(SeekStatus.NOT_FOUND, termsEnum.SeekCeil(new BytesRef("ha!")));
-            Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(1, termsEnum.Ord);
-            Assert.AreEqual(SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef("beer")));
-            Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(0, termsEnum.Ord);
-            Assert.AreEqual(SeekStatus.END, termsEnum.SeekCeil(new BytesRef("zzz")));
+                    // seekCeil()
+                    Assert.AreEqual(SeekStatus.NOT_FOUND, termsEnum.SeekCeil(new BytesRef("ha!")));
+                    Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.AreEqual(SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef("beer")));
+                    Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.AreEqual(SeekStatus.END, termsEnum.SeekCeil(new BytesRef("zzz")));
 
-            // seekExact()
-            Assert.IsTrue(termsEnum.SeekExact(new BytesRef("beer")));
-            Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(0, termsEnum.Ord);
-            Assert.IsTrue(termsEnum.SeekExact(new BytesRef("hello")));
-            Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(1, termsEnum.Ord);
-            Assert.IsTrue(termsEnum.SeekExact(new BytesRef("world")));
-            Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(2, termsEnum.Ord);
-            Assert.IsFalse(termsEnum.SeekExact(new BytesRef("bogus")));
+                    // seekExact()
+                    Assert.IsTrue(termsEnum.SeekExact(new BytesRef("beer")));
+                    Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.IsTrue(termsEnum.SeekExact(new BytesRef("hello")));
+                    Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.IsTrue(termsEnum.SeekExact(new BytesRef("world")));
+                    Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(2, termsEnum.Ord);
+                    Assert.IsFalse(termsEnum.SeekExact(new BytesRef("bogus")));
 
-            // seek(ord)
-            termsEnum.SeekExact(0);
-            Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(0, termsEnum.Ord);
-            termsEnum.SeekExact(1);
-            Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(1, termsEnum.Ord);
-            termsEnum.SeekExact(2);
-            Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
-            Assert.AreEqual(2, termsEnum.Ord);
-            ireader.Dispose();
-            directory.Dispose();
+                    // seek(ord)
+                    termsEnum.SeekExact(0);
+                    Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(0, termsEnum.Ord);
+                    termsEnum.SeekExact(1);
+                    Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(1, termsEnum.Ord);
+                    termsEnum.SeekExact(2);
+                    Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
+                    Assert.AreEqual(2, termsEnum.Ord);
+                }
+                finally
+                {
+                    ireader?.Dispose();
+                }
+            } // directory.Dispose();
         }
 
         private void DoTestSortedSetVsStoredFields(int minLength, int maxLength, int maxValuesPerDoc)
         {
-            Directory dir = NewDirectory();
-            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
-
-            // index some docs
-            int numDocs = AtLeast(300);
-            for (int i = 0; i < numDocs; i++)
+            using (Directory dir = NewDirectory())
             {
-                Document doc = new Document();
-                Field idField = new StringField("id", Convert.ToString(i, CultureInfo.InvariantCulture), Field.Store.NO);
-                doc.Add(idField);
-                int length;
-                if (minLength == maxLength)
+                IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf))
                 {
-                    length = minLength; // fixed length
-                }
-                else
-                {
-                    length = TestUtil.NextInt32(Random, minLength, maxLength);
-                }
-                int numValues = TestUtil.NextInt32(Random, 0, maxValuesPerDoc);
 
-                // create a random set of strings
-                // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-                SortedSet<string> values = new SortedSet<string>(StringComparer.Ordinal);
-                for (int v = 0; v < numValues; v++)
-                {
-                    values.Add(TestUtil.RandomSimpleString(Random, length));
-                }
-
-                // add ordered to the stored field
-                foreach (string v in values)
-                {
-                    doc.Add(new StoredField("stored", v));
-                }
-
-                // add in any order to the dv field
-                IList<string> unordered = new List<string>(values);
-                Collections.Shuffle(unordered);
-                foreach (string v in unordered)
-                {
-                    doc.Add(new SortedSetDocValuesField("dv", new BytesRef(v)));
-                }
-
-                writer.AddDocument(doc);
-                if (Random.Next(31) == 0)
-                {
-                    writer.Commit();
-                }
-            }
-
-            // delete some docs
-            int numDeletions = Random.Next(numDocs / 10);
-            for (int i = 0; i < numDeletions; i++)
-            {
-                int id = Random.Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
-            }
-            writer.Dispose();
-
-            // compare
-            DirectoryReader ir = DirectoryReader.Open(dir);
-            foreach (AtomicReaderContext context in ir.Leaves)
-            {
-                AtomicReader r = context.AtomicReader;
-                SortedSetDocValues docValues = r.GetSortedSetDocValues("dv");
-                BytesRef scratch = new BytesRef();
-                for (int i = 0; i < r.MaxDoc; i++)
-                {
-                    string[] stringValues = r.Document(i).GetValues("stored");
-                    if (docValues != null)
+                    // index some docs
+                    int numDocs = AtLeast(300);
+                    for (int i = 0; i < numDocs; i++)
                     {
-                        docValues.SetDocument(i);
+                        Document doc = new Document();
+                        Field idField = new StringField("id", Convert.ToString(i, CultureInfo.InvariantCulture), Field.Store.NO);
+                        doc.Add(idField);
+                        int length;
+                        if (minLength == maxLength)
+                        {
+                            length = minLength; // fixed length
+                        }
+                        else
+                        {
+                            length = TestUtil.NextInt32(Random, minLength, maxLength);
+                        }
+                        int numValues = TestUtil.NextInt32(Random, 0, maxValuesPerDoc);
+
+                        // create a random set of strings
+                        // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+                        SortedSet<string> values = new SortedSet<string>(StringComparer.Ordinal);
+                        for (int v = 0; v < numValues; v++)
+                        {
+                            values.Add(TestUtil.RandomSimpleString(Random, length));
+                        }
+
+                        // add ordered to the stored field
+                        foreach (string v in values)
+                        {
+                            doc.Add(new StoredField("stored", v));
+                        }
+
+                        // add in any order to the dv field
+                        IList<string> unordered = new List<string>(values);
+                        Collections.Shuffle(unordered, Random);
+                        foreach (string v in unordered)
+                        {
+                            doc.Add(new SortedSetDocValuesField("dv", new BytesRef(v)));
+                        }
+
+                        writer.AddDocument(doc);
+                        if (Random.Next(31) == 0)
+                        {
+                            writer.Commit();
+                        }
                     }
-                    for (int j = 0; j < stringValues.Length; j++)
+
+                    // delete some docs
+                    int numDeletions = Random.Next(numDocs / 10);
+                    for (int i = 0; i < numDeletions; i++)
                     {
-                        Debug.Assert(docValues != null);
-                        long ord = docValues.NextOrd();
-                        Debug.Assert(ord != SortedSetDocValues.NO_MORE_ORDS);
-                        docValues.LookupOrd(ord, scratch);
-                        Assert.AreEqual(stringValues[j], scratch.Utf8ToString());
+                        int id = Random.Next(numDocs);
+                        writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
                     }
-                    Debug.Assert(docValues == null || docValues.NextOrd() == SortedSetDocValues.NO_MORE_ORDS);
-                }
-            }
-            ir.Dispose();
-            dir.Dispose();
+                } // writer.Dispose();
+
+                // compare
+                using (DirectoryReader ir = DirectoryReader.Open(dir))
+                {
+                    foreach (AtomicReaderContext context in ir.Leaves)
+                    {
+                        AtomicReader r = context.AtomicReader;
+                        SortedSetDocValues docValues = r.GetSortedSetDocValues("dv");
+                        BytesRef scratch = new BytesRef();
+                        for (int i = 0; i < r.MaxDoc; i++)
+                        {
+                            string[] stringValues = r.Document(i).GetValues("stored");
+                            if (docValues != null)
+                            {
+                                docValues.SetDocument(i);
+                            }
+                            for (int j = 0; j < stringValues.Length; j++)
+                            {
+                                Debug.Assert(docValues != null);
+                                long ord = docValues.NextOrd();
+                                Debug.Assert(ord != SortedSetDocValues.NO_MORE_ORDS);
+                                docValues.LookupOrd(ord, scratch);
+                                Assert.AreEqual(stringValues[j], scratch.Utf8ToString());
+                            }
+                            Debug.Assert(docValues == null || docValues.NextOrd() == SortedSetDocValues.NO_MORE_ORDS);
+                        }
+                    }
+                } // ir.Dispose();
+            } // dir.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -2567,88 +2792,92 @@ namespace Lucene.Net.Index
 
         private void DoTestSortedSetVsUninvertedField(int minLength, int maxLength)
         {
-            Directory dir = NewDirectory();
-            IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
-
-            // index some docs
-            int numDocs = AtLeast(300);
-            for (int i = 0; i < numDocs; i++)
+            using (Directory dir = NewDirectory())
             {
-                Document doc = new Document();
-                Field idField = new StringField("id", Convert.ToString(i, CultureInfo.InvariantCulture), Field.Store.NO);
-                doc.Add(idField);
-                int length;
-                if (minLength == maxLength)
+                IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf))
                 {
-                    length = minLength; // fixed length
-                }
-                else
-                {
-                    length = TestUtil.NextInt32(Random, minLength, maxLength);
-                }
-                int numValues = Random.Next(17);
-                // create a random list of strings
-                IList<string> values = new List<string>();
-                for (int v = 0; v < numValues; v++)
-                {
-                    values.Add(TestUtil.RandomSimpleString(Random, length));
-                }
 
-                // add in any order to the indexed field
-                IList<string> unordered = new List<string>(values);
-                Collections.Shuffle(unordered);
-                foreach (string v in unordered)
-                {
-                    doc.Add(NewStringField("indexed", v, Field.Store.NO));
-                }
+                    // index some docs
+                    int numDocs = AtLeast(300);
+                    for (int i = 0; i < numDocs; i++)
+                    {
+                        Document doc = new Document();
+                        Field idField = new StringField("id", Convert.ToString(i, CultureInfo.InvariantCulture), Field.Store.NO);
+                        doc.Add(idField);
+                        int length;
+                        if (minLength == maxLength)
+                        {
+                            length = minLength; // fixed length
+                        }
+                        else
+                        {
+                            length = TestUtil.NextInt32(Random, minLength, maxLength);
+                        }
+                        int numValues = Random.Next(17);
+                        // create a random list of strings
+                        IList<string> values = new List<string>();
+                        for (int v = 0; v < numValues; v++)
+                        {
+                            values.Add(TestUtil.RandomSimpleString(Random, length));
+                        }
 
-                // add in any order to the dv field
-                IList<string> unordered2 = new List<string>(values);
-                Collections.Shuffle(unordered2);
-                foreach (string v in unordered2)
-                {
-                    doc.Add(new SortedSetDocValuesField("dv", new BytesRef(v)));
-                }
+                        // add in any order to the indexed field
+                        IList<string> unordered = new List<string>(values);
+                        Collections.Shuffle(unordered, Random);
+                        foreach (string v in unordered)
+                        {
+                            doc.Add(NewStringField("indexed", v, Field.Store.NO));
+                        }
 
-                writer.AddDocument(doc);
-                if (Random.Next(31) == 0)
-                {
-                    writer.Commit();
-                }
-            }
+                        // add in any order to the dv field
+                        IList<string> unordered2 = new List<string>(values);
+                        Collections.Shuffle(unordered2, Random);
+                        foreach (string v in unordered2)
+                        {
+                            doc.Add(new SortedSetDocValuesField("dv", new BytesRef(v)));
+                        }
 
-            // delete some docs
-            int numDeletions = Random.Next(numDocs / 10);
-            for (int i = 0; i < numDeletions; i++)
-            {
-                int id = Random.Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
-            }
+                        writer.AddDocument(doc);
+                        if (Random.Next(31) == 0)
+                        {
+                            writer.Commit();
+                        }
+                    }
 
-            // compare per-segment
-            DirectoryReader ir = writer.Reader;
-            foreach (AtomicReaderContext context in ir.Leaves)
-            {
-                AtomicReader r = context.AtomicReader;
-                SortedSetDocValues expected = FieldCache.DEFAULT.GetDocTermOrds(r, "indexed");
-                SortedSetDocValues actual = r.GetSortedSetDocValues("dv");
-                AssertEquals(r.MaxDoc, expected, actual);
-            }
-            ir.Dispose();
+                    // delete some docs
+                    int numDeletions = Random.Next(numDocs / 10);
+                    for (int i = 0; i < numDeletions; i++)
+                    {
+                        int id = Random.Next(numDocs);
+                        writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
+                    }
 
-            writer.ForceMerge(1);
+                    // compare per-segment
+                    using (DirectoryReader ir = writer.Reader)
+                    {
+                        foreach (AtomicReaderContext context in ir.Leaves)
+                        {
+                            AtomicReader r = context.AtomicReader;
+                            SortedSetDocValues expected = FieldCache.DEFAULT.GetDocTermOrds(r, "indexed");
+                            SortedSetDocValues actual = r.GetSortedSetDocValues("dv");
+                            AssertEquals(r.MaxDoc, expected, actual);
+                        }
+                    } // ir.Dispose();
 
-            // now compare again after the merge
-            ir = writer.Reader;
-            AtomicReader ar = GetOnlySegmentReader(ir);
-            SortedSetDocValues expected_ = FieldCache.DEFAULT.GetDocTermOrds(ar, "indexed");
-            SortedSetDocValues actual_ = ar.GetSortedSetDocValues("dv");
-            AssertEquals(ir.MaxDoc, expected_, actual_);
-            ir.Dispose();
+                    writer.ForceMerge(1);
 
-            writer.Dispose();
-            dir.Dispose();
+                    // now compare again after the merge
+                    using (DirectoryReader ir = writer.Reader)
+                    {
+                        AtomicReader ar = GetOnlySegmentReader(ir);
+                        SortedSetDocValues expected_ = FieldCache.DEFAULT.GetDocTermOrds(ar, "indexed");
+                        SortedSetDocValues actual_ = ar.GetSortedSetDocValues("dv");
+                        AssertEquals(ir.MaxDoc, expected_, actual_);
+                    } // ir.Dispose();
+
+                } // writer.Dispose();
+            } // dir.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -2745,212 +2974,230 @@ namespace Lucene.Net.Index
         public virtual void TestTwoNumbersOneMissing()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new StringField("id", "0", Field.Store.YES));
-            doc.Add(new NumericDocValuesField("dv1", 0));
-            iw.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new StringField("id", "1", Field.Store.YES));
-            iw.AddDocument(doc);
-            iw.ForceMerge(1);
-            iw.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new StringField("id", "0", Field.Store.YES));
+                    doc.Add(new NumericDocValuesField("dv1", 0));
+                    iw.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new StringField("id", "1", Field.Store.YES));
+                    iw.AddDocument(doc);
+                    iw.ForceMerge(1);
+                } // iw.Dispose();
 
-            IndexReader ir = DirectoryReader.Open(directory);
-            Assert.AreEqual(1, ir.Leaves.Count);
-            AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
-            NumericDocValues dv = ar.GetNumericDocValues("dv1");
-            Assert.AreEqual(0, dv.Get(0));
-            Assert.AreEqual(0, dv.Get(1));
-            IBits docsWithField = ar.GetDocsWithField("dv1");
-            Assert.IsTrue(docsWithField.Get(0));
-            Assert.IsFalse(docsWithField.Get(1));
-            ir.Dispose();
-            directory.Dispose();
+                using (IndexReader ir = DirectoryReader.Open(directory))
+                {
+                    Assert.AreEqual(1, ir.Leaves.Count);
+                    AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
+                    NumericDocValues dv = ar.GetNumericDocValues("dv1");
+                    Assert.AreEqual(0, dv.Get(0));
+                    Assert.AreEqual(0, dv.Get(1));
+                    IBits docsWithField = ar.GetDocsWithField("dv1");
+                    Assert.IsTrue(docsWithField.Get(0));
+                    Assert.IsFalse(docsWithField.Get(1));
+                } // ir.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwoNumbersOneMissingWithMerging()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new StringField("id", "0", Field.Store.YES));
-            doc.Add(new NumericDocValuesField("dv1", 0));
-            iw.AddDocument(doc);
-            iw.Commit();
-            doc = new Document();
-            doc.Add(new StringField("id", "1", Field.Store.YES));
-            iw.AddDocument(doc);
-            iw.ForceMerge(1);
-            iw.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new StringField("id", "0", Field.Store.YES));
+                    doc.Add(new NumericDocValuesField("dv1", 0));
+                    iw.AddDocument(doc);
+                    iw.Commit();
+                    doc = new Document();
+                    doc.Add(new StringField("id", "1", Field.Store.YES));
+                    iw.AddDocument(doc);
+                    iw.ForceMerge(1);
+                } // iw.Dispose();
 
-            IndexReader ir = DirectoryReader.Open(directory);
-            Assert.AreEqual(1, ir.Leaves.Count);
-            AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
-            NumericDocValues dv = ar.GetNumericDocValues("dv1");
-            Assert.AreEqual(0, dv.Get(0));
-            Assert.AreEqual(0, dv.Get(1));
-            IBits docsWithField = ar.GetDocsWithField("dv1");
-            Assert.IsTrue(docsWithField.Get(0));
-            Assert.IsFalse(docsWithField.Get(1));
-            ir.Dispose();
-            directory.Dispose();
+                using (IndexReader ir = DirectoryReader.Open(directory))
+                {
+                    Assert.AreEqual(1, ir.Leaves.Count);
+                    AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
+                    NumericDocValues dv = ar.GetNumericDocValues("dv1");
+                    Assert.AreEqual(0, dv.Get(0));
+                    Assert.AreEqual(0, dv.Get(1));
+                    IBits docsWithField = ar.GetDocsWithField("dv1");
+                    Assert.IsTrue(docsWithField.Get(0));
+                    Assert.IsFalse(docsWithField.Get(1));
+                } // ir.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestThreeNumbersOneMissingWithMerging()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new StringField("id", "0", Field.Store.YES));
-            doc.Add(new NumericDocValuesField("dv1", 0));
-            iw.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new StringField("id", "1", Field.Store.YES));
-            iw.AddDocument(doc);
-            iw.Commit();
-            doc = new Document();
-            doc.Add(new StringField("id", "2", Field.Store.YES));
-            doc.Add(new NumericDocValuesField("dv1", 5));
-            iw.AddDocument(doc);
-            iw.ForceMerge(1);
-            iw.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new StringField("id", "0", Field.Store.YES));
+                    doc.Add(new NumericDocValuesField("dv1", 0));
+                    iw.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new StringField("id", "1", Field.Store.YES));
+                    iw.AddDocument(doc);
+                    iw.Commit();
+                    doc = new Document();
+                    doc.Add(new StringField("id", "2", Field.Store.YES));
+                    doc.Add(new NumericDocValuesField("dv1", 5));
+                    iw.AddDocument(doc);
+                    iw.ForceMerge(1);
+                } // iw.Dispose();
 
-            IndexReader ir = DirectoryReader.Open(directory);
-            Assert.AreEqual(1, ir.Leaves.Count);
-            AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
-            NumericDocValues dv = ar.GetNumericDocValues("dv1");
-            Assert.AreEqual(0, dv.Get(0));
-            Assert.AreEqual(0, dv.Get(1));
-            Assert.AreEqual(5, dv.Get(2));
-            IBits docsWithField = ar.GetDocsWithField("dv1");
-            Assert.IsTrue(docsWithField.Get(0));
-            Assert.IsFalse(docsWithField.Get(1));
-            Assert.IsTrue(docsWithField.Get(2));
-            ir.Dispose();
-            directory.Dispose();
+                using (IndexReader ir = DirectoryReader.Open(directory))
+                {
+                    Assert.AreEqual(1, ir.Leaves.Count);
+                    AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
+                    NumericDocValues dv = ar.GetNumericDocValues("dv1");
+                    Assert.AreEqual(0, dv.Get(0));
+                    Assert.AreEqual(0, dv.Get(1));
+                    Assert.AreEqual(5, dv.Get(2));
+                    IBits docsWithField = ar.GetDocsWithField("dv1");
+                    Assert.IsTrue(docsWithField.Get(0));
+                    Assert.IsFalse(docsWithField.Get(1));
+                    Assert.IsTrue(docsWithField.Get(2));
+                } // ir.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwoBytesOneMissing()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new StringField("id", "0", Field.Store.YES));
-            doc.Add(new BinaryDocValuesField("dv1", new BytesRef()));
-            iw.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new StringField("id", "1", Field.Store.YES));
-            iw.AddDocument(doc);
-            iw.ForceMerge(1);
-            iw.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new StringField("id", "0", Field.Store.YES));
+                    doc.Add(new BinaryDocValuesField("dv1", new BytesRef()));
+                    iw.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new StringField("id", "1", Field.Store.YES));
+                    iw.AddDocument(doc);
+                    iw.ForceMerge(1);
+                } // iw.Dispose();
 
-            IndexReader ir = DirectoryReader.Open(directory);
-            Assert.AreEqual(1, ir.Leaves.Count);
-            AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
-            BinaryDocValues dv = ar.GetBinaryDocValues("dv1");
-            BytesRef @ref = new BytesRef();
-            dv.Get(0, @ref);
-            Assert.AreEqual(new BytesRef(), @ref);
-            dv.Get(1, @ref);
-            Assert.AreEqual(new BytesRef(), @ref);
-            IBits docsWithField = ar.GetDocsWithField("dv1");
-            Assert.IsTrue(docsWithField.Get(0));
-            Assert.IsFalse(docsWithField.Get(1));
-            ir.Dispose();
-            directory.Dispose();
+                using (IndexReader ir = DirectoryReader.Open(directory))
+                {
+                    Assert.AreEqual(1, ir.Leaves.Count);
+                    AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
+                    BinaryDocValues dv = ar.GetBinaryDocValues("dv1");
+                    BytesRef @ref = new BytesRef();
+                    dv.Get(0, @ref);
+                    Assert.AreEqual(new BytesRef(), @ref);
+                    dv.Get(1, @ref);
+                    Assert.AreEqual(new BytesRef(), @ref);
+                    IBits docsWithField = ar.GetDocsWithField("dv1");
+                    Assert.IsTrue(docsWithField.Get(0));
+                    Assert.IsFalse(docsWithField.Get(1));
+                } // ir.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestTwoBytesOneMissingWithMerging()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new StringField("id", "0", Field.Store.YES));
-            doc.Add(new BinaryDocValuesField("dv1", new BytesRef()));
-            iw.AddDocument(doc);
-            iw.Commit();
-            doc = new Document();
-            doc.Add(new StringField("id", "1", Field.Store.YES));
-            iw.AddDocument(doc);
-            iw.ForceMerge(1);
-            iw.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new StringField("id", "0", Field.Store.YES));
+                    doc.Add(new BinaryDocValuesField("dv1", new BytesRef()));
+                    iw.AddDocument(doc);
+                    iw.Commit();
+                    doc = new Document();
+                    doc.Add(new StringField("id", "1", Field.Store.YES));
+                    iw.AddDocument(doc);
+                    iw.ForceMerge(1);
+                } // iw.Dispose();
 
-            IndexReader ir = DirectoryReader.Open(directory);
-            Assert.AreEqual(1, ir.Leaves.Count);
-            AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
-            BinaryDocValues dv = ar.GetBinaryDocValues("dv1");
-            BytesRef @ref = new BytesRef();
-            dv.Get(0, @ref);
-            Assert.AreEqual(new BytesRef(), @ref);
-            dv.Get(1, @ref);
-            Assert.AreEqual(new BytesRef(), @ref);
-            IBits docsWithField = ar.GetDocsWithField("dv1");
-            Assert.IsTrue(docsWithField.Get(0));
-            Assert.IsFalse(docsWithField.Get(1));
-            ir.Dispose();
-            directory.Dispose();
+                using (IndexReader ir = DirectoryReader.Open(directory))
+                {
+                    Assert.AreEqual(1, ir.Leaves.Count);
+                    AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
+                    BinaryDocValues dv = ar.GetBinaryDocValues("dv1");
+                    BytesRef @ref = new BytesRef();
+                    dv.Get(0, @ref);
+                    Assert.AreEqual(new BytesRef(), @ref);
+                    dv.Get(1, @ref);
+                    Assert.AreEqual(new BytesRef(), @ref);
+                    IBits docsWithField = ar.GetDocsWithField("dv1");
+                    Assert.IsTrue(docsWithField.Get(0));
+                    Assert.IsFalse(docsWithField.Get(1));
+                } // ir.Dispose();
+            } // directory.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestThreeBytesOneMissingWithMerging()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
-            Directory directory = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
-            conf.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf);
-            Document doc = new Document();
-            doc.Add(new StringField("id", "0", Field.Store.YES));
-            doc.Add(new BinaryDocValuesField("dv1", new BytesRef()));
-            iw.AddDocument(doc);
-            doc = new Document();
-            doc.Add(new StringField("id", "1", Field.Store.YES));
-            iw.AddDocument(doc);
-            iw.Commit();
-            doc = new Document();
-            doc.Add(new StringField("id", "2", Field.Store.YES));
-            doc.Add(new BinaryDocValuesField("dv1", new BytesRef("boo")));
-            iw.AddDocument(doc);
-            iw.ForceMerge(1);
-            iw.Dispose();
+            using (Directory directory = NewDirectory())
+            {
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, null);
+                conf.SetMergePolicy(NewLogMergePolicy());
+                using (RandomIndexWriter iw = new RandomIndexWriter(Random, directory, conf))
+                {
+                    Document doc = new Document();
+                    doc.Add(new StringField("id", "0", Field.Store.YES));
+                    doc.Add(new BinaryDocValuesField("dv1", new BytesRef()));
+                    iw.AddDocument(doc);
+                    doc = new Document();
+                    doc.Add(new StringField("id", "1", Field.Store.YES));
+                    iw.AddDocument(doc);
+                    iw.Commit();
+                    doc = new Document();
+                    doc.Add(new StringField("id", "2", Field.Store.YES));
+                    doc.Add(new BinaryDocValuesField("dv1", new BytesRef("boo")));
+                    iw.AddDocument(doc);
+                    iw.ForceMerge(1);
+                } // iw.Dispose();
 
-            IndexReader ir = DirectoryReader.Open(directory);
-            Assert.AreEqual(1, ir.Leaves.Count);
-            AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
-            BinaryDocValues dv = ar.GetBinaryDocValues("dv1");
-            BytesRef @ref = new BytesRef();
-            dv.Get(0, @ref);
-            Assert.AreEqual(new BytesRef(), @ref);
-            dv.Get(1, @ref);
-            Assert.AreEqual(new BytesRef(), @ref);
-            dv.Get(2, @ref);
-            Assert.AreEqual(new BytesRef("boo"), @ref);
-            IBits docsWithField = ar.GetDocsWithField("dv1");
-            Assert.IsTrue(docsWithField.Get(0));
-            Assert.IsFalse(docsWithField.Get(1));
-            Assert.IsTrue(docsWithField.Get(2));
-            ir.Dispose();
-            directory.Dispose();
+                using (IndexReader ir = DirectoryReader.Open(directory))
+                {
+                    Assert.AreEqual(1, ir.Leaves.Count);
+                    AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
+                    BinaryDocValues dv = ar.GetBinaryDocValues("dv1");
+                    BytesRef @ref = new BytesRef();
+                    dv.Get(0, @ref);
+                    Assert.AreEqual(new BytesRef(), @ref);
+                    dv.Get(1, @ref);
+                    Assert.AreEqual(new BytesRef(), @ref);
+                    dv.Get(2, @ref);
+                    Assert.AreEqual(new BytesRef("boo"), @ref);
+                    IBits docsWithField = ar.GetDocsWithField("dv1");
+                    Assert.IsTrue(docsWithField.Get(0));
+                    Assert.IsFalse(docsWithField.Get(1));
+                    Assert.IsTrue(docsWithField.Get(2));
+                } // ir.Dispose();
+            } // directory.Dispose();
         }
 
         // LUCENE-4853
@@ -2961,117 +3208,139 @@ namespace Lucene.Net.Index
             // FSDirectory because SimpleText will consume gobbs of
             // space when storing big binary values:
             Directory d = NewFSDirectory(CreateTempDir("hugeBinaryValues"));
-            bool doFixed = Random.NextBoolean();
-            int numDocs;
-            int fixedLength = 0;
-            if (doFixed)
-            {
-                // Sometimes make all values fixed length since some
-                // codecs have different code paths for this:
-                numDocs = TestUtil.NextInt32(Random, 10, 20);
-                fixedLength = TestUtil.NextInt32(Random, 65537, 256 * 1024);
-            }
-            else
-            {
-                numDocs = TestUtil.NextInt32(Random, 100, 200);
-            }
-            IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
-            var docBytes = new List<byte[]>();
-            long totalBytes = 0;
-            for (int docID = 0; docID < numDocs; docID++)
-            {
-                // we don't use RandomIndexWriter because it might add
-                // more docvalues than we expect !!!!
-
-                // Must be > 64KB in size to ensure more than 2 pages in
-                // PagedBytes would be needed:
-                int numBytes;
-                if (doFixed)
-                {
-                    numBytes = fixedLength;
-                }
-                else if (docID == 0 || Random.Next(5) == 3)
-                {
-                    numBytes = TestUtil.NextInt32(Random, 65537, 3 * 1024 * 1024);
-                }
-                else
-                {
-                    numBytes = TestUtil.NextInt32(Random, 1, 1024 * 1024);
-                }
-                totalBytes += numBytes;
-                if (totalBytes > 5 * 1024 * 1024)
-                {
-                    break;
-                }
-                var bytes = new byte[numBytes];
-                Random.NextBytes(bytes);
-                docBytes.Add(bytes);
-                Document doc = new Document();
-                BytesRef b = new BytesRef(bytes);
-                b.Length = bytes.Length;
-                doc.Add(new BinaryDocValuesField("field", b));
-                doc.Add(new StringField("id", "" + docID, Field.Store.YES));
-                try
-                {
-                    w.AddDocument(doc);
-                }
-                catch (System.ArgumentException iae)
-                {
-                    if (iae.Message.IndexOf("is too large", StringComparison.Ordinal) == -1)
-                    {
-                        throw /*iae*/; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
-                    }
-                    else
-                    {
-                        // OK: some codecs can't handle binary DV > 32K
-                        Assert.IsFalse(CodecAcceptsHugeBinaryValues("field"));
-                        w.Rollback();
-                        d.Dispose();
-                        return;
-                    }
-                }
-            }
-
-            DirectoryReader r;
+            bool directoryDisposed = false;
             try
             {
-                r = w.GetReader();
-            }
-            catch (System.ArgumentException iae)
-            {
-                if (iae.Message.IndexOf("is too large", StringComparison.Ordinal) == -1)
+                bool doFixed = Random.NextBoolean();
+                int numDocs;
+                int fixedLength = 0;
+                if (doFixed)
                 {
-                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                    // Sometimes make all values fixed length since some
+                    // codecs have different code paths for this:
+                    numDocs = TestUtil.NextInt32(Random, 10, 20);
+                    fixedLength = TestUtil.NextInt32(Random, 65537, 256 * 1024);
                 }
                 else
                 {
-                    Assert.IsFalse(CodecAcceptsHugeBinaryValues("field"));
+                    numDocs = TestUtil.NextInt32(Random, 100, 200);
+                }
+                var docBytes = new List<byte[]>();
+                DirectoryReader r = null;
+                try
+                {
+                    using (IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)))
+                    {
+                        long totalBytes = 0;
+                        for (int docID = 0; docID < numDocs; docID++)
+                        {
+                            // we don't use RandomIndexWriter because it might add
+                            // more docvalues than we expect !!!!
 
-                    // OK: some codecs can't handle binary DV > 32K
-                    w.Rollback();
-                    d.Dispose();
-                    return;
+                            // Must be > 64KB in size to ensure more than 2 pages in
+                            // PagedBytes would be needed:
+                            int numBytes;
+                            if (doFixed)
+                            {
+                                numBytes = fixedLength;
+                            }
+                            else if (docID == 0 || Random.Next(5) == 3)
+                            {
+                                numBytes = TestUtil.NextInt32(Random, 65537, 3 * 1024 * 1024);
+                            }
+                            else
+                            {
+                                numBytes = TestUtil.NextInt32(Random, 1, 1024 * 1024);
+                            }
+                            totalBytes += numBytes;
+                            if (totalBytes > 5 * 1024 * 1024)
+                            {
+                                break;
+                            }
+                            var bytes = new byte[numBytes];
+                            Random.NextBytes(bytes);
+                            docBytes.Add(bytes);
+                            Document doc = new Document();
+                            BytesRef b = new BytesRef(bytes);
+                            b.Length = bytes.Length;
+                            doc.Add(new BinaryDocValuesField("field", b));
+                            doc.Add(new StringField("id", "" + docID, Field.Store.YES));
+                            try
+                            {
+                                w.AddDocument(doc);
+                            }
+                            catch (System.ArgumentException iae)
+                            {
+                                if (iae.Message.IndexOf("is too large", StringComparison.Ordinal) == -1)
+                                {
+                                    throw /*iae*/; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                                }
+                                else
+                                {
+                                    // OK: some codecs can't handle binary DV > 32K
+                                    Assert.IsFalse(CodecAcceptsHugeBinaryValues("field"));
+                                    w.Rollback();
+                                    d.Dispose();
+                                    directoryDisposed = true; // LUCENENET specific
+                                    return;
+                                }
+                            }
+                        }
+
+                        //DirectoryReader r; // LUCENENET: declaration moved outside w's using block
+                        try
+                        {
+                            r = w.GetReader();
+                        }
+                        catch (System.ArgumentException iae)
+                        {
+                            if (iae.Message.IndexOf("is too large", StringComparison.Ordinal) == -1)
+                            {
+                                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                            }
+                            else
+                            {
+                                Assert.IsFalse(CodecAcceptsHugeBinaryValues("field"));
+
+                                // OK: some codecs can't handle binary DV > 32K
+                                w.Rollback();
+                                d.Dispose();
+                                directoryDisposed = true; // LUCENENET specific
+                                return;
+                            }
+                        }
+                    } // w.Dispose();
+
+                    using (AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r))
+                    {
+
+                        BinaryDocValues s = FieldCache.DEFAULT.GetTerms(ar, "field", false);
+                        for (int docID = 0; docID < docBytes.Count; docID++)
+                        {
+                            Document doc = ar.Document(docID);
+                            BytesRef bytes = new BytesRef();
+                            s.Get(docID, bytes);
+                            var expected = docBytes[Convert.ToInt32(doc.Get("id"), CultureInfo.InvariantCulture)];
+                            Assert.AreEqual(expected.Length, bytes.Length);
+                            Assert.AreEqual(new BytesRef(expected), bytes);
+                        }
+
+                        Assert.IsTrue(CodecAcceptsHugeBinaryValues("field"));
+
+                    } // ar.Dispose();
+                }
+                finally
+                {
+                    r?.Dispose(); // LUCENENET specific - small chance w.Dispose() will throw, this is just here to cover that case. It is safe to call r.Dispose() more than once.
                 }
             }
-            w.Dispose();
-
-            AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);
-
-            BinaryDocValues s = FieldCache.DEFAULT.GetTerms(ar, "field", false);
-            for (int docID = 0; docID < docBytes.Count; docID++)
+            finally
             {
-                Document doc = ar.Document(docID);
-                BytesRef bytes = new BytesRef();
-                s.Get(docID, bytes);
-                var expected = docBytes[Convert.ToInt32(doc.Get("id"), CultureInfo.InvariantCulture)];
-                Assert.AreEqual(expected.Length, bytes.Length);
-                Assert.AreEqual(new BytesRef(expected), bytes);
+                // LUCENENET: MMapDirectory is not safe to call dispose on twice (a bug?), so we
+                // need to ensure that if another path got it already that we don't do it again here.
+                if (!directoryDisposed)
+                    d.Dispose();
             }
-
-            Assert.IsTrue(CodecAcceptsHugeBinaryValues("field"));
-
-            ar.Dispose();
-            d.Dispose();
         }
 
         // TODO: get this out of here and into the deprecated codecs (4.0, 4.2)
@@ -3083,78 +3352,90 @@ namespace Lucene.Net.Index
             Analyzer analyzer = new MockAnalyzer(Random);
             // FSDirectory because SimpleText will consume gobbs of
             // space when storing big binary values:
-            Directory d = NewFSDirectory(CreateTempDir("hugeBinaryValues"));
-            bool doFixed = Random.NextBoolean();
-            int numDocs;
-            int fixedLength = 0;
-            if (doFixed)
+            using (Directory d = NewFSDirectory(CreateTempDir("hugeBinaryValues")))
             {
-                // Sometimes make all values fixed length since some
-                // codecs have different code paths for this:
-                numDocs = TestUtil.NextInt32(Random, 10, 20);
-                fixedLength = Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH;
-            }
-            else
-            {
-                numDocs = TestUtil.NextInt32(Random, 100, 200);
-            }
-            IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
-            var docBytes = new List<byte[]>();
-            long totalBytes = 0;
-            for (int docID = 0; docID < numDocs; docID++)
-            {
-                // we don't use RandomIndexWriter because it might add
-                // more docvalues than we expect !!!!
-
-                // Must be > 64KB in size to ensure more than 2 pages in
-                // PagedBytes would be needed:
-                int numBytes;
+                bool doFixed = Random.NextBoolean();
+                int numDocs;
+                int fixedLength = 0;
                 if (doFixed)
                 {
-                    numBytes = fixedLength;
-                }
-                else if (docID == 0 || Random.Next(5) == 3)
-                {
-                    numBytes = Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH;
+                    // Sometimes make all values fixed length since some
+                    // codecs have different code paths for this:
+                    numDocs = TestUtil.NextInt32(Random, 10, 20);
+                    fixedLength = Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH;
                 }
                 else
                 {
-                    numBytes = TestUtil.NextInt32(Random, 1, Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
+                    numDocs = TestUtil.NextInt32(Random, 100, 200);
                 }
-                totalBytes += numBytes;
-                if (totalBytes > 5 * 1024 * 1024)
+                var docBytes = new List<byte[]>();
+                DirectoryReader r = null;
+                try
                 {
-                    break;
+                    using (IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)))
+                    {
+                        long totalBytes = 0;
+                        for (int docID = 0; docID < numDocs; docID++)
+                        {
+                            // we don't use RandomIndexWriter because it might add
+                            // more docvalues than we expect !!!!
+
+                            // Must be > 64KB in size to ensure more than 2 pages in
+                            // PagedBytes would be needed:
+                            int numBytes;
+                            if (doFixed)
+                            {
+                                numBytes = fixedLength;
+                            }
+                            else if (docID == 0 || Random.Next(5) == 3)
+                            {
+                                numBytes = Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH;
+                            }
+                            else
+                            {
+                                numBytes = TestUtil.NextInt32(Random, 1, Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
+                            }
+                            totalBytes += numBytes;
+                            if (totalBytes > 5 * 1024 * 1024)
+                            {
+                                break;
+                            }
+                            var bytes = new byte[numBytes];
+                            Random.NextBytes(bytes);
+                            docBytes.Add(bytes);
+                            Document doc = new Document();
+                            BytesRef b = new BytesRef(bytes);
+                            b.Length = bytes.Length;
+                            doc.Add(new BinaryDocValuesField("field", b));
+                            doc.Add(new StringField("id", "" + docID, Field.Store.YES));
+                            w.AddDocument(doc);
+                        }
+
+                        r = w.GetReader();
+                    } // w.Dispose();
+
+                    using (AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r))
+                    {
+
+                        BinaryDocValues s = FieldCache.DEFAULT.GetTerms(ar, "field", false);
+                        for (int docID = 0; docID < docBytes.Count; docID++)
+                        {
+                            Document doc = ar.Document(docID);
+                            BytesRef bytes = new BytesRef();
+                            s.Get(docID, bytes);
+                            var expected = docBytes[Convert.ToInt32(doc.Get("id"), CultureInfo.InvariantCulture)];
+                            Assert.AreEqual(expected.Length, bytes.Length);
+                            Assert.AreEqual(new BytesRef(expected), bytes);
+                        }
+
+                    } // ar.Dispose();
                 }
-                var bytes = new byte[numBytes];
-                Random.NextBytes(bytes);
-                docBytes.Add(bytes);
-                Document doc = new Document();
-                BytesRef b = new BytesRef(bytes);
-                b.Length = bytes.Length;
-                doc.Add(new BinaryDocValuesField("field", b));
-                doc.Add(new StringField("id", "" + docID, Field.Store.YES));
-                w.AddDocument(doc);
-            }
+                finally
+                {
+                    r?.Dispose(); // LUCENENET specific - small chance w.Dispose() will throw, this is just here to cover that case. It is safe to call r.Dispose() more than once.
+                }
 
-            DirectoryReader r = w.GetReader();
-            w.Dispose();
-
-            AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);
-
-            BinaryDocValues s = FieldCache.DEFAULT.GetTerms(ar, "field", false);
-            for (int docID = 0; docID < docBytes.Count; docID++)
-            {
-                Document doc = ar.Document(docID);
-                BytesRef bytes = new BytesRef();
-                s.Get(docID, bytes);
-                var expected = docBytes[Convert.ToInt32(doc.Get("id"), CultureInfo.InvariantCulture)];
-                Assert.AreEqual(expected.Length, bytes.Length);
-                Assert.AreEqual(new BytesRef(expected), bytes);
-            }
-
-            ar.Dispose();
-            d.Dispose();
+            } // d.Dispose();
         }
 
         /// <summary>
@@ -3163,71 +3444,76 @@ namespace Lucene.Net.Index
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
         public virtual void TestThreads()
         {
-            Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
-            Document doc = new Document();
-            Field idField = new StringField("id", "", Field.Store.NO);
-            Field storedBinField = new StoredField("storedBin", new byte[0]);
-            Field dvBinField = new BinaryDocValuesField("dvBin", new BytesRef());
-            Field dvSortedField = new SortedDocValuesField("dvSorted", new BytesRef());
-            Field storedNumericField = new StoredField("storedNum", "");
-            Field dvNumericField = new NumericDocValuesField("dvNum", 0);
-            doc.Add(idField);
-            doc.Add(storedBinField);
-            doc.Add(dvBinField);
-            doc.Add(dvSortedField);
-            doc.Add(storedNumericField);
-            doc.Add(dvNumericField);
-
-            // index some docs
-            int numDocs = AtLeast(300);
-            for (int i = 0; i < numDocs; i++)
+            using (Directory dir = NewDirectory())
             {
-                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
-                int length = TestUtil.NextInt32(Random, 0, 8);
-                var buffer = new byte[length];
-                Random.NextBytes(buffer);
-                storedBinField.SetBytesValue(buffer);
-                dvBinField.SetBytesValue(buffer);
-                dvSortedField.SetBytesValue(buffer);
-                long numericValue = Random.NextInt64();
-                storedNumericField.SetStringValue(Convert.ToString(numericValue, CultureInfo.InvariantCulture));
-                dvNumericField.SetInt64Value(numericValue);
-                writer.AddDocument(doc);
-                if (Random.Next(31) == 0)
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf))
                 {
-                    writer.Commit();
-                }
-            }
+                    Document doc = new Document();
+                    Field idField = new StringField("id", "", Field.Store.NO);
+                    Field storedBinField = new StoredField("storedBin", new byte[0]);
+                    Field dvBinField = new BinaryDocValuesField("dvBin", new BytesRef());
+                    Field dvSortedField = new SortedDocValuesField("dvSorted", new BytesRef());
+                    Field storedNumericField = new StoredField("storedNum", "");
+                    Field dvNumericField = new NumericDocValuesField("dvNum", 0);
+                    doc.Add(idField);
+                    doc.Add(storedBinField);
+                    doc.Add(dvBinField);
+                    doc.Add(dvSortedField);
+                    doc.Add(storedNumericField);
+                    doc.Add(dvNumericField);
 
-            // delete some docs
-            int numDeletions = Random.Next(numDocs / 10);
-            for (int i = 0; i < numDeletions; i++)
-            {
-                int id = Random.Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
-            }
-            writer.Dispose();
+                    // index some docs
+                    int numDocs = AtLeast(300);
+                    for (int i = 0; i < numDocs; i++)
+                    {
+                        idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
+                        int length = TestUtil.NextInt32(Random, 0, 8);
+                        var buffer = new byte[length];
+                        Random.NextBytes(buffer);
+                        storedBinField.SetBytesValue(buffer);
+                        dvBinField.SetBytesValue(buffer);
+                        dvSortedField.SetBytesValue(buffer);
+                        long numericValue = Random.NextInt64();
+                        storedNumericField.SetStringValue(Convert.ToString(numericValue, CultureInfo.InvariantCulture));
+                        dvNumericField.SetInt64Value(numericValue);
+                        writer.AddDocument(doc);
+                        if (Random.Next(31) == 0)
+                        {
+                            writer.Commit();
+                        }
+                    }
 
-            // compare
-            DirectoryReader ir = DirectoryReader.Open(dir);
-            int numThreads = TestUtil.NextInt32(Random, 2, 7);
-            ThreadClass[] threads = new ThreadClass[numThreads];
-            CountdownEvent startingGun = new CountdownEvent(1);
+                    // delete some docs
+                    int numDeletions = Random.Next(numDocs / 10);
+                    for (int i = 0; i < numDeletions; i++)
+                    {
+                        int id = Random.Next(numDocs);
+                        writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
+                    }
+                } // writer.Dispose();
 
-            for (int i = 0; i < threads.Length; i++)
-            {
-                threads[i] = new ThreadAnonymousInnerClassHelper(this, ir, startingGun);
-                threads[i].Start();
-            }
-            startingGun.Signal();
-            foreach (ThreadClass t in threads)
-            {
-                t.Join();
-            }
-            ir.Dispose();
-            dir.Dispose();
+                // compare
+                using (DirectoryReader ir = DirectoryReader.Open(dir))
+                {
+                    int numThreads = TestUtil.NextInt32(Random, 2, 7);
+                    ThreadClass[] threads = new ThreadClass[numThreads];
+                    using (CountdownEvent startingGun = new CountdownEvent(1))
+                    {
+
+                        for (int i = 0; i < threads.Length; i++)
+                        {
+                            threads[i] = new ThreadAnonymousInnerClassHelper(this, ir, startingGun);
+                            threads[i].Start();
+                        }
+                        startingGun.Signal();
+                        foreach (ThreadClass t in threads)
+                        {
+                            t.Join();
+                        }
+                    }
+                } // ir.Dispose();
+            } // dir.Dispose();
         }
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
@@ -3284,90 +3570,95 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
-            Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf);
-            Field idField = new StringField("id", "", Field.Store.NO);
-            Field storedBinField = new StoredField("storedBin", new byte[0]);
-            Field dvBinField = new BinaryDocValuesField("dvBin", new BytesRef());
-            Field dvSortedField = new SortedDocValuesField("dvSorted", new BytesRef());
-            Field storedNumericField = new StoredField("storedNum", "");
-            Field dvNumericField = new NumericDocValuesField("dvNum", 0);
-
-            // index some docs
-            int numDocs = AtLeast(300);
-            for (int i = 0; i < numDocs; i++)
+            using (Directory dir = NewDirectory())
             {
-                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
-                int length = TestUtil.NextInt32(Random, 0, 8);
-                var buffer = new byte[length];
-                Random.NextBytes(buffer);
-                storedBinField.SetBytesValue(buffer);
-                dvBinField.SetBytesValue(buffer);
-                dvSortedField.SetBytesValue(buffer);
-                long numericValue = Random.NextInt64();
-                storedNumericField.SetStringValue(Convert.ToString(numericValue, CultureInfo.InvariantCulture));
-                dvNumericField.SetInt64Value(numericValue);
-                Document doc = new Document();
-                doc.Add(idField);
-                if (Random.Next(4) > 0)
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf))
                 {
-                    doc.Add(storedBinField);
-                    doc.Add(dvBinField);
-                    doc.Add(dvSortedField);
-                }
-                if (Random.Next(4) > 0)
-                {
-                    doc.Add(storedNumericField);
-                    doc.Add(dvNumericField);
-                }
-                int numSortedSetFields = Random.Next(3);
+                    Field idField = new StringField("id", "", Field.Store.NO);
+                    Field storedBinField = new StoredField("storedBin", new byte[0]);
+                    Field dvBinField = new BinaryDocValuesField("dvBin", new BytesRef());
+                    Field dvSortedField = new SortedDocValuesField("dvSorted", new BytesRef());
+                    Field storedNumericField = new StoredField("storedNum", "");
+                    Field dvNumericField = new NumericDocValuesField("dvNum", 0);
 
-                // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-                SortedSet<string> values = new SortedSet<string>(StringComparer.Ordinal);
-                for (int j = 0; j < numSortedSetFields; j++)
-                {
-                    values.Add(TestUtil.RandomSimpleString(Random));
-                }
-                foreach (string v in values)
-                {
-                    doc.Add(new SortedSetDocValuesField("dvSortedSet", new BytesRef(v)));
-                    doc.Add(new StoredField("storedSortedSet", v));
-                }
-                writer.AddDocument(doc);
-                if (Random.Next(31) == 0)
-                {
-                    writer.Commit();
-                }
-            }
+                    // index some docs
+                    int numDocs = AtLeast(300);
+                    for (int i = 0; i < numDocs; i++)
+                    {
+                        idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
+                        int length = TestUtil.NextInt32(Random, 0, 8);
+                        var buffer = new byte[length];
+                        Random.NextBytes(buffer);
+                        storedBinField.SetBytesValue(buffer);
+                        dvBinField.SetBytesValue(buffer);
+                        dvSortedField.SetBytesValue(buffer);
+                        long numericValue = Random.NextInt64();
+                        storedNumericField.SetStringValue(Convert.ToString(numericValue, CultureInfo.InvariantCulture));
+                        dvNumericField.SetInt64Value(numericValue);
+                        Document doc = new Document();
+                        doc.Add(idField);
+                        if (Random.Next(4) > 0)
+                        {
+                            doc.Add(storedBinField);
+                            doc.Add(dvBinField);
+                            doc.Add(dvSortedField);
+                        }
+                        if (Random.Next(4) > 0)
+                        {
+                            doc.Add(storedNumericField);
+                            doc.Add(dvNumericField);
+                        }
+                        int numSortedSetFields = Random.Next(3);
 
-            // delete some docs
-            int numDeletions = Random.Next(numDocs / 10);
-            for (int i = 0; i < numDeletions; i++)
-            {
-                int id = Random.Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
-            }
-            writer.Dispose();
+                        // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+                        SortedSet<string> values = new SortedSet<string>(StringComparer.Ordinal);
+                        for (int j = 0; j < numSortedSetFields; j++)
+                        {
+                            values.Add(TestUtil.RandomSimpleString(Random));
+                        }
+                        foreach (string v in values)
+                        {
+                            doc.Add(new SortedSetDocValuesField("dvSortedSet", new BytesRef(v)));
+                            doc.Add(new StoredField("storedSortedSet", v));
+                        }
+                        writer.AddDocument(doc);
+                        if (Random.Next(31) == 0)
+                        {
+                            writer.Commit();
+                        }
+                    }
 
-            // compare
-            DirectoryReader ir = DirectoryReader.Open(dir);
-            int numThreads = TestUtil.NextInt32(Random, 2, 7);
-            ThreadClass[] threads = new ThreadClass[numThreads];
-            CountdownEvent startingGun = new CountdownEvent(1);
+                    // delete some docs
+                    int numDeletions = Random.Next(numDocs / 10);
+                    for (int i = 0; i < numDeletions; i++)
+                    {
+                        int id = Random.Next(numDocs);
+                        writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
+                    }
+                } // writer.Dispose();
 
-            for (int i = 0; i < threads.Length; i++)
-            {
-                threads[i] = new ThreadAnonymousInnerClassHelper2(this, ir, startingGun);
-                threads[i].Start();
-            }
-            startingGun.Signal();
-            foreach (ThreadClass t in threads)
-            {
-                t.Join();
-            }
-            ir.Dispose();
-            dir.Dispose();
+                // compare
+                using (DirectoryReader ir = DirectoryReader.Open(dir))
+                {
+                    int numThreads = TestUtil.NextInt32(Random, 2, 7);
+                    ThreadClass[] threads = new ThreadClass[numThreads];
+                    using (CountdownEvent startingGun = new CountdownEvent(1))
+                    {
+
+                        for (int i = 0; i < threads.Length; i++)
+                        {
+                            threads[i] = new ThreadAnonymousInnerClassHelper2(this, ir, startingGun);
+                            threads[i].Start();
+                        }
+                        startingGun.Signal();
+                        foreach (ThreadClass t in threads)
+                        {
+                            t.Join();
+                        }
+                    }
+                } // ir.Dispose();
+            } // dir.Dispose();
         }
 
         private class ThreadAnonymousInnerClassHelper2 : ThreadClass
@@ -3482,34 +3773,45 @@ namespace Lucene.Net.Index
                 {
                     break;
                 }
-                Directory dir = NewDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-                BytesRef bytes = new BytesRef();
-                bytes.Bytes = new byte[1 << i];
-                bytes.Length = 1 << i;
-                for (int j = 0; j < 4; j++)
+                using (Directory dir = NewDirectory())
                 {
-                    Document doc_ = new Document();
-                    doc_.Add(new BinaryDocValuesField("field", bytes));
-                    w.AddDocument(doc_);
-                }
-                Document doc = new Document();
-                doc.Add(new StoredField("id", "5"));
-                doc.Add(new BinaryDocValuesField("field", new BytesRef()));
-                w.AddDocument(doc);
-                IndexReader r = w.Reader;
-                w.Dispose();
+                    IndexReader r = null;
+                    try
+                    {
+                        using (RandomIndexWriter w = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                        {
+                            BytesRef bytes = new BytesRef();
+                            bytes.Bytes = new byte[1 << i];
+                            bytes.Length = 1 << i;
+                            for (int j = 0; j < 4; j++)
+                            {
+                                Document doc_ = new Document();
+                                doc_.Add(new BinaryDocValuesField("field", bytes));
+                                w.AddDocument(doc_);
+                            }
+                            Document doc = new Document();
+                            doc.Add(new StoredField("id", "5"));
+                            doc.Add(new BinaryDocValuesField("field", new BytesRef()));
+                            w.AddDocument(doc);
+                            r = w.Reader;
+                        } // w.Dispose();
 
-                AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);
-                BinaryDocValues values = ar.GetBinaryDocValues("field");
-                BytesRef result = new BytesRef();
-                for (int j = 0; j < 5; j++)
-                {
-                    values.Get(0, result);
-                    Assert.IsTrue(result.Length == 0 || result.Length == 1 << i);
-                }
-                ar.Dispose();
-                dir.Dispose();
+                        using (AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r))
+                        {
+                            BinaryDocValues values = ar.GetBinaryDocValues("field");
+                            BytesRef result = new BytesRef();
+                            for (int j = 0; j < 5; j++)
+                            {
+                                values.Get(0, result);
+                                Assert.IsTrue(result.Length == 0 || result.Length == 1 << i);
+                            }
+                        } // ar.Dispose();
+                    }
+                    finally
+                    {
+                        r?.Dispose(); // LUCENENET specific - small chance w.Dispose() will throw, this is just here to cover that case. It is safe to call r.Dispose() more than once.
+                    }
+                } // dir.Dispose();
             }
         }
 
