@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewStringField("category", categories[i], Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
 
             PrefixQuery query = new PrefixQuery(new Term("category", "/Computers"));
             IndexSearcher searcher = NewSearcher(reader);

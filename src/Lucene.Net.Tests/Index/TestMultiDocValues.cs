@@ -64,9 +64,9 @@ namespace Lucene.Net.Index
                     iw.Commit();
                 }
             }
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.ForceMerge(1);
-            DirectoryReader ir2 = iw.Reader;
+            DirectoryReader ir2 = iw.GetReader();
             AtomicReader merged = GetOnlySegmentReader(ir2);
             iw.Dispose();
 
@@ -104,9 +104,9 @@ namespace Lucene.Net.Index
                     iw.Commit();
                 }
             }
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.ForceMerge(1);
-            DirectoryReader ir2 = iw.Reader;
+            DirectoryReader ir2 = iw.GetReader();
             AtomicReader merged = GetOnlySegmentReader(ir2);
             iw.Dispose();
 
@@ -152,9 +152,9 @@ namespace Lucene.Net.Index
                     iw.Commit();
                 }
             }
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.ForceMerge(1);
-            DirectoryReader ir2 = iw.Reader;
+            DirectoryReader ir2 = iw.GetReader();
             AtomicReader merged = GetOnlySegmentReader(ir2);
             iw.Dispose();
 
@@ -201,9 +201,9 @@ namespace Lucene.Net.Index
                     iw.Commit();
                 }
             }
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.ForceMerge(1);
-            DirectoryReader ir2 = iw.Reader;
+            DirectoryReader ir2 = iw.GetReader();
             AtomicReader merged = GetOnlySegmentReader(ir2);
             iw.Dispose();
 
@@ -251,9 +251,9 @@ namespace Lucene.Net.Index
                     iw.Commit();
                 }
             }
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.ForceMerge(1);
-            DirectoryReader ir2 = iw.Reader;
+            DirectoryReader ir2 = iw.GetReader();
             AtomicReader merged = GetOnlySegmentReader(ir2);
             iw.Dispose();
 
@@ -328,9 +328,9 @@ namespace Lucene.Net.Index
                     iw.Commit();
                 }
             }
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.ForceMerge(1);
-            DirectoryReader ir2 = iw.Reader;
+            DirectoryReader ir2 = iw.GetReader();
             AtomicReader merged = GetOnlySegmentReader(ir2);
             iw.Dispose();
 
@@ -404,9 +404,9 @@ namespace Lucene.Net.Index
                     iw.Commit();
                 }
             }
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.ForceMerge(1);
-            DirectoryReader ir2 = iw.Reader;
+            DirectoryReader ir2 = iw.GetReader();
             AtomicReader merged = GetOnlySegmentReader(ir2);
             iw.Dispose();
 

@@ -61,7 +61,7 @@ namespace Lucene.Net.Tests.Queries.Function
             doc.Add(new TextField("text", "second test", Field.Store.NO));
             iw.AddDocument(doc);
 
-            reader = iw.Reader;
+            reader = iw.GetReader();
             searcher = NewSearcher(reader);
             iw.Dispose();
         }

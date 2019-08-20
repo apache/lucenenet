@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewStringField("category", categories[i], Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
 
             // PrefixFilter combined with ConstantScoreQuery
             PrefixFilter filter = new PrefixFilter(new Term("category", "/Computers"));

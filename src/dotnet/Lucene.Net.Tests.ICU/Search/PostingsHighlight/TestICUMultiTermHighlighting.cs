@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -288,7 +288,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -395,7 +395,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -445,7 +445,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -484,7 +484,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -522,7 +522,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -561,7 +561,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -600,7 +600,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -640,7 +640,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -740,7 +740,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);

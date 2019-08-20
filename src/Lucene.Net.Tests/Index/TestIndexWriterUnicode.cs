@@ -364,7 +364,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            IndexReader r = writer.Reader;
+            IndexReader r = writer.GetReader();
 
             // Test each sub-segment
             foreach (AtomicReaderContext ctx in r.Leaves)
@@ -379,7 +379,7 @@ namespace Lucene.Net.Index
             writer.ForceMerge(1);
 
             // Test single segment
-            r = writer.Reader;
+            r = writer.GetReader();
             CheckTermsOrder(r, allTerms, true);
             r.Dispose();
 

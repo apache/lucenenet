@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
             }
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             NumericDocValues fooNorms = MultiDocValues.GetNormValues(reader, "foo");

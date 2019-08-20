@@ -109,7 +109,7 @@ namespace Lucene.Net.Search.Grouping
 
             w.AddDocument(doc);
 
-            IndexSearcher indexSearcher = NewSearcher(w.Reader);
+            IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
             Sort groupSort = Sort.RELEVANCE;
@@ -245,7 +245,7 @@ namespace Lucene.Net.Search.Grouping
             doc.Add(NewField("group", "foo", StringField.TYPE_NOT_STORED));
             w.AddDocument(doc);
 
-            IndexSearcher indexSearcher = NewSearcher(w.Reader);
+            IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
             GroupingSearch gs = new GroupingSearch("group");

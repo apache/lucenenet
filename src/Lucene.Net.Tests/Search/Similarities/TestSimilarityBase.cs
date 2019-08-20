@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Similarities
                 writer.AddDocument(d);
             }
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher = NewSearcher(Reader);
             writer.Dispose();
 

@@ -414,12 +414,9 @@ namespace Lucene.Net.Index
             IndexWriter.DeleteAll();
         }
 
-        public virtual DirectoryReader Reader
+        public virtual DirectoryReader GetReader()
         {
-            get
-            {
-                return GetReader(true);
-            }
+            return GetReader(true);
         }
 
         private bool doRandomForceMerge = true;
@@ -435,7 +432,7 @@ namespace Lucene.Net.Index
             IndexWriter.ForceMergeDeletes();
         }
 
-        public virtual bool RandomForceMerge
+        public virtual bool RandomForceMerge // LUCENENET TODO: API - rename back to DoRandomForceMerge (and change private method name slightly so it doesn't collide)
         {
             get // LUCENENET specific - added getter (to follow MSDN property guidelines)
             {

@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
                 field.SetStringValue(TestUtil.RandomUnicodeString(Random, 10));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher = NewSearcher(Reader);
             writer.Dispose();
         }

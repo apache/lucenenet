@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
             }
 
             iw.ForceMerge(1);
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             Assert.AreEqual(1, ir.Leaves.Count);
             AtomicReader air = (AtomicReader)ir.Leaves[0].Reader;
             Terms terms = air.GetTerms("field");

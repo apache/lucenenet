@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
             // Add the fifth document.  text = "Document 5"  dateTime = Oct 12 13:25:43 EDT 2007
             writer.AddDocument(CreateDocument("Document 5", 1192209943000L));
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
         }
 

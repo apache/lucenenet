@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
             doc.Add(NewTextField("field", "a b c d", Field.Store.NO));
             w.AddDocument(doc);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             IndexSearcher s = NewSearcher(r);
             // this test relies upon coord being the default implementation,
             // otherwise scores are different!
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
             Document doc1 = new Document();
             doc1.Add(NewTextField("field", "foo bar", Field.Store.NO));
             iw1.AddDocument(doc1);
-            IndexReader reader1 = iw1.Reader;
+            IndexReader reader1 = iw1.GetReader();
             iw1.Dispose();
 
             Directory dir2 = NewDirectory();
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search
             Document doc2 = new Document();
             doc2.Add(NewTextField("field", "foo baz", Field.Store.NO));
             iw2.AddDocument(doc2);
-            IndexReader reader2 = iw2.Reader;
+            IndexReader reader2 = iw2.GetReader();
             iw2.Dispose();
 
             BooleanQuery query = new BooleanQuery(); // Query: +foo -ba*
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search
                 w.AddDocument(doc);
             }
             w.ForceMerge(1);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             IndexSearcher s = NewSearcher(r);
             w.Dispose();
 
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search
             Document doc = new Document();
             doc.Add(NewTextField("field", "some text here", Field.Store.NO));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = new IndexSearcherAnonymousInnerClassHelper(this, r);
             BooleanQuery bq = new BooleanQuery();

@@ -824,7 +824,7 @@ namespace Lucene.Net.Index
                         iwriter.DeleteDocuments(new Term("id", "1"));
                         iwriter.ForceMerge(1);
 
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedDocValues dv = GetOnlySegmentReader(ireader).GetSortedDocValues("field");
@@ -941,7 +941,7 @@ namespace Lucene.Net.Index
                         iwriter.AddDocument(doc);
                         iwriter.ForceMerge(1);
 
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedDocValues dv = GetOnlySegmentReader(ireader).GetSortedDocValues("field");
@@ -1387,7 +1387,7 @@ namespace Lucene.Net.Index
                         w.AddDocument(doc);
                     }
                     w.Commit();
-                    using (IndexReader reader = w.Reader)
+                    using (IndexReader reader = w.GetReader())
                     {
                         SortedDocValues docValues = MultiDocValues.GetSortedValues(reader, "field");
                         int[] sort = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
@@ -1972,7 +1972,7 @@ namespace Lucene.Net.Index
                         doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
                         iwriter.AddDocument(doc);
 
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
@@ -2009,7 +2009,7 @@ namespace Lucene.Net.Index
                         doc.Add(new SortedSetDocValuesField("field2", new BytesRef("world")));
                         iwriter.AddDocument(doc);
 
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
@@ -2063,7 +2063,7 @@ namespace Lucene.Net.Index
                         iwriter.AddDocument(doc);
                         iwriter.ForceMerge(1);
 
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
@@ -2108,7 +2108,7 @@ namespace Lucene.Net.Index
                         doc.Add(new SortedSetDocValuesField("field", new BytesRef("world")));
                         iwriter.AddDocument(doc);
 
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
                 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
@@ -2149,7 +2149,7 @@ namespace Lucene.Net.Index
                         doc.Add(new SortedSetDocValuesField("field", new BytesRef("hello")));
                         iwriter.AddDocument(doc);
 
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
@@ -2200,7 +2200,7 @@ namespace Lucene.Net.Index
                         iwriter.AddDocument(doc);
                         iwriter.ForceMerge(1);
 
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
@@ -2255,7 +2255,7 @@ namespace Lucene.Net.Index
                         doc = new Document();
                         iwriter.AddDocument(doc);
                         iwriter.ForceMerge(1);
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
@@ -2300,7 +2300,7 @@ namespace Lucene.Net.Index
                         iwriter.AddDocument(doc);
                         iwriter.ForceMerge(1);
 
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
@@ -2344,7 +2344,7 @@ namespace Lucene.Net.Index
                         iwriter.AddDocument(doc);
 
                         iwriter.ForceMerge(1);
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
@@ -2389,7 +2389,7 @@ namespace Lucene.Net.Index
                         iwriter.AddDocument(doc);
                         iwriter.ForceMerge(1);
 
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
@@ -2436,7 +2436,7 @@ namespace Lucene.Net.Index
                         iwriter.DeleteDocuments(new Term("id", "1"));
                         iwriter.ForceMerge(1);
 
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
@@ -2470,7 +2470,7 @@ namespace Lucene.Net.Index
                         doc.Add(new SortedSetDocValuesField("field", new BytesRef("beer")));
                         iwriter.AddDocument(doc);
 
-                        ireader = iwriter.Reader;
+                        ireader = iwriter.GetReader();
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
@@ -2854,7 +2854,7 @@ namespace Lucene.Net.Index
                     }
 
                     // compare per-segment
-                    using (DirectoryReader ir = writer.Reader)
+                    using (DirectoryReader ir = writer.GetReader())
                     {
                         foreach (AtomicReaderContext context in ir.Leaves)
                         {
@@ -2868,7 +2868,7 @@ namespace Lucene.Net.Index
                     writer.ForceMerge(1);
 
                     // now compare again after the merge
-                    using (DirectoryReader ir = writer.Reader)
+                    using (DirectoryReader ir = writer.GetReader())
                     {
                         AtomicReader ar = GetOnlySegmentReader(ir);
                         SortedSetDocValues expected_ = FieldCache.DEFAULT.GetDocTermOrds(ar, "indexed");
@@ -3793,7 +3793,7 @@ namespace Lucene.Net.Index
                             doc.Add(new StoredField("id", "5"));
                             doc.Add(new BinaryDocValuesField("field", new BytesRef()));
                             w.AddDocument(doc);
-                            r = w.Reader;
+                            r = w.GetReader();
                         } // w.Dispose();
 
                         using (AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r))

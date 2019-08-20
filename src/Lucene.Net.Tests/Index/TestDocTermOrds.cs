@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
             field.SetStringValue("a f");
             w.AddDocument(doc);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);
@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
 
             if (VERBOSE)
@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
 
             if (VERBOSE)
@@ -483,7 +483,7 @@ namespace Lucene.Net.Index
             iwriter.AddDocument(doc);
             iwriter.ForceMerge(1);
 
-            DirectoryReader ireader = iwriter.Reader;
+            DirectoryReader ireader = iwriter.GetReader();
             iwriter.Dispose();
 
             AtomicReader ar = GetOnlySegmentReader(ireader);

@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
             {
                 Add(docText[i % docText.Length], iw);
             }
-            reader = iw.Reader;
+            reader = iw.GetReader();
             iw.Dispose();
             searcher = NewSearcher(reader);
 

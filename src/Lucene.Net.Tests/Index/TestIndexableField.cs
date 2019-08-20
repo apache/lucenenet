@@ -298,7 +298,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(new IterableAnonymousInnerClassHelper(this, fieldCount, finalDocCount, finalBaseCount));
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             IndexSearcher s = NewSearcher(r);

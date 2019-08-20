@@ -51,7 +51,7 @@ namespace Lucene.Net.Spatial
             directory = NewDirectory();
             Random random = Random;
             indexWriter = new RandomIndexWriter(random, directory, newIndexWriterConfig(random));
-            indexReader = indexWriter.Reader;
+            indexReader = indexWriter.GetReader();
             indexSearcher = NewSearcher(indexReader);
         }
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.Spatial
         {
             indexWriter.Commit();
             IOUtils.Dispose(indexReader);
-            indexReader = indexWriter.Reader;
+            indexReader = indexWriter.GetReader();
             indexSearcher = NewSearcher(indexReader);
         }
 

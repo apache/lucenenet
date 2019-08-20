@@ -252,7 +252,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 writer.AddDocument(doc);
             }
 
-            reader = writer.Reader;
+            reader = writer.GetReader();
             searcher = NewSearcher(reader);
             writer.Dispose();
 

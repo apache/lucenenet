@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewTextField(ALTFIELD, DocFields[i], Field.Store.NO));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
             Searcher = NewSearcher(Reader);
         }

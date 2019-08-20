@@ -88,7 +88,7 @@ namespace Lucene.Net.Tests.Join
             doc.Add(new TextField(toField, "4", Field.Store.NO));
             w.AddDocument(doc);
 
-            IndexSearcher indexSearcher = new IndexSearcher(w.Reader);
+            IndexSearcher indexSearcher = new IndexSearcher(w.GetReader());
             w.Dispose();
 
             // Search for product
@@ -162,7 +162,7 @@ namespace Lucene.Net.Tests.Join
             }
             w.AddDocument(doc);
 
-            IndexSearcher indexSearcher = new IndexSearcher(w.Reader);
+            IndexSearcher indexSearcher = new IndexSearcher(w.GetReader());
             w.Dispose();
 
             // Search for product
@@ -238,7 +238,7 @@ namespace Lucene.Net.Tests.Join
 
             w.ForceMerge(1);
 
-            IndexSearcher indexSearcher = new IndexSearcher(w.Reader);
+            IndexSearcher indexSearcher = new IndexSearcher(w.GetReader());
             w.Dispose();
 
             // Search for product
@@ -349,7 +349,7 @@ namespace Lucene.Net.Tests.Join
             doc.Add(new TextField(toField, "4", Field.Store.NO));
             w.AddDocument(doc);
 
-            IndexSearcher indexSearcher = new IndexSearcher(w.Reader);
+            IndexSearcher indexSearcher = new IndexSearcher(w.GetReader());
             w.Dispose();
 
             // Search for movie via subtitle
@@ -422,7 +422,7 @@ namespace Lucene.Net.Tests.Join
                 IndexIterationContext context = CreateContext(numberOfDocumentsToIndex, w, multipleValuesPerDocument,
                     scoreDocsInOrder);
 
-                IndexReader topLevelReader = w.Reader;
+                IndexReader topLevelReader = w.GetReader();
                 w.Dispose();
                 for (int searchIter = 1; searchIter <= maxSearchIter; searchIter++)
                 {
@@ -670,8 +670,8 @@ namespace Lucene.Net.Tests.Join
 
             // Pre-compute all possible hits for all unique random values. On top of this also compute all possible score for
             // any ScoreMode.
-            IndexSearcher fromSearcher = NewSearcher(fromWriter.Reader);
-            IndexSearcher toSearcher = NewSearcher(toWriter.Reader);
+            IndexSearcher fromSearcher = NewSearcher(fromWriter.GetReader());
+            IndexSearcher toSearcher = NewSearcher(toWriter.GetReader());
             for (int i = 0; i < context.RandomUniqueValues.Length; i++)
             {
                 string uniqueRandomValue = context.RandomUniqueValues[i];

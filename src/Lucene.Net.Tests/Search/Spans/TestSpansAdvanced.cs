@@ -70,7 +70,7 @@ namespace Lucene.Net.Search.Spans
             AddDocument(writer, "2", "I think it should work.");
             AddDocument(writer, "3", "I think it should work.");
             AddDocument(writer, "4", "I think it should work.");
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
             Searcher = NewSearcher(Reader);
             Searcher.Similarity = new DefaultSimilarity();

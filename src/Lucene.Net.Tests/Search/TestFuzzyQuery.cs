@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
             AddDoc("bbbbb", writer);
             AddDoc("ddddd", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             writer.Dispose();
 
@@ -220,7 +220,7 @@ namespace Lucene.Net.Search
             AddDoc("WOJNAROWSKI", writer);
             AddDoc("WRICKE", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             writer.Dispose();
 
@@ -259,8 +259,8 @@ namespace Lucene.Net.Search
             AddDoc("c123456", writer2);
             AddDoc("f123456", writer2);
 
-            IndexReader ir1 = writer.Reader;
-            IndexReader ir2 = writer2.Reader;
+            IndexReader ir1 = writer.GetReader();
+            IndexReader ir2 = writer2.GetReader();
 
             MultiReader mr = new MultiReader(ir1, ir2);
             IndexSearcher searcher = NewSearcher(mr);
@@ -287,7 +287,7 @@ namespace Lucene.Net.Search
             AddDoc("Lucene", writer);
             AddDoc("Lucenne", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             writer.Dispose();
 
@@ -327,7 +327,7 @@ namespace Lucene.Net.Search
             AddDoc("Willis bruce", w);
             AddDoc("Brute willis", w);
             AddDoc("B. willis", w);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             Query q = new FuzzyQuery(new Term("field", "giga"), 0);
@@ -349,7 +349,7 @@ namespace Lucene.Net.Search
             AddDoc("foobar", w);
             AddDoc("test", w);
             AddDoc("working", w);
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             w.Dispose();
 

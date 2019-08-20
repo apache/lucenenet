@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Payloads
                 doc.Add(NewTextField("field2", txt, Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
 
             Searcher = NewSearcher(Reader);

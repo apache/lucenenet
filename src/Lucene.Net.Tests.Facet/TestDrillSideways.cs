@@ -111,7 +111,7 @@ namespace Lucene.Net.Facet
             writer.AddDocument(config.Build(taxoWriter, doc));
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
 
             //System.out.println("searcher=" + searcher);
 
@@ -282,7 +282,7 @@ namespace Lucene.Net.Facet
             writer.AddDocument(config.Build(taxoWriter, doc));
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
 
             //System.out.println("searcher=" + searcher);
 
@@ -344,7 +344,7 @@ namespace Lucene.Net.Facet
             writer.AddDocument(config.Build(taxoWriter, doc));
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
 
             //System.out.println("searcher=" + searcher);
 
@@ -622,7 +622,7 @@ namespace Lucene.Net.Facet
                 }
                 w.ForceMerge(1);
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
 
             SortedSetDocValuesReaderState sortedSetDVState;
             IndexSearcher s = NewSearcher(r);
@@ -1303,7 +1303,7 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
             var writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
             var taxoReader = new DirectoryTaxonomyReader(taxoWriter);
 
             // Count "Author"

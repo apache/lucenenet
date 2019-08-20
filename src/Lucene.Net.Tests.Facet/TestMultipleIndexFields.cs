@@ -70,7 +70,7 @@ namespace Lucene.Net.Facet
 
             seedIndex(tw, iw, config);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             tw.Commit();
 
             // prepare index reader and taxonomy.
@@ -104,7 +104,7 @@ namespace Lucene.Net.Facet
             config.SetIndexFieldName("Author", "$author");
             seedIndex(tw, iw, config);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             tw.Commit();
 
             // prepare index reader and taxonomy.
@@ -144,7 +144,7 @@ namespace Lucene.Net.Facet
             config.SetIndexFieldName("Composer", "$music");
             seedIndex(tw, iw, config);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             tw.Commit();
 
             // prepare index reader and taxonomy.
@@ -200,7 +200,7 @@ namespace Lucene.Net.Facet
             config.SetIndexFieldName("Composer", "$composers");
             seedIndex(tw, iw, config);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             tw.Commit();
 
             // prepare index reader and taxonomy.
@@ -242,7 +242,7 @@ namespace Lucene.Net.Facet
             config.SetIndexFieldName("Author", "$literature");
             seedIndex(tw, iw, config);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             tw.Commit();
 
             // prepare index reader and taxonomy.

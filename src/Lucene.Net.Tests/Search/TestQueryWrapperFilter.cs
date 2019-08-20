@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
             Document doc = new Document();
             doc.Add(NewTextField("field", "value", Field.Store.NO));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             TermQuery termQuery = new TermQuery(new Term("field", "value"));
@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
                 aDocs.Remove(delID);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             TopDocs hits = NewSearcher(r).Search(new MatchAllDocsQuery(), new QueryWrapperFilter(new TermQuery(new Term("field", "a"))), numDocs);
             Assert.AreEqual(aDocs.Count, hits.TotalHits);
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
                 writer.AddDocument(doc);
             }
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);

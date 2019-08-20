@@ -1068,7 +1068,7 @@ namespace Lucene.Net.Util.Fst
                 //w.forceMerge(1);
 
                 // turn writer into reader:
-                IndexReader r = w.Reader;
+                IndexReader r = w.GetReader();
                 IndexSearcher idxS = NewSearcher(r);
                 w.Dispose();
 
@@ -1222,7 +1222,7 @@ namespace Lucene.Net.Util.Fst
             {
                 Console.WriteLine("TEST: get reader");
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: got reader=" + r);

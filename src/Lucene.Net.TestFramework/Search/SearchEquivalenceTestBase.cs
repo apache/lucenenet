@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            m_reader = iw.Reader;
+            m_reader = iw.GetReader();
             m_s1 = NewSearcher(m_reader);
             m_s2 = NewSearcher(m_reader);
             iw.Dispose();

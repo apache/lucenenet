@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Grouping
             doc.Add(new Field("id", "6", customType));
             w.AddDocument(doc);
 
-            IndexSearcher indexSearcher = NewSearcher(w.Reader);
+            IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
             Sort groupSort = Sort.RELEVANCE;
@@ -740,7 +740,7 @@ namespace Lucene.Net.Search.Grouping
                 w.UpdateDocuments(new Index.Term("group", docs[0].Get("group")), docs);
             }
 
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
 
             return r;
@@ -918,7 +918,7 @@ namespace Lucene.Net.Search.Grouping
                 GroupDoc[] groupDocsByID = new GroupDoc[groupDocs.Length];
                 System.Array.Copy(groupDocs, 0, groupDocsByID, 0, groupDocs.Length);
 
-                DirectoryReader r = w.Reader;
+                DirectoryReader r = w.GetReader();
                 w.Dispose();
 
                 // NOTE: intentional but temporary field cache insanity!

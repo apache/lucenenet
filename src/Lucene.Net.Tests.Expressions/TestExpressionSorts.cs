@@ -68,7 +68,7 @@ namespace Lucene.Net.Expressions
 				};
                 iw.AddDocument(document);
             }
-            reader = iw.Reader;
+            reader = iw.GetReader();
             iw.Dispose();
             searcher = NewSearcher(reader);
         }

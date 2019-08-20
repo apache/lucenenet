@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
 
                 for (int x = 0; x < 2; x++)
                 {
-                    IndexReader r = w.Reader;
+                    IndexReader r = w.GetReader();
                     IndexSearcher s = NewSearcher(r);
 
                     if (VERBOSE)
@@ -326,7 +326,7 @@ namespace Lucene.Net.Index
                 doc.Add(new Int32Field("id", id, ft));
                 w.AddDocument(doc);
             }
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
 
             Assert.AreEqual(numDocs, r.NumDocs);
@@ -360,7 +360,7 @@ namespace Lucene.Net.Index
             doc.Add(new Field("field", "value", onlyStored));
             doc.Add(new StringField("field2", "value", Field.Store.YES));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             Assert.IsFalse(r.Document(0).GetField("field").IndexableFieldType.IsIndexed);
             Assert.IsTrue(r.Document(0).GetField("field2").IndexableFieldType.IsIndexed);

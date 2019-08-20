@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis
             //    don't reset the stream here, the DocumentWriter should do that implicitly
             writer.AddDocument(doc);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             DocsAndPositionsEnum termPositions = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), "preanalyzed", new BytesRef("term1"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(1, termPositions.Freq);

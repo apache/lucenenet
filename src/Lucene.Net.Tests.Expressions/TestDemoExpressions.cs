@@ -71,7 +71,7 @@ namespace Lucene.Net.Expressions
 			    new DoubleField("longitude", -74.0088305, Field.Store.NO)
 			};
 		    iw.AddDocument(doc);
-			reader = iw.Reader;
+			reader = iw.GetReader();
 			searcher = new IndexSearcher(reader);
 			iw.Dispose();
 		}

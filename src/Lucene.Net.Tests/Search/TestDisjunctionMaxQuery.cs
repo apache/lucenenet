@@ -165,7 +165,7 @@ namespace Lucene.Net.Search
                 writer.AddDocument(d4);
             }
 
-            r = SlowCompositeReaderWrapper.Wrap(writer.Reader);
+            r = SlowCompositeReaderWrapper.Wrap(writer.GetReader());
             writer.Dispose();
             s = NewSearcher(r);
             s.Similarity = Sim;

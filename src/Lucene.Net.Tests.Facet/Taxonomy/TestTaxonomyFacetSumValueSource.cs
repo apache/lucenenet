@@ -108,7 +108,7 @@ namespace Lucene.Net.Facet.Taxonomy
             writer.AddDocument(config.Build(taxoWriter, doc));
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
             writer.Dispose();
 
             // NRT open
@@ -178,7 +178,7 @@ namespace Lucene.Net.Facet.Taxonomy
             writer.AddDocument(config.Build(taxoWriter, doc));
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
             writer.Dispose();
 
             // NRT open
@@ -223,7 +223,7 @@ namespace Lucene.Net.Facet.Taxonomy
             writer.AddDocument(config.Build(taxoWriter, doc));
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
             writer.Dispose();
 
             // NRT open
@@ -519,7 +519,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(w.Reader);
+            IndexSearcher searcher = NewSearcher(w.GetReader());
 
             // NRT open
             var tr = new DirectoryTaxonomyReader(tw);

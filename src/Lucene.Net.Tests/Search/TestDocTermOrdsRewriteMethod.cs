@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
                 writer.DeleteDocuments(new Term("id", Convert.ToString(Random.Next(num))));
             }
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher1 = NewSearcher(Reader);
             Searcher2 = NewSearcher(Reader);
             writer.Dispose();

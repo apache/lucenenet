@@ -65,7 +65,7 @@ namespace Lucene.Net.Documents
 
             /// <summary>
             /// open a reader and fetch the document </summary>
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             Documents.Document docFromReader = reader.Document(0);
             Assert.IsTrue(docFromReader != null);
 
@@ -101,7 +101,7 @@ namespace Lucene.Net.Documents
             {
                 writer.AddDocument(doc);
 
-                using (IndexReader reader = writer.Reader)
+                using (IndexReader reader = writer.GetReader())
                 {
                     Documents.Document docFromReader = reader.Document(0);
                     Assert.IsTrue(docFromReader != null);

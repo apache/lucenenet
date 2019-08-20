@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewStringField("field2", Convert.ToString(i % 2 == 0), Field.Store.NO));
                 iw.AddDocument(doc);
             }
-            Reader = iw.Reader;
+            Reader = iw.GetReader();
             iw.Dispose();
         }
 
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             w.AddDocument(new Document());
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             IndexSearcher s = new IndexSearcher(r);

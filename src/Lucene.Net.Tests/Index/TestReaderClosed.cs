@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
                 field.SetStringValue(TestUtil.RandomUnicodeString(Random, 10));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
         }
 

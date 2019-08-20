@@ -1258,7 +1258,7 @@ namespace Lucene.Net.Index
             doc.Add(NewStringField("field1", "foobar", Field.Store.YES));
             doc.Add(NewStringField("field2", "foobaz", Field.Store.YES));
             writer.AddDocument(doc);
-            DirectoryReader r = writer.Reader;
+            DirectoryReader r = writer.GetReader();
             writer.Dispose();
             HashSet<string> fieldsToLoad = new HashSet<string>();
             Assert.AreEqual(0, r.Document(0, fieldsToLoad).Fields.Count);

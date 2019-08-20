@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
 
             Assert.IsNull(MultiFields.GetTermPositionsEnum(reader, null, "foo", new BytesRef("test")));
@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
                 iw.ForceMerge(1);
             }
 
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             FieldInfos fis = MultiFields.GetMergedFieldInfos(ir);
             Assert.AreEqual(IndexOptions.DOCS_AND_FREQS, fis.FieldInfo("foo").IndexOptions);
             Assert.IsFalse(fis.FieldInfo("foo").HasPayloads);

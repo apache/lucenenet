@@ -171,7 +171,7 @@ namespace Lucene.Net.Search
             RandomIndexWriter writer = new RandomIndexWriter(Random, ramDir, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false), Similarity, TimeZone);
             writer.AddDocument(doc);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
 
             IndexSearcher searcher = NewSearcher(reader);
             MaxFreqCollector c = new MaxFreqCollector();
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search
             iw.AddDocument(doc);
             f.SetStringValue("drug druggy drug druggy drug");
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
@@ -327,7 +327,7 @@ namespace Lucene.Net.Search
             Document doc = new Document();
             doc.Add(NewField("lyrics", document, new FieldType(TextField.TYPE_NOT_STORED)));
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher @is = NewSearcher(ir);
@@ -353,7 +353,7 @@ namespace Lucene.Net.Search
             Document doc = new Document();
             doc.Add(NewField("lyrics", document, new FieldType(TextField.TYPE_NOT_STORED)));
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher @is = NewSearcher(ir);

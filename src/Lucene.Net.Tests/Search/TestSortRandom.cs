@@ -137,11 +137,11 @@ namespace Lucene.Net.Search
                 if (random.Next(40) == 17)
                 {
                     // force flush
-                    writer.Reader.Dispose();
+                    writer.GetReader().Dispose();
                 }
             }
 
-            IndexReader r = writer.Reader;
+            IndexReader r = writer.GetReader();
             writer.Dispose();
             if (VERBOSE)
             {

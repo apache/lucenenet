@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
                 doc.Add(new TextField("noTV", English.Int32ToEnglish(i), Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
         }
 
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
             doc.Add(NewField("field", "one", ft4));
             doc.Add(NewField("field", "one", ft5));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);

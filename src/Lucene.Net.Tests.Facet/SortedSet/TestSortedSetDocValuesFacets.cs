@@ -75,7 +75,7 @@ namespace Lucene.Net.Facet.SortedSet
             writer.AddDocument(config.Build(doc));
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
 
             // Per-top-reader state:
             SortedSetDocValuesReaderState state = new DefaultSortedSetDocValuesReaderState(searcher.IndexReader);
@@ -114,7 +114,7 @@ namespace Lucene.Net.Facet.SortedSet
             doc.Add(new SortedSetDocValuesFacetField("a", "foo"));
             writer.AddDocument(config.Build(doc));
 
-            IndexReader r = writer.Reader;
+            IndexReader r = writer.GetReader();
             SortedSetDocValuesReaderState state = new DefaultSortedSetDocValuesReaderState(r);
 
             doc = new Document();
@@ -125,7 +125,7 @@ namespace Lucene.Net.Facet.SortedSet
             doc.Add(new SortedSetDocValuesFacetField("a", "baz"));
             writer.AddDocument(config.Build(doc));
 
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
 
             FacetsCollector c = new FacetsCollector();
 
@@ -184,7 +184,7 @@ namespace Lucene.Net.Facet.SortedSet
             writer.AddDocument(config.Build(doc));
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
             writer.Dispose();
 
             // Per-top-reader state:
@@ -231,7 +231,7 @@ namespace Lucene.Net.Facet.SortedSet
             writer.Commit();
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
             writer.Dispose();
 
             // Per-top-reader state:
@@ -269,7 +269,7 @@ namespace Lucene.Net.Facet.SortedSet
             writer.AddDocument(config.Build(doc));
 
             // NRT open
-            IndexSearcher searcher = new IndexSearcher(SlowCompositeReaderWrapper.Wrap(writer.Reader));
+            IndexSearcher searcher = new IndexSearcher(SlowCompositeReaderWrapper.Wrap(writer.GetReader()));
 
             // Per-top-reader state:
             SortedSetDocValuesReaderState state = new DefaultSortedSetDocValuesReaderState(searcher.IndexReader);
@@ -313,7 +313,7 @@ namespace Lucene.Net.Facet.SortedSet
             }
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(w.Reader);
+            IndexSearcher searcher = NewSearcher(w.GetReader());
 
             // Per-top-reader state:
             SortedSetDocValuesReaderState state = new DefaultSortedSetDocValuesReaderState(searcher.IndexReader);

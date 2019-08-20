@@ -89,7 +89,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             taxoWriter.Dispose();
-            reader = writer.Reader;
+            reader = writer.GetReader();
             writer.Dispose();
             taxoReader = new DirectoryTaxonomyReader(taxoDir);
         }

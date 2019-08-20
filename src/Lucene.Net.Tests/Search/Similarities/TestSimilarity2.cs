@@ -85,7 +85,7 @@ namespace Lucene.Net.Search.Similarities
         {
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Similarities
             Document doc = new Document();
             doc.Add(NewTextField("foo", "bar", Field.Store.NO));
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search.Similarities
             Document doc = new Document();
             doc.Add(NewTextField("foo", "bar", Field.Store.NO));
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search.Similarities
             ft.Freeze();
             doc.Add(NewField("foo", "bar", ft));
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
@@ -192,7 +192,7 @@ namespace Lucene.Net.Search.Similarities
             Field f = NewField("foo", "bar", ft);
             doc.Add(f);
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
@@ -222,7 +222,7 @@ namespace Lucene.Net.Search.Similarities
             Field f = NewField("foo", "bar", ft);
             doc.Add(f);
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
@@ -252,7 +252,7 @@ namespace Lucene.Net.Search.Similarities
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
             doc.Add(NewField("foo", "bar", ft));
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 

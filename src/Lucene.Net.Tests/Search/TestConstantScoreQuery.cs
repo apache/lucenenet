@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewStringField("field", "term", Field.Store.NO));
                 writer.AddDocument(doc);
 
-                reader = writer.Reader;
+                reader = writer.GetReader();
                 writer.Dispose();
                 // we don't wrap with AssertingIndexSearcher in order to have the original scorer in setScorer.
                 searcher = NewSearcher(reader, true, false);
@@ -192,7 +192,7 @@ namespace Lucene.Net.Search
             doc = new Document();
             doc.Add(NewStringField("field", "b", Field.Store.NO));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             Filter filterB = new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "b"))));
@@ -220,7 +220,7 @@ namespace Lucene.Net.Search
             Document doc = new Document();
             doc.Add(NewStringField("field", "a", Field.Store.NO));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             Filter filter = new QueryWrapperFilter(AssertingQuery.Wrap(Random, new TermQuery(new Term("field", "a"))));

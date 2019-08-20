@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
             {
                 w.AddDocument(docs.NextDoc());
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             List<BytesRef> terms = new List<BytesRef>();
@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // NOTE: intentional insanity!!
@@ -455,7 +455,7 @@ namespace Lucene.Net.Index
                     w.AddDocument(doc);
                 }
 
-                return w.Reader;
+                return w.GetReader();
             }
         }
 
@@ -596,7 +596,7 @@ namespace Lucene.Net.Index
             w.Commit();
             w.DeleteDocuments(new Term("field", "one"));
             w.ForceMerge(1);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             Assert.AreEqual(1, r.NumDocs);
             Assert.AreEqual(1, r.MaxDoc);
@@ -895,7 +895,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
 
             w.ForceMerge(1);
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
             Terms terms = sub.Fields.GetTerms("field");
@@ -953,7 +953,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
 
             w.ForceMerge(1);
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
             Terms terms = sub.Fields.GetTerms("field");
@@ -1009,7 +1009,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
 
             w.ForceMerge(1);
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
             Terms terms = sub.Fields.GetTerms("field");

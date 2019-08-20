@@ -147,7 +147,7 @@ namespace Lucene.Net.Tests.Join
             docs.Add(MakeResume("Frank", "United States"));
             w.AddDocuments(docs);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
@@ -235,7 +235,7 @@ namespace Lucene.Net.Tests.Join
                 w.AddDocuments(docs);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
@@ -303,7 +303,7 @@ namespace Lucene.Net.Tests.Join
 
             AddSkillless(w);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
@@ -378,7 +378,7 @@ namespace Lucene.Net.Tests.Join
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
@@ -630,9 +630,9 @@ namespace Lucene.Net.Tests.Join
                 joinW.DeleteDocuments(new Term("blockID", "" + deleteID));
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
-            IndexReader joinR = joinW.Reader;
+            IndexReader joinR = joinW.GetReader();
             joinW.Dispose();
 
             if (VERBOSE)
@@ -1136,7 +1136,7 @@ namespace Lucene.Net.Tests.Join
             docs.Add(MakeResume("Lisa", "United Kingdom"));
             w.AddDocuments(docs);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
@@ -1219,7 +1219,7 @@ namespace Lucene.Net.Tests.Join
             Document parentDoc = new Document();
             parentDoc.Add(NewStringField("parent", "1", Field.Store.NO));
             w.AddDocuments(Arrays.AsList(childDoc, parentDoc));
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
             Query tq = new TermQuery(new Term("child", "1"));
@@ -1253,7 +1253,7 @@ namespace Lucene.Net.Tests.Join
 
             // Need single seg:
             w.ForceMerge(1);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
             Query tq = new TermQuery(new Term("child", "2"));
@@ -1286,7 +1286,7 @@ namespace Lucene.Net.Tests.Join
             w.AddDocuments(docs);
             AddSkillless(w);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = new IndexSearcher(r);
 
@@ -1394,7 +1394,7 @@ namespace Lucene.Net.Tests.Join
             docs.Add(parent);
             w.AddDocuments(docs);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             Query childQuery = new TermQuery(new Term("childText", "text"));
@@ -1459,7 +1459,7 @@ namespace Lucene.Net.Tests.Join
             docs.Add(parent);
             w.AddDocuments(docs);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // never matches:
@@ -1525,7 +1525,7 @@ namespace Lucene.Net.Tests.Join
             docs.Add(parent);
             w.AddDocuments(docs);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // illegally matches parent:
@@ -1572,7 +1572,7 @@ namespace Lucene.Net.Tests.Join
             childDoc.Add(NewStringField("child", "2", Field.Store.NO));
             w.AddDocuments(Arrays.AsList(childDoc, parentDoc));
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 

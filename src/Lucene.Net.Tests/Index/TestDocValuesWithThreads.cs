@@ -234,12 +234,12 @@ namespace Lucene.Net.Index
                 if (random.Next(40) == 17)
                 {
                     // force flush
-                    writer.Reader.Dispose();
+                    writer.GetReader().Dispose();
                 }
             }
 
             writer.ForceMerge(1);
-            DirectoryReader r = writer.Reader;
+            DirectoryReader r = writer.GetReader();
             writer.Dispose();
 
             AtomicReader sr = GetOnlySegmentReader(r);

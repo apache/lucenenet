@@ -215,7 +215,7 @@ namespace Lucene.Net.Search
                     iw.Commit();
                 }
             }
-            Reader = iw.Reader;
+            Reader = iw.GetReader();
             iw.Dispose();
             Searcher = NewSearcher(Reader);
             if (isVerbose)

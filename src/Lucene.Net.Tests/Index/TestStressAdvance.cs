@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
                 IList<int> aDocIDs = new List<int>();
                 IList<int> bDocIDs = new List<int>();
 
-                DirectoryReader r = w.Reader;
+                DirectoryReader r = w.GetReader();
                 int[] idToDocID = new int[r.MaxDoc];
                 for (int docID = 0; docID < idToDocID.Length; docID++)
                 {

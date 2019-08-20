@@ -64,7 +64,7 @@ namespace Lucene.Net.Facet
             Random random = Random;
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
             var taxoReader = new DirectoryTaxonomyReader(taxoWriter);
             IOUtils.Dispose(writer, taxoWriter);
 

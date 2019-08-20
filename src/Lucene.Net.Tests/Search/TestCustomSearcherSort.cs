@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewStringField("mandant", Convert.ToString(i % 3), Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
             Query = new TermQuery(new Term("content", "test"));
         }

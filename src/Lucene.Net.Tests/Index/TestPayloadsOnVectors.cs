@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
             field.SetTokenStream(ts);
             writer.AddDocument(doc);
 
-            DirectoryReader reader = writer.Reader;
+            DirectoryReader reader = writer.GetReader();
             Terms terms = reader.GetTermVector(1, "field");
             Debug.Assert(terms != null);
             TermsEnum termsEnum = terms.GetIterator(null);
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
             field3.SetTokenStream(ts);
             doc.Add(field3);
             writer.AddDocument(doc);
-            DirectoryReader reader = writer.Reader;
+            DirectoryReader reader = writer.GetReader();
             Terms terms = reader.GetTermVector(0, "field");
             Debug.Assert(terms != null);
             TermsEnum termsEnum = terms.GetIterator(null);

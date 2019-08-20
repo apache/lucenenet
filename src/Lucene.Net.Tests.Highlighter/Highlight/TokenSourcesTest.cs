@@ -365,7 +365,7 @@ namespace Lucene.Net.Search.Highlight
             doc.Add(new Field("field", new CannedTokenStream(tokens), myFieldType));
             writer.AddDocument(doc);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
             assertEquals(1, reader.NumDocs);
 

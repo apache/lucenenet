@@ -164,7 +164,7 @@ namespace Lucene.Net.Search
                     w.AddDocument(doc);
                 }
 
-                reader = w.Reader;
+                reader = w.GetReader();
                 w.Dispose();
             }
 

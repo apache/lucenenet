@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
                     w.DeleteDocuments(new Term("id", Convert.ToString(toDelete)));
                     if (Random.Next(17) == 6)
                     {
-                        IndexReader r = w.Reader;
+                        IndexReader r = w.GetReader();
                         Assert.AreEqual(NUM_DOCS - deleted.Count, r.NumDocs);
                         r.Dispose();
                     }

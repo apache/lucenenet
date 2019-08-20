@@ -1280,7 +1280,7 @@ namespace Lucene.Net.Index
             doc.Add(NewStringField("f1", "doc1 field1", Field.Store.YES));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             w.AddDocument(doc);
-            IndexReader r1 = w.Reader;
+            IndexReader r1 = w.GetReader();
             w.Dispose();
 
             Directory d2 = NewDirectory();
@@ -1289,7 +1289,7 @@ namespace Lucene.Net.Index
             doc.Add(NewStringField("f2", "doc2 field2", Field.Store.YES));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
             w.AddDocument(doc);
-            IndexReader r2 = w.Reader;
+            IndexReader r2 = w.GetReader();
             w.Dispose();
 
             Directory d3 = NewDirectory();
@@ -1300,7 +1300,7 @@ namespace Lucene.Net.Index
             r2.Dispose();
             d2.Dispose();
 
-            IndexReader r3 = w.Reader;
+            IndexReader r3 = w.GetReader();
             w.Dispose();
             Assert.AreEqual(2, r3.NumDocs);
             for (int docID = 0; docID < 2; docID++)
@@ -1346,7 +1346,7 @@ namespace Lucene.Net.Index
             Directory src = NewDirectory(), dest = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random, src, Similarity, TimeZone);
             w.AddDocument(new Document());
-            IndexReader allDeletedReader = new AllDeletedFilterReader((AtomicReader)w.Reader.Leaves[0].Reader);
+            IndexReader allDeletedReader = new AllDeletedFilterReader((AtomicReader)w.GetReader().Leaves[0].Reader);
             w.Dispose();
 
             w = new RandomIndexWriter(Random, dest, Similarity, TimeZone);

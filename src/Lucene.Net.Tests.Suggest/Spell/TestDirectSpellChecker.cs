@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Spell
                 writer.AddDocument(doc);
             }
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             string misspelled = "metanoix";
             SuggestWord[] similar = spellchecker.SuggestSimilar(new Term("repentance", misspelled), 4, ir, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
             assertTrue(similar.Length == 4);
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Spell
                 writer.AddDocument(doc);
             }
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
 
             SuggestWord[] similar = spellChecker.SuggestSimilar(new Term("numbers",
                 "fvie"), 2, ir, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search.Spell
             }
 
             ir.Dispose();
-            ir = writer.Reader;
+            ir = writer.GetReader();
 
             // look ma, no spellcheck index rebuild
             similar = spellChecker.SuggestSimilar(new Term("numbers", "tousand"), 10,
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search.Spell
             doc.Add(NewTextField("text", "fobar", Field.Store.NO));
             writer.AddDocument(doc);
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
 
             DirectSpellChecker spellChecker = new DirectSpellChecker();
             spellChecker.MaxQueryFrequency = (0F);
@@ -215,7 +215,7 @@ namespace Lucene.Net.Search.Spell
                 writer.AddDocument(doc);
             }
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
 
             SuggestWord[] similar = spellChecker.SuggestSimilar(new Term(
                 "bogusFieldBogusField", "fvie"), 2, ir,
@@ -242,7 +242,7 @@ namespace Lucene.Net.Search.Spell
                 writer.AddDocument(doc);
             }
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
 
             SuggestWord[] similar = spellChecker.SuggestSimilar(new Term(
                 "numbers", "fvie"), 1, ir,
@@ -270,7 +270,7 @@ namespace Lucene.Net.Search.Spell
                 writer.AddDocument(doc);
             }
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
 
             SuggestWord[] similar = spellChecker.SuggestSimilar(new Term(
                 "numbers", "seevntene"), 2, ir,

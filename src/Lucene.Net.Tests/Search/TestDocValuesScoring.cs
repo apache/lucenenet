@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
             field2.SetStringValue("jumps over lazy brown dog");
             dvField.SetSingleValue(4f); // boost x4
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             // no boosting

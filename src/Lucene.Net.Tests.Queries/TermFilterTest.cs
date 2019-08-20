@@ -53,7 +53,7 @@ namespace Lucene.Net.Tests.Queries
             Document doc = new Document();
             doc.Add(NewStringField(fieldName, @"value1", Field.Store.NO));
             w.AddDocument(doc);
-            IndexReader reader = SlowCompositeReaderWrapper.Wrap(w.Reader);
+            IndexReader reader = SlowCompositeReaderWrapper.Wrap(w.GetReader());
             assertTrue(reader.Context is AtomicReaderContext);
             var context = (AtomicReaderContext)reader.Context;
             w.Dispose();
@@ -87,7 +87,7 @@ namespace Lucene.Net.Tests.Queries
                 w.AddDocument(doc);
             }
 
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
             IndexSearcher searcher = NewSearcher(reader);
             int numQueries = AtLeast(10);

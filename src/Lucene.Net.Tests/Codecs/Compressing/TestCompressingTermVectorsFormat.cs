@@ -54,7 +54,7 @@ namespace Lucene.Net.Codecs.Compressing
             ft.StoreTermVectors = true;
             doc.Add(new Field("foo", "this is a test", ft));
             iw.AddDocument(doc);
-            AtomicReader ir = GetOnlySegmentReader(iw.Reader);
+            AtomicReader ir = GetOnlySegmentReader(iw.GetReader());
             Terms terms = ir.GetTermVector(0, "foo");
             Assert.IsNotNull(terms);
             TermsEnum termsEnum = terms.GetIterator(null);

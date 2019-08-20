@@ -62,7 +62,7 @@ namespace Lucene.Net.Tests.Queries
                 doc.Add(NewStringField(fieldName, "" + term, Field.Store.YES));
                 w.AddDocument(doc);
             }
-            IndexReader reader = SlowCompositeReaderWrapper.Wrap(w.Reader);
+            IndexReader reader = SlowCompositeReaderWrapper.Wrap(w.GetReader());
             assertTrue(reader.Context is AtomicReaderContext);
             AtomicReaderContext context = (AtomicReaderContext)reader.Context;
             w.Dispose();
@@ -97,7 +97,7 @@ namespace Lucene.Net.Tests.Queries
             Document doc = new Document();
             doc.Add(NewStringField(fieldName, "content1", Field.Store.YES));
             w1.AddDocument(doc);
-            IndexReader reader1 = w1.Reader;
+            IndexReader reader1 = w1.GetReader();
             w1.Dispose();
 
             fieldName = "field2";
@@ -106,7 +106,7 @@ namespace Lucene.Net.Tests.Queries
             doc = new Document();
             doc.Add(NewStringField(fieldName, "content2", Field.Store.YES));
             w2.AddDocument(doc);
-            IndexReader reader2 = w2.Reader;
+            IndexReader reader2 = w2.GetReader();
             w2.Dispose();
 
             TermsFilter tf = new TermsFilter(new Term(fieldName, "content1"));
@@ -152,7 +152,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             w.ForceMerge(1);
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
             assertEquals(1, reader.Leaves.size());
 
@@ -197,7 +197,7 @@ namespace Lucene.Net.Tests.Queries
                 }
             }
             w.ForceMerge(1);
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
             assertEquals(1, reader.Leaves.size());
             AtomicReaderContext context = reader.Leaves.First();
@@ -226,7 +226,7 @@ namespace Lucene.Net.Tests.Queries
                 doc.Add(NewStringField(field, @string, Field.Store.YES));
                 w.AddDocument(doc);
             }
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);

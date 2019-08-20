@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
             doc.Add(new Field("content", new CannedTokenStream(tokens), ft));
 
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             DocsAndPositionsEnum dp = MultiFields.GetTermPositionsEnum(r, null, "content", new BytesRef("a"));
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
 
             string[] terms = new string[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "hundred" };
@@ -319,7 +319,7 @@ namespace Lucene.Net.Index
                 doc.Add(new Field("content", new CannedTokenStream(tokens.ToArray()), ft));
                 w.AddDocument(doc);
             }
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
 
             string[] terms = new string[] { "a", "b", "c", "d" };
@@ -426,7 +426,7 @@ namespace Lucene.Net.Index
                 }
                 riw.AddDocument(doc);
             }
-            CompositeReader ir = riw.Reader;
+            CompositeReader ir = riw.GetReader();
             AtomicReader slow = SlowCompositeReaderWrapper.Wrap(ir);
             FieldInfos fis = slow.FieldInfos;
             Assert.AreEqual(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, fis.FieldInfo("foo").IndexOptions);

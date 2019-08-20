@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
             // 1 extra token, but wizard and oz are close;
             doc.Add(NewTextField("field", "wizard oz the the the the the the", Field.Store.NO));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // Do ordinary BooleanQuery:
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search
             // 1 extra token, but wizard and oz are close;
             doc.Add(NewTextField("field", "wizard oz the the the the the the", Field.Store.NO));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // Do ordinary BooleanQuery:
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
             // 1 extra token, but wizard and oz are close;
             doc.Add(NewTextField("field", "wizard oz the the the the the the", Field.Store.NO));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // Do ordinary BooleanQuery:
@@ -288,7 +288,7 @@ namespace Lucene.Net.Search
             // 1 extra token, but wizard and oz are close;
             doc.Add(NewTextField("field", "wizard oz the the the the the the", Field.Store.NO));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // Do ordinary BooleanQuery:
@@ -354,7 +354,7 @@ namespace Lucene.Net.Search
                 doc.Add(new NumericDocValuesField("num", idToNum[i]));
                 w.AddDocument(doc);
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             IndexSearcher s = NewSearcher(r);

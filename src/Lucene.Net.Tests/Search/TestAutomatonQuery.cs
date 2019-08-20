@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
             writer.AddDocument(doc);
             field.SetStringValue("doc three has some different stuff" + " with numbers 1234 5678.9 and letter b");
             writer.AddDocument(doc);
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher = NewSearcher(Reader);
             writer.Dispose();
         }

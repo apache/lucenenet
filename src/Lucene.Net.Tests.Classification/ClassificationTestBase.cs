@@ -86,7 +86,7 @@ namespace Lucene.Net.Classification
             try
             {
                 PopulateSampleIndex(analyzer);
-                atomicReader = SlowCompositeReaderWrapper.Wrap(indexWriter.Reader);
+                atomicReader = SlowCompositeReaderWrapper.Wrap(indexWriter.GetReader());
                 classifier.Train(atomicReader, textFieldName, classFieldName, analyzer, query);
                 ClassificationResult<T> classificationResult = classifier.AssignClass(inputDoc);
                 NotNull(classificationResult.AssignedClass);
@@ -110,7 +110,7 @@ namespace Lucene.Net.Classification
             try
             {
                 PopulateSampleIndex(analyzer);
-                atomicReader = SlowCompositeReaderWrapper.Wrap(indexWriter.Reader);
+                atomicReader = SlowCompositeReaderWrapper.Wrap(indexWriter.GetReader());
                 classifier.Train(atomicReader, textFieldName, classFieldName, analyzer, query);
                 ClassificationResult<T> classificationResult = classifier.AssignClass(inputDoc);
                 NotNull(classificationResult.AssignedClass);
@@ -214,7 +214,7 @@ namespace Lucene.Net.Classification
             try
             {
                 PopulatePerformanceIndex(analyzer);
-                atomicReader = SlowCompositeReaderWrapper.Wrap(indexWriter.Reader);
+                atomicReader = SlowCompositeReaderWrapper.Wrap(indexWriter.GetReader());
                 classifier.Train(atomicReader, textFieldName, classFieldName, analyzer);
                 stopwatch.Stop();
                 long trainTime = stopwatch.ElapsedMilliseconds;

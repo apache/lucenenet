@@ -54,7 +54,7 @@ namespace Lucene.Net.Tests.Queries.Function
             Field idField = new StringField("id", "", Field.Store.NO);
             document.Add(idField);
             iw.AddDocument(document);
-            ir = iw.Reader;
+            ir = iw.GetReader();
             @is = NewSearcher(ir);
             iw.Dispose();
         }

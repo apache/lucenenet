@@ -105,7 +105,7 @@ namespace Lucene.Net.Sandbox.Queries
                 writer.AddDocument(doc);
             }
 
-            IndexReader r = writer.Reader;
+            IndexReader r = writer.GetReader();
             IndexSearcher searcher = NewSearcher(r);
             if (VERBOSE)
             {

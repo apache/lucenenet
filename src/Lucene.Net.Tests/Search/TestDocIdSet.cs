@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
             Document doc = new Document();
             doc.Add(NewStringField("c", "val", Field.Store.NO));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             // First verify the document is searchable.
@@ -190,7 +190,7 @@ namespace Lucene.Net.Search
             Document doc = new Document();
             doc.Add(NewStringField("c", "val", Field.Store.NO));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             // First verify the document is searchable.

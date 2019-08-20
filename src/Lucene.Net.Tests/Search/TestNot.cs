@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
             d1.Add(NewTextField("field", "a b", Field.Store.YES));
 
             writer.AddDocument(d1);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
 
             IndexSearcher searcher = NewSearcher(reader);
 

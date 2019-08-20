@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
                     writer.AddDocument(doc);
                 }
 
-                Reader = writer.Reader;
+                Reader = writer.GetReader();
             }
         }
 

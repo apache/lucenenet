@@ -82,7 +82,7 @@ namespace Lucene.Net.Index.Sorter
                     iw.DeleteDocuments(new Term("s", term));
                 }
             }
-            reader = iw.Reader;
+            reader = iw.GetReader();
         }
 
         public override void TearDown()

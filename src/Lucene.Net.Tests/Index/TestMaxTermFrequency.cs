@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
                 foo.SetStringValue(AddValue());
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
         }
 

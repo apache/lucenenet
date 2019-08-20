@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
             doc.Add(NewTextField("nonexist", "phrase exist notexist exist found", Field.Store.YES));
             writer.AddDocument(doc);
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
 
             Searcher = NewSearcher(Reader);
@@ -249,7 +249,7 @@ namespace Lucene.Net.Search
             Documents.Document doc = new Documents.Document();
             doc.Add(NewTextField("field", "the stop words are here", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);
@@ -281,7 +281,7 @@ namespace Lucene.Net.Search
             doc.Add(NewTextField("source", "marketing info", Field.Store.YES));
             writer.AddDocument(doc);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);
@@ -316,7 +316,7 @@ namespace Lucene.Net.Search
             doc.Add(NewTextField("contents", "map foobarword entry woo", Field.Store.YES));
             writer.AddDocument(doc);
 
-            reader = writer.Reader;
+            reader = writer.GetReader();
             writer.Dispose();
 
             searcher = NewSearcher(reader);
@@ -366,7 +366,7 @@ namespace Lucene.Net.Search
             doc3.Add(NewTextField("field", "foo firstname zzz yyy lastname foo", Field.Store.YES));
             writer.AddDocument(doc3);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);
@@ -702,7 +702,7 @@ namespace Lucene.Net.Search
                 w.AddDocument(d);
             }
 
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             IndexSearcher s = NewSearcher(reader);
             w.Dispose();
 

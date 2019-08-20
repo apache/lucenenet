@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
             //
             writer.AddDocument(d);
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             //
             Searcher = NewSearcher(Reader);
             writer.Dispose();
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
             }
 
             riw.ForceMerge(1);
-            IndexReader r = riw.Reader;
+            IndexReader r = riw.GetReader();
             riw.Dispose();
 
             IndexSearcher s = NewSearcher(r);

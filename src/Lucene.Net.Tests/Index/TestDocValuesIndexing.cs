@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             doc.Add(new NumericDocValuesField("dv", 1));
             w.AddDocument(doc);
-            IndexReader r1 = w.Reader;
+            IndexReader r1 = w.GetReader();
             w.Dispose();
 
             Directory d2 = NewDirectory();
@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
             doc.Add(NewStringField("id", "2", Field.Store.YES));
             doc.Add(new NumericDocValuesField("dv", 2));
             w.AddDocument(doc);
-            IndexReader r2 = w.Reader;
+            IndexReader r2 = w.GetReader();
             w.Dispose();
 
             Directory d3 = NewDirectory();
@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
             d2.Dispose();
 
             w.ForceMerge(1);
-            DirectoryReader r3 = w.Reader;
+            DirectoryReader r3 = w.GetReader();
             w.Dispose();
             AtomicReader sr = GetOnlySegmentReader(r3);
             Assert.AreEqual(2, sr.NumDocs);
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
             doc.Add(f);
             w.AddDocument(doc);
             w.ForceMerge(1);
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
             Assert.AreEqual(17, FieldCache.DEFAULT.GetInt32s(GetOnlySegmentReader(r), "field", false).Get(0));
             r.Dispose();
@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
             doc.Add(f);
             w.AddDocument(doc);
             w.ForceMerge(1);
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
             Assert.AreEqual(17, FieldCache.DEFAULT.GetInt32s(GetOnlySegmentReader(r), "field", false).Get(0));
             r.Dispose();
@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
             doc.Add(f);
             w.AddDocument(doc);
             w.ForceMerge(1);
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             Assert.AreEqual(17, GetOnlySegmentReader(r).GetNumericDocValues("field").Get(0));
             r.Dispose();
             w.Dispose();

@@ -195,7 +195,7 @@ namespace Lucene.Net.Documents
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             writer.AddDocument(MakeDocumentWithFields());
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
 
             IndexSearcher searcher = NewSearcher(reader);
 
@@ -228,7 +228,7 @@ namespace Lucene.Net.Documents
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             writer.AddDocument(MakeDocumentWithFields());
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
 
             IndexSearcher searcher = NewSearcher(reader);
             PhraseQuery query = new PhraseQuery();
@@ -313,7 +313,7 @@ namespace Lucene.Net.Documents
             field.SetStringValue("id3");
             writer.AddDocument(doc);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
 
             Query query = new TermQuery(new Term("keyword", "test"));
@@ -379,7 +379,7 @@ namespace Lucene.Net.Documents
             doc.Add(new Field("tv_pos_off", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
 #pragma warning restore 612, 618
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             doc = r.Document(0);
@@ -442,7 +442,7 @@ namespace Lucene.Net.Documents
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             iw.AddDocument(doc);
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             Documents.Document sdoc = ir.Document(0);
             Assert.AreEqual("5", sdoc.Get("int"));
             Assert.IsNull(sdoc.Get("somethingElse"));

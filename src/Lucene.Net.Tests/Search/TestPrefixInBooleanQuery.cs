@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
             field.SetStringValue("tangfulin");
             writer.AddDocument(doc);
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher = NewSearcher(Reader);
             writer.Dispose();
         }

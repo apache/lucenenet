@@ -49,7 +49,7 @@ namespace Lucene.Net.Sandbox.Queries
             AddDoc(writer, "johnny smith", "4");
             AddDoc(writer, "jonny smith", "5");
             AddDoc(writer, "johnathon smythe", "6");
-            reader = writer.Reader;
+            reader = writer.GetReader();
             writer.Dispose();
             searcher = NewSearcher(reader);
         }

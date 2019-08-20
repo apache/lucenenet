@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewStringField(fieldName, "" + term, Field.Store.YES));
                 w.AddDocument(doc);
             }
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);

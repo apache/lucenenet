@@ -164,7 +164,7 @@ namespace Lucene.Net.Search
                 }
                 writer.AddDocument(doc);
             }
-            IndexReader r = writer.Reader;
+            IndexReader r = writer.GetReader();
             Reader = SlowCompositeReaderWrapper.Wrap(r);
             writer.Dispose();
         }
@@ -609,7 +609,7 @@ namespace Lucene.Net.Search
                 doc.Add(new SortedSetDocValuesField("sortedset", new BytesRef("sortedset value2")));
             }
             iw.AddDocument(doc);
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.Dispose();
             AtomicReader ar = GetOnlySegmentReader(ir);
 
@@ -829,7 +829,7 @@ namespace Lucene.Net.Search
             RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             iw.AddDocument(doc);
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.Dispose();
 
             AtomicReader ar = GetOnlySegmentReader(ir);
@@ -898,7 +898,7 @@ namespace Lucene.Net.Search
             doc.Add(new StoredField("bogusmultivalued", "bogus"));
             doc.Add(new StoredField("bogusbits", "bogus"));
             iw.AddDocument(doc);
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.Dispose();
 
             AtomicReader ar = GetOnlySegmentReader(ir);
@@ -993,7 +993,7 @@ namespace Lucene.Net.Search
                 }
             }
             iw.ForceMerge(1);
-            DirectoryReader reader = iw.Reader;
+            DirectoryReader reader = iw.GetReader();
             Int64s longs = FieldCache.DEFAULT.GetInt64s(GetOnlySegmentReader(reader), "f", false);
             for (int i = 0; i < values.Length; ++i)
             {
@@ -1047,7 +1047,7 @@ namespace Lucene.Net.Search
                 }
             }
             iw.ForceMerge(1);
-            DirectoryReader reader = iw.Reader;
+            DirectoryReader reader = iw.GetReader();
             Int32s ints = FieldCache.DEFAULT.GetInt32s(GetOnlySegmentReader(reader), "f", false);
             for (int i = 0; i < values.Length; ++i)
             {

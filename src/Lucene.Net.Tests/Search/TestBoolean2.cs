@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
             {
                 riw.AddDocument(doc_);
             }
-            Reader = riw.Reader;
+            Reader = riw.GetReader();
             BigSearcher = NewSearcher(Reader);
             riw.Dispose();
         }

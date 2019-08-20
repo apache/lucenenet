@@ -87,7 +87,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("baz")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -120,7 +120,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("baz")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -156,7 +156,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("baz")));
             doc.Add(NewStringField("id", "3", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -196,7 +196,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("baz")));
             doc.Add(NewStringField("id", "3", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -232,7 +232,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("bar")));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -266,7 +266,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("d")));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -300,7 +300,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("c")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -337,7 +337,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("d")));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -378,7 +378,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("d")));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -413,7 +413,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("bar")));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -447,7 +447,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("b")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -481,7 +481,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("d")));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -518,7 +518,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("b")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -559,7 +559,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("b")));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)
@@ -594,7 +594,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(new SortedSetDocValuesField("value", new BytesRef("bar")));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             // slow wrapper does not support random access ordinals (there is no need for that!)

@@ -99,7 +99,7 @@ namespace Lucene.Net.Search.Grouping
             doc.Add(new Field("id", "6", customType));
             w.AddDocument(doc);
 
-            IndexSearcher indexSearcher = NewSearcher(w.Reader);
+            IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
             IAbstractAllGroupsCollector<object> allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);

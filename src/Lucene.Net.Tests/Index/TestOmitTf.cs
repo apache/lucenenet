@@ -578,7 +578,7 @@ namespace Lucene.Net.Index
             Field f = NewField("foo", "bar", ft);
             doc.Add(f);
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             Assert.AreEqual(-1, ir.TotalTermFreq(new Term("foo", new BytesRef("bar"))));
             Assert.AreEqual(-1, ir.GetSumTotalTermFreq("foo"));

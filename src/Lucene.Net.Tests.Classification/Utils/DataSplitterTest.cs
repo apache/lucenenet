@@ -67,7 +67,7 @@ namespace Lucene.Net.Classification
 
             _indexWriter.Commit();
 
-            _originalIndex = SlowCompositeReaderWrapper.Wrap(_indexWriter.Reader);
+            _originalIndex = SlowCompositeReaderWrapper.Wrap(_indexWriter.GetReader());
         }
 
         [TearDown]

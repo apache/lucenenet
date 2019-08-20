@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
                 w.AddDocument(doc);
             }
 
-            s = NewSearcher(w.Reader);
+            s = NewSearcher(w.GetReader());
             w.Dispose();
         }
 

@@ -57,7 +57,7 @@ namespace Lucene.Net.Tests.Queries
                 w.AddDocument(doc);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             IndexSearcher s = NewSearcher(r);
             {
                 CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
@@ -191,7 +191,7 @@ namespace Lucene.Net.Tests.Queries
                 w.AddDocument(doc);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             IndexSearcher s = NewSearcher(r);
             {
                 CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
@@ -347,7 +347,7 @@ namespace Lucene.Net.Tests.Queries
                 w.AddDocument(doc);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             IndexSearcher s = NewSearcher(r);
             {
                 CommonTermsQuery query = new CommonTermsQuery(Occur.SHOULD, Occur.SHOULD, Random.NextBoolean() ? 2F : 0.5F);
@@ -392,7 +392,7 @@ namespace Lucene.Net.Tests.Queries
             analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, analyzer, Similarity, TimeZone);
             CreateRandomIndex(AtLeast(50), w, Random.NextInt64());
-            DirectoryReader reader = w.Reader;
+            DirectoryReader reader = w.GetReader();
             AtomicReader wrapper = SlowCompositeReaderWrapper.Wrap(reader);
             string field = @"body";
             Terms terms = wrapper.GetTerms(field);
@@ -462,7 +462,7 @@ namespace Lucene.Net.Tests.Queries
 
                 assertTrue(hits.Count == 0);
                 w.ForceMerge(1);
-                DirectoryReader reader2 = w.Reader;
+                DirectoryReader reader2 = w.GetReader();
                 QueryUtils.Check(Random, cq, NewSearcher(reader2), Similarity);
                 reader2.Dispose();
             }

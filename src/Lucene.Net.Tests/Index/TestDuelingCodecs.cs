@@ -96,9 +96,9 @@ namespace Lucene.Net.Index
             CreateRandomIndex(numdocs, leftWriter, seed);
             CreateRandomIndex(numdocs, rightWriter, seed);
 
-            LeftReader = MaybeWrapReader(leftWriter.Reader);
+            LeftReader = MaybeWrapReader(leftWriter.GetReader());
             leftWriter.Dispose();
-            RightReader = MaybeWrapReader(rightWriter.Reader);
+            RightReader = MaybeWrapReader(rightWriter.GetReader());
             rightWriter.Dispose();
 
             // check that our readers are valid

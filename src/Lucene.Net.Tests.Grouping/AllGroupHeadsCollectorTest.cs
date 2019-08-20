@@ -119,7 +119,7 @@ namespace Lucene.Net.Search.Grouping
             doc.Add(NewStringField("id_2", "7", Field.Store.NO));
             w.AddDocument(doc);
 
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             IndexSearcher indexSearcher = NewSearcher(reader);
 
             w.Dispose();
@@ -310,7 +310,7 @@ namespace Lucene.Net.Search.Grouping
                     }
                 }
 
-                DirectoryReader r = w.Reader;
+                DirectoryReader r = w.GetReader();
                 w.Dispose();
 
                 // NOTE: intentional but temporary field cache insanity!

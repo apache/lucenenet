@@ -374,7 +374,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 uniqueTermCount += uniqueTerms.Count;
             }
 
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
 
             if (VERBOSE)
             {

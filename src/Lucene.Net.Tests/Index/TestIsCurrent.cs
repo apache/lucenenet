@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteByTermIsCurrent()
         {
             // get reader
-            DirectoryReader reader = Writer.Reader;
+            DirectoryReader reader = Writer.GetReader();
 
             // assert index has a document and reader is up2date
             Assert.AreEqual(1, Writer.NumDocs, "One document should be in the index");
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteAllIsCurrent()
         {
             // get reader
-            DirectoryReader reader = Writer.Reader;
+            DirectoryReader reader = Writer.GetReader();
 
             // assert index has a document and reader is up2date
             Assert.AreEqual(1, Writer.NumDocs, "One document should be in the index");

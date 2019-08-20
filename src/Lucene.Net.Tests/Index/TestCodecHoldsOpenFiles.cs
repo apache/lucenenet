@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             foreach (string fileName in d.ListAll())
@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             foreach (string fileName in d.ListAll())

@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Grouping
             AddField(doc, "duration", "5", useDv);
             w.AddDocument(doc);
 
-            IndexSearcher indexSearcher = NewSearcher(w.Reader);
+            IndexSearcher indexSearcher = NewSearcher(w.GetReader());
 
             IList<TermGroupFacetCollector.FacetEntry> entries = null;
             AbstractGroupFacetCollector groupedAirportFacetCollector = null;
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search.Grouping
             w.AddDocument(doc);
 
             indexSearcher.IndexReader.Dispose();
-            indexSearcher = NewSearcher(w.Reader);
+            indexSearcher = NewSearcher(w.GetReader());
             groupedAirportFacetCollector = CreateRandomCollector(useDv ? "hotel_dv" : "hotel", useDv ? "airport_dv" : "airport", null, !useDv);
             indexSearcher.Search(new MatchAllDocsQuery(), groupedAirportFacetCollector);
             airportResult = groupedAirportFacetCollector.MergeSegmentResults(3, 0, true);
@@ -221,7 +221,7 @@ namespace Lucene.Net.Search.Grouping
             w.AddDocument(doc);
 
             indexSearcher.IndexReader.Dispose();
-            indexSearcher = NewSearcher(w.Reader);
+            indexSearcher = NewSearcher(w.GetReader());
             groupedAirportFacetCollector = CreateRandomCollector(useDv ? "hotel_dv" : "hotel", useDv ? "airport_dv" : "airport", null, false);
             indexSearcher.Search(new MatchAllDocsQuery(), groupedAirportFacetCollector);
             airportResult = groupedAirportFacetCollector.MergeSegmentResults(10, 0, false);
@@ -732,7 +732,7 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            DirectoryReader reader = writer.Reader;
+            DirectoryReader reader = writer.GetReader();
             writer.Dispose();
 
             return new IndexContext(searchTermToFacetToGroups, reader, numDocs, dir, facetWithMostGroups, numGroups, contentBrs, uniqueFacetValues, useDv);

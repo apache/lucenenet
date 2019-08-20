@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
                 w.AddDocument(doc);
             }
 
-            r = w.Reader;
+            r = w.GetReader();
             s = NewSearcher(r);
             w.Dispose();
             //System.out.println("Set up " + getName());

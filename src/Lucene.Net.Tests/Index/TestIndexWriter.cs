@@ -2003,7 +2003,7 @@ namespace Lucene.Net.Index
             // So we remove the deleted doc:
             w.ForceMerge(1);
 
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
 
             // Make sure all terms < max size were indexed
@@ -2041,7 +2041,7 @@ namespace Lucene.Net.Index
             contentField.SetStringValue("zzz");
             w.AddDocument(doc);
 
-            reader = w.Reader;
+            reader = w.GetReader();
             w.Dispose();
             Assert.AreEqual(1, reader.DocFreq(new Term("content", bigTerm)));
 
@@ -2328,7 +2328,7 @@ namespace Lucene.Net.Index
             doc.Add(new TextField("body", "just a", Field.Store.NO));
             doc.Add(new TextField("body", "test of gaps", Field.Store.NO));
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
             PhraseQuery pq = new PhraseQuery();
@@ -2370,7 +2370,7 @@ namespace Lucene.Net.Index
             doc.Add(new TextField("body", "just a foobar", Field.Store.NO));
             doc.Add(new TextField("body", "test of gaps", Field.Store.NO));
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
             PhraseQuery pq = new PhraseQuery();
@@ -2890,7 +2890,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
 
             // Get a new reader, but this also sets off a merge:
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // Blow away index and make a new writer:

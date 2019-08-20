@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
                 writer.AddDocument(doc);
             }
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher = NewSearcher(Reader);
             writer.Dispose();
             if (VERBOSE)

@@ -57,7 +57,7 @@ namespace Lucene.Net.Tests.Queries.Function
             }
 
             // Open index
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
             IndexSearcher searcher = NewSearcher(reader);
 

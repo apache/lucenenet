@@ -302,13 +302,13 @@ namespace Lucene.Net.Index
                 riw.AddDocument(d);
             }
 
-            IndexReader ir1 = riw.Reader;
+            IndexReader ir1 = riw.GetReader();
             // todo: generalize
             NumericDocValues norms1 = MultiDocValues.GetNormValues(ir1, field);
 
             // fully merge and validate MultiNorms against single segment.
             riw.ForceMerge(1);
-            DirectoryReader ir2 = riw.Reader;
+            DirectoryReader ir2 = riw.GetReader();
             NumericDocValues norms2 = GetOnlySegmentReader(ir2).GetNormValues(field);
 
             if (norms1 == null)

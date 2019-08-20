@@ -180,7 +180,7 @@ namespace Lucene.Net.Index
             }
 
             w.ForceMerge(1);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             Assert.AreEqual(numDocs, r.MaxDoc);
             Assert.AreEqual(numDocs, r.NumDocs);
             r.Dispose();
@@ -192,14 +192,14 @@ namespace Lucene.Net.Index
 
             w.DeleteDocuments(new Term("id", "" + (42 + 17)));
 
-            r = w.Reader;
+            r = w.GetReader();
             Assert.AreEqual(numDocs, r.MaxDoc);
             Assert.AreEqual(numDocs - 1, r.NumDocs);
             r.Dispose();
 
             w.ForceMergeDeletes();
 
-            r = w.Reader;
+            r = w.GetReader();
             Assert.AreEqual(numDocs - 1, r.MaxDoc);
             Assert.AreEqual(numDocs - 1, r.NumDocs);
             r.Dispose();

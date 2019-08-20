@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
             doc.Add(NewTextField("body", "Today is a very sunny day in New York City", Field.Store.YES));
             writer.AddDocument(doc);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
             IndexSearcher searcher = NewSearcher(reader);
 
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
             doc.Add(NewTextField("body", "Today is a very sunny day in New York City", Field.Store.YES));
             writer.AddDocument(doc);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
             IndexSearcher searcher = NewSearcher(reader);
 

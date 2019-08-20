@@ -47,11 +47,11 @@ namespace Lucene.Net.Index
             {
                 iw.AddDocument(Doc());
             }
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             VerifyCount(ir);
             ir.Dispose();
             iw.ForceMerge(1);
-            ir = iw.Reader;
+            ir = iw.GetReader();
             VerifyCount(ir);
             ir.Dispose();
             iw.Dispose();

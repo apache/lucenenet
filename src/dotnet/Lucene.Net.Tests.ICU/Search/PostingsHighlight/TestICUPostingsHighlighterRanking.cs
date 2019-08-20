@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 iw.AddDocument(document);
             }
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             IndexSearcher searcher = NewSearcher(ir);
             for (int i = 0; i < numDocs; i++)
             {
@@ -286,7 +286,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                                 "you have no idea how painful it was for me to type this long sentence into my IDE.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -330,7 +330,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                                 "This has only bar bar bar bar bar bar bar bar bar bar bar bar.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);

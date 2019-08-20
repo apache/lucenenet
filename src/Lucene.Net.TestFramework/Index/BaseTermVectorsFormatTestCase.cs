@@ -697,7 +697,7 @@ namespace Lucene.Net.Index
                         writer.AddDocument(emptyDoc);
                     }
                 }
-                IndexReader reader = writer.Reader;
+                IndexReader reader = writer.GetReader();
                 int docWithVectorsID = DocID(reader, "42");
                 for (int i = 0; i < 10; ++i)
                 {
@@ -736,7 +736,7 @@ namespace Lucene.Net.Index
                     RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 2), AtLeast(20000),
                         options);
                     writer.AddDocument(doc.ToDocument());
-                    using (IndexReader reader = writer.Reader)
+                    using (IndexReader reader = writer.GetReader())
                         AssertEquals(doc, reader.GetTermVectors(0));
                 }
             }
@@ -752,7 +752,7 @@ namespace Lucene.Net.Index
                 RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
                 RandomDocument doc = docFactory.NewDocument(AtLeast(100), 5, options);
                 writer.AddDocument(doc.ToDocument());
-                IndexReader reader = writer.Reader;
+                IndexReader reader = writer.GetReader();
                 AssertEquals(doc, reader.GetTermVectors(0));
                 reader.Dispose();
                 writer.Dispose();
@@ -781,7 +781,7 @@ namespace Lucene.Net.Index
                         RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
                         writer.AddDocument(AddId(doc1.ToDocument(), "1"));
                         writer.AddDocument(AddId(doc2.ToDocument(), "2"));
-                        using (IndexReader reader = writer.Reader)
+                        using (IndexReader reader = writer.GetReader())
                         {
                             int doc1ID = DocID(reader, "1");
                             AssertEquals(doc1, reader.GetTermVectors(doc1ID));
@@ -809,7 +809,7 @@ namespace Lucene.Net.Index
             {
                 writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
             }
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             for (int i = 0; i < numDocs; ++i)
             {
                 int docID = DocID(reader, "" + i);
@@ -854,7 +854,7 @@ namespace Lucene.Net.Index
                 }
                 // merge with deletes
                 writer.ForceMerge(1);
-                IndexReader reader = writer.Reader;
+                IndexReader reader = writer.GetReader();
                 for (int i = 0; i < numDocs; ++i)
                 {
                     if (!deletes.Contains(i))
@@ -889,7 +889,7 @@ namespace Lucene.Net.Index
                 {
                     writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
                 }
-                IndexReader reader = writer.Reader;
+                IndexReader reader = writer.GetReader();
                 for (int i = 0; i < numDocs; ++i)
                 {
                     int docID = DocID(reader, "" + i);

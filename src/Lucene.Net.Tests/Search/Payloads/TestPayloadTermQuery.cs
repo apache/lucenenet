@@ -139,7 +139,7 @@ namespace Lucene.Net.Search.Payloads
                 doc.Add(NewTextField("multiField", English.Int32ToEnglish(i) + "  " + English.Int32ToEnglish(i), Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
 
             Searcher = NewSearcher(Reader);

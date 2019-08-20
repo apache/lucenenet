@@ -64,7 +64,7 @@ namespace Lucene.Net.Tests.Queries
 
                 cal = cal.AddDays(1);
             }
-            reader = writer.Reader;
+            reader = writer.GetReader();
             writer.Dispose();
 
             searcher = NewSearcher(reader);
@@ -183,7 +183,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);

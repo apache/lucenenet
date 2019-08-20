@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Grouping
             doc.Add(new StringField("id", "6", Field.Store.NO));
             w.AddDocument(doc);
 
-            IndexSearcher indexSearcher = NewSearcher(w.Reader);
+            IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
             var cmp = new ComparerAnonymousHelper1(this);
@@ -576,7 +576,7 @@ namespace Lucene.Net.Search.Grouping
                 w.AddDocument(doc);
             }
 
-            DirectoryReader reader = w.Reader;
+            DirectoryReader reader = w.GetReader();
             if (VERBOSE)
             {
                 for (int docID = 0; docID < reader.MaxDoc; docID++)

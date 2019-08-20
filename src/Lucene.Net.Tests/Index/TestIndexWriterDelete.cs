@@ -1131,7 +1131,7 @@ namespace Lucene.Net.Index
                 {
                     w.DeleteDocuments(new Term("id", "" + ids[upto++]));
                 }
-                IndexReader r = w.Reader;
+                IndexReader r = w.GetReader();
                 Assert.AreEqual(NUM_DOCS - upto, r.NumDocs);
                 r.Dispose();
             }

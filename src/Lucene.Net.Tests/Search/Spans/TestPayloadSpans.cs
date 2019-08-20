@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Spans
             Document doc = new Document();
             doc.Add(NewTextField(PayloadHelper.FIELD, "one two three one four three", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             CheckSpans(MultiSpansWrapper.Wrap(reader.Context, snq), 1, new int[] { 2 });
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search.Spans
             doc.Add(new TextField("content", new StringReader("a b c d e f g h i j a k")));
             writer.AddDocument(doc);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher @is = NewSearcher(reader);
             writer.Dispose();
 
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search.Spans
             Document doc = new Document();
             doc.Add(new TextField("content", new StringReader("a b a d k f a h i k a k")));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher @is = NewSearcher(reader);
             writer.Dispose();
 
@@ -344,7 +344,7 @@ namespace Lucene.Net.Search.Spans
             Document doc = new Document();
             doc.Add(new TextField("content", new StringReader("j k a l f k k p a t a k l k t a")));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher @is = NewSearcher(reader);
             writer.Dispose();
 
@@ -391,7 +391,7 @@ namespace Lucene.Net.Search.Spans
             doc.Add(NewTextField(PayloadHelper.FIELD, "xx rr yy mm  pp", Field.Store.YES));
             writer.AddDocument(doc);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
             IndexSearcher searcher = NewSearcher(reader);
 
@@ -460,7 +460,7 @@ namespace Lucene.Net.Search.Spans
                     writer.AddDocument(doc);
                 }
 
-                CloseIndexReader = writer.Reader;
+                CloseIndexReader = writer.GetReader();
                 writer.Dispose();
 
                 IndexSearcher searcher = NewSearcher(CloseIndexReader);

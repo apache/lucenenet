@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
                 riw.AddDocument(doc);
             }
 
-            r = riw.Reader;
+            r = riw.GetReader();
             riw.Dispose();
 
             /*
@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
                     riw.AddDocument(doc);
                 }
 
-                r = riw.Reader;
+                r = riw.GetReader();
                 riw.Dispose();
             }
             else

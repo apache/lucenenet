@@ -84,7 +84,7 @@ namespace Lucene.Net.Index.Sorter
                     writer.AddDocuments(documents);
                 }
                 writer.ForceMerge(1);
-                indexReader = writer.Reader;
+                indexReader = writer.GetReader();
             }
 
             AtomicReader reader = GetOnlySegmentReader(indexReader);

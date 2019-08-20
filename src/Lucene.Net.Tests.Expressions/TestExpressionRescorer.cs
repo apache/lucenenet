@@ -62,7 +62,7 @@ namespace Lucene.Net.Expressions
 			    new NumericDocValuesField("popularity", 2)
 			};
 		    iw.AddDocument(doc);
-			reader = iw.Reader;
+			reader = iw.GetReader();
 			searcher = new IndexSearcher(reader);
 			iw.Dispose();
 		}

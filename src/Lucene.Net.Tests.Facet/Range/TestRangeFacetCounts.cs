@@ -88,7 +88,7 @@ namespace Lucene.Net.Facet.Range
             field.SetInt64Value(long.MaxValue);
             w.AddDocument(doc);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             FacetsCollector fc = new FacetsCollector();
@@ -162,7 +162,7 @@ namespace Lucene.Net.Facet.Range
             field.SetInt64Value(long.MaxValue);
             w.AddDocument(doc);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             FacetsCollector fc = new FacetsCollector();
@@ -194,7 +194,7 @@ namespace Lucene.Net.Facet.Range
             field.SetInt64Value(long.MaxValue);
             w.AddDocument(doc);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             FacetsCollector fc = new FacetsCollector();
@@ -243,7 +243,7 @@ namespace Lucene.Net.Facet.Range
                 w.AddDocument(config.Build(tw, doc));
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
 
             var tr = new DirectoryTaxonomyReader(tw);
 
@@ -340,7 +340,7 @@ namespace Lucene.Net.Facet.Range
                 w.AddDocument(doc);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
 
             FacetsCollector fc = new FacetsCollector();
 
@@ -367,7 +367,7 @@ namespace Lucene.Net.Facet.Range
                 w.AddDocument(doc);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
 
             FacetsCollector fc = new FacetsCollector();
 
@@ -406,7 +406,7 @@ namespace Lucene.Net.Facet.Range
                 minValue = Math.Min(minValue, v);
                 maxValue = Math.Max(maxValue, v);
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
 
             IndexSearcher s = NewSearcher(r);
             FacetsConfig config = new FacetsConfig();
@@ -595,7 +595,7 @@ namespace Lucene.Net.Facet.Range
                 minValue = Math.Min(minValue, v);
                 maxValue = Math.Max(maxValue, v);
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
 
             IndexSearcher s = NewSearcher(r);
             FacetsConfig config = new FacetsConfig();
@@ -800,7 +800,7 @@ namespace Lucene.Net.Facet.Range
                 minValue = Math.Min(minValue, v);
                 maxValue = Math.Max(maxValue, v);
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
 
             IndexSearcher s = NewSearcher(r);
             FacetsConfig config = new FacetsConfig();
@@ -988,7 +988,7 @@ namespace Lucene.Net.Facet.Range
                 w.AddDocument(doc);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
 
             FacetsCollector fc = new FacetsCollector();
 
@@ -1021,7 +1021,7 @@ namespace Lucene.Net.Facet.Range
 
             FacetsCollector fc = new FacetsCollector();
 
-            IndexReader r = writer.Reader;
+            IndexReader r = writer.GetReader();
             IndexSearcher s = NewSearcher(r);
             s.Search(new MatchAllDocsQuery(), fc);
 

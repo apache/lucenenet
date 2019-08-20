@@ -1767,7 +1767,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             IndexSearcher s = NewSearcher(r);
@@ -1857,7 +1857,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             IndexSearcher s = NewSearcher(r);
@@ -2397,7 +2397,7 @@ namespace Lucene.Net.Index
                     {
                         Console.WriteLine("TEST: verify against NRT reader");
                     }
-                    ir = w.Reader;
+                    ir = w.GetReader();
                 }
                 Assert.AreEqual(docCount - deleteCount, ir.NumDocs);
                 if (DefaultCodecSupportsDocValues)

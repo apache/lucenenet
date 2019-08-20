@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
             }
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
 
             AssertSumDocFreq(ir);
             ir.Dispose();

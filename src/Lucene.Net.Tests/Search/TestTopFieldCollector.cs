@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
                 Document doc = new Document();
                 iw.AddDocument(doc);
             }
-            Ir = iw.Reader;
+            Ir = iw.GetReader();
             iw.Dispose();
             @is = NewSearcher(Ir);
         }

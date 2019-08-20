@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
             {
                 Iw.DeleteDocuments(new Term("id", Convert.ToString(Random.Next(Iw.MaxDoc))));
             }
-            Ir = Iw.Reader;
+            Ir = Iw.GetReader();
             @is = NewSearcher(Ir);
         }
 

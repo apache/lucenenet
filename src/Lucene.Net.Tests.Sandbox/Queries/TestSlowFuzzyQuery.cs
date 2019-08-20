@@ -49,7 +49,7 @@ namespace Lucene.Net.Sandbox.Queries
             addDoc("bbbbb", writer);
             addDoc("ddddd", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             writer.Dispose();
 
@@ -201,7 +201,7 @@ namespace Lucene.Net.Sandbox.Queries
             addDoc("abcdef", writer);
             addDoc("segment", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             writer.Dispose();
 
@@ -226,7 +226,7 @@ namespace Lucene.Net.Sandbox.Queries
             addDoc("aaaaaaa", writer);
             addDoc("segment", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             writer.Dispose();
 
@@ -345,8 +345,8 @@ namespace Lucene.Net.Sandbox.Queries
             addDoc("c123456", writer2);
             addDoc("f123456", writer2);
 
-            IndexReader ir1 = writer.Reader;
-            IndexReader ir2 = writer2.Reader;
+            IndexReader ir1 = writer.GetReader();
+            IndexReader ir2 = writer2.GetReader();
 
             MultiReader mr = new MultiReader(ir1, ir2);
             IndexSearcher searcher = NewSearcher(mr);
@@ -370,7 +370,7 @@ namespace Lucene.Net.Sandbox.Queries
             addDoc("12345678911", writer);
             addDoc("segment", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             writer.Dispose();
 
@@ -409,7 +409,7 @@ namespace Lucene.Net.Sandbox.Queries
             addDoc("Lucene", writer);
             addDoc("Lucenne", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             writer.Dispose();
 
@@ -449,7 +449,7 @@ namespace Lucene.Net.Sandbox.Queries
             addDoc("Willis bruce", w);
             addDoc("Brute willis", w);
             addDoc("B. willis", w);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             Query q = new SlowFuzzyQuery(new Term("field", "giga"), 0.9f);
@@ -471,7 +471,7 @@ namespace Lucene.Net.Sandbox.Queries
             addDoc("foobar", w);
             addDoc("test", w);
             addDoc("working", w);
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             w.Dispose();
 

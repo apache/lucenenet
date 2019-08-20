@@ -56,7 +56,7 @@ namespace Lucene.Net.Sandbox.Queries
             // have only 1 segment:
             writer.ForceMerge(1);
 
-            reader = writer.Reader;
+            reader = writer.GetReader();
             writer.Dispose();
             searcher = NewSearcher(reader);
 

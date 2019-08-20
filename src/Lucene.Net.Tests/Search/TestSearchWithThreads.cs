@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
                 w.AddDocument(doc);
                 sb.Remove(0, sb.Length);
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             long endTime = Environment.TickCount;

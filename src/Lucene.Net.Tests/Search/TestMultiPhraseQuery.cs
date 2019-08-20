@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
             Add("bluebird foobar pizza", writer);
             Add("piccadilly circus", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
 
             // search for "blueberry pi*":
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
             RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
             Add("blueberry chocolate pie", writer);
             Add("blueberry chocolate tart", writer);
-            IndexReader r = writer.Reader;
+            IndexReader r = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(r);
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
             Directory indexStore = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
             Add("a b c d e f g h i k", writer);
-            IndexReader r = writer.Reader;
+            IndexReader r = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(r);
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search
             Directory indexStore = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
             Add("a b c d e f g h i k", writer);
-            IndexReader r = writer.Reader;
+            IndexReader r = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(r);
@@ -238,7 +238,7 @@ namespace Lucene.Net.Search
             Add("blueberry chewing gum", writer);
             Add("blue raspberry pie", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             // this query will be equivalent to +body:pie +body:"blue*"
             BooleanQuery q = new BooleanQuery();
@@ -269,7 +269,7 @@ namespace Lucene.Net.Search
             Add("this is a test", "object", writer);
             Add("a note", "note", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
 
             // this query will be equivalent to +type:note +body:"a t*"
@@ -296,7 +296,7 @@ namespace Lucene.Net.Search
             RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
             Add("a note", "note", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
 
             MultiPhraseQuery q = new MultiPhraseQuery();
@@ -366,7 +366,7 @@ namespace Lucene.Net.Search
             Add("this is a test", "object", writer);
             Add("a note", "note", writer);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper(this);
 
@@ -418,7 +418,7 @@ namespace Lucene.Net.Search
             doc = new Document();
             doc.Add(new TextField("field", new CannedTokenStream(tokens)));
             writer.AddDocument(doc);
-            IndexReader r = writer.Reader;
+            IndexReader r = writer.GetReader();
             writer.Dispose();
             IndexSearcher s = NewSearcher(r);
             MultiPhraseQuery mpq = new MultiPhraseQuery();

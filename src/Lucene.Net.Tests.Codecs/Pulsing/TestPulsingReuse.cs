@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.Pulsing
             Document doc = new Document();
             doc.Add(new TextField("foo", "a b b c c c d e f g g h i i j j k", Field.Store.NO));
             iw.AddDocument(doc);
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.Dispose();
 
             AtomicReader segment = GetOnlySegmentReader(ir);
@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.Pulsing
             // this is because we only track the 'last' enum we reused (not all).
             // but this seems 'good enough' for now.
             iw.AddDocument(doc);
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.Dispose();
 
             AtomicReader segment = GetOnlySegmentReader(ir);

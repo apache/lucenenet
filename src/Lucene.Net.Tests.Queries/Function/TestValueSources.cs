@@ -96,7 +96,7 @@ namespace Lucene.Net.Tests.Queries.Function
                 iw.AddDocument(document);
             }
 
-            reader = iw.Reader;
+            reader = iw.GetReader();
             searcher = NewSearcher(reader);
             iw.Dispose();
         }

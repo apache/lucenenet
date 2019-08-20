@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
                 doc.Add(new TextField("field", sb.ToString(), Field.Store.NO));
                 w.AddDocument(doc);
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             int cloneCount = dir.InputCloneCount;

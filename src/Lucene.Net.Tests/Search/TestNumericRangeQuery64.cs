@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
                 ascfield2.SetInt64Value(val);
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher = NewSearcher(Reader);
             writer.Dispose();
         }

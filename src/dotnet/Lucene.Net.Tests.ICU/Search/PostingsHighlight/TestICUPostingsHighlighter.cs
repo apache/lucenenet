@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Highlighting the first term. Hope it works.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("This is a test");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -218,7 +218,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Test a one sentence document.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             title.SetStringValue("But best may not be good enough.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -337,7 +337,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Highlighting the first term. Hope it works.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -376,7 +376,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("This test is another test. Not a good sentence. Test test test test.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -416,7 +416,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             title.SetStringValue("test");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -473,7 +473,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document document = new Document();
             document.Add(body);
             iw.AddDocument(document);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher searcher = NewSearcher(ir);
             PhraseQuery query = new PhraseQuery();
@@ -505,7 +505,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document document = new Document();
             document.Add(body);
             iw.AddDocument(document);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher searcher = NewSearcher(ir);
             PhraseQuery query = new PhraseQuery();
@@ -539,7 +539,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document document = new Document();
             document.Add(body);
             iw.AddDocument(document);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher searcher = NewSearcher(ir);
             BooleanQuery query = new BooleanQuery();
@@ -574,7 +574,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("This is a test.  Just highlighting from postings. This is also a much sillier test.  Feel free to test test test test test test test.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -602,7 +602,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Document document = new Document();
             document.Add(body);
             iw.AddDocument(document);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher searcher = NewSearcher(ir);
             BooleanQuery query = new BooleanQuery();
@@ -637,7 +637,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("This is a test.  Just highlighting from postings. This is also a much sillier test.  Feel free to test test test test test test test.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -690,7 +690,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("Highlighting the first term. Hope it works.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -728,7 +728,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             doc.Add(body);
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -783,7 +783,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             doc.Add(body);
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -816,7 +816,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             doc.Add(body);
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -857,7 +857,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             doc.Add(body);
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -890,7 +890,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             doc.Add(body);
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -925,7 +925,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             doc.Add(new Field("body", "something", offsetsType));
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -963,7 +963,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             doc.Add(new Field("body", "something", offsetsType));
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -1011,7 +1011,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 }
             }
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -1058,7 +1058,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             title.SetStringValue("This is a test. Just a test highlighting from postings. Feel free to ignore.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -1092,7 +1092,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("This is a test. Just a test highlighting from <i>postings</i>. Feel free to ignore.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -1140,7 +1140,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -1184,7 +1184,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             body.SetStringValue("This is a test. Just a test highlighting from postings. Feel free to ignore.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);

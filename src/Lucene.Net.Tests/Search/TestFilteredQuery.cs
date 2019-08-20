@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
             // blindly accepts that docID in any sub-segment
             writer.ForceMerge(1);
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
 
             Searcher = NewSearcher(Reader);
@@ -497,7 +497,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewTextField("field", "" + num, Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);
@@ -618,7 +618,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewTextField("field", "" + num, Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
             bool queryFirst = Random.NextBoolean();
             IndexSearcher searcher = NewSearcher(reader);

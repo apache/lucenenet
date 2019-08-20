@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Spans
             writer.AddDocument(Doc(new Field[] { GetField("id", "3"), GetField("gender", "female"), GetField("first", "lisa"), GetField("last", "jones"), GetField("gender", "male"), GetField("first", "bob"), GetField("last", "costas") }));
 
             writer.AddDocument(Doc(new Field[] { GetField("id", "4"), GetField("gender", "female"), GetField("first", "sally"), GetField("last", "smith"), GetField("gender", "female"), GetField("first", "linda"), GetField("last", "dixit"), GetField("gender", "male"), GetField("first", "bubba"), GetField("last", "jones") }));
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
             Searcher = NewSearcher(Reader);
         }

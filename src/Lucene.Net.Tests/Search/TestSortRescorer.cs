@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
             doc.Add(new NumericDocValuesField("popularity", 2));
             iw.AddDocument(doc);
 
-            Reader = iw.Reader;
+            Reader = iw.GetReader();
             Searcher = new IndexSearcher(Reader);
             iw.Dispose();
         }
@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
                 doc.Add(new NumericDocValuesField("num", idToNum[i]));
                 w.AddDocument(doc);
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             IndexSearcher s = NewSearcher(r);

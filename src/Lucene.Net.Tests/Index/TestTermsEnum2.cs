@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
 
             TermsAutomaton = BasicAutomata.MakeStringUnion(Terms);
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher = NewSearcher(Reader);
             writer.Dispose();
         }

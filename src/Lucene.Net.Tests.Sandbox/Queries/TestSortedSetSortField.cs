@@ -42,7 +42,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(NewStringField("value", "bar", Field.Store.NO));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -73,7 +73,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(NewStringField("id", "2", Field.Store.YES));
             writer.AddDocument(doc);
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -106,7 +106,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc = new Document();
             doc.Add(NewStringField("id", "3", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -143,7 +143,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc = new Document();
             doc.Add(NewStringField("id", "3", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -176,7 +176,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(NewStringField("value", "bar", Field.Store.NO));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);

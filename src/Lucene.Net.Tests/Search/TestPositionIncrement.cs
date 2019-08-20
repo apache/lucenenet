@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
             Document d = new Document();
             d.Add(NewTextField("field", "bogus", Field.Store.YES));
             writer.AddDocument(d);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);
@@ -237,7 +237,7 @@ namespace Lucene.Net.Search
             doc.Add(new TextField("content", new StringReader("a a b c d e a f g h i j a b k k")));
             writer.AddDocument(doc);
 
-            IndexReader readerFromWriter = writer.Reader;
+            IndexReader readerFromWriter = writer.GetReader();
             AtomicReader r = SlowCompositeReaderWrapper.Wrap(readerFromWriter);
 
             DocsAndPositionsEnum tp = r.GetTermPositionsEnum(new Term("content", "a"));

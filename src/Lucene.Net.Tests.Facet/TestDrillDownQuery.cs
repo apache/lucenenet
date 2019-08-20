@@ -129,7 +129,7 @@ namespace Lucene.Net.Facet
             }
 
             taxoWriter.Dispose();
-            reader = writer.Reader;
+            reader = writer.GetReader();
             writer.Dispose();
 
             taxo = new DirectoryTaxonomyReader(taxoDir);

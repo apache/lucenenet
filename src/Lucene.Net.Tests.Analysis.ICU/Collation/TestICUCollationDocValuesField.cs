@@ -52,7 +52,7 @@ namespace Lucene.Net.Collation
             collationField.SetStringValue("abc");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher @is = NewSearcher(ir);
@@ -91,7 +91,7 @@ namespace Lucene.Net.Collation
                 iw.AddDocument(doc);
             }
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 

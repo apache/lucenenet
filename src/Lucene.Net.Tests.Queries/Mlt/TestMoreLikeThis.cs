@@ -49,7 +49,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
             AddDoc(writer, "lucene");
             AddDoc(writer, "lucene release");
 
-            reader = writer.Reader;
+            reader = writer.GetReader();
             writer.Dispose();
             searcher = NewSearcher(reader);
         }

@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
                 doc.Add(NewField(FieldName, "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10", customType));
                 writer.AddDocument(doc);
             }
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             int num = AtLeast(13);
@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
             }
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             int num_ = AtLeast(13);
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
             }
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             int num = AtLeast(13);
@@ -337,7 +337,7 @@ namespace Lucene.Net.Index
             }
 
             // now do searches
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             int num = AtLeast(13);
@@ -382,7 +382,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             doc.Add(NewStringField("foo", "bar", Field.Store.NO));
             writer.AddDocument(doc);
-            DirectoryReader reader = writer.Reader;
+            DirectoryReader reader = writer.GetReader();
             AtomicReader r = GetOnlySegmentReader(reader);
             DocsEnum disi = TestUtil.Docs(Random, r, "foo", new BytesRef("bar"), null, null, DocsFlags.NONE);
             int docid = disi.DocID;
@@ -409,7 +409,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             doc.Add(NewTextField("foo", "bar", Field.Store.NO));
             writer.AddDocument(doc);
-            DirectoryReader reader = writer.Reader;
+            DirectoryReader reader = writer.GetReader();
             AtomicReader r = GetOnlySegmentReader(reader);
             DocsAndPositionsEnum disi = r.GetTermPositionsEnum(new Term("foo", "bar"));
             int docid = disi.DocID;

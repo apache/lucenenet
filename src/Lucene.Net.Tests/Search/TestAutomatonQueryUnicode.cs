@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
             writer.AddDocument(doc);
             field.SetStringValue("\uFFFD\uFFFD");
             writer.AddDocument(doc);
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher = NewSearcher(Reader);
             writer.Dispose();
         }

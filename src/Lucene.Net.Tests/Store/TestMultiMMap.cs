@@ -417,7 +417,7 @@ namespace Lucene.Net.Store
                 junk.SetStringValue(TestUtil.RandomUnicodeString(random));
                 writer.AddDocument(doc);
             }
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             int numAsserts = AtLeast(100);

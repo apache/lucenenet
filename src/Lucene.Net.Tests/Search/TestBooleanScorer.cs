@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewStringField(FIELD, values[i], Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             BooleanQuery booleanQuery1 = new BooleanQuery();
@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
             writer.Commit();
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
             IndexSearcher searcher = NewSearcher(ir);
             BooleanWeight weight = (BooleanWeight)(new BooleanQuery()).CreateWeight(searcher);
@@ -167,7 +167,7 @@ namespace Lucene.Net.Search
             doc = new Document();
             doc.Add(new TextField("field", "33", Field.Store.NO));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             // we don't wrap with AssertingIndexSearcher in order to have the original scorer in setScorer.
             IndexSearcher s = NewSearcher(r, true, false);
@@ -310,7 +310,7 @@ namespace Lucene.Net.Search
             Document doc = new Document();
             doc.Add(NewTextField("field", "doctors are people who prescribe medicines of which they know little, to cure diseases of which they know less, in human beings of whom they know nothing", Field.Store.NO));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             IndexSearcher s = NewSearcher(r);
