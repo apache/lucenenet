@@ -1,5 +1,4 @@
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
@@ -683,41 +682,42 @@ namespace Lucene.Net.Index
                 int numDocs = AtLeast(200);
                 int docWithVectors = Random.Next(numDocs);
                 Document emptyDoc = new Document();
-                Directory dir = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-                RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), 20, options);
-                for (int i = 0; i < numDocs; ++i)
+                using (Directory dir = NewDirectory())
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
                 {
-                    if (i == docWithVectors)
+                    RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), 20, options);
+                    for (int i = 0; i < numDocs; ++i)
                     {
-                        writer.AddDocument(AddId(doc.ToDocument(), "42"));
+                        if (i == docWithVectors)
+                        {
+                            writer.AddDocument(AddId(doc.ToDocument(), "42"));
+                        }
+                        else
+                        {
+                            writer.AddDocument(emptyDoc);
+                        }
                     }
-                    else
+                    using (IndexReader reader = writer.GetReader())
                     {
-                        writer.AddDocument(emptyDoc);
-                    }
-                }
-                IndexReader reader = writer.GetReader();
-                int docWithVectorsID = DocID(reader, "42");
-                for (int i = 0; i < 10; ++i)
-                {
-                    int docID = Random.Next(numDocs);
-                    Fields fields = reader.GetTermVectors(docID);
-                    if (docID == docWithVectorsID)
-                    {
-                        AssertEquals(doc, fields);
-                    }
-                    else
-                    {
-                        Assert.IsNull(fields);
-                    }
-                }
-                Fields fields_ = reader.GetTermVectors(docWithVectorsID);
-                AssertEquals(doc, fields_);
-                reader.Dispose();
-                writer.Dispose();
-                dir.Dispose(); // LUCENENET TODO: using blocks in this whole class
-    }
+                        int docWithVectorsID = DocID(reader, "42");
+                        for (int i = 0; i < 10; ++i)
+                        {
+                            int docID = Random.Next(numDocs);
+                            Fields fields = reader.GetTermVectors(docID);
+                            if (docID == docWithVectorsID)
+                            {
+                                AssertEquals(doc, fields);
+                            }
+                            else
+                            {
+                                Assert.IsNull(fields);
+                            }
+                        }
+                        Fields fields_ = reader.GetTermVectors(docWithVectorsID);
+                        AssertEquals(doc, fields_);
+                    } // reader.Dispose();
+                } // writer.Dispose();, dir.Dispose();
+            }
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -748,15 +748,15 @@ namespace Lucene.Net.Index
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 500, 10);
             foreach (Options options in ValidOptions())
             {
-                Directory dir = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-                RandomDocument doc = docFactory.NewDocument(AtLeast(100), 5, options);
-                writer.AddDocument(doc.ToDocument());
-                IndexReader reader = writer.GetReader();
-                AssertEquals(doc, reader.GetTermVectors(0));
-                reader.Dispose();
-                writer.Dispose();
-                dir.Dispose();
+                using (Directory dir = NewDirectory())
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+                {
+                    RandomDocument doc = docFactory.NewDocument(AtLeast(100), 5, options);
+                    writer.AddDocument(doc.ToDocument());
+                    using (IndexReader reader = writer.GetReader())
+                        AssertEquals(doc, reader.GetTermVectors(0));
+                    //reader.Dispose();
+                } // writer.Dispose();, dir.Dispose();
             }
         }
 
@@ -803,21 +803,22 @@ namespace Lucene.Net.Index
             {
                 docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), TestUtil.NextInt32(Random, 10, 50), RandomOptions());
             }
-            Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-            for (int i = 0; i < numDocs; ++i)
+            using (Directory dir = NewDirectory())
+            using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
             {
-                writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
-            }
-            IndexReader reader = writer.GetReader();
-            for (int i = 0; i < numDocs; ++i)
-            {
-                int docID = DocID(reader, "" + i);
-                AssertEquals(docs[i], reader.GetTermVectors(docID));
-            }
-            reader.Dispose(); // LUCENENET TODO: using blocks in this whole class
-            writer.Dispose();
-            dir.Dispose();
+                for (int i = 0; i < numDocs; ++i)
+                {
+                    writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
+                }
+                using (IndexReader reader = writer.GetReader())
+                {
+                    for (int i = 0; i < numDocs; ++i)
+                    {
+                        int docID = DocID(reader, "" + i);
+                        AssertEquals(docs[i], reader.GetTermVectors(docID));
+                    }
+                } // reader.Dispose();
+            } // writer.Dispose();, dir.Dispose();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
@@ -838,34 +839,36 @@ namespace Lucene.Net.Index
                 {
                     docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), AtLeast(10), options);
                 }
-                Directory dir = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-                for (int i = 0; i < numDocs; ++i)
+                using (Directory dir = NewDirectory())
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
                 {
-                    writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
-                    if (Rarely())
+                    for (int i = 0; i < numDocs; ++i)
                     {
-                        writer.Commit();
+                        writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
+                        if (Rarely())
+                        {
+                            writer.Commit();
+                        }
                     }
-                }
-                foreach (int delete in deletes)
-                {
-                    writer.DeleteDocuments(new Term("id", "" + delete));
-                }
-                // merge with deletes
-                writer.ForceMerge(1);
-                IndexReader reader = writer.GetReader();
-                for (int i = 0; i < numDocs; ++i)
-                {
-                    if (!deletes.Contains(i))
+                    foreach (int delete in deletes)
                     {
-                        int docID = DocID(reader, "" + i);
-                        AssertEquals(docs[i], reader.GetTermVectors(docID));
+                        writer.DeleteDocuments(new Term("id", "" + delete));
                     }
-                }
-                reader.Dispose();
-                writer.Dispose();
-                dir.Dispose();
+                    // merge with deletes
+                    writer.ForceMerge(1);
+                    using (IndexReader reader = writer.GetReader())
+                    {
+                        for (int i = 0; i < numDocs; ++i)
+                        {
+                            if (!deletes.Contains(i))
+                            {
+                                int docID = DocID(reader, "" + i);
+                                AssertEquals(docs[i], reader.GetTermVectors(docID));
+                            }
+                        }
+                    } // reader.Dispose();
+
+                } // writer.Dispose();, dir.Dispose();
             }
         }
 
@@ -883,36 +886,37 @@ namespace Lucene.Net.Index
                 {
                     docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), AtLeast(10), options);
                 }
-                Directory dir = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
-                for (int i = 0; i < numDocs; ++i)
-                {
-                    writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
-                }
-                IndexReader reader = writer.GetReader();
-                for (int i = 0; i < numDocs; ++i)
-                {
-                    int docID = DocID(reader, "" + i);
-                    AssertEquals(docs[i], reader.GetTermVectors(docID));
-                }
-
                 AtomicObject<Exception> exception = new AtomicObject<Exception>();
-                ThreadClass[] threads = new ThreadClass[2];
-                for (int i = 0; i < threads.Length; ++i)
+                using (Directory dir = NewDirectory())
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
                 {
-                    threads[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, docs, reader, exception, i);
-                }
-                foreach (ThreadClass thread in threads)
-                {
-                    thread.Start();
-                }
-                foreach (ThreadClass thread in threads)
-                {
-                    thread.Join();
-                }
-                reader.Dispose();
-                writer.Dispose();
-                dir.Dispose();
+                    for (int i = 0; i < numDocs; ++i)
+                    {
+                        writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
+                    }
+                    using (IndexReader reader = writer.GetReader())
+                    {
+                        for (int i = 0; i < numDocs; ++i)
+                        {
+                            int docID = DocID(reader, "" + i);
+                            AssertEquals(docs[i], reader.GetTermVectors(docID));
+                        }
+
+                        ThreadClass[] threads = new ThreadClass[2];
+                        for (int i = 0; i < threads.Length; ++i)
+                        {
+                            threads[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, docs, reader, exception, i);
+                        }
+                        foreach (ThreadClass thread in threads)
+                        {
+                            thread.Start();
+                        }
+                        foreach (ThreadClass thread in threads)
+                        {
+                            thread.Join();
+                        }
+                    } // reader.Dispose();
+                } // writer.Dispose();, dir.Dispose();
                 Assert.IsNull(exception.Value, "One thread threw an exception");
             }
         }
