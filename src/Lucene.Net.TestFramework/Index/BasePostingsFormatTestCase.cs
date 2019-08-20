@@ -1148,7 +1148,7 @@ namespace Lucene.Net.Index
             IList<TermState> termStates = new List<TermState>();
             IList<FieldAndTerm> termStateTerms = new List<FieldAndTerm>();
 
-            Collections.Shuffle(allTerms);
+            Collections.Shuffle(allTerms, Random);
             int upto = 0;
             while (upto < allTerms.Count)
             {
@@ -1244,15 +1244,17 @@ namespace Lucene.Net.Index
 
         private void TestFields(Fields fields)
         {
-            IEnumerator<string> iterator = fields.GetEnumerator();
-            while (iterator.MoveNext())
+            using (IEnumerator<string> iterator = fields.GetEnumerator())
             {
-                var dummy = iterator.Current;
-                // .NET: Testing for iterator.Remove() isn't applicable
-            }
-            Assert.IsFalse(iterator.MoveNext());
+                while (iterator.MoveNext())
+                {
+                    var dummy = iterator.Current;
+                    // .NET: Testing for iterator.Remove() isn't applicable
+                }
+                Assert.IsFalse(iterator.MoveNext());
 
-            // .NET: Testing for NoSuchElementException with .NET iterators isn't applicable
+                // .NET: Testing for NoSuchElementException with .NET iterators isn't applicable
+            }
         }
 
         /// <summary>
@@ -1265,28 +1267,29 @@ namespace Lucene.Net.Index
             using (Directory dir = NewFSDirectory(path))
             {
                 // TODO test thread safety of buildIndex too
-                var fieldsProducer = BuildIndex(dir, options, withPayloads, true);
-
-                TestFields(fieldsProducer);
-
-                var allOptions = ((IndexOptions[])Enum.GetValues(typeof(IndexOptions))).Skip(1).ToArray(); // LUCENENET: Skip our NONE option
-                    //IndexOptions_e.values();
-                int maxIndexOption = Arrays.AsList(allOptions).IndexOf(options);
-
-                for (int i = 0; i <= maxIndexOption; i++)
+                using (var fieldsProducer = BuildIndex(dir, options, withPayloads, true))
                 {
-                    ISet<Option> allOptionsHashSet = new HashSet<Option>(Enum.GetValues(typeof (Option)).Cast<Option>());
-                    TestTerms(fieldsProducer, allOptionsHashSet, allOptions[i], options, true);
-                    if (withPayloads)
-                    {
-                        // If we indexed w/ payloads, also test enums w/o accessing payloads:
-                        ISet<Option> payloadsHashSet = new HashSet<Option>() {Option.PAYLOADS};
-                        var complementHashSet = new HashSet<Option>(allOptionsHashSet.Except(payloadsHashSet));
-                        TestTerms(fieldsProducer, complementHashSet, allOptions[i], options, true);
-                    }
-                }
 
-                fieldsProducer.Dispose(); // LUCENENET TODO: using block
+                    TestFields(fieldsProducer);
+
+                    var allOptions = ((IndexOptions[])Enum.GetValues(typeof(IndexOptions))).Skip(1).ToArray(); // LUCENENET: Skip our NONE option
+                                                                                                               //IndexOptions_e.values();
+                    int maxIndexOption = Arrays.AsList(allOptions).IndexOf(options);
+
+                    for (int i = 0; i <= maxIndexOption; i++)
+                    {
+                        ISet<Option> allOptionsHashSet = new HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>());
+                        TestTerms(fieldsProducer, allOptionsHashSet, allOptions[i], options, true);
+                        if (withPayloads)
+                        {
+                            // If we indexed w/ payloads, also test enums w/o accessing payloads:
+                            ISet<Option> payloadsHashSet = new HashSet<Option>() { Option.PAYLOADS };
+                            var complementHashSet = new HashSet<Option>(allOptionsHashSet.Except(payloadsHashSet));
+                            TestTerms(fieldsProducer, complementHashSet, allOptions[i], options, true);
+                        }
+                    }
+
+                } // fieldsProducer.Dispose();
             }
         }
 
@@ -1334,27 +1337,29 @@ namespace Lucene.Net.Index
             for (int iter = 0; iter < iters; iter++)
             {
                 DirectoryInfo path = CreateTempDir("testPostingsFormat");
-                Directory dir = NewFSDirectory(path);
+                using (Directory dir = NewFSDirectory(path))
+                {
 
-                bool indexPayloads = Random.NextBoolean();
-                // TODO test thread safety of buildIndex too
-                FieldsProducer fieldsProducer = BuildIndex(dir, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, indexPayloads, false);
+                    bool indexPayloads = Random.NextBoolean();
+                    // TODO test thread safety of buildIndex too
+                    using (FieldsProducer fieldsProducer = BuildIndex(dir, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, indexPayloads, false))
+                    {
 
-                TestFields(fieldsProducer);
+                        TestFields(fieldsProducer);
 
-                // NOTE: you can also test "weaker" index options than
-                // you indexed with:
-                TestTerms(fieldsProducer,
-                    // LUCENENET: Skip our NONE option
-                    new HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>().Skip(1)), 
-                    IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, 
-                    IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, 
-                    false);
+                        // NOTE: you can also test "weaker" index options than
+                        // you indexed with:
+                        TestTerms(fieldsProducer,
+                            // LUCENENET: Skip our NONE option
+                            new HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>().Skip(1)),
+                            IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
+                            IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
+                            false);
 
-                fieldsProducer.Dispose();
-                fieldsProducer = null;
+                    } // fieldsProducer.Dispose();
+                    // fieldsProducer = null; // LUCENENET: No can do - out of scope
 
-                dir.Dispose();
+                } // dir.Dispose();
                 System.IO.Directory.Delete(path.FullName, true);
             }
         }
