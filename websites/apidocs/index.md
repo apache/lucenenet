@@ -39,6 +39,8 @@ on some of the conceptual or inner details of Lucene:
 
 ## API Docs
 
+### Packages
+
 * [Lucene.Net](xref:Lucene.Net): Lucene core library
 * [Lucene.Net.Analysis.Common](xref:Lucene.Net.Analysis): Analyzers for indexing content in different languages and domains.
 * [Lucene.Net.ICU](xref:Lucene.Net.Analysis.Icu): Analysis integration with ICU (International Components for Unicode).
@@ -63,6 +65,10 @@ on some of the conceptual or inner details of Lucene:
 * [Lucene.Net.Sandbox](xref:Lucene.Net.Sandbox): Various third party contributions and new ideas
 * [Lucene.Net.Spatial](xref:Lucene.Net.Spatial): Geospatial search
 * [Lucene.Net.Suggest](xref:Lucene.Net.Search.Suggest): Auto-suggest and Spellchecking support
-* [demo](xref:Lucene.Net.Demo): Simple example code
 * __To be completed__: analyzers-morfologik: Analyzer for indexing Polish
 * __To be completed__: test-framework: Framework for testing Lucene-based applications
+
+### Tools
+
+* [Lucene CLI](cli/index.html): Dotnet tool to work with Lucene indexes from the command line
+* [Demo](xref:Lucene.Net.Demo): Simple example code
