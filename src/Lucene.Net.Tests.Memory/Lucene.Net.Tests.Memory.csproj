@@ -38,7 +38,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Memory\Lucene.Net.Memory.csproj" />
     <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework.NUnit\Lucene.Net.TestFramework.NUnit.csproj" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />

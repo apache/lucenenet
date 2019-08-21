@@ -37,7 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\lucene-cli\lucene-cli.csproj" />
     <ProjectReference Include="..\..\..\Lucene.Net\Lucene.Net.csproj" />
-    <ProjectReference Include="..\..\..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    <ProjectReference Include="..\..\..\Lucene.Net.TestFramework.NUnit\Lucene.Net.TestFramework.NUnit.csproj" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />

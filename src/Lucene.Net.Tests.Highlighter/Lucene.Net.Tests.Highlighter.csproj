@@ -38,7 +38,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework.NUnit\Lucene.Net.TestFramework.NUnit.csproj" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />

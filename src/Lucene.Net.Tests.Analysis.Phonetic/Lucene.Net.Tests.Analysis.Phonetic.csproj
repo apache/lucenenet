@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Analysis.Phonetic\Lucene.Net.Analysis.Phonetic.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework.NUnit\Lucene.Net.TestFramework.NUnit.csproj" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
