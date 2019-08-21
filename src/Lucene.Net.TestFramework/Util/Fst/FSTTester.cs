@@ -58,13 +58,13 @@ namespace Lucene.Net.Util.Fst
     public class FSTTester<T>
     {
         internal readonly Random random;
-        internal readonly List<InputOutput<T>> pairs;
+        internal readonly IList<InputOutput<T>> pairs;
         internal readonly int inputMode;
         internal readonly Outputs<T> outputs;
         internal readonly Directory dir;
         internal readonly bool doReverseLookup;
 
-        public FSTTester(Random random, Directory dir, int inputMode, List<InputOutput<T>> pairs, Outputs<T> outputs, bool doReverseLookup)
+        public FSTTester(Random random, Directory dir, int inputMode, IList<InputOutput<T>> pairs, Outputs<T> outputs, bool doReverseLookup)
         {
             this.random = random;
             this.dir = dir;
