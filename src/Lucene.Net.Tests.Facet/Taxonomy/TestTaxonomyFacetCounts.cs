@@ -263,7 +263,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 facets.GetSpecificValue("a");
-                Fail("should have hit exc");
+                fail("should have hit exc");
             }
             catch (System.ArgumentException)
             {
@@ -273,7 +273,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 facets.GetTopChildren(10, "a");
-                Fail("should have hit exc");
+                fail("should have hit exc");
             }
             catch (System.ArgumentException)
             {
@@ -356,7 +356,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 facets.GetSpecificValue("a");
-                Fail("didn't hit expected exception");
+                fail("didn't hit expected exception");
             }
             catch (System.ArgumentException)
             {
@@ -448,7 +448,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 Assert.AreEqual(1, facets.GetSpecificValue("dim"));
-                Fail("didn't hit expected exception");
+                fail("didn't hit expected exception");
             }
             catch (System.ArgumentException)
             {
@@ -530,7 +530,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 config.Build(taxoWriter, doc);
-                Fail("did not hit expected exception");
+                fail("did not hit expected exception");
             }
             catch (System.ArgumentException)
             {
@@ -557,7 +557,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 config.Build(taxoWriter, doc);
-                Fail("did not hit expected exception");
+                fail("did not hit expected exception");
             }
             catch (System.ArgumentException)
             {

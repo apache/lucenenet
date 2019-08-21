@@ -27,7 +27,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util.Automaton;
-using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -51,8 +50,21 @@ using System.Text.RegularExpressions;
 #elif TESTFRAMEWORK_XUNIT
 
 #else // #elif TESTFRAMEWORK_NUNIT
-using Before = NUnit.Framework.SetUpAttribute;
-using After = NUnit.Framework.TearDownAttribute;
+
+#endif
+
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_NUNIT
+using SetUp = NUnit.Framework.SetUpAttribute;
+using TearDown = NUnit.Framework.TearDownAttribute;
+using OneTimeSetUp = NUnit.Framework.OneTimeSetUpAttribute;
+using OneTimeTearDown = NUnit.Framework.OneTimeTearDownAttribute;
+using Assert = NUnit.Framework.Assert;
+using Test = NUnit.Framework.TestAttribute;
+using TestFixture = NUnit.Framework.TestFixtureAttribute;
+#elif TESTFRAMEWORK_XUNIT
+
 #endif
 
 
@@ -179,7 +191,7 @@ namespace Lucene.Net.Util
     /// </para>
     ///
     /// <para>
-    /// For instance-level setup, use <see cref="Before"/> and <see cref="After"/> annotated
+    /// For instance-level setup, use <see cref="NUnit.Framework.SetUpAttribute"/> and <see cref="NUnit.Framework.TearDownAttribute"/> annotated
     /// methods. If you override either <see cref="SetUp()"/> or <see cref="TearDown()"/> in
     /// your subclass, make sure you call <c>base.SetUp()</c> and
     /// <c>base.TearDown()</c>. This is detected and enforced.
@@ -225,7 +237,7 @@ namespace Lucene.Net.Util
     /// </para>
     /// </summary>
     [TestFixture]
-    public abstract partial class LuceneTestCase : Assert // Wait long for leaked threads to complete before failure. zk needs this. -  See LUCENE-3995 for rationale.
+    public abstract partial class LuceneTestCase //: Assert // Wait long for leaked threads to complete before failure. zk needs this. -  See LUCENE-3995 for rationale.
     {
         public LuceneTestCase()
         {
@@ -769,7 +781,7 @@ namespace Lucene.Net.Util
         /// this method from multiple threads, etc., but it should be called while within a runner's
         /// scope (so no static initializers). The returned <see cref="System.Random"/> instance will be
         /// <b>different</b> when this method is called inside a <see cref="BeforeClass()"/> hook (static
-        /// suite scope) and within <see cref="Before"/>/ <see cref="After"/> hooks or test methods.
+        /// suite scope) and within <see cref="NUnit.Framework.SetUpAttribute"/>/ <see cref="NUnit.Framework.TearDownAttribute"/> hooks or test methods.
         ///
         /// <para/>The returned instance must not be shared with other threads or cross a single scope's
         /// boundary. For example, a <see cref="System.Random"/> acquired within a test method shouldn't be reused

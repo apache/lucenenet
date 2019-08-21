@@ -1,6 +1,13 @@
 using Lucene.Net.Support;
-using NUnit.Framework;
 using System.Collections.Generic;
+
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_NUNIT
+using Test = NUnit.Framework.TestAttribute;
+#elif TESTFRAMEWORK_XUNIT
+
+#endif
 
 namespace Lucene.Net.Index
 {
@@ -43,7 +50,7 @@ namespace Lucene.Net.Index
 
         private Codec savedCodec;
 
-        [SetUp]
+        //[SetUp]
         public override void SetUp()
         {
             base.SetUp();
@@ -52,7 +59,7 @@ namespace Lucene.Net.Index
             Codec.Default = GetCodec();
         }
 
-        [TearDown]
+        //[TearDown]
         public override void TearDown()
         {
             Codec.Default = savedCodec; // restore

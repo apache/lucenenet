@@ -3,7 +3,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +13,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Console = Lucene.Net.Support.SystemConsole;
+
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_NUNIT
+using CollectionAssert = NUnit.Framework.CollectionAssert;
+using Assert = NUnit.Framework.Assert;
+#elif TESTFRAMEWORK_XUNIT
+
+#endif
 
 namespace Lucene.Net.Util
 {

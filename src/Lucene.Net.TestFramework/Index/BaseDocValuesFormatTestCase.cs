@@ -2,12 +2,20 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
+
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_NUNIT
+using Test = NUnit.Framework.TestAttribute;
+using Assert = NUnit.Framework.Assert;
+#elif TESTFRAMEWORK_XUNIT
+
+#endif
 
 namespace Lucene.Net.Index
 {

@@ -111,7 +111,7 @@ namespace Lucene.Net.Facet.Range
             try
             {
                 new Int64Range("useless", 7, true, 6, true);
-                Fail("did not hit expected exception");
+                fail("did not hit expected exception");
             }
             catch (System.ArgumentException)
             {
@@ -120,7 +120,7 @@ namespace Lucene.Net.Facet.Range
             try
             {
                 new Int64Range("useless", 7, true, 7, false);
-                Fail("did not hit expected exception");
+                fail("did not hit expected exception");
             }
             catch (System.ArgumentException)
             {
@@ -129,7 +129,7 @@ namespace Lucene.Net.Facet.Range
             try
             {
                 new DoubleRange("useless", 7.0, true, 6.0, true);
-                Fail("did not hit expected exception");
+                fail("did not hit expected exception");
             }
             catch (System.ArgumentException)
             {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Facet.Range
             try
             {
                 new DoubleRange("useless", 7.0, true, 7.0, false);
-                Fail("did not hit expected exception");
+                fail("did not hit expected exception");
             }
             catch (System.ArgumentException)
             {

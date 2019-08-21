@@ -1,6 +1,13 @@
 using Lucene.Net.Support;
-using NUnit.Framework;
 using System;
+
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_NUNIT
+using Test = NUnit.Framework.TestAttribute;
+#elif TESTFRAMEWORK_XUNIT
+
+#endif
 
 namespace Lucene.Net.Index
 {

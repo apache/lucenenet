@@ -339,7 +339,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 mgr.MaybeRefresh();
-                Fail("should have hit exception");
+                fail("should have hit exception");
             }
             catch (InvalidOperationException)
             {

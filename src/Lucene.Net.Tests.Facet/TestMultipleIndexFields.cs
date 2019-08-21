@@ -181,7 +181,7 @@ namespace Lucene.Net.Facet
                     return; // not all segments must have this DocValues
                 }
             }
-            Fail("no ordinals found for " + field);
+            fail("no ordinals found for " + field);
         }
 
         [Test]

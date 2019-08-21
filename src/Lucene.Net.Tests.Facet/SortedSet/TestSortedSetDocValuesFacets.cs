@@ -134,7 +134,7 @@ namespace Lucene.Net.Facet.SortedSet
             try
             {
                 new SortedSetDocValuesFacetCounts(state, c);
-                Fail("did not hit expected exception");
+                fail("did not hit expected exception");
             }
             catch (InvalidOperationException)
             {

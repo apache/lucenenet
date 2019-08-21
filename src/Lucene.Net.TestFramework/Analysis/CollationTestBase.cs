@@ -4,12 +4,19 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Directory = Lucene.Net.Store.Directory;
+
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_NUNIT
+using Assert = NUnit.Framework.Assert;
+#elif TESTFRAMEWORK_XUNIT
+
+#endif
 
 namespace Lucene.Net.Analysis
 {
@@ -115,7 +122,7 @@ namespace Lucene.Net.Analysis
 
                     Search.Query query = new TermRangeQuery("content", firstBeg, firstEnd, true, true);
                     ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
-                    AreEqual(0, hits.Length, "The index Term should not be included.");
+                    Assert.AreEqual(0, hits.Length, "The index Term should not be included.");
 
                     query = new TermRangeQuery("content", secondBeg, secondEnd, true, true);
                     hits = searcher.Search(query, null, 1000).ScoreDocs;
@@ -336,10 +343,10 @@ namespace Lucene.Net.Analysis
                             ITermToBytesRefAttribute termAtt = ts.AddAttribute<ITermToBytesRefAttribute>();
                             BytesRef bytes = termAtt.BytesRef;
                             ts.Reset();
-                            IsTrue(ts.IncrementToken());
+                            Assert.IsTrue(ts.IncrementToken());
                             termAtt.FillBytesRef();
-                            AreEqual(expected, bytes);
-                            IsFalse(ts.IncrementToken());
+                            Assert.AreEqual(expected, bytes);
+                            Assert.IsFalse(ts.IncrementToken());
                             ts.End();
                         }
                         catch (IOException e)

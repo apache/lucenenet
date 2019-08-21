@@ -177,7 +177,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 try
                 {
                     Assert.NotNull(new FacetLabel(components));
-                    Fail("empty or null components should not be allowed: " + Arrays.ToString(components));
+                    fail("empty or null components should not be allowed: " + Arrays.ToString(components));
                 }
                 catch (System.ArgumentException)
                 {
@@ -186,7 +186,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 try
                 {
                     new FacetField("dim", components);
-                    Fail("empty or null components should not be allowed: " + Arrays.ToString(components));
+                    fail("empty or null components should not be allowed: " + Arrays.ToString(components));
                 }
                 catch (System.ArgumentException)
                 {
@@ -195,7 +195,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 try
                 {
                     new AssociationFacetField(new BytesRef(), "dim", components);
-                    Fail("empty or null components should not be allowed: " + Arrays.ToString(components));
+                    fail("empty or null components should not be allowed: " + Arrays.ToString(components));
                 }
                 catch (System.ArgumentException)
                 {
@@ -204,7 +204,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 try
                 {
                     new Int32AssociationFacetField(17, "dim", components);
-                    Fail("empty or null components should not be allowed: " + Arrays.ToString(components));
+                    fail("empty or null components should not be allowed: " + Arrays.ToString(components));
                 }
                 catch (System.ArgumentException)
                 {
@@ -213,7 +213,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 try
                 {
                     new SingleAssociationFacetField(17.0f, "dim", components);
-                    Fail("empty or null components should not be allowed: " + Arrays.ToString(components));
+                    fail("empty or null components should not be allowed: " + Arrays.ToString(components));
                 }
                 catch (System.ArgumentException)
                 {
@@ -223,7 +223,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 new FacetField(null, new string[] { "abc" });
-                Fail("empty or null components should not be allowed");
+                fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
             {
@@ -232,7 +232,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 new FacetField("", new string[] { "abc" });
-                Fail("empty or null components should not be allowed");
+                fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
             {
@@ -241,7 +241,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 new Int32AssociationFacetField(17, null, new string[] { "abc" });
-                Fail("empty or null components should not be allowed");
+                fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
             {
@@ -250,7 +250,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 new Int32AssociationFacetField(17, "", new string[] { "abc" });
-                Fail("empty or null components should not be allowed");
+                fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
             {
@@ -259,7 +259,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 new SingleAssociationFacetField(17.0f, null, new string[] { "abc" });
-                Fail("empty or null components should not be allowed");
+                fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
             {
@@ -268,7 +268,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 new SingleAssociationFacetField(17.0f, "", new string[] { "abc" });
-                Fail("empty or null components should not be allowed");
+                fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
             {
@@ -277,7 +277,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 new AssociationFacetField(new BytesRef(), null, new string[] { "abc" });
-                Fail("empty or null components should not be allowed");
+                fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
             {
@@ -286,7 +286,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 new AssociationFacetField(new BytesRef(), "", new string[] { "abc" });
-                Fail("empty or null components should not be allowed");
+                fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
             {
@@ -295,7 +295,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 new SortedSetDocValuesFacetField(null, "abc");
-                Fail("empty or null components should not be allowed");
+                fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
             {
@@ -304,7 +304,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 new SortedSetDocValuesFacetField("", "abc");
-                Fail("empty or null components should not be allowed");
+                fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
             {
@@ -313,7 +313,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 new SortedSetDocValuesFacetField("dim", null);
-                Fail("empty or null components should not be allowed");
+                fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
             {
@@ -322,7 +322,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 new SortedSetDocValuesFacetField("dim", "");
-                Fail("empty or null components should not be allowed");
+                fail("empty or null components should not be allowed");
             }
             catch (System.ArgumentException)
             {
@@ -348,7 +348,7 @@ namespace Lucene.Net.Facet.Taxonomy
             try
             {
                 Assert.NotNull(new FacetLabel("dim", bigComp));
-                Fail("long paths should not be allowed; len=" + bigComp.Length);
+                fail("long paths should not be allowed; len=" + bigComp.Length);
             }
             catch (System.ArgumentException)
             {

@@ -3,6 +3,14 @@ using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
 using System.Collections.Generic;
 
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_NUNIT
+using Assert = NUnit.Framework.Assert;
+#elif TESTFRAMEWORK_XUNIT
+
+#endif
+
 namespace Lucene.Net.Index
 {
     using Directory = Lucene.Net.Store.Directory;

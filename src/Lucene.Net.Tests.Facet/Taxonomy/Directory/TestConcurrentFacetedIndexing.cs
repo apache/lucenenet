@@ -148,7 +148,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         Console.WriteLine("FAIL: path=" + label + " not recognized");
                     }
                 }
-                Fail("mismatch number of categories");
+                fail("mismatch number of categories");
             }
             int[] parents = tr.ParallelTaxonomyArrays.Parents;
             foreach (string cat in values.Keys)

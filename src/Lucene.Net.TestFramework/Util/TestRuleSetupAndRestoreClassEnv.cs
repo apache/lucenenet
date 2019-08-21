@@ -21,10 +21,10 @@ using Debug = Lucene.Net.Diagnostics.Debug;
 // is being supported.
 #if TESTFRAMEWORK_MSTEST
 
+#elif TESTFRAMEWORK_NUNIT
+using AssumptionViolatedException = NUnit.Framework.InconclusiveException;
 #elif TESTFRAMEWORK_XUNIT
 
-#else // #elif TESTFRAMEWORK_NUNIT
-using AssumptionViolatedException = NUnit.Framework.InconclusiveException;
 #endif
 
 namespace Lucene.Net.Util
@@ -359,7 +359,6 @@ namespace Lucene.Net.Util
         /// <exception cref="AssumptionViolatedException"> if the class does not work with a given codec. </exception>
         private void CheckCodecRestrictions(Codec codec)
         {
-            NUnit.Framework.Assume.That(true);
             LuceneTestCase.AssumeFalse("Class not allowed to use codec: " + codec.Name + ".", ShouldAvoidCodec(codec.Name));
 
             if (codec is RandomCodec && avoidCodecs.Count > 0)

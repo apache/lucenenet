@@ -20,7 +20,6 @@
 */
 
 using Lucene.Net.Util;
-using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,6 +28,14 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Console = Lucene.Net.Support.SystemConsole;
+
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_NUNIT
+using Assert = NUnit.Framework.Assert;
+#elif TESTFRAMEWORK_XUNIT
+
+#endif
 
 namespace Lucene.Net.Support
 {

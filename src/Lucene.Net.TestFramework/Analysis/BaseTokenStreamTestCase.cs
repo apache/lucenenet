@@ -3,7 +3,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,6 +12,14 @@ using System.Text;
 using System.Threading;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Console = Lucene.Net.Support.SystemConsole;
+
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_NUNIT
+using Assert = NUnit.Framework.Assert;
+#elif TESTFRAMEWORK_XUNIT
+
+#endif
 
 namespace Lucene.Net.Analysis
 {
@@ -714,7 +721,7 @@ namespace Lucene.Net.Analysis
                     catch (ThreadInterruptedException e)
 #pragma warning restore 168
                     {
-                        Fail("Thread interrupted");
+                        fail("Thread interrupted");
                     }
 #endif
                 }

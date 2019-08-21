@@ -152,7 +152,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             try
             {
                 dtw.AddCategory(new FacetLabel("a"));
-                Fail("should not have succeeded to add a category following rollback.");
+                fail("should not have succeeded to add a category following rollback.");
             }
             catch (ObjectDisposedException)
             {
@@ -185,7 +185,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             try
             {
                 dtw.AddCategory(new FacetLabel("a"));
-                Fail("should not have succeeded to add a category following close.");
+                fail("should not have succeeded to add a category following close.");
             }
             catch (ObjectDisposedException)
             {
@@ -323,7 +323,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         Console.WriteLine("FAIL: path=" + label + " not recognized");
                     }
                 }
-                Fail("mismatch number of categories");
+                fail("mismatch number of categories");
             }
 
             int[] parents = dtr.ParallelTaxonomyArrays.Parents;

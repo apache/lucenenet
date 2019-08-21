@@ -1,14 +1,21 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
+
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_NUNIT
+using Test = NUnit.Framework.TestAttribute;
+using Assert = NUnit.Framework.Assert;
+#elif TESTFRAMEWORK_XUNIT
+
+#endif
 
 namespace Lucene.Net.Index
 {
@@ -74,7 +81,7 @@ namespace Lucene.Net.Index
         they weren't indexed
     */
 
-    [TestFixture]
+    //[TestFixture]
     public abstract class BasePostingsFormatTestCase : BaseIndexFileFormatTestCase
     {
         private enum Option
@@ -369,7 +376,7 @@ namespace Lucene.Net.Index
             return new SeedPostings(seed, minDocFreq, maxDocFreq, withLiveDocs ? globalLiveDocs : null, options);
         }
 
-        [OneTimeSetUp]
+        //[OneTimeSetUp]
         public override void BeforeClass() // Renamed from CreatePostings to ensure the base class setup is called before this one
         {
             base.BeforeClass();
@@ -493,7 +500,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [OneTimeTearDown]
+        //[OneTimeTearDown]
         public override void AfterClass()
         {
             allTerms = null;

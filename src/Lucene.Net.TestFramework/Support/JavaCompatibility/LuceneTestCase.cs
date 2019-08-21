@@ -22,9 +22,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework;
 using Lucene.Net.Support;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
+
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_NUNIT
+using Assert = NUnit.Framework.Assert;
+using CollectionAssert = NUnit.Framework.CollectionAssert;
+#elif TESTFRAMEWORK_XUNIT
+
+#endif
 
 namespace Lucene.Net.Util
 {
@@ -142,7 +150,7 @@ namespace Lucene.Net.Util
             Assert.Null(o, msg);
         }
 
-        internal static void assertArrayEquals(IEnumerable a1, IEnumerable a2)
+        internal static void assertArrayEquals<T>(T[] a1, T[] a2)
         {
             CollectionAssert.AreEqual(a1, a2);
         }

@@ -118,7 +118,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             try
             {
                 var tmpSize = ltr.Count;
-                Fail("An ObjectDisposedException should have been thrown here");
+                fail("An ObjectDisposedException should have been thrown here");
             }
             catch (ObjectDisposedException)
             {

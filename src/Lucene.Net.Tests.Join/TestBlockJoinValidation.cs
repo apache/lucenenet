@@ -75,7 +75,7 @@ namespace Lucene.Net.Tests.Join
             Query parentQueryWithRandomChild = CreateChildrenQueryWithOneParent(GetRandomChildNumber(0));
             var blockJoinQuery = new ToParentBlockJoinQuery(parentQueryWithRandomChild, ParentsFilter, ScoreMode.None);
 
-            var ex = Throws<InvalidOperationException>(() => IndexSearcher.Search(blockJoinQuery, 1));
+            var ex = Assert.Throws<InvalidOperationException>(() => IndexSearcher.Search(blockJoinQuery, 1));
             StringAssert.Contains("child query must only match non-parent docs", ex.Message);
 
         }
@@ -95,7 +95,7 @@ namespace Lucene.Net.Tests.Join
             conjunctionQuery.Add(new BooleanClause(childQuery, Occur.MUST));
             conjunctionQuery.Add(new BooleanClause(blockJoinQuery, Occur.MUST));
 
-            var ex = Throws<InvalidOperationException>(() => IndexSearcher.Search(conjunctionQuery, 1));
+            var ex = Assert.Throws<InvalidOperationException>(() => IndexSearcher.Search(conjunctionQuery, 1));
             StringAssert.Contains("child query must only match non-parent docs", ex.Message);
         }
 
@@ -105,7 +105,7 @@ namespace Lucene.Net.Tests.Join
             Query parentQueryWithRandomChild = CreateParentsQueryWithOneChild(GetRandomChildNumber(0));
             var blockJoinQuery = new ToChildBlockJoinQuery(parentQueryWithRandomChild, ParentsFilter, false);
 
-            var ex = Throws<InvalidOperationException>(() => IndexSearcher.Search(blockJoinQuery, 1));
+            var ex = Assert.Throws<InvalidOperationException>(() => IndexSearcher.Search(blockJoinQuery, 1));
             StringAssert.Contains(ToChildBlockJoinQuery.INVALID_QUERY_MESSAGE, ex.Message);
         }
         
@@ -124,7 +124,7 @@ namespace Lucene.Net.Tests.Join
             conjunctionQuery.Add(new BooleanClause(childQuery, Occur.MUST));
             conjunctionQuery.Add(new BooleanClause(blockJoinQuery, Occur.MUST));
             
-            var ex = Throws<InvalidOperationException>(() => IndexSearcher.Search(conjunctionQuery, 1));
+            var ex = Assert.Throws<InvalidOperationException>(() => IndexSearcher.Search(conjunctionQuery, 1));
             StringAssert.Contains(ToChildBlockJoinQuery.INVALID_QUERY_MESSAGE, ex.Message);
         }
 

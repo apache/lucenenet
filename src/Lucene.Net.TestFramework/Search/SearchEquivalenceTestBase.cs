@@ -1,10 +1,17 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Globalization;
 using System.Text;
+
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_NUNIT
+using Assert = NUnit.Framework.Assert;
+#elif TESTFRAMEWORK_XUNIT
+
+#endif
 
 namespace Lucene.Net.Search
 {
@@ -60,7 +67,7 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// Is non-static because ClassEnvRule is no longer static.
         /// </summary>
-        [OneTimeSetUp]
+        //[OneTimeSetUp]
         public override void BeforeClass()
         {
             base.BeforeClass();
@@ -107,7 +114,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
         }
 
-        [OneTimeTearDown]
+        //[OneTimeTearDown]
         public override void AfterClass()
         {
             m_reader.Dispose();

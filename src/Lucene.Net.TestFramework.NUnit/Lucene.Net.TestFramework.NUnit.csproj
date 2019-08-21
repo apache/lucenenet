@@ -35,7 +35,7 @@
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
 
-    <DefineConstants>TESTFRAMEWORK_NUNIT</DefineConstants>
+    <DefineConstants>$(DefineConstants);TESTFRAMEWORK_NUNIT</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
