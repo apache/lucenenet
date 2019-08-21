@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis
 
     /// <summary>
     /// Base class for all Lucene unit tests that use <see cref="TokenStream"/>s.
-    /// <p>
+    /// <para/>
     /// When writing unit tests for analysis components, its highly recommended
     /// to use the helper methods here (especially in conjunction with <see cref="MockAnalyzer"/> or
     /// <see cref="MockTokenizer"/>), as they contain many assertions and checks to

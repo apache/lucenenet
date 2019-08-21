@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Base class aiming at testing <see cref="Codecs.StoredFieldsFormat"/>.
     /// To test a new format, all you need is to register a new <see cref="Codec"/> which
-    /// uses it and extend this class and override <see cref="GetCodec()"/>.
+    /// uses it and extend this class and override <see cref="BaseIndexFileFormatTestCase.GetCodec()"/>.
     /// <para/>
     /// @lucene.experimental
     /// </summary>

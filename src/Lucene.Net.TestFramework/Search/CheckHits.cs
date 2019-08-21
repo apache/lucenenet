@@ -456,7 +456,7 @@ namespace Lucene.Net.Search
     /// An <see cref="IndexSearcher"/> that implicitly checks hte explanation of every match
     /// whenever it executes a search.
     /// </summary>
-    /// <seealso cref= ExplanationAsserter </seealso>
+    /// <seealso cref="ExplanationAsserter"/>
     public class ExplanationAssertingSearcher : IndexSearcher
     {
         public ExplanationAssertingSearcher(IndexReader r)

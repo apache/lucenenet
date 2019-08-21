@@ -329,7 +329,7 @@ namespace Lucene.Net.Util
         /// up after the suite is completed.
         /// </summary>
         /// <seealso cref="LuceneTestCase.CreateTempDir()"/>
-        /// <seealso cref= LuceneTestCase.CreateTempFile(String, String)"/>
+        /// <seealso cref="LuceneTestCase.CreateTempFile(String, String)"/>
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
         public class SuppressTempFileChecksAttribute : System.Attribute // LUCENENET: API looks better with this nested
         {
@@ -400,20 +400,20 @@ namespace Lucene.Net.Util
         /// The line file used by LineFileDocs </summary>
         public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
 
-        /// <summary>
-        /// Whether or not <see cref="Nightly"/> tests should run. </summary>
+        ///// <summary>
+        ///// Whether or not <see cref="Nightly"/> tests should run. </summary>
         internal static readonly bool TEST_NIGHTLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_NIGHTLY, false); // LUCENENET specific - made internal, because not fully implemented
 
-        /// <summary>
-        /// Whether or not <see cref="Weekly"/> tests should run. </summary>
+        ///// <summary>
+        ///// Whether or not <see cref="Weekly"/> tests should run. </summary>
         internal static readonly bool TEST_WEEKLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_WEEKLY, false); // LUCENENET specific - made internal, because not fully implemented
 
-        /// <summary>
-        /// Whether or not <see cref="AwaitsFix"/> tests should run. </summary>
+        ///// <summary>
+        ///// Whether or not <see cref="AwaitsFix"/> tests should run. </summary>
         internal static readonly bool TEST_AWAITSFIX = SystemProperties.GetPropertyAsBoolean(SYSPROP_AWAITSFIX, false); // LUCENENET specific - made internal, because not fully implemented
 
-        /// <summary>
-        /// Whether or not <see cref="Slow"/> tests should run. </summary>
+        ///// <summary>
+        ///// Whether or not <see cref="Slow"/> tests should run. </summary>
         internal static readonly bool TEST_SLOW = SystemProperties.GetPropertyAsBoolean(SYSPROP_SLOW, false); // LUCENENET specific - made internal, because not fully implemented
 
         /// <summary>
@@ -491,9 +491,9 @@ namespace Lucene.Net.Util
         // Class level (suite) rules.
         // -----------------------------------------------------------------
 
-        /// <summary>
-        /// Stores the currently class under test.
-        /// </summary>
+        ///// <summary>
+        ///// Stores the currently class under test.
+        ///// </summary>
         //private static TestRuleStoreClassName ClassNameRule;
 
         /// <summary>

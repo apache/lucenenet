@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// A <c>DocumentsWriterPerThreadPool<c> that selects thread states at random.
+    /// A <see cref="DocumentsWriterPerThreadPool"/> that selects thread states at random.
     /// <para/>
     /// @lucene.internal
     /// @lucene.experimental

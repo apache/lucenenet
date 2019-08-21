@@ -229,10 +229,9 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-        /// <summary>
-        /// below are original, unoptimized implementations of DFA operations for testing.
-        /// These are from brics automaton, full license (BSD) below:
-        /// </summary>
+        // below are original, unoptimized implementations of DFA operations for testing.
+        // These are from brics automaton, full license (BSD) below:
+
 
         /*
          * dk.brics.automaton

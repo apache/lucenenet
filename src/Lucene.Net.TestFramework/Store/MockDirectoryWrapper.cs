@@ -1505,7 +1505,7 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// Use this when throwing fake <see cref="IOException"/>,
-    /// e.g. from <see cref="MockDirectoryWrapper.Failure"/>.
+    /// e.g. from <see cref="Failure"/>.
     /// </summary>
     // LUCENENET: It is no longer good practice to use binary serialization. 
     // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568

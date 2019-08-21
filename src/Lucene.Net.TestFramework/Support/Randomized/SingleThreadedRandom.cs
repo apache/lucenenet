@@ -22,7 +22,7 @@ using System.Threading;
 namespace Lucene.Net.Randomized
 {
     /// <summary>
-    /// A random with a delegate, preventing <see cref="System.Random."/>and locked
+    /// A random with a delegate, preventing <see cref="System.Random"/>and locked
     /// to be used by a single thread. This is the equivelant to AssertRandom
     /// </summary>
     public class SingleThreadedRandom : Random, IDisposable
