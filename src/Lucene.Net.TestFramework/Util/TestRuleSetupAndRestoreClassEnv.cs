@@ -5,7 +5,6 @@ using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Codecs.Lucene42;
 using Lucene.Net.Codecs.Lucene45;
-using Lucene.Net.JavaCompatibility;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
