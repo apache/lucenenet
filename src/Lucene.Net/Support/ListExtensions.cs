@@ -38,6 +38,87 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
+        /// Performs a binary search for the specified element in the specified
+        /// sorted list. The list needs to be already sorted in natural sorting
+        /// order. Searching in an unsorted array has an undefined result. It's also
+        /// undefined which element is found if there are multiple occurrences of the
+        /// same element.
+        /// </summary>
+        /// <typeparam name="T">The element type.</typeparam>
+        /// <param name="list">The sorted list to search.</param>
+        /// <param name="item">The element to find.</param>
+        /// <returns>The non-negative index of the element, or a negative index which
+        /// is the <c>-index - 1</c> where the element would be inserted.</returns>
+        /// <exception cref="InvalidCastException">
+        /// If an element in the List or the search element does not
+        /// implement <see cref="IComparable{T}"/>, or cannot be compared to each other.</exception>
+        public static int BinarySearch<T>(this IList<T> list, T item) where T : IComparable<T>
+        {
+            if (list == null)
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
+            if (list.Count == 0)
+            {
+                return -1;
+            }
+
+            int low = 0, mid = list.Count, high = mid - 1, result = -1;
+            while (low <= high)
+            {
+                mid = (low + high) >> 1;
+                if ((result = -list[mid].CompareTo(item)) > 0)
+                    low = mid + 1;
+                else if (result == 0)
+                    return mid;
+                else
+                    high = mid - 1;
+            }
+            return -mid - (result < 0 ? 1 : 2);
+        }
+
+        /// <summary>
+        /// Performs a binary search for the specified element in the specified
+        /// sorted list using the specified comparator. The list needs to be already
+        /// sorted according to the <paramref name="comparer"/> passed. Searching in an unsorted array
+        /// has an undefined result. It's also undefined which element is found if
+        /// there are multiple occurrences of the same element.
+        /// </summary>
+        /// <typeparam name="T">The element type.</typeparam>
+        /// <param name="list">The sorted <see cref="IList{T}"/> to search.</param>
+        /// <param name="item">The element to find.</param>
+        /// <param name="comparer">The comparer. If the comparer is <c>null</c> then the
+        /// search uses the objects' natural ordering.</param>
+        /// <returns>the non-negative index of the element, or a negative index which
+        /// is the <c>-index - 1</c> where the element would be inserted.</returns>
+        /// <exception cref="InvalidCastException">
+        /// when an element in the list and the searched element cannot
+        /// be compared to each other using the comparer.</exception>
+        public static int BinarySearch<T>(this IList<T> list, T item, IComparer<T> comparer) where T : IComparable<T>
+        {
+            if (list == null)
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
+
+            if (comparer == null)
+                return BinarySearch(list, item);
+
+            int low = 0, mid = list.Count, high = mid - 1, result = -1;
+            while (low <= high)
+            {
+                mid = (low + high) >> 1;
+                if ((result = -comparer.Compare(list[mid], item)) > 0)
+                    low = mid + 1;
+                else if (result == 0)
+                    return mid;
+                else
+                    high = mid - 1;
+            }
+            return -mid - (result < 0 ? 1 : 2);
+        }
+
+        /// <summary>
         /// Shuffles an <see cref="IList{T}"/> in place using a new <see cref="Random"/> instance.
         /// </summary>
         /// <typeparam name="T"></typeparam>
