@@ -151,27 +151,28 @@ namespace Lucene.Net.Replicator
                     Directory dir = source.Equals(IndexAndTaxonomyRevision.INDEX_SOURCE, StringComparison.Ordinal) ? indexDir : taxoDir;
                     foreach (RevisionFile file in e.Value)
                     {
-                        IndexInput src = dir.OpenInput(file.FileName, IOContext.READ_ONCE);
-                        System.IO.Stream @in = rev.Open(source, file.FileName);
-                        assertEquals(src.Length, @in.Length);
-                        byte[] srcBytes = new byte[(int)src.Length];
-                        byte[] inBytes = new byte[(int)src.Length];
-                        int offset = 0;
-                        if (Random.nextBoolean())
+                        using (IndexInput src = dir.OpenInput(file.FileName, IOContext.READ_ONCE))
+                        using (System.IO.Stream @in = rev.Open(source, file.FileName))
                         {
-                            int skip = Random.Next(10);
-                            if (skip >= src.Length)
+                            assertEquals(src.Length, @in.Length);
+                            byte[] srcBytes = new byte[(int)src.Length];
+                            byte[] inBytes = new byte[(int)src.Length];
+                            int offset = 0;
+                            if (Random.nextBoolean())
                             {
-                                skip = 0;
+                                int skip = Random.Next(10);
+                                if (skip >= src.Length)
+                                {
+                                    skip = 0;
+                                }
+                                @in.Seek(skip, SeekOrigin.Current);
+                                src.Seek(skip);
+                                offset = skip;
                             }
-                            @in.Seek(skip, SeekOrigin.Current);
-                            src.Seek(skip);
-                            offset = skip;
+                            src.ReadBytes(srcBytes, offset, srcBytes.Length - offset);
+                            @in.Read(inBytes, offset, inBytes.Length - offset);
+                            assertArrayEquals(srcBytes, inBytes);
                         }
-                        src.ReadBytes(srcBytes, offset, srcBytes.Length - offset);
-                        @in.Read(inBytes, offset, inBytes.Length - offset);
-                        assertArrayEquals(srcBytes, inBytes);
-                        IOUtils.Dispose(src, @in);
                     }
                 }
             }
