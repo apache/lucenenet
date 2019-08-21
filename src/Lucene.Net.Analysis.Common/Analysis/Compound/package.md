@@ -145,13 +145,13 @@ This decision matrix should help you:
       public void testHyphenationCompoundWordsDE() throws Exception {
         String[] dict = { "Rind", "Fleisch", "Draht", "Schere", "Gesetz",
             "Aufgabe", "Überwachung" };
-
-        Reader reader = new FileReader("de_DR.xml");
-
-        HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter
+    
+    Reader reader = new FileReader("de_DR.xml");
+    
+    HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter
             .getHyphenationTree(reader);
-
-        HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(
+    
+    HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(
             new WhitespaceTokenizer(new StringReader(
                 "Rindfleischüberwachungsgesetz Drahtschere abba")), hyphenator,
             dict, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE,
@@ -163,14 +163,14 @@ This decision matrix should help you:
            System.out.println(t);
         }
       }
-
-      public void testHyphenationCompoundWordsWithoutDictionaryDE() throws Exception {
+    
+  public void testHyphenationCompoundWordsWithoutDictionaryDE() throws Exception {
         Reader reader = new FileReader("de_DR.xml");
-
-        HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter
+    
+    HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter
             .getHyphenationTree(reader);
-
-        HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(
+    
+    HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(
             new WhitespaceTokenizer(new StringReader(
                 "Rindfleischüberwachungsgesetz Drahtschere abba")), hyphenator);
 
@@ -184,8 +184,8 @@ This decision matrix should help you:
         String[] dict = { "Bil", "Dörr", "Motor", "Tak", "Borr", "Slag", "Hammar",
             "Pelar", "Glas", "Ögon", "Fodral", "Bas", "Fiol", "Makare", "Gesäll",
             "Sko", "Vind", "Rute", "Torkare", "Blad" };
-
-        DictionaryCompoundWordTokenFilter tf = new DictionaryCompoundWordTokenFilter(
+    
+    DictionaryCompoundWordTokenFilter tf = new DictionaryCompoundWordTokenFilter(
             new WhitespaceTokenizer(
                 new StringReader(
                     "Bildörr Bilmotor Biltak Slagborr Hammarborr Pelarborr Glasögonfodral Basfiolsfodral Basfiolsfodralmakaregesäll Skomakare Vindrutetorkare Vindrutetorkarblad abba")),

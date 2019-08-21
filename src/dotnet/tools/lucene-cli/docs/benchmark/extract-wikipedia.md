@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene benchmark extract-wikipedia [?|-h|--help]</code>
+<code>lucene benchmark extract-wikipedia \<INPUT_WIKIPEDIA_FILE> \<OUTPUT_DIRECTORY> [-d|--discard-image-only-docs] [?|-h|--help]</code>
 
 ### Arguments
 

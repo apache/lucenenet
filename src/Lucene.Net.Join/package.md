@@ -57,7 +57,7 @@ Query time joining has the following input:
       String toField = "to"; // Name of the to field
       ScoreMode scoreMode = ScoreMode.Max // Defines how the scores are translated into the other side of the join.
       Query fromQuery = new TermQuery(new Term("content", searchTerm)); // Query executed to collect from values to join to the to values
-
-      Query joinQuery = JoinUtil.createJoinQuery(fromField, multipleValuesPerDocument, toField, fromQuery, fromSearcher, scoreMode);
+    
+  Query joinQuery = JoinUtil.createJoinQuery(fromField, multipleValuesPerDocument, toField, fromQuery, fromSearcher, scoreMode);
       TopDocs topDocs = toSearcher.search(joinQuery, 10); // Note: toSearcher can be the same as the fromSearcher
       // Render topDocs...

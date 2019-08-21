@@ -1,9 +1,4 @@
-﻿---
-uid: Lucene.Net.Analysis.Smartcn
-summary: *content
----
-
-
+﻿
 <!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -31,6 +26,7 @@ Three analyzers are provided for Chinese, each of which treats Chinese text in a
 *   StandardAnalyzer: Index unigrams (individual Chinese characters) as a token.
 	CJKAnalyzer (in the analyzers/cjk package): Index bigrams (overlapping groups of two adjacent Chinese characters) as tokens.
 	SmartChineseAnalyzer (in this package): Index words (attempt to segment Chinese text into words) as tokens.
+
 
 Example phrase： "我是中国人"
 

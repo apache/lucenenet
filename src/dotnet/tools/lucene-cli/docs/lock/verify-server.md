@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene lock verify-server <IP_HOSTNAME> <MAX_CLIENTS> [?|-h|--help]</code>
+<code>lucene lock verify-server \<IP_HOSTNAME> \<MAX_CLIENTS> [?|-h|--help]</code>
 
 ### Description
 

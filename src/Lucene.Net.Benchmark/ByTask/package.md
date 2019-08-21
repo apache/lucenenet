@@ -25,6 +25,7 @@ Benchmarking Lucene By Tasks.
 
  Contained packages: 
 
+
 <table border="1" cellpadding="4">
  <tr>
    <td>**Package**</td>
@@ -54,7 +55,7 @@ Benchmarking Lucene By Tasks.
 
 ## Table Of Contents
 
- 1. [Benchmarking By Tasks](#concept) 2. [How to use](#usage) 3. [Benchmark "algorithm"](#algorithm) 4. [Supported tasks/commands](#tasks) 5. [Benchmark properties](#properties) 6. [Example input algorithm and the result benchmark report.](#example) 7. [Results record counting clarified](#recsCounting) 
+ 1. [Benchmarking By Tasks](#concept) 2. [How to use](#usage) 3. [Benchmark "algorithm"](#algorithm) 4. [Supported tasks/commands](#tasks) 5. [Benchmark properties](#properties) 6. [Example input algorithm and the result benchmark report.](#example) 7. [Results record counting clarified](#recscounting) 
 
 ## Benchmarking By Tasks
 
@@ -212,7 +213,7 @@ Example -  <font color="#FF0066">{ AddDoc } : 100 : 200/min</font> - would
 10.  **Disable Counting**: Each task executed contributes to the records count.
  This count is reflected in reports under recs/s and under recsPerRun.
  Most tasks count 1, some count 0, and some count more.
- (See [Results record counting clarified](#recsCounting) for more details.)
+ (See [Results record counting clarified](#recscounting) for more details.)
  It is possible to disable counting for a task by preceding it with <font color="#FF0066">-</font>.
 
 Example -  <font color="#FF0066"> -CreateIndex </font> - would count 0 while
@@ -490,6 +491,7 @@ Example: max.buffered=buf:10:10:100:100 -
  The traverse and retrieve tasks "count" more: a traverse task would add 1 for each traversed result (hit), and a retrieve task would additionally add 1 for each retrieved doc. So, regular Search would count 1, SearchTrav that traverses 10 hits would count 11, and a SearchTravRet task that retrieves (and traverses) 10, would count 21. 
 
  Confusing? this might help: always examine the `elapsedSec` column, and always compare "apples to apples", .i.e. it is interesting to check how the `rec/s` changed for the same task (or sequence) between two different runs, but it is not very useful to know how the `rec/s` differs between `Search` and `SearchTrav` tasks. For the latter, `elapsedSec` would bring more insight. 
+
 
 </div>
 <div> </div>

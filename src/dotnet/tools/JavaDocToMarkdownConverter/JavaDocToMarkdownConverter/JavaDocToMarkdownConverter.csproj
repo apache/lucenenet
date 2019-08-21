@@ -21,6 +21,11 @@
 -->
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup Label="Assembly Signing">
+    <!-- Ensure this doesn't inherit the strong naming since this tool will no work with a signed assembly due to it's references -->
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -124,10 +129,12 @@
   <ItemGroup>
     <Compile Include="Formatters\CodeLinkReplacer.cs" />
     <Compile Include="DocConverter.cs" />
+    <Compile Include="Formatters\DivWrapperReplacer.cs" />
     <Compile Include="Formatters\DocTypeReplacer.cs" />
     <Compile Include="Formatters\ExtraHtmlElementReplacer.cs" />
     <Compile Include="Formatters\IReplacer.cs" />
     <Compile Include="Formatters\JavaDocFormatters.cs" />
+    <Compile Include="Formatters\NamedAnchorLinkReplacer.cs" />
     <Compile Include="Formatters\PatternReplacer.cs" />
     <Compile Include="Formatters\RepoLinkReplacer.cs" />
     <Compile Include="Program.cs" />

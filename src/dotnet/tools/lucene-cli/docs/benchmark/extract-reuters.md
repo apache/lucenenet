@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene benchmark extract-reuters [?|-h|--help]</code>
+<code>lucene benchmark extract-reuters \<INPUT_DIRECTORY> \<OUTPUT_DIRECTORY> [?|-h|--help]</code>
 
 ### Arguments
 

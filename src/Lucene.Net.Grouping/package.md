@@ -28,32 +28,32 @@ Grouping requires a number of inputs:
       For example, if you use the `author` field then each
       group has all books by the same author.  Documents that don't
       have this field are grouped under a single group with
-      a `null` group value.
+      a `null` group value.
 
-     `groupSort`: how the groups are sorted.  For sorting
+         `groupSort`: how the groups are sorted.  For sorting
       purposes, each group is "represented" by the highest-sorted
       document according to the `groupSort` within it.  For
       example, if you specify "price" (ascending) then the first group
       is the one with the lowest price book within it.  Or if you
       specify relevance group sort, then the first group is the one
-      containing the highest scoring book.
+      containing the highest scoring book.
 
-     `topNGroups`: how many top groups to keep.  For
-      example, 10 means the top 10 groups are computed.
+         `topNGroups`: how many top groups to keep.  For
+      example, 10 means the top 10 groups are computed.
 
-     `groupOffset`: which "slice" of top groups you want to
+         `groupOffset`: which "slice" of top groups you want to
       retrieve.  For example, 3 means you'll get 7 groups back
       (assuming `topNGroups` is 10).  This is useful for
-      paging, where you might show 5 groups per page.
+      paging, where you might show 5 groups per page.
 
-     `withinGroupSort`: how the documents within each group
-      are sorted.  This can be different from the group sort.
+         `withinGroupSort`: how the documents within each group
+      are sorted.  This can be different from the group sort.
 
-     `maxDocsPerGroup`: how many top documents within each
-      group to keep.
+         `maxDocsPerGroup`: how many top documents within each
+      group to keep.
 
-     `withinGroupOffset`: which "slice" of top
-      documents you want to retrieve from each group.
+         `withinGroupOffset`: which "slice" of top
+      documents you want to retrieve from each group.
 
 The implementation is two-pass: the first pass (<xref:Lucene.Net.Search.Grouping.Term.TermFirstPassGroupingCollector>) gathers the top groups, and the second pass (<xref:Lucene.Net.Search.Grouping.Term.TermSecondPassGroupingCollector>) gathers documents within those groups. If the search is costly to run you may want to use the <xref:Lucene.Net.Search.CachingCollector> class, which caches hits and can (quickly) replay them for the second pass. This way you only run the query once, but you pay a RAM cost to (briefly) hold all hits. Results are returned as a <xref:Lucene.Net.Search.Grouping.TopGroups> instance.
 
@@ -75,20 +75,20 @@ Typical usage for the generic two-pass grouping search looks like this using the
       GroupingSearch groupingSearch = new GroupingSearch("author");
       groupingSearch.setGroupSort(groupSort);
       groupingSearch.setFillSortFields(fillFields);
-
-      if (useCache) {
+    
+  if (useCache) {
         // Sets cache in MB
         groupingSearch.setCachingInMB(4.0, true);
       }
-
-      if (requiredTotalGroupCount) {
+    
+  if (requiredTotalGroupCount) {
         groupingSearch.setAllGroups(true);
       }
-
-      TermQuery query = new TermQuery(new Term("content", searchTerm));
+    
+  TermQuery query = new TermQuery(new Term("content", searchTerm));
       TopGroups<BytesRef> result = groupingSearch.search(indexSearcher, query, groupOffset, groupLimit);
-
-      // Render groupsResult...
+    
+  // Render groupsResult...
       if (requiredTotalGroupCount) {
         int totalGroupCount = result.totalGroupCount;
       }
@@ -102,17 +102,19 @@ To use the single-pass `BlockGroupingCollector`, first, at indexing time, you mu
       groupEndField.setIndexOptions(IndexOptions.DOCS_ONLY);
       groupEndField.setOmitNorms(true);
       oneGroup.get(oneGroup.size()-1).add(groupEndField);
-
-      // You can also use writer.updateDocuments(); just be sure you
+    
+  // You can also use writer.updateDocuments(); just be sure you
       // replace an entire previous doc block with this new one.  For
       // example, each group could have a "groupID" field, with the same
       // value for all docs in this group:
       writer.addDocuments(oneGroup);
 
+
 Then, at search time, do this up front:
 
       // Set this once in your app & save away for reusing across all queries:
       Filter groupEndDocs = new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("groupEnd", "x"))));
+
 
 Finally, do this per search:
 
@@ -120,8 +122,9 @@ Finally, do this per search:
       BlockGroupingCollector c = new BlockGroupingCollector(groupSort, groupOffset+topNGroups, needsScores, groupEndDocs);
       s.search(new TermQuery(new Term("content", searchTerm)), c);
       TopGroups groupsResult = c.getTopGroups(withinGroupSort, groupOffset, docOffset, docOffset+docsPerGroup, fillFields);
+    
+  // Render groupsResult...
 
-      // Render groupsResult...
 
 Or alternatively use the `GroupingSearch` convenience utility:
 
@@ -131,8 +134,9 @@ Or alternatively use the `GroupingSearch` convenience utility:
       groupingSearch.setIncludeScores(needsScores);
       TermQuery query = new TermQuery(new Term("content", searchTerm));
       TopGroups groupsResult = groupingSearch.search(indexSearcher, query, groupOffset, groupLimit);
+    
+  // Render groupsResult...
 
-      // Render groupsResult...
 
 Note that the `groupValue` of each `GroupDocs`
 will be `null`, so if you need to present this value you'll

@@ -35,17 +35,17 @@ could be constructed with:
     SpanQuery kerry  = new SpanTermQuery(new Term("content", "kerry"));
     SpanQuery george = new SpanTermQuery(new Term("content", "george"));
     SpanQuery bush   = new SpanTermQuery(new Term("content", "bush"));
-
-    SpanQuery johnKerry =
+    
+SpanQuery johnKerry =
        new SpanNearQuery(new SpanQuery[] {john, kerry}, 0, true);
-
-    SpanQuery georgeBush =
+    
+SpanQuery georgeBush =
        new SpanNearQuery(new SpanQuery[] {george, bush}, 0, true);
-
-    SpanQuery johnKerryNearGeorgeBush =
+    
+SpanQuery johnKerryNearGeorgeBush =
        new SpanNearQuery(new SpanQuery[] {johnKerry, georgeBush}, 10, false);
-
-    SpanQuery johnKerryNearGeorgeBushAtStart =
+    
+SpanQuery johnKerryNearGeorgeBushAtStart =
        new SpanFirstQuery(johnKerryNearGeorgeBush, 100);
 
 Span queries may be freely intermixed with other Lucene queries.

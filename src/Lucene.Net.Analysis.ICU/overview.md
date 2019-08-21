@@ -105,8 +105,8 @@ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis>
       writer.addDocument(doc);
       writer.close();
       IndexSearcher is = new IndexSearcher(ramDir, true);
-
-      QueryParser aqp = new QueryParser(Version.LUCENE_48, "content", analyzer);
+    
+  QueryParser aqp = new QueryParser(Version.LUCENE_48, "content", analyzer);
       aqp.setAnalyzeRangeTerms(true);
 
       // Unicode order would include U+0633 in [ U+062F - U+0698 ], but Farsi

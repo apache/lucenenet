@@ -127,7 +127,6 @@
           "files": [
             "Lucene.Net.Analysis.Common/Lucene.Net.Analysis.Common.csproj",
             "Lucene.Net.Analysis.Stempel/Lucene.Net.Analysis.Stempel.csproj",
-            "Lucene.Net.Analysis.SmartCn/Lucene.Net.Analysis.SmartCn.csproj",
             "Lucene.Net.Analysis.Phonetic/Lucene.Net.Analysis.Phonetic.csproj",
             "Lucene.Net.Analysis.Kuromoji/Lucene.Net.Analysis.Kuromoji.csproj"
           ],
@@ -136,6 +135,36 @@
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis",
+      "properties": {
+          "TargetFramework": "netstandard1.6"
+      }
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Analysis.SmartCn/Lucene.Net.Analysis.SmartCn.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../../src"
+        }
+      ],
+      "dest": "obj/docfx/api/Lucene.Net.Analysis.SmartCn",
+      "properties": {
+          "TargetFramework": "netstandard1.6"
+      }
+    },    
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Analysis.Kuromoji/Lucene.Net.Analysis.Kuromoji.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../../src"
+        }
+      ],
+      "dest": "obj/docfx/api/Lucene.Net.Analysis.Kuromoji",
       "properties": {
           "TargetFramework": "netstandard1.6"
       }
@@ -304,11 +333,16 @@
       "_appFaviconPath": "logo/favicon.ico",
       "_enableSearch": true,
       "_appLogoPath": "logo/lucene-net-color.png",
-      "_appFooter": "Copyright © 2019 Licensed to the Apache Software Foundation (ASF)"
+      "_appFooter": "Copyright © 2019 Licensed to the Apache Software Foundation (ASF)",
+      "_gitContribute": {
+        "repo": "https://github.com/apache/lucenenet",
+        "branch": "master",
+        "apiSpecFolder": "websites/apidocs/apiSpec"
+      }
     },
     "overwrite": [
       {
-        "files": ["**/package.md","**/overview.md"],
+        "files": ["**/package.md","**/overview.md", "apiSpec/**/*.md"],
         "src": "../../src",
         "exclude": ["Lucene.Net/overview.md"]
       }

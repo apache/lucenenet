@@ -6,7 +6,7 @@
 
 ### Synopsis
 
-<code>lucene benchmark run [?|-h|--help]</code>
+<code>lucene benchmark run \<ALGORITHM_FILE> \<OUTPUT_DIRECTORY> [?|-h|--help]</code>
 
 ### Arguments
 

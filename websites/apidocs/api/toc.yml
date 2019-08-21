@@ -7,6 +7,12 @@
 - name: Lucene.Net.Analysis
   href: ../obj/docfx/api/Lucene.Net.Analysis/toc.yml
   topicUid: Lucene.Net.Analysis
+- name: Lucene.Net.Analysis.Kuromoji
+  href: ../obj/docfx/api/Lucene.Net.Analysis.Kuromoji/toc.yml
+  topicUid: Lucene.Net.Analysis.Ja
+- name: Lucene.Net.Analysis.SmartCn
+  href: ../obj/docfx/api/Lucene.Net.Analysis.SmartCn/toc.yml
+  topicUid: Lucene.Net.Analysis.Cn.Smart
 - name: Lucene.Net.QueryParser
   href: ../obj/docfx/api/Lucene.Net.QueryParser/toc.yml
 - name: Lucene.Net.Highlighter
@@ -42,7 +48,7 @@
   topicUid: Lucene.Net.Replicator
 - name: Lucene.Net.ICU
   href: ../obj/docfx/api/Lucene.Net.ICU/toc.yml
-  topicUid: Lucene.Net.Analysis.ICU
+  topicUid: Lucene.Net.Analysis.Icu
 - name: Lucene.Net.Demo
   href: ../obj/docfx/api/Lucene.Net.Demo/toc.yml
   topicUid: Lucene.Net.Demo

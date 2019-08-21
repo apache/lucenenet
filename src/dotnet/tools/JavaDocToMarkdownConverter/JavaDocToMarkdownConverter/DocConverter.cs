@@ -83,9 +83,10 @@ namespace JavaDocToMarkdownConverter
             {
                 markdown = r.Replace(markdown);
             }
-            if (JavaDocFormatters.CustomReplacers.TryGetValue(ns, out var cr))
+            if (JavaDocFormatters.CustomReplacers.TryGetValue(ns, out var replacers))
             {
-                markdown = cr.Replace(markdown);
+                foreach(var r in replacers)
+                    markdown = r.Replace(markdown);
             }
 
             var appendYamlHeader = ShouldAppendYamlHeader(inputDoc, ns);
@@ -160,6 +161,8 @@ namespace JavaDocToMarkdownConverter
             ["Lucene.Net.Memory"] = "Lucene.Net.Index.Memory",
             ["Lucene.Net.QueryParser.Classic"] = "Lucene.Net.QueryParsers.Classic",
             ["Lucene.Net.Document"] = "Lucene.Net.Documents",
+            ["Lucene.Net.Analysis.Kuromoji"] = "Lucene.Net.Analysis.Ja",
+            ["Lucene.Net.Analysis.SmartCn"] = "Lucene.Net.Analysis.Cn.Smart",
         };
 
         private string AppendYamlHeader(string ns, string fileContent)

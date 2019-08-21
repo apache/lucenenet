@@ -27,20 +27,20 @@ Lucene 4.6 file format.
 
 <div>
 
-*   [Introduction](#Introduction)
-*   [Definitions](#Definitions)
+*   [Introduction](#introduction)
+*   [Definitions](#definitions)
 
-    *   [Inverted Indexing](#Inverted_Indexing)
-    *   [Types of Fields](#Types_of_Fields)
-    *   [Segments](#Segments)
-    *   [Document Numbers](#Document_Numbers)
+    *   [Inverted Indexing](#inverted-indexing)
+    *   [Types of Fields](#types-of-fields)
+    *   [Segments](#segments)
+    *   [Document Numbers](#document-numbers)
 
-*   [Index Structure Overview](#Overview)
-*   [File Naming](#File_Naming)
+*   [Index Structure Overview](#overview)
+*   [File Naming](#file-naming)
 *   [Summary of File Extensions](#file-names)
-*   *   [Lock File](#Lock_File)
-    *   [History](#History)
-    *   [Limitations](#Limitations)
+*   *   [Lock File](#lock-file)
+    *   [History](#history)
+    *   [Limitations](#limitations)
 
 </div>
 
@@ -195,7 +195,7 @@ The following table summarizes the names and extensions of the files in Lucene:
 <td>Stores information about a commit point</td>
 </tr>
 <tr>
-<td>[Lock File](#Lock_File)</td>
+<td>[Lock File](#lock-file)</td>
 <td>write.lock</td>
 <td>The Write lock prevents multiple IndexWriters from writing to the same
 file.</td>

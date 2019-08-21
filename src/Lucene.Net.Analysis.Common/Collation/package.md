@@ -47,8 +47,8 @@
       writer.close();
       IndexReader ir = DirectoryReader.open(ramDir);
       IndexSearcher is = new IndexSearcher(ir);
-
-      QueryParser aqp = new QueryParser(version, "content", analyzer);
+    
+  QueryParser aqp = new QueryParser(version, "content", analyzer);
       aqp.setAnalyzeRangeTerms(true);
 
       // Unicode order would include U+0633 in [ U+062F - U+0698 ], but Farsi

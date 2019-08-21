@@ -3,6 +3,7 @@ uid: Lucene.Net.Replicator
 summary: *content
 ---
 
+
 <!-- 
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +22,7 @@ summary: *content
 -->
 
 # Files replication framework
+
 
 	The
 	[Replicator](Replicator.html) allows replicating files between a server and client(s). Producers publish
@@ -51,19 +53,19 @@ summary: *content
     IndexWriter publishWriter; // the writer used for indexing
     Replicator replicator = new LocalReplicator();
     replicator.publish(new IndexRevision(publishWriter));
-
-    // ++++++++++++++ CLIENT SIDE ++++++++++++++ // 
+    
+// ++++++++++++++ CLIENT SIDE ++++++++++++++ // 
     // either LocalReplictor, or HttpReplicator if client and server are on different nodes
     Replicator replicator;
-
-    // callback invoked after handler finished handling the revision and e.g. can reopen the reader.
+    
+// callback invoked after handler finished handling the revision and e.g. can reopen the reader.
     Callable<Boolean> callback = null; // can also be null if no callback is needed
     ReplicationHandler handler = new IndexReplicationHandler(indexDir, callback);
     SourceDirectoryFactory factory = new PerSessionDirectoryFactory(workDir);
     ReplicationClient client = new ReplicationClient(replicator, handler, factory);
-
-    // invoke client manually
+    
+// invoke client manually
     client.updateNow();
-
-    // or, periodically
+    
+// or, periodically
     client.startUpdateThread(100); // check for update every 100 milliseconds

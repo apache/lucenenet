@@ -16,6 +16,7 @@
  limitations under the License.
 -->
 
+
 The highlight package contains classes to provide "keyword in context" features
 typically used to highlight search terms in the text of results pages.
 The Highlighter class is the central component and can be used to extract the
@@ -28,10 +29,10 @@ Fragmenter, fragment Scorer, and Formatter classes.
       IndexSearcher searcher = new IndexSearcher(directory);
       QueryParser parser = new QueryParser("notv", analyzer);
       Query query = parser.parse("million");
-
-      TopDocs hits = searcher.search(query, 10);
-
-      SimpleHTMLFormatter htmlFormatter = new SimpleHTMLFormatter();
+    
+  TopDocs hits = searcher.search(query, 10);
+    
+  SimpleHTMLFormatter htmlFormatter = new SimpleHTMLFormatter();
       Highlighter highlighter = new Highlighter(htmlFormatter, new QueryScorer(query));
       for (int i = 0; i < 10;="" i++)="" {="" int="" id="hits.scoreDocs[i].doc;" document="" doc="searcher.doc(id);" string="" text="doc.get(" notv");"="" tokenstream="" tokenstream="TokenSources.getAnyTokenStream(searcher.getIndexReader()," id,="" "notv",="" analyzer);="" textfragment[]="" frag="highlighter.getBestTextFragments(tokenStream," text,="" false,="" 10);//highlighter.getbestfragments(tokenstream,="" text,="" 3,="" "...");="" for="" (int="" j="0;" j="">< frag.length;="" j++)="" {="" if="" ((frag[j]="" !="null)" &&="" (frag[j].getscore()=""> 0)) {
             System.out.println((frag[j].toString()));
@@ -50,6 +51,7 @@ Fragmenter, fragment Scorer, and Formatter classes.
 
 ## New features 06/02/2005
 
+
 This release adds options for encoding (thanks to Nicko Cadell).
 An "Encoder" implementation such as the new SimpleHTMLEncoder class can be passed to the highlighter to encode
 all those non-xhtml standard characters such as & into legal values. This simple class may not suffice for
@@ -57,6 +59,7 @@ some languages -  Commons Lang has an implementation that could be used: escapeH
 http://svn.apache.org/viewcvs.cgi/jakarta/commons/proper/lang/trunk/src/java/org/apache/commons/lang/StringEscapeUtils.java?rev=137958&view=markup
 
 ## New features 22/12/2004
+
 
 This release adds some new capabilities:
 

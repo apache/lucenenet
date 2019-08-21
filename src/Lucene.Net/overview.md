@@ -25,8 +25,8 @@ Apache Lucene is a high-performance, full-featured text search engine library. H
 <!-- =   Java2Html Converter 5.0 [2006-03-04] by Markus Gebhard  markus@jave.de   = -->
 
         Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
-
-        // Store the index in memory:
+    
+    // Store the index in memory:
         Directory directory = new RAMDirectory();
         // To store an index on disk, use this instead:
         //Directory directory = FSDirectory.open("/tmp/testindex");
@@ -64,7 +64,7 @@ Tokenizers and TokenFilters are strung together and applied with an [Analyzer](x
 and the grammar-based [StandardAnalyzer](../analyzers-common/org/apache/lucene/analysis/standard/StandardAnalyzer.html).
 *   **<xref:Lucene.Net.Codecs>**
 provides an abstraction over the encoding and decoding of the inverted index structure,
-as well as different implementations that can be chosen depending upon application needs.
+as well as different implementations that can be chosen depending upon application needs.
 
     **<xref:Lucene.Net.Documents>**
 provides a simple [Document](xref:Lucene.Net.Documents.Document)
@@ -81,7 +81,7 @@ for phrases, and [BooleanQuery](xref:Lucene.Net.Search.BooleanQuery)
 for boolean combinations of queries) and the [IndexSearcher](xref:Lucene.Net.Search.IndexSearcher)
 which turns queries into [TopDocs](xref:Lucene.Net.Search.TopDocs).
 A number of [QueryParser](../queryparser/overview-summary.html)s are provided for producing
-query structures from strings or xml.
+query structures from strings or xml.
 
     **<xref:Lucene.Net.Store>**
 defines an abstract class for storing persistent data, the [Directory](xref:Lucene.Net.Store.Directory),
