@@ -1,3 +1,5 @@
+#if TESTFRAMEWORK
+// LUCENENET NOTE: This is incomplete
 using System;
 using System.Diagnostics;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -70,3 +72,4 @@ namespace Lucene.Net.Util
 	}
 
 }
+#endif

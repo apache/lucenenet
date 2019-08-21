@@ -1,3 +1,6 @@
+#if TESTFRAMEWORK
+// LUCENENET NOTE: This is incomplete
+
 using System.Threading;
 
 namespace Lucene.Net.Util
@@ -50,3 +53,4 @@ namespace Lucene.Net.Util
 	}
 
 }
+#endif

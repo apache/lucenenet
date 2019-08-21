@@ -1,3 +1,6 @@
+#if TESTFRAMEWORK
+// LUCENENET NOTE: This is incomplete
+
 namespace Lucene.Net.Util
 {
 
@@ -59,3 +62,4 @@ namespace Lucene.Net.Util
 	}
 
 }
+#endif

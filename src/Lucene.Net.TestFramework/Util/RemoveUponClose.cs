@@ -1,3 +1,6 @@
+#if TESTFRAMEWORK
+// LUCENENET NOTE: This is incomplete
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -67,3 +70,4 @@ namespace Lucene.Net.Util
 	  }
 	}
 }
+#endif

@@ -1,3 +1,6 @@
+#if TESTFRAMEWORK
+// LUCENENET NOTE: This is incomplete
+
 using System;
 
 namespace Lucene.Net.Util
@@ -89,3 +92,4 @@ namespace Lucene.Net.Util
 	}
 
 }
+#endif

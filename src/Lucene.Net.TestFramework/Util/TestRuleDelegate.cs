@@ -1,3 +1,5 @@
+#if TESTFRAMEWORK
+// LUCENENET NOTE: This is incomplete
 using Apache.NMS.Util;
 
 namespace Lucene.Net.Util
@@ -49,3 +51,4 @@ namespace Lucene.Net.Util
 	}
 
 }
+#endif
