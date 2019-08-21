@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// stemmer or some other filter.
         /// </summary>
         /// <seealso cref="SetOffset(int, int)"/>
-        int StartOffset { get; }
+        int StartOffset { get; } // LUCENENET TODO: API - add a setter ? It seems the SetOffset only sets two properties at once...
 
         /// <summary>
         /// Set the starting and ending offset.
@@ -51,6 +51,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// of the token in the source text is (<code>EndOffset</code> - <see cref="StartOffset"/>).
         /// </summary>
         /// <seealso cref="SetOffset(int, int)"/>
-        int EndOffset { get; }
+        int EndOffset { get; } // LUCENENET TODO: API - add a setter ? It seems the SetOffset only sets two properties at once...
     }
 }
