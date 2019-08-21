@@ -272,7 +272,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             AtomicInt32 numCats = new AtomicInt32(ncats);
             Directory dir = NewDirectory();
             var values = new ConcurrentDictionary<string, string>();
-            double d = Random().NextDouble();
+            double d = Random.NextDouble();
             ITaxonomyWriterCache cache;
             if (d < 0.7)
             {
@@ -366,7 +366,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             public override void Run()
             {
-                Random random = Random();
+                Random random = Random;
                 while (numCats.DecrementAndGet() > 0)
                 {
                     try
@@ -512,7 +512,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         public virtual void TestHugeLabel()
         {
             Directory indexDir = NewDirectory(), taxoDir = NewDirectory();
-            IndexWriter indexWriter = new IndexWriter(indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter indexWriter = new IndexWriter(indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE, new Cl2oTaxonomyWriterCache(2, 1f, 1));
             FacetsConfig config = new FacetsConfig();
 
@@ -521,7 +521,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             int ordinal = -1;
 
             int len = FacetLabel.MAX_CATEGORY_PATH_LENGTH - 4; // for the dimension and separator
-            bigs = TestUtil.RandomSimpleString(Random(), len, len);
+            bigs = TestUtil.RandomSimpleString(Random, len, len);
             FacetField ff = new FacetField("dim", bigs);
             FacetLabel cp = new FacetLabel("dim", bigs);
             ordinal = taxoWriter.AddCategory(cp);
@@ -532,7 +532,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // Add tiny ones to cause a re-hash
             for (int i = 0; i < 3; i++)
             {
-                string s = TestUtil.RandomSimpleString(Random(), 1, 10);
+                string s = TestUtil.RandomSimpleString(Random, 1, 10);
                 taxoWriter.AddCategory(new FacetLabel("dim", s));
                 doc = new Document();
                 doc.Add(new FacetField("dim", s));

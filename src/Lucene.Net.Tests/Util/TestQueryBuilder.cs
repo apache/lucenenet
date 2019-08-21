@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
         public virtual void TestTerm()
         {
             TermQuery expected = new TermQuery(new Term("field", "test"));
-            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random));
             Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "test"));
         }
 
@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "foo")), Occur.SHOULD);
             expected.Add(new TermQuery(new Term("field", "bar")), Occur.SHOULD);
-            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random));
             Assert.IsTrue(expected.Equals(builder.CreateBooleanQuery("field", "foo bar")));
             //Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "foo bar"));
         }
@@ -67,21 +67,21 @@ namespace Lucene.Net.Util
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "foo")), Occur.MUST);
             expected.Add(new TermQuery(new Term("field", "bar")), Occur.MUST);
-            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random));
             Assert.AreEqual(expected, builder.CreateBooleanQuery("field", "foo bar", Occur.MUST));
         }
 
         [Test]
         public virtual void TestMinShouldMatchNone()
         {
-            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random));
             Assert.AreEqual(builder.CreateBooleanQuery("field", "one two three four"), builder.CreateMinShouldMatchQuery("field", "one two three four", 0f));
         }
 
         [Test]
         public virtual void TestMinShouldMatchAll()
         {
-            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random));
             Assert.AreEqual(builder.CreateBooleanQuery("field", "one two three four", Occur.MUST), builder.CreateMinShouldMatchQuery("field", "one two three four", 1f));
         }
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Util
             expected.Add(new TermQuery(new Term("field", "four")), Occur.SHOULD);
             expected.MinimumNumberShouldMatch = 0;
 
-            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random));
             Assert.AreEqual(expected, builder.CreateMinShouldMatchQuery("field", "one two three four", 0.1f));
             Assert.AreEqual(expected, builder.CreateMinShouldMatchQuery("field", "one two three four", 0.24f));
 
@@ -121,7 +121,7 @@ namespace Lucene.Net.Util
 
             CharacterRunAutomaton stopList = new CharacterRunAutomaton((new RegExp("[sS][tT][oO][pP]")).ToAutomaton());
 
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false, stopList);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false, stopList);
 
             QueryBuilder builder = new QueryBuilder(analyzer);
             Assert.AreEqual(expected, builder.CreatePhraseQuery("field", "1 stop 2"));
@@ -130,7 +130,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestEmpty()
         {
-            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random()));
+            QueryBuilder builder = new QueryBuilder(new MockAnalyzer(Random));
             Assert.IsNull(builder.CreateBooleanQuery("field", ""));
         }
 

@@ -21,14 +21,16 @@ namespace Lucene.Net.Codecs.Compressing
      */
 
     /// <summary>
-    /// CompressionCodec that uses <seealso cref="CompressionMode#HIGH_COMPRESSION"/> </summary>
+    /// CompressionCodec that uses <see cref="CompressionMode.HIGH_COMPRESSION"/>. </summary>
     [CodecName("HighCompressionCompressingStoredFields")]
     public class HighCompressionCompressingCodec : CompressingCodec
     {
         /// <summary>
-        /// Constructor that allows to configure the chunk size. </summary>
+        /// Constructor that allows to configure the <paramref name="chunkSize"/>. </summary>
         public HighCompressionCompressingCodec(int chunkSize, bool withSegmentSuffix)
-            : base(withSegmentSuffix ? "HighCompressionCompressingStoredFields" : "", CompressionMode.HIGH_COMPRESSION, chunkSize)
+            : base(
+                  withSegmentSuffix ? "HighCompressionCompressingStoredFields" : "", 
+                  CompressionMode.HIGH_COMPRESSION, chunkSize)
         {
         }
 

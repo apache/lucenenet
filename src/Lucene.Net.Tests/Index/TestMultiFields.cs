@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
 
                 Directory dir = NewDirectory();
 
-                IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
+                IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
                 // we can do this because we use NoMergePolicy (and dont merge to "nothing")
                 w.KeepFullyDeletedSegments = true;
 
@@ -54,14 +54,14 @@ namespace Lucene.Net.Index
                 HashSet<int?> deleted = new HashSet<int?>();
                 IList<BytesRef> terms = new List<BytesRef>();
 
-                int numDocs = TestUtil.NextInt(Random(), 1, 100 * RANDOM_MULTIPLIER);
+                int numDocs = TestUtil.NextInt32(Random, 1, 100 * RANDOM_MULTIPLIER);
                 Documents.Document doc = new Documents.Document();
                 Field f = NewStringField("field", "", Field.Store.NO);
                 doc.Add(f);
                 Field id = NewStringField("id", "", Field.Store.NO);
                 doc.Add(id);
 
-                bool onlyUniqueTerms = Random().NextBoolean();
+                bool onlyUniqueTerms = Random.NextBoolean();
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: onlyUniqueTerms=" + onlyUniqueTerms + " numDocs=" + numDocs);
@@ -69,16 +69,16 @@ namespace Lucene.Net.Index
                 HashSet<BytesRef> uniqueTerms = new HashSet<BytesRef>();
                 for (int i = 0; i < numDocs; i++)
                 {
-                    if (!onlyUniqueTerms && Random().NextBoolean() && terms.Count > 0)
+                    if (!onlyUniqueTerms && Random.NextBoolean() && terms.Count > 0)
                     {
                         // re-use existing term
-                        BytesRef term = terms[Random().Next(terms.Count)];
+                        BytesRef term = terms[Random.Next(terms.Count)];
                         docs[term].Add(i);
                         f.SetStringValue(term.Utf8ToString());
                     }
                     else
                     {
-                        string s = TestUtil.RandomUnicodeString(Random(), 10);
+                        string s = TestUtil.RandomUnicodeString(Random, 10);
                         BytesRef term = new BytesRef(s);
                         if (!docs.ContainsKey(term))
                         {
@@ -91,13 +91,13 @@ namespace Lucene.Net.Index
                     }
                     id.SetStringValue("" + i);
                     w.AddDocument(doc);
-                    if (Random().Next(4) == 1)
+                    if (Random.Next(4) == 1)
                     {
                         w.Commit();
                     }
-                    if (i > 0 && Random().Next(20) == 1)
+                    if (i > 0 && Random.Next(20) == 1)
                     {
-                        int delID = Random().Next(i);
+                        int delID = Random.Next(i);
                         deleted.Add(delID);
                         w.DeleteDocuments(new Term("id", "" + delID));
                         if (VERBOSE)
@@ -146,13 +146,13 @@ namespace Lucene.Net.Index
 
                 for (int i = 0; i < 100; i++)
                 {
-                    BytesRef term = terms[Random().Next(terms.Count)];
+                    BytesRef term = terms[Random.Next(terms.Count)];
                     if (VERBOSE)
                     {
                         Console.WriteLine("TEST: seek term=" + UnicodeUtil.ToHexString(term.Utf8ToString()) + " " + term);
                     }
 
-                    DocsEnum docsEnum = TestUtil.Docs(Random(), reader, "field", term, liveDocs, null, DocsFlags.NONE);
+                    DocsEnum docsEnum = TestUtil.Docs(Random, reader, "field", term, liveDocs, null, DocsFlags.NONE);
                     Assert.IsNotNull(docsEnum);
 
                     foreach (int docID in docs[term])
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
         public virtual void TestSeparateEnums()
         {
             Directory dir = NewDirectory();
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Documents.Document d = new Documents.Document();
             d.Add(NewStringField("f", "j", Field.Store.NO));
             w.AddDocument(d);
@@ -197,8 +197,8 @@ namespace Lucene.Net.Index
             w.AddDocument(d);
             IndexReader r = w.GetReader();
             w.Dispose();
-            DocsEnum d1 = TestUtil.Docs(Random(), r, "f", new BytesRef("j"), null, null, DocsFlags.NONE);
-            DocsEnum d2 = TestUtil.Docs(Random(), r, "f", new BytesRef("j"), null, null, DocsFlags.NONE);
+            DocsEnum d1 = TestUtil.Docs(Random, r, "f", new BytesRef("j"), null, null, DocsFlags.NONE);
+            DocsEnum d2 = TestUtil.Docs(Random, r, "f", new BytesRef("j"), null, null, DocsFlags.NONE);
             Assert.AreEqual(0, d1.NextDoc());
             Assert.AreEqual(0, d2.NextDoc());
             r.Dispose();
@@ -209,7 +209,7 @@ namespace Lucene.Net.Index
         public virtual void TestTermDocsEnum()
         {
             Directory dir = NewDirectory();
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Documents.Document d = new Documents.Document();
             d.Add(NewStringField("f", "j", Field.Store.NO));
             w.AddDocument(d);

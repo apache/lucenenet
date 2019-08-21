@@ -45,29 +45,29 @@ namespace Lucene.Net.Classification
         {
             base.SetUp();
             _dir = NewDirectory();
-            _indexWriter = new RandomIndexWriter(Random(), _dir, new MockAnalyzer(Random()), Similarity, TimeZone);
+            _indexWriter = new RandomIndexWriter(Random, _dir, new MockAnalyzer(Random), Similarity, TimeZone);
 
             FieldType ft = new FieldType(TextField.TYPE_STORED);
             ft.StoreTermVectors = true;
             ft.StoreTermVectorOffsets = true;
             ft.StoreTermVectorPositions = true;
 
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
 
             Document doc;
             for (int i = 0; i < 100; i++)
             {
                 doc = new Document();
-                doc.Add(new Field(_idFieldName, Random().toString(), ft));
-                doc.Add(new Field(_textFieldName, new StringBuilder(Random().toString()).append(Random().toString()).append(
-                    Random().toString()).toString(), ft));
-                doc.Add(new Field(_classFieldName, Random().toString(), ft));
+                doc.Add(new Field(_idFieldName, Random.toString(), ft));
+                doc.Add(new Field(_textFieldName, new StringBuilder(Random.toString()).append(Random.toString()).append(
+                    Random.toString()).toString(), ft));
+                doc.Add(new Field(_classFieldName, Random.toString(), ft));
                 _indexWriter.AddDocument(doc, analyzer);
             }
 
             _indexWriter.Commit();
 
-            _originalIndex = SlowCompositeReaderWrapper.Wrap(_indexWriter.Reader);
+            _originalIndex = SlowCompositeReaderWrapper.Wrap(_indexWriter.GetReader());
         }
 
         [TearDown]
@@ -101,7 +101,7 @@ namespace Lucene.Net.Classification
             try
             {
                 DatasetSplitter datasetSplitter = new DatasetSplitter(testRatio, crossValidationRatio);
-                datasetSplitter.Split(originalIndex, trainingIndex, testIndex, crossValidationIndex, new MockAnalyzer(Random()), fieldNames);
+                datasetSplitter.Split(originalIndex, trainingIndex, testIndex, crossValidationIndex, new MockAnalyzer(Random), fieldNames);
 
                 NotNull(trainingIndex);
                 NotNull(testIndex);

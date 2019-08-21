@@ -250,11 +250,11 @@ namespace Lucene.Net.Analysis.Pattern
         [Test, LongRunningTest]
         public virtual void TestRandomStrings()
         {
-            int numPatterns = 10 + Random().Next(20);
-            Random random = new Random(Random().nextInt(int.MaxValue));
+            int numPatterns = 10 + LuceneTestCase.Random.Next(20);
+            Random random = new Random(Random.nextInt(int.MaxValue));
             for (int i = 0; i < numPatterns; i++)
             {
-                Regex p = TestUtil.RandomPattern(Random());
+                Regex p = TestUtil.RandomRegex(LuceneTestCase.Random);
 
                 string replacement = TestUtil.RandomSimpleString(random);
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, p, replacement);

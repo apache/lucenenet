@@ -12,21 +12,21 @@ using Console = Lucene.Net.Support.SystemConsole;
 namespace Lucene.Net.Util
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using Document = Documents.Document;
     using Field = Field;
@@ -42,11 +42,11 @@ namespace Lucene.Net.Util
     /// </summary>
     public class LineFileDocs : IDisposable
     {
-        private TextReader Reader;
+        private TextReader reader;
         //private static readonly int BUFFER_SIZE = 1 << 16; // 64K // LUCENENET NOTE: Not used because we don't have a BufferedReader in .NET
-        private readonly AtomicInt32 Id = new AtomicInt32();
-        private readonly string Path;
-        private readonly bool UseDocValues;
+        private readonly AtomicInt32 id = new AtomicInt32();
+        private readonly string path;
+        private readonly bool useDocValues;
 
         /// <summary>
         /// If forever is true, we rewind the file at EOF (repeat
@@ -54,8 +54,8 @@ namespace Lucene.Net.Util
         /// </summary>
         public LineFileDocs(Random random, string path, bool useDocValues)
         {
-            this.Path = path;
-            this.UseDocValues = useDocValues;
+            this.path = path;
+            this.useDocValues = useDocValues;
             Open(random);
         }
 
@@ -82,11 +82,11 @@ namespace Lucene.Net.Util
             {
                 lock (this)
                 {
-                    ThreadDocs?.Dispose();
-                    if (Reader != null)
+                    threadDocs?.Dispose();
+                    if (reader != null)
                     {
-                        Reader.Dispose();
-                        Reader = null;
+                        reader.Dispose();
+                        reader = null;
                     }
                 }
             }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
             {
                 return 0L;
             }
-            return (random.NextLong() & long.MaxValue) % (size / 3);
+            return (random.NextInt64() & long.MaxValue) % (size / 3);
         }
 
         private void Open(Random random)
@@ -113,22 +113,22 @@ namespace Lucene.Net.Util
                 {
                     // LUCENENET: We have embedded the default file, so if that filename is passed,
                     // open the local resource instead of an external file.
-                    if (Path == LuceneTestCase.DEFAULT_LINE_DOCS_FILE)
+                    if (path == LuceneTestCase.DEFAULT_LINE_DOCS_FILE)
                     {
-                        @is = this.GetType().getResourceAsStream(Path);
+                        @is = this.GetType().getResourceAsStream(path);
                     }
                     else
                     {
-                        @is = new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                        @is = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
                     }
                 }
                 catch (Exception)
                 {
                     failed = true;
                     // if its not in classpath, we load it as absolute filesystem path (e.g. Hudson's home dir)
-                    FileInfo file = new FileInfo(Path);
+                    FileInfo file = new FileInfo(path);
                     size = file.Length;
-                    if (Path.EndsWith(".gz", StringComparison.Ordinal))
+                    if (path.EndsWith(".gz", StringComparison.Ordinal))
                     {
                         // if it is a gzip file, we need to use InputStream and slowly skipTo:
                         @is = new FileStream(file.FullName, FileMode.Append, FileAccess.Write, FileShare.Read);
@@ -137,7 +137,7 @@ namespace Lucene.Net.Util
                     {
                         // optimized seek using RandomAccessFile:
                         seekTo = RandomSeekPos(random, size);
-                        FileStream channel = new FileStream(Path, FileMode.Open);
+                        FileStream channel = new FileStream(path, FileMode.Open);
                         if (LuceneTestCase.VERBOSE)
                         {
                             Console.WriteLine("TEST: LineFileDocs: file seek to fp=" + seekTo + " on open");
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util
                     size = @is.Length;// available();
                 }
 
-                if (Path.EndsWith(".gz", StringComparison.Ordinal))
+                if (path.EndsWith(".gz", StringComparison.Ordinal))
                 {
                     using (var gzs = new GZipStream(@is, CompressionMode.Decompress))
                     {
@@ -195,12 +195,12 @@ namespace Lucene.Net.Util
                 //CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
                 MemoryStream ms = new MemoryStream();
                 @is.CopyTo(ms);
-                Reader = new StringReader(Encoding.UTF8.GetString(ms.ToArray()));//, BUFFER_SIZE);
+                reader = new StringReader(Encoding.UTF8.GetString(ms.ToArray()));//, BUFFER_SIZE);
 
                 if (seekTo > 0L)
                 {
                     // read one more line, to make sure we are not inside a Windows linebreak (\r\n):
-                    Reader.ReadLine();
+                    reader.ReadLine();
                 }
 
                 @is.Dispose();
@@ -213,7 +213,7 @@ namespace Lucene.Net.Util
             {
                 Dispose();
                 Open(random);
-                Id.Set(0);
+                id.Set(0);
             }
         }
 
@@ -221,13 +221,13 @@ namespace Lucene.Net.Util
 
         private sealed class DocState
         {
-            internal readonly Document Doc;
-            internal readonly Field TitleTokenized;
-            internal readonly Field Title;
-            internal readonly Field TitleDV;
-            internal readonly Field Body;
-            internal readonly Field Id;
-            internal readonly Field Date;
+            internal Document Doc { get; private set; }
+            internal Field TitleTokenized { get; private set; }
+            internal Field Title { get; private set; }
+            internal Field TitleDV { get; private set; }
+            internal Field Body { get; private set; }
+            internal Field Id { get; private set; }
+            internal Field Date { get; private set; }
 
             public DocState(bool useDocValues)
             {
@@ -265,7 +265,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private readonly ThreadLocal<DocState> ThreadDocs = new ThreadLocal<DocState>();
+        private readonly ThreadLocal<DocState> threadDocs = new ThreadLocal<DocState>();
 
         /// <summary>
         /// Note: Document instance is re-used per-thread </summary>
@@ -274,7 +274,7 @@ namespace Lucene.Net.Util
             string line;
             lock (this)
             {
-                line = Reader.ReadLine();
+                line = reader.ReadLine();
                 if (line == null)
                 {
                     // Always rewind at end:
@@ -284,15 +284,15 @@ namespace Lucene.Net.Util
                     }
                     Dispose();
                     Open(null);
-                    line = Reader.ReadLine();
+                    line = reader.ReadLine();
                 }
             }
 
-            DocState docState = ThreadDocs.Value;
+            DocState docState = threadDocs.Value;
             if (docState == null)
             {
-                docState = new DocState(UseDocValues);
-                ThreadDocs.Value = docState;
+                docState = new DocState(useDocValues);
+                threadDocs.Value = docState;
             }
 
             int spot = line.IndexOf(SEP);
@@ -315,7 +315,7 @@ namespace Lucene.Net.Util
             }
             docState.TitleTokenized.SetStringValue(title);
             docState.Date.SetStringValue(line.Substring(1 + spot, spot2 - (1 + spot)));
-            docState.Id.SetStringValue(Convert.ToString(Id.GetAndIncrement(), CultureInfo.InvariantCulture));
+            docState.Id.SetStringValue(Convert.ToString(id.GetAndIncrement(), CultureInfo.InvariantCulture));
             return docState.Doc;
         }
     }

@@ -20,23 +20,23 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// A crazy <seealso cref="BulkScorer"/> that wraps another <seealso cref="BulkScorer"/>
-    ///  but shuffles the order of the collected documents.
+    /// A crazy <see cref="BulkScorer"/> that wraps another <see cref="BulkScorer"/>
+    /// but shuffles the order of the collected documents.
     /// </summary>
     public class AssertingBulkOutOfOrderScorer : BulkScorer
     {
         internal readonly BulkScorer @in;
-        internal readonly Random Random;
+        internal readonly Random random;
 
         public AssertingBulkOutOfOrderScorer(Random random, BulkScorer @in)
         {
             this.@in = @in;
-            this.Random = random;
+            this.random = random;
         }
 
         public override bool Score(ICollector collector, int max)
         {
-            RandomOrderCollector randomCollector = new RandomOrderCollector(Random, collector);
+            RandomOrderCollector randomCollector = new RandomOrderCollector(random, collector);
             bool remaining = @in.Score(randomCollector, max);
             randomCollector.Flush();
             return remaining;
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
 
         public override void Score(ICollector collector)
         {
-            RandomOrderCollector randomCollector = new RandomOrderCollector(Random, collector);
+            RandomOrderCollector randomCollector = new RandomOrderCollector(random, collector);
             @in.Score(randomCollector);
             randomCollector.Flush();
         }

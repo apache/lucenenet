@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Ar
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new ArabicAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new ArabicAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
     }
 }

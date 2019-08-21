@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestRandomStrings()
         {
-            CheckRandomData(Random(), analyzer, AtLeast(1000));
+            CheckRandomData(Random, analyzer, AtLeast(1000));
         }
 
         [Test]

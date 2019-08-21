@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             for (int i = 0; i < DocFields.Length; i++)
             {
                 Document doc = new Document();
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewTextField(ALTFIELD, DocFields[i], Field.Store.NO));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
             Searcher = NewSearcher(Reader);
         }
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
         /// check the expDocNrs first, then check the query (and the explanations) </summary>
         public virtual void Qtest(Query q, int[] expDocNrs)
         {
-            CheckHits.CheckHitCollector(Random(), q, FIELD, Searcher, expDocNrs, Similarity);
+            CheckHits.CheckHitCollector(Random, q, FIELD, Searcher, expDocNrs, Similarity);
         }
 
         /// <summary>
@@ -265,7 +265,7 @@ namespace Lucene.Net.Search
         /// Placeholder: JUnit freaks if you don't have one test ... making
         /// class abstract doesn't help
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestNoop()
         {
             /* NOOP */

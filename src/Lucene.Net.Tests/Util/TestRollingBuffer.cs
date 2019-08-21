@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
                 int maxPos = AtLeast(10000);
                 FixedBitSet posSet = new FixedBitSet(maxPos + 1000);
                 int posUpto = 0;
-                Random random = Random();
+                Random random = Random;
                 while (freeBeforePos < maxPos)
                 {
                     if (random.Next(4) == 1)

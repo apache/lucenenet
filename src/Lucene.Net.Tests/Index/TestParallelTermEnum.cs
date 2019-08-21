@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
             base.SetUp();
             Document doc;
             Rd1 = NewDirectory();
-            IndexWriter iw1 = new IndexWriter(Rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter iw1 = new IndexWriter(Rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             doc = new Document();
             doc.Add(NewTextField("field1", "the quick brown fox jumps", Field.Store.YES));
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 
             iw1.Dispose();
             Rd2 = NewDirectory();
-            IndexWriter iw2 = new IndexWriter(Rd2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter iw2 = new IndexWriter(Rd2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             doc = new Document();
             doc.Add(NewTextField("field1", "the fox jumps over the lazy dog", Field.Store.YES));
@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
                 BytesRef b = te.Next();
                 Assert.IsNotNull(b);
                 Assert.AreEqual(t, b.Utf8ToString());
-                DocsEnum td = TestUtil.Docs(Random(), te, liveDocs, null, DocsFlags.NONE);
+                DocsEnum td = TestUtil.Docs(Random, te, liveDocs, null, DocsFlags.NONE);
                 Assert.IsTrue(td.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 Assert.AreEqual(0, td.DocID);
                 Assert.AreEqual(td.NextDoc(), DocIdSetIterator.NO_MORE_DOCS);

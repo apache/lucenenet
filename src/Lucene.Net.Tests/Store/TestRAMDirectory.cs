@@ -61,13 +61,13 @@ namespace Lucene.Net.Store
             IndexDir = new DirectoryInfo(Path.Combine(tempDir, "RAMDirIndex"));
 
             Directory dir = NewFSDirectory(IndexDir);
-            IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.CREATE));
+            IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.CREATE));
             // add some documents
             Document doc = null;
             for (int i = 0; i < DocsToAdd; i++)
             {
                 doc = new Document();
-                doc.Add(NewStringField("content", English.IntToEnglish(i).Trim(), Field.Store.YES));
+                doc.Add(NewStringField("content", English.Int32ToEnglish(i).Trim(), Field.Store.YES));
                 writer.AddDocument(doc);
             }
             Assert.AreEqual(DocsToAdd, writer.MaxDoc);
@@ -79,13 +79,13 @@ namespace Lucene.Net.Store
         public virtual void TestRAMDirectoryMem()
         {
             Directory dir = NewFSDirectory(IndexDir);
-            MockDirectoryWrapper ramDir = new MockDirectoryWrapper(Random(), new RAMDirectory(dir, NewIOContext(Random())));
+            MockDirectoryWrapper ramDir = new MockDirectoryWrapper(Random, new RAMDirectory(dir, NewIOContext(Random)));
 
             // close the underlaying directory
             dir.Dispose();
 
             // Check size
-            Assert.AreEqual(ramDir.GetSizeInBytes(), ramDir.RecomputedSizeInBytes);
+            Assert.AreEqual(ramDir.GetSizeInBytes(), ramDir.GetRecomputedSizeInBytes());
 
             // open reader to test document count
             IndexReader reader = DirectoryReader.Open(ramDir);
@@ -112,13 +112,13 @@ namespace Lucene.Net.Store
         public virtual void TestRAMDirectorySize()
         {
             Directory dir = NewFSDirectory(IndexDir);
-            MockDirectoryWrapper ramDir = new MockDirectoryWrapper(Random(), new RAMDirectory(dir, NewIOContext(Random())));
+            MockDirectoryWrapper ramDir = new MockDirectoryWrapper(Random, new RAMDirectory(dir, NewIOContext(Random)));
             dir.Dispose();
 
-            IndexWriter writer = new IndexWriter(ramDir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
+            IndexWriter writer = new IndexWriter(ramDir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
 
-            Assert.AreEqual(ramDir.GetSizeInBytes(), ramDir.RecomputedSizeInBytes);
+            Assert.AreEqual(ramDir.GetSizeInBytes(), ramDir.GetRecomputedSizeInBytes());
 
             ThreadClass[] threads = new ThreadClass[NumThreads];
             for (int i = 0; i < NumThreads; i++)
@@ -136,7 +136,7 @@ namespace Lucene.Net.Store
             }
 
             writer.ForceMerge(1);
-            Assert.AreEqual(ramDir.GetSizeInBytes(), ramDir.RecomputedSizeInBytes);
+            Assert.AreEqual(ramDir.GetSizeInBytes(), ramDir.GetRecomputedSizeInBytes());
 
             writer.Dispose();
         }
@@ -160,7 +160,7 @@ namespace Lucene.Net.Store
                 for (int j = 1; j < OuterInstance.DocsPerThread; j++)
                 {
                     Document doc = new Document();
-                    doc.Add(OuterInstance.NewStringField("sizeContent", English.IntToEnglish(Num * OuterInstance.DocsPerThread + j).Trim(), Field.Store.YES));
+                    doc.Add(NewStringField("sizeContent", English.Int32ToEnglish(Num * OuterInstance.DocsPerThread + j).Trim(), Field.Store.YES));
                     try
                     {
                         Writer.AddDocument(doc);
@@ -189,11 +189,11 @@ namespace Lucene.Net.Store
         public virtual void TestIllegalEOF()
         {
             RAMDirectory dir = new RAMDirectory();
-            IndexOutput o = dir.CreateOutput("out", NewIOContext(Random()));
+            IndexOutput o = dir.CreateOutput("out", NewIOContext(Random));
             var b = new byte[1024];
             o.WriteBytes(b, 0, 1024);
             o.Dispose();
-            IndexInput i = dir.OpenInput("out", NewIOContext(Random()));
+            IndexInput i = dir.OpenInput("out", NewIOContext(Random));
             i.Seek(1024);
             i.Dispose();
             dir.Dispose();
@@ -215,12 +215,12 @@ namespace Lucene.Net.Store
         {
             RAMDirectory dir = new RAMDirectory();
 
-            IndexOutput o = dir.CreateOutput("out", NewIOContext(Random()));
+            IndexOutput o = dir.CreateOutput("out", NewIOContext(Random));
             var bytes = new byte[3 * RAMInputStream.BUFFER_SIZE];
             o.WriteBytes(bytes, 0, bytes.Length);
             o.Dispose();
 
-            IndexInput i = dir.OpenInput("out", NewIOContext(Random()));
+            IndexInput i = dir.OpenInput("out", NewIOContext(Random));
             i.Seek(2 * RAMInputStream.BUFFER_SIZE - 1);
             i.Seek(3 * RAMInputStream.BUFFER_SIZE);
             i.Seek(RAMInputStream.BUFFER_SIZE);

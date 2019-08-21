@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.Compressing
             return compressed;
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestShortLiteralsAndMatchs()
         {
             // literals and matchs lengths <= 15
@@ -96,11 +96,11 @@ namespace Lucene.Net.Codecs.Compressing
             Test(decompressed);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestLongMatchs()
         {
             // match length >= 20
-            var decompressed = new byte[RandomInts.NextIntBetween(Random(), 300, 1024)];
+            var decompressed = new byte[RandomInts.RandomInt32Between(Random, 300, 1024)];
             for (int i = 0; i < decompressed.Length; ++i)
             {
                 decompressed[i] = (byte)i;
@@ -108,19 +108,19 @@ namespace Lucene.Net.Codecs.Compressing
             Test(decompressed);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestLongLiterals()
         {
             // long literals (length >= 16) which are not the last literals
-            var decompressed = RandomArray(RandomInts.NextIntBetween(Random(), 400, 1024), 256);
-            int matchRef = Random().Next(30);
-            int matchOff = RandomInts.NextIntBetween(Random(), decompressed.Length - 40, decompressed.Length - 20);
-            int matchLength = RandomInts.NextIntBetween(Random(), 4, 10);
+            var decompressed = RandomArray(RandomInts.RandomInt32Between(Random, 400, 1024), 256);
+            int matchRef = Random.Next(30);
+            int matchOff = RandomInts.RandomInt32Between(Random, decompressed.Length - 40, decompressed.Length - 20);
+            int matchLength = RandomInts.RandomInt32Between(Random, 4, 10);
             Array.Copy(decompressed, matchRef, decompressed, matchOff, matchLength);
             Test(decompressed);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestMatchRightBeforeLastLiterals()
         {
             Test(new byte[] { 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 5 });

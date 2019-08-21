@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(i, reader.ReadInt32());
                 }
                 Assert.IsTrue(reader.IsEndOfSlice);
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     pool.Reset(true, false);
                     Assert.AreEqual(0, bytesUsed.Get());
@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
                 int num = AtLeast(4);
                 for (int i = 0; i < num; i++)
                 {
-                    holders.Add(new StartEndAndValues(Random().Next(1000)));
+                    holders.Add(new StartEndAndValues(Random.Next(1000)));
                 }
                 Int32BlockPool.SliceWriter writer = new Int32BlockPool.SliceWriter(pool);
                 Int32BlockPool.SliceReader reader = new Int32BlockPool.SliceReader(pool);
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
                 int numValuesToWrite = AtLeast(10000);
                 for (int i = 0; i < numValuesToWrite; i++)
                 {
-                    StartEndAndValues values = holders[Random().Next(holders.Count)];
+                    StartEndAndValues values = holders[Random.Next(holders.Count)];
                     if (values.ValueCount == 0)
                     {
                         values.Start = writer.StartNewSlice();
@@ -101,21 +101,21 @@ namespace Lucene.Net.Index
                     }
                     writer.WriteInt32(values.NextValue());
                     values.End = writer.CurrentOffset;
-                    if (Random().Next(5) == 0)
+                    if (Random.Next(5) == 0)
                     {
                         // pick one and reader the ints
-                        AssertReader(reader, holders[Random().Next(holders.Count)]);
+                        AssertReader(reader, holders[Random.Next(holders.Count)]);
                     }
                 }
 
                 while (holders.Count > 0)
                 {
-                    int randIndex = Random().Next(holders.Count);
+                    int randIndex = Random.Next(holders.Count);
                     StartEndAndValues values = holders[randIndex];
                     holders.RemoveAt(randIndex);
                     AssertReader(reader, values);
                 }
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     pool.Reset(true, false);
                     Assert.AreEqual(0, bytesUsed.Get());

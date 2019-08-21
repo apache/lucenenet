@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             int numTerms = AtLeast(50);
             for (int i = 0; i < numTerms; i++)
             {
-                string randomRealisticUnicodeString = TestUtil.RandomRealisticUnicodeString(Random());
+                string randomRealisticUnicodeString = TestUtil.RandomRealisticUnicodeString(Random);
                 char[] charArray = randomRealisticUnicodeString.ToCharArray();
                 StringBuilder sb = new StringBuilder();
                 for (int j = 0; j < charArray.Length;)
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
                 if (sb.Length > 0)
                 {
-                    string value = TestUtil.RandomSimpleString(Random());
+                    string value = TestUtil.RandomSimpleString(Random);
                     map[sb.ToString()] = value.Length == 0 ? "a" : value;
 
                 }
@@ -95,14 +95,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 map["booked"] = "books";
             }
-            StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(Random().nextBoolean());
+            StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(Random.nextBoolean());
             IDictionary<string, string> entrySet = map;
             StringBuilder input = new StringBuilder();
             IList<string> output = new List<string>();
             foreach (KeyValuePair<string, string> entry in entrySet)
             {
                 builder.Add(entry.Key, entry.Value);
-                if (Random().nextBoolean() || output.Count == 0)
+                if (Random.nextBoolean() || output.Count == 0)
                 {
                     input.Append(entry.Key).Append(" ");
                     output.Add(entry.Value);
@@ -120,10 +120,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
             int numTerms = AtLeast(50);
             for (int i = 0; i < numTerms; i++)
             {
-                string randomRealisticUnicodeString = TestUtil.RandomRealisticUnicodeString(Random());
+                string randomRealisticUnicodeString = TestUtil.RandomRealisticUnicodeString(Random);
                 if (randomRealisticUnicodeString.Length > 0)
                 {
-                    string value = TestUtil.RandomSimpleString(Random());
+                    string value = TestUtil.RandomSimpleString(Random);
                     map[randomRealisticUnicodeString] = value.Length == 0 ? "a" : value;
                 }
             }
@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 map["booked"] = "books";
             }
-            StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(Random().nextBoolean());
+            StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(Random.nextBoolean());
             IDictionary<string, string> entrySet = map;
             foreach (KeyValuePair<string, string> entry in entrySet)
             {
@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             StemmerOverrideFilter.StemmerOverrideMap build = builder.Build();
             foreach (KeyValuePair<string, string> entry in entrySet)
             {
-                if (Random().nextBoolean())
+                if (Random.nextBoolean())
                 {
                     Tokenizer tokenizer = new KeywordTokenizer(new StringReader(entry.Key));
                     TokenStream stream = new PorterStemFilter(new StemmerOverrideFilter(tokenizer, build));

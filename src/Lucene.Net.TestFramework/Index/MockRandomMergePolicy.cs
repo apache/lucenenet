@@ -1,7 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Index
 {
@@ -25,17 +25,17 @@ namespace Lucene.Net.Index
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// MergePolicy that makes random decisions for testing.
+    /// <see cref="MergePolicy"/> that makes random decisions for testing.
     /// </summary>
     public class MockRandomMergePolicy : MergePolicy
     {
-        private readonly Random Random;
+        private readonly Random random;
 
         public MockRandomMergePolicy(Random random)
         {
             // fork a private random, since we are called
             // unpredictably from threads:
-            this.Random = new Random(random.Next());
+            this.random = new Random(random.Next());
         }
 
         public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
@@ -58,13 +58,13 @@ namespace Lucene.Net.Index
 
             numSegments = segments.Count;
 
-            if (numSegments > 1 && (numSegments > 30 || Random.Next(5) == 3))
+            if (numSegments > 1 && (numSegments > 30 || random.Next(5) == 3))
             {
-                Collections.Shuffle(segments);
+                Collections.Shuffle(segments, random);
 
                 // TODO: sometimes make more than 1 merge?
                 mergeSpec = new MergeSpecification();
-                int segsToMerge = TestUtil.NextInt(Random, 1, numSegments);
+                int segsToMerge = TestUtil.NextInt32(random, 1, numSegments);
                 mergeSpec.Add(new OneMerge(segments.SubList(0, segsToMerge)));
             }
 
@@ -89,12 +89,12 @@ namespace Lucene.Net.Index
                 mergeSpec = new MergeSpecification();
                 // Already shuffled having come out of a set but
                 // shuffle again for good measure:
-                Collections.Shuffle(eligibleSegments);
+                Collections.Shuffle(eligibleSegments, random);
                 int upto = 0;
                 while (upto < eligibleSegments.Count)
                 {
                     int max = Math.Min(10, eligibleSegments.Count - upto);
-                    int inc = max <= 2 ? max : TestUtil.NextInt(Random, 2, max);
+                    int inc = max <= 2 ? max : TestUtil.NextInt32(random, 2, max);
                     mergeSpec.Add(new OneMerge(eligibleSegments.SubList(upto, upto + inc)));
                     upto += inc;
                 }
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
         public override bool UseCompoundFile(SegmentInfos infos, SegmentCommitInfo mergedInfo)
         {
             // 80% of the time we create CFS:
-            return Random.Next(5) != 1;
+            return random.Next(5) != 1;
         }
     }
 }

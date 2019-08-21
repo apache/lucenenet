@@ -45,12 +45,12 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             doc.Add(NewStringField("content", "aaa", Field.Store.NO));
             int incrMin = TEST_NIGHTLY ? 15 : 40;
-            for (int numDocs = 10; numDocs < 500; numDocs += TestUtil.NextInt(Random(), incrMin, 5 * incrMin))
+            for (int numDocs = 10; numDocs < 500; numDocs += TestUtil.NextInt32(Random, incrMin, 5 * incrMin))
             {
                 LogDocMergePolicy ldmp = new LogDocMergePolicy();
                 ldmp.MinMergeDocs = 1;
                 ldmp.MergeFactor = 5;
-                IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(ldmp));
+                IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(ldmp));
                 for (int j = 0; j < numDocs; j++)
                 {
                     writer.AddDocument(doc);
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 
                 ldmp = new LogDocMergePolicy();
                 ldmp.MergeFactor = 5;
-                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(ldmp));
+                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(ldmp));
                 writer.ForceMerge(3);
                 writer.Dispose();
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
             LogDocMergePolicy ldmp = new LogDocMergePolicy();
             ldmp.MinMergeDocs = 1;
             ldmp.MergeFactor = 4;
-            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMaxBufferedDocs(2)
                             .SetMergePolicy(ldmp)
                             .SetMergeScheduler(newScheduler());
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
         public virtual void TestForceMergeTempSpaceUsage()
         {
             MockDirectoryWrapper dir = NewMockDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy()));
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: config1=" + writer.Config);
@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
             // Import to use same term index interval else a
             // smaller one here could increase the disk usage and
             // cause a false failure:
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetTermIndexInterval(termIndexInterval).SetMergePolicy(NewLogMergePolicy()));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetTermIndexInterval(termIndexInterval).SetMergePolicy(NewLogMergePolicy()));
             writer.ForceMerge(1);
             writer.Dispose();
             long maxDiskUsage = dir.MaxUsedSizeInBytes;
@@ -200,7 +200,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             for (int pass = 0; pass < 2; pass++)
             {
-                IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(51)));
+                IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(51)));
                 Document doc = new Document();
                 doc.Add(NewStringField("field", "aaa", Field.Store.NO));
                 for (int i = 0; i < 100; i++)

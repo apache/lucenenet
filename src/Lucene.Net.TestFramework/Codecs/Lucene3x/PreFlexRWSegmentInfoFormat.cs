@@ -23,13 +23,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 #pragma warning disable 612, 618
     internal class PreFlexRWSegmentInfoFormat : Lucene3xSegmentInfoFormat
     {
-        private readonly SegmentInfoWriter Writer = new PreFlexRWSegmentInfoWriter();
+        private readonly SegmentInfoWriter writer = new PreFlexRWSegmentInfoWriter();
 
         public override SegmentInfoWriter SegmentInfoWriter
         {
             get
             {
-                return Writer;
+                return writer;
             }
         }
     }

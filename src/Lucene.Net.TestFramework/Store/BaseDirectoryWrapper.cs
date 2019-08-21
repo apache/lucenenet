@@ -21,16 +21,16 @@ namespace Lucene.Net.Store
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// Calls check index on close.
+    /// Calls check index on dispose.
     /// </summary>
     // do NOT make any methods in this class synchronized, volatile
     // do NOT import anything from the concurrency package.
     // no randoms, no nothing.
     public class BaseDirectoryWrapper : FilterDirectory
     {
-        private bool CheckIndexOnClose_Renamed = true;
-        private bool CrossCheckTermVectorsOnClose_Renamed = true;
-        protected internal volatile bool IsOpen = true;
+        private bool checkIndexOnClose = true;
+        private bool crossCheckTermVectorsOnClose = true;
+        private volatile bool isOpen = true; // LUCENENET specific - private because volatile is not CLS compliant, but made protected setter
 
         public BaseDirectoryWrapper(Directory @delegate)
             : base(@delegate)
@@ -41,48 +41,52 @@ namespace Lucene.Net.Store
         {
             if (disposing)
             {
-                IsOpen = false;
-                if (CheckIndexOnClose_Renamed && DirectoryReader.IndexExists(this))
+                isOpen = false;
+                if (checkIndexOnClose && DirectoryReader.IndexExists(this))
                 {
-                    TestUtil.CheckIndex(this, CrossCheckTermVectorsOnClose_Renamed);
+                    TestUtil.CheckIndex(this, crossCheckTermVectorsOnClose);
                 }
                 base.Dispose(disposing);
             }
         }
 
-        public virtual bool Open
+        public virtual bool IsOpen
         {
             get
             {
-                return IsOpen;
+                return isOpen;
+            }
+            protected set // LUCENENET specific - added protected setter and marked isOpen private because volatile is not CLS compliant
+            {
+                isOpen = value;
             }
         }
 
         /// <summary>
         /// Set whether or not checkindex should be run
-        /// on close
+        /// on dispose
         /// </summary>
-        public virtual bool CheckIndexOnClose
+        public virtual bool CheckIndexOnDispose  // LUCENENET specific - renamed from CheckIndexOnClose
         {
             set
             {
-                this.CheckIndexOnClose_Renamed = value;
+                this.checkIndexOnClose = value;
             }
             get
             {
-                return CheckIndexOnClose_Renamed;
+                return checkIndexOnClose;
             }
         }
 
-        public virtual bool CrossCheckTermVectorsOnClose
+        public virtual bool CrossCheckTermVectorsOnDispose  // LUCENENET specific - renamed from CrossCheckTermVectorsOnClose
         {
             set
             {
-                this.CrossCheckTermVectorsOnClose_Renamed = value;
+                this.crossCheckTermVectorsOnClose = value;
             }
             get
             {
-                return CrossCheckTermVectorsOnClose_Renamed;
+                return crossCheckTermVectorsOnClose;
             }
         }
 

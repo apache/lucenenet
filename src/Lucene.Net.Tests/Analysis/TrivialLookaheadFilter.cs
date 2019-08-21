@@ -26,21 +26,21 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class TrivialLookaheadFilter : LookaheadTokenFilter<TestPosition>
     {
-        private readonly ICharTermAttribute TermAtt;
-        new private readonly IPositionIncrementAttribute PosIncAtt;
-        new private readonly IOffsetAttribute OffsetAtt;
+        private readonly ICharTermAttribute termAtt;
+        private readonly IPositionIncrementAttribute posIncAtt;
+        private readonly IOffsetAttribute offsetAtt;
 
         private int InsertUpto;
 
         internal TrivialLookaheadFilter(TokenStream input)
             : base(input)
         {
-            TermAtt = AddAttribute<ICharTermAttribute>();
-            PosIncAtt = AddAttribute<IPositionIncrementAttribute>();
-            OffsetAtt = AddAttribute<IOffsetAttribute>();
+            termAtt = AddAttribute<ICharTermAttribute>();
+            posIncAtt = AddAttribute<IPositionIncrementAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
-        protected internal override TestPosition NewPosition()
+        protected override TestPosition NewPosition()
         {
             return new TestPosition();
         }
@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis
         {
             // At the outset, getMaxPos is -1. So we'll peek. When we reach the end of the sentence and go to the
             // first token of the next sentence, maxPos will be the prev sentence's end token, and we'll go again.
-            if (positions.MaxPos < OutputPos)
+            if (m_positions.MaxPos < m_outputPos)
             {
                 PeekSentence();
             }
@@ -63,18 +63,18 @@ namespace Lucene.Net.Analysis
             InsertUpto = -1;
         }
 
-        protected internal override void AfterPosition()
+        protected override void AfterPosition()
         {
-            if (InsertUpto < OutputPos)
+            if (InsertUpto < m_outputPos)
             {
                 InsertToken();
                 // replace term with 'improved' term.
                 ClearAttributes();
-                TermAtt.SetEmpty();
-                PosIncAtt.PositionIncrement = 0;
-                TermAtt.Append(((TestPosition)positions.Get(OutputPos)).Fact);
-                OffsetAtt.SetOffset(positions.Get(OutputPos).StartOffset, positions.Get(OutputPos + 1).EndOffset);
-                InsertUpto = OutputPos;
+                termAtt.SetEmpty();
+                posIncAtt.PositionIncrement = 0;
+                termAtt.Append(((TestPosition)m_positions.Get(m_outputPos)).Fact);
+                offsetAtt.SetOffset(m_positions.Get(m_outputPos).StartOffset, m_positions.Get(m_outputPos + 1).EndOffset);
+                InsertUpto = m_outputPos;
             }
         }
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis
             {
                 if (PeekToken())
                 {
-                    string term = new string(TermAtt.Buffer, 0, TermAtt.Length);
+                    string term = new string(termAtt.Buffer, 0, termAtt.Length);
                     facts.Add(term + "-huh?");
                     if (".".Equals(term, StringComparison.Ordinal))
                     {
@@ -103,7 +103,7 @@ namespace Lucene.Net.Analysis
             for (int x = 0; x < facts.Count; x++)
             {
                 // sentenceTokens is just relative to sentence, positions is absolute.
-                ((TestPosition)positions.Get(OutputPos + x)).Fact = facts[x];
+                ((TestPosition)m_positions.Get(m_outputPos + x)).Fact = facts[x];
             }
         }
     }

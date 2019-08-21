@@ -22,8 +22,10 @@ using System.Reflection;
 
 namespace Lucene.Net.Randomized.Attributes
 {
+    // LUCENENET NOTE: Not used (and not CLS compliant because of the constructor),
+    // so marking internal instead of public
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class SeedDecoratorAttribute : System.Attribute
+    internal class SeedDecoratorAttribute : System.Attribute
     {
         public IList<Type> Decorators { get; set; }
 

@@ -43,8 +43,8 @@ namespace Lucene.Net.Misc
             base.BeforeClass();
 
             dir = NewDirectory();
-            writer = new IndexWriter(dir, NewIndexWriterConfig(Random(),
-               TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
+            writer = new IndexWriter(dir, NewIndexWriterConfig(Random,
+               TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
                .SetMaxBufferedDocs(2));
             IndexDocs(writer);
             reader = DirectoryReader.Open(dir);
@@ -228,7 +228,7 @@ namespace Lucene.Net.Misc
         /// </summary>
         private void IndexDocs(IndexWriter writer)
         {
-            Random rnd = Random();
+            Random rnd = Random;
 
             /**
              * Generate 10 documents where term n  has a docFreq of n and a totalTermFreq of n*2 (squared). 

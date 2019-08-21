@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
             private readonly TestMultiLevelSkipList OuterInstance;
 
             public CountingRAMDirectory(TestMultiLevelSkipList outerInstance, Directory @delegate)
-                : base(Random(), @delegate)
+                : base(Random, @delegate)
             {
                 this.OuterInstance = outerInstance;
             }

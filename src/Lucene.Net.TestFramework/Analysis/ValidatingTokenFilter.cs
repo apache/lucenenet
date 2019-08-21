@@ -35,39 +35,38 @@ namespace Lucene.Net.Analysis
     // instead of checking itself:
 
     /// <summary>
-    /// A TokenFilter that checks consistency of the tokens (eg
-    ///  offsets are consistent with one another).
+    /// A <see cref="TokenFilter"/> that checks consistency of the tokens (eg
+    /// offsets are consistent with one another).
     /// </summary>
     public sealed class ValidatingTokenFilter : TokenFilter
     {
-        private void InitializeInstanceFields()
+        private void InitializeInstanceFields() // LUCENENT TODO: API - move these into constructor and make these members readonly
         {
-            PosIncAtt = getAttrIfExists<PositionIncrementAttribute>();
-            PosLenAtt = getAttrIfExists<PositionLengthAttribute>();
-            OffsetAtt = getAttrIfExists<OffsetAttribute>();
-            TermAtt = getAttrIfExists<CharTermAttribute>();
+            posIncAtt = GetAttrIfExists<PositionIncrementAttribute>();
+            posLenAtt = GetAttrIfExists<PositionLengthAttribute>();
+            offsetAtt = GetAttrIfExists<OffsetAttribute>();
+            termAtt = GetAttrIfExists<CharTermAttribute>();
         }
 
-        private int Pos;
-        private int LastStartOffset;
+        private int pos;
+        private int lastStartOffset;
 
         // Maps position to the start/end offset:
-        private readonly IDictionary<int, int> PosToStartOffset = new Dictionary<int, int>();
+        private readonly IDictionary<int, int> posToStartOffset = new Dictionary<int, int>();
 
-        private readonly IDictionary<int, int> PosToEndOffset = new Dictionary<int, int>();
+        private readonly IDictionary<int, int> posToEndOffset = new Dictionary<int, int>();
 
-        private PositionIncrementAttribute PosIncAtt;
-        private PositionLengthAttribute PosLenAtt;
-        private OffsetAttribute OffsetAtt;
-        private CharTermAttribute TermAtt;
-        private readonly bool OffsetsAreCorrect;
+        private PositionIncrementAttribute posIncAtt;
+        private PositionLengthAttribute posLenAtt;
+        private OffsetAttribute offsetAtt;
+        private CharTermAttribute termAtt;
+        private readonly bool offsetsAreCorrect;
 
-        private readonly string Name;
+        private readonly string name;
 
         // Returns null if the attr wasn't already added
-        private A getAttrIfExists<A>() where A : Lucene.Net.Util.Attribute
+        private A GetAttrIfExists<A>() where A : Lucene.Net.Util.Attribute
         {
-            var att = typeof(A);
             if (HasAttribute<A>())
             {
                 return GetAttribute<A>();
@@ -79,16 +78,16 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// The name arg is used to identify this stage when
-        ///  throwing exceptions (useful if you have more than one
-        ///  instance in your chain).
+        /// The <paramref name="name"/> is used to identify this stage when
+        /// throwing exceptions (useful if you have more than one
+        /// instance in your chain).
         /// </summary>
         public ValidatingTokenFilter(TokenStream @in, string name, bool offsetsAreCorrect)
             : base(@in)
         {
             InitializeInstanceFields();
-            this.Name = name;
-            this.OffsetsAreCorrect = offsetsAreCorrect;
+            this.name = name;
+            this.offsetsAreCorrect = offsetsAreCorrect;
         }
 
         public override bool IncrementToken()
@@ -102,10 +101,10 @@ namespace Lucene.Net.Analysis
             int endOffset = 0;
             int posLen = 0;
 
-            if (PosIncAtt != null)
+            if (posIncAtt != null)
             {
-                Pos += PosIncAtt.PositionIncrement;
-                if (Pos == -1)
+                pos += posIncAtt.PositionIncrement;
+                if (pos == -1)
                 {
                     throw new Exception("first posInc must be > 0");
                 }
@@ -113,26 +112,26 @@ namespace Lucene.Net.Analysis
 
             // System.out.println("  got token=" + termAtt + " pos=" + pos);
 
-            if (OffsetAtt != null)
+            if (offsetAtt != null)
             {
-                startOffset = OffsetAtt.StartOffset;
-                endOffset = OffsetAtt.EndOffset;
+                startOffset = offsetAtt.StartOffset;
+                endOffset = offsetAtt.EndOffset;
 
-                if (OffsetsAreCorrect && OffsetAtt.StartOffset < LastStartOffset)
+                if (offsetsAreCorrect && offsetAtt.StartOffset < lastStartOffset)
                 {
-                    throw new Exception(Name + ": offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + LastStartOffset);
+                    throw new Exception(name + ": offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + lastStartOffset);
                 }
-                LastStartOffset = OffsetAtt.StartOffset;
+                lastStartOffset = offsetAtt.StartOffset;
             }
 
-            posLen = PosLenAtt == null ? 1 : PosLenAtt.PositionLength;
+            posLen = posLenAtt == null ? 1 : posLenAtt.PositionLength;
 
-            if (OffsetAtt != null && PosIncAtt != null && OffsetsAreCorrect)
+            if (offsetAtt != null && posIncAtt != null && offsetsAreCorrect)
             {
-                if (!PosToStartOffset.ContainsKey(Pos))
+                if (!posToStartOffset.ContainsKey(pos))
                 {
                     // First time we've seen a token leaving from this position:
-                    PosToStartOffset[Pos] = startOffset;
+                    posToStartOffset[pos] = startOffset;
                     //System.out.println("  + s " + pos + " -> " + startOffset);
                 }
                 else
@@ -140,19 +139,19 @@ namespace Lucene.Net.Analysis
                     // We've seen a token leaving from this position
                     // before; verify the startOffset is the same:
                     //System.out.println("  + vs " + pos + " -> " + startOffset);
-                    int oldStartOffset = PosToStartOffset[Pos];
+                    int oldStartOffset = posToStartOffset[pos];
                     if (oldStartOffset != startOffset)
                     {
-                        throw new Exception(Name + ": inconsistent startOffset at pos=" + Pos + ": " + oldStartOffset + " vs " + startOffset + "; token=" + TermAtt);
+                        throw new Exception(name + ": inconsistent startOffset at pos=" + pos + ": " + oldStartOffset + " vs " + startOffset + "; token=" + termAtt);
                     }
                 }
 
-                int endPos = Pos + posLen;
+                int endPos = pos + posLen;
 
-                if (!PosToEndOffset.ContainsKey(endPos))
+                if (!posToEndOffset.ContainsKey(endPos))
                 {
                     // First time we've seen a token arriving to this position:
-                    PosToEndOffset[endPos] = endOffset;
+                    posToEndOffset[endPos] = endOffset;
                     //System.out.println("  + e " + endPos + " -> " + endOffset);
                 }
                 else
@@ -160,10 +159,10 @@ namespace Lucene.Net.Analysis
                     // We've seen a token arriving to this position
                     // before; verify the endOffset is the same:
                     //System.out.println("  + ve " + endPos + " -> " + endOffset);
-                    int oldEndOffset = PosToEndOffset[endPos];
+                    int oldEndOffset = posToEndOffset[endPos];
                     if (oldEndOffset != endOffset)
                     {
-                        throw new Exception(Name + ": inconsistent endOffset at pos=" + endPos + ": " + oldEndOffset + " vs " + endOffset + "; token=" + TermAtt);
+                        throw new Exception(name + ": inconsistent endOffset at pos=" + endPos + ": " + oldEndOffset + " vs " + endOffset + "; token=" + termAtt);
                     }
                 }
             }
@@ -184,10 +183,10 @@ namespace Lucene.Net.Analysis
         public override void Reset()
         {
             base.Reset();
-            Pos = -1;
-            PosToStartOffset.Clear();
-            PosToEndOffset.Clear();
-            LastStartOffset = 0;
+            pos = -1;
+            posToStartOffset.Clear();
+            posToEndOffset.Clear();
+            lastStartOffset = 0;
         }
     }
 }

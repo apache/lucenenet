@@ -1,4 +1,5 @@
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Store;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
@@ -41,17 +42,17 @@ namespace Lucene.Net.Util
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("test2BPagedBytes"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
             PagedBytes pb = new PagedBytes(15);
             IndexOutput dataOutput = dir.CreateOutput("foo", IOContext.DEFAULT);
             long netBytes = 0;
-            long seed = Random().NextLong();
+            long seed = Random.NextInt64();
             long lastFP = 0;
             Random r2 = new Random((int)seed);
             while (netBytes < 1.1 * int.MaxValue)
             {
-                int numBytes = TestUtil.NextInt(r2, 1, 32768);
+                int numBytes = TestUtil.NextInt32(r2, 1, 32768);
                 byte[] bytes = new byte[numBytes];
                 r2.NextBytes(bytes);
                 dataOutput.WriteBytes(bytes, bytes.Length);
@@ -70,7 +71,7 @@ namespace Lucene.Net.Util
             netBytes = 0;
             while (netBytes < 1.1 * int.MaxValue)
             {
-                int numBytes = TestUtil.NextInt(r2, 1, 32768);
+                int numBytes = TestUtil.NextInt32(r2, 1, 32768);
                 var bytes = new byte[numBytes];
                 r2.NextBytes(bytes);
                 BytesRef expected = new BytesRef(bytes);

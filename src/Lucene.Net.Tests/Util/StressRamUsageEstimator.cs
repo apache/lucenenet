@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestChainedEstimation()
         {
-            Random rnd = Random();
+            Random rnd = Random;
             Entry first = new Entry();
             try
             {
@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
             object[] all = new object[1000000];
             for (int i = 0; i < all.Length; i++)
             {
-                all[i] = new sbyte[Random().Next(3)];
+                all[i] = new sbyte[Random.Next(3)];
             }
             CauseGc();
             long after = GC.GetTotalMemory(false);
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util
                     all[all.Length - 1] = seg;
                     for (int i = 0; i < seg.Length; i++)
                     {
-                        seg[i] = new sbyte[Random().Next(7)];
+                        seg[i] = new sbyte[Random.Next(7)];
                     }
                 }
             }

@@ -1,28 +1,26 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using AfterEffect = Lucene.Net.Search.Similarities.AfterEffect;
     using AfterEffectB = Lucene.Net.Search.Similarities.AfterEffectB;
@@ -54,7 +52,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Similarity implementation that randomizes Similarity implementations
     /// per-field.
-    /// <p>
+    /// <para/>
     /// The choices are 'sticky', so the selected algorithm is always used
     /// for the same field.
     /// </summary>
@@ -72,7 +70,7 @@ namespace Lucene.Net.Search
             perFieldSeed = random.Next();
             coordType = random.Next(3);
             shouldQueryNorm = random.NextBoolean();
-            knownSims = new List<Similarity>(AllSims);
+            knownSims = new List<Similarity>(allSims);
             Collections.Shuffle(knownSims, random);
         }
 
@@ -140,20 +138,20 @@ namespace Lucene.Net.Search
         /// Lambdas for IB. </summary>
         internal static Lambda[] LAMBDAS = new Lambda[] { new LambdaDF(), new LambdaTTF() };
 
-        internal static IList<Similarity> AllSims;
+        internal static IList<Similarity> allSims;
 
         static RandomSimilarityProvider()
         {
-            AllSims = new List<Similarity>();
-            AllSims.Add(new DefaultSimilarity());
-            AllSims.Add(new BM25Similarity());
+            allSims = new List<Similarity>();
+            allSims.Add(new DefaultSimilarity());
+            allSims.Add(new BM25Similarity());
             foreach (BasicModel basicModel in BASIC_MODELS)
             {
                 foreach (AfterEffect afterEffect in AFTER_EFFECTS)
                 {
                     foreach (Normalization normalization in NORMALIZATIONS)
                     {
-                        AllSims.Add(new DFRSimilarity(basicModel, afterEffect, normalization));
+                        allSims.Add(new DFRSimilarity(basicModel, afterEffect, normalization));
                     }
                 }
             }
@@ -163,14 +161,14 @@ namespace Lucene.Net.Search
                 {
                     foreach (Normalization normalization in NORMALIZATIONS)
                     {
-                        AllSims.Add(new IBSimilarity(distribution, lambda, normalization));
+                        allSims.Add(new IBSimilarity(distribution, lambda, normalization));
                     }
                 }
             }
             /* TODO: enable Dirichlet
             allSims.Add(new LMDirichletSimilarity()); */
-            AllSims.Add(new LMJelinekMercerSimilarity(0.1f));
-            AllSims.Add(new LMJelinekMercerSimilarity(0.7f));
+            allSims.Add(new LMJelinekMercerSimilarity(0.1f));
+            allSims.Add(new LMJelinekMercerSimilarity(0.7f));
         }
 
         public override string ToString()

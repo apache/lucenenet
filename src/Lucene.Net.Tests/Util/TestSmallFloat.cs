@@ -141,7 +141,7 @@ namespace Lucene.Net.Util
             int num = AtLeast(100000);
             for (int i = 0; i < num; i++)
             {
-                float f = Number.Int32BitsToSingle(Random().Next());
+                float f = Number.Int32BitsToSingle(Random.Next());
                 if (float.IsNaN(f)) // skip NaN
                 {
                     continue;

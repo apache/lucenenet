@@ -5,18 +5,27 @@ using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Codecs.Lucene42;
 using Lucene.Net.Codecs.Lucene45;
-using Lucene.Net.JavaCompatibility;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Console = Lucene.Net.Support.SystemConsole;
+using Debug = Lucene.Net.Diagnostics.Debug;
+
+// LUCENENET NOTE: These are primarily here because they are referred to
+// in the XML documentation. Be sure to add a new option if a new test framework
+// is being supported.
+#if TESTFRAMEWORK_MSTEST
+
+#elif TESTFRAMEWORK_XUNIT
+
+#else // #elif TESTFRAMEWORK_NUNIT
+using AssumptionViolatedException = NUnit.Framework.InconclusiveException;
+#endif
 
 namespace Lucene.Net.Util
 {
@@ -67,6 +76,8 @@ namespace Lucene.Net.Util
     /// Setup and restore suite-level environment (fine grained junk that
     /// doesn't fit anywhere else).
     /// </summary>
+    // LUCENENET specific: This class was refactored to be called directly from LuceneTestCase, since
+    // we didn't port over the entire test suite from Java.
     internal sealed class TestRuleSetupAndRestoreClassEnv : AbstractBeforeAfterRule
     {
         /// <summary>
@@ -84,11 +95,41 @@ namespace Lucene.Net.Util
         internal Similarity similarity;
         internal Codec codec;
 
-        /// <seealso cref= SuppressCodecs </seealso>
+        /// <seealso cref="LuceneTestCase.SuppressCodecsAttribute"/>
         internal HashSet<string> avoidCodecs;
+
+        internal class ThreadNameFixingPrintStreamInfoStream : TextWriterInfoStream
+        {
+            public ThreadNameFixingPrintStreamInfoStream(TextWriter @out)
+                : base(@out)
+            {
+            }
+
+            public override void Message(string component, string message)
+            {
+                if ("TP".Equals(component, StringComparison.Ordinal))
+                {
+                    return; // ignore test points!
+                }
+                string name;
+                if (Thread.CurrentThread.Name != null && Thread.CurrentThread.Name.StartsWith("TEST-", StringComparison.Ordinal))
+                {
+                    // The name of the main thread is way too
+                    // long when looking at IW verbose output...
+                    name = "main";
+                }
+                else
+                {
+                    name = Thread.CurrentThread.Name;
+                }
+                m_stream.WriteLine(component + " " + m_messageID + " [" + DateTime.Now + "; " + name + "]: " + message);
+            }
+        }
 
         public override void Before(LuceneTestCase testInstance)
         {
+            // LUCENENET specific - SOLR setup code removed
+
             // if verbose: print some debugging stuff about which codecs are loaded.
             if (LuceneTestCase.VERBOSE)
             {
@@ -106,7 +147,7 @@ namespace Lucene.Net.Util
             }
 
             savedInfoStream = InfoStream.Default;
-            Random random = LuceneTestCase.Random(); 
+            Random random = LuceneTestCase.Random; 
             bool v = random.NextBoolean();
             if (LuceneTestCase.INFOSTREAM)
             {
@@ -253,8 +294,8 @@ namespace Lucene.Net.Util
 
             // Always pick a random one for consistency (whether tests.locale was specified or not).
             savedLocale = CultureInfo.CurrentCulture;
-            CultureInfo randomLocale = LuceneTestCase.RandomLocale(random);
-            locale = testLocale.Equals("random", StringComparison.Ordinal) ? randomLocale : LuceneTestCase.LocaleForName(testLocale);
+            CultureInfo randomLocale = LuceneTestCase.RandomCulture(random);
+            locale = testLocale.Equals("random", StringComparison.Ordinal) ? randomLocale : LuceneTestCase.CultureForName(testLocale);
 #if NETSTANDARD
             CultureInfo.CurrentCulture = locale;
 #else
@@ -268,7 +309,6 @@ namespace Lucene.Net.Util
             TimeZoneInfo randomTimeZone = LuceneTestCase.RandomTimeZone(random);
             timeZone = testTimeZone.Equals("random", StringComparison.Ordinal) ? randomTimeZone : TimeZoneInfo.FindSystemTimeZoneById(testTimeZone);
             //TimeZone.Default = TimeZone; // LUCENENET NOTE: There doesn't seem to be an equivalent to this, but I don't think we need it.
-
             similarity = random.NextBoolean() ? (Similarity)new DefaultSimilarity() : new RandomSimilarityProvider(random);
 
             // Check codec restrictions once at class level.
@@ -280,34 +320,6 @@ namespace Lucene.Net.Util
             {
                 Console.Error.WriteLine("NOTE: " + e.Message + " Suppressed codecs: " + Arrays.ToString(avoidCodecs.ToArray()));
                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
-            }
-        }
-
-        internal class ThreadNameFixingPrintStreamInfoStream : TextWriterInfoStream
-        {
-            public ThreadNameFixingPrintStreamInfoStream(TextWriter @out)
-                : base(@out)
-            {
-            }
-
-            public override void Message(string component, string message)
-            {
-                if ("TP".Equals(component, StringComparison.Ordinal))
-                {
-                    return; // ignore test points!
-                }
-                string name;
-                if (Thread.CurrentThread.Name != null && Thread.CurrentThread.Name.StartsWith("TEST-", StringComparison.Ordinal))
-                {
-                    // The name of the main thread is way too
-                    // long when looking at IW verbose output...
-                    name = "main";
-                }
-                else
-                {
-                    name = Thread.CurrentThread.Name;
-                }
-                m_stream.WriteLine(component + " " + m_messageID + " [" + DateTime.Now + "; " + name + "]: " + message);
             }
         }
 
@@ -347,11 +359,12 @@ namespace Lucene.Net.Util
         /// <exception cref="AssumptionViolatedException"> if the class does not work with a given codec. </exception>
         private void CheckCodecRestrictions(Codec codec)
         {
+            NUnit.Framework.Assume.That(true);
             LuceneTestCase.AssumeFalse("Class not allowed to use codec: " + codec.Name + ".", ShouldAvoidCodec(codec.Name));
 
             if (codec is RandomCodec && avoidCodecs.Count > 0)
             {
-                foreach (string name in ((RandomCodec)codec).formatNames)
+                foreach (string name in ((RandomCodec)codec).FormatNames)
                 {
                     LuceneTestCase.AssumeFalse("Class not allowed to use postings format: " + name + ".", ShouldAvoidCodec(name));
                 }

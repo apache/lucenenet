@@ -102,7 +102,7 @@ namespace Lucene.Net.Facet
             {
                 return null;
             }
-            return new Random((int)random.NextLong());
+            return new Random((int)random.NextInt64());
         }
 
         /// <summary>

@@ -80,13 +80,13 @@ namespace Lucene.Net.Search
                 "blueberry pizza",
             };
             directory = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
 
             for (int i = 0; i < N_DOCS; i++)
             {
                 Add(docText[i % docText.Length], iw);
             }
-            reader = iw.Reader;
+            reader = iw.GetReader();
             iw.Dispose();
             searcher = NewSearcher(reader);
 

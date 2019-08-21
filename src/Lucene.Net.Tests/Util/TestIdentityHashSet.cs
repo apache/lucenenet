@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestCheck()
         {
-            Random rnd = Random();
+            Random rnd = Random;
 
             ISet<object> jdk = Collections.NewSetFromMap<object, bool?>(new IdentityHashMap<object, bool?>());
             RamUsageEstimator.IdentityHashSet<object> us = new RamUsageEstimator.IdentityHashSet<object>();

@@ -93,12 +93,12 @@ namespace Lucene.Net.Search
         public virtual void TestNullOrSubScorer()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "a b c d", Field.Store.NO));
             w.AddDocument(doc);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             IndexSearcher s = NewSearcher(r);
             // this test relies upon coord being the default implementation,
             // otherwise scores are different!
@@ -159,19 +159,19 @@ namespace Lucene.Net.Search
         public virtual void TestDeMorgan()
         {
             Directory dir1 = NewDirectory();
-            RandomIndexWriter iw1 = new RandomIndexWriter(Random(), dir1, Similarity, TimeZone);
+            RandomIndexWriter iw1 = new RandomIndexWriter(Random, dir1, Similarity, TimeZone);
             Document doc1 = new Document();
             doc1.Add(NewTextField("field", "foo bar", Field.Store.NO));
             iw1.AddDocument(doc1);
-            IndexReader reader1 = iw1.Reader;
+            IndexReader reader1 = iw1.GetReader();
             iw1.Dispose();
 
             Directory dir2 = NewDirectory();
-            RandomIndexWriter iw2 = new RandomIndexWriter(Random(), dir2, Similarity, TimeZone);
+            RandomIndexWriter iw2 = new RandomIndexWriter(Random, dir2, Similarity, TimeZone);
             Document doc2 = new Document();
             doc2.Add(NewTextField("field", "foo baz", Field.Store.NO));
             iw2.AddDocument(doc2);
-            IndexReader reader2 = iw2.Reader;
+            IndexReader reader2 = iw2.GetReader();
             iw2.Dispose();
 
             BooleanQuery query = new BooleanQuery(); // Query: +foo -ba*
@@ -206,28 +206,28 @@ namespace Lucene.Net.Search
         public virtual void TestBS2DisjunctionNextVsAdvance()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d, Similarity, TimeZone);
             int numDocs = AtLeast(300);
             for (int docUpto = 0; docUpto < numDocs; docUpto++)
             {
                 string contents = "a";
-                if (Random().Next(20) <= 16)
+                if (Random.Next(20) <= 16)
                 {
                     contents += " b";
                 }
-                if (Random().Next(20) <= 8)
+                if (Random.Next(20) <= 8)
                 {
                     contents += " c";
                 }
-                if (Random().Next(20) <= 4)
+                if (Random.Next(20) <= 4)
                 {
                     contents += " d";
                 }
-                if (Random().Next(20) <= 2)
+                if (Random.Next(20) <= 2)
                 {
                     contents += " e";
                 }
-                if (Random().Next(20) <= 1)
+                if (Random.Next(20) <= 1)
                 {
                     contents += " f";
                 }
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search
                 w.AddDocument(doc);
             }
             w.ForceMerge(1);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             IndexSearcher s = NewSearcher(r);
             w.Dispose();
 
@@ -247,10 +247,10 @@ namespace Lucene.Net.Search
                     Console.WriteLine("iter=" + iter);
                 }
                 IList<string> terms = new List<string>(Arrays.AsList("a", "b", "c", "d", "e", "f"));
-                int numTerms = TestUtil.NextInt(Random(), 1, terms.Count);
+                int numTerms = TestUtil.NextInt32(Random, 1, terms.Count);
                 while (terms.Count > numTerms)
                 {
-                    terms.RemoveAt(Random().Next(terms.Count));
+                    terms.RemoveAt(Random.Next(terms.Count));
                 }
 
                 if (VERBOSE)
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search
                         int nextUpto;
                         int nextDoc;
                         int left = hits.Count - upto;
-                        if (left == 1 || Random().nextBoolean())
+                        if (left == 1 || Random.nextBoolean())
                         {
                             // next
                             nextUpto = 1 + upto;
@@ -307,7 +307,7 @@ namespace Lucene.Net.Search
                         else
                         {
                             // advance
-                            int inc = TestUtil.NextInt(Random(), 1, left - 1);
+                            int inc = TestUtil.NextInt32(Random, 1, left - 1);
                             nextUpto = inc + upto;
                             nextDoc = scorer.Advance(hits[nextUpto].Doc);
                         }
@@ -339,7 +339,7 @@ namespace Lucene.Net.Search
             bool failed = false;
             int hits = 0;
             Directory directory = NewDirectory();
-            Analyzer indexerAnalyzer = new MockAnalyzer(Random());
+            Analyzer indexerAnalyzer = new MockAnalyzer(Random);
 
             IndexWriterConfig config = new IndexWriterConfig(TEST_VERSION_CURRENT, indexerAnalyzer);
             IndexWriter writer = new IndexWriter(directory, config);
@@ -375,11 +375,11 @@ namespace Lucene.Net.Search
         public virtual void TestInOrderWithMinShouldMatch()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "some text here", Field.Store.NO));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = new IndexSearcherAnonymousInnerClassHelper(this, r);
             BooleanQuery bq = new BooleanQuery();

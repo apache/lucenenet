@@ -21,7 +21,7 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Takes a while to open files: gives testThreadInterruptDeadlock
+    /// Takes a while to open files: gives TestThreadInterruptDeadlock
     /// a chance to find file leaks if opening an input throws exception
     /// </summary>
     internal class SlowOpeningMockIndexInputWrapper : MockIndexInputWrapper

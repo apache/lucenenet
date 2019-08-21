@@ -1,6 +1,6 @@
 using Lucene.Net.Analysis.TokenAttributes;
-using NUnit.Framework;
 using System;
+using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis
@@ -28,51 +28,51 @@ namespace Lucene.Net.Analysis
 
     /// <summary>
     /// Randomly inserts overlapped (posInc=0) tokens with
-    ///  posLength sometimes > 1.  The chain must have
-    ///  an OffsetAttribute.
+    /// posLength sometimes > 1.  The chain must have
+    /// an <see cref="IOffsetAttribute"/>.
     /// </summary>
 
     public sealed class MockGraphTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
     {
         new private static bool DEBUG = false;
 
-        private readonly ICharTermAttribute TermAtt;
+        private readonly ICharTermAttribute termAtt;
 
-        private readonly long Seed;
-        private Random Random;
+        private readonly int seed; // LUCENENET specific: changed to int, since .NET random seed is int, not long
+        private Random random;
 
         public MockGraphTokenFilter(Random random, TokenStream input)
             : base(input)
         {
-            Seed = random.Next();
-            TermAtt = AddAttribute<ICharTermAttribute>();
+            seed = random.Next();
+            termAtt = AddAttribute<ICharTermAttribute>();
         }
 
-        protected internal override LookaheadTokenFilter.Position NewPosition()
+        protected override Position NewPosition()
         {
-            return new LookaheadTokenFilter.Position();
+            return new Position();
         }
 
-        protected internal override void AfterPosition()
+        protected override void AfterPosition()
         {
             if (DEBUG)
             {
                 Console.WriteLine("MockGraphTF.afterPos");
             }
-            if (Random.Next(7) == 5)
+            if (random.Next(7) == 5)
             {
-                int posLength = TestUtil.NextInt(Random, 1, 5);
+                int posLength = TestUtil.NextInt32(random, 1, 5);
 
                 if (DEBUG)
                 {
                     Console.WriteLine("  do insert! posLen=" + posLength);
                 }
 
-                LookaheadTokenFilter.Position posEndData = positions.Get(OutputPos + posLength);
+                Position posEndData = m_positions.Get(m_outputPos + posLength);
 
                 // Look ahead as needed until we figure out the right
                 // endOffset:
-                while (!end && posEndData.EndOffset == -1 && InputPos <= (OutputPos + posLength))
+                while (!m_end && posEndData.EndOffset == -1 && m_inputPos <= (m_outputPos + posLength))
                 {
                     if (!PeekToken())
                     {
@@ -85,13 +85,13 @@ namespace Lucene.Net.Analysis
                     // Notify super class that we are injecting a token:
                     InsertToken();
                     ClearAttributes();
-                    PosLenAtt.PositionLength = posLength;
-                    TermAtt.Append(TestUtil.RandomUnicodeString(Random));
-                    PosIncAtt.PositionIncrement = 0;
-                    OffsetAtt.SetOffset(positions.Get(OutputPos).StartOffset, posEndData.EndOffset);
+                    m_posLenAtt.PositionLength = posLength;
+                    termAtt.Append(TestUtil.RandomUnicodeString(random));
+                    m_posIncAtt.PositionIncrement = 0;
+                    m_offsetAtt.SetOffset(m_positions.Get(m_outputPos).StartOffset, posEndData.EndOffset);
                     if (DEBUG)
                     {
-                        Console.WriteLine("  inject: outputPos=" + OutputPos + " startOffset=" + OffsetAtt.StartOffset + " endOffset=" + OffsetAtt.EndOffset + " posLength=" + PosLenAtt.PositionLength);
+                        Console.WriteLine("  inject: outputPos=" + m_outputPos + " startOffset=" + m_offsetAtt.StartOffset + " endOffset=" + m_offsetAtt.EndOffset + " posLength=" + m_posLenAtt.PositionLength);
                     }
                     // TODO: set TypeAtt too?
                 }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis
             // NOTE: must be "deterministically random" because
             // baseTokenStreamTestCase pulls tokens twice on the
             // same input and asserts they are the same:
-            this.Random = new Random((int)Seed);
+            this.random = new Random(seed);
         }
 
         protected override void Dispose(bool disposing)
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis
             if (disposing)
             {
                 base.Dispose(disposing);
-                this.Random = null;
+                this.random = null;
             }
         }
 
@@ -127,11 +127,11 @@ namespace Lucene.Net.Analysis
         {
             if (DEBUG)
             {
-                Console.WriteLine("MockGraphTF.incr inputPos=" + InputPos + " outputPos=" + OutputPos);
+                Console.WriteLine("MockGraphTF.incr inputPos=" + m_inputPos + " outputPos=" + m_outputPos);
             }
-            if (Random == null)
+            if (random == null)
             {
-                throw new AssertionException("incrementToken called in wrong state!");
+                throw new AssertionError("IncrementToken() called in wrong state!");
             }
             return NextToken();
         }

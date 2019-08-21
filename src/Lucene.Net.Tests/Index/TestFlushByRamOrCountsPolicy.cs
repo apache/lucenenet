@@ -1,3 +1,4 @@
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
@@ -45,7 +46,7 @@ namespace Lucene.Net.Index
         public override void BeforeClass()
         {
             base.BeforeClass();
-            LineDocFile = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
+            LineDocFile = new LineFileDocs(Random, DefaultCodecSupportsDocValues);
         }
 
         [OneTimeTearDown]
@@ -59,15 +60,15 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestFlushByRam()
         {
-            double ramBuffer = (TEST_NIGHTLY ? 1 : 10) + AtLeast(2) + Random().NextDouble();
-            RunFlushByRam(1 + Random().Next(TEST_NIGHTLY ? 5 : 1), ramBuffer, false);
+            double ramBuffer = (TEST_NIGHTLY ? 1 : 10) + AtLeast(2) + Random.NextDouble();
+            RunFlushByRam(1 + Random.Next(TEST_NIGHTLY ? 5 : 1), ramBuffer, false);
         }
 
         [Test]
         public virtual void TestFlushByRamLargeBuffer()
         {
             // with a 256 mb ram buffer we should never stall
-            RunFlushByRam(1 + Random().Next(TEST_NIGHTLY ? 5 : 1), 256d, true);
+            RunFlushByRam(1 + Random.Next(TEST_NIGHTLY ? 5 : 1), 256d, true);
         }
 
         protected internal virtual void RunFlushByRam(int numThreads, double maxRamMB, bool ensureNotStalled)
@@ -76,8 +77,8 @@ namespace Lucene.Net.Index
             AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
             Directory dir = NewDirectory();
             MockDefaultFlushPolicy flushPolicy = new MockDefaultFlushPolicy();
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
 
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetFlushPolicy(flushPolicy);
             int numDWPT = 1 + AtLeast(2);
@@ -137,7 +138,7 @@ namespace Lucene.Net.Index
                 AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
                 Directory dir = NewDirectory();
                 MockDefaultFlushPolicy flushPolicy = new MockDefaultFlushPolicy();
-                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetFlushPolicy(flushPolicy);
+                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetFlushPolicy(flushPolicy);
 
                 int numDWPT = 1 + AtLeast(2);
                 DocumentsWriterPerThreadPool threadPool = new ThreadAffinityDocumentsWriterThreadPool(numDWPT);
@@ -181,15 +182,15 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRandom()
         {
-            int numThreads = 1 + Random().Next(8);
+            int numThreads = 1 + Random.Next(8);
             int numDocumentsToIndex = 50 + AtLeast(70);
             AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             MockDefaultFlushPolicy flushPolicy = new MockDefaultFlushPolicy();
             iwc.SetFlushPolicy(flushPolicy);
 
-            int numDWPT = 1 + Random().Next(8);
+            int numDWPT = 1 + Random.Next(8);
             DocumentsWriterPerThreadPool threadPool = new ThreadAffinityDocumentsWriterThreadPool(numDWPT);
             iwc.SetIndexerThreadPool(threadPool);
 
@@ -244,15 +245,15 @@ namespace Lucene.Net.Index
         public virtual void TestStallControl()
         {
 
-            int[] numThreads = new int[] { 4 + Random().Next(8), 1 };
-            int numDocumentsToIndex = 50 + Random().Next(50);
+            int[] numThreads = new int[] { 4 + Random.Next(8), 1 };
+            int numDocumentsToIndex = 50 + Random.Next(50);
             for (int i = 0; i < numThreads.Length; i++)
             {
                 AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
                 MockDirectoryWrapper dir = NewMockDirectory();
                 // mock a very slow harddisk sometimes here so that flushing is very slow
-                dir.Throttling = MockDirectoryWrapper.Throttling_e.SOMETIMES;
-                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+                dir.Throttling = Throttling.SOMETIMES;
+                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
                 iwc.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
                 iwc.SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH);
                 FlushPolicy flushPolicy = new FlushByRamOrCountsPolicy();

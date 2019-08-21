@@ -21,7 +21,7 @@
 
 using Lucene.Net.Util;
 
-namespace Lucene.Net.JavaCompatibility
+namespace Lucene.Net.Support
 {
     /// <summary>
     /// LUCENENET specific for mimicking the JUnit rule functionality.

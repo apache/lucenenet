@@ -32,8 +32,8 @@ namespace Lucene.Net.Search.Spell
         {
             DirectSpellChecker spellchecker = new DirectSpellChecker();
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir,
-                new MockAnalyzer(Random(), MockTokenizer.KEYWORD, true), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
+                new MockAnalyzer(Random, MockTokenizer.KEYWORD, true), Similarity, TimeZone);
 
             string[] termsToAdd = { "metanoia", "metanoian", "metanoiai", "metanoias", "metanoið‘" };
             for (int i = 0; i < termsToAdd.Length; i++)
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Spell
                 writer.AddDocument(doc);
             }
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             string misspelled = "metanoix";
             SuggestWord[] similar = spellchecker.SuggestSimilar(new Term("repentance", misspelled), 4, ir, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
             assertTrue(similar.Length == 4);
@@ -66,17 +66,17 @@ namespace Lucene.Net.Search.Spell
             DirectSpellChecker spellChecker = new DirectSpellChecker();
             spellChecker.MinQueryLength = (0);
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir,
-                new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
+                new MockAnalyzer(Random, MockTokenizer.SIMPLE, true), Similarity, TimeZone);
 
             for (int i = 0; i < 20; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("numbers", English.IntToEnglish(i), Field.Store.NO));
+                doc.Add(NewTextField("numbers", English.Int32ToEnglish(i), Field.Store.NO));
                 writer.AddDocument(doc);
             }
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
 
             SuggestWord[] similar = spellChecker.SuggestSimilar(new Term("numbers",
                 "fvie"), 2, ir, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
@@ -114,12 +114,12 @@ namespace Lucene.Net.Search.Spell
             for (int i = 1000; i < 1100; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("numbers", English.IntToEnglish(i), Field.Store.NO));
+                doc.Add(NewTextField("numbers", English.Int32ToEnglish(i), Field.Store.NO));
                 writer.AddDocument(doc);
             }
 
             ir.Dispose();
-            ir = writer.Reader;
+            ir = writer.GetReader();
 
             // look ma, no spellcheck index rebuild
             similar = spellChecker.SuggestSimilar(new Term("numbers", "tousand"), 10,
@@ -136,8 +136,8 @@ namespace Lucene.Net.Search.Spell
         public void TestOptions()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir,
-                new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
+                new MockAnalyzer(Random, MockTokenizer.SIMPLE, true), Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(NewTextField("text", "foobar", Field.Store.NO));
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search.Spell
             doc.Add(NewTextField("text", "fobar", Field.Store.NO));
             writer.AddDocument(doc);
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
 
             DirectSpellChecker spellChecker = new DirectSpellChecker();
             spellChecker.MaxQueryFrequency = (0F);
@@ -205,17 +205,17 @@ namespace Lucene.Net.Search.Spell
         {
             DirectSpellChecker spellChecker = new DirectSpellChecker();
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir,
-                new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
+                new MockAnalyzer(Random, MockTokenizer.SIMPLE, true), Similarity, TimeZone);
 
             for (int i = 0; i < 20; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("numbers", English.IntToEnglish(i), Field.Store.NO));
+                doc.Add(NewTextField("numbers", English.Int32ToEnglish(i), Field.Store.NO));
                 writer.AddDocument(doc);
             }
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
 
             SuggestWord[] similar = spellChecker.SuggestSimilar(new Term(
                 "bogusFieldBogusField", "fvie"), 2, ir,
@@ -232,17 +232,17 @@ namespace Lucene.Net.Search.Spell
         {
             DirectSpellChecker spellChecker = new DirectSpellChecker();
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir,
-                new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
+                new MockAnalyzer(Random, MockTokenizer.SIMPLE, true), Similarity, TimeZone);
 
             for (int i = 0; i < 20; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("numbers", English.IntToEnglish(i), Field.Store.NO));
+                doc.Add(NewTextField("numbers", English.Int32ToEnglish(i), Field.Store.NO));
                 writer.AddDocument(doc);
             }
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
 
             SuggestWord[] similar = spellChecker.SuggestSimilar(new Term(
                 "numbers", "fvie"), 1, ir,
@@ -260,17 +260,17 @@ namespace Lucene.Net.Search.Spell
         {
             DirectSpellChecker spellChecker = new DirectSpellChecker();
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir,
-                new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir,
+                new MockAnalyzer(Random, MockTokenizer.SIMPLE, true), Similarity, TimeZone);
 
             for (int i = 0; i < 20; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("numbers", English.IntToEnglish(i), Field.Store.NO));
+                doc.Add(NewTextField("numbers", English.Int32ToEnglish(i), Field.Store.NO));
                 writer.AddDocument(doc);
             }
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
 
             SuggestWord[] similar = spellChecker.SuggestSimilar(new Term(
                 "numbers", "seevntene"), 2, ir,

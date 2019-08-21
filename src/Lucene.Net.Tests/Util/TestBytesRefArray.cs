@@ -28,7 +28,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestAppend()
         {
-            Random random = Random();
+            Random random = Random;
             BytesRefArray list = new BytesRefArray(Util.Counter.NewCounter());
             IList<string> stringList = new List<string>();
             for (int j = 0; j < 2; j++)
@@ -75,7 +75,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestSort()
         {
-            Random random = Random();
+            Random random = Random;
             BytesRefArray list = new BytesRefArray(Util.Counter.NewCounter());
             List<string> stringList = new List<string>();
 

@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Lv
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new LatvianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new LatvianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
     }
 }

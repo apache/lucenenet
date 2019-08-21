@@ -39,11 +39,11 @@ namespace Lucene.Net.Search
         public virtual void TestBasic()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "value", Field.Store.NO));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             TermQuery termQuery = new TermQuery(new Term("field", "value"));
@@ -92,15 +92,15 @@ namespace Lucene.Net.Search
         public virtual void TestRandom()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
-            w.w.Config.SetMaxBufferedDocs(17);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d, Similarity, TimeZone);
+            w.IndexWriter.Config.SetMaxBufferedDocs(17);
             int numDocs = AtLeast(100);
             HashSet<string> aDocs = new HashSet<string>();
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
                 string v;
-                if (Random().Next(5) == 4)
+                if (Random.Next(5) == 4)
                 {
                     v = "a";
                     aDocs.Add("" + i);
@@ -118,12 +118,12 @@ namespace Lucene.Net.Search
             int numDelDocs = AtLeast(10);
             for (int i = 0; i < numDelDocs; i++)
             {
-                string delID = "" + Random().Next(numDocs);
+                string delID = "" + Random.Next(numDocs);
                 w.DeleteDocuments(new Term("id", delID));
                 aDocs.Remove(delID);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             TopDocs hits = NewSearcher(r).Search(new MatchAllDocsQuery(), new QueryWrapperFilter(new TermQuery(new Term("field", "a"))), numDocs);
             Assert.AreEqual(aDocs.Count, hits.TotalHits);
@@ -139,22 +139,22 @@ namespace Lucene.Net.Search
         public virtual void TestThousandDocuments()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             for (int i = 0; i < 1000; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewStringField("field", English.IntToEnglish(i), Field.Store.NO));
+                doc.Add(NewStringField("field", English.Int32ToEnglish(i), Field.Store.NO));
                 writer.AddDocument(doc);
             }
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);
 
             for (int i = 0; i < 1000; i++)
             {
-                TermQuery termQuery = new TermQuery(new Term("field", English.IntToEnglish(i)));
+                TermQuery termQuery = new TermQuery(new Term("field", English.Int32ToEnglish(i)));
                 QueryWrapperFilter qwf = new QueryWrapperFilter(termQuery);
                 TopDocs td = searcher.Search(new MatchAllDocsQuery(), qwf, 10);
                 Assert.AreEqual(1, td.TotalHits);

@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Similarities
             base.SetUp();
 
             Dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, Similarity, TimeZone);
 
             for (int i = 0; i < Docs.Length; i++)
             {
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search.Similarities
                 writer.AddDocument(d);
             }
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher = NewSearcher(Reader);
             writer.Dispose();
 

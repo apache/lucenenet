@@ -1,7 +1,6 @@
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Util;
 using System;
-using System.Diagnostics;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Search
 {
@@ -25,7 +24,7 @@ namespace Lucene.Net.Search
     using DocsEnum = Lucene.Net.Index.DocsEnum;
 
     /// <summary>
-    /// Wraps a Scorer with additional checks </summary>
+    /// Wraps a <see cref="Scorer"/> with additional checks. </summary>
     public class AssertingBulkScorer : BulkScorer
     {
         private static readonly VirtualMethod SCORE_COLLECTOR = new VirtualMethod(typeof(BulkScorer), "Score", typeof(ICollector));
@@ -45,12 +44,12 @@ namespace Lucene.Net.Search
             return SCORE_COLLECTOR.IsOverriddenAsOf(inScorer.GetType()) || SCORE_COLLECTOR_RANGE.IsOverriddenAsOf(inScorer.GetType());
         }
 
-        internal readonly Random Random;
+        internal readonly Random random;
         internal readonly BulkScorer @in;
 
         private AssertingBulkScorer(Random random, BulkScorer @in)
         {
-            this.Random = random;
+            this.random = random;
             this.@in = @in;
         }
 
@@ -64,7 +63,7 @@ namespace Lucene.Net.Search
 
         public override void Score(ICollector collector)
         {
-            if (Random.NextBoolean())
+            if (random.NextBoolean())
             {
                 try
                 {

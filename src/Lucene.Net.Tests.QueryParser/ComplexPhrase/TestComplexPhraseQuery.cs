@@ -173,7 +173,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
         {
             base.SetUp();
 
-            analyzer = new MockAnalyzer(Random());
+            analyzer = new MockAnalyzer(Random);
             rd = NewDirectory();
             using (IndexWriter w = new IndexWriter(rd, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)))
             {

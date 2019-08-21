@@ -99,7 +99,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             string termStr = "the*tre";
 
             Analyzer stopsAnalyzer = new MockAnalyzer
-                (Random(), MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
+                (Random, MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
             try
             {
                 string q = ParseWithAnalyzingQueryParser(termStr, stopsAnalyzer, true);
@@ -311,7 +311,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             int hits;
             using (Directory ramDir = NewDirectory())
             {
-                using (RandomIndexWriter writer = new RandomIndexWriter(Random(), ramDir, analyzer, Similarity, TimeZone))
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random, ramDir, analyzer, Similarity, TimeZone))
                 {
                     Document doc = new Document();
                     FieldType fieldType = new FieldType();

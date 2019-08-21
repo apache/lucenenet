@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
 
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -66,14 +66,14 @@ namespace Lucene.Net.Search
                 writer.AddDocument(doc);
             }
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
             Searcher = NewSearcher(Reader);
         }
 
         private char N()
         {
-            return (char)(0x30 + Random().Next(10));
+            return (char)(0x30 + Random.Next(10));
         }
 
         private string FillPattern(string wildcardPattern)

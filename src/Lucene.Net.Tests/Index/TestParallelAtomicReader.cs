@@ -41,8 +41,8 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestQueries()
         {
-            Single_Renamed = Single(Random());
-            Parallel_Renamed = Parallel(Random());
+            Single_Renamed = Single(Random);
+            Parallel_Renamed = Parallel(Random);
 
             QueryTest(new TermQuery(new Term("f1", "v1")));
             QueryTest(new TermQuery(new Term("f1", "v2")));
@@ -73,8 +73,8 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestFieldNames()
         {
-            Directory dir1 = GetDir1(Random());
-            Directory dir2 = GetDir2(Random());
+            Directory dir1 = GetDir1(Random);
+            Directory dir2 = GetDir2(Random);
             ParallelAtomicReader pr = new ParallelAtomicReader(SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1)), SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2)));
             FieldInfos fieldInfos = pr.FieldInfos;
             Assert.AreEqual(4, fieldInfos.Count);
@@ -90,8 +90,8 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRefCounts1()
         {
-            Directory dir1 = GetDir1(Random());
-            Directory dir2 = GetDir2(Random());
+            Directory dir1 = GetDir1(Random);
+            Directory dir2 = GetDir2(Random);
             AtomicReader ir1, ir2;
             // close subreaders, ParallelReader will not change refCounts, but close on its own close
             ParallelAtomicReader pr = new ParallelAtomicReader(ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1)), ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2)));
@@ -109,8 +109,8 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRefCounts2()
         {
-            Directory dir1 = GetDir1(Random());
-            Directory dir2 = GetDir2(Random());
+            Directory dir1 = GetDir1(Random);
+            Directory dir2 = GetDir2(Random);
             AtomicReader ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1));
             AtomicReader ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2));
             // don't close subreaders, so ParallelReader will increment refcounts
@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestCloseInnerReader()
         {
-            Directory dir1 = GetDir1(Random());
+            Directory dir1 = GetDir1(Random);
             AtomicReader ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1));
 
             // with overlapping
@@ -161,11 +161,11 @@ namespace Lucene.Net.Index
         public virtual void TestIncompatibleIndexes()
         {
             // two documents:
-            Directory dir1 = GetDir1(Random());
+            Directory dir1 = GetDir1(Random);
 
             // one document only:
             Directory dir2 = NewDirectory();
-            IndexWriter w2 = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w2 = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document d3 = new Document();
 
             d3.Add(NewTextField("f3", "v1", Field.Store.YES));
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                new ParallelAtomicReader(Random().NextBoolean(), new AtomicReader[] { ir1, ir2 }, new AtomicReader[] { ir1, ir2 });
+                new ParallelAtomicReader(Random.NextBoolean(), new AtomicReader[] { ir1, ir2 }, new AtomicReader[] { ir1, ir2 });
                 Assert.Fail("didn't get expected exception: indexes don't have same number of documents");
             }
 #pragma warning disable 168
@@ -210,8 +210,8 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestIgnoreStoredFields()
         {
-            Directory dir1 = GetDir1(Random());
-            Directory dir2 = GetDir2(Random());
+            Directory dir1 = GetDir1(Random);
+            Directory dir2 = GetDir2(Random);
             AtomicReader ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1));
             AtomicReader ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2));
 

@@ -1,9 +1,8 @@
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Console = Lucene.Net.Support.SystemConsole;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Index
 {
@@ -38,20 +37,19 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Silly class that randomizes the indexing experience.  EG
-    ///  it may swap in a different merge policy/scheduler; may
-    ///  commit periodically; may or may not forceMerge in the end,
-    ///  may flush by doc count instead of RAM, etc.
+    /// it may swap in a different merge policy/scheduler; may
+    /// commit periodically; may or may not forceMerge in the end,
+    /// may flush by doc count instead of RAM, etc.
     /// </summary>
-
     public class RandomIndexWriter : IDisposable
     {
-        public IndexWriter w;
+        public IndexWriter IndexWriter { get; set; } // LUCENENET: Renamed from w to IndexWriter to make it clear what this is.
         private readonly Random r;
-        internal int DocCount;
-        internal int FlushAt;
-        private double FlushAtFactor = 1.0;
-        private bool GetReaderCalled;
-        private readonly Codec Codec; // sugar
+        internal int docCount;
+        internal int flushAt;
+        private double flushAtFactor = 1.0;
+        private bool getReaderCalled;
+        private readonly Codec codec; // sugar
 
         public static IndexWriter MockIndexWriter(Directory dir, IndexWriterConfig conf, Random r)
         {
@@ -60,98 +58,111 @@ namespace Lucene.Net.Index
             return MockIndexWriter(dir, conf, new TestPointAnonymousInnerClassHelper(random));
         }
 
-        private class TestPointAnonymousInnerClassHelper : TestPoint
+        private class TestPointAnonymousInnerClassHelper : ITestPoint
         {
-            private Random Random;
+            private Random random;
 
             public TestPointAnonymousInnerClassHelper(Random random)
             {
-                this.Random = random;
+                this.random = random;
             }
 
             public virtual void Apply(string message)
             {
-                if (Random.Next(4) == 2)
+                if (random.Next(4) == 2)
                 {
                     System.Threading.Thread.Sleep(0);
                 }
             }
         }
 
-        public static IndexWriter MockIndexWriter(Directory dir, IndexWriterConfig conf, TestPoint testPoint)
+        public static IndexWriter MockIndexWriter(Directory dir, IndexWriterConfig conf, ITestPoint testPoint)
         {
             conf.SetInfoStream(new TestPointInfoStream(conf.InfoStream, testPoint));
             return new IndexWriter(dir, conf);
         }
 
         /// <summary>
-        /// create a RandomIndexWriter with a random config: Uses TEST_VERSION_CURRENT and MockAnalyzer
-        ///
-        /// LUCENENET specific
-        /// Similarity and TimeZone parameters allow a RandomIndexWriter to be
-        /// created without adding a dependency on 
-        /// <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
-        /// <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
+        /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/> and <see cref="MockAnalyzer"/>.
         /// </summary>
+        /// <param name="r"></param>
+        /// <param name="dir"></param>
+        /// <param name="similarity">Generally, should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        /// <param name="timezone">Generally, should always be <see cref="LuceneTestCase.TimeZone"/>.</param>
+        // LUCENENET specific
+        // Similarity and TimeZone parameters allow a RandomIndexWriter to be
+        // created without adding a dependency on 
+        // <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
+        // <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
         public RandomIndexWriter(Random r, Directory dir, Similarity similarity, TimeZoneInfo timezone)
             : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r), similarity, timezone))
         {
         }
 
         /// <summary>
-        /// create a RandomIndexWriter with a random config: Uses TEST_VERSION_CURRENT
-        ///
-        /// LUCENENET specific
-        /// Similarity and TimeZone parameters allow a RandomIndexWriter to be
-        /// created without adding a dependency on 
-        /// <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
-        /// <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
+        /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/>.
         /// </summary>
+        /// <param name="r"></param>
+        /// <param name="dir"></param>
+        /// <param name="a"></param>
+        /// <param name="similarity">Generally, should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        /// <param name="timezone">Generally, should always be <see cref="LuceneTestCase.TimeZone"/>.</param>
+        // LUCENENET specific
+        // Similarity and TimeZone parameters allow a RandomIndexWriter to be
+        // created without adding a dependency on 
+        // <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
+        // <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
         public RandomIndexWriter(Random r, Directory dir, Analyzer a, Similarity similarity, TimeZoneInfo timezone)
             : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a, similarity, timezone))
         {
         }
 
         /// <summary>
-        /// Creates a RandomIndexWriter with a random config
-        ///
-        /// LUCENENET specific
-        /// Similarity and TimeZone parameters allow a RandomIndexWriter to be
-        /// created without adding a dependency on 
-        /// <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
-        /// <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
+        /// Creates a <see cref="RandomIndexWriter"/> with a random config.
         /// </summary>
+        /// <param name="r"></param>
+        /// <param name="dir"></param>
+        /// <param name="v"></param>
+        /// <param name="a"></param>
+        /// <param name="similarity">Generally, should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        /// <param name="timezone">Generally, should always be <see cref="LuceneTestCase.TimeZone"/>.</param>
+
+        // LUCENENET specific
+        // Similarity and TimeZone parameters allow a RandomIndexWriter to be
+        // created without adding a dependency on 
+        // <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
+        // <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
         public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a, Similarity similarity, TimeZoneInfo timezone)
             : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a, similarity, timezone))
         {
         }
 
         /// <summary>
-        /// create a RandomIndexWriter with the provided config </summary>
+        /// Creates a <see cref="RandomIndexWriter"/> with the provided config </summary>
         public RandomIndexWriter(Random r, Directory dir, IndexWriterConfig c)
         {
             // TODO: this should be solved in a different way; Random should not be shared (!).
             this.r = new Random(r.Next());
-            w = MockIndexWriter(dir, c, r);
-            FlushAt = TestUtil.NextInt(r, 10, 1000);
-            Codec = w.Config.Codec;
+            IndexWriter = MockIndexWriter(dir, c, r);
+            flushAt = TestUtil.NextInt32(r, 10, 1000);
+            codec = IndexWriter.Config.Codec;
             if (LuceneTestCase.VERBOSE)
             {
-                Console.WriteLine("RIW dir=" + dir + " config=" + w.Config);
-                Console.WriteLine("codec default=" + Codec.Name);
+                Console.WriteLine("RIW dir=" + dir + " config=" + IndexWriter.Config);
+                Console.WriteLine("codec default=" + codec.Name);
             }
 
             // Make sure we sometimes test indices that don't get
             // any forced merges:
-            DoRandomForceMerge_Renamed = !(c.MergePolicy is NoMergePolicy) && r.NextBoolean();
+            doRandomForceMerge = !(c.MergePolicy is NoMergePolicy) && r.NextBoolean();
         }
 
         /// <summary>
         /// Adds a Document. </summary>
-        /// <seealso cref= IndexWriter#addDocument(Iterable) </seealso>
+        /// <seealso cref="IndexWriter.AddDocument(IEnumerable{IIndexableField})"/>
         public virtual void AddDocument(IEnumerable<IIndexableField> doc)
         {
-            AddDocument(doc, w.Analyzer);
+            AddDocument(doc, IndexWriter.Analyzer);
         }
 
         public virtual void AddDocument(IEnumerable<IIndexableField> doc, Analyzer a)
@@ -162,11 +173,11 @@ namespace Lucene.Net.Index
                 // (but we need to clone them), and only when
                 // getReader, commit, etc. are called, we do an
                 // addDocuments?  Would be better testing.
-                w.AddDocuments(new IterableAnonymousInnerClassHelper<IIndexableField>(this, doc), a);
+                IndexWriter.AddDocuments(new IterableAnonymousInnerClassHelper<IIndexableField>(this, doc), a);
             }
             else
             {
-                w.AddDocument(doc, a);
+                IndexWriter.AddDocument(doc, a);
             }
 
             MaybeCommit();
@@ -174,14 +185,14 @@ namespace Lucene.Net.Index
 
         private class IterableAnonymousInnerClassHelper<IndexableField> : IEnumerable<IEnumerable<IndexableField>>
         {
-            private readonly RandomIndexWriter OuterInstance;
+            private readonly RandomIndexWriter outerInstance;
 
-            private IEnumerable<IndexableField> Doc;
+            private IEnumerable<IndexableField> doc;
 
             public IterableAnonymousInnerClassHelper(RandomIndexWriter outerInstance, IEnumerable<IndexableField> doc)
             {
-                this.OuterInstance = outerInstance;
-                this.Doc = doc;
+                this.outerInstance = outerInstance;
+                this.doc = doc;
             }
 
             public IEnumerator<IEnumerable<IndexableField>> GetEnumerator()
@@ -196,11 +207,11 @@ namespace Lucene.Net.Index
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<IEnumerable<IndexableField>>
             {
-                private readonly IterableAnonymousInnerClassHelper<IndexableField> OuterInstance;
+                private readonly IterableAnonymousInnerClassHelper<IndexableField> outerInstance;
 
                 public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper<IndexableField> outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 internal bool done;
@@ -214,7 +225,7 @@ namespace Lucene.Net.Index
                     }
 
                     done = true;
-                    current = OuterInstance.Doc;
+                    current = outerInstance.doc;
                     return true;
                 }
 
@@ -241,60 +252,60 @@ namespace Lucene.Net.Index
 
         private void MaybeCommit()
         {
-            if (DocCount++ == FlushAt)
+            if (docCount++ == flushAt)
             {
                 if (LuceneTestCase.VERBOSE)
                 {
-                    Console.WriteLine("RIW.add/updateDocument: now doing a commit at docCount=" + DocCount);
+                    Console.WriteLine("RIW.add/updateDocument: now doing a commit at docCount=" + docCount);
                 }
-                w.Commit();
-                FlushAt += TestUtil.NextInt(r, (int)(FlushAtFactor * 10), (int)(FlushAtFactor * 1000));
-                if (FlushAtFactor < 2e6)
+                IndexWriter.Commit();
+                flushAt += TestUtil.NextInt32(r, (int)(flushAtFactor * 10), (int)(flushAtFactor * 1000));
+                if (flushAtFactor < 2e6)
                 {
                     // gradually but exponentially increase time b/w flushes
-                    FlushAtFactor *= 1.05;
+                    flushAtFactor *= 1.05;
                 }
             }
         }
 
         public virtual void AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs)
         {
-            w.AddDocuments(docs);
+            IndexWriter.AddDocuments(docs);
             MaybeCommit();
         }
 
         public virtual void UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
-            w.UpdateDocuments(delTerm, docs);
+            IndexWriter.UpdateDocuments(delTerm, docs);
             MaybeCommit();
         }
 
         /// <summary>
         /// Updates a document. </summary>
-        /// <seealso cref= IndexWriter#updateDocument(Term, Iterable) </seealso>
+        /// <see cref="IndexWriter.UpdateDocument(Term, IEnumerable{IIndexableField})"/>
         public virtual void UpdateDocument(Term t, IEnumerable<IIndexableField> doc)
         {
             if (r.Next(5) == 3)
             {
-                w.UpdateDocuments(t, new IterableAnonymousInnerClassHelper2(this, doc));
+                IndexWriter.UpdateDocuments(t, new IterableAnonymousInnerClassHelper2(this, doc));
             }
             else
             {
-                w.UpdateDocument(t, doc);
+                IndexWriter.UpdateDocument(t, doc);
             }
             MaybeCommit();
         }
 
         private class IterableAnonymousInnerClassHelper2 : IEnumerable<IEnumerable<IIndexableField>>
         {
-            private readonly RandomIndexWriter OuterInstance;
+            private readonly RandomIndexWriter outerInstance;
 
-            private IEnumerable<IIndexableField> Doc;
+            private IEnumerable<IIndexableField> doc;
 
             public IterableAnonymousInnerClassHelper2(RandomIndexWriter outerInstance, IEnumerable<IIndexableField> doc)
             {
-                this.OuterInstance = outerInstance;
-                this.Doc = doc;
+                this.outerInstance = outerInstance;
+                this.doc = doc;
             }
 
             public IEnumerator<IEnumerable<IIndexableField>> GetEnumerator()
@@ -309,11 +320,11 @@ namespace Lucene.Net.Index
 
             private class IteratorAnonymousInnerClassHelper2 : IEnumerator<IEnumerable<IIndexableField>>
             {
-                private readonly IterableAnonymousInnerClassHelper2 OuterInstance;
+                private readonly IterableAnonymousInnerClassHelper2 outerInstance;
 
                 public IteratorAnonymousInnerClassHelper2(IterableAnonymousInnerClassHelper2 outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 internal bool done;
@@ -327,7 +338,7 @@ namespace Lucene.Net.Index
                     }
 
                     done = true;
-                    current = OuterInstance.Doc;
+                    current = outerInstance.doc;
                     return true;
                 }
 
@@ -354,96 +365,101 @@ namespace Lucene.Net.Index
 
         public virtual void AddIndexes(params Directory[] dirs)
         {
-            w.AddIndexes(dirs);
+            IndexWriter.AddIndexes(dirs);
         }
 
         public virtual void AddIndexes(params IndexReader[] readers)
         {
-            w.AddIndexes(readers);
+            IndexWriter.AddIndexes(readers);
         }
 
         public virtual void UpdateNumericDocValue(Term term, string field, long? value)
         {
-            w.UpdateNumericDocValue(term, field, value);
+            IndexWriter.UpdateNumericDocValue(term, field, value);
         }
 
         public virtual void UpdateBinaryDocValue(Term term, string field, BytesRef value)
         {
-            w.UpdateBinaryDocValue(term, field, value);
+            IndexWriter.UpdateBinaryDocValue(term, field, value);
         }
 
         public virtual void DeleteDocuments(Term term)
         {
-            w.DeleteDocuments(term);
+            IndexWriter.DeleteDocuments(term);
         }
 
         public virtual void DeleteDocuments(Query q)
         {
-            w.DeleteDocuments(q);
+            IndexWriter.DeleteDocuments(q);
         }
 
         public virtual void Commit()
         {
-            w.Commit();
+            IndexWriter.Commit();
         }
 
         public virtual int NumDocs
         {
-            get { return w.NumDocs; }
+            get { return IndexWriter.NumDocs; }
         }
 
         public virtual int MaxDoc
         {
-            get { return w.MaxDoc; }
+            get { return IndexWriter.MaxDoc; }
         }
 
         public virtual void DeleteAll()
         {
-            w.DeleteAll();
+            IndexWriter.DeleteAll();
         }
 
-        public virtual DirectoryReader Reader
+        public virtual DirectoryReader GetReader()
         {
-            get
-            {
-                return GetReader(true);
-            }
+            return GetReader(true);
         }
 
-        private bool DoRandomForceMerge_Renamed = true;
-        private bool DoRandomForceMergeAssert_Renamed = true;
+        private bool doRandomForceMerge = true;
+        private bool doRandomForceMergeAssert = true;
 
         public virtual void ForceMergeDeletes(bool doWait)
         {
-            w.ForceMergeDeletes(doWait);
+            IndexWriter.ForceMergeDeletes(doWait);
         }
 
         public virtual void ForceMergeDeletes()
         {
-            w.ForceMergeDeletes();
+            IndexWriter.ForceMergeDeletes();
         }
 
-        public virtual bool RandomForceMerge
+        public virtual bool DoRandomForceMerge
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return doRandomForceMerge;
+            }
             set
             {
-                DoRandomForceMerge_Renamed = value;
+                doRandomForceMerge = value;
             }
         }
 
         public virtual bool DoRandomForceMergeAssert
         {
+            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            {
+                return doRandomForceMergeAssert;
+            }
             set
             {
-                DoRandomForceMergeAssert_Renamed = value;
+                doRandomForceMergeAssert = value;
             }
         }
 
-        private void DoRandomForceMerge()
+        private void _DoRandomForceMerge() // LUCENENET specific - added leading underscore to keep this from colliding with the DoRandomForceMerge property
         {
-            if (DoRandomForceMerge_Renamed)
+            if (doRandomForceMerge)
             {
-                int segCount = w.SegmentCount;
+                int segCount = IndexWriter.SegmentCount;
                 if (r.NextBoolean() || segCount == 0)
                 {
                     // full forceMerge
@@ -451,33 +467,33 @@ namespace Lucene.Net.Index
                     {
                         Console.WriteLine("RIW: doRandomForceMerge(1)");
                     }
-                    w.ForceMerge(1);
+                    IndexWriter.ForceMerge(1);
                 }
                 else
                 {
                     // partial forceMerge
-                    int limit = TestUtil.NextInt(r, 1, segCount);
+                    int limit = TestUtil.NextInt32(r, 1, segCount);
                     if (LuceneTestCase.VERBOSE)
                     {
                         Console.WriteLine("RIW: doRandomForceMerge(" + limit + ")");
                     }
-                    w.ForceMerge(limit);
-                    Debug.Assert(!DoRandomForceMergeAssert_Renamed || w.SegmentCount <= limit, "limit=" + limit + " actual=" + w.SegmentCount);
+                    IndexWriter.ForceMerge(limit);
+                    Debug.Assert(!doRandomForceMergeAssert || IndexWriter.SegmentCount <= limit, "limit=" + limit + " actual=" + IndexWriter.SegmentCount);
                 }
             }
         }
 
         public virtual DirectoryReader GetReader(bool applyDeletions)
         {
-            GetReaderCalled = true;
+            getReaderCalled = true;
             if (r.Next(20) == 2)
             {
-                DoRandomForceMerge();
+                _DoRandomForceMerge();
             }
             // If we are writing with PreFlexRW, force a full
             // IndexReader.open so terms are sorted in codepoint
             // order during searching:
-            if (!applyDeletions || !Codec.Name.Equals("Lucene3x", StringComparison.Ordinal) && r.NextBoolean())
+            if (!applyDeletions || !codec.Name.Equals("Lucene3x", StringComparison.Ordinal) && r.NextBoolean())
             {
                 if (LuceneTestCase.VERBOSE)
                 {
@@ -485,9 +501,9 @@ namespace Lucene.Net.Index
                 }
                 if (r.Next(5) == 1)
                 {
-                    w.Commit();
+                    IndexWriter.Commit();
                 }
-                return w.GetReader(applyDeletions);
+                return IndexWriter.GetReader(applyDeletions);
             }
             else
             {
@@ -495,14 +511,14 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("RIW.getReader: open new reader");
                 }
-                w.Commit();
+                IndexWriter.Commit();
                 if (r.NextBoolean())
                 {
-                    return DirectoryReader.Open(w.Directory, TestUtil.NextInt(r, 1, 10));
+                    return DirectoryReader.Open(IndexWriter.Directory, TestUtil.NextInt32(r, 1, 10));
                 }
                 else
                 {
-                    return w.GetReader(applyDeletions);
+                    return IndexWriter.GetReader(applyDeletions);
                 }
             }
         }
@@ -527,69 +543,73 @@ namespace Lucene.Net.Index
             {
                 // if someone isn't using getReader() API, we want to be sure to
                 // forceMerge since presumably they might open a reader on the dir.
-                if (GetReaderCalled == false && r.Next(8) == 2)
+                if (getReaderCalled == false && r.Next(8) == 2)
                 {
-                    DoRandomForceMerge();
+                    _DoRandomForceMerge();
                 }
-                w.Dispose();
+                IndexWriter.Dispose();
             }
         }
 
         /// <summary>
         /// Forces a forceMerge.
-        /// <p>
+        /// <para/>
         /// NOTE: this should be avoided in tests unless absolutely necessary,
         /// as it will result in less test coverage. </summary>
-        /// <seealso cref= IndexWriter#forceMerge(int) </seealso>
+        /// <seealso cref="IndexWriter.ForceMerge(int)"/>
         public virtual void ForceMerge(int maxSegmentCount)
         {
-            w.ForceMerge(maxSegmentCount);
+            IndexWriter.ForceMerge(maxSegmentCount);
         }
 
-        public sealed class TestPointInfoStream : InfoStream
+        // LUCENENET specific - de-nested TestPointInfoStream
+
+        // LUCENENET specific - de-nested ITestPoint
+    }
+
+    public sealed class TestPointInfoStream : InfoStream
+    {
+        private readonly InfoStream @delegate;
+        private readonly ITestPoint testPoint;
+
+        public TestPointInfoStream(InfoStream @delegate, ITestPoint testPoint)
         {
-            internal readonly InfoStream @delegate;
-            internal readonly TestPoint TestPoint;
-
-            public TestPointInfoStream(InfoStream @delegate, TestPoint testPoint)
-            {
-                this.@delegate = @delegate ?? new NullInfoStream();
-                this.TestPoint = testPoint;
-            }
-
-            protected override void Dispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    @delegate.Dispose();
-                }
-            }
-
-            public override void Message(string component, string message)
-            {
-                if ("TP".Equals(component, StringComparison.Ordinal))
-                {
-                    TestPoint.Apply(message);
-                }
-                if (@delegate.IsEnabled(component))
-                {
-                    @delegate.Message(component, message);
-                }
-            }
-
-            public override bool IsEnabled(string component)
-            {
-                return "TP".Equals(component, StringComparison.Ordinal) || @delegate.IsEnabled(component);
-            }
+            this.@delegate = @delegate ?? new NullInfoStream();
+            this.testPoint = testPoint;
         }
 
-        /// <summary>
-        /// Simple interface that is executed for each <tt>TP</tt> <seealso cref="InfoStream"/> component
-        /// message. See also <seealso cref="RandomIndexWriter#mockIndexWriter(Directory, IndexWriterConfig, TestPoint)"/>
-        /// </summary>
-        public interface TestPoint
+        protected override void Dispose(bool disposing)
         {
-            void Apply(string message);
+            if (disposing)
+            {
+                @delegate.Dispose();
+            }
         }
+
+        public override void Message(string component, string message)
+        {
+            if ("TP".Equals(component, StringComparison.Ordinal))
+            {
+                testPoint.Apply(message);
+            }
+            if (@delegate.IsEnabled(component))
+            {
+                @delegate.Message(component, message);
+            }
+        }
+
+        public override bool IsEnabled(string component)
+        {
+            return "TP".Equals(component, StringComparison.Ordinal) || @delegate.IsEnabled(component);
+        }
+    }
+
+    /// <summary>
+    /// Simple interface that is executed for each <c>TP</c> <see cref="InfoStream"/> component
+    /// message. See also <see cref="RandomIndexWriter.MockIndexWriter(Directory, IndexWriterConfig, ITestPoint)"/>.
+    /// </summary>
+    public interface ITestPoint
+    {
+        void Apply(string message);
     }
 }

@@ -50,7 +50,7 @@ namespace Lucene.Net.Index.Sorter
                     values.Add(int.Parse(reader.Document(i).Get(ID_FIELD), CultureInfo.InvariantCulture));
                 }
             }
-            int idx = Random().nextInt(SORT.Length);
+            int idx = Random.nextInt(SORT.Length);
             Sort sorter = SORT[idx];
             if (idx == 1)
             { // reverse doc sort
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index.Sorter
             else
             {
                 values.Sort();
-                if (Random().nextBoolean())
+                if (Random.nextBoolean())
                 {
                     sorter = new Sort(new SortField(NUMERIC_DV_FIELD, SortFieldType.INT64, true)); // descending
                     values.Reverse();
@@ -90,61 +90,5 @@ namespace Lucene.Net.Index.Sorter
             reader = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
             assertFalse("index should not have deletions", reader.HasDeletions);
         }
-
-
-        #region SorterTestBase
-        // LUCENENET NOTE: Tests in a base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        [Test]
-        public override void TestBinaryDocValuesField()
-        {
-            base.TestBinaryDocValuesField();
-        }
-
-        [Test]
-        public override void TestDocsAndPositionsEnum()
-        {
-            base.TestDocsAndPositionsEnum();
-        }
-
-        [Test]
-        public override void TestDocsEnum()
-        {
-            base.TestDocsEnum();
-        }
-
-        [Test]
-        public override void TestNormValues()
-        {
-            base.TestNormValues();
-        }
-
-        [Test]
-        public override void TestNumericDocValuesField()
-        {
-            base.TestNumericDocValuesField();
-        }
-
-        [Test]
-        public override void TestSortedDocValuesField()
-        {
-            base.TestSortedDocValuesField();
-        }
-
-        [Test]
-        public override void TestSortedSetDocValuesField()
-        {
-            base.TestSortedSetDocValuesField();
-        }
-
-        [Test]
-        public override void TestTermVectors()
-        {
-            base.TestTermVectors();
-        }
-
-        #endregion
     }
 }

@@ -59,9 +59,9 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             Directory dir = NewDirectory();
             Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(cp));
             int numdocs = AtLeast(20);
-            CreateRandomIndex(numdocs, writer, Random());
+            CreateRandomIndex(numdocs, writer, Random);
             writer.Commit();
 
             DirectoryReader open = DirectoryReader.Open(dir);
@@ -74,7 +74,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 MatchNoBits bits = new MatchNoBits(indexReader.MaxDoc);
                 while ((iterator.Next()) != null)
                 {
-                    DocsEnum docs = iterator.Docs(Random().NextBoolean() ? bits : new MatchNoBits(indexReader.MaxDoc), null, Random().NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
+                    DocsEnum docs = iterator.Docs(Random.NextBoolean() ? bits : new MatchNoBits(indexReader.MaxDoc), null, Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
                     enums[docs] = true;
                 }
 
@@ -89,9 +89,9 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             Directory dir = NewDirectory();
             Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(cp));
             int numdocs = AtLeast(20);
-            CreateRandomIndex(numdocs, writer, Random());
+            CreateRandomIndex(numdocs, writer, Random);
             writer.Commit();
 
             DirectoryReader open = DirectoryReader.Open(dir);
@@ -104,7 +104,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 DocsEnum docs = null;
                 while ((iterator.Next()) != null)
                 {
-                    docs = iterator.Docs(bits, docs, Random().NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
+                    docs = iterator.Docs(bits, docs, Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
                     enums[docs] = true;
                 }
 
@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 docs = null;
                 while ((iterator.Next()) != null)
                 {
-                    docs = iterator.Docs(new MatchNoBits(open.MaxDoc), docs, Random().NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
+                    docs = iterator.Docs(new MatchNoBits(open.MaxDoc), docs, Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
                     enums[docs] = true;
                 }
                 Assert.AreEqual(terms.Count, enums.Count);
@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 docs = null;
                 while ((iterator.Next()) != null)
                 {
-                    docs = iterator.Docs(null, docs, Random().NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
+                    docs = iterator.Docs(null, docs, Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
                     enums[docs] = true;
                 }
                 Assert.AreEqual(1, enums.Count);
@@ -138,12 +138,12 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             Directory dir = NewDirectory();
             Codec cp = TestUtil.AlwaysPostingsFormat(new Lucene40RWPostingsFormat());
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetCodec(cp));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetCodec(cp));
             int numdocs = AtLeast(20);
-            CreateRandomIndex(numdocs, writer, Random());
+            CreateRandomIndex(numdocs, writer, Random);
             writer.Commit();
 
             DirectoryReader firstReader = DirectoryReader.Open(dir);
@@ -162,7 +162,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 BytesRef term = null;
                 while ((term = iterator.Next()) != null)
                 {
-                    docs = iterator.Docs(null, RandomDocsEnum("body", term, leaves2, bits), Random().NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
+                    docs = iterator.Docs(null, RandomDocsEnum("body", term, leaves2, bits), Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
                     enums[docs] = true;
                 }
                 Assert.AreEqual(terms.Count, enums.Count);
@@ -172,7 +172,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 docs = null;
                 while ((term = iterator.Next()) != null)
                 {
-                    docs = iterator.Docs(bits, RandomDocsEnum("body", term, leaves2, bits), Random().NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
+                    docs = iterator.Docs(bits, RandomDocsEnum("body", term, leaves2, bits), Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
                     enums[docs] = true;
                 }
                 Assert.AreEqual(terms.Count, enums.Count);
@@ -182,11 +182,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public virtual DocsEnum RandomDocsEnum(string field, BytesRef term, IList<AtomicReaderContext> readers, IBits bits)
         {
-            if (Random().Next(10) == 0)
+            if (Random.Next(10) == 0)
             {
                 return null;
             }
-            AtomicReader indexReader = (AtomicReader)readers[Random().Next(readers.Count)].Reader;
+            AtomicReader indexReader = (AtomicReader)readers[Random.Next(readers.Count)].Reader;
             Terms terms = indexReader.GetTerms(field);
             if (terms == null)
             {
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.Lucene40
             TermsEnum iterator = terms.GetIterator(null);
             if (iterator.SeekExact(term))
             {
-                return iterator.Docs(bits, null, Random().NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
+                return iterator.Docs(bits, null, Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
             }
             return null;
         }

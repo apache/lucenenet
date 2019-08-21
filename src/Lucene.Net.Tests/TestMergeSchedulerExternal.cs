@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Lucene.Net.Documents;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -99,7 +100,7 @@ namespace Lucene.Net
             }
         }
 
-        private class FailOnlyOnMerge : MockDirectoryWrapper.Failure
+        private class FailOnlyOnMerge : Failure
         {
             public override void Eval(MockDirectoryWrapper dir)
             {
@@ -122,7 +123,7 @@ namespace Lucene.Net
             Field idField = NewStringField("id", "", Field.Store.YES);
             doc.Add(idField);
 
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(new MyMergeScheduler(this)).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new MyMergeScheduler(this)).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy()));
             LogMergePolicy logMP = (LogMergePolicy)writer.Config.MergePolicy;
             logMP.MergeFactor = 10;
             for (int i = 0; i < 20; i++)

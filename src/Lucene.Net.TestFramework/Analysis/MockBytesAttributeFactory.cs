@@ -22,8 +22,8 @@ namespace Lucene.Net.Analysis
     using AttributeSource = Lucene.Net.Util.AttributeSource;
 
     /// <summary>
-    /// Attribute factory that implements CharTermAttribute with
-    /// <seealso cref="MockUTF16TermAttributeImpl"/>
+    /// <see cref="AttributeSource.AttributeFactory"/> that implements <see cref="Lucene.Net.Analysis.TokenAttributes.ICharTermAttribute"/> with
+    /// <see cref="MockUTF16TermAttributeImpl"/>.
     /// </summary>
     public class MockBytesAttributeFactory : AttributeSource.AttributeFactory
     {
@@ -32,7 +32,9 @@ namespace Lucene.Net.Analysis
         public override Attribute CreateAttributeInstance<T>()
         {
             var attClass = typeof(T);
-            return attClass.GetTypeInfo().IsAssignableFrom(typeof(MockUTF16TermAttributeImpl)) ? new MockUTF16TermAttributeImpl() : @delegate.CreateAttributeInstance<T>();
+            return attClass.GetTypeInfo().IsAssignableFrom(typeof(MockUTF16TermAttributeImpl))
+                ? new MockUTF16TermAttributeImpl()
+                : @delegate.CreateAttributeInstance<T>();
         }
     }
 }

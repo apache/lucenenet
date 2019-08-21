@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.It
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new ItalianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new ItalianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
 
         /// <summary>

@@ -43,11 +43,11 @@ namespace Lucene.Net.Index
         {
             base.SetUp();
             dir = NewDirectory();
-            MockAnalyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            MockAnalyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             config.SetMergePolicy(NewLogMergePolicy());
             config.SetSimilarity(new TestSimilarity());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, config);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, config);
             Document doc = new Document();
             Field foo = NewTextField("foo", "", Field.Store.NO);
             doc.Add(foo);
@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
                 foo.SetStringValue(AddValue());
                 writer.AddDocument(doc);
             }
-            reader = writer.Reader;
+            reader = writer.GetReader();
             writer.Dispose();
         }
 
@@ -86,11 +86,11 @@ namespace Lucene.Net.Index
         {
             StringBuilder sb = new StringBuilder();
             HashSet<string> terms = new HashSet<string>();
-            int num = TestUtil.NextInt(Random(), 0, 255);
+            int num = TestUtil.NextInt32(Random, 0, 255);
             for (int i = 0; i < num; i++)
             {
                 sb.append(' ');
-                char term = (char)TestUtil.NextInt(Random(), 'a', 'z');
+                char term = (char)TestUtil.NextInt32(Random, 'a', 'z');
                 sb.append(term);
                 terms.add("" + term);
             }

@@ -48,10 +48,10 @@ namespace Lucene.Net.Tests.Queries.Function
             base.SetUp();
 
             dir = NewDirectory();
-            IndexWriterConfig iwConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwConfig.SetMergePolicy(NewLogMergePolicy());
             iwConfig.SetSimilarity(sim);
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConfig);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConfig);
 
             Document doc = new Document();
             doc.Add(new TextField("text", "this is a test test test", Field.Store.NO));
@@ -61,7 +61,7 @@ namespace Lucene.Net.Tests.Queries.Function
             doc.Add(new TextField("text", "second test", Field.Store.NO));
             iw.AddDocument(doc);
 
-            reader = iw.Reader;
+            reader = iw.GetReader();
             searcher = NewSearcher(reader);
             iw.Dispose();
         }
@@ -110,7 +110,7 @@ namespace Lucene.Net.Tests.Queries.Function
             }
             */
 
-            CheckHits.DoCheckHits(Random(), q, "", searcher, expectedDocs, Similarity);
+            CheckHits.DoCheckHits(Random, q, "", searcher, expectedDocs, Similarity);
             CheckHits.CheckHitsQuery(q, expected, docs.ScoreDocs, expectedDocs);
             CheckHits.CheckExplanations(q, "", searcher);
         }

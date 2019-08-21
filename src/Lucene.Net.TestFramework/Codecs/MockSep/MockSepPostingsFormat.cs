@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.MockSep
 
     /// <summary>
     /// A silly codec that simply writes each file separately as
-    /// single vInts.Don't use this (performance will be poor)!
+    /// single vInts. Don't use this (performance will be poor)!
     /// This is here just to test the core sep codec
     /// classes.
     /// </summary>
@@ -39,7 +39,7 @@ namespace Lucene.Net.Codecs.MockSep
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
         {
 
-            PostingsWriterBase postingsWriter = new SepPostingsWriter(state, new MockSingleIntFactory());
+            PostingsWriterBase postingsWriter = new SepPostingsWriter(state, new MockSingleInt32Factory());
 
             bool success = false;
             TermsIndexWriterBase indexWriter;
@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs.MockSep
         {
 
             PostingsReaderBase postingsReader = new SepPostingsReader(state.Directory, state.FieldInfos, state.SegmentInfo,
-                state.Context, new MockSingleIntFactory(), state.SegmentSuffix);
+                state.Context, new MockSingleInt32Factory(), state.SegmentSuffix);
 
             TermsIndexReaderBase indexReader;
             bool success = false;

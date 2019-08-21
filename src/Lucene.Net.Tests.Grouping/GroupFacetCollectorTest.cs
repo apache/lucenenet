@@ -43,12 +43,12 @@ namespace Lucene.Net.Search.Grouping
 
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-                Random(),
+                Random,
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
-                    new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
-            bool canUseDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
-            bool useDv = canUseDV && Random().nextBoolean();
+                    new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+            bool canUseDV = !"Lucene3x".Equals(w.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
+            bool useDv = canUseDV && Random.nextBoolean();
 
             // 0
             Document doc = new Document();
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Grouping
             AddField(doc, "duration", "5", useDv);
             w.AddDocument(doc);
 
-            IndexSearcher indexSearcher = NewSearcher(w.Reader);
+            IndexSearcher indexSearcher = NewSearcher(w.GetReader());
 
             IList<TermGroupFacetCollector.FacetEntry> entries = null;
             AbstractGroupFacetCollector groupedAirportFacetCollector = null;
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search.Grouping
             w.AddDocument(doc);
 
             indexSearcher.IndexReader.Dispose();
-            indexSearcher = NewSearcher(w.Reader);
+            indexSearcher = NewSearcher(w.GetReader());
             groupedAirportFacetCollector = CreateRandomCollector(useDv ? "hotel_dv" : "hotel", useDv ? "airport_dv" : "airport", null, !useDv);
             indexSearcher.Search(new MatchAllDocsQuery(), groupedAirportFacetCollector);
             airportResult = groupedAirportFacetCollector.MergeSegmentResults(3, 0, true);
@@ -221,7 +221,7 @@ namespace Lucene.Net.Search.Grouping
             w.AddDocument(doc);
 
             indexSearcher.IndexReader.Dispose();
-            indexSearcher = NewSearcher(w.Reader);
+            indexSearcher = NewSearcher(w.GetReader());
             groupedAirportFacetCollector = CreateRandomCollector(useDv ? "hotel_dv" : "hotel", useDv ? "airport_dv" : "airport", null, false);
             indexSearcher.Search(new MatchAllDocsQuery(), groupedAirportFacetCollector);
             airportResult = groupedAirportFacetCollector.MergeSegmentResults(10, 0, false);
@@ -280,10 +280,10 @@ namespace Lucene.Net.Search.Grouping
 
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-                Random(),
+                Random,
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
-                    new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
+                    new MockAnalyzer(Random)).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
             bool useDv = false;
 
             // Cannot assert this since we use NoMergePolicy:
@@ -372,8 +372,8 @@ namespace Lucene.Net.Search.Grouping
         [Test]
         public void TestRandom()
         {
-            Random random = Random();
-            int numberOfRuns = TestUtil.NextInt(random, 3, 6);
+            Random random = Random;
+            int numberOfRuns = TestUtil.NextInt32(random, 3, 6);
             for (int indexIter = 0; indexIter < numberOfRuns; indexIter++)
             {
                 bool multipleFacetsPerDocument = random.nextBoolean();
@@ -516,10 +516,10 @@ namespace Lucene.Net.Search.Grouping
 
         private IndexContext CreateIndexContext(bool multipleFacetValuesPerDocument)
         {
-            Random random = Random();
-            int numDocs = TestUtil.NextInt(random, 138, 1145) * RANDOM_MULTIPLIER;
-            int numGroups = TestUtil.NextInt(random, 1, numDocs / 4);
-            int numFacets = TestUtil.NextInt(random, 1, numDocs / 6);
+            Random random = Random;
+            int numDocs = TestUtil.NextInt32(random, 138, 1145) * RANDOM_MULTIPLIER;
+            int numGroups = TestUtil.NextInt32(random, 1, numDocs / 4);
+            int numFacets = TestUtil.NextInt32(random, 1, numDocs / 6);
 
             if (VERBOSE)
             {
@@ -536,7 +536,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 facetValues.Add(GenerateRandomNonEmptyString());
             }
-            string[] contentBrs = new string[TestUtil.NextInt(random, 2, 20)];
+            string[] contentBrs = new string[TestUtil.NextInt32(random, 2, 20)];
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: create fake content");
@@ -559,7 +559,7 @@ namespace Lucene.Net.Search.Grouping
                     new MockAnalyzer(random)
                 )
             );
-            bool canUseDV = !"Lucene3x".Equals(writer.w.Config.Codec.Name, StringComparison.Ordinal);
+            bool canUseDV = !"Lucene3x".Equals(writer.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
             bool useDv = canUseDV && !multipleFacetValuesPerDocument && random.nextBoolean();
 
             Document doc = new Document();
@@ -732,7 +732,7 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            DirectoryReader reader = writer.Reader;
+            DirectoryReader reader = writer.GetReader();
             writer.Dispose();
 
             return new IndexContext(searchTermToFacetToGroups, reader, numDocs, dir, facetWithMostGroups, numGroups, contentBrs, uniqueFacetValues, useDv);
@@ -840,7 +840,7 @@ namespace Lucene.Net.Search.Grouping
             BytesRef facetPrefixBR = facetPrefix == null ? null : new BytesRef(facetPrefix);
             // DocValues cannot be multi-valued:
             Debug.Assert(!multipleFacetsPerDocument || !groupField.EndsWith("_dv", StringComparison.Ordinal));
-            return TermGroupFacetCollector.CreateTermGroupFacetCollector(groupField, facetField, multipleFacetsPerDocument, facetPrefixBR, Random().nextInt(1024));
+            return TermGroupFacetCollector.CreateTermGroupFacetCollector(groupField, facetField, multipleFacetsPerDocument, facetPrefixBR, Random.nextInt(1024));
         }
 
         private string GetFromSet(ISet<string> set, int index)

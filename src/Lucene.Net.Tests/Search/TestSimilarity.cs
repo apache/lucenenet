@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
         public virtual void TestSimilarity_Mem()
         {
             Directory store = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), store, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetSimilarity(new SimpleSimilarity()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, store, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetSimilarity(new SimpleSimilarity()));
 
             Document d1 = new Document();
             d1.Add(NewTextField("field", "a c", Field.Store.YES));
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
 
             writer.AddDocument(d1);
             writer.AddDocument(d2);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);

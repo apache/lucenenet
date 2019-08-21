@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
                 AddAttribute<ITermToBytesRefAttribute>();
                 Bytes.Length = TOKEN_LEN;
                 this.Random = random;
-                NextSave = TestUtil.NextInt(random, 500000, 1000000);
+                NextSave = TestUtil.NextInt32(random, 500000, 1000000);
             }
 
             public override bool IncrementToken()
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
                 {
                     SavedTerms.Add(BytesRef.DeepCopyOf(Bytes));
                     Console.WriteLine("TEST: save term=" + Bytes);
-                    NextSave = TestUtil.NextInt(Random, 500000, 1000000);
+                    NextSave = TestUtil.NextInt32(Random, 500000, 1000000);
                 }
                 return true;
             }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
             Console.WriteLine("Starting Test2B");
             long TERM_COUNT = ((long)int.MaxValue) + 100000000;
 
-            int TERMS_PER_DOC = TestUtil.NextInt(Random(), 100000, 1000000);
+            int TERMS_PER_DOC = TestUtil.NextInt32(Random, 100000, 1000000);
 
             IList<BytesRef> savedTerms = null;
 
@@ -187,13 +187,13 @@ namespace Lucene.Net.Index
             //MockDirectoryWrapper dir = NewFSDirectory(new File("/p/lucene/indices/2bindex"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
-            dir.CheckIndexOnClose = false; // don't double-checkindex
+            dir.CheckIndexOnDispose = false; // don't double-checkindex
 
             if (true)
             {
-                IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                                            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
                                            .SetRAMBufferSizeMB(256.0)
                                            .SetMergeScheduler(newScheduler())
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
                 }
 
                 Documents.Document doc = new Documents.Document();
-                MyTokenStream ts = new MyTokenStream(Random(), TERMS_PER_DOC);
+                MyTokenStream ts = new MyTokenStream(Random, TERMS_PER_DOC);
 
                 FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
                 customType.IndexOptions = IndexOptions.DOCS_ONLY;
@@ -263,7 +263,7 @@ namespace Lucene.Net.Index
             Console.WriteLine("TEST: findTerms");
             TermsEnum termsEnum = MultiFields.GetTerms(r, "field").GetIterator(null);
             IList<BytesRef> savedTerms = new List<BytesRef>();
-            int nextSave = TestUtil.NextInt(Random(), 500000, 1000000);
+            int nextSave = TestUtil.NextInt32(Random, 500000, 1000000);
             BytesRef term;
             while ((term = termsEnum.Next()) != null)
             {
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
                 {
                     savedTerms.Add(BytesRef.DeepCopyOf(term));
                     Console.WriteLine("TEST: add " + term);
-                    nextSave = TestUtil.NextInt(Random(), 500000, 1000000);
+                    nextSave = TestUtil.NextInt32(Random, 500000, 1000000);
                 }
             }
             return savedTerms;
@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
             bool failed = false;
             for (int iter = 0; iter < 10 * terms.Count; iter++)
             {
-                BytesRef term = terms[Random().Next(terms.Count)];
+                BytesRef term = terms[Random.Next(terms.Count)];
                 Console.WriteLine("TEST: search " + term);
                 long t0 = Environment.TickCount;
                 int count = s.Search(new TermQuery(new Term("field", term)), 1).TotalHits;

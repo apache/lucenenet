@@ -133,13 +133,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         [Test]
         public virtual void TestFreshReadRecreatedTaxonomy()
         {
-            doTestReadRecreatedTaxonomy(Random(), true);
+            doTestReadRecreatedTaxonomy(Random, true);
         }
 
         [Test]
         public virtual void TestOpenIfChangedReadRecreatedTaxonomy()
         {
-            doTestReadRecreatedTaxonomy(Random(), false);
+            doTestReadRecreatedTaxonomy(Random, false);
         }
         
         private void doTestReadRecreatedTaxonomy(Random random, bool closeReader)
@@ -234,11 +234,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             DirectoryTaxonomyWriter writer = new DirectoryTaxonomyWriterAnonymousInnerClassHelper(this, dir);
             var reader = new DirectoryTaxonomyReader(writer);
 
-            int numRounds = Random().Next(10) + 10;
+            int numRounds = Random.Next(10) + 10;
             int numCategories = 1; // one for root
             for (int i = 0; i < numRounds; i++)
             {
-                int numCats = Random().Next(4) + 1;
+                int numCats = Random.Next(4) + 1;
                 for (int j = 0; j < numCats; j++)
                 {
                     writer.AddCategory(new FacetLabel(Convert.ToString(i), Convert.ToString(j)));
@@ -295,7 +295,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // hold onto IW to forceMerge
             // note how we don't close it, since DTW will close it.
-            IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(new LogByteSizeMergePolicy()));
+            IndexWriter iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(new LogByteSizeMergePolicy()));
 
             // LUCENENET: We need to set the index writer before the constructor of the base class is called
             // because the DirectoryTaxonomyWriter class constructor is the consumer of the OpenIndexWriter method.
@@ -351,7 +351,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // hold onto IW to forceMerge
             // note how we don't close it, since DTW will close it.
-            var iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(new LogByteSizeMergePolicy()));
+            var iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(new LogByteSizeMergePolicy()));
 
             // LUCENENET: We need to set the index writer before the constructor of the base class is called
             // because the DirectoryTaxonomyWriter class constructor is the consumer of the OpenIndexWriter method.
@@ -552,7 +552,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             var taxoWriter = new DirectoryTaxonomyWriter(dir);
             int numCategories = AtLeast(10);
             int numA = 0, numB = 0;
-            Random random = Random();
+            Random random = Random;
             // add the two categories for which we'll also add children (so asserts are simpler)
             taxoWriter.AddCategory(new FacetLabel("a"));
             taxoWriter.AddCategory(new FacetLabel("b"));

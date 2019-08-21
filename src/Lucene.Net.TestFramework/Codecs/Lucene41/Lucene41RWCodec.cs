@@ -24,7 +24,7 @@ namespace Lucene.Net.Codecs.Lucene41
      */
 
     /// <summary>
-    /// Read-write version of <seealso cref="Lucene41Codec"/> for testing.
+    /// Read-write version of <see cref="Lucene41Codec"/> for testing.
     /// </summary>
 #pragma warning disable 612, 618
     public class Lucene41RWCodec : Lucene41Codec

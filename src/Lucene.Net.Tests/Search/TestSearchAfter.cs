@@ -139,55 +139,55 @@ namespace Lucene.Net.Search
                 if (sf.Type == SortFieldType.INT32)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.INT32, sf.IsReverse);
-                    sf2.MissingValue = Random().Next();
+                    sf2.MissingValue = Random.Next();
                     AllSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.INT64)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.INT64, sf.IsReverse);
-                    sf2.MissingValue = Random().NextLong();
+                    sf2.MissingValue = Random.NextInt64();
                     AllSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.SINGLE)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.SINGLE, sf.IsReverse);
-                    sf2.MissingValue = (float)Random().NextDouble();
+                    sf2.MissingValue = (float)Random.NextDouble();
                     AllSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.DOUBLE)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.DOUBLE, sf.IsReverse);
-                    sf2.MissingValue = Random().NextDouble();
+                    sf2.MissingValue = Random.NextDouble();
                     AllSortFields.Add(sf2);
                 }
             }
 
             Dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, Dir, Similarity, TimeZone);
             int numDocs = AtLeast(200);
             for (int i = 0; i < numDocs; i++)
             {
                 IList<Field> fields = new List<Field>();
-                fields.Add(NewTextField("english", English.IntToEnglish(i), Field.Store.NO));
+                fields.Add(NewTextField("english", English.Int32ToEnglish(i), Field.Store.NO));
                 fields.Add(NewTextField("oddeven", (i % 2 == 0) ? "even" : "odd", Field.Store.NO));
-                fields.Add(NewStringField("byte", "" + ((sbyte)Random().Next()), Field.Store.NO));
-                fields.Add(NewStringField("short", "" + ((short)Random().Next()), Field.Store.NO));
-                fields.Add(new Int32Field("int", Random().Next(), Field.Store.NO));
-                fields.Add(new Int64Field("long", Random().NextLong(), Field.Store.NO));
+                fields.Add(NewStringField("byte", "" + ((sbyte)Random.Next()), Field.Store.NO));
+                fields.Add(NewStringField("short", "" + ((short)Random.Next()), Field.Store.NO));
+                fields.Add(new Int32Field("int", Random.Next(), Field.Store.NO));
+                fields.Add(new Int64Field("long", Random.NextInt64(), Field.Store.NO));
 
-                fields.Add(new SingleField("float", (float)Random().NextDouble(), Field.Store.NO));
-                fields.Add(new DoubleField("double", Random().NextDouble(), Field.Store.NO));
-                fields.Add(NewStringField("bytes", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
-                fields.Add(NewStringField("bytesval", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
-                fields.Add(new DoubleField("double", Random().NextDouble(), Field.Store.NO));
+                fields.Add(new SingleField("float", (float)Random.NextDouble(), Field.Store.NO));
+                fields.Add(new DoubleField("double", Random.NextDouble(), Field.Store.NO));
+                fields.Add(NewStringField("bytes", TestUtil.RandomRealisticUnicodeString(Random), Field.Store.NO));
+                fields.Add(NewStringField("bytesval", TestUtil.RandomRealisticUnicodeString(Random), Field.Store.NO));
+                fields.Add(new DoubleField("double", Random.NextDouble(), Field.Store.NO));
 
                 if (supportsDocValues)
                 {
-                    fields.Add(new NumericDocValuesField("intdocvalues", Random().Next()));
-                    fields.Add(new SingleDocValuesField("floatdocvalues", (float)Random().NextDouble()));
-                    fields.Add(new SortedDocValuesField("sortedbytesdocvalues", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()))));
-                    fields.Add(new SortedDocValuesField("sortedbytesdocvaluesval", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()))));
-                    fields.Add(new BinaryDocValuesField("straightbytesdocvalues", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()))));
+                    fields.Add(new NumericDocValuesField("intdocvalues", Random.Next()));
+                    fields.Add(new SingleDocValuesField("floatdocvalues", (float)Random.NextDouble()));
+                    fields.Add(new SortedDocValuesField("sortedbytesdocvalues", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random))));
+                    fields.Add(new SortedDocValuesField("sortedbytesdocvaluesval", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random))));
+                    fields.Add(new BinaryDocValuesField("straightbytesdocvalues", new BytesRef(TestUtil.RandomRealisticUnicodeString(Random))));
                 }
                 Document document = new Document();
                 document.Add(new StoredField("id", "" + i));
@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
                 foreach (Field field in fields)
                 {
                     // So we are sometimes missing that field:
-                    if (Random().Next(5) != 4)
+                    if (Random.Next(5) != 4)
                     {
                         document.Add(field);
                         if (isVerbose)
@@ -210,12 +210,12 @@ namespace Lucene.Net.Search
 
                 iw.AddDocument(document);
 
-                if (Random().Next(50) == 17)
+                if (Random.Next(50) == 17)
                 {
                     iw.Commit();
                 }
             }
-            Reader = iw.Reader;
+            Reader = iw.GetReader();
             iw.Dispose();
             Searcher = NewSearcher(Reader);
             if (isVerbose)
@@ -280,10 +280,10 @@ namespace Lucene.Net.Search
         {
             get
             {
-                SortField[] sortFields = new SortField[TestUtil.NextInt(Random(), 2, 7)];
+                SortField[] sortFields = new SortField[TestUtil.NextInt32(Random, 2, 7)];
                 for (int i = 0; i < sortFields.Length; i++)
                 {
-                    sortFields[i] = AllSortFields[Random().Next(AllSortFields.Count)];
+                    sortFields[i] = AllSortFields[Random.Next(AllSortFields.Count)];
                 }
                 return new Sort(sortFields);
             }
@@ -293,13 +293,13 @@ namespace Lucene.Net.Search
         {
             int maxDoc = Searcher.IndexReader.MaxDoc;
             TopDocs all;
-            int pageSize = TestUtil.NextInt(Random(), 1, maxDoc * 2);
+            int pageSize = TestUtil.NextInt32(Random, 1, maxDoc * 2);
             if (isVerbose)
             {
                 Console.WriteLine("\nassertQuery " + (Iter++) + ": query=" + query + " filter=" + filter + " sort=" + sort + " pageSize=" + pageSize);
             }
-            bool doMaxScore = Random().NextBoolean();
-            bool doScores = Random().NextBoolean();
+            bool doMaxScore = Random.NextBoolean();
+            bool doScores = Random.NextBoolean();
             if (sort == null)
             {
                 all = Searcher.Search(query, filter, maxDoc);

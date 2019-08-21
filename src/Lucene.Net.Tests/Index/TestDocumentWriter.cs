@@ -66,13 +66,13 @@ namespace Lucene.Net.Index
         {
             Document testDoc = new Document();
             DocHelper.SetupDoc(testDoc);
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer.AddDocument(testDoc);
             writer.Commit();
             SegmentCommitInfo info = writer.NewestSegment();
             writer.Dispose();
             //After adding the document, we should be able to read it back in
-            SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
+            SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
             Assert.IsTrue(reader != null);
             Document doc = reader.Document(0);
             Assert.IsTrue(doc != null);
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
             writer.Commit();
             SegmentCommitInfo info = writer.NewestSegment();
             writer.Dispose();
-            SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
+            SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
 
             DocsAndPositionsEnum termPositions = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), "repeated", new BytesRef("repeated"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
             writer.Commit();
             SegmentCommitInfo info = writer.NewestSegment();
             writer.Dispose();
-            SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
+            SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
 
             DocsAndPositionsEnum termPositions = MultiFields.GetTermPositionsEnum(reader, reader.LiveDocs, "f1", new BytesRef("a"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
@@ -268,7 +268,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestPreAnalyzedField()
         {
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
 
             doc.Add(new TextField("preanalyzed", new TokenStreamAnonymousInnerClassHelper(this)));
@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
             writer.Commit();
             SegmentCommitInfo info = writer.NewestSegment();
             writer.Dispose();
-            SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
+            SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
 
             DocsAndPositionsEnum termPositions = reader.GetTermPositionsEnum(new Term("preanalyzed", "term1"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
@@ -348,7 +348,7 @@ namespace Lucene.Net.Index
             doc.Add(NewField("f2", "v1", customType2));
             doc.Add(NewStringField("f2", "v2", Field.Store.YES));
 
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer.AddDocument(doc);
             writer.Dispose();
 
@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
             doc.Add(f);
             doc.Add(NewField("f2", "v2", customType2));
 
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer.AddDocument(doc);
             writer.ForceMerge(1); // be sure to have a single segment
             writer.Dispose();

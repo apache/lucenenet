@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Cz
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new CzechAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new CzechAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
     }
 }

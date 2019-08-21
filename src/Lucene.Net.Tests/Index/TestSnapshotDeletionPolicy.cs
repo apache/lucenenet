@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
         public virtual void TestSnapshotDeletionPolicy_Mem()
         {
             Directory fsDir = NewDirectory();
-            RunTest(Random(), fsDir);
+            RunTest(Random, fsDir);
             fsDir.Dispose();
         }
 
@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
 
         private void ReadFile(Directory dir, string name)
         {
-            IndexInput input = dir.OpenInput(name, NewIOContext(Random()));
+            IndexInput input = dir.OpenInput(name, NewIOContext(Random));
             try
             {
                 long size = dir.FileLength(name);
@@ -333,7 +333,7 @@ namespace Lucene.Net.Index
 
             // Create 3 snapshots: snapshot0, snapshot1, snapshot2
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
+            IndexWriter writer = new IndexWriter(dir, GetConfig(Random, DeletionPolicy));
             SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             PrepareIndexAndSnapshots(sdp, writer, numSnapshots);
             writer.Dispose();
@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
 
             // open a new IndexWriter w/ no snapshots to keep and assert that all snapshots are gone.
             sdp = DeletionPolicy;
-            writer = new IndexWriter(dir, GetConfig(Random(), sdp));
+            writer = new IndexWriter(dir, GetConfig(Random, sdp));
             writer.DeleteUnusedFiles();
             writer.Dispose();
             Assert.AreEqual(1, DirectoryReader.ListCommits(dir).Count, "no snapshots should exist");
@@ -358,7 +358,7 @@ namespace Lucene.Net.Index
         public virtual void TestMultiThreadedSnapshotting()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
+            IndexWriter writer = new IndexWriter(dir, GetConfig(Random, DeletionPolicy));
             SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
 
             ThreadClass[] threads = new ThreadClass[10];
@@ -434,12 +434,12 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
 
             SnapshotDeletionPolicy sdp = DeletionPolicy;
-            IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), sdp));
+            IndexWriter writer = new IndexWriter(dir, GetConfig(Random, sdp));
             PrepareIndexAndSnapshots(sdp, writer, numSnapshots);
             writer.Dispose();
 
             // now open the writer on "snapshot0" - make sure it succeeds
-            writer = new IndexWriter(dir, GetConfig(Random(), sdp).SetIndexCommit(Snapshots[0]));
+            writer = new IndexWriter(dir, GetConfig(Random, sdp).SetIndexCommit(Snapshots[0]));
             // this does the actual rollback
             writer.Commit();
             writer.DeleteUnusedFiles();
@@ -457,7 +457,7 @@ namespace Lucene.Net.Index
         public virtual void TestReleaseSnapshot()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
+            IndexWriter writer = new IndexWriter(dir, GetConfig(Random, DeletionPolicy));
             SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             PrepareIndexAndSnapshots(sdp, writer, 1);
 
@@ -480,7 +480,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
 
-            IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
+            IndexWriter writer = new IndexWriter(dir, GetConfig(Random, DeletionPolicy));
             SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             writer.AddDocument(new Document());
             writer.Commit();
@@ -508,7 +508,7 @@ namespace Lucene.Net.Index
             // Tests the behavior of SDP when commits that are given at ctor are missing
             // on onInit().
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, GetConfig(Random(), DeletionPolicy));
+            IndexWriter writer = new IndexWriter(dir, GetConfig(Random, DeletionPolicy));
             SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             writer.AddDocument(new Document());
             writer.Commit();
@@ -520,7 +520,7 @@ namespace Lucene.Net.Index
 
             // open a new writer w/ KeepOnlyLastCommit policy, so it will delete "s1"
             // commit.
-            (new IndexWriter(dir, GetConfig(Random(), null))).Dispose();
+            (new IndexWriter(dir, GetConfig(Random, null))).Dispose();
 
             Assert.IsFalse(SlowFileExists(dir, s1.SegmentsFileName), "snapshotted commit should not exist");
             dir.Dispose();

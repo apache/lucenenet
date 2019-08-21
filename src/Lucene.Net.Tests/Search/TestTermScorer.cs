@@ -51,14 +51,14 @@ namespace Lucene.Net.Search
             base.SetUp();
             Directory = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
             for (int i = 0; i < Values.Length; i++)
             {
                 Document doc = new Document();
                 doc.Add(NewTextField(FIELD, Values[i], Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            IndexReader = SlowCompositeReaderWrapper.Wrap(writer.Reader);
+            IndexReader = SlowCompositeReaderWrapper.Wrap(writer.GetReader());
             writer.Dispose();
             IndexSearcher = NewSearcher(IndexReader);
             IndexSearcher.Similarity = new DefaultSimilarity();

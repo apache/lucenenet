@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet.Taxonomy
             config.SetIndexFieldName("float", "$facets.float");
             config.SetMultiValued("float", true);
 
-            var writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            var writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             // index documents, 50% have only 'b' and all have 'a'
             for (int i = 0; i < 110; i++)
@@ -89,7 +89,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
 
             taxoWriter.Dispose();
-            reader = writer.Reader;
+            reader = writer.GetReader();
             writer.Dispose();
             taxoReader = new DirectoryTaxonomyReader(taxoDir);
         }
@@ -197,7 +197,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
             FacetsConfig config = new FacetsConfig();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(new Int32AssociationFacetField(14, "a", "x"));
@@ -223,7 +223,7 @@ namespace Lucene.Net.Facet.Taxonomy
             ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
             FacetsConfig config = new FacetsConfig();
             config.SetHierarchical("a", true);
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(new Int32AssociationFacetField(14, "a", "x"));
@@ -248,7 +248,7 @@ namespace Lucene.Net.Facet.Taxonomy
             ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
             FacetsConfig config = new FacetsConfig();
             config.SetRequireDimCount("a", true);
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(new Int32AssociationFacetField(14, "a", "x"));

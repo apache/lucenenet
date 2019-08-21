@@ -88,7 +88,7 @@ namespace Lucene.Net.Tests.Queries.Function
 
             Query q = new FunctionQuery(vs);
             Log("test: " + q);
-            QueryUtils.Check(Random(), q, s, Similarity);
+            QueryUtils.Check(Random, q, s, Similarity);
             ScoreDoc[] h = s.Search(q, null, 1000).ScoreDocs;
             assertEquals("All docs should be matched!", N_DOCS, h.Length);
             string prevID = inOrder ? "IE" : "IC"; // smaller than all ids of docs in this test ("ID0001", etc.) -  greater than all ids of docs in this test ("ID0001", etc.)

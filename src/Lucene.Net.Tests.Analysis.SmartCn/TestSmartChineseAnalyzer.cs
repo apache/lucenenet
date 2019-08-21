@@ -327,21 +327,21 @@ namespace Lucene.Net.Analysis.Cn.Smart
         [Test]
         public void TestRandomStrings()
         {
-            CheckRandomData(Random(), new SmartChineseAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new SmartChineseAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
 
         /** blast some random large strings through the analyzer */
         [Test, LongRunningTest]
         public void TestRandomHugeStrings()
         {
-            Random random = Random();
+            Random random = Random;
             CheckRandomData(random, new SmartChineseAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
         }
 
         [Test]
         public void TestEmptyTerm()
         {
-            Random random = Random();
+            Random random = Random;
             Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);

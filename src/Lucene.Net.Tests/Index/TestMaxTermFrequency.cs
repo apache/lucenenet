@@ -51,9 +51,9 @@ namespace Lucene.Net.Index
         {
             base.SetUp();
             Dir = NewDirectory();
-            IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy());
+            IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy());
             config.SetSimilarity(new TestSimilarity(this));
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, config);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, config);
             Document doc = new Document();
             Field foo = NewTextField("foo", "", Field.Store.NO);
             doc.Add(foo);
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
                 foo.SetStringValue(AddValue());
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
         }
 
@@ -93,11 +93,11 @@ namespace Lucene.Net.Index
         private string AddValue()
         {
             IList<string> terms = new List<string>();
-            int maxCeiling = TestUtil.NextInt(Random(), 0, 255);
+            int maxCeiling = TestUtil.NextInt32(Random, 0, 255);
             int max = 0;
             for (char ch = 'a'; ch <= 'z'; ch++)
             {
-                int num = TestUtil.NextInt(Random(), 0, maxCeiling);
+                int num = TestUtil.NextInt32(Random, 0, maxCeiling);
                 for (int i = 0; i < num; i++)
                 {
                     terms.Add(char.ToString(ch));

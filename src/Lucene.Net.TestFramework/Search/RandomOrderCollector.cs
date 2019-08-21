@@ -22,21 +22,21 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// Randomize collection order. Don't forget to call <seealso cref="#flush()"/> when
-    ///  collection is finished to collect buffered documents.
+    /// Randomize collection order. Don't forget to call <see cref="Flush()"/> when
+    /// collection is finished to collect buffered documents.
     /// </summary>
     internal sealed class RandomOrderCollector : ICollector
     {
-        internal readonly Random Random;
+        internal readonly Random random;
         internal readonly ICollector @in;
-        internal Scorer Scorer_Renamed;
+        internal Scorer scorer;
         internal FakeScorer fakeScorer;
 
-        internal int Buffered;
-        internal readonly int BufferSize;
-        internal readonly int[] DocIDs;
-        internal readonly float[] Scores;
-        internal readonly int[] Freqs;
+        internal int buffered;
+        internal readonly int bufferSize;
+        internal readonly int[] docIDs;
+        internal readonly float[] scores;
+        internal readonly int[] freqs;
 
         internal RandomOrderCollector(Random random, ICollector @in)
         {
@@ -45,67 +45,67 @@ namespace Lucene.Net.Search
                 throw new System.ArgumentException();
             }
             this.@in = @in;
-            this.Random = random;
-            BufferSize = 1 + random.Next(100);
-            DocIDs = new int[BufferSize];
-            Scores = new float[BufferSize];
-            Freqs = new int[BufferSize];
-            Buffered = 0;
+            this.random = random;
+            bufferSize = 1 + random.Next(100);
+            docIDs = new int[bufferSize];
+            scores = new float[bufferSize];
+            freqs = new int[bufferSize];
+            buffered = 0;
         }
 
         public void SetScorer(Scorer scorer)
         {
-            this.Scorer_Renamed = scorer;
+            this.scorer = scorer;
             fakeScorer = new FakeScorer();
             @in.SetScorer(fakeScorer);
         }
 
         private void Shuffle()
         {
-            for (int i = Buffered - 1; i > 0; --i)
+            for (int i = buffered - 1; i > 0; --i)
             {
-                int other = Random.Next(i + 1);
+                int other = random.Next(i + 1);
 
-                int tmpDoc = DocIDs[i];
-                DocIDs[i] = DocIDs[other];
-                DocIDs[other] = tmpDoc;
+                int tmpDoc = docIDs[i];
+                docIDs[i] = docIDs[other];
+                docIDs[other] = tmpDoc;
 
-                float tmpScore = Scores[i];
-                Scores[i] = Scores[other];
-                Scores[other] = tmpScore;
+                float tmpScore = scores[i];
+                scores[i] = scores[other];
+                scores[other] = tmpScore;
 
-                int tmpFreq = Freqs[i];
-                Freqs[i] = Freqs[other];
-                Freqs[other] = tmpFreq;
+                int tmpFreq = freqs[i];
+                freqs[i] = freqs[other];
+                freqs[other] = tmpFreq;
             }
         }
 
         public void Flush()
         {
             Shuffle();
-            for (int i = 0; i < Buffered; ++i)
+            for (int i = 0; i < buffered; ++i)
             {
-                fakeScorer.doc = DocIDs[i];
-                fakeScorer.freq = Freqs[i];
-                fakeScorer.score = Scores[i];
+                fakeScorer.doc = docIDs[i];
+                fakeScorer.freq = freqs[i];
+                fakeScorer.score = scores[i];
                 @in.Collect(fakeScorer.DocID);
             }
-            Buffered = 0;
+            buffered = 0;
         }
 
         public void Collect(int doc)
         {
-            DocIDs[Buffered] = doc;
-            Scores[Buffered] = Scorer_Renamed.GetScore();
+            docIDs[buffered] = doc;
+            scores[buffered] = scorer.GetScore();
             try
             {
-                Freqs[Buffered] = Scorer_Renamed.Freq;
+                freqs[buffered] = scorer.Freq;
             }
             catch (System.NotSupportedException)
             {
-                Freqs[Buffered] = -1;
+                freqs[buffered] = -1;
             }
-            if (++Buffered == BufferSize)
+            if (++buffered == bufferSize)
             {
                 Flush();
             }

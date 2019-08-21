@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             Dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, Dir, Similarity, TimeZone);
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
@@ -79,15 +79,15 @@ namespace Lucene.Net.Search
 
                 AddSome(doc, AlwaysTerms);
 
-                if (Random().Next(100) < 90)
+                if (Random.Next(100) < 90)
                 {
                     AddSome(doc, CommonTerms);
                 }
-                if (Random().Next(100) < 50)
+                if (Random.Next(100) < 50)
                 {
                     AddSome(doc, MediumTerms);
                 }
-                if (Random().Next(100) < 10)
+                if (Random.Next(100) < 10)
                 {
                     AddSome(doc, RareTerms);
                 }
@@ -129,7 +129,7 @@ namespace Lucene.Net.Search
         {
             IList<string> list = Arrays.AsList(values);
             Collections.Shuffle(list);
-            int howMany = TestUtil.NextInt(Random(), 1, list.Count);
+            int howMany = TestUtil.NextInt32(Random, 1, list.Count);
             for (int i = 0; i < howMany; i++)
             {
                 doc.Add(new StringField("field", list[i], Field.Store.NO));

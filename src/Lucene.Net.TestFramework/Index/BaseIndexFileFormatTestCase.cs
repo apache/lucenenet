@@ -10,21 +10,21 @@ namespace Lucene.Net.Index
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 
@@ -33,44 +33,48 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class BaseIndexFileFormatTestCase : LuceneTestCase
     {
+        // LUCENENET specific - this class was internal in Java, but we can't mark it that way
+        // because it has public subclasses. So we are creating an internal constructor instead.
+        internal BaseIndexFileFormatTestCase() { }
+
         /// <summary>
         /// Returns the codec to run tests against </summary>
-        protected abstract Codec Codec { get; }
+        protected abstract Codec GetCodec();
 
-        private Codec SavedCodec;
+        private Codec savedCodec;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
             // set the default codec, so adding test cases to this isn't fragile
-            SavedCodec = Codec.Default;
-            Codec.Default = Codec;
+            savedCodec = Codec.Default;
+            Codec.Default = GetCodec();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Codec.Default = SavedCodec; // restore
+            Codec.Default = savedCodec; // restore
             base.TearDown();
         }
 
         /// <summary>
         /// Add random fields to the provided document. </summary>
-        protected internal abstract void AddRandomFields(Document doc);
+        protected abstract void AddRandomFields(Document doc);
 
         private IDictionary<string, long> BytesUsedByExtension(Directory d)
         {
             IDictionary<string, long> bytesUsedByExtension = new Dictionary<string, long>();
             foreach (string file in d.ListAll())
             {
-				string ext = IndexFileNames.GetExtension(file) ?? string.Empty;
+                string ext = IndexFileNames.GetExtension(file) ?? string.Empty;
                 long previousLength = bytesUsedByExtension.ContainsKey(ext) ? bytesUsedByExtension[ext] : 0;
                 bytesUsedByExtension[ext] = previousLength + d.FileLength(file);
             }
-			foreach (string item in ExcludedExtensionsFromByteCounts()) {
-				bytesUsedByExtension.Remove(item);							
-			}
+            foreach (string item in ExcludedExtensionsFromByteCounts()) {
+                bytesUsedByExtension.Remove(item);
+            }
             return bytesUsedByExtension;
         }
 
@@ -78,7 +82,7 @@ namespace Lucene.Net.Index
         /// Return the list of extensions that should be excluded from byte counts when
         /// comparing indices that store the same content.
         /// </summary>
-        protected internal virtual ICollection<string> ExcludedExtensionsFromByteCounts()
+        protected virtual ICollection<string> ExcludedExtensionsFromByteCounts()
         {
             return new HashSet<string>(Arrays.AsList(new string[] { "si", "lock" }));
             // segment infos store various pieces of information that don't solely depend
@@ -90,44 +94,47 @@ namespace Lucene.Net.Index
         /// <summary>
         /// The purpose of this test is to make sure that bulk merge doesn't accumulate useless data over runs.
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestMergeStability()
         {
-            Directory dir = NewDirectory();
-            // do not use newMergePolicy that might return a MockMergePolicy that ignores the no-CFS ratio
-            MergePolicy mp = NewTieredMergePolicy();
-            mp.NoCFSRatio = 0;
-            var cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetUseCompoundFile(false).SetMergePolicy(mp);
-            using (var w = new RandomIndexWriter(Random(), dir, cfg))
+            using (Directory dir = NewDirectory())
             {
-                var numDocs = AtLeast(500);
-                for (var i = 0; i < numDocs; ++i)
+                // do not use newMergePolicy that might return a MockMergePolicy that ignores the no-CFS ratio
+                MergePolicy mp = NewTieredMergePolicy();
+                mp.NoCFSRatio = 0;
+                var cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetUseCompoundFile(false).SetMergePolicy(mp);
+                using (var w = new RandomIndexWriter(Random, dir, cfg))
                 {
-                    var d = new Document();
-                    AddRandomFields(d);
-                    w.AddDocument(d);
+                    var numDocs = AtLeast(500);
+                    for (var i = 0; i < numDocs; ++i)
+                    {
+                        var d = new Document();
+                        AddRandomFields(d);
+                        w.AddDocument(d);
+                    }
+                    w.ForceMerge(1);
+                    w.Commit();
                 }
-                w.ForceMerge(1);
-                w.Commit();
-            }
-            IndexReader reader = DirectoryReader.Open(dir);
+                using (IndexReader reader = DirectoryReader.Open(dir))
+                {
+                    using (Directory dir2 = NewDirectory())
+                    {
+                        mp = NewTieredMergePolicy();
+                        mp.NoCFSRatio = 0;
+                        cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetUseCompoundFile(false).SetMergePolicy(mp);
 
-            Directory dir2 = NewDirectory();
-            mp = NewTieredMergePolicy();
-            mp.NoCFSRatio = 0;
-            cfg = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetUseCompoundFile(false).SetMergePolicy(mp);
+                        using (var w = new RandomIndexWriter(Random, dir2, cfg))
+                        {
+                            w.AddIndexes(reader);
+                            w.Commit();
+                        }
 
-            using (var w = new RandomIndexWriter(Random(), dir2, cfg))
-            {
-                w.AddIndexes(reader);
-                w.Commit();
-            }
+                        assertEquals(BytesUsedByExtension(dir), BytesUsedByExtension(dir2));
 
-            assertEquals(BytesUsedByExtension(dir), BytesUsedByExtension(dir2));
-
-            reader.Dispose();
-            dir.Dispose();
-            dir2.Dispose();
+                    } // dir2.Dispose();
+                } // reader.Dispose();
+            } // dir.Dispose();
+            
         }
     }
 }

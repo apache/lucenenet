@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
         public virtual void TestOutOfOrderCollection()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             for (int i = 0; i < 10; i++)
             {
                 writer.AddDocument(new Document());
@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
             // Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return
             // the clause instead of BQ.
             bq.MinimumNumberShouldMatch = 1;
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             for (int i = 0; i < inOrder.Length; i++)
             {

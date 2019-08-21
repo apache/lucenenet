@@ -74,10 +74,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             // NOTE: turn off compound file, this test will open some index files directly.
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
-            IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetUseCompoundFile(false);
+            IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetUseCompoundFile(false);
 
             TermIndexInterval = config.TermIndexInterval;
-            IndexDivisor = TestUtil.NextInt(Random(), 1, 10);
+            IndexDivisor = TestUtil.NextInt32(Random, 1, 10);
             NUMBER_OF_DOCUMENTS = AtLeast(100);
             NUMBER_OF_FIELDS = AtLeast(Math.Max(10, 3 * TermIndexInterval * IndexDivisor / NUMBER_OF_DOCUMENTS));
 
@@ -100,8 +100,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             FieldInfos fieldInfos = infosReader.Read(Directory, segment, "", IOContext.READ_ONCE);
             string segmentFileName = IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
             long tiiFileLength = Directory.FileLength(segmentFileName);
-            IndexInput input = Directory.OpenInput(segmentFileName, NewIOContext(Random()));
-            TermEnum = new SegmentTermEnum(Directory.OpenInput(IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_EXTENSION), NewIOContext(Random())), fieldInfos, false);
+            IndexInput input = Directory.OpenInput(segmentFileName, NewIOContext(Random));
+            TermEnum = new SegmentTermEnum(Directory.OpenInput(IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_EXTENSION), NewIOContext(Random)), fieldInfos, false);
             int totalIndexInterval = TermEnum.indexInterval * IndexDivisor;
 
             SegmentTermEnum indexEnum = new SegmentTermEnum(input, fieldInfos, true);
@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             input.Dispose();
 
             Reader = IndexReader.Open(Directory);
-            SampleTerms = Sample(Random(), Reader, 1000);
+            SampleTerms = Sample(Random, Reader, 1000);
         }
 
         [OneTimeTearDown]
@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         [Test]
         public virtual void TestCompareTo()
         {
-            Term term = new Term("field" + Random().Next(NUMBER_OF_FIELDS), Text);
+            Term term = new Term("field" + Random.Next(NUMBER_OF_FIELDS), Text);
             for (int i = 0; i < Index.Length; i++)
             {
                 Term t = Index.GetTerm(i);
@@ -209,7 +209,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private void Populate(Directory directory, IndexWriterConfig config)
         {
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, config);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, config);
             for (int i = 0; i < NUMBER_OF_DOCUMENTS; i++)
             {
                 Document document = new Document();
@@ -227,7 +227,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                return Convert.ToString(Random().Next());
+                return Convert.ToString(Random.Next());
             }
         }
     }

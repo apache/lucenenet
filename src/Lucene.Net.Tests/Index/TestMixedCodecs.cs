@@ -57,8 +57,8 @@ namespace Lucene.Net.Index
                 }
                 if (docsLeftInthisSegment == 0)
                 {
-                    IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-                    if (Random().NextBoolean())
+                    IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+                    if (Random.NextBoolean())
                     {
                         // Make sure we aggressively mix in SimpleText
                         // since it has different impls for all codec
@@ -69,8 +69,8 @@ namespace Lucene.Net.Index
                     {
                         w.Dispose();
                     }
-                    w = new RandomIndexWriter(Random(), dir, iwc);
-                    docsLeftInthisSegment = TestUtil.NextInt(Random(), 10, 100);
+                    w = new RandomIndexWriter(Random, dir, iwc);
+                    docsLeftInthisSegment = TestUtil.NextInt32(Random, 10, 100);
                 }
                 Document doc = new Document();
                 doc.Add(NewStringField("id", Convert.ToString(docUpto), Field.Store.YES));
@@ -88,14 +88,14 @@ namespace Lucene.Net.Index
             HashSet<int?> deleted = new HashSet<int?>();
             while (deleted.Count < NUM_DOCS / 2)
             {
-                int? toDelete = Random().Next(NUM_DOCS);
+                int? toDelete = Random.Next(NUM_DOCS);
                 if (!deleted.Contains(toDelete))
                 {
                     deleted.Add(toDelete);
                     w.DeleteDocuments(new Term("id", Convert.ToString(toDelete)));
-                    if (Random().Next(17) == 6)
+                    if (Random.Next(17) == 6)
                     {
-                        IndexReader r = w.Reader;
+                        IndexReader r = w.GetReader();
                         Assert.AreEqual(NUM_DOCS - deleted.Count, r.NumDocs);
                         r.Dispose();
                     }

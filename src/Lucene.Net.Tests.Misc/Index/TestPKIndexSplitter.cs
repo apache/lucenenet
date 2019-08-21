@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
             using (Directory dir = NewDirectory())
             {
                 using (w = new IndexWriter(dir, NewIndexWriterConfig(
-                    TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
+                    TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
                     .SetOpenMode(OpenMode.CREATE).SetMergePolicy(NoMergePolicy.COMPOUND_FILES)))
                 {
                     for (int x = 0; x < 11; x++)
@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
                 // delete some documents
                 using (w = new IndexWriter(dir, NewIndexWriterConfig(
 
-                    TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
+                    TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
                         .SetOpenMode(OpenMode.APPEND).SetMergePolicy(NoMergePolicy.COMPOUND_FILES)))
                 {
                     w.DeleteDocuments(midTerm);
@@ -81,8 +81,8 @@ namespace Lucene.Net.Index
                 using (Directory dir2 = NewDirectory())
                 {
                     PKIndexSplitter splitter = new PKIndexSplitter(dir, dir1, dir2, splitTerm,
-                        NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())),
-                        NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                        NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)),
+                        NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                     splitter.Split();
 
                     using (IndexReader ir1 = DirectoryReader.Open(dir1))

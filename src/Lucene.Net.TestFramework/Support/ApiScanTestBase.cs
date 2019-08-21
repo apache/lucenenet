@@ -38,6 +38,8 @@ namespace Lucene.Net.Support
     /// </summary>
     public abstract class ApiScanTestBase : LuceneTestCase
     {
+        internal ApiScanTestBase() { } // LUCENENET: Not for use by end users
+
         /// <summary>
         /// Private fields must be upper case separated with underscores, 
         /// must be camelCase (optionally may be prefixed with underscore, 
@@ -313,7 +315,7 @@ namespace Lucene.Net.Support
 
             Assert.IsFalse(names.Any(), names.Count() + " member names containing the word 'Int' not followed " + 
                 "by 16, 32, or 64, 'Long', 'Short', or 'Float' detected. " +
-                "In .NET, we need to change to 'Short' to 'Int16', 'Int' to 'Int32', 'Long' to 'Int64', and 'Float' to 'Short'.");
+                "In .NET, we need to change to 'Short' to 'Int16', 'Int' to 'Int32', 'Long' to 'Int64', and 'Float' to 'Single'.");
         }
 
         //[Test, LuceneNetSpecific]
@@ -331,7 +333,7 @@ namespace Lucene.Net.Support
 
             Assert.IsFalse(names.Any(), names.Count() + " member names containing the word 'Int' not followed " +
                 "by 16, 32, or 64, 'Long', 'Short', or 'Float' detected. " +
-                "In .NET, we need to change to 'Short' to 'Int16', 'Int' to 'Int32', 'Long' to 'Int64', and 'Float' to 'Short'." +
+                "In .NET, we need to change to 'Short' to 'Int16', 'Int' to 'Int32', 'Long' to 'Int64', and 'Float' to 'Single'." +
                 "\n\nIMPORTANT: Before making changes, make sure to rename any types with ambiguous use of the word `Single` (meaning 'singular' rather than `System.Single`) to avoid confusion.");
         }
 
@@ -815,6 +817,11 @@ namespace Lucene.Net.Support
 
             foreach (var t in types)
             {
+                if (t.GetTypeInfo().IsDefined(typeof(ExceptionToNetNumericConventionAttribute)))
+                {
+                    continue;
+                }
+
                 if (ContainsNonNetNumeric.IsMatch(t.Name))
                 {
                     result.Add(t.FullName);

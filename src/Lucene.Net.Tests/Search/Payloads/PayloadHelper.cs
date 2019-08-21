@@ -137,9 +137,9 @@ namespace Lucene.Net.Search.Payloads
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                doc.Add(new TextField(FIELD, English.IntToEnglish(i), Field.Store.YES));
-                doc.Add(new TextField(MULTI_FIELD, English.IntToEnglish(i) + "  " + English.IntToEnglish(i), Field.Store.YES));
-                doc.Add(new TextField(NO_PAYLOAD_FIELD, English.IntToEnglish(i), Field.Store.YES));
+                doc.Add(new TextField(FIELD, English.Int32ToEnglish(i), Field.Store.YES));
+                doc.Add(new TextField(MULTI_FIELD, English.Int32ToEnglish(i) + "  " + English.Int32ToEnglish(i), Field.Store.YES));
+                doc.Add(new TextField(NO_PAYLOAD_FIELD, English.Int32ToEnglish(i), Field.Store.YES));
                 writer.AddDocument(doc);
             }
             Reader = DirectoryReader.Open(writer, true);

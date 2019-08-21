@@ -43,18 +43,18 @@ namespace Lucene.Net.Index
         public override void SetUp()
         {
             base.SetUp();
-            UseNonNrtReaders = Random().NextBoolean();
+            UseNonNrtReaders = Random.NextBoolean();
         }
 
-        protected internal override void DoSearching(TaskScheduler es, long stopTime)
+        protected override void DoSearching(TaskScheduler es, long stopTime)
         {
             bool anyOpenDelFiles = false;
 
-            DirectoryReader r = DirectoryReader.Open(writer, true);
+            DirectoryReader r = DirectoryReader.Open(m_writer, true);
 
-            while (Environment.TickCount < stopTime && !failed.Get())
+            while (Environment.TickCount < stopTime && !m_failed.Get())
             {
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     if (VERBOSE)
                     {
@@ -74,8 +74,8 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: now close reader=" + r);
                     }
                     r.Dispose();
-                    writer.Commit();
-                    ISet<string> openDeletedFiles = ((MockDirectoryWrapper)dir).OpenDeletedFiles;
+                    m_writer.Commit();
+                    ICollection<string> openDeletedFiles = ((MockDirectoryWrapper)m_dir).GetOpenDeletedFiles();
                     if (openDeletedFiles.Count > 0)
                     {
                         Console.WriteLine("OBD files: " + openDeletedFiles);
@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
                     {
                         Console.WriteLine("TEST: now open");
                     }
-                    r = DirectoryReader.Open(writer, true);
+                    r = DirectoryReader.Open(m_writer, true);
                 }
                 if (VERBOSE)
                 {
@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
             r.Dispose();
 
             //System.out.println("numDocs=" + r.NumDocs + " openDelFileCount=" + dir.openDeleteFileCount());
-            ISet<string> openDeletedFiles_ = ((MockDirectoryWrapper)dir).OpenDeletedFiles;
+            ICollection<string> openDeletedFiles_ = ((MockDirectoryWrapper)m_dir).GetOpenDeletedFiles();
             if (openDeletedFiles_.Count > 0)
             {
                 Console.WriteLine("OBD files: " + openDeletedFiles_);
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
             Assert.IsFalse(anyOpenDelFiles, "saw non-zero open-but-deleted count");
         }
 
-        protected internal override Directory GetDirectory(Directory @in)
+        protected override Directory GetDirectory(Directory @in)
         {
             Debug.Assert(@in is MockDirectoryWrapper);
             if (!UseNonNrtReaders)
@@ -125,25 +125,22 @@ namespace Lucene.Net.Index
             return @in;
         }
 
-        protected internal override void DoAfterWriter(TaskScheduler es)
+        protected override void DoAfterWriter(TaskScheduler es)
         {
             // Force writer to do reader pooling, always, so that
             // all merged segments, even for merges before
             // doSearching is called, are warmed:
-            writer.GetReader().Dispose();
+            m_writer.GetReader().Dispose();
         }
 
         private IndexSearcher FixedSearcher;
 
-        protected internal override IndexSearcher CurrentSearcher
+        protected override IndexSearcher GetCurrentSearcher()
         {
-            get
-            {
-                return FixedSearcher;
-            }
+            return FixedSearcher;
         }
 
-        protected internal override void ReleaseSearcher(IndexSearcher s)
+        protected override void ReleaseSearcher(IndexSearcher s)
         {
             if (s != FixedSearcher)
             {
@@ -152,29 +149,26 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal override IndexSearcher FinalSearcher
+        protected override IndexSearcher GetFinalSearcher()
         {
-            get
+            IndexReader r2;
+            if (UseNonNrtReaders)
             {
-                IndexReader r2;
-                if (UseNonNrtReaders)
+                if (Random.NextBoolean())
                 {
-                    if (Random().NextBoolean())
-                    {
-                        r2 = writer.GetReader();
-                    }
-                    else
-                    {
-                        writer.Commit();
-                        r2 = DirectoryReader.Open(dir);
-                    }
+                    r2 = m_writer.GetReader();
                 }
                 else
                 {
-                    r2 = writer.GetReader();
+                    m_writer.Commit();
+                    r2 = DirectoryReader.Open(m_dir);
                 }
-                return NewSearcher(r2);
             }
+            else
+            {
+                r2 = m_writer.GetReader();
+            }
+            return NewSearcher(r2);
         }
 
         [Test]

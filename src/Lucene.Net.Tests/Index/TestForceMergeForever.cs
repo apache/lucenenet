@@ -63,15 +63,15 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             Directory d = NewDirectory();
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
 
             MyIndexWriter w = new MyIndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 
             // Try to make an index that requires merging:
-            w.Config.SetMaxBufferedDocs(TestUtil.NextInt(Random(), 2, 11));
+            w.Config.SetMaxBufferedDocs(TestUtil.NextInt32(Random, 2, 11));
             int numStartDocs = AtLeast(20);
-            LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
+            LineFileDocs docs = new LineFileDocs(Random, DefaultCodecSupportsDocValues);
             for (int docIDX = 0; docIDX < numStartDocs; docIDX++)
             {
                 w.AddDocument(docs.NextDoc());
@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
                 {
                     while (!DoStop.Get())
                     {
-                        w.UpdateDocument(new Term("docid", "" + Random().Next(NumStartDocs)), Docs.NextDoc());
+                        w.UpdateDocument(new Term("docid", "" + Random.Next(NumStartDocs)), Docs.NextDoc());
                         // Force deletes to apply
                         w.GetReader().Dispose();
                     }

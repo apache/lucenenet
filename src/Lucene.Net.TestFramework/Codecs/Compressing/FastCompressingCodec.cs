@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Compressing
      */
 
     /// <summary>
-    /// CompressionCodec that uses <seealso cref="CompressionMode#FAST"/> </summary>
+    /// CompressionCodec that uses <see cref="CompressionMode.FAST"/>. </summary>
     [CodecName("FastCompressingStoredFields")]
     public class FastCompressingCodec : CompressingCodec
     {

@@ -48,8 +48,8 @@ namespace Lucene.Net.Index.Sorter
         private Document randomDocument()
         {
             Document doc = new Document();
-            doc.Add(new NumericDocValuesField("ndv", Random().NextLong()));
-            doc.Add(new StringField("s", RandomInts.RandomFrom(Random(), terms), Field.Store.YES));
+            doc.Add(new NumericDocValuesField("ndv", Random.NextInt64()));
+            doc.Add(new StringField("s", RandomPicks.RandomFrom(Random, terms), Field.Store.YES));
             return doc;
         }
 
@@ -57,18 +57,18 @@ namespace Lucene.Net.Index.Sorter
         {
             // create a MP with a low merge factor so that many merges happen
             MergePolicy mp;
-            if (Random().nextBoolean())
+            if (Random.nextBoolean())
             {
-                TieredMergePolicy tmp = NewTieredMergePolicy(Random());
-                int numSegs = TestUtil.NextInt(Random(), 3, 5);
+                TieredMergePolicy tmp = NewTieredMergePolicy(Random);
+                int numSegs = TestUtil.NextInt32(Random, 3, 5);
                 tmp.SegmentsPerTier = (numSegs);
-                tmp.MaxMergeAtOnce = (TestUtil.NextInt(Random(), 2, numSegs));
+                tmp.MaxMergeAtOnce = (TestUtil.NextInt32(Random, 2, numSegs));
                 mp = tmp;
             }
             else
             {
-                LogMergePolicy lmp = NewLogMergePolicy(Random());
-                lmp.MergeFactor = TestUtil.NextInt(Random(), 3, 5);
+                LogMergePolicy lmp = NewLogMergePolicy(Random);
+                lmp.MergeFactor = TestUtil.NextInt32(Random, 3, 5);
                 mp = lmp;
             }
             // wrap it with a sorting mp
@@ -80,14 +80,14 @@ namespace Lucene.Net.Index.Sorter
             dir1 = NewDirectory();
             dir2 = NewDirectory();
             int numDocs = AtLeast(150);
-            int numTerms = TestUtil.NextInt(Random(), 1, numDocs / 5);
+            int numTerms = TestUtil.NextInt32(Random, 1, numDocs / 5);
             ISet<string> randomTerms = new HashSet<string>();
             while (randomTerms.size() < numTerms)
             {
-                randomTerms.add(TestUtil.RandomSimpleString(Random()));
+                randomTerms.add(TestUtil.RandomSimpleString(Random));
             }
             terms = new List<string>(randomTerms);
-            long seed = Random().NextLong();
+            long seed = Random.NextInt64();
             IndexWriterConfig iwc1 = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new Random((int)seed)));
             IndexWriterConfig iwc2 = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(new Random((int)seed)));
             iwc2.SetMergePolicy(NewSortingMergePolicy(sort));
@@ -95,16 +95,16 @@ namespace Lucene.Net.Index.Sorter
             RandomIndexWriter iw2 = new RandomIndexWriter(new Random((int)seed), dir2, iwc2);
             for (int i = 0; i < numDocs; ++i)
             {
-                if (Random().nextInt(5) == 0 && i != numDocs - 1)
+                if (Random.nextInt(5) == 0 && i != numDocs - 1)
                 {
-                    string term = RandomInts.RandomFrom(Random(), terms);
+                    string term = RandomPicks.RandomFrom(Random, terms);
                     iw1.DeleteDocuments(new Term("s", term));
                     iw2.DeleteDocuments(new Term("s", term));
                 }
                 Document doc = randomDocument();
                 iw1.AddDocument(doc);
                 iw2.AddDocument(doc);
-                if (Random().nextInt(8) == 0)
+                if (Random.nextInt(8) == 0)
                 {
                     iw1.Commit();
                     iw2.Commit();
@@ -120,16 +120,16 @@ namespace Lucene.Net.Index.Sorter
             // single segment in the index, and threefore the index won't be sorted.
             // This hurts the assumption of the test later on, that the index is sorted
             // by SortingMP.
-            iw1.w.AddDocument(doc2);
-            iw2.w.AddDocument(doc2);
+            iw1.IndexWriter.AddDocument(doc2);
+            iw2.IndexWriter.AddDocument(doc2);
 
-            if (DefaultCodecSupportsFieldUpdates())
+            if (DefaultCodecSupportsFieldUpdates)
             {
                 // update NDV of docs belonging to one term (covers many documents)
-                long value = Random().NextLong();
-                string term = RandomInts.RandomFrom(Random(), terms);
-                iw1.w.UpdateNumericDocValue(new Term("s", term), "ndv", value);
-                iw2.w.UpdateNumericDocValue(new Term("s", term), "ndv", value);
+                long value = Random.NextInt64();
+                string term = RandomPicks.RandomFrom(Random, terms);
+                iw1.IndexWriter.UpdateNumericDocValue(new Term("s", term), "ndv", value);
+                iw2.IndexWriter.UpdateNumericDocValue(new Term("s", term), "ndv", value);
             }
 
             iw1.ForceMerge(1);

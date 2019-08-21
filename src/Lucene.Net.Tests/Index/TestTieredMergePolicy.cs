@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestTieredMergePolicy : BaseMergePolicyTestCase
     {
-        protected internal override MergePolicy MergePolicy()
+        protected override MergePolicy NewMergePolicy()
         {
             return NewTieredMergePolicy();
         }
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         public virtual void TestIndexWriterDirtSimple()
         {
             Directory dir = new RAMDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             TieredMergePolicy tmp = NewTieredMergePolicy();
             iwc.SetMergePolicy(tmp);
             iwc.SetMaxBufferedDocs(2);
@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
         public virtual void TestForceMergeDeletes()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             TieredMergePolicy tmp = NewTieredMergePolicy();
             conf.SetMergePolicy(tmp);
             conf.SetMaxBufferedDocs(4);
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: iter=" + iter);
                 }
                 Directory dir = NewDirectory();
-                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
                 conf.SetMergeScheduler(new SerialMergeScheduler());
                 TieredMergePolicy tmp = NewTieredMergePolicy();
                 conf.SetMergePolicy(tmp);
@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
 
                 IndexWriter w = new IndexWriter(dir, conf);
                 int maxCount = 0;
-                int numDocs = TestUtil.NextInt(Random(), 20, 100);
+                int numDocs = TestUtil.NextInt32(Random, 20, 100);
                 for (int i = 0; i < numDocs; i++)
                 {
                     Document doc = new Document();
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
                 w.Flush(true, true);
 
                 int segmentCount = w.SegmentCount;
-                int targetCount = TestUtil.NextInt(Random(), 1, segmentCount);
+                int targetCount = TestUtil.NextInt32(Random, 1, segmentCount);
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: merge to " + targetCount + " segs (current count=" + segmentCount + ")");
@@ -161,14 +161,14 @@ namespace Lucene.Net.Index
         public virtual void TestForceMergeDeletesMaxSegSize()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             TieredMergePolicy tmp = new TieredMergePolicy();
             tmp.MaxMergedSegmentMB = 0.01;
             tmp.ForceMergeDeletesPctAllowed = 0.0;
             conf.SetMergePolicy(tmp);
 
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, conf);
-            w.RandomForceMerge = false;
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, conf);
+            w.DoRandomForceMerge = false;
 
             int numDocs = AtLeast(200);
             for (int i = 0; i < numDocs; i++)
@@ -180,7 +180,7 @@ namespace Lucene.Net.Index
             }
 
             w.ForceMerge(1);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             Assert.AreEqual(numDocs, r.MaxDoc);
             Assert.AreEqual(numDocs, r.NumDocs);
             r.Dispose();
@@ -192,14 +192,14 @@ namespace Lucene.Net.Index
 
             w.DeleteDocuments(new Term("id", "" + (42 + 17)));
 
-            r = w.Reader;
+            r = w.GetReader();
             Assert.AreEqual(numDocs, r.MaxDoc);
             Assert.AreEqual(numDocs - 1, r.NumDocs);
             r.Dispose();
 
             w.ForceMergeDeletes();
 
-            r = w.Reader;
+            r = w.GetReader();
             Assert.AreEqual(numDocs - 1, r.MaxDoc);
             Assert.AreEqual(numDocs - 1, r.NumDocs);
             r.Dispose();
@@ -281,19 +281,5 @@ namespace Lucene.Net.Index
 
             // TODO: Add more checks for other non-double setters!
         }
-
-
-        #region BaseMergePolicyTestCase
-        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        [Test]
-        public override void TestForceMergeNotNeeded()
-        {
-            base.TestForceMergeNotNeeded();
-        }
-
-        #endregion
     }
 }

@@ -39,25 +39,22 @@ namespace Lucene.Net.Codecs.Compressing
     [TestFixture]
     public class TestCompressingStoredFieldsFormat : BaseStoredFieldsFormatTestCase
     {
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return CompressingCodec.RandomInstance(Random());
-            }
+            return CompressingCodec.RandomInstance(Random);
         }
 
         [Test]
         public virtual void TestDeletePartiallyWrittenFilesIfAbort()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
-            iwConf.SetCodec(CompressingCodec.RandomInstance(Random()));
+            IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            iwConf.SetMaxBufferedDocs(RandomInts.RandomInt32Between(Random, 2, 30));
+            iwConf.SetCodec(CompressingCodec.RandomInstance(Random));
             // disable CFS because this test checks file names
             iwConf.SetMergePolicy(NewLogMergePolicy(false));
             iwConf.SetUseCompoundFile(false);
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwConf);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConf);
 
             Document validDoc = new Document();
             validDoc.Add(new Int32Field("id", 0, Field.Store.YES));
@@ -104,94 +101,5 @@ namespace Lucene.Net.Codecs.Compressing
                 this.OuterInstance = outerInstance;
             }
         }
-
-
-        #region BaseStoredFieldsFormatTestCase
-        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        [Test]
-        public override void TestRandomStoredFields()
-        {
-            base.TestRandomStoredFields();
-        }
-
-        [Test]
-        // LUCENE-1727: make sure doc fields are stored in order
-        public override void TestStoredFieldsOrder()
-        {
-            base.TestStoredFieldsOrder();
-        }
-
-        [Test]
-        // LUCENE-1219
-        public override void TestBinaryFieldOffsetLength()
-        {
-            base.TestBinaryFieldOffsetLength();
-        }
-
-        [Test]
-        public override void TestNumericField()
-        {
-            base.TestNumericField();
-        }
-
-        [Test]
-        public override void TestIndexedBit()
-        {
-            base.TestIndexedBit();
-        }
-
-        [Test]
-        public override void TestReadSkip()
-        {
-            base.TestReadSkip();
-        }
-
-        [Test]
-        public override void TestEmptyDocs()
-        {
-            base.TestEmptyDocs();
-        }
-
-        [Test]
-        public override void TestConcurrentReads()
-        {
-            base.TestConcurrentReads();
-        }
-
-        [Test]
-        public override void TestWriteReadMerge()
-        {
-            base.TestWriteReadMerge();
-        }
-
-        [Test, LongRunningTest]
-        public override void TestBigDocuments()
-        {
-            base.TestBigDocuments();
-        }
-
-        [Test]
-        public override void TestBulkMergeWithDeletes()
-        {
-            base.TestBulkMergeWithDeletes();
-        }
-
-        #endregion
-
-        #region BaseIndexFileFormatTestCase
-        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        [Test]
-        public override void TestMergeStability()
-        {
-            base.TestMergeStability();
-        }
-
-        #endregion
     }
 }

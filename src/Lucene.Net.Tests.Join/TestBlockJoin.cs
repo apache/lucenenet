@@ -70,7 +70,7 @@ namespace Lucene.Net.Tests.Join
         public void TestEmptyChildFilter()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             config.SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES);
             // we don't want to merge - since we rely on certain segment setup
             IndexWriter w = new IndexWriter(dir, config);
@@ -96,7 +96,7 @@ namespace Lucene.Net.Tests.Join
                 w.AddDocuments(docs);
             }
 
-            IndexReader r = DirectoryReader.Open(w, Random().NextBoolean());
+            IndexReader r = DirectoryReader.Open(w, Random.NextBoolean());
             w.Dispose();
             assertTrue(r.Leaves.size() > 1);
             IndexSearcher s = new IndexSearcher(r);
@@ -132,7 +132,7 @@ namespace Lucene.Net.Tests.Join
         public void TestSimple()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             IList<Document> docs = new List<Document>();
 
@@ -147,7 +147,7 @@ namespace Lucene.Net.Tests.Join
             docs.Add(MakeResume("Frank", "United States"));
             w.AddDocuments(docs);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
@@ -197,7 +197,7 @@ namespace Lucene.Net.Tests.Join
             //System.out.println("TEST: now test up");
 
             // Now join "up" (map parent hits to child docs) instead...:
-            ToChildBlockJoinQuery parentJoinQuery = new ToChildBlockJoinQuery(parentQuery, parentsFilter, Random().NextBoolean());
+            ToChildBlockJoinQuery parentJoinQuery = new ToChildBlockJoinQuery(parentQuery, parentsFilter, Random.NextBoolean());
             BooleanQuery fullChildQuery = new BooleanQuery();
             fullChildQuery.Add(new BooleanClause(parentJoinQuery, Occur.MUST));
             fullChildQuery.Add(new BooleanClause(childQuery, Occur.MUST));
@@ -222,7 +222,7 @@ namespace Lucene.Net.Tests.Join
         public void TestBugCausedByRewritingTwice()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             IList<Document> docs = new List<Document>();
 
@@ -235,7 +235,7 @@ namespace Lucene.Net.Tests.Join
                 w.AddDocuments(docs);
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
@@ -279,7 +279,7 @@ namespace Lucene.Net.Tests.Join
         public virtual void TestSimpleFilter()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             IList<Document> docs = new List<Document>();
             docs.Add(MakeJob("java", 2007));
@@ -294,7 +294,7 @@ namespace Lucene.Net.Tests.Join
             docs2.Add(MakeResume("Frank", "United States"));
 
             AddSkillless(w);
-            bool turn = Random().NextBoolean();
+            bool turn = Random.NextBoolean();
             w.AddDocuments(turn ? docs : docs2);
 
             AddSkillless(w);
@@ -303,7 +303,7 @@ namespace Lucene.Net.Tests.Join
 
             AddSkillless(w);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
@@ -343,14 +343,14 @@ namespace Lucene.Net.Tests.Join
 
 
             TermQuery us = new TermQuery(new Term("country", "United States"));
-            assertEquals("@ US we have java and ruby", 2, s.Search(new ToChildBlockJoinQuery(us, parentsFilter, Random().NextBoolean()), 10).TotalHits);
+            assertEquals("@ US we have java and ruby", 2, s.Search(new ToChildBlockJoinQuery(us, parentsFilter, Random.NextBoolean()), 10).TotalHits);
 
-            assertEquals("java skills in US", 1, s.Search(new ToChildBlockJoinQuery(us, parentsFilter, Random().NextBoolean()), Skill("java"), 10).TotalHits);
+            assertEquals("java skills in US", 1, s.Search(new ToChildBlockJoinQuery(us, parentsFilter, Random.NextBoolean()), Skill("java"), 10).TotalHits);
 
             BooleanQuery rubyPython = new BooleanQuery();
             rubyPython.Add(new TermQuery(new Term("skill", "ruby")), Occur.SHOULD);
             rubyPython.Add(new TermQuery(new Term("skill", "python")), Occur.SHOULD);
-            assertEquals("ruby skills in US", 1, s.Search(new ToChildBlockJoinQuery(us, parentsFilter, Random().NextBoolean()), new QueryWrapperFilter(rubyPython), 10).TotalHits);
+            assertEquals("ruby skills in US", 1, s.Search(new ToChildBlockJoinQuery(us, parentsFilter, Random.NextBoolean()), new QueryWrapperFilter(rubyPython), 10).TotalHits);
 
             r.Dispose();
             dir.Dispose();
@@ -358,9 +358,9 @@ namespace Lucene.Net.Tests.Join
         
         private void AddSkillless(RandomIndexWriter w)
         {
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
-                w.AddDocument(MakeResume("Skillless", Random().NextBoolean() ? "United Kingdom" : "United States"));
+                w.AddDocument(MakeResume("Skillless", Random.NextBoolean() ? "United Kingdom" : "United States"));
             }
         }
         
@@ -377,13 +377,13 @@ namespace Lucene.Net.Tests.Join
         public void TestBoostBug()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
-            IndexReader r = w.Reader;
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
             ToParentBlockJoinQuery q = new ToParentBlockJoinQuery(new MatchAllDocsQuery(), new QueryWrapperFilter(new MatchAllDocsQuery()), ScoreMode.Avg);
-            QueryUtils.Check(Random(), q, s, Similarity);
+            QueryUtils.Check(Random, q, s, Similarity);
             s.Search(q, 10);
             BooleanQuery bq = new BooleanQuery();
             bq.Boost = 2f; // we boost the BQ
@@ -397,7 +397,7 @@ namespace Lucene.Net.Tests.Join
         public void TestNestedDocScoringWithDeletes()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
 
             // Cannot assert this since we use NoMergePolicy:
             w.DoRandomForceMergeAssert = false;
@@ -446,7 +446,7 @@ namespace Lucene.Net.Tests.Join
         private string[][] GetRandomFields(int maxUniqueValues)
         {
 
-            string[][] fields = new string[TestUtil.NextInt(Random(), 2, 4)][];
+            string[][] fields = new string[TestUtil.NextInt32(Random, 2, 4)][];
             for (int fieldID = 0; fieldID < fields.Length; fieldID++)
             {
                 int valueCount;
@@ -456,13 +456,13 @@ namespace Lucene.Net.Tests.Join
                 }
                 else
                 {
-                    valueCount = TestUtil.NextInt(Random(), 1, maxUniqueValues);
+                    valueCount = TestUtil.NextInt32(Random, 1, maxUniqueValues);
                 }
 
                 string[] values = fields[fieldID] = new string[valueCount];
                 for (int i = 0; i < valueCount; i++)
                 {
-                    values[i] = TestUtil.RandomRealisticUnicodeString(Random());
+                    values[i] = TestUtil.RandomRealisticUnicodeString(Random);
                     //values[i] = TestUtil.randomSimpleString(random);
                 }
             }
@@ -472,12 +472,12 @@ namespace Lucene.Net.Tests.Join
 
         private Term RandomParentTerm(string[] values)
         {
-            return new Term("parent0", values[Random().Next(values.Length)]);
+            return new Term("parent0", values[Random.Next(values.Length)]);
         }
 
         private Term RandomChildTerm(string[] values)
         {
-            return new Term("child0", values[Random().Next(values.Length)]);
+            return new Term("child0", values[Random.Next(values.Length)]);
         }
 
         private Sort GetRandomSort(string prefix, int numFields)
@@ -486,14 +486,14 @@ namespace Lucene.Net.Tests.Join
             // TODO: sometimes sort by score; problem is scores are
             // not comparable across the two indices
             // sortFields.Add(SortField.FIELD_SCORE);
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
-                sortFields.Add(new SortField(prefix + Random().Next(numFields), SortFieldType.STRING, Random().NextBoolean()));
+                sortFields.Add(new SortField(prefix + Random.Next(numFields), SortFieldType.STRING, Random.NextBoolean()));
             }
-            else if (Random().NextBoolean())
+            else if (Random.NextBoolean())
             {
-                sortFields.Add(new SortField(prefix + Random().Next(numFields), SortFieldType.STRING, Random().NextBoolean()));
-                sortFields.Add(new SortField(prefix + Random().Next(numFields), SortFieldType.STRING, Random().NextBoolean()));
+                sortFields.Add(new SortField(prefix + Random.Next(numFields), SortFieldType.STRING, Random.NextBoolean()));
+                sortFields.Add(new SortField(prefix + Random.Next(numFields), SortFieldType.STRING, Random.NextBoolean()));
             }
             // Break ties:
             sortFields.Add(new SortField(prefix + "ID", SortFieldType.INT32));
@@ -510,7 +510,7 @@ namespace Lucene.Net.Tests.Join
             Directory dir = NewDirectory();
             Directory joinDir = NewDirectory();
 
-            int numParentDocs = TestUtil.NextInt(Random(), 100 * RANDOM_MULTIPLIER, 300 * RANDOM_MULTIPLIER);
+            int numParentDocs = TestUtil.NextInt32(Random, 100 * RANDOM_MULTIPLIER, 300 * RANDOM_MULTIPLIER);
             //final int numParentDocs = 30;
 
             // Values for parent fields:
@@ -518,12 +518,12 @@ namespace Lucene.Net.Tests.Join
             // Values for child fields:
             string[][] childFields = GetRandomFields(numParentDocs);
 
-            bool doDeletes = Random().NextBoolean();
+            bool doDeletes = Random.NextBoolean();
             IList<int> toDelete = new List<int>();
 
             // TODO: parallel star join, nested join cases too!
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
-            RandomIndexWriter joinW = new RandomIndexWriter(Random(), joinDir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter joinW = new RandomIndexWriter(Random, joinDir, Similarity, TimeZone);
             for (int parentDocID = 0; parentDocID < numParentDocs; parentDocID++)
             {
                 Document parentDoc = new Document();
@@ -534,9 +534,9 @@ namespace Lucene.Net.Tests.Join
                 parentJoinDoc.Add(NewStringField("isParent", "x", Field.Store.NO));
                 for (int field = 0; field < parentFields.Length; field++)
                 {
-                    if (Random().NextDouble() < 0.9)
+                    if (Random.NextDouble() < 0.9)
                     {
-                        Field f = NewStringField("parent" + field, parentFields[field][Random().Next(parentFields[field].Length)], Field.Store.NO);
+                        Field f = NewStringField("parent" + field, parentFields[field][Random.Next(parentFields[field].Length)], Field.Store.NO);
                         parentDoc.Add(f);
                         parentJoinDoc.Add(f);
                     }
@@ -565,7 +565,7 @@ namespace Lucene.Net.Tests.Join
                     Console.WriteLine("  " + sb);
                 }
 
-                int numChildDocs = TestUtil.NextInt(Random(), 1, 20);
+                int numChildDocs = TestUtil.NextInt32(Random, 1, 20);
                 for (int childDocID = 0; childDocID < numChildDocs; childDocID++)
                 {
                     // Denormalize: copy all parent fields into child doc:
@@ -579,9 +579,9 @@ namespace Lucene.Net.Tests.Join
 
                     for (int childFieldID = 0; childFieldID < childFields.Length; childFieldID++)
                     {
-                        if (Random().NextDouble() < 0.9)
+                        if (Random.NextDouble() < 0.9)
                         {
-                            Field f = NewStringField("child" + childFieldID, childFields[childFieldID][Random().Next(childFields[childFieldID].Length)], Field.Store.NO);
+                            Field f = NewStringField("child" + childFieldID, childFields[childFieldID][Random.Next(childFields[childFieldID].Length)], Field.Store.NO);
                             childDoc.Add(f);
                             joinChildDoc.Add(f);
                         }
@@ -614,7 +614,7 @@ namespace Lucene.Net.Tests.Join
                 joinDocs.Add(parentJoinDoc);
                 joinW.AddDocuments(joinDocs);
 
-                if (doDeletes && Random().Next(30) == 7)
+                if (doDeletes && Random.Next(30) == 7)
                 {
                     toDelete.Add(parentDocID);
                 }
@@ -630,9 +630,9 @@ namespace Lucene.Net.Tests.Join
                 joinW.DeleteDocuments(new Term("blockID", "" + deleteID));
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
-            IndexReader joinR = joinW.Reader;
+            IndexReader joinR = joinW.GetReader();
             joinW.Dispose();
 
             if (VERBOSE)
@@ -662,32 +662,32 @@ namespace Lucene.Net.Tests.Join
                 }
 
                 Query childQuery;
-                if (Random().Next(3) == 2)
+                if (Random.Next(3) == 2)
                 {
-                    int childFieldID = Random().Next(childFields.Length);
-                    childQuery = new TermQuery(new Term("child" + childFieldID, childFields[childFieldID][Random().Next(childFields[childFieldID].Length)]));
+                    int childFieldID = Random.Next(childFields.Length);
+                    childQuery = new TermQuery(new Term("child" + childFieldID, childFields[childFieldID][Random.Next(childFields[childFieldID].Length)]));
                 }
-                else if (Random().Next(3) == 2)
+                else if (Random.Next(3) == 2)
                 {
                     BooleanQuery bq = new BooleanQuery();
                     childQuery = bq;
-                    int numClauses = TestUtil.NextInt(Random(), 2, 4);
+                    int numClauses = TestUtil.NextInt32(Random, 2, 4);
                     bool didMust = false;
                     for (int clauseIDX = 0; clauseIDX < numClauses; clauseIDX++)
                     {
                         Query clause;
                         Occur occur;
-                        if (!didMust && Random().NextBoolean())
+                        if (!didMust && Random.NextBoolean())
                         {
-                            occur = Random().NextBoolean() ? Occur.MUST : Occur.MUST_NOT;
+                            occur = Random.NextBoolean() ? Occur.MUST : Occur.MUST_NOT;
                             clause = new TermQuery(RandomChildTerm(childFields[0]));
                             didMust = true;
                         }
                         else
                         {
                             occur = Occur.SHOULD;
-                            int childFieldID = TestUtil.NextInt(Random(), 1, childFields.Length - 1);
-                            clause = new TermQuery(new Term("child" + childFieldID, childFields[childFieldID][Random().Next(childFields[childFieldID].Length)]));
+                            int childFieldID = TestUtil.NextInt32(Random, 1, childFields.Length - 1);
+                            clause = new TermQuery(new Term("child" + childFieldID, childFields[childFieldID][Random.Next(childFields[childFieldID].Length)]));
                         }
                         bq.Add(clause, occur);
                     }
@@ -698,11 +698,11 @@ namespace Lucene.Net.Tests.Join
                     childQuery = bq;
 
                     bq.Add(new TermQuery(RandomChildTerm(childFields[0])), Occur.MUST);
-                    int childFieldID = TestUtil.NextInt(Random(), 1, childFields.Length - 1);
-                    bq.Add(new TermQuery(new Term("child" + childFieldID, childFields[childFieldID][Random().Next(childFields[childFieldID].Length)])), Random().NextBoolean() ? Occur.MUST : Occur.MUST_NOT);
+                    int childFieldID = TestUtil.NextInt32(Random, 1, childFields.Length - 1);
+                    bq.Add(new TermQuery(new Term("child" + childFieldID, childFields[childFieldID][Random.Next(childFields[childFieldID].Length)])), Random.NextBoolean() ? Occur.MUST : Occur.MUST_NOT);
                 }
 
-                int x = Random().Next(4);
+                int x = Random.Next(4);
                 ScoreMode agg;
                 if (x == 0)
                 {
@@ -731,7 +731,7 @@ namespace Lucene.Net.Tests.Join
                 // results):
                 Query parentQuery;
 
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     parentQuery = childQuery;
                     parentJoinQuery = childJoinQuery;
@@ -742,7 +742,7 @@ namespace Lucene.Net.Tests.Join
                     BooleanQuery bq = new BooleanQuery();
                     parentJoinQuery = bq;
                     Term parentTerm = RandomParentTerm(parentFields[0]);
-                    if (Random().NextBoolean())
+                    if (Random.NextBoolean())
                     {
                         bq.Add(childJoinQuery, Occur.MUST);
                         bq.Add(new TermQuery(parentTerm), Occur.MUST);
@@ -755,7 +755,7 @@ namespace Lucene.Net.Tests.Join
 
                     BooleanQuery bq2 = new BooleanQuery();
                     parentQuery = bq2;
-                    if (Random().NextBoolean())
+                    if (Random.NextBoolean())
                     {
                         bq2.Add(childQuery, Occur.MUST);
                         bq2.Add(new TermQuery(parentTerm), Occur.MUST);
@@ -820,14 +820,14 @@ namespace Lucene.Net.Tests.Join
                 }
                 else
                 {
-                    trackScores = Random().NextBoolean();
-                    trackMaxScore = Random().NextBoolean();
+                    trackScores = Random.NextBoolean();
+                    trackMaxScore = Random.NextBoolean();
                 }
                 ToParentBlockJoinCollector c = new ToParentBlockJoinCollector(parentSort, 10, trackScores, trackMaxScore);
 
                 joinS.Search(parentJoinQuery, c);
 
-                int hitsPerGroup = TestUtil.NextInt(Random(), 1, 20);
+                int hitsPerGroup = TestUtil.NextInt32(Random, 1, 20);
                 //final int hitsPerGroup = 100;
                 ITopGroups<int> joinResults = c.GetTopGroups(childJoinQuery, childSort, 0, hitsPerGroup, 0, true);
 
@@ -894,32 +894,32 @@ namespace Lucene.Net.Tests.Join
 
                 // Get random query against parent documents:
                 Query parentQuery2;
-                if (Random().Next(3) == 2)
+                if (Random.Next(3) == 2)
                 {
-                    int fieldID = Random().Next(parentFields.Length);
-                    parentQuery2 = new TermQuery(new Term("parent" + fieldID, parentFields[fieldID][Random().Next(parentFields[fieldID].Length)]));
+                    int fieldID = Random.Next(parentFields.Length);
+                    parentQuery2 = new TermQuery(new Term("parent" + fieldID, parentFields[fieldID][Random.Next(parentFields[fieldID].Length)]));
                 }
-                else if (Random().Next(3) == 2)
+                else if (Random.Next(3) == 2)
                 {
                     BooleanQuery bq = new BooleanQuery();
                     parentQuery2 = bq;
-                    int numClauses = TestUtil.NextInt(Random(), 2, 4);
+                    int numClauses = TestUtil.NextInt32(Random, 2, 4);
                     bool didMust = false;
                     for (int clauseIDX = 0; clauseIDX < numClauses; clauseIDX++)
                     {
                         Query clause;
                         Occur occur;
-                        if (!didMust && Random().NextBoolean())
+                        if (!didMust && Random.NextBoolean())
                         {
-                            occur = Random().NextBoolean() ? Occur.MUST : Occur.MUST_NOT;
+                            occur = Random.NextBoolean() ? Occur.MUST : Occur.MUST_NOT;
                             clause = new TermQuery(RandomParentTerm(parentFields[0]));
                             didMust = true;
                         }
                         else
                         {
                             occur = Occur.SHOULD;
-                            int fieldID = TestUtil.NextInt(Random(), 1, parentFields.Length - 1);
-                            clause = new TermQuery(new Term("parent" + fieldID, parentFields[fieldID][Random().Next(parentFields[fieldID].Length)]));
+                            int fieldID = TestUtil.NextInt32(Random, 1, parentFields.Length - 1);
+                            clause = new TermQuery(new Term("parent" + fieldID, parentFields[fieldID][Random.Next(parentFields[fieldID].Length)]));
                         }
                         bq.Add(clause, occur);
                     }
@@ -930,8 +930,8 @@ namespace Lucene.Net.Tests.Join
                     parentQuery2 = bq;
 
                     bq.Add(new TermQuery(RandomParentTerm(parentFields[0])), Occur.MUST);
-                    int fieldID = TestUtil.NextInt(Random(), 1, parentFields.Length - 1);
-                    bq.Add(new TermQuery(new Term("parent" + fieldID, parentFields[fieldID][Random().Next(parentFields[fieldID].Length)])), Random().NextBoolean() ? Occur.MUST : Occur.MUST_NOT);
+                    int fieldID = TestUtil.NextInt32(Random, 1, parentFields.Length - 1);
+                    bq.Add(new TermQuery(new Term("parent" + fieldID, parentFields[fieldID][Random.Next(parentFields[fieldID].Length)])), Random.NextBoolean() ? Occur.MUST : Occur.MUST_NOT);
                 }
 
                 if (VERBOSE)
@@ -940,7 +940,7 @@ namespace Lucene.Net.Tests.Join
                 }
 
                 // Maps parent query to child docs:
-                ToChildBlockJoinQuery parentJoinQuery2 = new ToChildBlockJoinQuery(parentQuery2, parentsFilter, Random().NextBoolean());
+                ToChildBlockJoinQuery parentJoinQuery2 = new ToChildBlockJoinQuery(parentQuery2, parentsFilter, Random.NextBoolean());
 
                 // To run against the block-join index:
                 Query childJoinQuery2;
@@ -953,7 +953,7 @@ namespace Lucene.Net.Tests.Join
                 // apply a filter to children
                 Filter childFilter2, childJoinFilter2;
 
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     childQuery2 = parentQuery2;
                     childJoinQuery2 = parentJoinQuery2;
@@ -963,11 +963,11 @@ namespace Lucene.Net.Tests.Join
                 else
                 {
                     Term childTerm = RandomChildTerm(childFields[0]);
-                    if (Random().NextBoolean()) // filtered case
+                    if (Random.NextBoolean()) // filtered case
                     {
                         childJoinQuery2 = parentJoinQuery2;
                         Filter f = new QueryWrapperFilter(new TermQuery(childTerm));
-                        childJoinFilter2 = Random().NextBoolean() ? new FixedBitSetCachingWrapperFilter(f) : f;
+                        childJoinFilter2 = Random.NextBoolean() ? new FixedBitSetCachingWrapperFilter(f) : f;
                     }
                     else
                     {
@@ -975,7 +975,7 @@ namespace Lucene.Net.Tests.Join
                         // AND child field w/ parent query:
                         BooleanQuery bq = new BooleanQuery();
                         childJoinQuery2 = bq;
-                        if (Random().NextBoolean())
+                        if (Random.NextBoolean())
                         {
                             bq.Add(parentJoinQuery2, Occur.MUST);
                             bq.Add(new TermQuery(childTerm), Occur.MUST);
@@ -987,18 +987,18 @@ namespace Lucene.Net.Tests.Join
                         }
                     }
 
-                    if (Random().NextBoolean()) // filtered case
+                    if (Random.NextBoolean()) // filtered case
                     {
                         childQuery2 = parentQuery2;
                         Filter f = new QueryWrapperFilter(new TermQuery(childTerm));
-                        childFilter2 = Random().NextBoolean() ? new FixedBitSetCachingWrapperFilter(f) : f;
+                        childFilter2 = Random.NextBoolean() ? new FixedBitSetCachingWrapperFilter(f) : f;
                     }
                     else
                     {
                         childFilter2 = null;
                         BooleanQuery bq2 = new BooleanQuery();
                         childQuery2 = bq2;
-                        if (Random().NextBoolean())
+                        if (Random.NextBoolean())
                         {
                             bq2.Add(parentQuery2, Occur.MUST);
                             bq2.Add(new TermQuery(childTerm), Occur.MUST);
@@ -1126,7 +1126,7 @@ namespace Lucene.Net.Tests.Join
         public void TestMultiChildTypes()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             IList<Document> docs = new List<Document>();
 
@@ -1136,7 +1136,7 @@ namespace Lucene.Net.Tests.Join
             docs.Add(MakeResume("Lisa", "United Kingdom"));
             w.AddDocuments(docs);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
@@ -1213,13 +1213,13 @@ namespace Lucene.Net.Tests.Join
         public void TestAdvanceSingleParentSingleChild()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document childDoc = new Document();
             childDoc.Add(NewStringField("child", "1", Field.Store.NO));
             Document parentDoc = new Document();
             parentDoc.Add(NewStringField("parent", "1", Field.Store.NO));
             w.AddDocuments(Arrays.AsList(childDoc, parentDoc));
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
             Query tq = new TermQuery(new Term("child", "1"));
@@ -1237,7 +1237,7 @@ namespace Lucene.Net.Tests.Join
         public void TestAdvanceSingleParentNoChild()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(new LogDocMergePolicy()));
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(new LogDocMergePolicy()));
             Document parentDoc = new Document();
             parentDoc.Add(NewStringField("parent", "1", Field.Store.NO));
             parentDoc.Add(NewStringField("isparent", "yes", Field.Store.NO));
@@ -1253,7 +1253,7 @@ namespace Lucene.Net.Tests.Join
 
             // Need single seg:
             w.ForceMerge(1);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
             Query tq = new TermQuery(new Term("child", "2"));
@@ -1272,7 +1272,7 @@ namespace Lucene.Net.Tests.Join
         {
 
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             IList<Document> docs = new List<Document>();
             docs.Add(MakeJob("ruby", 2005));
@@ -1286,7 +1286,7 @@ namespace Lucene.Net.Tests.Join
             w.AddDocuments(docs);
             AddSkillless(w);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = new IndexSearcher(r);
 
@@ -1366,7 +1366,7 @@ namespace Lucene.Net.Tests.Join
         public void TestSometimesParentOnlyMatches()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d, Similarity, TimeZone);
             Document parent = new Document();
             parent.Add(new StoredField("parentID", "0"));
             parent.Add(NewTextField("parentText", "text", Field.Store.NO));
@@ -1394,7 +1394,7 @@ namespace Lucene.Net.Tests.Join
             docs.Add(parent);
             w.AddDocuments(docs);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             Query childQuery = new TermQuery(new Term("childText", "text"));
@@ -1431,7 +1431,7 @@ namespace Lucene.Net.Tests.Join
         public void TestChildQueryNeverMatches()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d, Similarity, TimeZone);
             Document parent = new Document();
             parent.Add(new StoredField("parentID", "0"));
             parent.Add(NewTextField("parentText", "text", Field.Store.NO));
@@ -1459,7 +1459,7 @@ namespace Lucene.Net.Tests.Join
             docs.Add(parent);
             w.AddDocuments(docs);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // never matches:
@@ -1497,7 +1497,7 @@ namespace Lucene.Net.Tests.Join
         public void TestChildQueryMatchesParent()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d, Similarity, TimeZone);
             Document parent = new Document();
             parent.Add(new StoredField("parentID", "0"));
             parent.Add(NewTextField("parentText", "text", Field.Store.NO));
@@ -1525,7 +1525,7 @@ namespace Lucene.Net.Tests.Join
             docs.Add(parent);
             w.AddDocuments(docs);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // illegally matches parent:
@@ -1548,7 +1548,7 @@ namespace Lucene.Net.Tests.Join
         public void TestAdvanceSingleDeletedParentNoChild()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             // First doc with 1 children
             Document parentDoc = new Document();
@@ -1572,7 +1572,7 @@ namespace Lucene.Net.Tests.Join
             childDoc.Add(NewStringField("child", "2", Field.Store.NO));
             w.AddDocuments(Arrays.AsList(childDoc, parentDoc));
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
@@ -1581,7 +1581,7 @@ namespace Lucene.Net.Tests.Join
 
             Query parentQuery = new TermQuery(new Term("parent", "2"));
 
-            ToChildBlockJoinQuery parentJoinQuery = new ToChildBlockJoinQuery(parentQuery, parentsFilter, Random().NextBoolean());
+            ToChildBlockJoinQuery parentJoinQuery = new ToChildBlockJoinQuery(parentQuery, parentsFilter, Random.NextBoolean());
             TopDocs topdocs = s.Search(parentJoinQuery, 3);
             assertEquals(1, topdocs.TotalHits);
 

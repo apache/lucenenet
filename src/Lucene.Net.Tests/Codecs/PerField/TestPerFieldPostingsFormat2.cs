@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs.PerField
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, 
-                new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetCodec(new MockCodec());
+                new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetCodec(new MockCodec());
             IndexWriter writer = NewWriter(dir, iwconf);
             AddDocs(writer, 10);
             writer.Commit();
@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs.PerField
                 Console.WriteLine("TEST: make new index");
             }
             IndexWriterConfig iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, 
-                new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetCodec(new MockCodec());
+                new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetCodec(new MockCodec());
             iwconf.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
             // ((LogMergePolicy)iwconf.getMergePolicy()).setMergeFactor(10);
             IndexWriter writer = NewWriter(dir, iwconf);
@@ -140,7 +140,7 @@ namespace Lucene.Net.Codecs.PerField
             AssertQuery(new Term("content", "aaa"), dir, 10);
             Codec codec = iwconf.Codec;
 
-            iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            iwconf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                 .SetOpenMode(OpenMode.APPEND).SetCodec(codec);
             // ((LogMergePolicy)iwconf.getMergePolicy()).setNoCFSRatio(0.0);
             // ((LogMergePolicy)iwconf.getMergePolicy()).setMergeFactor(10);
@@ -246,13 +246,13 @@ namespace Lucene.Net.Codecs.PerField
         [Test]
         public virtual void TestStressPerFieldCodec()
         {
-            Directory dir = NewDirectory(Random());
+            Directory dir = NewDirectory(Random);
             const int docsPerRound = 97;
             int numRounds = AtLeast(1);
             for (int i = 0; i < numRounds; i++)
             {
-                int num = TestUtil.NextInt(Random(), 30, 60);
-                IndexWriterConfig config = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+                int num = TestUtil.NextInt32(Random, 30, 60);
+                IndexWriterConfig config = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random));
                 config.SetOpenMode(OpenMode.CREATE_OR_APPEND);
                 IndexWriter writer = NewWriter(dir, config);
                 for (int j = 0; j < docsPerRound; j++)
@@ -261,14 +261,14 @@ namespace Lucene.Net.Codecs.PerField
                     for (int k = 0; k < num; k++)
                     {
                         FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-                        customType.IsTokenized = Random().NextBoolean();
-                        customType.OmitNorms = Random().NextBoolean();
-                        Field field = NewField("" + k, TestUtil.RandomRealisticUnicodeString(Random(), 128), customType);
+                        customType.IsTokenized = Random.NextBoolean();
+                        customType.OmitNorms = Random.NextBoolean();
+                        Field field = NewField("" + k, TestUtil.RandomRealisticUnicodeString(Random, 128), customType);
                         doc.Add(field);
                     }
                     writer.AddDocument(doc);
                 }
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     writer.ForceMerge(1);
                 }
@@ -348,9 +348,9 @@ namespace Lucene.Net.Codecs.PerField
         private void DoTestMixedPostings(Codec codec)
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetCodec(codec);
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
             Document doc = new Document();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
             // turn on vectors for the checkindex cross-check
@@ -363,8 +363,8 @@ namespace Lucene.Net.Codecs.PerField
             doc.Add(dateField);
             for (int i = 0; i < 100; i++)
             {
-                idField.SetStringValue(Convert.ToString(Random().Next(50)));
-                dateField.SetStringValue(Convert.ToString(Random().Next(100)));
+                idField.SetStringValue(Convert.ToString(Random.Next(50)));
+                dateField.SetStringValue(Convert.ToString(Random.Next(100)));
                 iw.AddDocument(doc);
             }
             iw.Dispose();

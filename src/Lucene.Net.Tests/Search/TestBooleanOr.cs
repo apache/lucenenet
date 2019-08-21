@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
 
         private int Search(Query q)
         {
-            QueryUtils.Check(Random(), q, Searcher, Similarity);
+            QueryUtils.Check(Random, q, Searcher, Similarity);
             return Searcher.Search(q, null, 1000).TotalHits;
         }
 
@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
             Dir = NewDirectory();
 
             //
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, Similarity, TimeZone);
 
             //
             Document d = new Document();
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search
             //
             writer.AddDocument(d);
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             //
             Searcher = NewSearcher(Reader);
             writer.Dispose();
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
         public virtual void TestBooleanScorerMax()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            RandomIndexWriter riw = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             int docCount = AtLeast(10000);
 
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
             }
 
             riw.ForceMerge(1);
-            IndexReader r = riw.Reader;
+            IndexReader r = riw.GetReader();
             riw.Dispose();
 
             IndexSearcher s = NewSearcher(r);
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search
 
             while (end.Get() < docCount)
             {
-                int inc = TestUtil.NextInt(Random(), 1, 1000);
+                int inc = TestUtil.NextInt32(Random, 1, 1000);
                 end.AddAndGet(inc);
                 scorer.Score(c, end.Get());
             }

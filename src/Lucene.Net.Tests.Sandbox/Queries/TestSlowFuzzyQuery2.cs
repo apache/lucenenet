@@ -77,7 +77,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestFromTestData()
         {
             // TODO: randomize!
-            assertFromTestData(mappings[Random().nextInt(mappings.Length)]);
+            assertFromTestData(mappings[Random.nextInt(mappings.Length)]);
         }
 
         public void assertFromTestData(int[] codePointTable)
@@ -93,7 +93,7 @@ namespace Lucene.Net.Sandbox.Queries
             int terms = (int)Math.Pow(2, bits);
 
             Store.Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMergePolicy(NewLogMergePolicy()));
 
             Document doc = new Document();
             Field field = NewTextField("field", "", Field.Store.NO);
@@ -105,7 +105,7 @@ namespace Lucene.Net.Sandbox.Queries
                 writer.AddDocument(doc);
             }
 
-            IndexReader r = writer.Reader;
+            IndexReader r = writer.GetReader();
             IndexSearcher searcher = NewSearcher(r);
             if (VERBOSE)
             {

@@ -39,14 +39,14 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public void TestCachability()
         {
-            TermsFilter a = TermsFilter(Random().NextBoolean(), new Term("field1", "a"), new Term("field1", "b"));
+            TermsFilter a = TermsFilter(Random.NextBoolean(), new Term("field1", "a"), new Term("field1", "b"));
             HashSet<Filter> cachedFilters = new HashSet<Filter>();
             cachedFilters.Add(a);
-            TermsFilter b = TermsFilter(Random().NextBoolean(), new Term("field1", "b"), new Term("field1", "a"));
+            TermsFilter b = TermsFilter(Random.NextBoolean(), new Term("field1", "b"), new Term("field1", "a"));
             assertTrue("Must be cached", cachedFilters.Contains(b));
             //duplicate term
             assertTrue("Must be cached", cachedFilters.Contains(TermsFilter(true, new Term("field1", "a"), new Term("field1", "a"), new Term("field1", "b"))));
-            assertFalse("Must not be cached", cachedFilters.Contains(TermsFilter(Random().NextBoolean(), new Term("field1", "a"), new Term("field1", "a"), new Term("field1", "b"), new Term("field1", "v"))));
+            assertFalse("Must not be cached", cachedFilters.Contains(TermsFilter(Random.NextBoolean(), new Term("field1", "a"), new Term("field1", "a"), new Term("field1", "b"), new Term("field1", "v"))));
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace Lucene.Net.Tests.Queries
         {
             string fieldName = "field1";
             Directory rd = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), rd, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, rd, Similarity, TimeZone);
             for (int i = 0; i < 100; i++)
             {
                 Document doc = new Document();
@@ -62,26 +62,26 @@ namespace Lucene.Net.Tests.Queries
                 doc.Add(NewStringField(fieldName, "" + term, Field.Store.YES));
                 w.AddDocument(doc);
             }
-            IndexReader reader = SlowCompositeReaderWrapper.Wrap(w.Reader);
+            IndexReader reader = SlowCompositeReaderWrapper.Wrap(w.GetReader());
             assertTrue(reader.Context is AtomicReaderContext);
             AtomicReaderContext context = (AtomicReaderContext)reader.Context;
             w.Dispose();
 
             IList<Term> terms = new List<Term>();
             terms.Add(new Term(fieldName, "19"));
-            FixedBitSet bits = (FixedBitSet)TermsFilter(Random().NextBoolean(), terms).GetDocIdSet(context, context.AtomicReader.LiveDocs);
+            FixedBitSet bits = (FixedBitSet)TermsFilter(Random.NextBoolean(), terms).GetDocIdSet(context, context.AtomicReader.LiveDocs);
             assertNull("Must match nothing", bits);
 
             terms.Add(new Term(fieldName, "20"));
-            bits = (FixedBitSet)TermsFilter(Random().NextBoolean(), terms).GetDocIdSet(context, context.AtomicReader.LiveDocs);
+            bits = (FixedBitSet)TermsFilter(Random.NextBoolean(), terms).GetDocIdSet(context, context.AtomicReader.LiveDocs);
             assertEquals("Must match 1", 1, bits.Cardinality());
 
             terms.Add(new Term(fieldName, "10"));
-            bits = (FixedBitSet)TermsFilter(Random().NextBoolean(), terms).GetDocIdSet(context, context.AtomicReader.LiveDocs);
+            bits = (FixedBitSet)TermsFilter(Random.NextBoolean(), terms).GetDocIdSet(context, context.AtomicReader.LiveDocs);
             assertEquals("Must match 2", 2, bits.Cardinality());
 
             terms.Add(new Term(fieldName, "00"));
-            bits = (FixedBitSet)TermsFilter(Random().NextBoolean(), terms).GetDocIdSet(context, context.AtomicReader.LiveDocs);
+            bits = (FixedBitSet)TermsFilter(Random.NextBoolean(), terms).GetDocIdSet(context, context.AtomicReader.LiveDocs);
             assertEquals("Must match 2", 2, bits.Cardinality());
 
             reader.Dispose();
@@ -93,20 +93,20 @@ namespace Lucene.Net.Tests.Queries
         {
             string fieldName = "field1";
             Directory rd1 = NewDirectory();
-            RandomIndexWriter w1 = new RandomIndexWriter(Random(), rd1, Similarity, TimeZone);
+            RandomIndexWriter w1 = new RandomIndexWriter(Random, rd1, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField(fieldName, "content1", Field.Store.YES));
             w1.AddDocument(doc);
-            IndexReader reader1 = w1.Reader;
+            IndexReader reader1 = w1.GetReader();
             w1.Dispose();
 
             fieldName = "field2";
             Directory rd2 = NewDirectory();
-            RandomIndexWriter w2 = new RandomIndexWriter(Random(), rd2, Similarity, TimeZone);
+            RandomIndexWriter w2 = new RandomIndexWriter(Random, rd2, Similarity, TimeZone);
             doc = new Document();
             doc.Add(NewStringField(fieldName, "content2", Field.Store.YES));
             w2.AddDocument(doc);
-            IndexReader reader2 = w2.Reader;
+            IndexReader reader2 = w2.GetReader();
             w2.Dispose();
 
             TermsFilter tf = new TermsFilter(new Term(fieldName, "content1"));
@@ -135,9 +135,9 @@ namespace Lucene.Net.Tests.Queries
         public void TestFieldNotPresent()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             int num = AtLeast(3);
-            int skip = Random().Next(num);
+            int skip = Random.Next(num);
             var terms = new List<Term>();
             for (int i = 0; i < num; i++)
             {
@@ -152,7 +152,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             w.ForceMerge(1);
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
             assertEquals(1, reader.Leaves.size());
 
@@ -171,23 +171,23 @@ namespace Lucene.Net.Tests.Queries
         public void TestSkipField()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             int num = AtLeast(10);
             var terms = new HashSet<Term>();
             for (int i = 0; i < num; i++)
             {
-                string field = "field" + Random().Next(100);
+                string field = "field" + Random.Next(100);
                 terms.Add(new Term(field, "content1"));
                 Document doc = new Document();
                 doc.Add(NewStringField(field, "content1", Field.Store.YES));
                 w.AddDocument(doc);
             }
-            int randomFields = Random().Next(10);
+            int randomFields = Random.Next(10);
             for (int i = 0; i < randomFields; i++)
             {
                 while (true)
                 {
-                    string field = "field" + Random().Next(100);
+                    string field = "field" + Random.Next(100);
                     Term t = new Term(field, "content1");
                     if (!terms.Contains(t))
                     {
@@ -197,7 +197,7 @@ namespace Lucene.Net.Tests.Queries
                 }
             }
             w.ForceMerge(1);
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
             assertEquals(1, reader.Leaves.size());
             AtomicReaderContext context = reader.Leaves.First();
@@ -213,20 +213,20 @@ namespace Lucene.Net.Tests.Queries
         public void TestRandom()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             int num = AtLeast(100);
-            bool singleField = Random().NextBoolean();
+            bool singleField = Random.NextBoolean();
             IList<Term> terms = new List<Term>();
             for (int i = 0; i < num; i++)
             {
-                string field = "field" + (singleField ? "1" : Random().Next(100).ToString());
-                string @string = TestUtil.RandomRealisticUnicodeString(Random());
+                string field = "field" + (singleField ? "1" : Random.Next(100).ToString());
+                string @string = TestUtil.RandomRealisticUnicodeString(Random);
                 terms.Add(new Term(field, @string));
                 Document doc = new Document();
                 doc.Add(NewStringField(field, @string, Field.Store.YES));
                 w.AddDocument(doc);
             }
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);
@@ -235,7 +235,7 @@ namespace Lucene.Net.Tests.Queries
             for (int i = 0; i < numQueries; i++)
             {
                 Collections.Shuffle(terms);
-                int numTerms = 1 + Random().Next(Math.Min(BooleanQuery.MaxClauseCount, terms.Count));
+                int numTerms = 1 + Random.Next(Math.Min(BooleanQuery.MaxClauseCount, terms.Count));
                 BooleanQuery bq = new BooleanQuery();
                 for (int j = 0; j < numTerms; j++)
                 {
@@ -290,25 +290,25 @@ namespace Lucene.Net.Tests.Queries
         public void TestHashCodeAndEquals()
         {
             int num = AtLeast(100);
-            bool singleField = Random().NextBoolean();
+            bool singleField = Random.NextBoolean();
             IList<Term> terms = new List<Term>();
             var uniqueTerms = new HashSet<Term>();
             for (int i = 0; i < num; i++)
             {
-                string field = "field" + (singleField ? "1" : Random().Next(100).ToString());
-                string @string = TestUtil.RandomRealisticUnicodeString(Random());
+                string field = "field" + (singleField ? "1" : Random.Next(100).ToString());
+                string @string = TestUtil.RandomRealisticUnicodeString(Random);
                 terms.Add(new Term(field, @string));
                 uniqueTerms.Add(new Term(field, @string));
-                TermsFilter left = TermsFilter(singleField && Random().NextBoolean(), uniqueTerms);
+                TermsFilter left = TermsFilter(singleField && Random.NextBoolean(), uniqueTerms);
                 Collections.Shuffle(terms);
-                TermsFilter right = TermsFilter(singleField && Random().NextBoolean(), terms);
+                TermsFilter right = TermsFilter(singleField && Random.NextBoolean(), terms);
                 assertEquals(right, left);
                 assertEquals(right.GetHashCode(), left.GetHashCode());
                 if (uniqueTerms.Count > 1)
                 {
                     IList<Term> asList = new List<Term>(uniqueTerms);
                     asList.RemoveAt(0);
-                    TermsFilter notEqual = TermsFilter(singleField && Random().NextBoolean(), asList);
+                    TermsFilter notEqual = TermsFilter(singleField && Random.NextBoolean(), asList);
                     assertFalse(left.Equals(notEqual));
                     assertFalse(right.Equals(notEqual));
                 }

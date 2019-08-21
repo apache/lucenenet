@@ -41,7 +41,7 @@ namespace Lucene.Net.Util.Fst
         {
             int[] ints = new int[7];
             Int32sRef input = new Int32sRef(ints, 0, ints.Length);
-            int seed = Random().Next();
+            int seed = Random.Next();
 
             Directory dir = new MMapDirectory(CreateTempDir("2BFST"));
 

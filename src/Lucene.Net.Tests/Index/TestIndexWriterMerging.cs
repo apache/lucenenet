@@ -51,14 +51,14 @@ namespace Lucene.Net.Index
             Directory indexA = NewDirectory();
             Directory indexB = NewDirectory();
 
-            FillIndex(Random(), indexA, 0, num);
+            FillIndex(Random, indexA, 0, num);
             bool fail = VerifyIndex(indexA, 0);
             if (fail)
             {
                 Assert.Fail("Index a is invalid");
             }
 
-            FillIndex(Random(), indexB, num, num);
+            FillIndex(Random, indexB, num, num);
             fail = VerifyIndex(indexB, num);
             if (fail)
             {
@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
 
             Directory merged = NewDirectory();
 
-            IndexWriter writer = new IndexWriter(merged, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(2)));
+            IndexWriter writer = new IndexWriter(merged, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy(2)));
             writer.AddIndexes(indexA, indexB);
             writer.ForceMerge(1);
             writer.Dispose();
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
         public virtual void TestForceMergeDeletes()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH));
+            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH));
             Document document = new Document();
 
             FieldType customType = new FieldType();
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(10, ir.NumDocs);
             ir.Dispose();
 
-            IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
+            IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
             writer = new IndexWriter(dir, dontMergeConfig);
             writer.DeleteDocuments(new Term("id", "0"));
             writer.DeleteDocuments(new Term("id", "7"));
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(8, ir.NumDocs);
             ir.Dispose();
 
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             Assert.AreEqual(8, writer.NumDocs);
             Assert.AreEqual(10, writer.MaxDoc);
             writer.ForceMergeDeletes();
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
         public virtual void TestForceMergeDeletes2()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy(50)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy(50)));
 
             Document document = new Document();
 
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(98, ir.NumDocs);
             ir.Dispose();
 
-            IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
+            IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
             writer = new IndexWriter(dir, dontMergeConfig);
             for (int i = 0; i < 98; i += 2)
             {
@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(49, ir.NumDocs);
             ir.Dispose();
 
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(3)));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy(3)));
             Assert.AreEqual(49, writer.NumDocs);
             writer.ForceMergeDeletes();
             writer.Dispose();
@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
         public virtual void TestForceMergeDeletes3()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy(50)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy(50)));
 
             FieldType customType = new FieldType();
             customType.IsStored = true;
@@ -269,7 +269,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(98, ir.NumDocs);
             ir.Dispose();
 
-            IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
+            IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
             writer = new IndexWriter(dir, dontMergeConfig);
             for (int i = 0; i < 98; i += 2)
             {
@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(49, ir.NumDocs);
             ir.Dispose();
 
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(3)));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy(3)));
             writer.ForceMergeDeletes(false);
             writer.Dispose();
             ir = DirectoryReader.Open(dir);
@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
         public virtual void TestSetMaxMergeDocs()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(new MyMergeScheduler(this)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new MyMergeScheduler(this)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
             LogMergePolicy lmp = (LogMergePolicy)conf.MergePolicy;
             lmp.MaxMergeDocs = 20;
             lmp.MergeFactor = 2;
@@ -369,7 +369,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: pass=" + pass);
                 }
 
-                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
                 if (pass == 2)
                 {
                     conf.SetMergeScheduler(new SerialMergeScheduler());
@@ -420,7 +420,7 @@ namespace Lucene.Net.Index
                     reader.Dispose();
 
                     // Reopen
-                    writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMergePolicy(NewLogMergePolicy()));
+                    writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMergePolicy(NewLogMergePolicy()));
                 }
                 writer.Dispose();
             }

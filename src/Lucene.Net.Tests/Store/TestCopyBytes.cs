@@ -49,9 +49,9 @@ namespace Lucene.Net.Store
                 }
 
                 // make random file
-                IndexOutput @out = dir.CreateOutput("test", NewIOContext(Random()));
-                var bytes = new byte[TestUtil.NextInt(Random(), 1, 77777)];
-                int size = TestUtil.NextInt(Random(), 1, 1777777);
+                IndexOutput @out = dir.CreateOutput("test", NewIOContext(Random));
+                var bytes = new byte[TestUtil.NextInt32(Random, 1, 77777)];
+                int size = TestUtil.NextInt32(Random, 1, 1777777);
                 int upto = 0;
                 int byteUpto = 0;
                 while (upto < size)
@@ -71,21 +71,21 @@ namespace Lucene.Net.Store
                 Assert.AreEqual(size, dir.FileLength("test"));
 
                 // copy from test -> test2
-                IndexInput @in = dir.OpenInput("test", NewIOContext(Random()));
+                IndexInput @in = dir.OpenInput("test", NewIOContext(Random));
 
-                @out = dir.CreateOutput("test2", NewIOContext(Random()));
+                @out = dir.CreateOutput("test2", NewIOContext(Random));
 
                 upto = 0;
                 while (upto < size)
                 {
-                    if (Random().NextBoolean())
+                    if (Random.NextBoolean())
                     {
                         @out.WriteByte(@in.ReadByte());
                         upto++;
                     }
                     else
                     {
-                        int chunk = Math.Min(TestUtil.NextInt(Random(), 1, bytes.Length), size - upto);
+                        int chunk = Math.Min(TestUtil.NextInt32(Random, 1, bytes.Length), size - upto);
                         @out.CopyBytes(@in, chunk);
                         upto += chunk;
                     }
@@ -95,11 +95,11 @@ namespace Lucene.Net.Store
                 @in.Dispose();
 
                 // verify
-                IndexInput in2 = dir.OpenInput("test2", NewIOContext(Random()));
+                IndexInput in2 = dir.OpenInput("test2", NewIOContext(Random));
                 upto = 0;
                 while (upto < size)
                 {
-                    if (Random().NextBoolean())
+                    if (Random.NextBoolean())
                     {
                         var v = in2.ReadByte();
                         Assert.AreEqual(Value(upto), v);
@@ -107,7 +107,7 @@ namespace Lucene.Net.Store
                     }
                     else
                     {
-                        int limit = Math.Min(TestUtil.NextInt(Random(), 1, bytes.Length), size - upto);
+                        int limit = Math.Min(TestUtil.NextInt32(Random, 1, bytes.Length), size - upto);
                         in2.ReadBytes(bytes, 0, limit);
                         for (int byteIdx = 0; byteIdx < limit; byteIdx++)
                         {
@@ -129,9 +129,9 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestCopyBytesWithThreads()
         {
-            int datalen = TestUtil.NextInt(Random(), 101, 10000);
+            int datalen = TestUtil.NextInt32(Random, 101, 10000);
             byte[] data = new byte[datalen];
-            Random().NextBytes(data);
+            Random.NextBytes(data);
 
             Directory d = NewDirectory();
             IndexOutput output = d.CreateOutput("data", IOContext.DEFAULT);

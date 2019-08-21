@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Spans
         {
             base.SetUp();
             Directory = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), Directory, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, Directory, Similarity, TimeZone);
             Document doc = new Document();
             Field field = NewTextField("field", "", Field.Store.NO);
             doc.Add(field);
@@ -55,7 +55,7 @@ namespace Lucene.Net.Search.Spans
             iw.AddDocument(doc);
             field.SetStringValue("jumps over extremely very lazy broxn dog");
             iw.AddDocument(doc);
-            Reader = iw.Reader;
+            Reader = iw.GetReader();
             iw.Dispose();
             Searcher = NewSearcher(Reader);
         }

@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         internal static int MaxBufferedDocs = 3;
         internal static int Seed = 0;
 
-        public sealed class YieldTestPoint : RandomIndexWriter.TestPoint
+        public sealed class YieldTestPoint : ITestPoint
         {
             private readonly TestStressIndexing2 OuterInstance;
 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
             public void Apply(string name)
             {
                 //      if (name.equals("startCommit")) {
-                if (Random().Next(4) == 2)
+                if (Random.Next(4) == 2)
                 {
                     Thread.Sleep(0);
                 }
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
             DocsAndWriter dw = IndexRandomIWReader(5, 3, 100, dir);
             DirectoryReader reader = dw.Writer.GetReader();
             dw.Writer.Commit();
-            VerifyEquals(Random(), reader, dir, "id");
+            VerifyEquals(Random, reader, dir, "id");
             reader.Dispose();
             dw.Writer.Dispose();
             dir.Dispose();
@@ -90,10 +90,10 @@ namespace Lucene.Net.Index
             Directory dir1 = NewDirectory();
             Directory dir2 = NewDirectory();
             // mergeFactor=2; maxBufferedDocs=2; Map docs = indexRandom(1, 3, 2, dir1);
-            int maxThreadStates = 1 + Random().Next(10);
-            bool doReaderPooling = Random().NextBoolean();
+            int maxThreadStates = 1 + Random.Next(10);
+            bool doReaderPooling = Random.NextBoolean();
             IDictionary<string, Document> docs = IndexRandom(5, 3, 100, dir1, maxThreadStates, doReaderPooling);
-            IndexSerial(Random(), docs, dir2);
+            IndexSerial(Random, docs, dir2);
 
             // verifying verify
             // verifyEquals(dir1, dir1, "id");
@@ -116,16 +116,16 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("\n\nTEST: top iter=" + i);
                 }
-                SameFieldOrder = Random().NextBoolean();
-                MergeFactor = Random().Next(3) + 2;
-                MaxBufferedDocs = Random().Next(3) + 2;
-                int maxThreadStates = 1 + Random().Next(10);
-                bool doReaderPooling = Random().NextBoolean();
+                SameFieldOrder = Random.NextBoolean();
+                MergeFactor = Random.Next(3) + 2;
+                MaxBufferedDocs = Random.Next(3) + 2;
+                int maxThreadStates = 1 + Random.Next(10);
+                bool doReaderPooling = Random.NextBoolean();
                 Seed++;
 
-                int nThreads = Random().Next(5) + 1;
-                int iter = Random().Next(5) + 1;
-                int range = Random().Next(20) + 1;
+                int nThreads = Random.Next(5) + 1;
+                int iter = Random.Next(5) + 1;
+                int range = Random.Next(20) + 1;
                 Directory dir1 = NewDirectory();
                 Directory dir2 = NewDirectory();
                 if (VERBOSE)
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: index serial");
                 }
-                IndexSerial(Random(), docs, dir2);
+                IndexSerial(Random, docs, dir2);
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: verify");
@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
         public virtual DocsAndWriter IndexRandomIWReader(int nThreads, int iterations, int range, Directory dir)
         {
             IDictionary<string, Document> docs = new Dictionary<string, Document>();
-            IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetRAMBufferSizeMB(0.1).SetMaxBufferedDocs(MaxBufferedDocs).SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint(this));
+            IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetRAMBufferSizeMB(0.1).SetMaxBufferedDocs(MaxBufferedDocs).SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint(this));
             w.Commit();
             LogMergePolicy lmp = (LogMergePolicy)w.Config.MergePolicy;
             lmp.NoCFSRatio = 0.0;
@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
         public virtual IDictionary<string, Document> IndexRandom(int nThreads, int iterations, int range, Directory dir, int maxThreadStates, bool doReaderPooling)
         {
             IDictionary<string, Document> docs = new Dictionary<string, Document>();
-            IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetRAMBufferSizeMB(0.1).SetMaxBufferedDocs(MaxBufferedDocs).SetIndexerThreadPool(new ThreadAffinityDocumentsWriterThreadPool(maxThreadStates)).SetReaderPooling(doReaderPooling).SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint(this));
+            IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetRAMBufferSizeMB(0.1).SetMaxBufferedDocs(MaxBufferedDocs).SetIndexerThreadPool(new ThreadAffinityDocumentsWriterThreadPool(maxThreadStates)).SetReaderPooling(doReaderPooling).SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint(this));
             LogMergePolicy lmp = (LogMergePolicy)w.Config.MergePolicy;
             lmp.NoCFSRatio = 0.0;
             lmp.MergeFactor = MergeFactor;
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
                 DocsEnum docs = null;
                 while (termsEnum.Next() != null)
                 {
-                    docs = TestUtil.Docs(Random(), termsEnum, liveDocs, docs, DocsFlags.NONE);
+                    docs = TestUtil.Docs(Random, termsEnum, liveDocs, docs, DocsFlags.NONE);
                     while (docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         Assert.Fail("r1 is not empty but r2 is");
@@ -411,10 +411,10 @@ namespace Lucene.Net.Index
                     break;
                 }
 
-                termDocs1 = TestUtil.Docs(Random(), termsEnum, liveDocs1, termDocs1, DocsFlags.NONE);
+                termDocs1 = TestUtil.Docs(Random, termsEnum, liveDocs1, termDocs1, DocsFlags.NONE);
                 if (termsEnum2.SeekExact(term))
                 {
-                    termDocs2 = TestUtil.Docs(Random(), termsEnum2, liveDocs2, termDocs2, DocsFlags.NONE);
+                    termDocs2 = TestUtil.Docs(Random, termsEnum2, liveDocs2, termDocs2, DocsFlags.NONE);
                 }
                 else
                 {
@@ -487,7 +487,7 @@ namespace Lucene.Net.Index
                                 }
                                 else
                                 {
-                                    dEnum = TestUtil.Docs(Random(), termsEnum3, null, dEnum, DocsFlags.FREQS);
+                                    dEnum = TestUtil.Docs(Random, termsEnum3, null, dEnum, DocsFlags.FREQS);
                                     Assert.IsNotNull(dEnum);
                                     Assert.IsTrue(dEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                                     int freq = dEnum.Freq;
@@ -526,7 +526,7 @@ namespace Lucene.Net.Index
                                 }
                                 else
                                 {
-                                    dEnum = TestUtil.Docs(Random(), termsEnum3, null, dEnum, DocsFlags.FREQS);
+                                    dEnum = TestUtil.Docs(Random, termsEnum3, null, dEnum, DocsFlags.FREQS);
                                     Assert.IsNotNull(dEnum);
                                     Assert.IsTrue(dEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                                     int freq = dEnum.Freq;
@@ -590,7 +590,7 @@ namespace Lucene.Net.Index
                     }
 
                     //System.out.println("TEST: term1=" + term1);
-                    docs1 = TestUtil.Docs(Random(), termsEnum1, liveDocs1, docs1, DocsFlags.FREQS);
+                    docs1 = TestUtil.Docs(Random, termsEnum1, liveDocs1, docs1, DocsFlags.FREQS);
                     while (docs1.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         int d = docs1.DocID;
@@ -632,7 +632,7 @@ namespace Lucene.Net.Index
                     }
 
                     //System.out.println("TEST: term1=" + term1);
-                    docs2 = TestUtil.Docs(Random(), termsEnum2, liveDocs2, docs2, DocsFlags.FREQS);
+                    docs2 = TestUtil.Docs(Random, termsEnum2, liveDocs2, docs2, DocsFlags.FREQS);
                     while (docs2.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         int d = r2r1[docs2.DocID];
@@ -780,8 +780,8 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        dEnum1 = TestUtil.Docs(Random(), termsEnum1, null, dEnum1, DocsFlags.FREQS);
-                        dEnum2 = TestUtil.Docs(Random(), termsEnum2, null, dEnum2, DocsFlags.FREQS);
+                        dEnum1 = TestUtil.Docs(Random, termsEnum1, null, dEnum1, DocsFlags.FREQS);
+                        dEnum2 = TestUtil.Docs(Random, termsEnum2, null, dEnum2, DocsFlags.FREQS);
                         Assert.IsNotNull(dEnum1);
                         Assert.IsNotNull(dEnum2);
                         int docID1 = dEnum1.NextDoc();
@@ -923,7 +923,7 @@ namespace Lucene.Net.Index
 
                 List<Field> fields = new List<Field>();
                 string idString = IdString;
-                Field idField = OuterInstance.NewField("id", idString, customType1);
+                Field idField = NewField("id", idString, customType1);
                 fields.Add(idField);
 
                 int nFields = NextInt(MaxFields);
@@ -956,13 +956,13 @@ namespace Lucene.Net.Index
                             customType.IsStored = true;
                             customType.OmitNorms = true;
                             customType.IsIndexed = true;
-                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(1), customType));
+                            fields.Add(NewField("f" + NextInt(100), GetString(1), customType));
                             break;
 
                         case 1:
                             customType.IsIndexed = true;
                             customType.IsTokenized = true;
-                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(0), customType));
+                            fields.Add(NewField("f" + NextInt(100), GetString(0), customType));
                             break;
 
                         case 2:
@@ -970,14 +970,14 @@ namespace Lucene.Net.Index
                             customType.StoreTermVectors = false;
                             customType.StoreTermVectorOffsets = false;
                             customType.StoreTermVectorPositions = false;
-                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(0), customType));
+                            fields.Add(NewField("f" + NextInt(100), GetString(0), customType));
                             break;
 
                         case 3:
                             customType.IsStored = true;
                             customType.IsIndexed = true;
                             customType.IsTokenized = true;
-                            fields.Add(OuterInstance.NewField("f" + NextInt(100), GetString(BigFieldSize), customType));
+                            fields.Add(NewField("f" + NextInt(100), GetString(BigFieldSize), customType));
                             break;
                     }
                 }

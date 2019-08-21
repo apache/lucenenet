@@ -1,69 +1,77 @@
 using System;
-using System.Diagnostics;
-using NUnit.Framework;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Analysis
 {
     using System.IO;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// Wraps a Reader, and can throw random or fixed
-    ///  exceptions, and spoon feed read chars.
+    /// Wraps a <see cref="TextReader"/>, and can throw random or fixed
+    /// exceptions, and spoon feed read chars.
     /// </summary>
-
-    public class MockReaderWrapper : StringReader
+    public class MockReaderWrapper : TextReader
     {
-        private readonly Random Random;
+        private readonly TextReader input;
+        private readonly Random random;
 
-        private int ExcAtChar = -1;
-        private int ReadSoFar;
-        private bool ThrowExcNext_Renamed;
+        private int excAtChar = -1;
+        private int readSoFar;
+        private bool throwExcNext;
 
-        public MockReaderWrapper(Random random, string text)
-            : base(text)
+        public MockReaderWrapper(Random random, TextReader input)
         {
-            this.Random = random;
+            this.input = input;
+            this.random = random;
         }
 
         /// <summary>
         /// Throw an exception after reading this many chars. </summary>
         public virtual void ThrowExcAfterChar(int charUpto)
         {
-            ExcAtChar = charUpto;
+            excAtChar = charUpto;
             // You should only call this on init!:
-            Assert.AreEqual(0, ReadSoFar);
+            Debug.Assert(0 == readSoFar);
         }
 
         public virtual void ThrowExcNext()
         {
-            ThrowExcNext_Renamed = true;
+            throwExcNext = true;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                input?.Dispose();
+            }
         }
 
         public override int Read()
         {
             ThrowExceptionIfApplicable();
 
-            var c = base.Read();
-            ReadSoFar += 1;
+            var c = input.Read();
+            readSoFar += 1;
             return c;
         }
 
@@ -80,46 +88,49 @@ namespace Lucene.Net.Analysis
             {
                 // Spoon-feed: intentionally maybe return less than
                 // the consumer asked for
-                realLen = TestUtil.NextInt(Random, 1, len);
+                realLen = TestUtil.NextInt32(random, 1, len);
             }
-            if (ExcAtChar != -1)
+            if (excAtChar != -1)
             {
-                int left = ExcAtChar - ReadSoFar;
-                Assert.True(left != 0);
-                read = base.Read(cbuf, off, Math.Min(realLen, left));
+                int left = excAtChar - readSoFar;
+                Debug.Assert(left != 0);
+                read = input.Read(cbuf, off, Math.Min(realLen, left));
                 //Characters are left
-                Assert.True(read != 0);
-                ReadSoFar += read;
+                Debug.Assert(read != 0);
+                readSoFar += read;
             }
             else
             {
-                read = base.Read(cbuf, off, realLen);
-                //Terrible TextReader::Read semantics
-                if (read == 0)
-                {
-                    read = -1;
-                }
+                // LUCENENET NOTE: In Java this returns -1 when done reading,
+                // but in .NET it returns 0. We are sticking with the .NET behavior
+                // for compatibility reasons, but all Java-ported tests need to be fixed
+                // to compensate for this (i.e. instead of checking x == -1, we should 
+                // check x <= 0 which covers both cases)
+                read = input.Read(cbuf, off, realLen);
             }
             return read;
         }
 
         private void ThrowExceptionIfApplicable()
         {
-            if (ThrowExcNext_Renamed || (ExcAtChar != -1 && ReadSoFar >= ExcAtChar))
+            if (throwExcNext || (excAtChar != -1 && readSoFar >= excAtChar))
             {
                 throw new Exception("fake exception now!");
             }
         }
 
-        public bool MarkSupported()
-        {
-            return false;
-        }
+        // LUCENENET: These are not supported by TextReader, so doesn't make much sense to include them.
+        // These were basically just to override the Java Reader class. In .NET, there is no Mark() method 
+        // to support, nor is there an IsReady. TextReader works happily without these.
+        //public virtual bool IsMarkSupported // LUCENENET specific - renamed from markSupported()
+        //{
+        //    get { return false; }
+        //}
 
-        public bool Ready()
-        {
-            return false;
-        }
+        //public virtual bool IsReady // LUCENENET specific - renamed from ready()
+        //{
+        //    get { return false; }
+        //}
 
         public static bool IsMyEvilException(Exception t)
         {

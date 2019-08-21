@@ -85,7 +85,7 @@ namespace Lucene.Net.Spatial
 
         public override void SetUp()
         {
-            SpatialStrategy strategy = ((Param)(RandomInts.RandomFrom(Random(), Parameters()))[0]).strategy;
+            SpatialStrategy strategy = ((Param)(RandomPicks.RandomFrom(Random, Parameters()))[0]).strategy;
             this.ctx = strategy.SpatialContext;
             this.strategy = strategy;
             base.SetUp();
@@ -141,7 +141,7 @@ namespace Lucene.Net.Spatial
 
         internal void checkDistValueSource(IPoint pt, params float[] distances)
         {
-            float multiplier = (float)Random().NextDouble() * 100f;
+            float multiplier = (float)Random.NextDouble() * 100f;
             float[]
             dists2 = Arrays.CopyOf(distances, distances.Length);
             for (int i = 0; i < dists2.Length; i++)

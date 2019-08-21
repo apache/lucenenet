@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestLetterAscii()
         {
-            Random random = Random();
+            Random random = Random;
             Analyzer left = new MockAnalyzer(random, jvmLetter, false);
             Analyzer right = new AnalyzerAnonymousInnerClassHelper(this);
             for (int i = 0; i < 1000; i++)
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestLetterAsciiHuge()
         {
-            Random random = Random();
+            Random random = Random;
             int maxLength = 8192; // CharTokenizer.IO_BUFFER_SIZE*2
             MockAnalyzer left = new MockAnalyzer(random, jvmLetter, false);
             left.MaxTokenLength = 255; // match CharTokenizer's max token length
@@ -121,7 +121,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestLetterHtmlish()
         {
-            Random random = Random();
+            Random random = Random;
             Analyzer left = new MockAnalyzer(random, jvmLetter, false);
             Analyzer right = new AnalyzerAnonymousInnerClassHelper3(this);
             for (int i = 0; i < 1000; i++)
@@ -150,7 +150,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestLetterHtmlishHuge()
         {
-            Random random = Random();
+            Random random = Random;
             int maxLength = 1024; // this is number of elements, not chars!
             MockAnalyzer left = new MockAnalyzer(random, jvmLetter, false);
             left.MaxTokenLength = 255; // match CharTokenizer's max token length
@@ -182,8 +182,8 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestLetterUnicode()
         {
-            Random random = Random();
-            Analyzer left = new MockAnalyzer(Random(), jvmLetter, false);
+            Random random = Random;
+            Analyzer left = new MockAnalyzer(LuceneTestCase.Random, jvmLetter, false);
             Analyzer right = new AnalyzerAnonymousInnerClassHelper5(this);
             for (int i = 0; i < 1000; i++)
             {
@@ -211,7 +211,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestLetterUnicodeHuge()
         {
-            Random random = Random();
+            Random random = Random;
             int maxLength = 4300; // CharTokenizer.IO_BUFFER_SIZE + fudge
             MockAnalyzer left = new MockAnalyzer(random, jvmLetter, false);
             left.MaxTokenLength = 255; // match CharTokenizer's max token length
@@ -272,11 +272,11 @@ namespace Lucene.Net.Analysis.Core
         // TODO: maybe push this out to TestUtil or LuceneTestCase and always use it instead?
         private static TextReader newStringReader(string s)
         {
-            Random random = Random();
+            Random random = Random;
             TextReader r = new StringReader(s);
-            if (random.Next(1) == 1)
+            if (random.NextBoolean())
             {
-                r = new MockReaderWrapper(random, s);
+                r = new MockReaderWrapper(random, r);
             }
             return r;
         }

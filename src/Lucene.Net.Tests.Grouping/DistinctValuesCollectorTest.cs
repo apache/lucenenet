@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Grouping
         [Test]
         public virtual void TestSimple()
         {
-            Random random = Random();
+            Random random = Random;
             DocValuesType[] dvTypes = new DocValuesType[]{
                 DocValuesType.NUMERIC,
                 DocValuesType.BINARY,
@@ -90,7 +90,7 @@ namespace Lucene.Net.Search.Grouping
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
                     new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
-            bool canUseDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
+            bool canUseDV = !"Lucene3x".Equals(w.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
             DocValuesType dvType = canUseDV ? dvTypes[random.nextInt(dvTypes.Length)] : DocValuesType.NONE;
 
             Document doc = new Document();
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Grouping
             doc.Add(new StringField("id", "6", Field.Store.NO));
             w.AddDocument(doc);
 
-            IndexSearcher indexSearcher = NewSearcher(w.Reader);
+            IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
             var cmp = new ComparerAnonymousHelper1(this);
@@ -246,8 +246,8 @@ namespace Lucene.Net.Search.Grouping
         [Test]
         public virtual void TestRandom()
         {
-            Random random = Random();
-            int numberOfRuns = TestUtil.NextInt(random, 3, 6);
+            Random random = Random;
+            int numberOfRuns = TestUtil.NextInt32(random, 3, 6);
             for (int indexIter = 0; indexIter < numberOfRuns; indexIter++)
             {
                 IndexContext context = CreateIndexContext();
@@ -435,7 +435,7 @@ namespace Lucene.Net.Search.Grouping
                                                                             string countField,
                                                                             DocValuesType dvType)
         {
-            Random random = Random();
+            Random random = Random;
             IEnumerable<ISearchGroup<T>> searchGroups = firstPassGroupingCollector.GetTopGroups(0, false);
             if (typeof(FunctionFirstPassGroupingCollector).IsAssignableFrom(firstPassGroupingCollector.GetType()))
             {
@@ -449,7 +449,7 @@ namespace Lucene.Net.Search.Grouping
 
         private IAbstractFirstPassGroupingCollector<IComparable> CreateRandomFirstPassCollector(DocValuesType dvType, Sort groupSort, string groupField, int topNGroups)
         {
-            Random random = Random();
+            Random random = Random;
             if (dvType != DocValuesType.NONE)
             {
                 if (random.nextBoolean())
@@ -511,7 +511,7 @@ namespace Lucene.Net.Search.Grouping
 
         private IndexContext CreateIndexContext()
         {
-            Random random = Random();
+            Random random = Random;
                 DocValuesType[] dvTypes = new DocValuesType[]{
                 DocValuesType.BINARY,
                 DocValuesType.SORTED
@@ -525,7 +525,7 @@ namespace Lucene.Net.Search.Grouping
                 new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy())
               );
 
-            bool canUseDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
+            bool canUseDV = !"Lucene3x".Equals(w.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
             DocValuesType dvType = canUseDV ? dvTypes[random.nextInt(dvTypes.Length)] : DocValuesType.NONE;
 
             int numDocs = 86 + random.nextInt(1087) * RANDOM_MULTIPLIER;
@@ -576,7 +576,7 @@ namespace Lucene.Net.Search.Grouping
                 w.AddDocument(doc);
             }
 
-            DirectoryReader reader = w.Reader;
+            DirectoryReader reader = w.GetReader();
             if (VERBOSE)
             {
                 for (int docID = 0; docID < reader.MaxDoc; docID++)

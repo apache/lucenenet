@@ -43,7 +43,7 @@ namespace Lucene.Net
             Store.Directory directory = NewDirectory();
             try
             {
-                Analyzer analyzer = new MockAnalyzer(Random());
+                Analyzer analyzer = new MockAnalyzer(Random);
                 IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
 
                 IndexWriter writer = new IndexWriter(directory, conf);
@@ -102,7 +102,7 @@ namespace Lucene.Net
             string singleFileOutput;
             using (sw = new StringWriter())
             {
-                DoTestSearch(Random(), sw, false);
+                DoTestSearch(Random, sw, false);
                 multiFileOutput = sw.ToString();
             }
 
@@ -110,7 +110,7 @@ namespace Lucene.Net
 
             using (sw = new StringWriter())
             {
-                DoTestSearch(Random(), sw, true);
+                DoTestSearch(Random, sw, true);
                 singleFileOutput = sw.ToString();
             }
 

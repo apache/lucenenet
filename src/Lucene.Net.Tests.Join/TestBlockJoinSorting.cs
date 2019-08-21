@@ -35,7 +35,7 @@ namespace Lucene.Net.Tests.Join
         public void TestNestedSorting()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NoMergePolicy.COMPOUND_FILES));
 
             IList<Document> docs = new List<Document>();
             Document document = new Document();
@@ -190,7 +190,7 @@ namespace Lucene.Net.Tests.Join
             document.Add(new StringField("fieldXXX", "x", Field.Store.NO));
             w.AddDocument(document);
 
-            IndexSearcher searcher = new IndexSearcher(DirectoryReader.Open(w.w, false));
+            IndexSearcher searcher = new IndexSearcher(DirectoryReader.Open(w.IndexWriter, false));
             w.Dispose();
             Filter parentFilter = new QueryWrapperFilter(new TermQuery(new Term("__type", "parent")));
             Filter childFilter = new QueryWrapperFilter(new PrefixQuery(new Term("field2")));
@@ -272,7 +272,7 @@ namespace Lucene.Net.Tests.Join
 
         private Filter Wrap(Filter filter)
         {
-            return Random().NextBoolean() ? new FixedBitSetCachingWrapperFilter(filter) : filter;
+            return Random.NextBoolean() ? new FixedBitSetCachingWrapperFilter(filter) : filter;
         }
     }
 }

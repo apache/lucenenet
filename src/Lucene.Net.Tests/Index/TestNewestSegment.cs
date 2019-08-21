@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
         public virtual void TestNewestSegment_Mem()
         {
             Directory directory = NewDirectory();
-            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Assert.IsNull(writer.NewestSegment());
             writer.Dispose();
             directory.Dispose();

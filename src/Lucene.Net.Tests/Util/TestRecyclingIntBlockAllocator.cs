@@ -36,7 +36,7 @@ namespace Lucene.Net.Util
 
         private RecyclingInt32BlockAllocator NewAllocator()
         {
-            return new RecyclingInt32BlockAllocator(1 << (2 + Random().Next(15)), Random().Next(97), Util.Counter.NewCounter());
+            return new RecyclingInt32BlockAllocator(1 << (2 + Random.Next(15)), Random.Next(97), Util.Counter.NewCounter());
         }
 
         [Test]
@@ -75,7 +75,7 @@ namespace Lucene.Net.Util
             int numIters = AtLeast(97);
             for (int i = 0; i < numIters; i++)
             {
-                int num = 1 + Random().Next(39);
+                int num = 1 + Random.Next(39);
                 for (int j = 0; j < num; j++)
                 {
                     block = allocator.GetInt32Block();
@@ -85,8 +85,8 @@ namespace Lucene.Net.Util
                     Assert.AreEqual(4 * size * (allocated.Count + allocator.NumBufferedBlocks), allocator.BytesUsed);
                 }
                 int[][] array = allocated.ToArray(/*new int[0][]*/);
-                int begin = Random().Next(array.Length);
-                int end = begin + Random().Next(array.Length - begin);
+                int begin = Random.Next(array.Length);
+                int end = begin + Random.Next(array.Length - begin);
                 IList<int[]> selected = new List<int[]>();
                 for (int j = begin; j < end; j++)
                 {
@@ -117,7 +117,7 @@ namespace Lucene.Net.Util
             int numIters = AtLeast(97);
             for (int i = 0; i < numIters; i++)
             {
-                int num = 1 + Random().Next(39);
+                int num = 1 + Random.Next(39);
                 for (int j = 0; j < num; j++)
                 {
                     block = allocator.GetInt32Block();
@@ -129,8 +129,8 @@ namespace Lucene.Net.Util
                 }
 
                 int[][] array = allocated.ToArray(/*new int[0][]*/);
-                int begin = Random().Next(array.Length);
-                int end = begin + Random().Next(array.Length - begin);
+                int begin = Random.Next(array.Length);
+                int end = begin + Random.Next(array.Length - begin);
                 for (int j = begin; j < end; j++)
                 {
                     int[] b = array[j];
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util
                 }
                 // randomly free blocks
                 int numFreeBlocks = allocator.NumBufferedBlocks;
-                int freeBlocks = allocator.FreeBlocks(Random().Next(7 + allocator.MaxBufferedBlocks));
+                int freeBlocks = allocator.FreeBlocks(Random.Next(7 + allocator.MaxBufferedBlocks));
                 Assert.AreEqual(allocator.NumBufferedBlocks, numFreeBlocks - freeBlocks);
             }
         }

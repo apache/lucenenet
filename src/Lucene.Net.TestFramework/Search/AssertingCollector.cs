@@ -1,5 +1,5 @@
 using System;
-using System.Diagnostics;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Search
 {
@@ -23,10 +23,9 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// Wraps another Collector and checks that
-    ///  acceptsDocsOutOfOrder is respected.
+    /// Wraps another <see cref="ICollector"/> and checks that
+    /// <see cref="AcceptsDocsOutOfOrder"/> is respected.
     /// </summary>
-
     public class AssertingCollector : ICollector
     {
         public static ICollector Wrap(Random random, ICollector other, bool inOrder)
@@ -34,37 +33,37 @@ namespace Lucene.Net.Search
             return other is AssertingCollector ? other : new AssertingCollector(random, other, inOrder);
         }
 
-        internal readonly Random Random;
+        internal readonly Random random;
         internal readonly ICollector @in;
-        internal readonly bool InOrder;
-        internal int LastCollected;
+        internal readonly bool inOrder;
+        internal int lastCollected;
 
         internal AssertingCollector(Random random, ICollector @in, bool inOrder)
         {
-            this.Random = random;
+            this.random = random;
             this.@in = @in;
-            this.InOrder = inOrder;
-            LastCollected = -1;
+            this.inOrder = inOrder;
+            lastCollected = -1;
         }
 
         public virtual void SetScorer(Scorer scorer)
         {
-            @in.SetScorer(AssertingScorer.GetAssertingScorer(Random, scorer));
+            @in.SetScorer(AssertingScorer.GetAssertingScorer(random, scorer));
         }
 
         public virtual void Collect(int doc)
         {
-            if (InOrder || !AcceptsDocsOutOfOrder)
+            if (inOrder || !AcceptsDocsOutOfOrder)
             {
-                Debug.Assert(doc > LastCollected, "Out of order : " + LastCollected + " " + doc);
+                Debug.Assert(doc > lastCollected, "Out of order : " + lastCollected + " " + doc);
             }
             @in.Collect(doc);
-            LastCollected = doc;
+            lastCollected = doc;
         }
 
         public virtual void SetNextReader(AtomicReaderContext context)
         {
-            LastCollected = -1;
+            lastCollected = -1;
         }
 
         public virtual bool AcceptsDocsOutOfOrder

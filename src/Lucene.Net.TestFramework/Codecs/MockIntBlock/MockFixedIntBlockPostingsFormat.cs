@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
 
     /// <summary>
     /// A silly test codec to verify core support for fixed
-    /// sized int block encoders is working.The int encoder
+    /// sized int block encoders is working. The int encoder
     /// used here just writes each block as a series of vInt.
     /// </summary>
     [PostingsFormatName("MockFixedIntBlock")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
@@ -56,9 +56,9 @@ namespace Lucene.Net.Codecs.MockIntBlock
             return new MockInt32Factory(blockSize);
         }
 
-        /**
-         * Encodes blocks as vInts of a fixed block size.
-         */
+        /// <summary>
+        /// Encodes blocks as vInts of a fixed block size.
+        /// </summary>
         public class MockInt32Factory : Int32StreamFactory
         {
             private readonly int blockSize;
@@ -134,19 +134,19 @@ namespace Lucene.Net.Codecs.MockIntBlock
                     }
                 }
             }
-        }
 
-        private class FixedInt32BlockIndexOutputAnonymousHelper : FixedInt32BlockIndexOutput
-        {
-            public FixedInt32BlockIndexOutputAnonymousHelper(IndexOutput output, int blockSize)
-                : base(output, blockSize)
+            private class FixedInt32BlockIndexOutputAnonymousHelper : FixedInt32BlockIndexOutput
             {
-            }
-            protected override void FlushBlock()
-            {
-                for (int i = 0; i < m_buffer.Length; i++)
+                public FixedInt32BlockIndexOutputAnonymousHelper(IndexOutput output, int blockSize)
+                    : base(output, blockSize)
                 {
-                    m_output.WriteVInt32(m_buffer[i]);
+                }
+                protected override void FlushBlock()
+                {
+                    for (int i = 0; i < m_buffer.Length; i++)
+                    {
+                        m_output.WriteVInt32(m_buffer[i]);
+                    }
                 }
             }
         }

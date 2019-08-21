@@ -1076,7 +1076,7 @@ namespace Lucene.Net.Index
         /// finished (which should be at most a few seconds), and
         /// then return. </param>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public virtual void Dispose(bool waitForMerges)
+        public virtual void Dispose(bool waitForMerges) // LUCENENET TODO: API - mark protected
         {
             // Ensure that only one thread actually gets to do the
             // closing, and make sure no commit is also in progress:

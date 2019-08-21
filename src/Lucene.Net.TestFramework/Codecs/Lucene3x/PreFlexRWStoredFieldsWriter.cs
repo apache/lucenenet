@@ -1,6 +1,6 @@
 using Lucene.Net.Documents;
 using System;
-using System.Diagnostics;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -104,7 +104,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 #pragma warning restore 168
             {
             }
-            IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
+            IOUtils.DeleteFilesIgnoringExceptions(directory, 
+                IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), 
+                IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
         }
 
         public override void WriteField(FieldInfo info, IIndexableField field)

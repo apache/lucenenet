@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
         public virtual void TestAllCommitsRemain()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE));
             for (int i = 0; i < 10; i++)
             {
                 Document doc = new Document();

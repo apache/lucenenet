@@ -170,7 +170,7 @@ namespace Lucene.Net.Analysis.Synonym
                             new int[] { 1, 1 }, 
                             new int[] { 1, 1 }, 
                             true);
-            CheckAnalysisConsistency(Random(), analyzer, false, "a b c");
+            CheckAnalysisConsistency(Random, analyzer, false, "a b c");
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -210,7 +210,7 @@ namespace Lucene.Net.Analysis.Synonym
                             new int[] { 1, 0, 1, 1 }, 
                             new int[] { 1, 2, 1, 1 }, 
                             true);
-            CheckAnalysisConsistency(Random(), analyzer, false, "a b c");
+            CheckAnalysisConsistency(Random, analyzer, false, "a b c");
         }
 
         private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
@@ -299,7 +299,7 @@ namespace Lucene.Net.Analysis.Synonym
             char[] s = new char[2 * length];
             for (int charIDX = 0; charIDX < length; charIDX++)
             {
-                s[2 * charIDX] = (char)(start + Random().Next(alphabetSize));
+                s[2 * charIDX] = (char)(start + Random.Next(alphabetSize));
                 s[2 * charIDX + 1] = ' ';
             }
             return new string(s);
@@ -458,7 +458,7 @@ namespace Lucene.Net.Analysis.Synonym
         public virtual void TestRandom()
         {
 
-            int alphabetSize = TestUtil.NextInt(Random(), 2, 7);
+            int alphabetSize = TestUtil.NextInt32(Random, 2, 7);
 
             int docLen = AtLeast(3000);
             //final int docLen = 50;
@@ -475,7 +475,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             IDictionary<string, OneSyn> synMap = new Dictionary<string, OneSyn>();
             IList<OneSyn> syns = new List<OneSyn>();
-            bool dedup = Random().nextBoolean();
+            bool dedup = Random.nextBoolean();
             if (VERBOSE)
             {
                 Console.WriteLine("  dedup=" + dedup);
@@ -483,7 +483,7 @@ namespace Lucene.Net.Analysis.Synonym
             b = new SynonymMap.Builder(dedup);
             for (int synIDX = 0; synIDX < numSyn; synIDX++)
             {
-                string synIn = GetRandomString('a', alphabetSize, TestUtil.NextInt(Random(), 1, 5)).Trim();
+                string synIn = GetRandomString('a', alphabetSize, TestUtil.NextInt32(Random, 1, 5)).Trim();
                 OneSyn s = synMap.ContainsKey(synIn) ? synMap[synIn] : null;
                 if (s == null)
                 {
@@ -492,9 +492,9 @@ namespace Lucene.Net.Analysis.Synonym
                     syns.Add(s);
                     s.@out = new List<string>();
                     synMap[synIn] = s;
-                    s.keepOrig = Random().nextBoolean();
+                    s.keepOrig = Random.nextBoolean();
                 }
-                string synOut = GetRandomString('0', 10, TestUtil.NextInt(Random(), 1, 5)).Trim();
+                string synOut = GetRandomString('0', 10, TestUtil.NextInt32(Random, 1, 5)).Trim();
                 s.@out.Add(synOut);
                 Add(synIn, synOut, s.keepOrig);
                 if (VERBOSE)
@@ -558,7 +558,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             while (true)
             {
-                string s = TestUtil.RandomUnicodeString(Random()).Trim();
+                string s = TestUtil.RandomUnicodeString(Random).Trim();
                 if (s.Length != 0 && s.IndexOf('\u0000') == -1)
                 {
                     return s;
@@ -576,18 +576,18 @@ namespace Lucene.Net.Analysis.Synonym
             int numIters = AtLeast(3);
             for (int i = 0; i < numIters; i++)
             {
-                b = new SynonymMap.Builder(Random().nextBoolean());
+                b = new SynonymMap.Builder(Random.nextBoolean());
                 int numEntries = AtLeast(10);
                 for (int j = 0; j < numEntries; j++)
                 {
-                    Add(RandomNonEmptyString(), RandomNonEmptyString(), Random().nextBoolean());
+                    Add(RandomNonEmptyString(), RandomNonEmptyString(), Random.nextBoolean());
                 }
                 SynonymMap map = b.Build();
-                bool ignoreCase = Random().nextBoolean();
+                bool ignoreCase = Random.nextBoolean();
 
                 Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper100(this, map, ignoreCase);
 
-                CheckRandomData(Random(), analyzer, 100);
+                CheckRandomData(Random, analyzer, 100);
             }
         }
 
@@ -619,7 +619,7 @@ namespace Lucene.Net.Analysis.Synonym
         // Adds MockGraphTokenFilter before SynFilter:
         public void TestRandom2GraphBefore() throws Exception {
           final int numIters = AtLeast(10);
-          Random random = random();
+          Random random = Random;
           for (int i = 0; i < numIters; i++) {
             b = new SynonymMap.Builder(random.nextBoolean());
             final int numEntries = AtLeast(10);
@@ -633,7 +633,7 @@ namespace Lucene.Net.Analysis.Synonym
               @Override
               protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                TokenStream graph = new MockGraphTokenFilter(random(), tokenizer);
+                TokenStream graph = new MockGraphTokenFilter(Random, tokenizer);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(graph, map, ignoreCase));
               }
             };
@@ -648,7 +648,7 @@ namespace Lucene.Net.Analysis.Synonym
         public virtual void TestRandom2GraphAfter()
         {
             int numIters = AtLeast(3);
-            Random random = Random();
+            Random random = Random;
             for (int i = 0; i < numIters; i++)
             {
                 b = new SynonymMap.Builder(random.nextBoolean());
@@ -684,7 +684,7 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 TokenStream syns = new SynonymFilter(tokenizer, map, ignoreCase);
-                TokenStream graph = new MockGraphTokenFilter(Random(), syns);
+                TokenStream graph = new MockGraphTokenFilter(Random, syns);
                 return new TokenStreamComponents(tokenizer, graph);
             }
         }
@@ -692,7 +692,7 @@ namespace Lucene.Net.Analysis.Synonym
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Random random = Random();
+            Random random = Random;
             int numIters = AtLeast(10);
             for (int i = 0; i < numIters; i++)
             {
@@ -738,7 +738,7 @@ namespace Lucene.Net.Analysis.Synonym
         [Test]
         public virtual void TestRandomHuge()
         {
-            Random random = Random();
+            Random random = Random;
             int numIters = AtLeast(3);
             for (int i = 0; i < numIters; i++)
             {
@@ -788,7 +788,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             string testFile = "aaa => aaaa1 aaaa2 aaaa3\n" + "bbb => bbbb1 bbbb2\n";
 
-            SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random()));
+            SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random));
             parser.Parse(new StringReader(testFile));
             SynonymMap map = parser.Build();
 

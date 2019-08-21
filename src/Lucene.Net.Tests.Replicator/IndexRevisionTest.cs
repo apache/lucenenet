@@ -148,9 +148,9 @@ namespace Lucene.Net.Replicator
                     byte[] srcBytes = new byte[(int)src.Length];
                     byte[] inBytes = new byte[(int)src.Length];
                     int offset = 0;
-                    if (Random().nextBoolean())
+                    if (Random.nextBoolean())
                     {
-                        int skip = Random().Next(10);
+                        int skip = Random.Next(10);
                         if (skip >= src.Length)
                         {
                             skip = 0;

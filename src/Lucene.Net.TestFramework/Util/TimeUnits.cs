@@ -18,23 +18,19 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// time unit constants for use in annotations. </summary>
-    public sealed class TimeUnits
+    /// Time unit constants for use in annotations. </summary>
+    public static class TimeUnits // LUCENENET specific: made static instead of having a private constructor
     {
-        private TimeUnits()
-        {
-        }
-
         /// <summary>
         /// 1 second in milliseconds </summary>
         public const int SECOND = 1000;
 
         /// <summary>
         /// 1 minute in milliseconds </summary>
-        public static readonly int MINUTE = 60 * SECOND;
+        public const int MINUTE = 60 * SECOND;
 
         /// <summary>
         /// 1 hour in milliseconds </summary>
-        public static readonly int HOUR = 60 * MINUTE;
+        public const int HOUR = 60 * MINUTE;
     }
 }

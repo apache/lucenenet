@@ -43,13 +43,13 @@ namespace Lucene.Net.Tests.Queries.Mlt
         {
             base.SetUp();
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
 
             // Add series of docs with specific information for MoreLikeThis
             AddDoc(writer, "lucene");
             AddDoc(writer, "lucene release");
 
-            reader = writer.Reader;
+            reader = writer.GetReader();
             writer.Dispose();
             searcher = NewSearcher(reader);
         }
@@ -75,7 +75,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
             IDictionary<string, float?> originalValues = OriginalValues;
 
             MoreLikeThis mlt = new MoreLikeThis(reader);
-            mlt.Analyzer = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+            mlt.Analyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             mlt.MinDocFreq = 1;
             mlt.MinTermFreq = 1;
             mlt.MinWordLen = 1;
@@ -109,7 +109,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
             {
                 IDictionary<string, float?> originalValues = new Dictionary<string, float?>();
                 MoreLikeThis mlt = new MoreLikeThis(reader);
-                mlt.Analyzer = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+                mlt.Analyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
                 mlt.MinDocFreq = 1;
                 mlt.MinTermFreq = 1;
                 mlt.MinWordLen = 1;
@@ -132,7 +132,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
         public void TestMultiFields()
         {
             MoreLikeThis mlt = new MoreLikeThis(reader);
-            mlt.Analyzer = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+            mlt.Analyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             mlt.MinDocFreq = 1;
             mlt.MinTermFreq = 1;
             mlt.MinWordLen = 1;
@@ -146,8 +146,8 @@ namespace Lucene.Net.Tests.Queries.Mlt
         [Test]
         public void TestMoreLikeThisQuery()
         {
-            Query query = new MoreLikeThisQuery("this is a test", new[] { "text" }, new MockAnalyzer(Random()), "text");
-            QueryUtils.Check(Random(), query, searcher, Similarity);
+            Query query = new MoreLikeThisQuery("this is a test", new[] { "text" }, new MockAnalyzer(Random), "text");
+            QueryUtils.Check(Random, query, searcher, Similarity);
         }
 
         // TODO: add tests for the MoreLikeThisQuery

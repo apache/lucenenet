@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
         public virtual void TestSimple()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             Field field = NewTextField("foo", "", Field.Store.NO);
             doc.Add(field);
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
             field2.SetStringValue("jumps over lazy brown dog");
             dvField.SetSingleValue(4f); // boost x4
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             // no boosting
@@ -82,8 +82,8 @@ namespace Lucene.Net.Search
 
             // in this case, we searched on field "foo". first document should have 2x the score.
             TermQuery tq = new TermQuery(new Term("foo", "quick"));
-            QueryUtils.Check(Random(), tq, searcher1, Similarity);
-            QueryUtils.Check(Random(), tq, searcher2, Similarity);
+            QueryUtils.Check(Random, tq, searcher1, Similarity);
+            QueryUtils.Check(Random, tq, searcher2, Similarity);
 
             TopDocs noboost = searcher1.Search(tq, 10);
             TopDocs boost = searcher2.Search(tq, 10);
@@ -95,8 +95,8 @@ namespace Lucene.Net.Search
 
             // this query matches only the second document, which should have 4x the score.
             tq = new TermQuery(new Term("foo", "jumps"));
-            QueryUtils.Check(Random(), tq, searcher1, Similarity);
-            QueryUtils.Check(Random(), tq, searcher2, Similarity);
+            QueryUtils.Check(Random, tq, searcher1, Similarity);
+            QueryUtils.Check(Random, tq, searcher2, Similarity);
 
             noboost = searcher1.Search(tq, 10);
             boost = searcher2.Search(tq, 10);
@@ -108,8 +108,8 @@ namespace Lucene.Net.Search
             // search on on field bar just for kicks, nothing should happen, since we setup
             // our sim provider to only use foo_boost for field foo.
             tq = new TermQuery(new Term("bar", "quick"));
-            QueryUtils.Check(Random(), tq, searcher1, Similarity);
-            QueryUtils.Check(Random(), tq, searcher2, Similarity);
+            QueryUtils.Check(Random, tq, searcher1, Similarity);
+            QueryUtils.Check(Random, tq, searcher2, Similarity);
 
             noboost = searcher1.Search(tq, 10);
             boost = searcher2.Search(tq, 10);

@@ -19,12 +19,21 @@
  *
 */
 
-using System.Collections.Generic;
+using NUnit.Framework;
 
-namespace Lucene.Net
+
+namespace Lucene.Net.Randomized
 {
-    public static class LuceneTypesHelpers
+    public class RandomizedTest
     {
+        public static void AssumeTrue(string msg, bool value)
+        {
+            Assume.That(value, msg);
+        }
 
+        public static void AssumeFalse(string msg, bool value)
+        {
+            Assume.That(!value, msg);
+        }
     }
 }

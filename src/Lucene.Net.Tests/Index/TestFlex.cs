@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
 
             const int DOC_COUNT = 177;
 
-            IndexWriter w = new IndexWriter(d, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetMaxBufferedDocs(7).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter w = new IndexWriter(d, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMaxBufferedDocs(7).SetMergePolicy(NewLogMergePolicy()));
 
             for (int iter = 0; iter < 2; iter++)
             {
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
         public virtual void TestTermOrd()
         {
             Directory d = NewDirectory();
-            IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())));
+            IndexWriter w = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())));
             Documents.Document doc = new Documents.Document();
             doc.Add(NewTextField("f", "a b c", Field.Store.NO));
             w.AddDocument(doc);

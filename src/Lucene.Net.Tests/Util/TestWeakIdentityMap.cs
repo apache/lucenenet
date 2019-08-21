@@ -35,7 +35,7 @@ namespace Lucene.Net.Util
         [Test, LongRunningTest]
         public virtual void TestSimpleHashMap()
         {
-            WeakIdentityMap<string, string> map = WeakIdentityMap<string, string>.NewHashMap(Random().NextBoolean());
+            WeakIdentityMap<string, string> map = WeakIdentityMap<string, string>.NewHashMap(Random.NextBoolean());
             // we keep strong references to the keys,
             // so WeakIdentityMap will not forget about them:
             string key1 = "foo";
@@ -204,7 +204,7 @@ namespace Lucene.Net.Util
             const int threadCount = 8, keyCount = 1024;
 
             RunnableAnonymousInnerClassHelper[] workers = new RunnableAnonymousInnerClassHelper[threadCount];
-            WeakIdentityMap<object, int?> map = WeakIdentityMap<object, int?>.NewConcurrentHashMap(Random().NextBoolean());
+            WeakIdentityMap<object, int?> map = WeakIdentityMap<object, int?>.NewConcurrentHashMap(Random.NextBoolean());
             // we keep strong references to the keys,
             // so WeakIdentityMap will not forget about them:
             AtomicReferenceArray<object> keys = new AtomicReferenceArray<object>(keyCount);
@@ -217,7 +217,7 @@ namespace Lucene.Net.Util
             {
                 for (int t = 0; t < threadCount; t++)
                 {
-                    Random rnd = new Random(Random().Next());
+                    Random rnd = new Random(Random.Next());
                     var worker = new RunnableAnonymousInnerClassHelper(this, keyCount, map, keys, rnd);
                     workers[t] = worker;
                     worker.Start();

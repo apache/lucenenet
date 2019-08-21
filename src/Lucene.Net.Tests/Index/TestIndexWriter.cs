@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
             {
                 IndexWriterConfig.DefaultWriteLockTimeout = 2000;
                 Assert.AreEqual(2000, IndexWriterConfig.DefaultWriteLockTimeout);
-                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             }
             finally
             {
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             // delete 40 documents
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NoMergePolicy.NO_COMPOUND_FILES));
             for (i = 0; i < 40; i++)
             {
                 writer.DeleteDocuments(new Term("id", "" + i));
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
             reader.Dispose();
 
             // merge the index down and check that the new doc count is correct
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Assert.AreEqual(60, writer.NumDocs);
             writer.ForceMerge(1);
             Assert.AreEqual(60, writer.MaxDoc);
@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
 
             // make sure opening a new index for create over
             // this existing one works correctly:
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
             Assert.AreEqual(0, writer.MaxDoc);
             Assert.AreEqual(0, writer.NumDocs);
             writer.Dispose();
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
         public static void AssertNoUnreferencedFiles(Directory dir, string message)
         {
             string[] startFiles = dir.ListAll();
-            (new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())))).Rollback();
+            (new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)))).Rollback();
             string[] endFiles = dir.ListAll();
 
             Array.Sort(startFiles);
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
 
             // add one document & close writer
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             AddDoc(writer);
             writer.Dispose();
 
@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(reader.NumDocs, 1, "should be one document");
 
             // now open index for create:
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
             Assert.AreEqual(writer.MaxDoc, 0, "should be zero documents");
             AddDoc(writer);
             writer.Dispose();
@@ -240,7 +240,7 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = null;
 
-            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(newScheduler());
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(newScheduler());
             writer = new IndexWriter(dir, config);
             AddDoc(writer);
 
@@ -264,7 +264,7 @@ namespace Lucene.Net.Index
         public virtual void TestIndexNoDocuments()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer.Commit();
             writer.Dispose();
 
@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, reader.NumDocs);
             reader.Dispose();
 
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             writer.Commit();
             writer.Dispose();
 
@@ -288,7 +288,7 @@ namespace Lucene.Net.Index
         public virtual void TestManyFields()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10));
+            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(10));
             for (int j = 0; j < 100; j++)
             {
                 Document doc = new Document();
@@ -323,7 +323,7 @@ namespace Lucene.Net.Index
         {
 
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetRAMBufferSizeMB(0.000001).SetMergePolicy(NewLogMergePolicy(10)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetRAMBufferSizeMB(0.000001).SetMergePolicy(NewLogMergePolicy(10)));
             int lastNumFile = dir.ListAll().Length;
             for (int j = 0; j < 9; j++)
             {
@@ -346,7 +346,7 @@ namespace Lucene.Net.Index
         public virtual void TestChangingRAMBuffer()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer.Config.SetMaxBufferedDocs(10);
             writer.Config.SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH);
 
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
         public virtual void TestChangingRAMBuffer2()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer.Config.SetMaxBufferedDocs(10);
             writer.Config.SetMaxBufferedDeleteTerms(10);
             writer.Config.SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH);
@@ -510,7 +510,7 @@ namespace Lucene.Net.Index
         public virtual void TestDiverseDocs()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetRAMBufferSizeMB(0.5));
+            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetRAMBufferSizeMB(0.5));
             int n = AtLeast(1);
             for (int i = 0; i < n; i++)
             {
@@ -521,7 +521,7 @@ namespace Lucene.Net.Index
                     Document doc = new Document();
                     for (int k = 0; k < 100; k++)
                     {
-                        doc.Add(NewField("field", Convert.ToString(Random().Next()), StoredTextType));
+                        doc.Add(NewField("field", Convert.ToString(Random.Next()), StoredTextType));
                     }
                     writer.AddDocument(doc);
                 }
@@ -568,7 +568,7 @@ namespace Lucene.Net.Index
         public virtual void TestEnablingNorms()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10));
+            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(10));
             // Enable norms for only 1 doc, pre flush
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             customType.OmitNorms = true;
@@ -597,7 +597,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(10, hits.Length);
             reader.Dispose();
 
-            writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(10));
+            writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(10));
             // Enable norms for only 1 doc, post flush
             for (int j = 0; j < 27; j++)
             {
@@ -631,7 +631,7 @@ namespace Lucene.Net.Index
         public virtual void TestHighFreqTerm()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetRAMBufferSizeMB(0.01));
+            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetRAMBufferSizeMB(0.01));
             // Massive doc that has 128 K a's
             StringBuilder b = new StringBuilder(1024 * 1024);
             for (int i = 0; i < 4096; i++)
@@ -655,7 +655,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, reader.NumDocs);
             Term t = new Term("field", "a");
             Assert.AreEqual(1, reader.DocFreq(t));
-            DocsEnum td = TestUtil.Docs(Random(), reader, "field", new BytesRef("a"), MultiFields.GetLiveDocs(reader), null, DocsFlags.FREQS);
+            DocsEnum td = TestUtil.Docs(Random, reader, "field", new BytesRef("a"), MultiFields.GetLiveDocs(reader), null, DocsFlags.FREQS);
             td.NextDoc();
             Assert.AreEqual(128 * 1024, td.Freq);
             reader.Dispose();
@@ -668,9 +668,9 @@ namespace Lucene.Net.Index
             private LockFactory myLockFactory;
 
             public MyRAMDirectory(Directory @delegate)
-                : base(Random(), @delegate)
+                : base(Random, @delegate)
             {
-                LockFactory_Renamed = null;
+                m_lockFactory = null;
                 myLockFactory = new SingleInstanceLockFactory();
             }
 
@@ -689,7 +689,7 @@ namespace Lucene.Net.Index
         public virtual void TestNullLockFactory()
         {
             Directory dir = new MyRAMDirectory(new RAMDirectory());
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             for (int i = 0; i < 100; i++)
             {
                 AddDoc(writer);
@@ -702,7 +702,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(100, hits.Length, "did not get right number of hits");
             reader.Dispose();
 
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
             writer.Dispose();
             dir.Dispose();
         }
@@ -711,7 +711,7 @@ namespace Lucene.Net.Index
         public virtual void TestFlushWithNoMerging()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(10)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy(10)));
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             customType.StoreTermVectors = true;
@@ -738,7 +738,7 @@ namespace Lucene.Net.Index
         public virtual void TestEmptyDocAfterFlushingRealDoc()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             customType.StoreTermVectors = true;
@@ -768,7 +768,7 @@ namespace Lucene.Net.Index
         public virtual void TestBadSegment()
         {
             Directory dir = NewDirectory();
-            IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             Document document = new Document();
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
@@ -788,7 +788,7 @@ namespace Lucene.Net.Index
             try
             {
                 Directory dir = NewDirectory();
-                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
                 ((LogMergePolicy)conf.MergePolicy).MergeFactor = 2;
                 IndexWriter iw = new IndexWriter(dir, conf);
                 Document document = new Document();
@@ -820,7 +820,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: iter=" + i);
                 }
-                IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy()));
+                IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy()));
                 //LogMergePolicy lmp = (LogMergePolicy) writer.getConfig().getMergePolicy();
                 //lmp.setMergeFactor(2);
                 //lmp.setNoCFSRatio(0.0);
@@ -859,7 +859,7 @@ namespace Lucene.Net.Index
 
                 if (0 == i % 4)
                 {
-                    writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                    writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                     //LogMergePolicy lmp2 = (LogMergePolicy) writer.getConfig().getMergePolicy();
                     //lmp2.setNoCFSRatio(0.0);
                     writer.ForceMerge(1);
@@ -875,7 +875,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
 
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             Document doc = new Document();
             StringBuilder b = new StringBuilder();
@@ -900,7 +900,7 @@ namespace Lucene.Net.Index
         public virtual void TestEmptyFieldName()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             doc.Add(NewTextField("", "a b c", Field.Store.NO));
             writer.AddDocument(doc);
@@ -912,7 +912,7 @@ namespace Lucene.Net.Index
         public virtual void TestEmptyFieldNameTerms()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             doc.Add(NewTextField("", "a b c", Field.Store.NO));
             writer.AddDocument(doc);
@@ -932,7 +932,7 @@ namespace Lucene.Net.Index
         public virtual void TestEmptyFieldNameWithEmptyTerm()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             doc.Add(NewStringField("", "", Field.Store.NO));
             doc.Add(NewStringField("", "a", Field.Store.NO));
@@ -978,7 +978,7 @@ namespace Lucene.Net.Index
         public virtual void TestDoBeforeAfterFlush()
         {
             Directory dir = NewDirectory();
-            MockIndexWriter w = new MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            MockIndexWriter w = new MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             doc.Add(NewField("field", "a field", customType));
@@ -1008,7 +1008,7 @@ namespace Lucene.Net.Index
             TokenStream tokens = new TokenStreamAnonymousInnerClassHelper(this);
 
             Directory dir = NewDirectory();
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             doc.Add(new TextField("field", tokens));
             try
@@ -1064,8 +1064,8 @@ namespace Lucene.Net.Index
         public virtual void TestPositionIncrementGapEmptyField()
         {
             Directory dir = NewDirectory();
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.PositionIncrementGap = 100;
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
+            analyzer.SetPositionIncrementGap(100);
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
@@ -1104,7 +1104,7 @@ namespace Lucene.Net.Index
         public virtual void TestDeadlock()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
+            IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
             Document doc = new Document();
 
             FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -1120,7 +1120,7 @@ namespace Lucene.Net.Index
             // index has 2 segments
 
             Directory dir2 = NewDirectory();
-            IndexWriter writer2 = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer2 = new IndexWriter(dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer2.AddDocument(doc);
             writer2.Dispose();
 
@@ -1152,37 +1152,37 @@ namespace Lucene.Net.Index
             internal IndexerThreadInterrupt(TestIndexWriter outerInstance)
             {
                 this.OuterInstance = outerInstance;
-                this.Random = new Random(Random().Next());
+                this.Random = new Random(Random.Next());
                 // make a little directory for addIndexes
                 // LUCENE-2239: won't work with NIOFS/MMAP
                 Adder = new MockDirectoryWrapper(this.Random, new RAMDirectory());
                 IndexWriterConfig conf = OuterInstance.NewIndexWriterConfig(this.Random, TEST_VERSION_CURRENT, new MockAnalyzer(this.Random));
                 IndexWriter w = new IndexWriter(Adder, conf);
                 Document doc = new Document();
-                doc.Add(OuterInstance.NewStringField(this.Random, "id", "500", Field.Store.NO));
-                doc.Add(OuterInstance.NewField(this.Random, "field", "some prepackaged text contents", StoredTextType));
-                if (DefaultCodecSupportsDocValues())
+                doc.Add(NewStringField(this.Random, "id", "500", Field.Store.NO));
+                doc.Add(NewField(this.Random, "field", "some prepackaged text contents", StoredTextType));
+                if (DefaultCodecSupportsDocValues)
                 {
                     doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("500")));
                     doc.Add(new NumericDocValuesField("numericdv", 500));
                     doc.Add(new SortedDocValuesField("sorteddv", new BytesRef("500")));
                 }
-                if (DefaultCodecSupportsSortedSet())
+                if (DefaultCodecSupportsSortedSet)
                 {
                     doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("one")));
                     doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("two")));
                 }
                 w.AddDocument(doc);
                 doc = new Document();
-                doc.Add(OuterInstance.NewStringField(this.Random, "id", "501", Field.Store.NO));
-                doc.Add(OuterInstance.NewField(this.Random, "field", "some more contents", StoredTextType));
-                if (DefaultCodecSupportsDocValues())
+                doc.Add(NewStringField(this.Random, "id", "501", Field.Store.NO));
+                doc.Add(NewField(this.Random, "field", "some more contents", StoredTextType));
+                if (DefaultCodecSupportsDocValues)
                 {
                     doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("501")));
                     doc.Add(new NumericDocValuesField("numericdv", 501));
                     doc.Add(new SortedDocValuesField("sorteddv", new BytesRef("501")));
                 }
-                if (DefaultCodecSupportsSortedSet())
+                if (DefaultCodecSupportsSortedSet)
                 {
                     doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("two")));
                     doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("three")));
@@ -1222,14 +1222,14 @@ namespace Lucene.Net.Index
                             w = new IndexWriter(dir, conf);
 
                             Document doc = new Document();
-                            Field idField = OuterInstance.NewStringField(Random, "id", "", Field.Store.NO);
+                            Field idField = NewStringField(Random, "id", "", Field.Store.NO);
                             Field binaryDVField = null;
                             Field numericDVField = null;
                             Field sortedDVField = null;
                             Field sortedSetDVField = new SortedSetDocValuesField("sortedsetdv", new BytesRef());
                             doc.Add(idField);
-                            doc.Add(OuterInstance.NewField(Random, "field", "some text contents", StoredTextType));
-                            if (DefaultCodecSupportsDocValues())
+                            doc.Add(NewField(Random, "field", "some text contents", StoredTextType));
+                            if (DefaultCodecSupportsDocValues)
                             {
                                 binaryDVField = new BinaryDocValuesField("binarydv", new BytesRef());
                                 numericDVField = new NumericDocValuesField("numericdv", 0);
@@ -1238,14 +1238,14 @@ namespace Lucene.Net.Index
                                 doc.Add(numericDVField);
                                 doc.Add(sortedDVField);
                             }
-                            if (DefaultCodecSupportsSortedSet())
+                            if (DefaultCodecSupportsSortedSet)
                             {
                                 doc.Add(sortedSetDVField);
                             }
                             for (int i = 0; i < 100; i++)
                             {
                                 idField.SetStringValue(Convert.ToString(i));
-                                if (DefaultCodecSupportsDocValues())
+                                if (DefaultCodecSupportsDocValues)
                                 {
                                     binaryDVField.SetBytesValue(new BytesRef(idField.GetStringValue()));
                                     numericDVField.SetInt64Value(i);
@@ -1481,7 +1481,7 @@ namespace Lucene.Net.Index
                 // TODO: would be nice to also sometimes interrupt the
                 // CMS merge threads too ...
                 Thread.Sleep(10);
-                IndexerThreadInterrupt t = Random().NextBoolean() ? t1 : t2;
+                IndexerThreadInterrupt t = Random.NextBoolean() ? t1 : t2;
                 if (t.AllowInterrupt)
                 {
                     i++;
@@ -1505,7 +1505,7 @@ namespace Lucene.Net.Index
         public virtual void TestIndexStoreCombos()
         {
             Directory dir = NewDirectory();
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             var b = new byte[50];
             for (int i = 0; i < 50; i++)
             {
@@ -1562,12 +1562,12 @@ namespace Lucene.Net.Index
             Assert.AreEqual("value", ir.Document(2).Get("string"));
 
             // test that the terms were indexed.
-            Assert.IsTrue(TestUtil.Docs(Random(), ir, "binary", new BytesRef("doc1field1"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.IsTrue(TestUtil.Docs(Random(), ir, "binary", new BytesRef("doc2field1"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.IsTrue(TestUtil.Docs(Random(), ir, "binary", new BytesRef("doc3field1"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.IsTrue(TestUtil.Docs(Random(), ir, "string", new BytesRef("doc1field2"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.IsTrue(TestUtil.Docs(Random(), ir, "string", new BytesRef("doc2field2"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.IsTrue(TestUtil.Docs(Random(), ir, "string", new BytesRef("doc3field2"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(TestUtil.Docs(Random, ir, "binary", new BytesRef("doc1field1"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(TestUtil.Docs(Random, ir, "binary", new BytesRef("doc2field1"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(TestUtil.Docs(Random, ir, "binary", new BytesRef("doc3field1"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(TestUtil.Docs(Random, ir, "string", new BytesRef("doc1field2"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(TestUtil.Docs(Random, ir, "string", new BytesRef("doc2field2"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(TestUtil.Docs(Random, ir, "string", new BytesRef("doc3field2"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
             ir.Dispose();
             dir.Dispose();
@@ -1577,7 +1577,7 @@ namespace Lucene.Net.Index
         public virtual void TestNoDocsIndex()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer.AddDocument(new Document());
             writer.Dispose();
 
@@ -1588,7 +1588,7 @@ namespace Lucene.Net.Index
         public virtual void TestIndexDivisor()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             config.SetTermIndexInterval(2);
             IndexWriter w = new IndexWriter(dir, config);
             StringBuilder s = new StringBuilder();
@@ -1607,7 +1607,7 @@ namespace Lucene.Net.Index
             int count = 0;
             while (t.Next() != null)
             {
-                DocsEnum docs = TestUtil.Docs(Random(), t, null, null, DocsFlags.NONE);
+                DocsEnum docs = TestUtil.Docs(Random, t, null, null, DocsFlags.NONE);
                 Assert.AreEqual(0, docs.NextDoc());
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docs.NextDoc());
                 count++;
@@ -1631,7 +1631,7 @@ namespace Lucene.Net.Index
                 mergePolicy.NoCFSRatio = 1.0;
                 mergePolicy.MaxCFSSegmentSizeMB = double.PositiveInfinity;
 
-                IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(mergePolicy).SetUseCompoundFile(true));
+                IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(mergePolicy).SetUseCompoundFile(true));
                 Document doc = new Document();
                 doc.Add(NewTextField("field", "go", Field.Store.NO));
                 w.AddDocument(doc);
@@ -1723,7 +1723,7 @@ namespace Lucene.Net.Index
             // Validates that iw.DeleteUnusedFiles() also deletes unused index commits
             // in case a deletion policy which holds onto commits is used.
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy())));
             SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
 
             // First commit
@@ -1765,7 +1765,7 @@ namespace Lucene.Net.Index
             // then IndexWriter ctor succeeds. Previously (LUCENE-2386) it failed
             // when listAll() was called in IndexFileDeleter.
             Directory dir = NewFSDirectory(CreateTempDir("emptyFSDirNoLock"), NoLockFactory.GetNoLockFactory());
-            (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())))).Dispose();
+            (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)))).Dispose();
             dir.Dispose();
         }
 
@@ -1779,7 +1779,7 @@ namespace Lucene.Net.Index
             // indexed, flushed (but not committed) and then IW rolls back, then no
             // files are left in the Directory.
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy()).SetUseCompoundFile(false));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy()).SetUseCompoundFile(false));
             string[] files = dir.ListAll();
 
             // Creating over empty dir should not create any files,
@@ -1840,7 +1840,7 @@ namespace Lucene.Net.Index
         {
             BaseDirectoryWrapper dir = NewDirectory();
             dir.SetLockFactory(NoLockFactory.GetNoLockFactory());
-            IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
+            IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
 
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -1850,7 +1850,7 @@ namespace Lucene.Net.Index
             doc.Add(NewField("c", "val", customType));
             w.AddDocument(doc);
             w.AddDocument(doc);
-            IndexWriter w2 = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetOpenMode(OpenMode.CREATE));
+            IndexWriter w2 = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetOpenMode(OpenMode.CREATE));
 
             w2.Dispose();
             // If we don't do that, the test fails on Windows
@@ -1858,7 +1858,7 @@ namespace Lucene.Net.Index
 
             // this test leaves only segments.gen, which causes
             // DirectoryReader.indexExists to return true:
-            dir.CheckIndexOnClose = false;
+            dir.CheckIndexOnDispose = false;
             dir.Dispose();
         }
 
@@ -1866,7 +1866,7 @@ namespace Lucene.Net.Index
         public virtual void TestNoUnwantedTVFiles()
         {
             Directory dir = NewDirectory();
-            IndexWriter indexWriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetRAMBufferSizeMB(0.01).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter indexWriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetRAMBufferSizeMB(0.01).SetMergePolicy(NewLogMergePolicy()));
             indexWriter.Config.MergePolicy.NoCFSRatio = 0.0;
 
             string BIG = "alskjhlaksjghlaksjfhalksvjepgjioefgjnsdfjgefgjhelkgjhqewlrkhgwlekgrhwelkgjhwelkgrhwlkejg";
@@ -1972,7 +1972,7 @@ namespace Lucene.Net.Index
         public virtual void TestWickedLongTerm()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, new StringSplitAnalyzer(), Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, new StringSplitAnalyzer(), Similarity, TimeZone);
 
             char[] chars = new char[DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8];
             Arrays.Fill(chars, 'x');
@@ -2003,7 +2003,7 @@ namespace Lucene.Net.Index
             // So we remove the deleted doc:
             w.ForceMerge(1);
 
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
 
             // Make sure all terms < max size were indexed
@@ -2027,7 +2027,7 @@ namespace Lucene.Net.Index
             Field contentField = new Field("content", "", customType);
             doc.Add(contentField);
 
-            w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             contentField.SetStringValue("other");
             w.AddDocument(doc);
@@ -2041,11 +2041,11 @@ namespace Lucene.Net.Index
             contentField.SetStringValue("zzz");
             w.AddDocument(doc);
 
-            reader = w.Reader;
+            reader = w.GetReader();
             w.Dispose();
             Assert.AreEqual(1, reader.DocFreq(new Term("content", bigTerm)));
 
-            SortedDocValues dti = FieldCache.DEFAULT.GetTermsIndex(SlowCompositeReaderWrapper.Wrap(reader), "content", (float)Random().NextDouble() * PackedInt32s.FAST);
+            SortedDocValues dti = FieldCache.DEFAULT.GetTermsIndex(SlowCompositeReaderWrapper.Wrap(reader), "content", (float)Random.NextDouble() * PackedInt32s.FAST);
             Assert.AreEqual(4, dti.ValueCount);
             BytesRef br = new BytesRef();
             dti.LookupOrd(2, br);
@@ -2059,7 +2059,7 @@ namespace Lucene.Net.Index
         public virtual void TestEmptyFieldNameTIIOne()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetTermIndexInterval(1);
             iwc.SetReaderTermsIndexDivisor(1);
             IndexWriter writer = new IndexWriter(dir, iwc);
@@ -2073,8 +2073,8 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestDeleteAllNRTLeftoverFiles()
         {
-            Directory d = new MockDirectoryWrapper(Random(), new RAMDirectory());
-            IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            Directory d = new MockDirectoryWrapper(Random, new RAMDirectory());
+            IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             for (int i = 0; i < 20; i++)
             {
@@ -2099,8 +2099,8 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestNRTReaderVersion()
         {
-            Directory d = new MockDirectoryWrapper(Random(), new RAMDirectory());
-            IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            Directory d = new MockDirectoryWrapper(Random, new RAMDirectory());
+            IndexWriter w = new IndexWriter(d, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
             doc.Add(NewStringField("id", "0", Field.Store.YES));
             w.AddDocument(doc);
@@ -2131,11 +2131,11 @@ namespace Lucene.Net.Index
             // somehow "knows" a lock is held against write.lock
             // even if you remove that file:
             d.SetLockFactory(new SimpleFSLockFactory());
-            RandomIndexWriter w1 = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
+            RandomIndexWriter w1 = new RandomIndexWriter(Random, d, Similarity, TimeZone);
             w1.DeleteAll();
             try
             {
-                new RandomIndexWriter(Random(), d, NewIndexWriterConfig(TEST_VERSION_CURRENT, null).SetWriteLockTimeout(100));
+                new RandomIndexWriter(Random, d, NewIndexWriterConfig(TEST_VERSION_CURRENT, null).SetWriteLockTimeout(100));
                 Assert.Fail("should not be able to create another writer");
             }
 #pragma warning disable 168
@@ -2152,7 +2152,7 @@ namespace Lucene.Net.Index
         public virtual void TestChangeIndexOptions()
         {
             Directory dir = NewDirectory();
-            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             FieldType docsAndFreqs = new FieldType(TextField.TYPE_NOT_STORED);
             docsAndFreqs.IndexOptions = IndexOptions.DOCS_AND_FREQS;
@@ -2176,7 +2176,7 @@ namespace Lucene.Net.Index
         public virtual void TestOnlyUpdateDocuments()
         {
             Directory dir = NewDirectory();
-            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             IList<Document> docs = new List<Document>();
             docs.Add(new Document());
@@ -2190,7 +2190,7 @@ namespace Lucene.Net.Index
         public virtual void TestPrepareCommitThenClose()
         {
             Directory dir = NewDirectory();
-            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             w.PrepareCommit();
             try
@@ -2217,7 +2217,7 @@ namespace Lucene.Net.Index
         public virtual void TestPrepareCommitThenRollback()
         {
             Directory dir = NewDirectory();
-            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             w.PrepareCommit();
             w.Rollback();
@@ -2230,7 +2230,7 @@ namespace Lucene.Net.Index
         public virtual void TestPrepareCommitThenRollback2()
         {
             Directory dir = NewDirectory();
-            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             w.Commit();
             w.AddDocument(new Document());
@@ -2297,17 +2297,17 @@ namespace Lucene.Net.Index
         public virtual void TestOtherFiles()
         {
             Directory dir = NewDirectory();
-            var iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            var iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             iw.AddDocument(new Document());
             iw.Dispose();
             try
             {
                 // Create my own random file:
-                IndexOutput @out = dir.CreateOutput("myrandomfile", NewIOContext(Random()));
+                IndexOutput @out = dir.CreateOutput("myrandomfile", NewIOContext(Random));
                 @out.WriteByte((byte)(sbyte)42);
                 @out.Dispose();
 
-                (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())))).Dispose();
+                (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)))).Dispose();
 
                 Assert.IsTrue(SlowFileExists(dir, "myrandomfile"));
             }
@@ -2323,12 +2323,12 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, a, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, a, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new TextField("body", "just a", Field.Store.NO));
             doc.Add(new TextField("body", "test of gaps", Field.Store.NO));
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
             PhraseQuery pq = new PhraseQuery();
@@ -2365,12 +2365,12 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             Automaton secondSet = BasicAutomata.MakeString("foobar");
             Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this, secondSet);
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, a, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, a, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(new TextField("body", "just a foobar", Field.Store.NO));
             doc.Add(new TextField("body", "test of gaps", Field.Store.NO));
             iw.AddDocument(doc);
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
             PhraseQuery pq = new PhraseQuery();
@@ -2413,15 +2413,15 @@ namespace Lucene.Net.Index
             try
             {
                 // Create my own random file:
-                IndexOutput @out = dir.CreateOutput("_a.frq", NewIOContext(Random()));
+                IndexOutput @out = dir.CreateOutput("_a.frq", NewIOContext(Random));
                 @out.WriteByte((byte)(sbyte)42);
                 @out.Dispose();
 
-                (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())))).Dispose();
+                (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)))).Dispose();
 
                 Assert.IsTrue(SlowFileExists(dir, "_a.frq"));
 
-                IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                 iw.AddDocument(new Document());
                 iw.Dispose();
 
@@ -2438,7 +2438,7 @@ namespace Lucene.Net.Index
         public virtual void TestRotatingFieldNames()
         {
             Directory dir = NewFSDirectory(CreateTempDir("TestIndexWriter.testChangingFields"));
-            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetRAMBufferSizeMB(0.2);
             iwc.SetMaxBufferedDocs(-1);
             IndexWriter w = new IndexWriter(dir, iwc);
@@ -2553,7 +2553,7 @@ namespace Lucene.Net.Index
         public virtual void TestIterableThrowsException()
         {
             Directory dir = NewDirectory();
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             int iters = AtLeast(100);
             int docCount = 0;
             int docId = 0;
@@ -2569,13 +2569,13 @@ namespace Lucene.Net.Index
                 {
                     Document doc = new Document();
                     doc.Add(NewField("id", "" + (docId++), idFt));
-                    doc.Add(NewField("foo", TestUtil.RandomSimpleString(Random()), ft));
+                    doc.Add(NewField("foo", TestUtil.RandomSimpleString(Random), ft));
                     docs.Add(doc);
                 }
                 bool success = false;
                 try
                 {
-                    w.AddDocuments(new RandomFailingFieldIterable(docs, Random()));
+                    w.AddDocuments(new RandomFailingFieldIterable(docs, Random));
                     success = true;
                 }
                 catch (Exception e)
@@ -2678,7 +2678,7 @@ namespace Lucene.Net.Index
             {
                 BaseDirectoryWrapper dir = NewDirectory();
                 dir.CreateOutput("segments_0", IOContext.DEFAULT).Dispose();
-                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
                 int mode = i / 2;
                 if (mode == 0)
                 {
@@ -2731,7 +2731,7 @@ namespace Lucene.Net.Index
 
                 if (mode != 0)
                 {
-                    dir.CheckIndexOnClose = false;
+                    dir.CheckIndexOnDispose = false;
                 }
                 dir.Dispose();
             }
@@ -2741,7 +2741,7 @@ namespace Lucene.Net.Index
         public virtual void TestHasUncommittedChanges()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Assert.IsTrue(writer.HasUncommittedChanges()); // this will be true because a commit will create an empty index
             Document doc = new Document();
             doc.Add(NewTextField("myfield", "a b c", Field.Store.NO));
@@ -2779,7 +2779,7 @@ namespace Lucene.Net.Index
             Assert.IsFalse(writer.HasUncommittedChanges());
             writer.Dispose();
 
-            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Assert.IsFalse(writer.HasUncommittedChanges());
             writer.AddDocument(doc);
             Assert.IsTrue(writer.HasUncommittedChanges());
@@ -2792,15 +2792,15 @@ namespace Lucene.Net.Index
         public virtual void TestMergeAllDeleted()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             SetOnce<IndexWriter> iwRef = new SetOnce<IndexWriter>();
-            iwc.SetInfoStream(new RandomIndexWriter.TestPointInfoStream(iwc.InfoStream, new TestPointAnonymousInnerClassHelper(this, iwRef)));
+            iwc.SetInfoStream(new TestPointInfoStream(iwc.InfoStream, new TestPointAnonymousInnerClassHelper(this, iwRef)));
             IndexWriter evilWriter = new IndexWriter(dir, iwc);
             iwRef.Set(evilWriter);
             for (int i = 0; i < 1000; i++)
             {
                 AddDoc(evilWriter);
-                if (Random().Next(17) == 0)
+                if (Random.Next(17) == 0)
                 {
                     evilWriter.Commit();
                 }
@@ -2811,7 +2811,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TestPointAnonymousInnerClassHelper : RandomIndexWriter.TestPoint
+        private class TestPointAnonymousInnerClassHelper : ITestPoint
         {
             private readonly TestIndexWriter OuterInstance;
 
@@ -2841,7 +2841,7 @@ namespace Lucene.Net.Index
         public virtual void TestDeleteSameTermAcrossFields()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             IndexWriter w = new IndexWriter(dir, iwc);
             Document doc = new Document();
             doc.Add(new TextField("a", "foo", Field.Store.NO));
@@ -2877,12 +2877,12 @@ namespace Lucene.Net.Index
             // Allow writing to same file more than once:
             dir.PreventDoubleWrite = false;
 
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             LogMergePolicy lmp = new LogDocMergePolicy();
             lmp.MergeFactor = 2;
             iwc.SetMergePolicy(lmp);
 
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, iwc);
             Document doc = new Document();
             doc.Add(new TextField("a", "foo", Field.Store.NO));
             w.AddDocument(doc);
@@ -2890,7 +2890,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
 
             // Get a new reader, but this also sets off a merge:
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // Blow away index and make a new writer:
@@ -2899,7 +2899,7 @@ namespace Lucene.Net.Index
                 dir.DeleteFile(fileName);
             }
 
-            w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             w.AddDocument(doc);
             w.Dispose();
             r.Dispose();

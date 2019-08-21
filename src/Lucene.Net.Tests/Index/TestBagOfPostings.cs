@@ -51,11 +51,11 @@ namespace Lucene.Net.Index
         {
             IList<string> postingsList = new List<string>();
             int numTerms = AtLeast(300);
-            int maxTermsPerDoc = TestUtil.NextInt(Random(), 10, 20);
+            int maxTermsPerDoc = TestUtil.NextInt32(Random, 10, 20);
 
             bool isSimpleText = "SimpleText".Equals(TestUtil.GetPostingsFormat("field"), StringComparison.Ordinal);
 
-            IndexWriterConfig iwc = NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random));
 
             if ((isSimpleText || iwc.MergePolicy is MockRandomMergePolicy) && (TEST_NIGHTLY || RANDOM_MULTIPLIER > 1))
             {
@@ -82,12 +82,12 @@ namespace Lucene.Net.Index
             ConcurrentQueue<string> postings = new ConcurrentQueue<string>(postingsList);
 
             Directory dir = NewFSDirectory(CreateTempDir("bagofpostings"));
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
-            int threadCount = TestUtil.NextInt(Random(), 1, 5);
+            int threadCount = TestUtil.NextInt32(Random, 1, 5);
             if (VERBOSE)
             {
-                Console.WriteLine("config: " + iw.w.Config);
+                Console.WriteLine("config: " + iw.IndexWriter.Config);
                 Console.WriteLine("threadCount=" + threadCount);
             }
 
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
             }
 
             iw.ForceMerge(1);
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             Assert.AreEqual(1, ir.Leaves.Count);
             AtomicReader air = (AtomicReader)ir.Leaves[0].Reader;
             Terms terms = air.GetTerms("field");
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     Document document = new Document();
-                    Field field = OuterInstance.NewTextField("field", "", Field.Store.NO);
+                    Field field = NewTextField("field", "", Field.Store.NO);
                     document.Add(field);
                     StartingGun.Wait();
                     while (!(Postings.Count == 0))

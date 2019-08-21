@@ -45,26 +45,26 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRollingUpdates_Mem()
         {
-            Random random = new Random(Random().Next());
+            Random random = new Random(Random.Next());
             BaseDirectoryWrapper dir = NewDirectory();
-            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
+            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
 
             //provider.register(new MemoryCodec());
-            if ((!"Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal)) && Random().NextBoolean())
+            if ((!"Lucene3x".Equals(Codec.Default.Name, StringComparison.Ordinal)) && LuceneTestCase.Random.NextBoolean())
             {
                 Codec.Default =
-                    TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(Random().nextBoolean(), random.NextFloat()));
+                    TestUtil.AlwaysPostingsFormat(new MemoryPostingsFormat(LuceneTestCase.Random.nextBoolean(), random.NextSingle()));
             }
 
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
+            MockAnalyzer analyzer = new MockAnalyzer(LuceneTestCase.Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
 
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             int SIZE = AtLeast(20);
             int id = 0;
             IndexReader r = null;
             IndexSearcher s = null;
-            int numUpdates = (int)(SIZE * (2 + (TEST_NIGHTLY ? 200 * Random().NextDouble() : 5 * Random().NextDouble())));
+            int numUpdates = (int)(SIZE * (2 + (TEST_NIGHTLY ? 200 * LuceneTestCase.Random.NextDouble() : 5 * LuceneTestCase.Random.NextDouble())));
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: numUpdates=" + numUpdates);
@@ -129,14 +129,14 @@ namespace Lucene.Net.Index
                     w.AddDocument(doc);
                 }
 
-                if (docIter >= SIZE && Random().Next(50) == 17)
+                if (docIter >= SIZE && LuceneTestCase.Random.Next(50) == 17)
                 {
                     if (r != null)
                     {
                         r.Dispose();
                     }
 
-                    bool applyDeletions = Random().NextBoolean();
+                    bool applyDeletions = LuceneTestCase.Random.NextBoolean();
 
                     if (VERBOSE)
                     {
@@ -196,12 +196,12 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
 
-            LineFileDocs docs = new LineFileDocs(Random());
+            LineFileDocs docs = new LineFileDocs(Random);
             for (int r = 0; r < 3; r++)
             {
-                IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
+                IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
                 int numUpdates = AtLeast(20);
-                int numThreads = TestUtil.NextInt(Random(), 2, 6);
+                int numThreads = TestUtil.NextInt32(Random, 2, 6);
                 IndexingThread[] threads = new IndexingThread[numThreads];
                 for (int i = 0; i < numThreads; i++)
                 {
@@ -256,7 +256,7 @@ namespace Lucene.Net.Index
                         Documents.Document doc = new Documents.Document(); // docs.NextDoc();
                         doc.Add(NewStringField("id", "test", Field.Store.NO));
                         Writer.UpdateDocument(new Term("id", "test"), doc);
-                        if (Random().Next(3) == 0)
+                        if (Random.Next(3) == 0)
                         {
                             if (open == null)
                             {

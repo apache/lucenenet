@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
 
             var doc = new Document();
             Field field = NewStringField("field", "", Field.Store.NO);
@@ -69,10 +69,10 @@ namespace Lucene.Net.Search
             int num = codec.Equals("Lucene3x", StringComparison.Ordinal) ? 200 * RANDOM_MULTIPLIER : AtLeast(1000);
             for (int i = 0; i < num; i++)
             {
-                field.SetStringValue(TestUtil.RandomUnicodeString(Random(), 10));
+                field.SetStringValue(TestUtil.RandomUnicodeString(Random, 10));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher = NewSearcher(Reader);
             writer.Dispose();
         }
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
             int num = AtLeast(100);
             for (int i = 0; i < num; i++)
             {
-                AssertSame(TestUtil.RandomUnicodeString(Random(), 5));
+                AssertSame(TestUtil.RandomUnicodeString(Random, 5));
             }
         }
 

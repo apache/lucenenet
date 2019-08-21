@@ -23,125 +23,131 @@ namespace Lucene.Net.Analysis
     using System.Runtime.CompilerServices;
 
     /// <summary>
-    /// TokenStream from a canned list of binary (BytesRef-based)
+    /// Represents a binary token. </summary>
+    public sealed class BinaryToken
+    {
+        internal BytesRef Term { get; set; }
+        internal int PosInc { get; set; }
+        internal int PosLen { get; set; }
+        internal int StartOffset { get; set; }
+        internal int EndOffset { get; set; }
+
+        public BinaryToken(BytesRef term)
+        {
+            this.Term = term;
+            this.PosInc = 1;
+            this.PosLen = 1;
+        }
+
+        public BinaryToken(BytesRef term, int posInc, int posLen)
+        {
+            this.Term = term;
+            this.PosInc = posInc;
+            this.PosLen = posLen;
+        }
+    }
+
+    /// <summary>
+    /// An attribute extending <see cref="ITermToBytesRefAttribute"/>
+    /// but exposing <see cref="BytesRef"/> property.
+    /// </summary>
+    public interface IBinaryTermAttribute : ITermToBytesRefAttribute
+    {
+        /// <summary>
+        /// Set the current binary value. </summary>
+        new BytesRef BytesRef { get; set; }
+    }
+
+    /// <summary>
+    /// Implementation for <see cref="IBinaryTermAttribute"/>. </summary>
+    public sealed class BinaryTermAttribute : Attribute, IBinaryTermAttribute
+    {
+        private readonly BytesRef bytes = new BytesRef();
+
+        public void FillBytesRef()
+        {
+            // no-op: we already filled externally during owner's incrementToken
+        }
+
+        public BytesRef BytesRef
+        {
+            get
+            {
+                return bytes;
+            }
+            set
+            {
+                this.bytes.CopyBytes(value);
+            }
+        }
+
+        public override void Clear()
+        {
+        }
+
+        public override bool Equals(object other)
+        {
+            return other == this;
+        }
+
+        public override int GetHashCode()
+        {
+            return RuntimeHelpers.GetHashCode(this);
+        }
+
+        public override void CopyTo(IAttribute target)
+        {
+            BinaryTermAttribute other = (BinaryTermAttribute)target;
+            other.bytes.CopyBytes(bytes);
+        }
+
+        public override object Clone()
+        {
+            throw new System.NotSupportedException();
+        }
+    }
+
+    /// <summary>
+    /// <see cref="TokenStream"/> from a canned list of binary (<see cref="BytesRef"/>-based)
     /// tokens.
     /// </summary>
     public sealed class CannedBinaryTokenStream : TokenStream
     {
-        /// <summary>
-        /// Represents a binary token. </summary>
-        public sealed class BinaryToken
-        {
-            internal BytesRef Term;
-            internal int PosInc;
-            internal int PosLen;
-            internal int StartOffset;
-            internal int EndOffset;
+        // LUCENENET specific - de-nested BinaryToken
 
-            public BinaryToken(BytesRef term)
-            {
-                this.Term = term;
-                this.PosInc = 1;
-                this.PosLen = 1;
-            }
+        private readonly BinaryToken[] tokens;
+        private int upto = 0;
+        private readonly IBinaryTermAttribute termAtt;// = AddAttribute<BinaryTermAttribute>();
+        private readonly IPositionIncrementAttribute posIncrAtt;// = AddAttribute<PositionIncrementAttribute>();
+        private readonly IPositionLengthAttribute posLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
+        private readonly IOffsetAttribute offsetAtt;// = addAttribute(typeof(OffsetAttribute));
 
-            public BinaryToken(BytesRef term, int posInc, int posLen)
-            {
-                this.Term = term;
-                this.PosInc = posInc;
-                this.PosLen = posLen;
-            }
-        }
+        // LUCENENET specific - de-nested IBinaryTermAttribute
 
-        private readonly BinaryToken[] Tokens;
-        private int Upto = 0;
-        private readonly IBinaryTermAttribute TermAtt;// = AddAttribute<BinaryTermAttribute>();
-        private readonly IPositionIncrementAttribute PosIncrAtt;// = AddAttribute<PositionIncrementAttribute>();
-        private readonly IPositionLengthAttribute PosLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
-        private readonly IOffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
-
-        /// <summary>
-        /// An attribute extending <see cref="ITermToBytesRefAttribute"/>
-        /// but exposing <see cref="BytesRef"/> property.
-        /// </summary>
-        public interface IBinaryTermAttribute : ITermToBytesRefAttribute
-        {
-            /// <summary>
-            /// Set the current binary value. </summary>
-            new BytesRef BytesRef { get; set; }
-        }
-
-        /// <summary>
-        /// Implementation for <seealso cref="IBinaryTermAttribute"/>. </summary>
-        public sealed class BinaryTermAttribute : Attribute, IBinaryTermAttribute
-        {
-            internal readonly BytesRef Bytes = new BytesRef();
-
-            public void FillBytesRef()
-            {
-                // no-op: we already filled externally during owner's incrementToken
-            }
-
-            public BytesRef BytesRef
-            {
-                get
-                {
-                    return Bytes;
-                }
-                set
-                {
-                    this.Bytes.CopyBytes(value);
-                }
-            }
-
-            public override void Clear()
-            {
-            }
-
-            public override bool Equals(object other)
-            {
-                return other == this;
-            }
-
-            public override int GetHashCode()
-            {
-                return RuntimeHelpers.GetHashCode(this);
-            }
-
-            public override void CopyTo(IAttribute target)
-            {
-                BinaryTermAttribute other = (BinaryTermAttribute)target;
-                other.Bytes.CopyBytes(Bytes);
-            }
-
-            public override object Clone()
-            {
-                throw new System.NotSupportedException();
-            }
-        }
+        // LUCENENET specific - de-nested BinaryTermAttribute
 
         public CannedBinaryTokenStream(params BinaryToken[] tokens)
             : base()
         {
-            this.Tokens = tokens;
-            TermAtt = AddAttribute<IBinaryTermAttribute>();
-            PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
-            PosLengthAtt = AddAttribute<IPositionLengthAttribute>();
-            OffsetAtt = AddAttribute<IOffsetAttribute>();
+            this.tokens = tokens;
+            termAtt = AddAttribute<IBinaryTermAttribute>();
+            posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+            posLengthAtt = AddAttribute<IPositionLengthAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
         public override bool IncrementToken()
         {
-            if (Upto < Tokens.Length)
+            if (upto < tokens.Length)
             {
-                BinaryToken token = Tokens[Upto++];
+                BinaryToken token = tokens[upto++];
                 // TODO: can we just capture/restoreState so
                 // we get all attrs...?
                 ClearAttributes();
-                TermAtt.BytesRef = token.Term;
-                PosIncrAtt.PositionIncrement = token.PosInc;
-                PosLengthAtt.PositionLength = token.PosLen;
-                OffsetAtt.SetOffset(token.StartOffset, token.EndOffset);
+                termAtt.BytesRef = token.Term;
+                posIncrAtt.PositionIncrement = token.PosInc;
+                posLengthAtt.PositionLength = token.PosLen;
+                offsetAtt.SetOffset(token.StartOffset, token.EndOffset);
                 return true;
             }
             else

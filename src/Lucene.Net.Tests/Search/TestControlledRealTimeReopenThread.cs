@@ -82,23 +82,20 @@ namespace Lucene.Net.Search
             RunTest("TestControlledRealTimeReopenThread");
         }
 
-        protected internal override IndexSearcher FinalSearcher
+        protected override IndexSearcher GetFinalSearcher()
         {
-            get
+            if (VERBOSE)
             {
-                if (VERBOSE)
-                {
-                    Console.WriteLine("TEST: finalSearcher maxGen=" + MaxGen);
-                }
-                nrtDeletesThread.WaitForGeneration(MaxGen);
-                return nrtDeletes.Acquire();
+                Console.WriteLine("TEST: finalSearcher maxGen=" + MaxGen);
             }
+            nrtDeletesThread.WaitForGeneration(MaxGen);
+            return nrtDeletes.Acquire();
         }
 
-        protected internal override Directory GetDirectory(Directory @in)
+        protected override Directory GetDirectory(Directory @in)
         {
             // Randomly swap in NRTCachingDir
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 if (VERBOSE)
                 {
@@ -113,12 +110,12 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override void UpdateDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
+        protected override void UpdateDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             long gen = genWriter.UpdateDocuments(id, docs);
 
             // Randomly verify the update "took":
-            if (Random().Next(20) == 2)
+            if (Random.Next(20) == 2)
             {
                 if (VERBOSE)
                 {
@@ -144,11 +141,11 @@ namespace Lucene.Net.Search
 
         }
 
-        protected internal override void AddDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
+        protected override void AddDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             long gen = genWriter.AddDocuments(docs);
             // Randomly verify the add "took":
-            if (Random().Next(20) == 2)
+            if (Random.Next(20) == 2)
             {
                 if (VERBOSE)
                 {
@@ -172,12 +169,12 @@ namespace Lucene.Net.Search
             lastGens.Value = gen;
         }
 
-        protected internal override void AddDocument(Term id, IEnumerable<IIndexableField> doc)
+        protected override void AddDocument(Term id, IEnumerable<IIndexableField> doc)
         {
             long gen = genWriter.AddDocument(doc);
 
             // Randomly verify the add "took":
-            if (Random().Next(20) == 2)
+            if (Random.Next(20) == 2)
             {
                 if (VERBOSE)
                 {
@@ -201,11 +198,11 @@ namespace Lucene.Net.Search
             lastGens.Value = gen;
         }
 
-        protected internal override void UpdateDocument(Term id, IEnumerable<IIndexableField> doc)
+        protected override void UpdateDocument(Term id, IEnumerable<IIndexableField> doc)
         {
             long gen = genWriter.UpdateDocument(id, doc);
             // Randomly verify the udpate "took":
-            if (Random().Next(20) == 2)
+            if (Random.Next(20) == 2)
             {
                 if (VERBOSE)
                 {
@@ -229,11 +226,11 @@ namespace Lucene.Net.Search
             lastGens.Value = gen;
         }
 
-        protected internal override void DeleteDocuments(Term id)
+        protected override void DeleteDocuments(Term id)
         {
             long gen = genWriter.DeleteDocuments(id);
             // randomly verify the delete "took":
-            if (Random().Next(20) == 7)
+            if (Random.Next(20) == 7)
             {
                 if (VERBOSE)
                 {
@@ -257,22 +254,22 @@ namespace Lucene.Net.Search
             lastGens.Value = gen;
         }
 
-        protected internal override void DoAfterWriter(TaskScheduler es)
+        protected override void DoAfterWriter(TaskScheduler es)
         {
-            double minReopenSec = 0.01 + 0.05 * Random().NextDouble();
-            double maxReopenSec = minReopenSec * (1.0 + 10 * Random().NextDouble());
+            double minReopenSec = 0.01 + 0.05 * Random.NextDouble();
+            double maxReopenSec = minReopenSec * (1.0 + 10 * Random.NextDouble());
 
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: make SearcherManager maxReopenSec=" + maxReopenSec + " minReopenSec=" + minReopenSec);
             }
 
-            genWriter = new TrackingIndexWriter(writer);
+            genWriter = new TrackingIndexWriter(m_writer);
 
             SearcherFactory sf = new SearcherFactoryAnonymousInnerClassHelper(this, es);
 
-            nrtNoDeletes = new SearcherManager(writer, false, sf);
-            nrtDeletes = new SearcherManager(writer, true, sf);
+            nrtNoDeletes = new SearcherManager(m_writer, false, sf);
+            nrtDeletes = new SearcherManager(m_writer, true, sf);
 
             nrtDeletesThread = new ControlledRealTimeReopenThread<IndexSearcher>(genWriter, nrtDeletes, maxReopenSec, minReopenSec);
             nrtDeletesThread.Name = "NRTDeletes Reopen Thread";
@@ -312,7 +309,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override void DoAfterIndexingThreadDone()
+        protected override void DoAfterIndexingThreadDone()
         {
             long? gen = lastGens.Value;
             if (gen != null)
@@ -331,32 +328,29 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override void DoSearching(TaskScheduler es, long stopTime)
+        protected override void DoSearching(TaskScheduler es, long stopTime)
         {
             RunSearchThreads(stopTime);
         }
 
-        protected internal override IndexSearcher CurrentSearcher
+        protected override IndexSearcher GetCurrentSearcher()
         {
-            get
+            // Test doesn't assert deletions until the end, so we
+            // can randomize whether dels must be applied
+            SearcherManager nrt;
+            if (Random.NextBoolean())
             {
-                // Test doesn't assert deletions until the end, so we
-                // can randomize whether dels must be applied
-                SearcherManager nrt;
-                if (Random().NextBoolean())
-                {
-                    nrt = nrtDeletes;
-                }
-                else
-                {
-                    nrt = nrtNoDeletes;
-                }
-
-                return nrt.Acquire();
+                nrt = nrtDeletes;
             }
+            else
+            {
+                nrt = nrtNoDeletes;
+            }
+
+            return nrt.Acquire();
         }
 
-        protected internal override void ReleaseSearcher(IndexSearcher s)
+        protected override void ReleaseSearcher(IndexSearcher s)
         {
             // NOTE: a bit iffy... technically you should release
             // against the same SearcherManager you acquired from... but
@@ -365,7 +359,7 @@ namespace Lucene.Net.Search
             nrtNoDeletes.Release(s);
         }
 
-        protected internal override void DoClose()
+        protected override void DoClose()
         {
             Assert.IsTrue(warmCalled);
             if (VERBOSE)
@@ -384,8 +378,8 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestThreadStarvationNoDeleteNRTReader()
         {
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            conf.SetMergePolicy(Random().NextBoolean() ? NoMergePolicy.COMPOUND_FILES : NoMergePolicy.NO_COMPOUND_FILES);
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            conf.SetMergePolicy(Random.NextBoolean() ? NoMergePolicy.COMPOUND_FILES : NoMergePolicy.NO_COMPOUND_FILES);
             Directory d = NewDirectory();
             CountdownEvent latch = new CountdownEvent(1);
             CountdownEvent signal = new CountdownEvent(1);
@@ -550,7 +544,7 @@ namespace Lucene.Net.Search
         public virtual void TestEvilSearcherFactory()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             w.Commit();
 
             IndexReader other = DirectoryReader.Open(dir);
@@ -559,7 +553,7 @@ namespace Lucene.Net.Search
 
             try
             {
-                new SearcherManager(w.w, false, theEvilOne);
+                new SearcherManager(w.IndexWriter, false, theEvilOne);
                 fail("didn't hit expected exception");
             }
 #pragma warning disable 168
@@ -648,7 +642,7 @@ namespace Lucene.Net.Search
             StringBuilder builder = new StringBuilder(2048);
             for (int i = 0; i < 2048; i++)
             {
-                builder.Append(chars[Random().Next(chars.Length)]);
+                builder.Append(chars[Random.Next(chars.Length)]);
             }
             string content = builder.ToString();
 
@@ -658,7 +652,7 @@ namespace Lucene.Net.Search
 #pragma warning disable 612, 618
                 Version.LUCENE_46,
 #pragma warning restore 612, 618
-                new MockAnalyzer(Random()));
+                new MockAnalyzer(Random));
             config.SetIndexDeletionPolicy(sdp);
             config.SetOpenMode(OpenMode.CREATE_OR_APPEND);
             IndexWriter iw = new IndexWriter(dir, config);

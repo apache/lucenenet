@@ -82,7 +82,7 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestRandomData()
         {
-            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, analyzer, 1000 * RANDOM_MULTIPLIER);
         }
 
         [Test]

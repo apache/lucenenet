@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
         public override void SetUp()
         {
             base.SetUp();
-            Analyzer = new MockAnalyzer(Random());
+            Analyzer = new MockAnalyzer(Random);
         }
 
         [Test]

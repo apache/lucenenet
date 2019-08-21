@@ -1,33 +1,32 @@
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Util.Fst
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         * <p/>
-         * http://www.apache.org/licenses/LICENSE-2.0
-         * <p/>
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    * <p/>
+    * http://www.apache.org/licenses/LICENSE-2.0
+    * <p/>
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using Directory = Lucene.Net.Store.Directory;
     using IndexInput = Lucene.Net.Store.IndexInput;
@@ -36,24 +35,43 @@ namespace Lucene.Net.Util.Fst
     using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     /// <summary>
+    /// Holds one input/output pair. </summary>
+    public class InputOutput<T> : IComparable<InputOutput<T>>
+    {
+        public Int32sRef Input { get; private set; }
+        public T Output { get; private set; }
+
+        public InputOutput(Int32sRef input, T output)
+        {
+            this.Input = input;
+            this.Output = output;
+        }
+
+        public virtual int CompareTo(InputOutput<T> other)
+        {
+            return this.Input.CompareTo(other.Input);
+        }
+    }
+
+    /// <summary>
     /// Helper class to test FSTs. </summary>
     public class FSTTester<T>
     {
-        internal readonly Random Random;
-        internal readonly List<InputOutput<T>> Pairs;
-        internal readonly int InputMode;
-        internal readonly Outputs<T> Outputs;
-        internal readonly Directory Dir;
-        internal readonly bool DoReverseLookup;
+        internal readonly Random random;
+        internal readonly IList<InputOutput<T>> pairs;
+        internal readonly int inputMode;
+        internal readonly Outputs<T> outputs;
+        internal readonly Directory dir;
+        internal readonly bool doReverseLookup;
 
-        public FSTTester(Random random, Directory dir, int inputMode, List<InputOutput<T>> pairs, Outputs<T> outputs, bool doReverseLookup)
+        public FSTTester(Random random, Directory dir, int inputMode, IList<InputOutput<T>> pairs, Outputs<T> outputs, bool doReverseLookup)
         {
-            this.Random = random;
-            this.Dir = dir;
-            this.InputMode = inputMode;
-            this.Pairs = pairs;
-            this.Outputs = outputs;
-            this.DoReverseLookup = doReverseLookup;
+            this.random = random;
+            this.dir = dir;
+            this.inputMode = inputMode;
+            this.pairs = pairs;
+            this.outputs = outputs;
+            this.doReverseLookup = doReverseLookup;
         }
 
         internal static string InputToString(int inputMode, Int32sRef term)
@@ -120,31 +138,31 @@ namespace Lucene.Net.Util.Fst
             char[] buffer = new char[end];
             for (int i = 0; i < end; i++)
             {
-                buffer[i] = (char)TestUtil.NextInt(r, 97, 102);
+                buffer[i] = (char)TestUtil.NextInt32(r, 97, 102);
             }
             return new string(buffer, 0, end);
         }
 
-        internal static Int32sRef ToIntsRef(string s, int inputMode)
+        internal static Int32sRef ToInt32sRef(string s, int inputMode)
         {
-            return ToIntsRef(s, inputMode, new Int32sRef(10));
+            return ToInt32sRef(s, inputMode, new Int32sRef(10));
         }
 
-        internal static Int32sRef ToIntsRef(string s, int inputMode, Int32sRef ir)
+        internal static Int32sRef ToInt32sRef(string s, int inputMode, Int32sRef ir)
         {
             if (inputMode == 0)
             {
                 // utf8
-                return ToIntsRef(new BytesRef(s), ir);
+                return ToInt32sRef(new BytesRef(s), ir);
             }
             else
             {
                 // utf32
-                return ToIntsRefUTF32(s, ir);
+                return ToInt32sRefUTF32(s, ir);
             }
         }
 
-        internal static Int32sRef ToIntsRefUTF32(string s, Int32sRef ir)
+        internal static Int32sRef ToInt32sRefUTF32(string s, Int32sRef ir)
         {
             int charLength = s.Length;
             int charIdx = 0;
@@ -164,7 +182,7 @@ namespace Lucene.Net.Util.Fst
             return ir;
         }
 
-        internal static Int32sRef ToIntsRef(BytesRef br, Int32sRef ir)
+        internal static Int32sRef ToInt32sRef(BytesRef br, Int32sRef ir)
         {
             if (br.Length > ir.Int32s.Length)
             {
@@ -178,24 +196,7 @@ namespace Lucene.Net.Util.Fst
             return ir;
         }
 
-        /// <summary>
-        /// Holds one input/output pair. </summary>
-        public class InputOutput<T1> : IComparable<InputOutput<T1>>
-        {
-            public readonly Int32sRef Input;
-            public readonly T1 Output;
-
-            public InputOutput(Int32sRef input, T1 output)
-            {
-                this.Input = input;
-                this.Output = output;
-            }
-
-            public virtual int CompareTo(InputOutput<T1> other)
-            {
-                return this.Input.CompareTo(other.Input);
-            }
-        }
+        // LUCENENET specific - de-nested InputOutput<T>
 
         public virtual void DoTest(bool testPruning)
         {
@@ -205,10 +206,10 @@ namespace Lucene.Net.Util.Fst
             if (testPruning)
             {
                 // simple pruning
-                DoTest(TestUtil.NextInt(Random, 1, 1 + Pairs.Count), 0, true);
+                DoTest(TestUtil.NextInt32(random, 1, 1 + pairs.Count), 0, true);
 
                 // leafy pruning
-                DoTest(0, TestUtil.NextInt(Random, 1, 1 + Pairs.Count), true);
+                DoTest(0, TestUtil.NextInt32(random, 1, 1 + pairs.Count), true);
             }
         }
 
@@ -283,7 +284,7 @@ namespace Lucene.Net.Util.Fst
                 }
 
                 // pick one
-                arc = arcs[Random.Next(arcs.Count)];
+                arc = arcs[random.Next(arcs.Count)];
                 arcs.Clear();
 
                 // accumulate output
@@ -312,14 +313,14 @@ namespace Lucene.Net.Util.Fst
                 Console.WriteLine("\nTEST: prune1=" + prune1 + " prune2=" + prune2);
             }
 
-            bool willRewrite = Random.NextBoolean();
+            bool willRewrite = random.NextBoolean();
 
-            Builder<T> builder = new Builder<T>(InputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, 
+            Builder<T> builder = new Builder<T>(inputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, 
                                                 prune1, prune2, 
                                                 prune1 == 0 && prune2 == 0, 
-                                                allowRandomSuffixSharing ? Random.NextBoolean() : true, 
-                                                allowRandomSuffixSharing ? TestUtil.NextInt(Random, 1, 10) : int.MaxValue, 
-                                                Outputs, 
+                                                allowRandomSuffixSharing ? random.NextBoolean() : true, 
+                                                allowRandomSuffixSharing ? TestUtil.NextInt32(random, 1, 10) : int.MaxValue, 
+                                                outputs, 
                                                 null, 
                                                 willRewrite, 
                                                 PackedInt32s.DEFAULT, 
@@ -337,7 +338,7 @@ namespace Lucene.Net.Util.Fst
                 }
             }
 
-            foreach (InputOutput<T> pair in Pairs)
+            foreach (InputOutput<T> pair in pairs)
             {
                 if (pair.Output is IEnumerable)
                 {
@@ -355,26 +356,26 @@ namespace Lucene.Net.Util.Fst
             }
             FST<T> fst = builder.Finish();
 
-            if (Random.NextBoolean() && fst != null && !willRewrite)
+            if (random.NextBoolean() && fst != null && !willRewrite)
             {
-                IOContext context = LuceneTestCase.NewIOContext(Random);
-                using (IndexOutput @out = Dir.CreateOutput("fst.bin", context))
+                IOContext context = LuceneTestCase.NewIOContext(random);
+                using (IndexOutput @out = dir.CreateOutput("fst.bin", context))
                 {
                     fst.Save(@out);
                 }
-                IndexInput @in = Dir.OpenInput("fst.bin", context);
+                IndexInput @in = dir.OpenInput("fst.bin", context);
                 try
                 {
-                    fst = new FST<T>(@in, Outputs);
+                    fst = new FST<T>(@in, outputs);
                 }
                 finally
                 {
                     @in.Dispose();
-                    Dir.DeleteFile("fst.bin");
+                    dir.DeleteFile("fst.bin");
                 }
             }
 
-            if (LuceneTestCase.VERBOSE && Pairs.Count <= 20 && fst != null)
+            if (LuceneTestCase.VERBOSE && pairs.Count <= 20 && fst != null)
             {
                 using (TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.OpenOrCreate), Encoding.UTF8))
                 {
@@ -397,17 +398,17 @@ namespace Lucene.Net.Util.Fst
 
             if (prune1 == 0 && prune2 == 0)
             {
-                VerifyUnPruned(InputMode, fst);
+                VerifyUnPruned(inputMode, fst);
             }
             else
             {
-                VerifyPruned(InputMode, fst, prune1, prune2);
+                VerifyPruned(inputMode, fst, prune1, prune2);
             }
 
             return fst;
         }
 
-        protected internal virtual bool OutputsEqual(T a, T b)
+        protected virtual bool OutputsEqual(T a, T b)
         {
             // LUCENENET: In .NET, IEnumerables do not automatically test to ensure
             // their values are equal, so we need to do that manually.
@@ -424,12 +425,12 @@ namespace Lucene.Net.Util.Fst
             long minLong = long.MaxValue;
             long maxLong = long.MinValue;
 
-            if (DoReverseLookup)
+            if (doReverseLookup)
             {
                 FST<long?> fstLong0 = fst as FST<long?>;
                 fstLong = fstLong0;
                 validOutputs = new HashSet<long?>();
-                foreach (InputOutput<T> pair in Pairs)
+                foreach (InputOutput<T> pair in pairs)
                 {
                     long? output = pair.Output as long?;
                     maxLong = Math.Max(maxLong, output.Value);
@@ -443,7 +444,7 @@ namespace Lucene.Net.Util.Fst
                 validOutputs = null;
             }
 
-            if (Pairs.Count == 0)
+            if (pairs.Count == 0)
             {
                 Assert.IsNull(fst);
                 return;
@@ -451,13 +452,13 @@ namespace Lucene.Net.Util.Fst
 
             if (LuceneTestCase.VERBOSE)
             {
-                Console.WriteLine("TEST: now verify " + Pairs.Count + " terms");
-                foreach (InputOutput<T> pair in Pairs)
+                Console.WriteLine("TEST: now verify " + pairs.Count + " terms");
+                foreach (InputOutput<T> pair in pairs)
                 {
                     Assert.IsNotNull(pair);
                     Assert.IsNotNull(pair.Input);
                     Assert.IsNotNull(pair.Output);
-                    Console.WriteLine("  " + InputToString(inputMode, pair.Input) + ": " + Outputs.OutputToString(pair.Output));
+                    Console.WriteLine("  " + InputToString(inputMode, pair.Input) + ": " + outputs.OutputToString(pair.Output));
                 }
             }
 
@@ -472,7 +473,7 @@ namespace Lucene.Net.Util.Fst
             }
             {
                 Int32sRefFSTEnum<T> fstEnum = new Int32sRefFSTEnum<T>(fst);
-                foreach (InputOutput<T> pair in Pairs)
+                foreach (InputOutput<T> pair in pairs)
                 {
                     Int32sRef term = pair.Input;
                     if (LuceneTestCase.VERBOSE)
@@ -493,22 +494,22 @@ namespace Lucene.Net.Util.Fst
             }
 
             IDictionary<Int32sRef, T> termsMap = new Dictionary<Int32sRef, T>();
-            foreach (InputOutput<T> pair in Pairs)
+            foreach (InputOutput<T> pair in pairs)
             {
                 termsMap[pair.Input] = pair.Output;
             }
 
-            if (DoReverseLookup && maxLong > minLong)
+            if (doReverseLookup && maxLong > minLong)
             {
                 // Do random lookups so we test null (output doesn't
                 // exist) case:
                 Assert.IsNull(Util.GetByOutput(fstLong, minLong - 7));
                 Assert.IsNull(Util.GetByOutput(fstLong, maxLong + 7));
 
-                int num = LuceneTestCase.AtLeast(Random, 100);
+                int num = LuceneTestCase.AtLeast(random, 100);
                 for (int iter = 0; iter < num; iter++)
                 {
-                    long v = TestUtil.NextLong(Random, minLong, maxLong);
+                    long v = TestUtil.NextInt64(random, minLong, maxLong);
                     Int32sRef input = Util.GetByOutput(fstLong, v);
                     Assert.IsTrue(validOutputs.Contains(v) || input == null);
                 }
@@ -520,14 +521,14 @@ namespace Lucene.Net.Util.Fst
                 Console.WriteLine("TEST: verify random accepted terms");
             }
             Int32sRef scratch = new Int32sRef(10);
-            int num_ = LuceneTestCase.AtLeast(Random, 500);
+            int num_ = LuceneTestCase.AtLeast(random, 500);
             for (int iter = 0; iter < num_; iter++)
             {
                 T output = RandomAcceptedWord(fst, scratch);
                 Assert.IsTrue(termsMap.ContainsKey(scratch), "accepted word " + InputToString(inputMode, scratch) + " is not valid");
                 Assert.IsTrue(OutputsEqual(termsMap[scratch], output));
 
-                if (DoReverseLookup)
+                if (doReverseLookup)
                 {
                     //System.out.println("lookup output=" + output + " outs=" + fst.Outputs);
                     Int32sRef input = Util.GetByOutput(fstLong, (output as long?).Value);
@@ -543,27 +544,27 @@ namespace Lucene.Net.Util.Fst
                 Console.WriteLine("TEST: verify seek");
             }
             Int32sRefFSTEnum<T> fstEnum_ = new Int32sRefFSTEnum<T>(fst);
-            num_ = LuceneTestCase.AtLeast(Random, 100);
+            num_ = LuceneTestCase.AtLeast(random, 100);
             for (int iter = 0; iter < num_; iter++)
             {
                 if (LuceneTestCase.VERBOSE)
                 {
                     Console.WriteLine("  iter=" + iter);
                 }
-                if (Random.NextBoolean())
+                if (random.NextBoolean())
                 {
                     // seek to term that doesn't exist:
                     while (true)
                     {
-                        Int32sRef term = ToIntsRef(GetRandomString(Random), inputMode);
-                        int pos = Pairs.BinarySearch(new InputOutput<T>(term, default(T)));
+                        Int32sRef term = ToInt32sRef(GetRandomString(random), inputMode);
+                        int pos = pairs.BinarySearch(new InputOutput<T>(term, default(T)));
                         if (pos < 0)
                         {
                             pos = -(pos + 1);
                             // ok doesn't exist
                             //System.out.println("  seek " + inputToString(inputMode, term));
                             Int32sRefFSTEnum.InputOutput<T> seekResult;
-                            if (Random.Next(3) == 0)
+                            if (random.Next(3) == 0)
                             {
                                 if (LuceneTestCase.VERBOSE)
                                 {
@@ -572,7 +573,7 @@ namespace Lucene.Net.Util.Fst
                                 seekResult = fstEnum_.SeekExact(term);
                                 pos = -1;
                             }
-                            else if (Random.NextBoolean())
+                            else if (random.NextBoolean())
                             {
                                 if (LuceneTestCase.VERBOSE)
                                 {
@@ -590,16 +591,16 @@ namespace Lucene.Net.Util.Fst
                                 seekResult = fstEnum_.SeekCeil(term);
                             }
 
-                            if (pos != -1 && pos < Pairs.Count)
+                            if (pos != -1 && pos < pairs.Count)
                             {
                                 //System.out.println("    got " + inputToString(inputMode,seekResult.input) + " output=" + fst.Outputs.outputToString(seekResult.Output));
-                                Assert.IsNotNull(seekResult, "got null but expected term=" + InputToString(inputMode, Pairs[pos].Input));
+                                Assert.IsNotNull(seekResult, "got null but expected term=" + InputToString(inputMode, pairs[pos].Input));
                                 if (LuceneTestCase.VERBOSE)
                                 {
                                     Console.WriteLine("    got " + InputToString(inputMode, seekResult.Input));
                                 }
-                                Assert.AreEqual(Pairs[pos].Input, seekResult.Input, "expected " + InputToString(inputMode, Pairs[pos].Input) + " but got " + InputToString(inputMode, seekResult.Input));
-                                Assert.IsTrue(OutputsEqual(Pairs[pos].Output, seekResult.Output));
+                                Assert.AreEqual(pairs[pos].Input, seekResult.Input, "expected " + InputToString(inputMode, pairs[pos].Input) + " but got " + InputToString(inputMode, seekResult.Input));
+                                Assert.IsTrue(OutputsEqual(pairs[pos].Output, seekResult.Output));
                             }
                             else
                             {
@@ -619,9 +620,9 @@ namespace Lucene.Net.Util.Fst
                 else
                 {
                     // seek to term that does exist:
-                    InputOutput<T> pair = Pairs[Random.Next(Pairs.Count)];
+                    InputOutput<T> pair = pairs[random.Next(pairs.Count)];
                     Int32sRefFSTEnum.InputOutput<T> seekResult;
-                    if (Random.Next(3) == 2)
+                    if (random.Next(3) == 2)
                     {
                         if (LuceneTestCase.VERBOSE)
                         {
@@ -629,7 +630,7 @@ namespace Lucene.Net.Util.Fst
                         }
                         seekResult = fstEnum_.SeekExact(pair.Input);
                     }
-                    else if (Random.NextBoolean())
+                    else if (random.NextBoolean())
                     {
                         if (LuceneTestCase.VERBOSE)
                         {
@@ -657,7 +658,7 @@ namespace Lucene.Net.Util.Fst
             }
 
             // test mixed next/seek
-            num_ = LuceneTestCase.AtLeast(Random, 100);
+            num_ = LuceneTestCase.AtLeast(random, 100);
             for (int iter = 0; iter < num_; iter++)
             {
                 if (LuceneTestCase.VERBOSE)
@@ -670,7 +671,7 @@ namespace Lucene.Net.Util.Fst
                 while (true)
                 {
                     bool isDone = false;
-                    if (upto == Pairs.Count - 1 || Random.NextBoolean())
+                    if (upto == pairs.Count - 1 || random.NextBoolean())
                     {
                         // next
                         upto++;
@@ -680,19 +681,19 @@ namespace Lucene.Net.Util.Fst
                         }
                         isDone = fstEnum_.Next() == null;
                     }
-                    else if (upto != -1 && upto < 0.75 * Pairs.Count && Random.NextBoolean())
+                    else if (upto != -1 && upto < 0.75 * pairs.Count && random.NextBoolean())
                     {
                         int attempt = 0;
                         for (; attempt < 10; attempt++)
                         {
-                            Int32sRef term = ToIntsRef(GetRandomString(Random), inputMode);
-                            if (!termsMap.ContainsKey(term) && term.CompareTo(Pairs[upto].Input) > 0)
+                            Int32sRef term = ToInt32sRef(GetRandomString(random), inputMode);
+                            if (!termsMap.ContainsKey(term) && term.CompareTo(pairs[upto].Input) > 0)
                             {
-                                int pos = Pairs.BinarySearch(new InputOutput<T>(term, default(T)));
+                                int pos = pairs.BinarySearch(new InputOutput<T>(term, default(T)));
                                 Debug.Assert(pos < 0);
                                 upto = -(pos + 1);
 
-                                if (Random.NextBoolean())
+                                if (random.NextBoolean())
                                 {
                                     upto--;
                                     Assert.IsTrue(upto != -1);
@@ -721,28 +722,28 @@ namespace Lucene.Net.Util.Fst
                     }
                     else
                     {
-                        int inc = Random.Next(Pairs.Count - upto - 1);
+                        int inc = random.Next(pairs.Count - upto - 1);
                         upto += inc;
                         if (upto == -1)
                         {
                             upto = 0;
                         }
 
-                        if (Random.NextBoolean())
+                        if (random.NextBoolean())
                         {
                             if (LuceneTestCase.VERBOSE)
                             {
-                                Console.WriteLine("  do seekCeil(" + InputToString(inputMode, Pairs[upto].Input) + ")");
+                                Console.WriteLine("  do seekCeil(" + InputToString(inputMode, pairs[upto].Input) + ")");
                             }
-                            isDone = fstEnum_.SeekCeil(Pairs[upto].Input) == null;
+                            isDone = fstEnum_.SeekCeil(pairs[upto].Input) == null;
                         }
                         else
                         {
                             if (LuceneTestCase.VERBOSE)
                             {
-                                Console.WriteLine("  do seekFloor(" + InputToString(inputMode, Pairs[upto].Input) + ")");
+                                Console.WriteLine("  do seekFloor(" + InputToString(inputMode, pairs[upto].Input) + ")");
                             }
-                            isDone = fstEnum_.SeekFloor(Pairs[upto].Input) == null;
+                            isDone = fstEnum_.SeekFloor(pairs[upto].Input) == null;
                         }
                     }
                     if (LuceneTestCase.VERBOSE)
@@ -757,7 +758,7 @@ namespace Lucene.Net.Util.Fst
                         }
                     }
 
-                    if (upto == Pairs.Count)
+                    if (upto == pairs.Count)
                     {
                         Assert.IsTrue(isDone);
                         break;
@@ -765,8 +766,8 @@ namespace Lucene.Net.Util.Fst
                     else
                     {
                         Assert.IsFalse(isDone);
-                        Assert.AreEqual(Pairs[upto].Input, fstEnum_.Current.Input);
-                        Assert.IsTrue(OutputsEqual(Pairs[upto].Output, fstEnum_.Current.Output));
+                        Assert.AreEqual(pairs[upto].Input, fstEnum_.Current.Input);
+                        Assert.IsTrue(OutputsEqual(pairs[upto].Output, fstEnum_.Current.Output));
 
                         /*
                           if (upto < pairs.size()-1) {
@@ -792,11 +793,11 @@ namespace Lucene.Net.Util.Fst
 
         private class CountMinOutput<S>
         {
-            internal int Count;
-            internal S Output;
-            internal S FinalOutput;
-            internal bool IsLeaf = true;
-            internal bool IsFinal;
+            internal int Count { get; set; }
+            internal S Output { get; set; }
+            internal S FinalOutput { get; set; }
+            internal bool IsLeaf { get; set; } = true;
+            internal bool IsFinal { get; set; }
         }
 
         // FST is pruned
@@ -804,10 +805,10 @@ namespace Lucene.Net.Util.Fst
         {
             if (LuceneTestCase.VERBOSE)
             {
-                Console.WriteLine("TEST: now verify pruned " + Pairs.Count + " terms; outputs=" + Outputs);
-                foreach (InputOutput<T> pair in Pairs)
+                Console.WriteLine("TEST: now verify pruned " + pairs.Count + " terms; outputs=" + outputs);
+                foreach (InputOutput<T> pair in pairs)
                 {
-                    Console.WriteLine("  " + InputToString(inputMode, pair.Input) + ": " + Outputs.OutputToString(pair.Output));
+                    Console.WriteLine("  " + InputToString(inputMode, pair.Input) + ": " + outputs.OutputToString(pair.Output));
                 }
             }
 
@@ -823,7 +824,7 @@ namespace Lucene.Net.Util.Fst
             // build all prefixes
             IDictionary<Int32sRef, CountMinOutput<T>> prefixes = new HashMap<Int32sRef, CountMinOutput<T>>();
             Int32sRef scratch = new Int32sRef(10);
-            foreach (InputOutput<T> pair in Pairs)
+            foreach (InputOutput<T> pair in pairs)
             {
                 scratch.CopyInt32s(pair.Input);
                 for (int idx = 0; idx <= pair.Input.Length; idx++)
@@ -841,16 +842,16 @@ namespace Lucene.Net.Util.Fst
                     {
                         cmo.Count++;
                         T output1 = cmo.Output;
-                        if (output1.Equals(Outputs.NoOutput))
+                        if (output1.Equals(outputs.NoOutput))
                         {
-                            output1 = Outputs.NoOutput;
+                            output1 = outputs.NoOutput;
                         }
                         T output2 = pair.Output;
-                        if (output2.Equals(Outputs.NoOutput))
+                        if (output2.Equals(outputs.NoOutput))
                         {
-                            output2 = Outputs.NoOutput;
+                            output2 = outputs.NoOutput;
                         }
-                        cmo.Output = Outputs.Common(output1, output2);
+                        cmo.Output = outputs.Common(output1, output2);
                     }
                     if (idx == pair.Input.Length)
                     {
@@ -876,7 +877,7 @@ namespace Lucene.Net.Util.Fst
                 CountMinOutput<T> cmo = ent.Value;
                 if (LuceneTestCase.VERBOSE)
                 {
-                    Console.WriteLine("  term prefix=" + InputToString(inputMode, prefix, false) + " count=" + cmo.Count + " isLeaf=" + cmo.IsLeaf + " output=" + Outputs.OutputToString(cmo.Output) + " isFinal=" + cmo.IsFinal);
+                    Console.WriteLine("  term prefix=" + InputToString(inputMode, prefix, false) + " count=" + cmo.Count + " isLeaf=" + cmo.IsLeaf + " output=" + outputs.OutputToString(cmo.Output) + " isFinal=" + cmo.IsFinal);
                 }
                 bool keep;
                 if (prune1 > 0)
@@ -941,7 +942,7 @@ namespace Lucene.Net.Util.Fst
                     Console.WriteLine("  " + InputToString(inputMode, ent.Key, false) + ": isLeaf=" + ent.Value.IsLeaf + " isFinal=" + ent.Value.IsFinal);
                     if (ent.Value.IsFinal)
                     {
-                        Console.WriteLine("    finalOutput=" + Outputs.OutputToString(ent.Value.FinalOutput));
+                        Console.WriteLine("    finalOutput=" + outputs.OutputToString(ent.Value.FinalOutput));
                     }
                 }
             }
@@ -965,7 +966,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (LuceneTestCase.VERBOSE)
                 {
-                    Console.WriteLine("  fstEnum.next prefix=" + InputToString(inputMode, current.Input, false) + " output=" + Outputs.OutputToString(current.Output));
+                    Console.WriteLine("  fstEnum.next prefix=" + InputToString(inputMode, current.Input, false) + " output=" + outputs.OutputToString(current.Output));
                 }
                 CountMinOutput<T> cmo = prefixes.ContainsKey(current.Input) ? prefixes[current.Input] : null;
                 Assert.IsNotNull(cmo);
@@ -995,7 +996,7 @@ namespace Lucene.Net.Util.Fst
                     T output = Run(fst, ent.Key, stopNode);
                     if (LuceneTestCase.VERBOSE)
                     {
-                        Console.WriteLine("TEST: verify prefix=" + InputToString(inputMode, ent.Key, false) + " output=" + Outputs.OutputToString(cmo.Output));
+                        Console.WriteLine("TEST: verify prefix=" + InputToString(inputMode, ent.Key, false) + " output=" + outputs.OutputToString(cmo.Output));
                     }
                     // if (cmo.isFinal && !cmo.isLeaf) {
                     if (cmo.IsFinal)

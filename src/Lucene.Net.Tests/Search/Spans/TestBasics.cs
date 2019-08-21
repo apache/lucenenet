@@ -107,15 +107,15 @@ namespace Lucene.Net.Search.Spans
             SimplePayloadAnalyzer = new AnalyzerAnonymousInnerClassHelper();
 
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, SimplePayloadAnalyzer).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, SimplePayloadAnalyzer).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
             //writer.infoStream = System.out;
             for (int i = 0; i < 2000; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField("field", English.IntToEnglish(i), Field.Store.YES));
+                doc.Add(NewTextField("field", English.Int32ToEnglish(i), Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher = NewSearcher(Reader);
             writer.Dispose();
         }
@@ -623,7 +623,7 @@ namespace Lucene.Net.Search.Spans
 
         private void CheckHits(Query query, int[] results)
         {
-            Search.CheckHits.DoCheckHits(Random(), query, "field", Searcher, results, Similarity);
+            Search.CheckHits.DoCheckHits(Random, query, "field", Searcher, results, Similarity);
         }
     }
 }

@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Spans
         {
             base.SetUp();
             PayloadHelper helper = new PayloadHelper();
-            Searcher_Renamed = helper.SetUp(Random(), similarity, 1000);
+            Searcher_Renamed = helper.SetUp(Random, similarity, 1000);
             IndexReader = Searcher_Renamed.IndexReader;
         }
 
@@ -113,12 +113,12 @@ namespace Lucene.Net.Search.Spans
             SpanNotQuery snq = new SpanNotQuery(spq, new SpanTermQuery(new Term(PayloadHelper.FIELD, "two")));
 
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(similarity));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(similarity));
 
             Document doc = new Document();
             doc.Add(NewTextField(PayloadHelper.FIELD, "one two three one four three", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             CheckSpans(MultiSpansWrapper.Wrap(reader.Context, snq), 1, new int[] { 2 });
@@ -260,13 +260,13 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestShrinkToAfterShortestMatch()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
 
             Document doc = new Document();
             doc.Add(new TextField("content", new StringReader("a b c d e f g h i j a k")));
             writer.AddDocument(doc);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher @is = NewSearcher(reader);
             writer.Dispose();
 
@@ -300,12 +300,12 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestShrinkToAfterShortestMatch2()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
 
             Document doc = new Document();
             doc.Add(new TextField("content", new StringReader("a b a d k f a h i k a k")));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher @is = NewSearcher(reader);
             writer.Dispose();
 
@@ -339,12 +339,12 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestShrinkToAfterShortestMatch3()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestPayloadAnalyzer(this)));
 
             Document doc = new Document();
             doc.Add(new TextField("content", new StringReader("j k a l f k k p a t a k l k t a")));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher @is = NewSearcher(reader);
             writer.Dispose();
 
@@ -385,13 +385,13 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestPayloadSpanUtil()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(similarity));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(similarity));
 
             Document doc = new Document();
             doc.Add(NewTextField(PayloadHelper.FIELD, "xx rr yy mm  pp", Field.Store.YES));
             writer.AddDocument(doc);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
             IndexSearcher searcher = NewSearcher(reader);
 
@@ -449,7 +449,7 @@ namespace Lucene.Net.Search.Spans
             {
                 Directory = NewDirectory();
                 string[] docs = new string[] { "xx rr yy mm  pp", "xx yy mm rr pp", "nopayload qq ss pp np", "one two three four five six seven eight nine ten eleven", "nine one two three four five six seven eight eleven ten" };
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(similarity));
+                RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(similarity));
 
                 Document doc = null;
                 for (int i = 0; i < docs.Length; i++)
@@ -460,7 +460,7 @@ namespace Lucene.Net.Search.Spans
                     writer.AddDocument(doc);
                 }
 
-                CloseIndexReader = writer.Reader;
+                CloseIndexReader = writer.GetReader();
                 writer.Dispose();
 
                 IndexSearcher searcher = NewSearcher(CloseIndexReader);

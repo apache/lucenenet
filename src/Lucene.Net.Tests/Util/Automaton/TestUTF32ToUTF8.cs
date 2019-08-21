@@ -107,7 +107,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 for (int iter = 0; iter < iters; iter++)
                 {
-                    int x = TestUtil.NextInt(r, 0, invalidRange - 1);
+                    int x = TestUtil.NextInt32(r, 0, invalidRange - 1);
                     int code;
                     if (x >= startCode)
                     {
@@ -134,16 +134,16 @@ namespace Lucene.Net.Util.Automaton
             switch (r.Next(4))
             {
                 case 0:
-                    return TestUtil.NextInt(r, 0, 128);
+                    return TestUtil.NextInt32(r, 0, 128);
 
                 case 1:
-                    return TestUtil.NextInt(r, 128, 2048);
+                    return TestUtil.NextInt32(r, 128, 2048);
 
                 case 2:
-                    return TestUtil.NextInt(r, 2048, 65536);
+                    return TestUtil.NextInt32(r, 2048, 65536);
 
                 default:
-                    return TestUtil.NextInt(r, 65536, 1 + MAX_UNICODE);
+                    return TestUtil.NextInt32(r, 65536, 1 + MAX_UNICODE);
             }
         }
 
@@ -155,7 +155,7 @@ namespace Lucene.Net.Util.Automaton
         [Test]
         public void TestRandomRanges()
         {
-            Random r = Random();
+            Random r = Random;
             int ITERS = AtLeast(10);
             int ITERS_PER_DFA = AtLeast(100);
             for (int iter = 0; iter < ITERS; iter++)
@@ -243,7 +243,7 @@ namespace Lucene.Net.Util.Automaton
             int num = AtLeast(250);
             for (int i = 0; i < num; i++)
             {
-                AssertAutomaton((new RegExp(AutomatonTestUtil.RandomRegexp(Random()), RegExpSyntax.NONE)).ToAutomaton());
+                AssertAutomaton((new RegExp(AutomatonTestUtil.RandomRegexp(Random), RegExpSyntax.NONE)).ToAutomaton());
             }
         }
 
@@ -251,21 +251,21 @@ namespace Lucene.Net.Util.Automaton
         {
             var cra = new CharacterRunAutomaton(automaton);
             var bra = new ByteRunAutomaton(automaton);
-            var ras = new AutomatonTestUtil.RandomAcceptedStrings(automaton);
+            var ras = new RandomAcceptedStrings(automaton);
 
             int num = AtLeast(1000);
             for (int i = 0; i < num; i++)
             {
                 string s;
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     // likely not accepted
-                    s = TestUtil.RandomUnicodeString(Random());
+                    s = TestUtil.RandomUnicodeString(Random);
                 }
                 else
                 {
                     // will be accepted
-                    int[] codepoints = ras.GetRandomAcceptedString(Random());
+                    int[] codepoints = ras.GetRandomAcceptedString(Random);
                     try
                     {
                         s = UnicodeUtil.NewString(codepoints, 0, codepoints.Length);

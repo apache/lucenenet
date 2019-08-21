@@ -65,7 +65,7 @@ namespace Lucene.Net.Store
         public virtual void TestCloneSafety()
         {
             MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testCloneSafety"));
-            IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
+            IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random));
             io.WriteVInt32(5);
             io.Dispose();
             IndexInput one = mmapDir.OpenInput("bytes", IOContext.DEFAULT);
@@ -116,7 +116,7 @@ namespace Lucene.Net.Store
         public virtual void TestCloneClose()
         {
             MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testCloneClose"));
-            IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
+            IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random));
             io.WriteVInt32(5);
             io.Dispose();
             IndexInput one = mmapDir.OpenInput("bytes", IOContext.DEFAULT);
@@ -145,11 +145,11 @@ namespace Lucene.Net.Store
         public virtual void TestCloneSliceSafety()
         {
             MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testCloneSliceSafety"));
-            IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
+            IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random));
             io.WriteInt32(1);
             io.WriteInt32(2);
             io.Dispose();
-            IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random()));
+            IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random));
             IndexInput one = slicer.OpenSlice("first int", 0, 4);
             IndexInput two = slicer.OpenSlice("second int", 4, 4);
             IndexInput three = (IndexInput)one.Clone(); // clone of clone
@@ -212,11 +212,11 @@ namespace Lucene.Net.Store
         public virtual void TestCloneSliceClose()
         {
             MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testCloneSliceClose"));
-            IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
+            IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random));
             io.WriteInt32(1);
             io.WriteInt32(2);
             io.Dispose();
-            IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random()));
+            IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random));
             IndexInput one = slicer.OpenSlice("first int", 0, 4);
             IndexInput two = slicer.OpenSlice("second int", 4, 4);
             one.Dispose();
@@ -247,9 +247,9 @@ namespace Lucene.Net.Store
             for (int i = 0; i < 31; i++)
             {
                 MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeekZero"), null, 1 << i);
-                IndexOutput io = mmapDir.CreateOutput("zeroBytes", NewIOContext(Random()));
+                IndexOutput io = mmapDir.CreateOutput("zeroBytes", NewIOContext(Random));
                 io.Dispose();
-                IndexInput ii = mmapDir.OpenInput("zeroBytes", NewIOContext(Random()));
+                IndexInput ii = mmapDir.OpenInput("zeroBytes", NewIOContext(Random));
                 ii.Seek(0L);
                 ii.Dispose();
                 mmapDir.Dispose();
@@ -262,9 +262,9 @@ namespace Lucene.Net.Store
             for (int i = 0; i < 31; i++)
             {
                 MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeekSliceZero"), null, 1 << i);
-                IndexOutput io = mmapDir.CreateOutput("zeroBytes", NewIOContext(Random()));
+                IndexOutput io = mmapDir.CreateOutput("zeroBytes", NewIOContext(Random));
                 io.Dispose();
-                IndexInputSlicer slicer = mmapDir.CreateSlicer("zeroBytes", NewIOContext(Random()));
+                IndexInputSlicer slicer = mmapDir.CreateSlicer("zeroBytes", NewIOContext(Random));
                 IndexInput ii = slicer.OpenSlice("zero-length slice", 0, 0);
                 ii.Seek(0L);
                 ii.Dispose();
@@ -279,12 +279,12 @@ namespace Lucene.Net.Store
             for (int i = 0; i < 17; i++)
             {
                 MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeekEnd"), null, 1 << i);
-                IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
+                IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random));
                 var bytes = new byte[1 << i];
-                Random().NextBytes(bytes);
+                Random.NextBytes(bytes);
                 io.WriteBytes(bytes, bytes.Length);
                 io.Dispose();
-                IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random()));
+                IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random));
                 var actual = new byte[1 << i];
                 ii.ReadBytes(actual, 0, actual.Length);
                 Assert.AreEqual(new BytesRef(bytes), new BytesRef(actual));
@@ -300,12 +300,12 @@ namespace Lucene.Net.Store
             for (int i = 0; i < 17; i++)
             {
                 MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeekSliceEnd"), null, 1 << i);
-                IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
+                IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random));
                 var bytes = new byte[1 << i];
-                Random().NextBytes(bytes);
+                Random.NextBytes(bytes);
                 io.WriteBytes(bytes, bytes.Length);
                 io.Dispose();
-                IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random()));
+                IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random));
                 IndexInput ii = slicer.OpenSlice("full slice", 0, bytes.Length);
                 var actual = new byte[1 << i];
                 ii.ReadBytes(actual, 0, actual.Length);
@@ -323,12 +323,12 @@ namespace Lucene.Net.Store
             for (int i = 0; i < 10; i++)
             {
                 MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeeking"), null, 1 << i);
-                IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
+                IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random));
                 var bytes = new byte[1 << (i + 1)]; // make sure we switch buffers
-                Random().NextBytes(bytes);
+                Random.NextBytes(bytes);
                 io.WriteBytes(bytes, bytes.Length);
                 io.Dispose();
-                IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random()));
+                IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random));
                 var actual = new byte[1 << (i + 1)]; // first read all bytes
                 ii.ReadBytes(actual, 0, actual.Length);
                 Assert.AreEqual(new BytesRef(bytes), new BytesRef(actual));
@@ -355,17 +355,17 @@ namespace Lucene.Net.Store
             for (int i = 0; i < 10; i++)
             {
                 MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSlicedSeeking"), null, 1 << i);
-                IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
+                IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random));
                 var bytes = new byte[1 << (i + 1)]; // make sure we switch buffers
-                Random().NextBytes(bytes);
+                Random.NextBytes(bytes);
                 io.WriteBytes(bytes, bytes.Length);
                 io.Dispose();
-                IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random()));
+                IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random));
                 var actual = new byte[1 << (i + 1)]; // first read all bytes
                 ii.ReadBytes(actual, 0, actual.Length);
                 ii.Dispose();
                 Assert.AreEqual(new BytesRef(bytes), new BytesRef(actual));
-                IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random()));
+                IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random));
                 for (int sliceStart = 0; sliceStart < bytes.Length; sliceStart++)
                 {
                     for (int sliceLength = 0; sliceLength < bytes.Length - sliceStart; sliceLength++)
@@ -388,7 +388,7 @@ namespace Lucene.Net.Store
             int num = AtLeast(10);
             for (int i = 0; i < num; i++)
             {
-                AssertChunking(Random(), TestUtil.NextInt(Random(), 20, 100));
+                AssertChunking(Random, TestUtil.NextInt32(Random, 20, 100));
             }
         }
 
@@ -417,7 +417,7 @@ namespace Lucene.Net.Store
                 junk.SetStringValue(TestUtil.RandomUnicodeString(random));
                 writer.AddDocument(doc);
             }
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             int numAsserts = AtLeast(100);
@@ -442,7 +442,7 @@ namespace Lucene.Net.Store
             File.WriteAllText(fileName, string.Empty, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false) /* No BOM */);
 
             MMapDirectory mmapDir = new MMapDirectory(dir);
-            using (var indexInput = mmapDir.OpenInput(name, NewIOContext(Random())))
+            using (var indexInput = mmapDir.OpenInput(name, NewIOContext(Random)))
             {
             } // Dispose
 

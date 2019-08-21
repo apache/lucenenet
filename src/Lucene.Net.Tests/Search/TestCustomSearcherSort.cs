@@ -55,8 +55,8 @@ namespace Lucene.Net.Search
             base.SetUp();
             INDEX_SIZE = AtLeast(2000);
             Index = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Index, Similarity, TimeZone);
-            RandomGen random = new RandomGen(this, Random());
+            RandomIndexWriter writer = new RandomIndexWriter(LuceneTestCase.Random, Index, Similarity, TimeZone);
+            RandomGen random = new RandomGen(this, Random);
             for (int i = 0; i < INDEX_SIZE; ++i) // don't decrease; if to low the
             {
                 // problem doesn't show up
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewStringField("mandant", Convert.ToString(i % 3), Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
             Query = new TermQuery(new Term("content", "test"));
         }

@@ -159,7 +159,7 @@ namespace Lucene.Net.QueryParsers.Xml
         {
             base.SetUp();
 
-            analyzer = new MockAnalyzer(Random());
+            analyzer = new MockAnalyzer(Random);
             //Create an index
             dir = NewDirectory();
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));

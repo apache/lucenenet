@@ -5,10 +5,10 @@ using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Console = Lucene.Net.Support.SystemConsole;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Index
 {
@@ -16,21 +16,21 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using Codec = Lucene.Net.Codecs.Codec;
     using Constants = Lucene.Net.Util.Constants;
@@ -50,13 +50,13 @@ namespace Lucene.Net.Index
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// Abstract class to do basic tests for a postings format.
+    /// Abstract class to do basic tests for a <see cref="Codecs.PostingsFormat"/>.
     /// NOTE: this test focuses on the postings
     /// (docs/freqs/positions/payloads/offsets) impl, not the
     /// terms dict.  The [stretch] goal is for this test to be
-    /// so thorough in testing a new PostingsFormat that if this
+    /// so thorough in testing a new <see cref="Codecs.PostingsFormat"/> that if this
     /// test passes, then all Lucene/Solr tests should also pass.  Ie,
-    /// if there is some bug in a given PostingsFormat that this
+    /// if there is some bug in a given <see cref="Codecs.PostingsFormat"/> that this
     /// test fails to catch then this test needs to be improved!
     /// </summary>
 
@@ -106,60 +106,60 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Given the same random seed this always enumerates the
-        ///  same random postings
+        /// same random postings.
         /// </summary>
         private class SeedPostings : DocsAndPositionsEnum
         {
             // Used only to generate docIDs; this way if you pull w/
             // or w/o positions you get the same docID sequence:
-            internal readonly Random DocRandom;
+            private readonly Random docRandom;
 
-            internal readonly Random Random;
-            public int DocFreq;
-            internal readonly int MaxDocSpacing;
-            internal readonly int PayloadSize;
-            internal readonly bool FixedPayloads;
-            internal readonly IBits LiveDocs;
-            internal readonly BytesRef Payload_Renamed;
-            internal readonly IndexOptions Options;
-            internal readonly bool DoPositions;
+            private readonly Random random;
+            public int DocFreq { get; set; }
+            private readonly int maxDocSpacing;
+            private readonly int payloadSize;
+            private readonly bool fixedPayloads;
+            private readonly IBits liveDocs;
+            private readonly BytesRef payload;
+            private readonly IndexOptions options;
+            private readonly bool doPositions;
 
-            internal int DocID_Renamed;
-            internal int Freq_Renamed;
-            public int Upto;
+            private int docID;
+            internal int freq;
+            public int Upto { get; set; }
 
-            internal int Pos;
-            internal int Offset;
-            internal int StartOffset_Renamed;
-            internal int EndOffset_Renamed;
-            internal int PosSpacing;
-            internal int PosUpto;
+            private int pos;
+            private int offset;
+            private int startOffset;
+            private int endOffset;
+            private int posSpacing;
+            private int posUpto;
 
             public SeedPostings(long seed, int minDocFreq, int maxDocFreq, IBits liveDocs, IndexOptions options)
             {
-                Random = new Random((int)seed);
-                DocRandom = new Random(Random.Next());
-                DocFreq = TestUtil.NextInt(Random, minDocFreq, maxDocFreq);
-                this.LiveDocs = liveDocs;
+                random = new Random((int)seed);
+                docRandom = new Random(random.Next());
+                DocFreq = TestUtil.NextInt32(random, minDocFreq, maxDocFreq);
+                this.liveDocs = liveDocs;
 
                 // TODO: more realistic to inversely tie this to numDocs:
-                MaxDocSpacing = TestUtil.NextInt(Random, 1, 100);
+                maxDocSpacing = TestUtil.NextInt32(random, 1, 100);
 
-                if (Random.Next(10) == 7)
+                if (random.Next(10) == 7)
                 {
                     // 10% of the time create big payloads:
-                    PayloadSize = 1 + Random.Next(3);
+                    payloadSize = 1 + random.Next(3);
                 }
                 else
                 {
-                    PayloadSize = 1 + Random.Next(1);
+                    payloadSize = 1 + random.Next(1);
                 }
 
-                FixedPayloads = Random.NextBoolean();
-                var payloadBytes = new byte[PayloadSize];
-                Payload_Renamed = new BytesRef(payloadBytes);
-                this.Options = options;
-                DoPositions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS.CompareTo(options) <= 0;
+                fixedPayloads = random.NextBoolean();
+                var payloadBytes = new byte[payloadSize];
+                payload = new BytesRef(payloadBytes);
+                this.options = options;
+                doPositions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS.CompareTo(options) <= 0;
             }
 
             public override int NextDoc()
@@ -167,143 +167,143 @@ namespace Lucene.Net.Index
                 while (true)
                 {
                     _nextDoc();
-                    if (LiveDocs == null || DocID_Renamed == NO_MORE_DOCS || LiveDocs.Get(DocID_Renamed))
+                    if (liveDocs == null || docID == NO_MORE_DOCS || liveDocs.Get(docID))
                     {
-                        return DocID_Renamed;
+                        return docID;
                     }
                 }
             }
 
-            internal virtual int _nextDoc()
+            private int _nextDoc()
             {
                 // Must consume random:
-                while (PosUpto < Freq_Renamed)
+                while (posUpto < freq)
                 {
                     NextPosition();
                 }
 
                 if (Upto < DocFreq)
                 {
-                    if (Upto == 0 && DocRandom.NextBoolean())
+                    if (Upto == 0 && docRandom.NextBoolean())
                     {
                         // Sometimes index docID = 0
                     }
-                    else if (MaxDocSpacing == 1)
+                    else if (maxDocSpacing == 1)
                     {
-                        DocID_Renamed++;
+                        docID++;
                     }
                     else
                     {
                         // TODO: sometimes have a biggish gap here!
-                        DocID_Renamed += TestUtil.NextInt(DocRandom, 1, MaxDocSpacing);
+                        docID += TestUtil.NextInt32(docRandom, 1, maxDocSpacing);
                     }
 
-                    if (Random.Next(200) == 17)
+                    if (random.Next(200) == 17)
                     {
-                        Freq_Renamed = TestUtil.NextInt(Random, 1, 1000);
+                        freq = TestUtil.NextInt32(random, 1, 1000);
                     }
-                    else if (Random.Next(10) == 17)
+                    else if (random.Next(10) == 17)
                     {
-                        Freq_Renamed = TestUtil.NextInt(Random, 1, 20);
+                        freq = TestUtil.NextInt32(random, 1, 20);
                     }
                     else
                     {
-                        Freq_Renamed = TestUtil.NextInt(Random, 1, 4);
+                        freq = TestUtil.NextInt32(random, 1, 4);
                     }
 
-                    Pos = 0;
-                    Offset = 0;
-                    PosUpto = 0;
-                    PosSpacing = TestUtil.NextInt(Random, 1, 100);
+                    pos = 0;
+                    offset = 0;
+                    posUpto = 0;
+                    posSpacing = TestUtil.NextInt32(random, 1, 100);
 
                     Upto++;
-                    return DocID_Renamed;
+                    return docID;
                 }
                 else
                 {
-                    return DocID_Renamed = NO_MORE_DOCS;
+                    return docID = NO_MORE_DOCS;
                 }
             }
 
             public override int DocID
             {
-                get { return DocID_Renamed; }
+                get { return docID; }
             }
 
             public override int Freq
             {
-                get { return Freq_Renamed; }
+                get { return freq; }
             }
 
             public override int NextPosition()
             {
-                if (!DoPositions)
+                if (!doPositions)
                 {
-                    PosUpto = Freq_Renamed;
+                    posUpto = freq;
                     return 0;
                 }
-                Debug.Assert(PosUpto < Freq_Renamed);
+                Debug.Assert(posUpto < freq);
 
-                if (PosUpto == 0 && Random.NextBoolean())
+                if (posUpto == 0 && random.NextBoolean())
                 {
                     // Sometimes index pos = 0
                 }
-                else if (PosSpacing == 1)
+                else if (posSpacing == 1)
                 {
-                    Pos++;
+                    pos++;
                 }
                 else
                 {
-                    Pos += TestUtil.NextInt(Random, 1, PosSpacing);
+                    pos += TestUtil.NextInt32(random, 1, posSpacing);
                 }
 
-                if (PayloadSize != 0)
+                if (payloadSize != 0)
                 {
-                    if (FixedPayloads)
+                    if (fixedPayloads)
                     {
-                        Payload_Renamed.Length = PayloadSize;
-                        Random.NextBytes(Payload_Renamed.Bytes);
+                        payload.Length = payloadSize;
+                        random.NextBytes(payload.Bytes);
                     }
                     else
                     {
-                        int thisPayloadSize = Random.Next(PayloadSize);
+                        int thisPayloadSize = random.Next(payloadSize);
                         if (thisPayloadSize != 0)
                         {
-                            Payload_Renamed.Length = PayloadSize;
-                            Random.NextBytes(Payload_Renamed.Bytes);
+                            payload.Length = payloadSize;
+                            random.NextBytes(payload.Bytes);
                         }
                         else
                         {
-                            Payload_Renamed.Length = 0;
+                            payload.Length = 0;
                         }
                     }
                 }
                 else
                 {
-                    Payload_Renamed.Length = 0;
+                    payload.Length = 0;
                 }
 
-                StartOffset_Renamed = Offset + Random.Next(5);
-                EndOffset_Renamed = StartOffset_Renamed + Random.Next(10);
-                Offset = EndOffset_Renamed;
+                startOffset = offset + random.Next(5);
+                endOffset = startOffset + random.Next(10);
+                offset = endOffset;
 
-                PosUpto++;
-                return Pos;
+                posUpto++;
+                return pos;
             }
 
             public override int StartOffset
             {
-                get { return StartOffset_Renamed; }
+                get { return startOffset; }
             }
 
             public override int EndOffset
             {
-                get { return EndOffset_Renamed; }
+                get { return endOffset; }
             }
 
             public override BytesRef GetPayload()
             {
-                return Payload_Renamed.Length == 0 ? null : Payload_Renamed;
+                return payload.Length == 0 ? null : payload;
             }
 
             public override int Advance(int target)
@@ -319,8 +319,8 @@ namespace Lucene.Net.Index
 
         private class FieldAndTerm
         {
-            internal string Field;
-            internal BytesRef Term;
+            internal string Field { get; set; }
+            internal BytesRef Term { get; set; }
 
             public FieldAndTerm(string field, BytesRef term)
             {
@@ -330,17 +330,17 @@ namespace Lucene.Net.Index
         }
 
         // Holds all postings:
-        private static SortedDictionary<string, SortedDictionary<BytesRef, long>> Fields;
+        private static SortedDictionary<string, SortedDictionary<BytesRef, long>> fields;
 
-        private static FieldInfos FieldInfos;
+        private static FieldInfos fieldInfos;
 
-        private static FixedBitSet GlobalLiveDocs;
+        private static FixedBitSet globalLiveDocs;
 
-        private static IList<FieldAndTerm> AllTerms;
-        private static int MaxDoc;
+        private static IList<FieldAndTerm> allTerms;
+        private static int maxDoc;
 
-        private static long TotalPostings;
-        private static long TotalPayloadBytes;
+        private static long totalPostings;
+        private static long totalPayloadBytes;
 
         private static SeedPostings GetSeedPostings(string term, long seed, bool withLiveDocs, IndexOptions options)
         {
@@ -366,7 +366,7 @@ namespace Lucene.Net.Index
                 maxDocFreq = 3;
             }
 
-            return new SeedPostings(seed, minDocFreq, maxDocFreq, withLiveDocs ? GlobalLiveDocs : null, options);
+            return new SeedPostings(seed, minDocFreq, maxDocFreq, withLiveDocs ? globalLiveDocs : null, options);
         }
 
         [OneTimeSetUp]
@@ -374,25 +374,25 @@ namespace Lucene.Net.Index
         {
             base.BeforeClass();
 
-            TotalPostings = 0;
-            TotalPayloadBytes = 0;
+            totalPostings = 0;
+            totalPayloadBytes = 0;
 
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            Fields = new SortedDictionary<string, SortedDictionary<BytesRef, long>>(StringComparer.Ordinal);
+            fields = new SortedDictionary<string, SortedDictionary<BytesRef, long>>(StringComparer.Ordinal);
 
-            int numFields = TestUtil.NextInt(Random(), 1, 5);
+            int numFields = TestUtil.NextInt32(Random, 1, 5);
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: " + numFields + " fields");
             }
-            MaxDoc = 0;
+            maxDoc = 0;
 
             FieldInfo[] fieldInfoArray = new FieldInfo[numFields];
             int fieldUpto = 0;
             while (fieldUpto < numFields)
             {
-                string field = TestUtil.RandomSimpleString(Random());
-                if (Fields.ContainsKey(field))
+                string field = TestUtil.RandomSimpleString(Random);
+                if (fields.ContainsKey(field))
                 {
                     continue;
                 }
@@ -403,22 +403,22 @@ namespace Lucene.Net.Index
                 fieldUpto++;
 
                 SortedDictionary<BytesRef, long> postings = new SortedDictionary<BytesRef, long>();
-                Fields[field] = postings;
+                fields[field] = postings;
                 HashSet<string> seenTerms = new HashSet<string>();
 
                 int numTerms;
-                if (Random().Next(10) == 7)
+                if (Random.Next(10) == 7)
                 {
                     numTerms = AtLeast(50);
                 }
                 else
                 {
-                    numTerms = TestUtil.NextInt(Random(), 2, 20);
+                    numTerms = TestUtil.NextInt32(Random, 2, 20);
                 }
 
                 for (int termUpto = 0; termUpto < numTerms; termUpto++)
                 {
-                    string term = TestUtil.RandomSimpleString(Random());
+                    string term = TestUtil.RandomSimpleString(Random);
                     if (seenTerms.Contains(term))
                     {
                         continue;
@@ -435,7 +435,7 @@ namespace Lucene.Net.Index
                         // Make 1 medium term:
                         term = "medium_" + term;
                     }
-                    else if (Random().NextBoolean())
+                    else if (Random.NextBoolean())
                     {
                         // Low freq term:
                         term = "low_" + term;
@@ -446,7 +446,7 @@ namespace Lucene.Net.Index
                         term = "verylow_" + term;
                     }
 
-                    long termSeed = Random().NextLong();
+                    long termSeed = Random.NextInt64();
                     postings[new BytesRef(term)] = termSeed;
 
                     // NOTE: sort of silly: we enum all the docs just to
@@ -458,61 +458,61 @@ namespace Lucene.Net.Index
                     {
                         lastDoc = doc;
                     }
-                    MaxDoc = Math.Max(lastDoc, MaxDoc);
+                    maxDoc = Math.Max(lastDoc, maxDoc);
                 }
             }
 
-            FieldInfos = new FieldInfos(fieldInfoArray);
+            fieldInfos = new FieldInfos(fieldInfoArray);
 
             // It's the count, not the last docID:
-            MaxDoc++;
+            maxDoc++;
 
-            GlobalLiveDocs = new FixedBitSet(MaxDoc);
-            double liveRatio = Random().NextDouble();
-            for (int i = 0; i < MaxDoc; i++)
+            globalLiveDocs = new FixedBitSet(maxDoc);
+            double liveRatio = Random.NextDouble();
+            for (int i = 0; i < maxDoc; i++)
             {
-                if (Random().NextDouble() <= liveRatio)
+                if (Random.NextDouble() <= liveRatio)
                 {
-                    GlobalLiveDocs.Set(i);
+                    globalLiveDocs.Set(i);
                 }
             }
 
-            AllTerms = new List<FieldAndTerm>();
-            foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in Fields)
+            allTerms = new List<FieldAndTerm>();
+            foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in fields)
             {
                 string field = fieldEnt.Key;
                 foreach (KeyValuePair<BytesRef, long> termEnt in fieldEnt.Value.EntrySet())
                 {
-                    AllTerms.Add(new FieldAndTerm(field, termEnt.Key));
+                    allTerms.Add(new FieldAndTerm(field, termEnt.Key));
                 }
             }
 
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: done init postings; " + AllTerms.Count + " total terms, across " + FieldInfos.Count + " fields");
+                Console.WriteLine("TEST: done init postings; " + allTerms.Count + " total terms, across " + fieldInfos.Count + " fields");
             }
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            AllTerms = null;
-            FieldInfos = null;
-            Fields = null;
-            GlobalLiveDocs = null;
+            allTerms = null;
+            fieldInfos = null;
+            fields = null;
+            globalLiveDocs = null;
             base.AfterClass();
         }
 
         // TODO maybe instead of @BeforeClass just make a single test run: build postings & index & test it?
 
-        private FieldInfos CurrentFieldInfos;
+        private FieldInfos currentFieldInfos;
 
         // maxAllowed = the "highest" we can index, but we will still
         // randomly index at lower IndexOption
         private FieldsProducer BuildIndex(Directory dir, IndexOptions maxAllowed, bool allowPayloads, bool alwaysTestMax)
         {
-            Codec codec = Codec;
-            SegmentInfo segmentInfo = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, "_0", MaxDoc, false, codec, null);
+            Codec codec = GetCodec();
+            SegmentInfo segmentInfo = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, "_0", maxDoc, false, codec, null);
 
             int maxIndexOption = Enum.GetValues(typeof(IndexOptions)).Cast<IndexOptions>().ToList().IndexOf(maxAllowed);
             if (VERBOSE)
@@ -524,14 +524,14 @@ namespace Lucene.Net.Index
 
             // TODO use allowPayloads
 
-            var newFieldInfoArray = new FieldInfo[Fields.Count];
-            for (int fieldUpto = 0; fieldUpto < Fields.Count; fieldUpto++)
+            var newFieldInfoArray = new FieldInfo[fields.Count];
+            for (int fieldUpto = 0; fieldUpto < fields.Count; fieldUpto++)
             {
-                FieldInfo oldFieldInfo = FieldInfos.FieldInfo(fieldUpto);
+                FieldInfo oldFieldInfo = fieldInfos.FieldInfo(fieldUpto);
 
                 string pf = TestUtil.GetPostingsFormat(codec, oldFieldInfo.Name);
                 int fieldMaxIndexOption;
-                if (DoesntSupportOffsets.Contains(pf))
+                if (m_doesntSupportOffsets.Contains(pf))
                 {
                     fieldMaxIndexOption = Math.Min(maxIndexOptionNoOffsets, maxIndexOption);
                 }
@@ -542,7 +542,7 @@ namespace Lucene.Net.Index
 
                 // Randomly picked the IndexOptions to index this
                 // field with:
-                IndexOptions indexOptions = Enum.GetValues(typeof(IndexOptions)).Cast<IndexOptions>().ToArray()[alwaysTestMax ? fieldMaxIndexOption : Random().Next(1, 1 + fieldMaxIndexOption)]; // LUCENENET: Skipping NONE option
+                IndexOptions indexOptions = Enum.GetValues(typeof(IndexOptions)).Cast<IndexOptions>().ToArray()[alwaysTestMax ? fieldMaxIndexOption : Random.Next(1, 1 + fieldMaxIndexOption)]; // LUCENENET: Skipping NONE option
                 bool doPayloads = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
 
                 newFieldInfoArray[fieldUpto] = new FieldInfo(oldFieldInfo.Name, true, fieldUpto, false, false, doPayloads, indexOptions, DocValuesType.NONE, DocValuesType.NUMERIC, null);
@@ -552,15 +552,15 @@ namespace Lucene.Net.Index
 
             // Estimate that flushed segment size will be 25% of
             // what we use in RAM:
-            long bytes = TotalPostings * 8 + TotalPayloadBytes;
+            long bytes = totalPostings * 8 + totalPayloadBytes;
 
-            SegmentWriteState writeState = new SegmentWriteState(null, dir, segmentInfo, newFieldInfos, 32, null, new IOContext(new FlushInfo(MaxDoc, bytes)));
+            SegmentWriteState writeState = new SegmentWriteState(null, dir, segmentInfo, newFieldInfos, 32, null, new IOContext(new FlushInfo(maxDoc, bytes)));
 
             // LUCENENET specific - BUG: we must wrap this in a using block in case anything in the below loop throws
             using (FieldsConsumer fieldsConsumer = codec.PostingsFormat.FieldsConsumer(writeState))
             {
 
-                foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in Fields)
+                foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in fields)
                 {
                     string field = fieldEnt.Key;
                     IDictionary<BytesRef, long> terms = fieldEnt.Value;
@@ -582,7 +582,7 @@ namespace Lucene.Net.Index
                     TermsConsumer termsConsumer = fieldsConsumer.AddField(fieldInfo);
                     long sumTotalTF = 0;
                     long sumDF = 0;
-                    FixedBitSet seenDocs = new FixedBitSet(MaxDoc);
+                    FixedBitSet seenDocs = new FixedBitSet(maxDoc);
                     foreach (KeyValuePair<BytesRef, long> termEnt in terms)
                     {
                         BytesRef term = termEnt.Key;
@@ -600,13 +600,13 @@ namespace Lucene.Net.Index
                             int freq = postings.Freq;
                             if (VERBOSE)
                             {
-                                Console.WriteLine("    " + postings.Upto + ": docID=" + docID + " freq=" + postings.Freq_Renamed);
+                                Console.WriteLine("    " + postings.Upto + ": docID=" + docID + " freq=" + postings.freq);
                             }
-                            postingsConsumer.StartDoc(docID, doFreq ? postings.Freq_Renamed : -1);
+                            postingsConsumer.StartDoc(docID, doFreq ? postings.freq : -1);
                             seenDocs.Set(docID);
                             if (doPos)
                             {
-                                totalTF += postings.Freq_Renamed;
+                                totalTF += postings.freq;
                                 for (int posUpto = 0; posUpto < freq; posUpto++)
                                 {
                                     int pos = postings.NextPosition();
@@ -655,7 +655,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            CurrentFieldInfos = newFieldInfos;
+            currentFieldInfos = newFieldInfos;
 
             SegmentReadState readState = new SegmentReadState(dir, segmentInfo, newFieldInfos, IOContext.READ, 1);
 
@@ -665,9 +665,9 @@ namespace Lucene.Net.Index
         private class ThreadState
         {
             // Only used with REUSE option:
-            public DocsEnum ReuseDocsEnum;
+            public DocsEnum ReuseDocsEnum { get; set; }
 
-            public DocsAndPositionsEnum ReuseDocsAndPositionsEnum;
+            public DocsAndPositionsEnum ReuseDocsAndPositionsEnum { get; set; }
         }
 
         private void VerifyEnum(ThreadState threadState, 
@@ -693,11 +693,11 @@ namespace Lucene.Net.Index
             Assert.AreEqual(term, termsEnum.Term);
 
             // 50% of the time time pass liveDocs:
-            bool useLiveDocs = options.Contains(Option.LIVE_DOCS) && Random().NextBoolean();
+            bool useLiveDocs = options.Contains(Option.LIVE_DOCS) && Random.NextBoolean();
             IBits liveDocs;
             if (useLiveDocs)
             {
-                liveDocs = GlobalLiveDocs;
+                liveDocs = globalLiveDocs;
                 if (VERBOSE)
                 {
                     Console.WriteLine("  use liveDocs");
@@ -712,28 +712,28 @@ namespace Lucene.Net.Index
                 }
             }
 
-            FieldInfo fieldInfo = CurrentFieldInfos.FieldInfo(field);
+            FieldInfo fieldInfo = currentFieldInfos.FieldInfo(field);
 
             // NOTE: can be empty list if we are using liveDocs:
             SeedPostings expected = GetSeedPostings(term.Utf8ToString(), 
-                                                    Fields[field][term], 
+                                                    fields[field][term], 
                                                     useLiveDocs, 
                                                     maxIndexOptions);
             Assert.AreEqual(expected.DocFreq, termsEnum.DocFreq);
 
             bool allowFreqs = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && 
                 maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
-            bool doCheckFreqs = allowFreqs && (alwaysTestMax || Random().Next(3) <= 2);
+            bool doCheckFreqs = allowFreqs && (alwaysTestMax || Random.Next(3) <= 2);
 
             bool allowPositions = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && 
                 maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-            bool doCheckPositions = allowPositions && (alwaysTestMax || Random().Next(3) <= 2);
+            bool doCheckPositions = allowPositions && (alwaysTestMax || Random.Next(3) <= 2);
 
             bool allowOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >=0 && 
                 maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
-            bool doCheckOffsets = allowOffsets && (alwaysTestMax || Random().Next(3) <= 2);
+            bool doCheckOffsets = allowOffsets && (alwaysTestMax || Random.Next(3) <= 2);
 
-            bool doCheckPayloads = options.Contains(Option.PAYLOADS) && allowPositions && fieldInfo.HasPayloads && (alwaysTestMax || Random().Next(3) <= 2);
+            bool doCheckPayloads = options.Contains(Option.PAYLOADS) && allowPositions && fieldInfo.HasPayloads && (alwaysTestMax || Random.Next(3) <= 2);
 
             DocsEnum prevDocsEnum = null;
 
@@ -742,21 +742,21 @@ namespace Lucene.Net.Index
 
             if (!doCheckPositions)
             {
-                if (allowPositions && Random().Next(10) == 7)
+                if (allowPositions && Random.Next(10) == 7)
                 {
                     // 10% of the time, even though we will not check positions, pull a DocsAndPositions enum
 
-                    if (options.Contains(Option.REUSE_ENUMS) && Random().Next(10) < 9)
+                    if (options.Contains(Option.REUSE_ENUMS) && Random.Next(10) < 9)
                     {
                         prevDocsEnum = threadState.ReuseDocsAndPositionsEnum;
                     }
 
                     DocsAndPositionsFlags flags = 0;
-                    if (alwaysTestMax || Random().NextBoolean())
+                    if (alwaysTestMax || Random.NextBoolean())
                     {
                         flags |= DocsAndPositionsFlags.OFFSETS;
                     }
-                    if (alwaysTestMax || Random().NextBoolean())
+                    if (alwaysTestMax || Random.NextBoolean())
                     {
                         flags |= DocsAndPositionsFlags.PAYLOADS;
                     }
@@ -776,7 +776,7 @@ namespace Lucene.Net.Index
                     {
                         Console.WriteLine("  get DocsEnum");
                     }
-                    if (options.Contains(Option.REUSE_ENUMS) && Random().Next(10) < 9)
+                    if (options.Contains(Option.REUSE_ENUMS) && Random.Next(10) < 9)
                     {
                         prevDocsEnum = threadState.ReuseDocsEnum;
                     }
@@ -787,17 +787,17 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (options.Contains(Option.REUSE_ENUMS) && Random().Next(10) < 9)
+                if (options.Contains(Option.REUSE_ENUMS) && Random.Next(10) < 9)
                 {
                     prevDocsEnum = threadState.ReuseDocsAndPositionsEnum;
                 }
 
                 DocsAndPositionsFlags flags = 0;
-                if (alwaysTestMax || doCheckOffsets || Random().Next(3) == 1)
+                if (alwaysTestMax || doCheckOffsets || Random.Next(3) == 1)
                 {
                     flags |= DocsAndPositionsFlags.OFFSETS;
                 }
-                if (alwaysTestMax || doCheckPayloads || Random().Next(3) == 1)
+                if (alwaysTestMax || doCheckPayloads || Random.Next(3) == 1)
                 {
                     flags |= DocsAndPositionsFlags.PAYLOADS;
                 }
@@ -834,9 +834,9 @@ namespace Lucene.Net.Index
 
             // 10% of the time don't consume all docs:
             int stopAt;
-            if (!alwaysTestMax && options.Contains(Option.PARTIAL_DOC_CONSUME) && expected.DocFreq > 1 && Random().Next(10) == 7)
+            if (!alwaysTestMax && options.Contains(Option.PARTIAL_DOC_CONSUME) && expected.DocFreq > 1 && Random.Next(10) == 7)
             {
-                stopAt = Random().Next(expected.DocFreq - 1);
+                stopAt = Random.Next(expected.DocFreq - 1);
                 if (VERBOSE)
                 {
                     Console.WriteLine("  will not consume all docs (" + stopAt + " vs " + expected.DocFreq + ")");
@@ -851,17 +851,17 @@ namespace Lucene.Net.Index
                 }
             }
 
-            double skipChance = alwaysTestMax ? 0.5 : Random().NextDouble();
-            int numSkips = expected.DocFreq < 3 ? 1 : TestUtil.NextInt(Random(), 1, Math.Min(20, expected.DocFreq / 3));
+            double skipChance = alwaysTestMax ? 0.5 : Random.NextDouble();
+            int numSkips = expected.DocFreq < 3 ? 1 : TestUtil.NextInt32(Random, 1, Math.Min(20, expected.DocFreq / 3));
             int skipInc = expected.DocFreq / numSkips;
-            int skipDocInc = MaxDoc / numSkips;
+            int skipDocInc = maxDoc / numSkips;
 
             // Sometimes do 100% skipping:
-            bool doAllSkipping = options.Contains(Option.SKIPPING) && Random().Next(7) == 1;
+            bool doAllSkipping = options.Contains(Option.SKIPPING) && Random.Next(7) == 1;
 
-            double freqAskChance = alwaysTestMax ? 1.0 : Random().NextDouble();
-            double payloadCheckChance = alwaysTestMax ? 1.0 : Random().NextDouble();
-            double offsetCheckChance = alwaysTestMax ? 1.0 : Random().NextDouble();
+            double freqAskChance = alwaysTestMax ? 1.0 : Random.NextDouble();
+            double payloadCheckChance = alwaysTestMax ? 1.0 : Random.NextDouble();
+            double offsetCheckChance = alwaysTestMax ? 1.0 : Random.NextDouble();
 
             if (VERBOSE)
             {
@@ -901,13 +901,13 @@ namespace Lucene.Net.Index
                     break;
                 }
 
-                if (options.Contains(Option.SKIPPING) && (doAllSkipping || Random().NextDouble() <= skipChance))
+                if (options.Contains(Option.SKIPPING) && (doAllSkipping || Random.NextDouble() <= skipChance))
                 {
                     int targetDocID = -1;
-                    if (expected.Upto < stopAt && Random().NextBoolean())
+                    if (expected.Upto < stopAt && Random.NextBoolean())
                     {
                         // Pick target we know exists:
-                        int skipCount = TestUtil.NextInt(Random(), 1, skipInc);
+                        int skipCount = TestUtil.NextInt32(Random, 1, skipInc);
                         for (int skip = 0; skip < skipCount; skip++)
                         {
                             if (expected.NextDoc() == DocsEnum.NO_MORE_DOCS)
@@ -919,7 +919,7 @@ namespace Lucene.Net.Index
                     else
                     {
                         // Pick random target (might not exist):
-                        int skipDocIDs = TestUtil.NextInt(Random(), 1, skipDocInc);
+                        int skipDocIDs = TestUtil.NextInt32(Random, 1, skipDocInc);
                         if (skipDocIDs > 0)
                         {
                             targetDocID = expected.DocID + skipDocIDs;
@@ -929,7 +929,7 @@ namespace Lucene.Net.Index
 
                     if (expected.Upto >= stopAt)
                     {
-                        int target = Random().NextBoolean() ? MaxDoc : DocsEnum.NO_MORE_DOCS;
+                        int target = Random.NextBoolean() ? maxDoc : DocsEnum.NO_MORE_DOCS;
                         if (VERBOSE)
                         {
                             Console.WriteLine("  now advance to end (target=" + target + ")");
@@ -969,7 +969,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                if (doCheckFreqs && Random().NextDouble() <= freqAskChance)
+                if (doCheckFreqs && Random.NextDouble() <= freqAskChance)
                 {
                     if (VERBOSE)
                     {
@@ -983,9 +983,9 @@ namespace Lucene.Net.Index
                 {
                     int freq = docsEnum.Freq;
                     int numPosToConsume;
-                    if (!alwaysTestMax && options.Contains(Option.PARTIAL_POS_CONSUME) && Random().Next(5) == 1)
+                    if (!alwaysTestMax && options.Contains(Option.PARTIAL_POS_CONSUME) && Random.Next(5) == 1)
                     {
-                        numPosToConsume = Random().Next(freq);
+                        numPosToConsume = Random.Next(freq);
                     }
                     else
                     {
@@ -1004,7 +1004,7 @@ namespace Lucene.Net.Index
                         if (doCheckPayloads)
                         {
                             BytesRef expectedPayload = expected.GetPayload();
-                            if (Random().NextDouble() <= payloadCheckChance)
+                            if (Random.NextDouble() <= payloadCheckChance)
                             {
                                 if (VERBOSE)
                                 {
@@ -1041,7 +1041,7 @@ namespace Lucene.Net.Index
 
                         if (doCheckOffsets)
                         {
-                            if (Random().NextDouble() <= offsetCheckChance)
+                            if (Random.NextDouble() <= offsetCheckChance)
                             {
                                 if (VERBOSE)
                                 {
@@ -1072,23 +1072,23 @@ namespace Lucene.Net.Index
             }
         }
 
-        new private class TestThread : ThreadClass
+        private class TestThread : ThreadClass
         {
-            internal Fields FieldsSource;
-            internal ISet<Option> Options;
-            internal IndexOptions MaxIndexOptions;
-            internal IndexOptions MaxTestOptions;
-            internal bool AlwaysTestMax;
-            internal BasePostingsFormatTestCase TestCase;
+            private Fields fieldsSource;
+            private ISet<Option> options;
+            private IndexOptions maxIndexOptions;
+            private IndexOptions maxTestOptions;
+            private bool alwaysTestMax;
+            private BasePostingsFormatTestCase testCase;
 
             public TestThread(BasePostingsFormatTestCase testCase, Fields fieldsSource, ISet<Option> options, IndexOptions maxTestOptions, IndexOptions maxIndexOptions, bool alwaysTestMax)
             {
-                this.FieldsSource = fieldsSource;
-                this.Options = options;
-                this.MaxTestOptions = maxTestOptions;
-                this.MaxIndexOptions = maxIndexOptions;
-                this.AlwaysTestMax = alwaysTestMax;
-                this.TestCase = testCase;
+                this.fieldsSource = fieldsSource;
+                this.options = options;
+                this.maxTestOptions = maxTestOptions;
+                this.maxIndexOptions = maxIndexOptions;
+                this.alwaysTestMax = alwaysTestMax;
+                this.testCase = testCase;
             }
 
             public override void Run()
@@ -1097,7 +1097,7 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-                        TestCase.TestTermsOneThread(FieldsSource, Options, MaxTestOptions, MaxIndexOptions, AlwaysTestMax);
+                        testCase.TestTermsOneThread(fieldsSource, options, maxTestOptions, maxIndexOptions, alwaysTestMax);
                     }
                     catch (Exception t)
                     {
@@ -1106,8 +1106,8 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    FieldsSource = null;
-                    TestCase = null;
+                    fieldsSource = null;
+                    testCase = null;
                 }
             }
         }
@@ -1119,7 +1119,7 @@ namespace Lucene.Net.Index
         {
             if (options.Contains(Option.THREADS))
             {
-                int numThreads = TestUtil.NextInt(Random(), 2, 5);
+                int numThreads = TestUtil.NextInt32(Random, 2, 5);
                 ThreadClass[] threads = new ThreadClass[numThreads];
                 for (int threadUpto = 0; threadUpto < numThreads; threadUpto++)
                 {
@@ -1148,11 +1148,11 @@ namespace Lucene.Net.Index
             IList<TermState> termStates = new List<TermState>();
             IList<FieldAndTerm> termStateTerms = new List<FieldAndTerm>();
 
-            Collections.Shuffle(AllTerms);
+            Collections.Shuffle(allTerms, Random);
             int upto = 0;
-            while (upto < AllTerms.Count)
+            while (upto < allTerms.Count)
             {
-                bool useTermState = termStates.Count != 0 && Random().Next(5) == 1;
+                bool useTermState = termStates.Count != 0 && Random.Next(5) == 1;
                 FieldAndTerm fieldAndTerm;
                 TermsEnum termsEnum;
 
@@ -1161,7 +1161,7 @@ namespace Lucene.Net.Index
                 if (!useTermState)
                 {
                     // Seek by random field+term:
-                    fieldAndTerm = AllTerms[upto++];
+                    fieldAndTerm = allTerms[upto++];
                     if (VERBOSE)
                     {
                         Console.WriteLine("\nTEST: seek to term=" + fieldAndTerm.Field + ":" + fieldAndTerm.Term.Utf8ToString());
@@ -1170,7 +1170,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // Seek by previous saved TermState
-                    int idx = Random().Next(termStates.Count);
+                    int idx = Random.Next(termStates.Count);
                     fieldAndTerm = termStateTerms[idx];
                     if (VERBOSE)
                     {
@@ -1194,7 +1194,7 @@ namespace Lucene.Net.Index
 
                 bool savedTermState = false;
 
-                if (options.Contains(Option.TERM_STATE) && !useTermState && Random().Next(5) == 1)
+                if (options.Contains(Option.TERM_STATE) && !useTermState && Random.Next(5) == 1)
                 {
                     // Save away this TermState:
                     termStates.Add(termsEnum.GetTermState());
@@ -1212,7 +1212,7 @@ namespace Lucene.Net.Index
                             alwaysTestMax);
 
                 // Sometimes save term state after pulling the enum:
-                if (options.Contains(Option.TERM_STATE) && !useTermState && !savedTermState && Random().Next(5) == 1)
+                if (options.Contains(Option.TERM_STATE) && !useTermState && !savedTermState && Random.Next(5) == 1)
                 {
                     // Save away this TermState:
                     termStates.Add(termsEnum.GetTermState());
@@ -1222,7 +1222,7 @@ namespace Lucene.Net.Index
 
                 // 10% of the time make sure you can pull another enum
                 // from the same term:
-                if (alwaysTestMax || Random().Next(10) == 7)
+                if (alwaysTestMax || Random.Next(10) == 7)
                 {
                     // Try same term again
                     if (VERBOSE)
@@ -1244,20 +1244,22 @@ namespace Lucene.Net.Index
 
         private void TestFields(Fields fields)
         {
-            IEnumerator<string> iterator = fields.GetEnumerator();
-            while (iterator.MoveNext())
+            using (IEnumerator<string> iterator = fields.GetEnumerator())
             {
-                var dummy = iterator.Current;
-                // .NET: Testing for iterator.Remove() isn't applicable
-            }
-            Assert.IsFalse(iterator.MoveNext());
+                while (iterator.MoveNext())
+                {
+                    var dummy = iterator.Current;
+                    // .NET: Testing for iterator.Remove() isn't applicable
+                }
+                Assert.IsFalse(iterator.MoveNext());
 
-            // .NET: Testing for NoSuchElementException with .NET iterators isn't applicable
+                // .NET: Testing for NoSuchElementException with .NET iterators isn't applicable
+            }
         }
 
         /// <summary>
         /// Indexes all fields/terms at the specified
-        ///  IndexOptions, and fully tests at that IndexOptions.
+        /// <see cref="IndexOptions"/>, and fully tests at that <see cref="IndexOptions"/>.
         /// </summary>
         private void TestFull(IndexOptions options, bool withPayloads)
         {
@@ -1265,68 +1267,69 @@ namespace Lucene.Net.Index
             using (Directory dir = NewFSDirectory(path))
             {
                 // TODO test thread safety of buildIndex too
-                var fieldsProducer = BuildIndex(dir, options, withPayloads, true);
-
-                TestFields(fieldsProducer);
-
-                var allOptions = ((IndexOptions[])Enum.GetValues(typeof(IndexOptions))).Skip(1).ToArray(); // LUCENENET: Skip our NONE option
-                    //IndexOptions_e.values();
-                int maxIndexOption = Arrays.AsList(allOptions).IndexOf(options);
-
-                for (int i = 0; i <= maxIndexOption; i++)
+                using (var fieldsProducer = BuildIndex(dir, options, withPayloads, true))
                 {
-                    ISet<Option> allOptionsHashSet = new HashSet<Option>(Enum.GetValues(typeof (Option)).Cast<Option>());
-                    TestTerms(fieldsProducer, allOptionsHashSet, allOptions[i], options, true);
-                    if (withPayloads)
-                    {
-                        // If we indexed w/ payloads, also test enums w/o accessing payloads:
-                        ISet<Option> payloadsHashSet = new HashSet<Option>() {Option.PAYLOADS};
-                        var complementHashSet = new HashSet<Option>(allOptionsHashSet.Except(payloadsHashSet));
-                        TestTerms(fieldsProducer, complementHashSet, allOptions[i], options, true);
-                    }
-                }
 
-                fieldsProducer.Dispose();
+                    TestFields(fieldsProducer);
+
+                    var allOptions = ((IndexOptions[])Enum.GetValues(typeof(IndexOptions))).Skip(1).ToArray(); // LUCENENET: Skip our NONE option
+                                                                                                               //IndexOptions_e.values();
+                    int maxIndexOption = Arrays.AsList(allOptions).IndexOf(options);
+
+                    for (int i = 0; i <= maxIndexOption; i++)
+                    {
+                        ISet<Option> allOptionsHashSet = new HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>());
+                        TestTerms(fieldsProducer, allOptionsHashSet, allOptions[i], options, true);
+                        if (withPayloads)
+                        {
+                            // If we indexed w/ payloads, also test enums w/o accessing payloads:
+                            ISet<Option> payloadsHashSet = new HashSet<Option>() { Option.PAYLOADS };
+                            var complementHashSet = new HashSet<Option>(allOptionsHashSet.Except(payloadsHashSet));
+                            TestTerms(fieldsProducer, complementHashSet, allOptions[i], options, true);
+                        }
+                    }
+
+                } // fieldsProducer.Dispose();
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestDocsOnly()
         {
             TestFull(IndexOptions.DOCS_ONLY, false);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestDocsAndFreqs()
         {
             TestFull(IndexOptions.DOCS_AND_FREQS, false);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestDocsAndFreqsAndPositions()
         {
             TestFull(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, false);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestDocsAndFreqsAndPositionsAndPayloads()
         {
             TestFull(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, true);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestDocsAndFreqsAndPositionsAndOffsets()
         {
             TestFull(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, false);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestDocsAndFreqsAndPositionsAndOffsetsAndPayloads()
         {
             TestFull(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, true);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestRandom()
         {
             int iters = 5;
@@ -1334,32 +1337,34 @@ namespace Lucene.Net.Index
             for (int iter = 0; iter < iters; iter++)
             {
                 DirectoryInfo path = CreateTempDir("testPostingsFormat");
-                Directory dir = NewFSDirectory(path);
+                using (Directory dir = NewFSDirectory(path))
+                {
 
-                bool indexPayloads = Random().NextBoolean();
-                // TODO test thread safety of buildIndex too
-                FieldsProducer fieldsProducer = BuildIndex(dir, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, indexPayloads, false);
+                    bool indexPayloads = Random.NextBoolean();
+                    // TODO test thread safety of buildIndex too
+                    using (FieldsProducer fieldsProducer = BuildIndex(dir, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, indexPayloads, false))
+                    {
 
-                TestFields(fieldsProducer);
+                        TestFields(fieldsProducer);
 
-                // NOTE: you can also test "weaker" index options than
-                // you indexed with:
-                TestTerms(fieldsProducer,
-                    // LUCENENET: Skip our NONE option
-                    new HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>().Skip(1)), 
-                    IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, 
-                    IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, 
-                    false);
+                        // NOTE: you can also test "weaker" index options than
+                        // you indexed with:
+                        TestTerms(fieldsProducer,
+                            // LUCENENET: Skip our NONE option
+                            new HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>().Skip(1)),
+                            IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
+                            IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
+                            false);
 
-                fieldsProducer.Dispose();
-                fieldsProducer = null;
+                    } // fieldsProducer.Dispose();
+                    // fieldsProducer = null; // LUCENENET: No can do - out of scope
 
-                dir.Dispose();
+                } // dir.Dispose();
                 System.IO.Directory.Delete(path.FullName, true);
             }
         }
 
-        protected internal override void AddRandomFields(Document doc)
+        protected override void AddRandomFields(Document doc)
         {
             
             foreach (IndexOptions opts in Enum.GetValues(typeof(IndexOptions)))
@@ -1372,16 +1377,16 @@ namespace Lucene.Net.Index
 
                 string field = "f_" + opts;
                 string pf = TestUtil.GetPostingsFormat(Codec.Default, field);
-                if (opts == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS && DoesntSupportOffsets.Contains(pf))
+                if (opts == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS && m_doesntSupportOffsets.Contains(pf))
                 {
                     continue;
                 }
                 var ft = new FieldType { IndexOptions = opts, IsIndexed = true, OmitNorms = true};
                 ft.Freeze();
-                int numFields = Random().Next(5);
+                int numFields = Random.Next(5);
                 for (int j = 0; j < numFields; ++j)
                 {
-                    doc.Add(new Field("f_" + opts, TestUtil.RandomSimpleString(Random(), 2), ft));
+                    doc.Add(new Field("f_" + opts, TestUtil.RandomSimpleString(Random, 2), ft));
                 }
             }
         }

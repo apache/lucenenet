@@ -47,8 +47,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             for (int i = 0; i < n; i++)
             {
-                Random().NextBytes(buffer);
-                int size = 1 + Random().Next(50);
+                Random.NextBytes(buffer);
+                int size = 1 + Random.Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
                 Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,
@@ -61,8 +61,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             for (int i = 0; i < n; i++)
             {
-                Random().NextBytes(buffer);
-                int size = 1 + Random().Next(50);
+                Random.NextBytes(buffer);
+                int size = 1 + Random.Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
                 Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,
@@ -75,8 +75,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             for (int i = 0; i < n; i++)
             {
-                Random().NextBytes(buffer);
-                int size = 1 + Random().Next(50);
+                Random.NextBytes(buffer);
+                int size = 1 + Random.Next(50);
                 // This test is turning random bytes into a string,
                 // this is asking for trouble.
                 Encoding decoder = Encoding.GetEncoding(Encoding.UTF8.CodePage,

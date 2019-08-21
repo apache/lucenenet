@@ -107,10 +107,10 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             MaxId = AtLeast(500);
-            SignedIndexDir = new TestIndex(Random(), int.MaxValue, int.MinValue, true);
-            UnsignedIndexDir = new TestIndex(Random(), int.MaxValue, 0, false);
-            SignedIndexReader = Build(Random(), SignedIndexDir);
-            UnsignedIndexReader = Build(Random(), UnsignedIndexDir);
+            SignedIndexDir = new TestIndex(Random, int.MaxValue, int.MinValue, true);
+            UnsignedIndexDir = new TestIndex(Random, int.MaxValue, 0, false);
+            SignedIndexReader = Build(Random, SignedIndexDir);
+            UnsignedIndexReader = Build(Random, UnsignedIndexDir);
         }
 
         [OneTimeTearDown]
@@ -144,8 +144,8 @@ namespace Lucene.Net.Search
             doc.Add(randField);
             doc.Add(bodyField);
 
-            RandomIndexWriter writer = new RandomIndexWriter(random, index.Index, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(TestUtil.NextInt(random, 50, 1000)).SetMergePolicy(NewLogMergePolicy()));
-            TestUtil.ReduceOpenFiles(writer.w);
+            RandomIndexWriter writer = new RandomIndexWriter(random, index.Index, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(TestUtil.NextInt32(random, 50, 1000)).SetMergePolicy(NewLogMergePolicy()));
+            TestUtil.ReduceOpenFiles(writer.IndexWriter);
 
             while (true)
             {
@@ -186,7 +186,7 @@ namespace Lucene.Net.Search
                     // max, so, we loop until we satisfy that.  it should be
                     // exceedingly rare (Yonik calculates 1 in ~429,000)
                     // times) that this loop requires more than one try:
-                    IndexReader ir = writer.Reader;
+                    IndexReader ir = writer.GetReader();
                     writer.Dispose();
                     return ir;
                 }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestPad()
         {
             int[] tests = new int[] { -9999999, -99560, -100, -3, -1, 0, 3, 9, 10, 1000, 999999999 };

@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
     {
         public override PForDeltaDocIdSet CopyOf(BitArray bs, int length)
         {
-            PForDeltaDocIdSet.Builder builder = (new PForDeltaDocIdSet.Builder()).SetIndexInterval(TestUtil.NextInt(Random(), 1, 20));
+            PForDeltaDocIdSet.Builder builder = (new PForDeltaDocIdSet.Builder()).SetIndexInterval(TestUtil.NextInt32(Random, 1, 20));
             for (int doc = bs.NextSetBit(0); doc != -1; doc = bs.NextSetBit(doc + 1))
             {
                 builder.Add(doc);
@@ -38,49 +38,5 @@ namespace Lucene.Net.Util
             base.AssertEquals(numBits, ds1, ds2);
             Assert.AreEqual(ds1.Cardinality(), ds2.Cardinality());
         }
-
-
-        #region BaseDocIdSetTestCase<T>
-        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        /// <summary>
-        /// Test length=0.
-        /// </summary>
-        [Test]
-        public override void TestNoBit()
-        {
-            base.TestNoBit();
-        }
-
-        /// <summary>
-        /// Test length=1.
-        /// </summary>
-        [Test]
-        public override void Test1Bit()
-        {
-            base.Test1Bit();
-        }
-
-        /// <summary>
-        /// Test length=2.
-        /// </summary>
-        [Test]
-        public override void Test2Bits()
-        {
-            base.Test2Bits();
-        }
-
-        /// <summary>
-        /// Compare the content of the set against a <seealso cref="BitSet"/>.
-        /// </summary>
-        [Test]
-        public override void TestAgainstBitSet()
-        {
-            base.TestAgainstBitSet();
-        }
-
-        #endregion
     }
 }

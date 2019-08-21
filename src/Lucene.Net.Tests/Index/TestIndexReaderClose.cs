@@ -34,12 +34,12 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestCloseUnderException()
         {
-            int iters = 1000 + 1 + Random().nextInt(20);
+            int iters = 1000 + 1 + Random.nextInt(20);
             for (int j = 0; j < iters; j++)
             {
                 Directory dir = NewDirectory();
                 IndexWriter writer = new IndexWriter(dir,
-                    NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                    NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                 writer.Commit();
                 writer.Dispose();
                 DirectoryReader open = DirectoryReader.Open(dir);
@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
                 AtomicReader wrap = SlowCompositeReaderWrapper.Wrap(open);
                 FilterAtomicReader reader = new FilterAtomicReaderAnonymousInnerClassHelper(this, wrap, throwOnClose);
                 IList<IndexReader.IReaderClosedListener> listeners = new List<IndexReader.IReaderClosedListener>();
-                int listenerCount = Random().Next(20);
+                int listenerCount = Random.Next(20);
                 AtomicInt32 count = new AtomicInt32();
                 bool faultySet = false;
                 for (int i = 0; i < listenerCount; i++)
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
                 {
                 }
 
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     reader.Dispose(); // call it again
                 }

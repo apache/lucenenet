@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis
         public virtual void TestCaching()
         {
             Directory dir = new RAMDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             TokenStream stream = new TokenStreamAnonymousInnerClassHelper(this);
 
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis
             //    don't reset the stream here, the DocumentWriter should do that implicitly
             writer.AddDocument(doc);
 
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             DocsAndPositionsEnum termPositions = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), "preanalyzed", new BytesRef("term1"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(1, termPositions.Freq);

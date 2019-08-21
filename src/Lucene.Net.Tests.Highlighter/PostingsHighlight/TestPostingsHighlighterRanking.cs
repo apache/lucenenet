@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             int maxNumSentences = 20;
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true), Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true), Similarity, TimeZone);
             Document document = new Document();
             Field id = new StringField("id", "", Field.Store.NO);
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
@@ -74,17 +74,17 @@ namespace Lucene.Net.Search.PostingsHighlight
             for (int i = 0; i < numDocs; i++)
             {
                 StringBuilder bodyText = new StringBuilder();
-                int numSentences = TestUtil.NextInt(Random(), 1, maxNumSentences);
+                int numSentences = TestUtil.NextInt32(Random, 1, maxNumSentences);
                 for (int j = 0; j < numSentences; j++)
                 {
-                    bodyText.Append(newSentence(Random(), maxSentenceLength));
+                    bodyText.Append(newSentence(Random, maxSentenceLength));
                 }
                 body.SetStringValue(bodyText.ToString());
                 id.SetStringValue(i.ToString(CultureInfo.InvariantCulture));
                 iw.AddDocument(document);
             }
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             IndexSearcher searcher = NewSearcher(ir);
             for (int i = 0; i < numDocs; i++)
             {
@@ -151,18 +151,18 @@ namespace Lucene.Net.Search.PostingsHighlight
         private String newSentence(Random r, int maxSentenceLength)
         {
             StringBuilder sb = new StringBuilder();
-            int numElements = TestUtil.NextInt(r, 1, maxSentenceLength);
+            int numElements = TestUtil.NextInt32(r, 1, maxSentenceLength);
             for (int i = 0; i < numElements; i++)
             {
                 if (sb.Length > 0)
                 {
                     sb.append(' ');
-                    sb.append((char)TestUtil.NextInt(r, 'a', 'z'));
+                    sb.append((char)TestUtil.NextInt32(r, 'a', 'z'));
                 }
                 else
                 {
                     // capitalize the first word to help breakiterator
-                    sb.append((char)TestUtil.NextInt(r, 'A', 'Z'));
+                    sb.append((char)TestUtil.NextInt32(r, 'A', 'Z'));
                 }
             }
             sb.append(". "); // finalize sentence
@@ -273,9 +273,9 @@ namespace Lucene.Net.Search.PostingsHighlight
         public void TestCustomB()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -287,7 +287,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                                 "you have no idea how painful it was for me to type this long sentence into my IDE.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -316,9 +316,9 @@ namespace Lucene.Net.Search.PostingsHighlight
         public void TestCustomK1()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
             offsetsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -331,7 +331,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                                 "This has only bar bar bar bar bar bar bar bar bar bar bar bar.");
             iw.AddDocument(doc);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);

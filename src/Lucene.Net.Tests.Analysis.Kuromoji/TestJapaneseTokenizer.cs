@@ -200,15 +200,15 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestRandomStrings()
         {
-            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
-            CheckRandomData(Random(), analyzerNoPunct, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, analyzer, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, analyzerNoPunct, 1000 * RANDOM_MULTIPLIER);
         }
 
         /** blast some random large strings through the analyzer */
         [Test, LongRunningTest]
         public void TestRandomHugeStrings()
         {
-            Random random = Random();
+            Random random = Random;
             CheckRandomData(random, analyzer, 100 * RANDOM_MULTIPLIER, 8192);
             CheckRandomData(random, analyzerNoPunct, 100 * RANDOM_MULTIPLIER, 8192);
         }
@@ -217,12 +217,12 @@ namespace Lucene.Net.Analysis.Ja
         public void TestRandomHugeStringsMockGraphAfter()
         {
             // Randomly inject graph tokens after JapaneseTokenizer:
-            Random random = Random();
+            Random random = Random;
             CheckRandomData(random,
                             Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
                             {
                                 Tokenizer tokenizer = new JapaneseTokenizer(reader, ReadDict(), false, JapaneseTokenizerMode.SEARCH);
-                                TokenStream graph = new MockGraphTokenFilter(Random(), tokenizer);
+                                TokenStream graph = new MockGraphTokenFilter(Random, tokenizer);
                                 return new TokenStreamComponents(tokenizer, graph);
                             }),
                     100 * RANDOM_MULTIPLIER, 8192);
@@ -233,7 +233,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             for (int i = 0; i < 100; i++)
             {
-                String s = TestUtil.RandomUnicodeString(Random(), 10000);
+                String s = TestUtil.RandomUnicodeString(Random, 10000);
                 TokenStream ts = analyzer.GetTokenStream("foo", s);
                 try
                 {
@@ -269,7 +269,7 @@ namespace Lucene.Net.Analysis.Ja
                 {
                     Console.WriteLine("\nTEST: iter=" + i);
                 }
-                String s = TestUtil.RandomUnicodeString(Random(), 100);
+                String s = TestUtil.RandomUnicodeString(Random, 100);
                 TokenStream ts = analyzer.GetTokenStream("foo", s);
                 try
                 {

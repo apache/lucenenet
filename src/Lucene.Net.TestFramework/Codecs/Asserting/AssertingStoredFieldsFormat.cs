@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Asserting
 {
@@ -9,28 +9,28 @@ namespace Lucene.Net.Codecs.Asserting
     using IOContext = Lucene.Net.Store.IOContext;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using Lucene41StoredFieldsFormat = Lucene.Net.Codecs.Lucene41.Lucene41StoredFieldsFormat;
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
     using StoredFieldVisitor = Lucene.Net.Index.StoredFieldVisitor;
 
     /// <summary>
-    /// Just like <seealso cref="Lucene41StoredFieldsFormat"/> but with additional asserts.
+    /// Just like <see cref="Lucene41StoredFieldsFormat"/> but with additional asserts.
     /// </summary>
     public class AssertingStoredFieldsFormat : StoredFieldsFormat
     {
@@ -48,13 +48,13 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingStoredFieldsReader : StoredFieldsReader
         {
-            internal readonly StoredFieldsReader @in;
-            internal readonly int MaxDoc;
+            private readonly StoredFieldsReader @in;
+            private readonly int maxDoc;
 
             internal AssertingStoredFieldsReader(StoredFieldsReader @in, int maxDoc)
             {
                 this.@in = @in;
-                this.MaxDoc = maxDoc;
+                this.maxDoc = maxDoc;
             }
 
             protected override void Dispose(bool disposing)
@@ -65,13 +65,13 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void VisitDocument(int n, StoredFieldVisitor visitor)
             {
-                Debug.Assert(n >= 0 && n < MaxDoc);
+                Debug.Assert(n >= 0 && n < maxDoc);
                 @in.VisitDocument(n, visitor);
             }
 
             public override object Clone()
             {
-                return new AssertingStoredFieldsReader((StoredFieldsReader)@in.Clone(), MaxDoc);
+                return new AssertingStoredFieldsReader((StoredFieldsReader)@in.Clone(), maxDoc);
             }
 
             public override long RamBytesUsed()
@@ -94,41 +94,41 @@ namespace Lucene.Net.Codecs.Asserting
 
         internal class AssertingStoredFieldsWriter : StoredFieldsWriter
         {
-            internal readonly StoredFieldsWriter @in;
-            internal int NumWritten;
-            internal int FieldCount;
-            internal Status DocStatus;
+            private readonly StoredFieldsWriter @in;
+            private int numWritten;
+            private int fieldCount;
+            private Status docStatus;
 
             internal AssertingStoredFieldsWriter(StoredFieldsWriter @in)
             {
                 this.@in = @in;
-                this.DocStatus = Status.UNDEFINED;
+                this.docStatus = Status.UNDEFINED;
             }
 
             public override void StartDocument(int numStoredFields)
             {
-                Debug.Assert(DocStatus != Status.STARTED);
+                Debug.Assert(docStatus != Status.STARTED);
                 @in.StartDocument(numStoredFields);
-                Debug.Assert(FieldCount == 0);
-                FieldCount = numStoredFields;
-                NumWritten++;
-                DocStatus = Status.STARTED;
+                Debug.Assert(fieldCount == 0);
+                fieldCount = numStoredFields;
+                numWritten++;
+                docStatus = Status.STARTED;
             }
 
             public override void FinishDocument()
             {
-                Debug.Assert(DocStatus == Status.STARTED);
-                Debug.Assert(FieldCount == 0);
+                Debug.Assert(docStatus == Status.STARTED);
+                Debug.Assert(fieldCount == 0);
                 @in.FinishDocument();
-                DocStatus = Status.FINISHED;
+                docStatus = Status.FINISHED;
             }
 
             public override void WriteField(FieldInfo info, IIndexableField field)
             {
-                Debug.Assert(DocStatus == Status.STARTED);
+                Debug.Assert(docStatus == Status.STARTED);
                 @in.WriteField(info, field);
-                Debug.Assert(FieldCount > 0);
-                FieldCount--;
+                Debug.Assert(fieldCount > 0);
+                fieldCount--;
             }
 
             public override void Abort()
@@ -138,10 +138,10 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void Finish(FieldInfos fis, int numDocs)
             {
-                Debug.Assert(DocStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED));
+                Debug.Assert(docStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED));
                 @in.Finish(fis, numDocs);
-                Debug.Assert(FieldCount == 0);
-                Debug.Assert(numDocs == NumWritten);
+                Debug.Assert(fieldCount == 0);
+                Debug.Assert(numDocs == numWritten);
             }
 
             protected override void Dispose(bool disposing)

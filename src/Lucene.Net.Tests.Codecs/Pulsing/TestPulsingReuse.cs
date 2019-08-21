@@ -39,11 +39,11 @@ namespace Lucene.Net.Codecs.Pulsing
             // we always run this test with pulsing codec.
             Codec cp = TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(1));
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(cp));
             Document doc = new Document();
             doc.Add(new TextField("foo", "a b b c c c d e f g g h i i j j k", Field.Store.NO));
             iw.AddDocument(doc);
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.Dispose();
 
             AtomicReader segment = GetOnlySegmentReader(ir);
@@ -81,14 +81,14 @@ namespace Lucene.Net.Codecs.Pulsing
             // we always run this test with pulsing codec.
             Codec cp = TestUtil.AlwaysPostingsFormat(new NestedPulsingPostingsFormat());
             BaseDirectoryWrapper dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(cp));
             Document doc = new Document();
             doc.Add(new TextField("foo", "a b b c c c d e f g g g h i i j j k l l m m m", Field.Store.NO));
             // note: the reuse is imperfect, here we would have 4 enums (lost reuse when we get an enum for 'm')
             // this is because we only track the 'last' enum we reused (not all).
             // but this seems 'good enough' for now.
             iw.AddDocument(doc);
-            DirectoryReader ir = iw.Reader;
+            DirectoryReader ir = iw.GetReader();
             iw.Dispose();
 
             AtomicReader segment = GetOnlySegmentReader(ir);

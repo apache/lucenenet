@@ -52,18 +52,18 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void Test()
         {
-            Random random = new Random(Random().Next());
-            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
+            Random random = new Random(Random.Next());
+            LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
             Directory d = NewDirectory();
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d, analyzer, Similarity, TimeZone);
+            MockAnalyzer analyzer = new MockAnalyzer(LuceneTestCase.Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
+            RandomIndexWriter w = new RandomIndexWriter(LuceneTestCase.Random, d, analyzer, Similarity, TimeZone);
             int numDocs = AtLeast(10);
             for (int docCount = 0; docCount < numDocs; docCount++)
             {
                 w.AddDocument(docs.NextDoc());
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             List<BytesRef> terms = new List<BytesRef>();
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
             for (int iter = 0; iter < iters; iter++)
             {
                 bool isEnd;
-                if (upto != -1 && Random().NextBoolean())
+                if (upto != -1 && LuceneTestCase.Random.NextBoolean())
                 {
                     // next
                     if (VERBOSE)
@@ -115,29 +115,29 @@ namespace Lucene.Net.Index
                 {
                     BytesRef target;
                     string exists;
-                    if (Random().NextBoolean())
+                    if (LuceneTestCase.Random.NextBoolean())
                     {
                         // likely fake term
-                        if (Random().NextBoolean())
+                        if (LuceneTestCase.Random.NextBoolean())
                         {
-                            target = new BytesRef(TestUtil.RandomSimpleString(Random()));
+                            target = new BytesRef(TestUtil.RandomSimpleString(LuceneTestCase.Random));
                         }
                         else
                         {
-                            target = new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()));
+                            target = new BytesRef(TestUtil.RandomRealisticUnicodeString(LuceneTestCase.Random));
                         }
                         exists = "likely not";
                     }
                     else
                     {
                         // real term
-                        target = terms[Random().Next(terms.Count)];
+                        target = terms[LuceneTestCase.Random.Next(terms.Count)];
                         exists = "yes";
                     }
 
                     upto = terms.BinarySearch(target);
 
-                    if (Random().NextBoolean())
+                    if (LuceneTestCase.Random.NextBoolean())
                     {
                         if (VERBOSE)
                         {
@@ -234,7 +234,7 @@ namespace Lucene.Net.Index
         public virtual void TestIntersectRandom()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             int numTerms = AtLeast(300);
             //final int numTerms = 50;
@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
                 {
                     terms.Add(s);
                     pendingTerms.Add(s);
-                    if (Random().Next(20) == 7)
+                    if (Random.Next(20) == 7)
                     {
                         AddDoc(w, pendingTerms, termToID, id++);
                     }
@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // NOTE: intentional insanity!!
@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
                 // automaton:
                 HashSet<string> acceptTerms = new HashSet<string>();
                 SortedSet<BytesRef> sortedAcceptTerms = new SortedSet<BytesRef>();
-                double keepPct = Random().NextDouble();
+                double keepPct = Random.NextDouble();
                 Automaton a;
                 if (iter == 0)
                 {
@@ -313,7 +313,7 @@ namespace Lucene.Net.Index
                     foreach (string s in terms)
                     {
                         string s2;
-                        if (Random().NextDouble() <= keepPct)
+                        if (Random.NextDouble() <= keepPct)
                         {
                             s2 = s;
                         }
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
                     a = BasicAutomata.MakeStringUnion(sortedAcceptTerms);
                 }
 
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     if (VERBOSE)
                     {
@@ -362,7 +362,7 @@ namespace Lucene.Net.Index
 
                 for (int iter2 = 0; iter2 < 100; iter2++)
                 {
-                    BytesRef startTerm = acceptTermsArray.Length == 0 || Random().NextBoolean() ? null : acceptTermsArray[Random().Next(acceptTermsArray.Length)];
+                    BytesRef startTerm = acceptTermsArray.Length == 0 || Random.NextBoolean() ? null : acceptTermsArray[Random.Next(acceptTermsArray.Length)];
 
                     if (VERBOSE)
                     {
@@ -418,7 +418,7 @@ namespace Lucene.Net.Index
                         }
                         Assert.AreEqual(expected, actual);
                         Assert.AreEqual(1, te.DocFreq);
-                        docsEnum = TestUtil.Docs(Random(), te, null, docsEnum, DocsFlags.NONE);
+                        docsEnum = TestUtil.Docs(Random, te, null, docsEnum, DocsFlags.NONE);
                         int docID = docsEnum.NextDoc();
                         Assert.IsTrue(docID != DocIdSetIterator.NO_MORE_DOCS);
                         Assert.AreEqual(docIDToID.Get(docID), (int)termToID[expected]);
@@ -439,13 +439,13 @@ namespace Lucene.Net.Index
 
         private IndexReader MakeIndex(Directory d, params string[] terms)
         {
-            var iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            var iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
 
             /*
             iwc.SetCodec(new StandardCodec(minTermsInBlock, maxTermsInBlock));
             */
 
-            using (var w = new RandomIndexWriter(Random(), d, iwc))
+            using (var w = new RandomIndexWriter(Random, d, iwc))
             {
                 foreach (string term in terms)
                 {
@@ -455,7 +455,7 @@ namespace Lucene.Net.Index
                     w.AddDocument(doc);
                 }
 
-                return w.Reader;
+                return w.GetReader();
             }
         }
 
@@ -587,7 +587,7 @@ namespace Lucene.Net.Index
         public virtual void TestZeroTerms()
         {
             var d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), d, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, d, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewTextField("field", "one two three", Field.Store.NO));
             doc = new Document();
@@ -596,7 +596,7 @@ namespace Lucene.Net.Index
             w.Commit();
             w.DeleteDocuments(new Term("field", "one"));
             w.ForceMerge(1);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             Assert.AreEqual(1, r.NumDocs);
             Assert.AreEqual(1, r.MaxDoc);
@@ -614,22 +614,22 @@ namespace Lucene.Net.Index
             get
             {
                 //return TestUtil.RandomSimpleString(Random());
-                return TestUtil.RandomRealisticUnicodeString(Random());
+                return TestUtil.RandomRealisticUnicodeString(Random);
             }
         }
 
         [Test]
         public virtual void TestRandomTerms()
         {
-            var terms = new string[TestUtil.NextInt(Random(), 1, AtLeast(1000))];
+            var terms = new string[TestUtil.NextInt32(Random, 1, AtLeast(1000))];
             var seen = new HashSet<string>();
 
-            var allowEmptyString = Random().NextBoolean();
+            var allowEmptyString = Random.NextBoolean();
 
-            if (Random().Next(10) == 7 && terms.Length > 2)
+            if (Random.Next(10) == 7 && terms.Length > 2)
             {
                 // Sometimes add a bunch of terms sharing a longish common prefix:
-                int numTermsSamePrefix = Random().Next(terms.Length / 2);
+                int numTermsSamePrefix = Random.Next(terms.Length / 2);
                 if (numTermsSamePrefix > 0)
                 {
                     string prefix;
@@ -747,7 +747,7 @@ namespace Lucene.Net.Index
                 BytesRef t;
                 int loc;
                 TermState termState;
-                if (Random().Next(6) == 4)
+                if (Random.Next(6) == 4)
                 {
                     // pick term that doens't exist:
                     t = GetNonExistTerm(validTerms);
@@ -758,9 +758,9 @@ namespace Lucene.Net.Index
                     }
                     loc = Array.BinarySearch(validTerms, t);
                 }
-                else if (termStates.Count != 0 && Random().Next(4) == 1)
+                else if (termStates.Count != 0 && Random.Next(4) == 1)
                 {
-                    TermAndState ts = termStates[Random().Next(termStates.Count)];
+                    TermAndState ts = termStates[Random.Next(termStates.Count)];
                     t = ts.Term;
                     loc = Array.BinarySearch(validTerms, t);
                     Assert.IsTrue(loc >= 0);
@@ -773,7 +773,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // pick valid term
-                    loc = Random().Next(validTerms.Length);
+                    loc = Random.Next(validTerms.Length);
                     t = BytesRef.DeepCopyOf(validTerms[loc]);
                     termState = null;
                     if (VERBOSE)
@@ -783,7 +783,7 @@ namespace Lucene.Net.Index
                 }
 
                 // seekCeil or seekExact:
-                bool doSeekExact = Random().NextBoolean();
+                bool doSeekExact = Random.NextBoolean();
                 if (termState != null)
                 {
                     if (VERBOSE)
@@ -848,7 +848,7 @@ namespace Lucene.Net.Index
                 }
 
                 // Do a bunch of next's after the seek
-                int numNext = Random().Next(validTerms.Length);
+                int numNext = Random.Next(validTerms.Length);
 
                 for (int nextCount = 0; nextCount < numNext; nextCount++)
                 {
@@ -866,7 +866,7 @@ namespace Lucene.Net.Index
                     else
                     {
                         Assert.AreEqual(validTerms[loc], t2);
-                        if (Random().Next(40) == 17 && termStates.Count < 100)
+                        if (Random.Next(40) == 17 && termStates.Count < 100)
                         {
                             termStates.Add(new TermAndState(validTerms[loc], te.GetTermState()));
                         }
@@ -879,9 +879,9 @@ namespace Lucene.Net.Index
         public virtual void TestIntersectBasic()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(new LogDocMergePolicy());
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, iwc);
             Document doc = new Document();
             doc.Add(NewTextField("field", "aaa", Field.Store.NO));
             w.AddDocument(doc);
@@ -895,7 +895,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
 
             w.ForceMerge(1);
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
             Terms terms = sub.Fields.GetTerms("field");
@@ -932,10 +932,10 @@ namespace Lucene.Net.Index
         public virtual void TestIntersectStartTerm()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(new LogDocMergePolicy());
 
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, iwc);
             Document doc = new Document();
             doc.Add(NewStringField("field", "abc", Field.Store.NO));
             w.AddDocument(doc);
@@ -953,7 +953,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
 
             w.ForceMerge(1);
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
             Terms terms = sub.Fields.GetTerms("field");
@@ -992,9 +992,9 @@ namespace Lucene.Net.Index
         public virtual void TestIntersectEmptyString()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(new LogDocMergePolicy());
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, iwc);
             Document doc = new Document();
             doc.Add(NewStringField("field", "", Field.Store.NO));
             doc.Add(NewStringField("field", "abc", Field.Store.NO));
@@ -1009,7 +1009,7 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
 
             w.ForceMerge(1);
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
             Terms terms = sub.Fields.GetTerms("field");

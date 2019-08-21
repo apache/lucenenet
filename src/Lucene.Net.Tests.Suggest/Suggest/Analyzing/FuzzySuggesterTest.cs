@@ -42,10 +42,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             int numTerms = AtLeast(100);
             for (int i = 0; i < numTerms; i++)
             {
-                keys.Add(new Input("boo" + TestUtil.RandomSimpleString(Random()), 1 + Random().Next(100)));
+                keys.Add(new Input("boo" + TestUtil.RandomSimpleString(Random), 1 + Random.Next(100)));
             }
             keys.Add(new Input("foo bar boo far", 12));
-            MockAnalyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false);
+            MockAnalyzer analyzer = new MockAnalyzer(Random, MockTokenizer.KEYWORD, false);
             FuzzySuggester suggester = new FuzzySuggester(analyzer, analyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
                                                           0, FuzzySuggester.DEFAULT_MIN_FUZZY_LENGTH, FuzzySuggester.DEFAULT_UNICODE_AWARE);
             suggester.Build(new InputArrayIterator(keys));
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             for (int i = 0; i < numIters; i++)
             {
                 string addRandomEdit = AddRandomEdit("foo bar boo", FuzzySuggester.DEFAULT_NON_FUZZY_PREFIX);
-                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence(addRandomEdit, Random()).ToString(), false, 2);
+                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence(addRandomEdit, Random).ToString(), false, 2);
                 assertEquals(addRandomEdit, 1, results.size());
                 assertEquals("foo bar boo far", results.ElementAt(0).Key.toString());
                 assertEquals(12, results.ElementAt(0).Value, 0.01F);
@@ -67,10 +67,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             int numTerms = AtLeast(100);
             for (int i = 0; i < numTerms; i++)
             {
-                keys.Add(new Input("буу" + TestUtil.RandomSimpleString(Random()), 1 + Random().nextInt(100)));
+                keys.Add(new Input("буу" + TestUtil.RandomSimpleString(Random), 1 + Random.nextInt(100)));
             }
             keys.Add(new Input("фуу бар буу фар", 12));
-            MockAnalyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false);
+            MockAnalyzer analyzer = new MockAnalyzer(Random, MockTokenizer.KEYWORD, false);
             FuzzySuggester suggester = new FuzzySuggester(analyzer, analyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
                 0, FuzzySuggester.DEFAULT_MIN_FUZZY_LENGTH, true);
             suggester.Build(new InputArrayIterator(keys));
@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             for (int i = 0; i < numIters; i++)
             {
                 string addRandomEdit = AddRandomEdit("фуу бар буу", 0);
-                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence(addRandomEdit, Random()).ToString(), false, 2);
+                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence(addRandomEdit, Random).ToString(), false, 2);
                 assertEquals(addRandomEdit, 1, results.size());
                 assertEquals("фуу бар буу фар", results.ElementAt(0).Key.toString());
                 assertEquals(12, results.ElementAt(0).Value, 0.01F);
@@ -96,32 +96,32 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input("barbara", 6)
             };
 
-            FuzzySuggester suggester = new FuzzySuggester(new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false));
+            FuzzySuggester suggester = new FuzzySuggester(new MockAnalyzer(Random, MockTokenizer.KEYWORD, false));
             suggester.Build(new InputArrayIterator(keys));
 
-            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("bariar", Random()).ToString(), false, 2);
+            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("bariar", Random).ToString(), false, 2);
             assertEquals(2, results.size());
             assertEquals("barbar", results.ElementAt(0).Key.toString());
             assertEquals(12, results.ElementAt(0).Value, 0.01F);
 
-            results = suggester.DoLookup(TestUtil.StringToCharSequence("barbr", Random()).ToString(), false, 2);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("barbr", Random).ToString(), false, 2);
             assertEquals(2, results.size());
             assertEquals("barbar", results.ElementAt(0).Key.toString());
             assertEquals(12, results.ElementAt(0).Value, 0.01F);
 
-            results = suggester.DoLookup(TestUtil.StringToCharSequence("barbara", Random()).ToString(), false, 2);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("barbara", Random).ToString(), false, 2);
             assertEquals(2, results.size());
             assertEquals("barbara", results.ElementAt(0).Key.toString());
             assertEquals(6, results.ElementAt(0).Value, 0.01F);
 
-            results = suggester.DoLookup(TestUtil.StringToCharSequence("barbar", Random()).ToString(), false, 2);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("barbar", Random).ToString(), false, 2);
             assertEquals(2, results.size());
             assertEquals("barbar", results.ElementAt(0).Key.toString());
             assertEquals(12, results.ElementAt(0).Value, 0.01F);
             assertEquals("barbara", results.ElementAt(1).Key.toString());
             assertEquals(6, results.ElementAt(1).Value, 0.01F);
 
-            results = suggester.DoLookup(TestUtil.StringToCharSequence("barbaa", Random()).ToString(), false, 2);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("barbaa", Random).ToString(), false, 2);
             assertEquals(2, results.size());
             assertEquals("barbar", results.ElementAt(0).Key.toString());
             assertEquals(12, results.ElementAt(0).Value, 0.01F);
@@ -129,20 +129,20 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             assertEquals(6, results.ElementAt(1).Value, 0.01F);
 
             // top N of 2, but only foo is available
-            results = suggester.DoLookup(TestUtil.StringToCharSequence("f", Random()).ToString(), false, 2);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("f", Random).ToString(), false, 2);
             assertEquals(1, results.size());
             assertEquals("foo", results.ElementAt(0).Key.toString());
             assertEquals(50, results.ElementAt(0).Value, 0.01F);
 
             // top N of 1 for 'bar': we return this even though
             // barbar is higher because exactFirst is enabled:
-            results = suggester.DoLookup(TestUtil.StringToCharSequence("bar", Random()).ToString(), false, 1);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("bar", Random).ToString(), false, 1);
             assertEquals(1, results.size());
             assertEquals("bar", results.ElementAt(0).Key.toString());
             assertEquals(10, results.ElementAt(0).Value, 0.01F);
 
             // top N Of 2 for 'b'
-            results = suggester.DoLookup(TestUtil.StringToCharSequence("b", Random()).ToString(), false, 2);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("b", Random).ToString(), false, 2);
             assertEquals(2, results.size());
             assertEquals("barbar", results.ElementAt(0).Key.toString());
             assertEquals(12, results.ElementAt(0).Value, 0.01F);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             assertEquals(10, results.ElementAt(1).Value, 0.01F);
 
             // top N of 3 for 'ba'
-            results = suggester.DoLookup(TestUtil.StringToCharSequence("ba", Random()).ToString(), false, 3);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("ba", Random).ToString(), false, 3);
             assertEquals(3, results.size());
             assertEquals("barbar", results.ElementAt(0).Key.toString());
             assertEquals(12, results.ElementAt(0).Value, 0.01F);
@@ -170,24 +170,24 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input("the ghost of christmas past", 50),
             };
 
-            Analyzer standard = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
+            Analyzer standard = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
             FuzzySuggester suggester = new FuzzySuggester(standard, standard, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, false, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
                 FuzzySuggester.DEFAULT_NON_FUZZY_PREFIX, FuzzySuggester.DEFAULT_MIN_FUZZY_LENGTH, FuzzySuggester.DEFAULT_UNICODE_AWARE);
             suggester.Build(new InputArrayIterator(keys));
 
-            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("the ghost of chris", Random()).ToString(), false, 1);
+            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("the ghost of chris", Random).ToString(), false, 1);
             assertEquals(1, results.size());
             assertEquals("the ghost of christmas past", results.ElementAt(0).Key.toString());
             assertEquals(50, results.ElementAt(0).Value, 0.01F);
 
             // omit the 'the' since its a stopword, its suggested anyway
-            results = suggester.DoLookup(TestUtil.StringToCharSequence("ghost of chris", Random()).ToString(), false, 1);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("ghost of chris", Random).ToString(), false, 1);
             assertEquals(1, results.size());
             assertEquals("the ghost of christmas past", results.ElementAt(0).Key.toString());
             assertEquals(50, results.ElementAt(0).Value, 0.01F);
 
             // omit the 'the' and 'of' since they are stopwords, its suggested anyway
-            results = suggester.DoLookup(TestUtil.StringToCharSequence("ghost chris", Random()).ToString(), false, 1);
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("ghost chris", Random).ToString(), false, 1);
             assertEquals(1, results.size());
             assertEquals("the ghost of christmas past", results.ElementAt(0).Key.toString());
             assertEquals(50, results.ElementAt(0).Value, 0.01F);
@@ -203,14 +203,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             SuggesterOptions options = 0;
 
-            Analyzer a = new MockAnalyzer(Random());
+            Analyzer a = new MockAnalyzer(Random);
             FuzzySuggester suggester = new FuzzySuggester(a, a, options, 256, -1, true, 1, true, 1, 3, false);
             suggester.Build(new InputArrayIterator(keys));
             // TODO: would be nice if "ab " would allow the test to
             // pass, and more generally if the analyzer can know
             // that the user's current query has ended at a word, 
             // but, analyzers don't produce SEP tokens!
-            IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence("ab c", Random()).ToString(), false, 2);
+            IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence("ab c", Random).ToString(), false, 2);
             assertEquals(2, r.size());
 
             // With no PRESERVE_SEPS specified, "ab c" should also
@@ -309,7 +309,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         [Test]
         public void TestEmpty()
         {
-            FuzzySuggester suggester = new FuzzySuggester(new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false));
+            FuzzySuggester suggester = new FuzzySuggester(new MockAnalyzer(Random, MockTokenizer.KEYWORD, false));
             suggester.Build(new InputArrayIterator(new Input[0]));
 
             IList<Lookup.LookupResult> result = suggester.DoLookup("a", false, 20);
@@ -725,11 +725,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             Input[] keys = new Input[numQueries];
 
-            bool preserveSep = Random().nextBoolean();
-            bool unicodeAware = Random().nextBoolean();
+            bool preserveSep = Random.nextBoolean();
+            bool unicodeAware = Random.nextBoolean();
 
-            int numStopChars = Random().nextInt(10);
-            bool preserveHoles = Random().nextBoolean();
+            int numStopChars = Random.nextInt(10);
+            bool preserveHoles = Random.nextBoolean();
 
             if (VERBOSE)
             {
@@ -738,7 +738,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             for (int i = 0; i < numQueries; i++)
             {
-                int numTokens = TestUtil.NextInt(Random(), 1, 4);
+                int numTokens = TestUtil.NextInt32(Random, 1, 4);
                 string key;
                 string analyzedKey;
                 while (true)
@@ -753,7 +753,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         {
                             // TODO: would be nice to fix this slowCompletor/comparer to
                             // use full range, but we might lose some coverage too...
-                            s = TestUtil.RandomSimpleString(Random());
+                            s = TestUtil.RandomSimpleString(Random);
                             if (s.Length > 0)
                             {
                                 if (token > 0)
@@ -803,7 +803,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     allPrefixes.Add(key.Substring(0, j - 0));
                 }
                 // we can probably do Integer.MAX_VALUE here, but why worry.
-                int weight = Random().Next(1 << 24);
+                int weight = Random.Next(1 << 24);
                 keys[i] = new Input(key, weight);
 
                 slowCompletor.Add(new TermFreqPayload2(key, analyzedKey, weight));
@@ -835,8 +835,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     Console.WriteLine("\nTEST: prefix=" + prefix);
                 }
 
-                int topN = TestUtil.NextInt(Random(), 1, 10);
-                IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence(prefix, Random()).ToString(), false, topN);
+                int topN = TestUtil.NextInt32(Random, 1, 10);
+                IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence(prefix, Random).ToString(), false, topN);
 
                 // 2. go thru whole set to find suggestions:
                 List<Lookup.LookupResult> matches = new List<Lookup.LookupResult>();
@@ -982,7 +982,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         [Test]
         public void TestMaxSurfaceFormsPerAnalyzedForm()
         {
-            Analyzer a = new MockAnalyzer(Random());
+            Analyzer a = new MockAnalyzer(Random);
             FuzzySuggester suggester = new FuzzySuggester(a, a, 0, 2, -1, true, 1, true, 1, 3, false);
 
             IList<Input> keys = Arrays.AsList(new Input[] {
@@ -991,7 +991,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input(" a", 60),
             });
 
-            Collections.Shuffle(keys, Random());
+            Collections.Shuffle(keys, Random);
             suggester.Build(new InputArrayIterator(keys));
 
             IList<Lookup.LookupResult> results = suggester.DoLookup("a", false, 5);
@@ -1005,7 +1005,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         [Test]
         public void TestEditSeps()
         {
-            Analyzer a = new MockAnalyzer(Random());
+            Analyzer a = new MockAnalyzer(Random);
             FuzzySuggester suggester = new FuzzySuggester(a, a, SuggesterOptions.PRESERVE_SEP, 2, -1, true, 2, true, 1, 3, false);
 
             IList<Input> keys = Arrays.AsList(new Input[] {
@@ -1015,7 +1015,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input("barbazfoo", 10),
             });
 
-            Collections.Shuffle(keys, Random());
+            Collections.Shuffle(keys, Random);
             suggester.Build(new InputArrayIterator(keys));
 
             assertEquals("[foo bar baz/50, foo bar/40]", suggester.DoLookup("foobar", false, 5).toString());
@@ -1031,9 +1031,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < input.Length; i++)
             {
-                if (i >= prefixLength && Random().nextBoolean() && i < input.Length - 1)
+                if (i >= prefixLength && Random.nextBoolean() && i < input.Length - 1)
                 {
-                    switch (Random().nextInt(4))
+                    switch (Random.nextInt(4))
                     {
                         case 3:
                             if (i < input.Length - 1)
@@ -1075,7 +1075,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             // UTF8 byte space it's still a single
                             // insertion:
                             // bytes 0x1e and 0x1f are reserved
-                            int x = Random().nextBoolean() ? Random().nextInt(30) : 32 + Random().nextInt(128 - 32);
+                            int x = Random.nextBoolean() ? Random.nextInt(30) : 32 + Random.nextInt(128 - 32);
                             builder.Append((char)x);
                             for (int j = i; j < input.Length; j++)
                             {
@@ -1093,11 +1093,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         private string RandomSimpleString(int maxLen)
         {
-            int len = TestUtil.NextInt(Random(), 1, maxLen);
+            int len = TestUtil.NextInt32(Random, 1, maxLen);
             char[] chars = new char[len];
             for (int j = 0; j < len; j++)
             {
-                chars[j] = (char)('a' + Random().nextInt(4));
+                chars[j] = (char)('a' + Random.nextInt(4));
             }
             return new string(chars);
         }
@@ -1121,7 +1121,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 string s = RandomSimpleString(8);
                 if (!seen.Contains(s))
                 {
-                    answers.Add(new Input(s, Random().nextInt(1000)));
+                    answers.Add(new Input(s, Random.nextInt(1000)));
                     seen.Add(s);
                 }
             }
@@ -1137,10 +1137,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            Analyzer a = new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false);
-            int maxEdits = Random().nextBoolean() ? 1 : 2;
-            int prefixLen = Random().nextInt(4);
-            bool transpositions = Random().nextBoolean();
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.KEYWORD, false);
+            int maxEdits = Random.nextBoolean() ? 1 : 2;
+            int prefixLen = Random.nextInt(4);
+            bool transpositions = Random.nextBoolean();
             // TODO: test graph analyzers
             // TODO: test exactFirst / preserveSep permutations
             FuzzySuggester suggest = new FuzzySuggester(a, a, 0, 256, -1, true, maxEdits, transpositions, prefixLen, prefixLen, false);

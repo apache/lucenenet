@@ -33,14 +33,18 @@ using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net
 {
-    public static class SystemTypesHelpers
+    /// <summary>
+    /// LUCENENET specific extensions to various .NET types to make it easier to port tests
+    /// from Java with fewer changes.
+    /// </summary>
+    internal static class SystemTypesHelpers
     {
         public static char[] toCharArray(this string str)
         {
             return str.ToCharArray();
         }
 
-        public static string toString(this object obj)
+        public static string toString(this object obj) // LUCENENET TODO: wrap Collections.ToString()
         {
             // LUCENENET: We compensate for the fact that
             // .NET doesn't have reliable results from ToString
@@ -313,6 +317,13 @@ namespace Lucene.Net
         {
             var regex = new Regex(search);
             return regex.Replace(text, replace, 1);
+        }
+
+        public static byte[] ToByteArray(this sbyte[] arr)
+        {
+            var unsigned = new byte[arr.Length];
+            System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);
+            return unsigned;
         }
     }
 }

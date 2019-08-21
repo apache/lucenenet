@@ -26,6 +26,10 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Codecs.Lucene41Ords
 {
+    /// <summary>
+    /// Customized version of <see cref="Lucene41PostingsFormat"/> that uses
+    /// <see cref="FixedGapTermsIndexWriter"/>.
+    /// </summary>
     [PostingsFormatName("Lucene41WithOrds")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class Lucene41WithOrds : PostingsFormat
     {
@@ -139,12 +143,12 @@ namespace Lucene.Net.Codecs.Lucene41Ords
         /// <summary>
         /// Extension of freq postings file
         /// </summary>
-        static readonly string FREQ_EXTENSION = "frq"; // LUCENENET NOTE: Not used
+        internal static readonly string FREQ_EXTENSION = "frq"; // LUCENENET NOTE: Not used
 
         /// <summary>
         /// Extension of prox postings file
         /// </summary>
-        static readonly string PROX_EXTENSION = "prx"; // LUCENENET NOTE: Not used
+        internal static readonly string PROX_EXTENSION = "prx"; // LUCENENET NOTE: Not used
 #pragma warning restore 414
     }
 }

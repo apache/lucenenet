@@ -300,7 +300,7 @@ namespace Lucene.Net.Search.VectorHighlight
         private WeightedPhraseInfo newInfo(int startOffset, int endOffset, float boost)
         {
             List<TermInfo> infos = new List<TermInfo>();
-            infos.Add(new TermInfo(TestUtil.RandomUnicodeString(Random()), startOffset, endOffset, 0, 0));
+            infos.Add(new TermInfo(TestUtil.RandomUnicodeString(Random), startOffset, endOffset, 0, 0));
             return new WeightedPhraseInfo(infos, boost);
         }
 

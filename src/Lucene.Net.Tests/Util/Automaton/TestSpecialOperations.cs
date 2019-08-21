@@ -34,7 +34,7 @@ namespace Lucene.Net.Util.Automaton
             int num = AtLeast(200);
             for (int i = 0; i < num; i++)
             {
-                Automaton a = AutomatonTestUtil.RandomAutomaton(Random());
+                Automaton a = AutomatonTestUtil.RandomAutomaton(Random);
                 Automaton b = (Automaton)a.Clone();
                 Assert.AreEqual(AutomatonTestUtil.IsFiniteSlow(a), SpecialOperations.IsFinite(b));
             }

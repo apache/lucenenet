@@ -158,11 +158,11 @@ namespace Lucene.Net.Support.IO
         {
             // Write out a string whose UTF-8 encoding is quite possibly
             // longer than 65535 bytes
-            int length = Random().nextInt(A_NUMBER_NEAR_65535) + 1;
+            int length = Random.nextInt(A_NUMBER_NEAR_65535) + 1;
             MemoryStream baos = new MemoryStream();
             StringBuilder testBuffer = new StringBuilder();
             for (int i = 0; i < length; i++)
-                testBuffer.append((char)Random().Next());
+                testBuffer.append((char)Random.Next());
             string testString = testBuffer.toString();
             DataOutputStream dos = new DataOutputStream(baos);
             dos.WriteUTF(testString);
@@ -170,17 +170,17 @@ namespace Lucene.Net.Support.IO
             // Corrupt the data to produce malformed characters
             byte[] testBytes = baos.ToArray();
             int dataLength = testBytes.Length;
-            int corruptions = Random().nextInt(MAX_CORRUPTIONS_PER_CYCLE);
+            int corruptions = Random.nextInt(MAX_CORRUPTIONS_PER_CYCLE);
             for (int i = 0; i < corruptions; i++)
             {
-                int index = Random().nextInt(dataLength);
-                testBytes[index] = (byte)Random().Next();
+                int index = Random.nextInt(dataLength);
+                testBytes[index] = (byte)Random.Next();
             }
 
             // Pay special attention to mangling the end to produce
             // partial characters at end
-            testBytes[dataLength - 1] = (byte)Random().Next();
-            testBytes[dataLength - 2] = (byte)Random().Next();
+            testBytes[dataLength - 1] = (byte)Random.Next();
+            testBytes[dataLength - 2] = (byte)Random.Next();
 
             // Attempt to decode the bytes back into a String
             MemoryStream bais = new MemoryStream(testBytes);

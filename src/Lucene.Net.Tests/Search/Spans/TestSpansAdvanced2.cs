@@ -53,12 +53,12 @@ namespace Lucene.Net.Search.Spans
             base.SetUp();
 
             // create test index
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), MDirectory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).SetOpenMode(OpenMode.APPEND).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, MDirectory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).SetOpenMode(OpenMode.APPEND).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
             AddDocument(writer, "A", "Should we, could we, would we?");
             AddDocument(writer, "B", "It should.  Should it?");
             AddDocument(writer, "C", "It shouldn't.");
             AddDocument(writer, "D", "Should we, should we, should we.");
-            Reader2 = writer.Reader;
+            Reader2 = writer.GetReader();
             writer.Dispose();
 
             // re-open the searcher since we added more docs

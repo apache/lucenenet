@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
 
             {
                 dir = NewDirectory();
-                RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+                RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
                 // w.setDoRandomForceMerge(false);
 
                 // w.w.getConfig().SetMaxBufferedDocs(AtLeast(100));
@@ -129,10 +129,10 @@ namespace Lucene.Net.Search
                 for (int contentIDX = 0; contentIDX < content.Length; contentIDX++)
                 {
                     StringBuilder sb = new StringBuilder();
-                    int numTokens = TestUtil.NextInt(Random(), 1, 10);
+                    int numTokens = TestUtil.NextInt32(Random, 1, 10);
                     for (int tokenIDX = 0; tokenIDX < numTokens; tokenIDX++)
                     {
-                        sb.Append(tokens[Random().Next(tokens.Length)]).Append(' ');
+                        sb.Append(tokens[Random.Next(tokens.Length)]).Append(' ');
                     }
                     content[contentIDX] = sb.ToString();
                 }
@@ -140,21 +140,21 @@ namespace Lucene.Net.Search
                 for (int docIDX = 0; docIDX < numDocs; docIDX++)
                 {
                     Document doc = new Document();
-                    doc.Add(NewStringField("string", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
-                    doc.Add(NewTextField("text", content[Random().Next(content.Length)], Field.Store.NO));
-                    doc.Add(new SingleField("float", (float)Random().NextDouble(), Field.Store.NO));
+                    doc.Add(NewStringField("string", TestUtil.RandomRealisticUnicodeString(Random), Field.Store.NO));
+                    doc.Add(NewTextField("text", content[Random.Next(content.Length)], Field.Store.NO));
+                    doc.Add(new SingleField("float", (float)Random.NextDouble(), Field.Store.NO));
                     int intValue;
-                    if (Random().Next(100) == 17)
+                    if (Random.Next(100) == 17)
                     {
                         intValue = int.MinValue;
                     }
-                    else if (Random().Next(100) == 17)
+                    else if (Random.Next(100) == 17)
                     {
                         intValue = int.MaxValue;
                     }
                     else
                     {
-                        intValue = Random().Next();
+                        intValue = Random.Next();
                     }
                     doc.Add(new Int32Field("int", intValue, Field.Store.NO));
                     if (VERBOSE)
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search
                     w.AddDocument(doc);
                 }
 
-                reader = w.Reader;
+                reader = w.GetReader();
                 w.Dispose();
             }
 
@@ -214,25 +214,25 @@ namespace Lucene.Net.Search
             for (int iter = 0; iter < 1000 * RANDOM_MULTIPLIER; iter++)
             {
                 // TODO: custom FieldComp...
-                Query query = new TermQuery(new Term("text", tokens[Random().Next(tokens.Length)]));
+                Query query = new TermQuery(new Term("text", tokens[Random.Next(tokens.Length)]));
 
                 Sort sort;
-                if (Random().Next(10) == 4)
+                if (Random.Next(10) == 4)
                 {
                     // Sort by score
                     sort = null;
                 }
                 else
                 {
-                    SortField[] randomSortFields = new SortField[TestUtil.NextInt(Random(), 1, 3)];
+                    SortField[] randomSortFields = new SortField[TestUtil.NextInt32(Random, 1, 3)];
                     for (int sortIDX = 0; sortIDX < randomSortFields.Length; sortIDX++)
                     {
-                        randomSortFields[sortIDX] = sortFields[Random().Next(sortFields.Count)];
+                        randomSortFields[sortIDX] = sortFields[Random.Next(sortFields.Count)];
                     }
                     sort = new Sort(randomSortFields);
                 }
 
-                int numHits = TestUtil.NextInt(Random(), 1, numDocs + 5);
+                int numHits = TestUtil.NextInt32(Random, 1, numDocs + 5);
                 //final int numHits = 5;
 
                 if (VERBOSE)
@@ -248,9 +248,9 @@ namespace Lucene.Net.Search
                 {
                     if (useFrom)
                     {
-                        TopScoreDocCollector c = TopScoreDocCollector.Create(numHits, Random().NextBoolean());
+                        TopScoreDocCollector c = TopScoreDocCollector.Create(numHits, Random.NextBoolean());
                         searcher.Search(query, c);
-                        from = TestUtil.NextInt(Random(), 0, numHits - 1);
+                        from = TestUtil.NextInt32(Random, 0, numHits - 1);
                         size = numHits - from;
                         TopDocs tempTopHits = c.GetTopDocs();
                         if (from < tempTopHits.ScoreDocs.Length)
@@ -274,11 +274,11 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    TopFieldCollector c = TopFieldCollector.Create(sort, numHits, true, true, true, Random().NextBoolean());
+                    TopFieldCollector c = TopFieldCollector.Create(sort, numHits, true, true, true, Random.NextBoolean());
                     searcher.Search(query, c);
                     if (useFrom)
                     {
-                        from = TestUtil.NextInt(Random(), 0, numHits - 1);
+                        from = TestUtil.NextInt32(Random, 0, numHits - 1);
                         size = numHits - from;
                         TopDocs tempTopHits = c.GetTopDocs();
                         if (from < tempTopHits.ScoreDocs.Length)
@@ -332,7 +332,7 @@ namespace Lucene.Net.Search
                     }
                     else
                     {
-                        TopFieldCollector c = TopFieldCollector.Create(sort, numHits, true, true, true, Random().NextBoolean());
+                        TopFieldCollector c = TopFieldCollector.Create(sort, numHits, true, true, true, Random.NextBoolean());
                         subSearcher.Search(w, c);
                         subHits = c.GetTopDocs(0, numHits);
                     }

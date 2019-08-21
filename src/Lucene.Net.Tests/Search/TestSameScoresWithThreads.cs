@@ -47,10 +47,10 @@ namespace Lucene.Net.Search
         public virtual void Test()
         {
             Directory dir = NewDirectory();
-            MockAnalyzer analyzer = new MockAnalyzer(Random());
-            analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer, Similarity, TimeZone);
-            LineFileDocs docs = new LineFileDocs(Random(), DefaultCodecSupportsDocValues());
+            MockAnalyzer analyzer = new MockAnalyzer(Random);
+            analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, analyzer, Similarity, TimeZone);
+            LineFileDocs docs = new LineFileDocs(Random, DefaultCodecSupportsDocValues);
             int charsToIndex = AtLeast(100000);
             int charsIndexed = 0;
             //System.out.println("bytesToIndex=" + charsToIndex);
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
                 w.AddDocument(doc);
                 //System.out.println("  bytes=" + charsIndexed + " add: " + doc);
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             //System.out.println("numDocs=" + r.NumDocs);
             w.Dispose();
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
             IDictionary<BytesRef, TopDocs> answers = new Dictionary<BytesRef, TopDocs>();
             while (termsEnum.Next() != null)
             {
-                if (Random().NextDouble() <= chance)
+                if (Random.NextDouble() <= chance)
                 {
                     BytesRef term = BytesRef.DeepCopyOf(termsEnum.Term);
                     answers[term] = s.Search(new TermQuery(new Term("body", term)), 100);
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
             if (answers.Count > 0)
             {
                 CountdownEvent startingGun = new CountdownEvent(1);
-                int numThreads = TestUtil.NextInt(Random(), 2, 5);
+                int numThreads = TestUtil.NextInt32(Random, 2, 5);
                 ThreadClass[] threads = new ThreadClass[numThreads];
                 for (int threadID = 0; threadID < numThreads; threadID++)
                 {

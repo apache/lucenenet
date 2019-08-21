@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             Directory dir = NewDirectory();
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
 
             IList<long?> numbers = new List<long?>();
             IList<BytesRef> binary = new List<BytesRef>();
@@ -57,12 +57,12 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 Document d = new Document();
-                long number = Random().NextLong();
+                long number = Random.NextInt64();
                 d.Add(new NumericDocValuesField("number", number));
-                BytesRef bytes = new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()));
+                BytesRef bytes = new BytesRef(TestUtil.RandomRealisticUnicodeString(Random));
                 d.Add(new BinaryDocValuesField("bytes", bytes));
                 binary.Add(bytes);
-                bytes = new BytesRef(TestUtil.RandomRealisticUnicodeString(Random()));
+                bytes = new BytesRef(TestUtil.RandomRealisticUnicodeString(Random));
                 d.Add(new SortedDocValuesField("sorted", bytes));
                 sorted.Add(bytes);
                 w.AddDocument(d);
@@ -76,12 +76,12 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, r.Leaves.Count);
             AtomicReader ar = (AtomicReader)r.Leaves[0].Reader;
 
-            int numThreads = TestUtil.NextInt(Random(), 2, 5);
+            int numThreads = TestUtil.NextInt32(Random, 2, 5);
             IList<ThreadClass> threads = new List<ThreadClass>();
             CountdownEvent startingGun = new CountdownEvent(1);
             for (int t = 0; t < numThreads; t++)
             {
-                Random threadRandom = new Random(Random().Next());
+                Random threadRandom = new Random(Random.Next());
                 ThreadClass thread = new ThreadAnonymousInnerClassHelper(this, numbers, binary, sorted, numDocs, ar, startingGun, threadRandom);
                 thread.Start();
                 threads.Add(thread);
@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void Test2()
         {
-            Random random = Random();
+            Random random = Random;
             int NUM_DOCS = AtLeast(100);
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(random, dir, Similarity, TimeZone);
@@ -234,19 +234,19 @@ namespace Lucene.Net.Index
                 if (random.Next(40) == 17)
                 {
                     // force flush
-                    writer.Reader.Dispose();
+                    writer.GetReader().Dispose();
                 }
             }
 
             writer.ForceMerge(1);
-            DirectoryReader r = writer.Reader;
+            DirectoryReader r = writer.GetReader();
             writer.Dispose();
 
             AtomicReader sr = GetOnlySegmentReader(r);
 
             long END_TIME = Environment.TickCount + (TEST_NIGHTLY ? 30 : 1);
 
-            int NUM_THREADS = TestUtil.NextInt(Random(), 1, 10);
+            int NUM_THREADS = TestUtil.NextInt32(LuceneTestCase.Random, 1, 10);
             ThreadClass[] threads = new ThreadClass[NUM_THREADS];
             for (int thread = 0; thread < NUM_THREADS; thread++)
             {
@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-                Random random = Random();
+                Random random = Random;
                 SortedDocValues stringDVDirect;
                 NumericDocValues docIDToID;
                 try

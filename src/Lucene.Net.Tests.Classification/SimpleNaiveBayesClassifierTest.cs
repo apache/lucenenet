@@ -37,14 +37,14 @@ namespace Lucene.Net.Classification
         [Test]
         public void TestBasicUsage()
         {
-            CheckCorrectClassification(new SimpleNaiveBayesClassifier(), TECHNOLOGY_INPUT, TECHNOLOGY_RESULT, new MockAnalyzer(Random()), textFieldName, categoryFieldName);
-            CheckCorrectClassification(new SimpleNaiveBayesClassifier(), POLITICS_INPUT, POLITICS_RESULT, new MockAnalyzer(Random()), textFieldName, categoryFieldName);
+            CheckCorrectClassification(new SimpleNaiveBayesClassifier(), TECHNOLOGY_INPUT, TECHNOLOGY_RESULT, new MockAnalyzer(Random), textFieldName, categoryFieldName);
+            CheckCorrectClassification(new SimpleNaiveBayesClassifier(), POLITICS_INPUT, POLITICS_RESULT, new MockAnalyzer(Random), textFieldName, categoryFieldName);
         }
 
         [Test]
         public void TestBasicUsageWithQuery()
         {
-            CheckCorrectClassification(new SimpleNaiveBayesClassifier(), TECHNOLOGY_INPUT, TECHNOLOGY_RESULT, new MockAnalyzer(Random()), textFieldName, categoryFieldName, new TermQuery(new Term(textFieldName, "it")));
+            CheckCorrectClassification(new SimpleNaiveBayesClassifier(), TECHNOLOGY_INPUT, TECHNOLOGY_RESULT, new MockAnalyzer(Random), textFieldName, categoryFieldName, new TermQuery(new Term(textFieldName, "it")));
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace Lucene.Net.Classification
         [Test]
         public void TestPerformance()
         {
-            CheckPerformance(new SimpleNaiveBayesClassifier(), new MockAnalyzer(Random()), categoryFieldName);
+            CheckPerformance(new SimpleNaiveBayesClassifier(), new MockAnalyzer(Random), categoryFieldName);
         }
     }
 }

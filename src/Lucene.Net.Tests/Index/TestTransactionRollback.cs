@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
                 throw new Exception("Couldn't find commit point " + id);
             }
 
-            IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new RollbackDeletionPolicy(this, id)).SetIndexCommit(last));
+            IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(new RollbackDeletionPolicy(this, id)).SetIndexCommit(last));
             IDictionary<string, string> data = new Dictionary<string, string>();
             data["index"] = "Rolled back to 1-" + id.ToString(CultureInfo.InvariantCulture);
             w.SetCommitData(data);
@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
 
             //Build index, of records 1 to 100, committing after each batch of 10
             IndexDeletionPolicy sdp = new KeepAllDeletionPolicy(this);
-            IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(sdp));
+            IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(sdp));
 
             for (int currentRecordId = 1; currentRecordId <= 100; currentRecordId++)
             {
@@ -243,7 +243,7 @@ namespace Lucene.Net.Index
             {
                 // Unless you specify a prior commit point, rollback
                 // should not work:
-                (new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new DeleteLastCommitPolicy(this)))).Dispose();
+                (new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(new DeleteLastCommitPolicy(this)))).Dispose();
                 IndexReader r = DirectoryReader.Open(Dir);
                 Assert.AreEqual(100, r.NumDocs);
                 r.Dispose();

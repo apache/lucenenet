@@ -62,7 +62,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestInvalidElementSizes()
         {
-            Random rnd = Random();
+            Random rnd = Random;
             int num = AtLeast(10000);
             for (int iter = 0; iter < num; iter++)
             {
@@ -161,7 +161,7 @@ namespace Lucene.Net.Util
 
         private int[] CreateRandomArray(int maxSize)
         {
-            Random rnd = Random();
+            Random rnd = Random;
             int[] a = new int[rnd.Next(maxSize) + 1];
             for (int i = 0; i < a.Length; i++)
             {
@@ -196,7 +196,7 @@ namespace Lucene.Net.Util
 
         private int[] CreateSparseRandomArray(int maxSize)
         {
-            Random rnd = Random();
+            Random rnd = Random;
             int[] a = new int[rnd.Next(maxSize) + 1];
             for (int i = 0; i < a.Length; i++)
             {
@@ -267,7 +267,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestMergeSortStability()
         {
-            Random rnd = Random();
+            Random rnd = Random;
             Item[] items = new Item[100];
             for (int i = 0; i < items.Length; i++)
             {
@@ -307,7 +307,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestTimSortStability()
         {
-            Random rnd = Random();
+            Random rnd = Random;
             Item[] items = new Item[100];
             for (int i = 0; i < items.Length; i++)
             {

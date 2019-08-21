@@ -351,7 +351,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new ClassicAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new ClassicAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
 
         /// <summary>
@@ -359,7 +359,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestRandomHugeStrings()
         {
-            Random random = Random();
+            Random random = Random;
             CheckRandomData(random, new ClassicAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
         }
     }

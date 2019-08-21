@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Core
             NormalizeCharMap map = builder.Build();
 
             Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, cas, map);
-            CheckAnalysisConsistency(Random(), a, false, "wmgddzunizdomqyj");
+            CheckAnalysisConsistency(Random, a, false, "wmgddzunizdomqyj");
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -311,7 +311,7 @@ namespace Lucene.Net.Analysis.Core
         public virtual void TestUnicodeShinglesAndNgrams()
         {
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper100(this);
-            CheckRandomData(Random(), analyzer, 2000);
+            CheckRandomData(Random, analyzer, 2000);
         }
 
         private class AnalyzerAnonymousInnerClassHelper100 : Analyzer
@@ -341,7 +341,7 @@ namespace Lucene.Net.Analysis.Core
             CharArraySet protWords = new CharArraySet(TEST_VERSION_CURRENT, new HashSet<string>(Arrays.AsList("rrdpafa", "pupmmlu", "xlq", "dyy", "zqrxrrck", "o", "hsrlfvcha")), false);
             byte[] table = (byte[])(Array)new sbyte[] { -57, 26, 1, 48, 63, -23, 55, -84, 18, 120, -97, 103, 58, 13, 84, 89, 57, -13, -63, 5, 28, 97, -54, -94, 102, -108, -5, 5, 46, 40, 43, 78, 43, -72, 36, 29, 124, -106, -22, -51, 65, 5, 31, -42, 6, -99, 97, 14, 81, -128, 74, 100, 54, -55, -25, 53, -71, -98, 44, 33, 86, 106, -42, 47, 115, -89, -18, -26, 22, -95, -43, 83, -125, 105, -104, -24, 106, -16, 126, 115, -105, 97, 65, -33, 57, 44, -1, 123, -68, 100, 13, -41, -64, -119, 0, 92, 94, -36, 53, -9, -102, -18, 90, 94, -26, 31, 71, -20 };
             Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, protWords, table);
-            CheckAnalysisConsistency(Random(), a, false, "B\u28c3\ue0f8[ \ud800\udfc2 </p> jb");
+            CheckAnalysisConsistency(Random, a, false, "B\u28c3\ue0f8[ \ud800\udfc2 </p> jb");
         }
 
         private class AnalyzerAnonymousInnerClassHelper2 : Analyzer

@@ -54,21 +54,18 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSearcherManager_Mem()
         {
-            pruner = new SearcherLifetimeManager.PruneByAge(TEST_NIGHTLY ? TestUtil.NextInt(Random(), 1, 20) : 1);
+            pruner = new SearcherLifetimeManager.PruneByAge(TEST_NIGHTLY ? TestUtil.NextInt32(Random, 1, 20) : 1);
             RunTest("TestSearcherManager");
         }
 
-        protected internal override IndexSearcher FinalSearcher
+        protected override IndexSearcher GetFinalSearcher()
         {
-            get
+            if (!isNRT)
             {
-                if (!isNRT)
-                {
-                    writer.Commit();
-                }
-                assertTrue(mgr.MaybeRefresh() || mgr.IsSearcherCurrent());
-                return mgr.Acquire();
+                m_writer.Commit();
             }
+            assertTrue(mgr.MaybeRefresh() || mgr.IsSearcherCurrent());
+            return mgr.Acquire();
         }
 
         private SearcherManager mgr;
@@ -76,24 +73,24 @@ namespace Lucene.Net.Search
         private readonly IList<long> pastSearchers = new List<long>();
         private bool isNRT;
 
-        protected internal override void DoAfterWriter(TaskScheduler es)
+        protected override void DoAfterWriter(TaskScheduler es)
         {
             SearcherFactory factory = new SearcherFactoryAnonymousInnerClassHelper(this, es);
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 // TODO: can we randomize the applyAllDeletes?  But
                 // somehow for final searcher we must apply
                 // deletes...
-                mgr = new SearcherManager(writer, true, factory);
+                mgr = new SearcherManager(m_writer, true, factory);
                 isNRT = true;
             }
             else
             {
                 // SearcherManager needs to see empty commit:
-                writer.Commit();
-                mgr = new SearcherManager(dir, factory);
+                m_writer.Commit();
+                mgr = new SearcherManager(m_dir, factory);
                 isNRT = false;
-                assertMergedSegmentsWarmed = false;
+                m_assertMergedSegmentsWarmed = false;
             }
 
             lifetimeMGR = new SearcherLifetimeManager();
@@ -120,7 +117,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        protected internal override void DoSearching(TaskScheduler es, long stopTime)
+        protected override void DoSearching(TaskScheduler es, long stopTime)
         {
             ThreadClass reopenThread = new ThreadAnonymousInnerClassHelper(this, stopTime);
             reopenThread.SetDaemon(true);
@@ -154,10 +151,10 @@ namespace Lucene.Net.Search
 
                     while (Environment.TickCount < stopTime)
                     {
-                        Thread.Sleep(TestUtil.NextInt(Random(), 1, 100));
-                        outerInstance.writer.Commit();
-                        Thread.Sleep(TestUtil.NextInt(Random(), 1, 5));
-                        bool block = Random().NextBoolean();
+                        Thread.Sleep(TestUtil.NextInt32(Random, 1, 100));
+                        outerInstance.m_writer.Commit();
+                        Thread.Sleep(TestUtil.NextInt32(Random, 1, 5));
+                        bool block = Random.NextBoolean();
                         if (block)
                         {
                             outerInstance.mgr.MaybeRefreshBlocking();
@@ -176,78 +173,75 @@ namespace Lucene.Net.Search
                         Console.WriteLine("TEST: reopen thread hit exc");
                         Console.Out.Write(t.StackTrace);
                     }
-                    outerInstance.failed.Set(true);
+                    outerInstance.m_failed.Set(true);
                     throw new Exception(t.ToString(), t);
                 }
             }
         }
 
-        protected internal override IndexSearcher CurrentSearcher
+        protected override IndexSearcher GetCurrentSearcher()
         {
-            get
+            if (Random.Next(10) == 7)
             {
-                if (Random().Next(10) == 7)
+                // NOTE: not best practice to call maybeReopen
+                // synchronous to your search threads, but still we
+                // test as apps will presumably do this for
+                // simplicity:
+                if (mgr.MaybeRefresh())
                 {
-                    // NOTE: not best practice to call maybeReopen
-                    // synchronous to your search threads, but still we
-                    // test as apps will presumably do this for
-                    // simplicity:
-                    if (mgr.MaybeRefresh())
-                    {
-                        lifetimeMGR.Prune(pruner);
-                    }
+                    lifetimeMGR.Prune(pruner);
                 }
-
-                IndexSearcher s = null;
-
-                lock (pastSearchers)
-                {
-                    while (pastSearchers.Count != 0 && Random().NextDouble() < 0.25)
-                    {
-                        // 1/4 of the time pull an old searcher, ie, simulate
-                        // a user doing a follow-on action on a previous
-                        // search (drilling down/up, clicking next/prev page,
-                        // etc.)
-                        long token = pastSearchers[Random().Next(pastSearchers.Count)];
-                        s = lifetimeMGR.Acquire(token);
-                        if (s == null)
-                        {
-                            // Searcher was pruned
-                            pastSearchers.Remove(token);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-
-                if (s == null)
-                {
-                    s = mgr.Acquire();
-                    if (s.IndexReader.NumDocs != 0)
-                    {
-                        long token = lifetimeMGR.Record(s);
-                        lock (pastSearchers)
-                        {
-                            if (!pastSearchers.Contains(token))
-                            {
-                                pastSearchers.Add(token);
-                            }
-                        }
-                    }
-                }
-
-                return s;
             }
+
+            IndexSearcher s = null;
+
+            lock (pastSearchers)
+            {
+                while (pastSearchers.Count != 0 && Random.NextDouble() < 0.25)
+                {
+                    // 1/4 of the time pull an old searcher, ie, simulate
+                    // a user doing a follow-on action on a previous
+                    // search (drilling down/up, clicking next/prev page,
+                    // etc.)
+                    long token = pastSearchers[Random.Next(pastSearchers.Count)];
+                    s = lifetimeMGR.Acquire(token);
+                    if (s == null)
+                    {
+                        // Searcher was pruned
+                        pastSearchers.Remove(token);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (s == null)
+            {
+                s = mgr.Acquire();
+                if (s.IndexReader.NumDocs != 0)
+                {
+                    long token = lifetimeMGR.Record(s);
+                    lock (pastSearchers)
+                    {
+                        if (!pastSearchers.Contains(token))
+                        {
+                            pastSearchers.Add(token);
+                        }
+                    }
+                }
+            }
+
+            return s;
         }
 
-        protected internal override void ReleaseSearcher(IndexSearcher s)
+        protected override void ReleaseSearcher(IndexSearcher s)
         {
             s.IndexReader.DecRef();
         }
 
-        protected internal override void DoClose()
+        protected override void DoClose()
         {
             assertTrue(warmCalled);
             if (VERBOSE)
@@ -269,16 +263,16 @@ namespace Lucene.Net.Search
 #else
             scheduler = new ConcurrentMergeScheduler();
 #endif
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(scheduler));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(scheduler));
             writer.AddDocument(new Document());
             writer.Commit();
             CountdownEvent awaitEnterWarm = new CountdownEvent(1);
             CountdownEvent awaitClose = new CountdownEvent(1);
             AtomicBoolean triedReopen = new AtomicBoolean(false);
             //TaskScheduler es = Random().NextBoolean() ? null : Executors.newCachedThreadPool(new NamedThreadFactory("testIntermediateClose"));
-            TaskScheduler es = Random().NextBoolean() ? null : TaskScheduler.Default;
+            TaskScheduler es = Random.NextBoolean() ? null : TaskScheduler.Default;
             SearcherFactory factory = new SearcherFactoryAnonymousInnerClassHelper2(this, awaitEnterWarm, awaitClose, triedReopen, es);
-            SearcherManager searcherManager = Random().NextBoolean() ? new SearcherManager(dir, factory) : new SearcherManager(writer, Random().NextBoolean(), factory);
+            SearcherManager searcherManager = Random.NextBoolean() ? new SearcherManager(dir, factory) : new SearcherManager(writer, Random.NextBoolean(), factory);
             if (VERBOSE)
             {
                 Console.WriteLine("sm created");
@@ -439,7 +433,7 @@ namespace Lucene.Net.Search
         public virtual void TestReferenceDecrementIllegally([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             Directory dir = NewDirectory();
-            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMergeScheduler(newScheduler());
             IndexWriter writer = new IndexWriter(dir, config);
             SearcherManager sm = new SearcherManager(writer, false, new SearcherFactory());
@@ -547,7 +541,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestEvilSearcherFactory()
         {
-            Random random = Random();
+            Random random = Random;
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(random, dir, Similarity, TimeZone);
             w.Commit();
@@ -568,7 +562,7 @@ namespace Lucene.Net.Search
             }
             try
             {
-                new SearcherManager(w.w, random.NextBoolean(), theEvilOne);
+                new SearcherManager(w.IndexWriter, random.NextBoolean(), theEvilOne);
             }
 #pragma warning disable 168
             catch (InvalidOperationException ise)
@@ -605,7 +599,7 @@ namespace Lucene.Net.Search
             // make sure that maybeRefreshBlocking releases the lock, otherwise other
             // threads cannot obtain it.
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             w.Dispose();
 
             SearcherManager sm = new SearcherManager(dir, null);

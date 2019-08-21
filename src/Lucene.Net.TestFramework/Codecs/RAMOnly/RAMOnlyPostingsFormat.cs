@@ -2,8 +2,8 @@ using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.RAMOnly
 {
@@ -12,21 +12,21 @@ namespace Lucene.Net.Codecs.RAMOnly
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
@@ -44,10 +44,10 @@ namespace Lucene.Net.Codecs.RAMOnly
 
     /// <summary>
     /// Stores all postings data in RAM, but writes a small
-    ///  token (header + single int) to identify which "slot" the
-    ///  index is using in RAM HashMap.
-    ///
-    ///  NOTE: this codec sorts terms by reverse-unicode-order!
+    /// token (header + single int) to identify which "slot" the
+    /// index is using in RAM dictionary.
+    /// <para/>
+    /// NOTE: this codec sorts terms by reverse-unicode-order!
     /// </summary>
     [PostingsFormatName("RAMOnly")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class RAMOnlyPostingsFormat : PostingsFormat
@@ -110,23 +110,23 @@ namespace Lucene.Net.Codecs.RAMOnly
         internal class RAMPostings : FieldsProducer
         {
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            internal readonly IDictionary<string, RAMField> FieldToTerms = new SortedDictionary<string, RAMField>(StringComparer.Ordinal);
+            internal readonly IDictionary<string, RAMField> fieldToTerms = new SortedDictionary<string, RAMField>(StringComparer.Ordinal);
 
             public override Terms GetTerms(string field)
             {
                 RAMField result;
-                FieldToTerms.TryGetValue(field, out result);
+                fieldToTerms.TryGetValue(field, out result);
                 return result;
             }
 
             public override int Count
             {
-                get { return FieldToTerms.Count; }
+                get { return fieldToTerms.Count; }
             }
 
             public override IEnumerator<string> GetEnumerator()
             {
-                return FieldToTerms.Keys.GetEnumerator();
+                return fieldToTerms.Keys.GetEnumerator();
             }
 
             protected override void Dispose(bool disposing)
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.RAMOnly
             public override long RamBytesUsed()
             {
                 long sizeInBytes = 0;
-                foreach (RAMField field in FieldToTerms.Values)
+                foreach (RAMField field in fieldToTerms.Values)
                 {
                     sizeInBytes += field.RamBytesUsed();
                 }
@@ -150,19 +150,19 @@ namespace Lucene.Net.Codecs.RAMOnly
 
         internal class RAMField : Terms
         {
-            internal readonly string Field;
+            internal readonly string field;
 
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            internal readonly SortedDictionary<string, RAMTerm> TermToDocs = new SortedDictionary<string, RAMTerm>(StringComparer.Ordinal);
-            internal long SumTotalTermFreq_Renamed;
-            internal long SumDocFreq_Renamed;
-            internal int DocCount_Renamed;
-            internal readonly FieldInfo Info;
+            internal readonly SortedDictionary<string, RAMTerm> termToDocs = new SortedDictionary<string, RAMTerm>(StringComparer.Ordinal);
+            internal long sumTotalTermFreq;
+            internal long sumDocFreq;
+            internal int docCount;
+            internal readonly FieldInfo info;
 
             internal RAMField(string field, FieldInfo info)
             {
-                this.Field = field;
-                this.Info = info;
+                this.field = field;
+                this.info = info;
             }
 
             /// <summary>
@@ -170,7 +170,7 @@ namespace Lucene.Net.Codecs.RAMOnly
             public virtual long RamBytesUsed()
             {
                 long sizeInBytes = 0;
-                foreach (RAMTerm term in TermToDocs.Values)
+                foreach (RAMTerm term in termToDocs.Values)
                 {
                     sizeInBytes += term.RamBytesUsed();
                 }
@@ -179,14 +179,14 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override long Count
             {
-                get { return TermToDocs.Count; }
+                get { return termToDocs.Count; }
             }
 
             public override long SumTotalTermFreq
             {
                 get
                 {
-                    return SumTotalTermFreq_Renamed;
+                    return sumTotalTermFreq;
                 }
             }
 
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.RAMOnly
             {
                 get
                 {
-                    return SumDocFreq_Renamed;
+                    return sumDocFreq;
                 }
             }
 
@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.RAMOnly
             {
                 get
                 {
-                    return DocCount_Renamed;
+                    return docCount;
                 }
             }
 
@@ -221,34 +221,34 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override bool HasFreqs
             {
-                get { return Info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
+                get { return info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
             }
 
             public override bool HasOffsets
             {
-                get { return Info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
+                get { return info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
             }
 
             public override bool HasPositions
             {
-                get { return Info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
+                get { return info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
             }
 
             public override bool HasPayloads
             {
-                get { return Info.HasPayloads; }
+                get { return info.HasPayloads; }
             }
         }
 
         internal class RAMTerm
         {
-            internal readonly string Term;
-            internal long TotalTermFreq;
-            internal readonly IList<RAMDoc> Docs = new List<RAMDoc>();
+            internal readonly string term;
+            internal long totalTermFreq;
+            internal readonly IList<RAMDoc> docs = new List<RAMDoc>();
 
             public RAMTerm(string term)
             {
-                this.Term = term;
+                this.term = term;
             }
 
             /// <summary>
@@ -256,7 +256,7 @@ namespace Lucene.Net.Codecs.RAMOnly
             public virtual long RamBytesUsed()
             {
                 long sizeInBytes = 0;
-                foreach (RAMDoc rDoc in Docs)
+                foreach (RAMDoc rDoc in docs)
                 {
                     sizeInBytes += rDoc.RamBytesUsed();
                 }
@@ -266,14 +266,14 @@ namespace Lucene.Net.Codecs.RAMOnly
 
         internal class RAMDoc
         {
-            internal readonly int DocID;
-            internal readonly int[] Positions;
-            internal byte[][] Payloads;
+            internal readonly int docID;
+            internal readonly int[] positions;
+            internal byte[][] payloads;
 
             public RAMDoc(int docID, int freq)
             {
-                this.DocID = docID;
-                Positions = new int[freq];
+                this.docID = docID;
+                positions = new int[freq];
             }
 
             /// <summary>
@@ -281,11 +281,11 @@ namespace Lucene.Net.Codecs.RAMOnly
             public virtual long RamBytesUsed()
             {
                 long sizeInBytes = 0;
-                sizeInBytes += (Positions != null) ? RamUsageEstimator.SizeOf(Positions) : 0;
+                sizeInBytes += (positions != null) ? RamUsageEstimator.SizeOf(positions) : 0;
 
-                if (Payloads != null)
+                if (payloads != null)
                 {
-                    foreach (var payload in Payloads)
+                    foreach (var payload in payloads)
                     {
                         sizeInBytes += (payload != null) ? RamUsageEstimator.SizeOf(payload) : 0;
                     }
@@ -297,12 +297,12 @@ namespace Lucene.Net.Codecs.RAMOnly
         // Classes for writing to the postings state
         private class RAMFieldsConsumer : FieldsConsumer
         {
-            internal readonly RAMPostings Postings;
-            internal readonly RAMTermsConsumer TermsConsumer = new RAMTermsConsumer();
+            private readonly RAMPostings postings;
+            private readonly RAMTermsConsumer termsConsumer = new RAMTermsConsumer();
 
             public RAMFieldsConsumer(RAMPostings postings)
             {
-                this.Postings = postings;
+                this.postings = postings;
             }
 
             public override TermsConsumer AddField(FieldInfo field)
@@ -312,9 +312,9 @@ namespace Lucene.Net.Codecs.RAMOnly
                     throw new System.NotSupportedException("this codec cannot index offsets");
                 }
                 RAMField ramField = new RAMField(field.Name, field);
-                Postings.FieldToTerms[field.Name] = ramField;
-                TermsConsumer.Reset(ramField);
-                return TermsConsumer;
+                postings.fieldToTerms[field.Name] = ramField;
+                termsConsumer.Reset(ramField);
+                return termsConsumer;
             }
 
             protected override void Dispose(bool disposing)
@@ -325,21 +325,21 @@ namespace Lucene.Net.Codecs.RAMOnly
 
         private class RAMTermsConsumer : TermsConsumer
         {
-            internal RAMField Field;
-            internal readonly RAMPostingsWriterImpl PostingsWriter = new RAMPostingsWriterImpl();
-            internal RAMTerm Current;
+            private RAMField field;
+            private readonly RAMPostingsWriterImpl postingsWriter = new RAMPostingsWriterImpl();
+            internal RAMTerm current;
 
             internal virtual void Reset(RAMField field)
             {
-                this.Field = field;
+                this.field = field;
             }
 
             public override PostingsConsumer StartTerm(BytesRef text)
             {
                 string term = text.Utf8ToString();
-                Current = new RAMTerm(term);
-                PostingsWriter.Reset(Current);
-                return PostingsWriter;
+                current = new RAMTerm(term);
+                postingsWriter.Reset(current);
+                return postingsWriter;
             }
 
             public override IComparer<BytesRef> Comparer
@@ -353,69 +353,69 @@ namespace Lucene.Net.Codecs.RAMOnly
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
                 Debug.Assert(stats.DocFreq > 0);
-                Debug.Assert(stats.DocFreq == Current.Docs.Count);
-                Current.TotalTermFreq = stats.TotalTermFreq;
-                Field.TermToDocs[Current.Term] = Current;
+                Debug.Assert(stats.DocFreq == current.docs.Count);
+                current.totalTermFreq = stats.TotalTermFreq;
+                field.termToDocs[current.term] = current;
             }
 
             public override void Finish(long sumTotalTermFreq, long sumDocFreq, int docCount)
             {
-                Field.SumTotalTermFreq_Renamed = sumTotalTermFreq;
-                Field.SumDocFreq_Renamed = sumDocFreq;
-                Field.DocCount_Renamed = docCount;
+                field.sumTotalTermFreq = sumTotalTermFreq;
+                field.sumDocFreq = sumDocFreq;
+                field.docCount = docCount;
             }
         }
 
         internal class RAMPostingsWriterImpl : PostingsConsumer
         {
-            internal RAMTerm Term;
-            internal RAMDoc Current;
-            internal int PosUpto = 0;
+            private RAMTerm term;
+            private RAMDoc current;
+            private int posUpto = 0;
 
             public virtual void Reset(RAMTerm term)
             {
-                this.Term = term;
+                this.term = term;
             }
 
             public override void StartDoc(int docID, int freq)
             {
-                Current = new RAMDoc(docID, freq);
-                Term.Docs.Add(Current);
-                PosUpto = 0;
+                current = new RAMDoc(docID, freq);
+                term.docs.Add(current);
+                posUpto = 0;
             }
 
             public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
             {
                 Debug.Assert(startOffset == -1);
                 Debug.Assert(endOffset == -1);
-                Current.Positions[PosUpto] = position;
+                current.positions[posUpto] = position;
                 if (payload != null && payload.Length > 0)
                 {
-                    if (Current.Payloads == null)
+                    if (current.payloads == null)
                     {
-                        Current.Payloads = new byte[Current.Positions.Length][];
+                        current.payloads = new byte[current.positions.Length][];
                     }
-                    var bytes = Current.Payloads[PosUpto] = new byte[payload.Length];
+                    var bytes = current.payloads[posUpto] = new byte[payload.Length];
                     Array.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
                 }
-                PosUpto++;
+                posUpto++;
             }
 
             public override void FinishDoc()
             {
-                Debug.Assert(PosUpto == Current.Positions.Length);
+                Debug.Assert(posUpto == current.positions.Length);
             }
         }
 
         internal class RAMTermsEnum : TermsEnum
         {
-            internal IEnumerator<string> It;
-            internal string Current;
-            internal readonly RAMField RamField;
+            internal IEnumerator<string> it;
+            internal string current;
+            private readonly RAMField ramField;
 
             public RAMTermsEnum(RAMField field)
             {
-                this.RamField = field;
+                this.ramField = field;
             }
 
             public override IComparer<BytesRef> Comparer
@@ -428,22 +428,22 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override BytesRef Next()
             {
-                if (It == null)
+                if (it == null)
                 {
-                    if (Current == null)
+                    if (current == null)
                     {
-                        It = RamField.TermToDocs.Keys.GetEnumerator();
+                        it = ramField.termToDocs.Keys.GetEnumerator();
                     }
                     else
                     {
                         //It = RamField.TermToDocs.tailMap(Current).Keys.GetEnumerator();
-                        It = RamField.TermToDocs.Where(kvpair => String.CompareOrdinal(kvpair.Key, Current) >= 0).ToDictionary(kvpair => kvpair.Key, kvpair => kvpair.Value).Keys.GetEnumerator();
+                        it = ramField.termToDocs.Where(kvpair => String.CompareOrdinal(kvpair.Key, current) >= 0).ToDictionary(kvpair => kvpair.Key, kvpair => kvpair.Value).Keys.GetEnumerator();
                     }
                 }
-                if (It.MoveNext())
+                if (it.MoveNext())
                 {
-                    Current = It.Current;
-                    return new BytesRef(Current);
+                    current = it.Current;
+                    return new BytesRef(current);
                 }
                 else
                 {
@@ -453,15 +453,15 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override SeekStatus SeekCeil(BytesRef term)
             {
-                Current = term.Utf8ToString();
-                It = null;
-                if (RamField.TermToDocs.ContainsKey(Current))
+                current = term.Utf8ToString();
+                it = null;
+                if (ramField.termToDocs.ContainsKey(current))
                 {
                     return SeekStatus.FOUND;
                 }
                 else
                 {
-                    if (Current.CompareToOrdinal(RamField.TermToDocs.Last().Key) > 0)
+                    if (current.CompareToOrdinal(ramField.termToDocs.Last().Key) > 0)
                     {
                         return SeekStatus.END;
                     }
@@ -487,45 +487,45 @@ namespace Lucene.Net.Codecs.RAMOnly
                 get
                 {
                     // TODO: reuse BytesRef
-                    return new BytesRef(Current);
+                    return new BytesRef(current);
                 }
             }
 
             public override int DocFreq
             {
-                get { return RamField.TermToDocs[Current].Docs.Count; }
+                get { return ramField.termToDocs[current].docs.Count; }
             }
 
             public override long TotalTermFreq
             {
-                get { return RamField.TermToDocs[Current].TotalTermFreq; }
+                get { return ramField.termToDocs[current].totalTermFreq; }
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                return new RAMDocsEnum(RamField.TermToDocs[Current], liveDocs);
+                return new RAMDocsEnum(ramField.termToDocs[current], liveDocs);
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
-                return new RAMDocsAndPositionsEnum(RamField.TermToDocs[Current], liveDocs);
+                return new RAMDocsAndPositionsEnum(ramField.termToDocs[current], liveDocs);
             }
         }
 
         private class RAMDocsEnum : DocsEnum
         {
-            private readonly RAMTerm RamTerm;
-            private readonly IBits LiveDocs;
-            private RAMDoc Current;
-            private int Upto = -1;
+            private readonly RAMTerm ramTerm;
+            private readonly IBits liveDocs;
+            private RAMDoc current;
+            private int upto = -1;
 #pragma warning disable 414
-            private int PosUpto = 0; // LUCENENET NOTE: Not used
+            private int posUpto = 0; // LUCENENET NOTE: Not used
 #pragma warning restore 414
 
             public RAMDocsEnum(RAMTerm ramTerm, IBits liveDocs)
             {
-                this.RamTerm = ramTerm;
-                this.LiveDocs = liveDocs;
+                this.ramTerm = ramTerm;
+                this.liveDocs = liveDocs;
             }
 
             public override int Advance(int targetDocID)
@@ -538,14 +538,14 @@ namespace Lucene.Net.Codecs.RAMOnly
             {
                 while (true)
                 {
-                    Upto++;
-                    if (Upto < RamTerm.Docs.Count)
+                    upto++;
+                    if (upto < ramTerm.docs.Count)
                     {
-                        Current = RamTerm.Docs[Upto];
-                        if (LiveDocs == null || LiveDocs.Get(Current.DocID))
+                        current = ramTerm.docs[upto];
+                        if (liveDocs == null || liveDocs.Get(current.docID))
                         {
-                            PosUpto = 0;
-                            return Current.DocID;
+                            posUpto = 0;
+                            return current.docID;
                         }
                     }
                     else
@@ -557,32 +557,32 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override int Freq
             {
-                get { return Current.Positions.Length; }
+                get { return current.positions.Length; }
             }
 
             public override int DocID
             {
-                get { return Current.DocID; }
+                get { return current.docID; }
             }
 
             public override long GetCost()
             {
-                return RamTerm.Docs.Count;
+                return ramTerm.docs.Count;
             }
         }
 
         private class RAMDocsAndPositionsEnum : DocsAndPositionsEnum
         {
-            private readonly RAMTerm RamTerm;
-            private readonly IBits LiveDocs;
-            private RAMDoc Current;
-            private int Upto = -1;
-            private int PosUpto = 0;
+            private readonly RAMTerm ramTerm;
+            private readonly IBits liveDocs;
+            private RAMDoc current;
+            private int upto = -1;
+            private int posUpto = 0;
 
             public RAMDocsAndPositionsEnum(RAMTerm ramTerm, IBits liveDocs)
             {
-                this.RamTerm = ramTerm;
-                this.LiveDocs = liveDocs;
+                this.ramTerm = ramTerm;
+                this.liveDocs = liveDocs;
             }
 
             public override int Advance(int targetDocID)
@@ -595,14 +595,14 @@ namespace Lucene.Net.Codecs.RAMOnly
             {
                 while (true)
                 {
-                    Upto++;
-                    if (Upto < RamTerm.Docs.Count)
+                    upto++;
+                    if (upto < ramTerm.docs.Count)
                     {
-                        Current = RamTerm.Docs[Upto];
-                        if (LiveDocs == null || LiveDocs.Get(Current.DocID))
+                        current = ramTerm.docs[upto];
+                        if (liveDocs == null || liveDocs.Get(current.docID))
                         {
-                            PosUpto = 0;
-                            return Current.DocID;
+                            posUpto = 0;
+                            return current.docID;
                         }
                     }
                     else
@@ -614,17 +614,17 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override int Freq
             {
-                get { return Current.Positions.Length; }
+                get { return current.positions.Length; }
             }
 
             public override int DocID
             {
-                get { return Current.DocID; }
+                get { return current.docID; }
             }
 
             public override int NextPosition()
             {
-                return Current.Positions[PosUpto++];
+                return current.positions[posUpto++];
             }
 
             public override int StartOffset
@@ -639,9 +639,9 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override BytesRef GetPayload()
             {
-                if (Current.Payloads != null && Current.Payloads[PosUpto - 1] != null)
+                if (current.payloads != null && current.payloads[posUpto - 1] != null)
                 {
-                    return new BytesRef(Current.Payloads[PosUpto - 1]);
+                    return new BytesRef(current.payloads[posUpto - 1]);
                 }
                 else
                 {
@@ -651,14 +651,14 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override long GetCost()
             {
-                return RamTerm.Docs.Count;
+                return ramTerm.docs.Count;
             }
         }
 
         // Holds all indexes created, keyed by the ID assigned in fieldsConsumer
-        private readonly IDictionary<int?, RAMPostings> State = new Dictionary<int?, RAMPostings>();
+        private readonly IDictionary<int?, RAMPostings> state = new Dictionary<int?, RAMPostings>();
 
-        private readonly AtomicInt64 NextID = new AtomicInt64();
+        private readonly AtomicInt64 nextID = new AtomicInt64();
 
         private readonly string RAM_ONLY_NAME = "RAMOnly";
         private const int VERSION_START = 0;
@@ -668,7 +668,7 @@ namespace Lucene.Net.Codecs.RAMOnly
 
         public override FieldsConsumer FieldsConsumer(SegmentWriteState writeState)
         {
-            int id = (int)NextID.GetAndIncrement();
+            int id = (int)nextID.GetAndIncrement();
 
             // TODO -- ok to do this up front instead of
             // on close....?  should be ok?
@@ -697,9 +697,9 @@ namespace Lucene.Net.Codecs.RAMOnly
             RAMPostings postings = new RAMPostings();
             RAMFieldsConsumer consumer = new RAMFieldsConsumer(postings);
 
-            lock (State)
+            lock (state)
             {
-                State[id] = postings;
+                state[id] = postings;
             }
             return consumer;
         }
@@ -729,9 +729,9 @@ namespace Lucene.Net.Codecs.RAMOnly
                 }
             }
 
-            lock (State)
+            lock (state)
             {
-                return State[id];
+                return state[id];
             }
         }
     }

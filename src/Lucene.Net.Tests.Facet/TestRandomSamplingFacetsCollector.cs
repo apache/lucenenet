@@ -49,7 +49,7 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Util.LuceneTestCase.Random, dir, Similarity, TimeZone);
 
             FacetsConfig config = new FacetsConfig();
 
@@ -61,15 +61,15 @@ namespace Lucene.Net.Facet
                 doc.Add(new FacetField("iMod10", Convert.ToString(i % 10)));
                 writer.AddDocument(config.Build(taxoWriter, doc));
             }
-            Random random = Random();
+            Random random = Random;
 
             // NRT open
-            IndexSearcher searcher = NewSearcher(writer.Reader);
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
             var taxoReader = new DirectoryTaxonomyReader(taxoWriter);
             IOUtils.Dispose(writer, taxoWriter);
 
             // Test empty results
-            RandomSamplingFacetsCollector collectRandomZeroResults = new RandomSamplingFacetsCollector(numDocs / 10, random.NextLong());
+            RandomSamplingFacetsCollector collectRandomZeroResults = new RandomSamplingFacetsCollector(numDocs / 10, random.NextInt64());
 
             // There should be no divisions by zero
             searcher.Search(new TermQuery(new Term("EvenOdd", "NeverMatches")), collectRandomZeroResults);
@@ -97,8 +97,8 @@ namespace Lucene.Net.Facet
             // so that is probably not going to happen.
             int maxNumChildren = 5;
 
-            RandomSamplingFacetsCollector random100Percent = new RandomSamplingFacetsCollector(numDocs, random.NextLong()); // no sampling
-            RandomSamplingFacetsCollector random10Percent = new RandomSamplingFacetsCollector(numDocs / 10, random.NextLong()); // 10 % of total docs, 20% of the hits
+            RandomSamplingFacetsCollector random100Percent = new RandomSamplingFacetsCollector(numDocs, random.NextInt64()); // no sampling
+            RandomSamplingFacetsCollector random10Percent = new RandomSamplingFacetsCollector(numDocs / 10, random.NextInt64()); // 10 % of total docs, 20% of the hits
 
             FacetsCollector fc = new FacetsCollector();
 

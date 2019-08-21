@@ -1,7 +1,8 @@
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Search
 {
@@ -25,7 +26,7 @@ namespace Lucene.Net.Search
     using AssertingAtomicReader = Lucene.Net.Index.AssertingAtomicReader;
 
     /// <summary>
-    /// Wraps a Scorer with additional checks </summary>
+    /// Wraps a <see cref="Scorer"/> with additional checks.</summary>
     public class AssertingScorer : Scorer
     {
         // we need to track scorers using a weak hash map because otherwise we
@@ -66,16 +67,16 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal readonly Random Random;
+        internal readonly Random random;
         internal readonly Scorer @in;
-        internal readonly AssertingAtomicReader.AssertingDocsEnum DocsEnumIn;
+        internal readonly AssertingDocsEnum docsEnumIn;
 
         private AssertingScorer(Random random, Scorer @in)
             : base(@in.Weight)
         {
-            this.Random = random;
+            this.random = random;
             this.@in = @in;
-            this.DocsEnumIn = new AssertingAtomicReader.AssertingDocsEnum(@in);
+            this.docsEnumIn = new AssertingDocsEnum(@in);
         }
 
         public virtual Scorer In
@@ -133,12 +134,12 @@ namespace Lucene.Net.Search
 
         public override int NextDoc()
         {
-            return DocsEnumIn.NextDoc();
+            return docsEnumIn.NextDoc();
         }
 
         public override int Advance(int target)
         {
-            return DocsEnumIn.Advance(target);
+            return docsEnumIn.Advance(target);
         }
 
         public override long GetCost()

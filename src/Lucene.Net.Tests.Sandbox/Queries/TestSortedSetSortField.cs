@@ -32,7 +32,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestForward()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("value", "baz", Field.Store.NO));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -42,7 +42,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(NewStringField("value", "bar", Field.Store.NO));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -62,7 +62,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestReverse()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("value", "foo", Field.Store.NO));
             doc.Add(NewStringField("value", "bar", Field.Store.NO));
@@ -73,7 +73,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(NewStringField("id", "2", Field.Store.YES));
             writer.AddDocument(doc);
 
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -93,7 +93,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMissingFirst()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("value", "baz", Field.Store.NO));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -106,7 +106,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc = new Document();
             doc.Add(NewStringField("id", "3", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -130,7 +130,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestMissingLast()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("value", "baz", Field.Store.NO));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -143,7 +143,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc = new Document();
             doc.Add(NewStringField("id", "3", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
@@ -167,7 +167,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestSingleton()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             Document doc = new Document();
             doc.Add(NewStringField("value", "baz", Field.Store.NO));
             doc.Add(NewStringField("id", "2", Field.Store.YES));
@@ -176,7 +176,7 @@ namespace Lucene.Net.Sandbox.Queries
             doc.Add(NewStringField("value", "bar", Field.Store.NO));
             doc.Add(NewStringField("id", "1", Field.Store.YES));
             writer.AddDocument(doc);
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);

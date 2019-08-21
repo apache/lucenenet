@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
             // so the unreferenced files are expected.
             if (fsDir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)fsDir).AssertNoUnrefencedFilesOnClose = (false);
+                ((MockDirectoryWrapper)fsDir).AssertNoUnreferencedFilesOnClose = (false);
             }
 
             MergePolicy mergePolicy = new LogByteSizeMergePolicy();
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
             mergePolicy.MaxCFSSegmentSizeMB = double.PositiveInfinity;
             IndexWriter iw = new IndexWriter(
                 fsDir,
-                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).
+                new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).
                     SetOpenMode(OpenMode.CREATE).
                     SetMergePolicy(mergePolicy)
             );

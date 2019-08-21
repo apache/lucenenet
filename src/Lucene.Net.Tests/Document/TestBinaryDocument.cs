@@ -59,13 +59,13 @@ namespace Lucene.Net.Documents
             /// <summary>
             /// add the doc to a ram index </summary>
             Directory dir = NewDirectory();
-            Random r = Random();
+            Random r = Random;
             RandomIndexWriter writer = new RandomIndexWriter(r, dir, Similarity, TimeZone);
             writer.AddDocument(doc);
 
             /// <summary>
             /// open a reader and fetch the document </summary>
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             Documents.Document docFromReader = reader.Document(0);
             Assert.IsTrue(docFromReader != null);
 
@@ -97,11 +97,11 @@ namespace Lucene.Net.Documents
             var doc = new Documents.Document {binaryFldCompressed, stringFldCompressed};
 
             using (Directory dir = NewDirectory())
-            using (RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone))
+            using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone))
             {
                 writer.AddDocument(doc);
 
-                using (IndexReader reader = writer.Reader)
+                using (IndexReader reader = writer.GetReader())
                 {
                     Documents.Document docFromReader = reader.Document(0);
                     Assert.IsTrue(docFromReader != null);

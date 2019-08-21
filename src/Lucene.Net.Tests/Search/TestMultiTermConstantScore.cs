@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
             string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
 
             Small = NewDirectory();
-            using (RandomIndexWriter writer = new RandomIndexWriter(Random(), Small, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetMergePolicy(NewLogMergePolicy())))
+            using (RandomIndexWriter writer = new RandomIndexWriter(Random, Small, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMergePolicy(NewLogMergePolicy())))
             {
 
                 FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
                     writer.AddDocument(doc);
                 }
 
-                Reader = writer.Reader;
+                Reader = writer.GetReader();
             }
         }
 
@@ -554,19 +554,5 @@ namespace Lucene.Net.Search
             result = search.Search(Csrq("rand", maxRP, null, T, F), null, numDocs).ScoreDocs;
             AssertEquals("max,nul,T,T", 1, result.Length);
         }
-
-
-        #region SorterTestBase
-        // LUCENENET NOTE: Tests in a base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        [Test]
-        public override void TestPad()
-        {
-            base.TestPad();
-        }
-
-        #endregion
     }
 }

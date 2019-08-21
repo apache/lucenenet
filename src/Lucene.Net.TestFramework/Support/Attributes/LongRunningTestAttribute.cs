@@ -19,21 +19,20 @@
  *
 */
 
+using Lucene.Net.Support;
 using NUnit.Framework;
 
-
-namespace Lucene.Net.TestFramework.Support
+namespace Lucene.Net.Attributes
 {
-    public class RandomizedTest
+    /// <summary>
+    /// This test runs long and should be skipped in the 1st run.
+    /// </summary>
+    [ExceptionToNetNumericConvention]
+    public class LongRunningTestAttribute : CategoryAttribute
     {
-        public static void AssumeTrue(string msg, bool value)
+        public LongRunningTestAttribute() : base("LongRunningTest")
         {
-            Assume.That(value, msg);
-        }
-
-        public static void AssumeFalse(string msg, bool value)
-        {
-            Assume.That(!value, msg);
+            // nothing to do here but invoke the base contsructor.
         }
     }
 }

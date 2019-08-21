@@ -1,7 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -22,16 +22,14 @@ namespace Lucene.Net.Util.Automaton
      * limitations under the License.
      */
 
-    using Lucene.Net.Randomized.Generators;
-
     /// <summary>
     /// Utilities for testing automata.
-    /// <p>
+    /// <para/>
     /// Capable of generating random regular expressions,
     /// and automata, and also provides a number of very
     /// basic unoptimized implementations (*slow) for testing.
     /// </summary>
-    public class AutomatonTestUtil
+    public static class AutomatonTestUtil // LUCENENET specific - made static because all members are static
     {
         /// <summary>
         /// Returns random string, including full unicode range. </summary>
@@ -74,9 +72,9 @@ namespace Lucene.Net.Util.Automaton
                 {
                     // Make a surrogate pair
                     // High surrogate
-                    buffer[i++] = (char)TestUtil.NextInt(r, 0xd800, 0xdbff);
+                    buffer[i++] = (char)TestUtil.NextInt32(r, 0xd800, 0xdbff);
                     // Low surrogate
-                    buffer[i] = (char)TestUtil.NextInt(r, 0xdc00, 0xdfff);
+                    buffer[i] = (char)TestUtil.NextInt32(r, 0xdc00, 0xdfff);
                 }
                 else if (t <= 1)
                 {
@@ -84,15 +82,15 @@ namespace Lucene.Net.Util.Automaton
                 }
                 else if (2 == t)
                 {
-                    buffer[i] = (char)TestUtil.NextInt(r, 0x80, 0x800);
+                    buffer[i] = (char)TestUtil.NextInt32(r, 0x80, 0x800);
                 }
                 else if (3 == t)
                 {
-                    buffer[i] = (char)TestUtil.NextInt(r, 0x800, 0xd7ff);
+                    buffer[i] = (char)TestUtil.NextInt32(r, 0x800, 0xd7ff);
                 }
                 else if (4 == t)
                 {
-                    buffer[i] = (char)TestUtil.NextInt(r, 0xe000, 0xffff);
+                    buffer[i] = (char)TestUtil.NextInt32(r, 0xe000, 0xffff);
                 }
                 else if (5 == t)
                 {
@@ -140,10 +138,10 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// picks a random int code point, avoiding surrogates;
-        /// throws IllegalArgumentException if this transition only
+        /// throws <see cref="ArgumentException"/> if this transition only
         /// accepts surrogates
         /// </summary>
-        private static int GetRandomCodePoint(Random r, Transition t)
+        internal static int GetRandomCodePoint(Random r, Transition t) // LUCENENET specific - changed from private to internal
         {
             int code;
             if (t.Max < UnicodeUtil.UNI_SUR_HIGH_START || t.Min > UnicodeUtil.UNI_SUR_HIGH_END)
@@ -195,178 +193,10 @@ namespace Lucene.Net.Util.Automaton
             return code;
         }
 
-        /// <summary>
-        /// Lets you retrieve random strings accepted
-        /// by an Automaton.
-        /// <p>
-        /// Once created, call <seealso cref="#getRandomAcceptedString(Random)"/>
-        /// to get a new string (in UTF-32 codepoints).
-        /// </summary>
-        public class RandomAcceptedStrings
-        {
-            internal readonly IDictionary<Transition, bool?> leadsToAccept;
-            internal readonly Automaton a;
-
-            private class ArrivingTransition
-            {
-                internal readonly State from;
-                internal readonly Transition t;
-
-                public ArrivingTransition(State from, Transition t)
-                {
-                    this.from = from;
-                    this.t = t;
-                }
-            }
-
-            public RandomAcceptedStrings(Automaton a)
-            {
-                this.a = a;
-                if (a.IsSingleton)
-                {
-                    leadsToAccept = null;
-                    return;
-                }
-
-                // must use IdentityHashmap because two Transitions w/
-                // different start nodes can be considered the same
-                leadsToAccept = new IdentityHashMap<Transition, bool?>();
-                IDictionary<State, IList<ArrivingTransition>> allArriving = new Dictionary<State, IList<ArrivingTransition>>();
-
-                LinkedList<State> q = new LinkedList<State>();
-                HashSet<State> seen = new HashSet<State>();
-
-                // reverse map the transitions, so we can quickly look
-                // up all arriving transitions to a given state
-                foreach (State s in a.GetNumberedStates())
-                {
-                    for (int i = 0; i < s.numTransitions; i++)
-                    {
-                        Transition t = s.TransitionsArray[i];
-                        IList<ArrivingTransition> tl;
-                        allArriving.TryGetValue(t.to, out tl);
-                        if (tl == null)
-                        {
-                            tl = new List<ArrivingTransition>();
-                            allArriving[t.to] = tl;
-                        }
-                        tl.Add(new ArrivingTransition(s, t));
-                    }
-                    if (s.Accept)
-                    {
-                        q.AddLast(s);
-                        seen.Add(s);
-                    }
-                }
-
-                // Breadth-first search, from accept states,
-                // backwards:
-                while (q.Count > 0)
-                {
-                    State s = q.First.Value;
-                    q.Remove(s);
-                    IList<ArrivingTransition> arriving;
-                    allArriving.TryGetValue(s, out arriving);
-                    if (arriving != null)
-                    {
-                        foreach (ArrivingTransition at in arriving)
-                        {
-                            State from = at.from;
-                            if (!seen.Contains(from))
-                            {
-                                q.AddLast(from);
-                                seen.Add(from);
-                                leadsToAccept[at.t] = true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            public int[] GetRandomAcceptedString(Random r)
-            {
-                IList<int?> soFar = new List<int?>();
-                if (a.IsSingleton)
-                {
-                    // accepts only one
-                    var s = a.Singleton;
-
-                    int charUpto = 0;
-                    while (charUpto < s.Length)
-                    {
-                        int cp = s.CodePointAt(charUpto);
-                        charUpto += Character.CharCount(cp);
-                        soFar.Add(cp);
-                    }
-                }
-                else
-                {
-                    var s = a.initial;
-
-                    while (true)
-                    {
-                        if (s.accept)
-                        {
-                            if (s.numTransitions == 0)
-                            {
-                                // stop now
-                                break;
-                            }
-                            else
-                            {
-                                if (r.NextBoolean())
-                                {
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (s.numTransitions == 0)
-                        {
-                            throw new Exception("this automaton has dead states");
-                        }
-
-                        bool cheat = r.NextBoolean();
-
-                        Transition t;
-                        if (cheat)
-                        {
-                            // pick a transition that we know is the fastest
-                            // path to an accept state
-                            IList<Transition> toAccept = new List<Transition>();
-                            for (int i = 0; i < s.numTransitions; i++)
-                            {
-                                Transition t0 = s.TransitionsArray[i];
-                                if (leadsToAccept.ContainsKey(t0))
-                                {
-                                    toAccept.Add(t0);
-                                }
-                            }
-                            if (toAccept.Count == 0)
-                            {
-                                // this is OK -- it means we jumped into a cycle
-                                t = s.TransitionsArray[r.Next(s.numTransitions)];
-                            }
-                            else
-                            {
-                                t = toAccept[r.Next(toAccept.Count)];
-                            }
-                        }
-                        else
-                        {
-                            t = s.TransitionsArray[r.Next(s.numTransitions)];
-                        }
-                        soFar.Add(GetRandomCodePoint(r, t));
-                        s = t.to;
-                    }
-                }
-
-                return ArrayUtil.ToInt32Array(soFar);
-            }
-        }
+        // LUCENENET specific - De-nested RandomAcceptedStrings
 
         /// <summary>
-        /// return a random NFA/DFA for testing </summary>
+        /// Return a random NFA/DFA for testing. </summary>
         public static Automaton RandomAutomaton(Random random)
         {
             // get two random Automata from regexps
@@ -434,7 +264,7 @@ namespace Lucene.Net.Util.Automaton
          */
 
         /// <summary>
-        /// Simple, original brics implementation of Brzozowski minimize()
+        /// Simple, original brics implementation of Brzozowski Minimize()
         /// </summary>
         public static void MinimizeSimple(Automaton a)
         {
@@ -447,7 +277,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Simple, original brics implementation of determinize()
+        /// Simple, original brics implementation of Determinize()
         /// </summary>
         public static void DeterminizeSimple(Automaton a)
         {
@@ -461,7 +291,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Simple, original brics implementation of determinize()
+        /// Simple, original brics implementation of Determinize()
         /// Determinizes the given automaton using the given set of initial states.
         /// </summary>
         public static void DeterminizeSimple(Automaton a, ISet<State> initialset)
@@ -528,7 +358,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Returns true if the language of this automaton is finite.
-        /// <p>
+        /// <para/>
         /// WARNING: this method is slow, it will blow up if the automaton is large.
         /// this is only used to test the correctness of our faster implementation.
         /// </summary>
@@ -570,6 +400,176 @@ namespace Lucene.Net.Util.Automaton
             int numStates = a.GetNumberOfStates();
             a.ClearNumberedStates(); // force recomputation of cached numbered states
             Debug.Assert(numStates == a.GetNumberOfStates(), "automaton has " + (numStates - a.GetNumberOfStates()) + " detached states");
+        }
+    }
+
+    /// <summary>
+    /// Lets you retrieve random strings accepted
+    /// by an <see cref="Automaton"/>.
+    /// <para/>
+    /// Once created, call <see cref="GetRandomAcceptedString(Random)"/>
+    /// to get a new string (in UTF-32 codepoints).
+    /// </summary>
+    public class RandomAcceptedStrings
+    {
+        private readonly IDictionary<Transition, bool?> leadsToAccept;
+        private readonly Automaton a;
+
+        private class ArrivingTransition
+        {
+            internal readonly State from;
+            internal readonly Transition t;
+
+            public ArrivingTransition(State from, Transition t)
+            {
+                this.from = from;
+                this.t = t;
+            }
+        }
+
+        public RandomAcceptedStrings(Automaton a)
+        {
+            this.a = a;
+            if (a.IsSingleton)
+            {
+                leadsToAccept = null;
+                return;
+            }
+
+            // must use IdentityHashmap because two Transitions w/
+            // different start nodes can be considered the same
+            leadsToAccept = new IdentityHashMap<Transition, bool?>();
+            IDictionary<State, IList<ArrivingTransition>> allArriving = new Dictionary<State, IList<ArrivingTransition>>();
+
+            LinkedList<State> q = new LinkedList<State>();
+            HashSet<State> seen = new HashSet<State>();
+
+            // reverse map the transitions, so we can quickly look
+            // up all arriving transitions to a given state
+            foreach (State s in a.GetNumberedStates())
+            {
+                for (int i = 0; i < s.numTransitions; i++)
+                {
+                    Transition t = s.TransitionsArray[i];
+                    IList<ArrivingTransition> tl;
+                    allArriving.TryGetValue(t.to, out tl);
+                    if (tl == null)
+                    {
+                        tl = new List<ArrivingTransition>();
+                        allArriving[t.to] = tl;
+                    }
+                    tl.Add(new ArrivingTransition(s, t));
+                }
+                if (s.Accept)
+                {
+                    q.AddLast(s);
+                    seen.Add(s);
+                }
+            }
+
+            // Breadth-first search, from accept states,
+            // backwards:
+            while (q.Count > 0)
+            {
+                State s = q.First.Value;
+                q.Remove(s);
+                IList<ArrivingTransition> arriving;
+                allArriving.TryGetValue(s, out arriving);
+                if (arriving != null)
+                {
+                    foreach (ArrivingTransition at in arriving)
+                    {
+                        State from = at.from;
+                        if (!seen.Contains(from))
+                        {
+                            q.AddLast(from);
+                            seen.Add(from);
+                            leadsToAccept[at.t] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        public int[] GetRandomAcceptedString(Random r)
+        {
+            IList<int?> soFar = new List<int?>();
+            if (a.IsSingleton)
+            {
+                // accepts only one
+                var s = a.Singleton;
+
+                int charUpto = 0;
+                while (charUpto < s.Length)
+                {
+                    int cp = s.CodePointAt(charUpto);
+                    charUpto += Character.CharCount(cp);
+                    soFar.Add(cp);
+                }
+            }
+            else
+            {
+                var s = a.initial;
+
+                while (true)
+                {
+                    if (s.accept)
+                    {
+                        if (s.numTransitions == 0)
+                        {
+                            // stop now
+                            break;
+                        }
+                        else
+                        {
+                            if (r.NextBoolean())
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (s.numTransitions == 0)
+                    {
+                        throw new Exception("this automaton has dead states");
+                    }
+
+                    bool cheat = r.NextBoolean();
+
+                    Transition t;
+                    if (cheat)
+                    {
+                        // pick a transition that we know is the fastest
+                        // path to an accept state
+                        IList<Transition> toAccept = new List<Transition>();
+                        for (int i = 0; i < s.numTransitions; i++)
+                        {
+                            Transition t0 = s.TransitionsArray[i];
+                            if (leadsToAccept.ContainsKey(t0))
+                            {
+                                toAccept.Add(t0);
+                            }
+                        }
+                        if (toAccept.Count == 0)
+                        {
+                            // this is OK -- it means we jumped into a cycle
+                            t = s.TransitionsArray[r.Next(s.numTransitions)];
+                        }
+                        else
+                        {
+                            t = toAccept[r.Next(toAccept.Count)];
+                        }
+                    }
+                    else
+                    {
+                        t = s.TransitionsArray[r.Next(s.numTransitions)];
+                    }
+                    soFar.Add(AutomatonTestUtil.GetRandomCodePoint(r, t));
+                    s = t.to;
+                }
+            }
+
+            return ArrayUtil.ToInt32Array(soFar);
         }
     }
 }

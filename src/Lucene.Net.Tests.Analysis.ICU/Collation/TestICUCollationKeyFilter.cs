@@ -44,13 +44,13 @@ namespace Lucene.Net.Collation
 
             this.analyzer = new TestAnalyzer(collator);
             this.firstRangeBeginning = new BytesRef(EncodeCollationKey
-                (collator.GetCollationKey(FirstRangeBeginningOriginal).ToByteArray()));
+                (collator.GetCollationKey(m_firstRangeBeginningOriginal).ToByteArray()));
             this.firstRangeEnd = new BytesRef(EncodeCollationKey
-                (collator.GetCollationKey(FirstRangeEndOriginal).ToByteArray()));
+                (collator.GetCollationKey(m_firstRangeEndOriginal).ToByteArray()));
             this.secondRangeBeginning = new BytesRef(EncodeCollationKey
-                (collator.GetCollationKey(SecondRangeBeginningOriginal).ToByteArray()));
+                (collator.GetCollationKey(m_secondRangeBeginningOriginal).ToByteArray()));
             this.secondRangeEnd = new BytesRef(EncodeCollationKey
-                (collator.GetCollationKey(SecondRangeEndOriginal).ToByteArray()));
+                (collator.GetCollationKey(m_secondRangeEndOriginal).ToByteArray()));
         }
 
         public sealed class TestAnalyzer : Analyzer

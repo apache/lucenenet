@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Lucene40
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
     /// <summary>
-    /// Read-write version of <seealso cref="Lucene40NormsFormat"/> for testing </summary>
+    /// Read-write version of <see cref="Lucene40NormsFormat"/> for testing. </summary>
 #pragma warning disable 612, 618
     public class Lucene40RWNormsFormat : Lucene40NormsFormat
     {

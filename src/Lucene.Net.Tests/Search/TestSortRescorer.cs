@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, Dir, Similarity, TimeZone);
 
             Document doc = new Document();
             doc.Add(NewStringField("id", "1", Field.Store.YES));
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
             doc.Add(new NumericDocValuesField("popularity", 2));
             iw.AddDocument(doc);
 
-            Reader = iw.Reader;
+            Reader = iw.GetReader();
             Searcher = new IndexSearcher(Reader);
             iw.Dispose();
         }
@@ -122,31 +122,31 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             int numDocs = AtLeast(1000);
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             int[] idToNum = new int[numDocs];
-            int maxValue = TestUtil.NextInt(Random(), 10, 1000000);
+            int maxValue = TestUtil.NextInt32(Random, 10, 1000000);
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
                 doc.Add(NewStringField("id", "" + i, Field.Store.YES));
-                int numTokens = TestUtil.NextInt(Random(), 1, 10);
+                int numTokens = TestUtil.NextInt32(Random, 1, 10);
                 StringBuilder b = new StringBuilder();
                 for (int j = 0; j < numTokens; j++)
                 {
                     b.Append("a ");
                 }
                 doc.Add(NewTextField("field", b.ToString(), Field.Store.NO));
-                idToNum[i] = Random().Next(maxValue);
+                idToNum[i] = Random.Next(maxValue);
                 doc.Add(new NumericDocValuesField("num", idToNum[i]));
                 w.AddDocument(doc);
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             IndexSearcher s = NewSearcher(r);
-            int numHits = TestUtil.NextInt(Random(), 1, numDocs);
-            bool reverse = Random().NextBoolean();
+            int numHits = TestUtil.NextInt32(Random, 1, numDocs);
+            bool reverse = Random.NextBoolean();
 
             TopDocs hits = s.Search(new TermQuery(new Term("field", "a")), numHits);
 

@@ -61,21 +61,21 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            FieldName = Random().NextBoolean() ? "field" : ""; // sometimes use an empty string as field name
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
+            FieldName = Random.NextBoolean() ? "field" : ""; // sometimes use an empty string as field name
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
             List<string> terms = new List<string>();
             int num = AtLeast(200);
             for (int i = 0; i < num; i++)
             {
                 Document doc = new Document();
                 doc.Add(NewStringField("id", Convert.ToString(i), Field.Store.NO));
-                int numTerms = Random().Next(4);
+                int numTerms = Random.Next(4);
                 for (int j = 0; j < numTerms; j++)
                 {
-                    string s = TestUtil.RandomUnicodeString(Random());
+                    string s = TestUtil.RandomUnicodeString(Random);
                     doc.Add(NewStringField(FieldName, s, Field.Store.NO));
                     // if the default codec doesn't support sortedset, we will uninvert at search time
-                    if (DefaultCodecSupportsSortedSet())
+                    if (DefaultCodecSupportsSortedSet)
                     {
                         doc.Add(new SortedSetDocValuesField(FieldName, new BytesRef(s)));
                     }
@@ -95,13 +95,13 @@ namespace Lucene.Net.Search
                 }
             }
 
-            int numDeletions = Random().Next(num / 10);
+            int numDeletions = Random.Next(num / 10);
             for (int i = 0; i < numDeletions; i++)
             {
-                writer.DeleteDocuments(new Term("id", Convert.ToString(Random().Next(num))));
+                writer.DeleteDocuments(new Term("id", Convert.ToString(Random.Next(num))));
             }
 
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher1 = NewSearcher(Reader);
             Searcher2 = NewSearcher(Reader);
             writer.Dispose();
@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
             int num = AtLeast(1000);
             for (int i = 0; i < num; i++)
             {
-                string reg = AutomatonTestUtil.RandomRegexp(Random());
+                string reg = AutomatonTestUtil.RandomRegexp(Random);
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: regexp=" + reg);

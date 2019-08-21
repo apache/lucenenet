@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
 
             long start = Environment.TickCount;
-            AddDocs(Random(), dir, ndocs, "foo", "val", maxTF, percentDocs);
+            AddDocs(LuceneTestCase.Random, dir, ndocs, "foo", "val", maxTF, percentDocs);
             long end = Environment.TickCount;
             if (VERBOSE)
             {
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
 
             int ret = 0;
             DocsEnum tdocs = null;
-            Random random = new Random(Random().Next());
+            Random random = new Random(Random.Next());
             for (int i = 0; i < iter; i++)
             {
                 tenum.SeekCeil(new BytesRef("val"));

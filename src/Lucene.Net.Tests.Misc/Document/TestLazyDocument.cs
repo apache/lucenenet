@@ -63,7 +63,7 @@ namespace Lucene.Net.Documents
         {
             base.BeforeClass();
 
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriter writer = new IndexWriter
               (dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             try
@@ -93,7 +93,7 @@ namespace Lucene.Net.Documents
         [Test]
         public void TestLazy()
         {
-            int id = Random().nextInt(NUM_DOCS);
+            int id = Random.nextInt(NUM_DOCS);
             IndexReader reader = DirectoryReader.Open(dir);
             try
             {
@@ -149,11 +149,11 @@ namespace Lucene.Net.Documents
                 }
 
                 // pick a single field name to load a single value
-                string fieldName = FIELDS[Random().nextInt(FIELDS.Length)];
+                string fieldName = FIELDS[Random.nextInt(FIELDS.Length)];
                 IIndexableField[] fieldValues = d.GetFields(fieldName);
                 assertEquals("#vals in field: " + fieldName,
                              NUM_VALUES, fieldValues.Length);
-                int valNum = Random().nextInt(fieldValues.Length);
+                int valNum = Random.nextInt(fieldValues.Length);
                 assertEquals(id + "_" + fieldName + "_" + valNum,
                              fieldValues[valNum].GetStringValue());
 

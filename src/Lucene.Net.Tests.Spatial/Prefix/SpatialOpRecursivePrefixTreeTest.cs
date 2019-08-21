@@ -46,7 +46,7 @@ namespace Lucene.Net.Spatial.Prefix
 
         public virtual void SetupGrid(int maxLevels)
         {
-            if (Random().nextBoolean())
+            if (Random.nextBoolean())
                 SetupQuadGrid(maxLevels);
             else
                 SetupGeohashGrid(maxLevels);
@@ -157,7 +157,7 @@ namespace Lucene.Net.Spatial.Prefix
             adoc("0", ctx.MakeRectangle(192, 204, -128, 128));
             Commit();
 
-            ((RecursivePrefixTreeStrategy)strategy).PrefixGridScanLevel = (Random().nextInt(2 + 1));
+            ((RecursivePrefixTreeStrategy)strategy).PrefixGridScanLevel = (Random.nextInt(2 + 1));
 
             //query does NOT contain it; both indexed cells are leaves to the query, and
             // when expanded to the full grid cells, the top one's top row is disjoint
@@ -227,7 +227,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 String id = "" + i;
                 IShape indexedShape;
-                int R = Random().nextInt(12);
+                int R = Random.nextInt(12);
                 if (R == 0)
                 {//1 in 12
                     indexedShape = null;
@@ -252,7 +252,7 @@ namespace Lucene.Net.Spatial.Prefix
 
                 adoc(id, indexedShape);
 
-                if (Random().nextInt(10) == 0)
+                if (Random.nextInt(10) == 0)
                     Commit();//intermediate commit, produces extra segments
 
             }
@@ -261,7 +261,7 @@ namespace Lucene.Net.Spatial.Prefix
             while (idIter.MoveNext())
             {
                 String id = idIter.Current;
-                if (Random().nextInt(10) == 0)
+                if (Random.nextInt(10) == 0)
                 {
                     DeleteDoc(id);
                     //idIter.Remove();

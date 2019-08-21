@@ -99,7 +99,7 @@ namespace Lucene.Net.Util
         {
             SetOnce<Integer> set = new SetOnce<Integer>();
             SetOnceThread[] threads = new SetOnceThread[10];
-            Random random = Random();
+            Random random = Random;
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new SetOnceThread(random);

@@ -1,5 +1,5 @@
 using System;
-using System.Diagnostics;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -14,28 +14,29 @@ namespace Lucene.Net.Codecs.Lucene40
     using IndexOptions = Lucene.Net.Index.IndexOptions;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
 
     /// <summary>
     /// Lucene 4.0 FieldInfos writer.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso> cref= Lucene40FieldInfosFormat
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="Lucene40FieldInfosFormat"/>
     [Obsolete]
     public class Lucene40FieldInfosWriter : FieldInfosWriter
     {
@@ -92,8 +93,8 @@ namespace Lucene.Net.Codecs.Lucene40
                     output.WriteByte((byte)bits);
 
                     // pack the DV types in one byte
-                    sbyte dv = DocValuesByte(fi.DocValuesType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_DV_TYPE_KEY));
-                    sbyte nrm = DocValuesByte(fi.NormType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_NORM_TYPE_KEY));
+                    byte dv = DocValuesByte(fi.DocValuesType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_DV_TYPE_KEY));
+                    byte nrm = DocValuesByte(fi.NormType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_NORM_TYPE_KEY));
                     Debug.Assert((dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
                     var val = (byte)(0xff & ((nrm << 4) | (byte)dv));
                     output.WriteByte(val);
@@ -116,7 +117,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// 4.0-style docvalues byte </summary>
-        public virtual sbyte DocValuesByte(DocValuesType type, string legacyTypeAtt)
+        public virtual byte DocValuesByte(DocValuesType type, string legacyTypeAtt)
         {
             if (type == DocValuesType.NONE)
             {
@@ -127,7 +128,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 Debug.Assert(legacyTypeAtt != null);
                 //return (sbyte)LegacyDocValuesType.ordinalLookup[legacyTypeAtt];
-                return (sbyte)legacyTypeAtt.ToLegacyDocValuesType();
+                return (byte)legacyTypeAtt.ToLegacyDocValuesType();
             }
         }
     }

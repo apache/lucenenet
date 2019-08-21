@@ -49,12 +49,12 @@ namespace Lucene.Net.Index
         public virtual void TestIsCurrentWithThreads()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             IndexWriter writer = new IndexWriter(dir, conf);
             ReaderHolder holder = new ReaderHolder();
             ReaderThread[] threads = new ReaderThread[AtLeast(3)];
             CountdownEvent latch = new CountdownEvent(1);
-            WriterThread writerThread = new WriterThread(holder, writer, AtLeast(500), Random(), latch);
+            WriterThread writerThread = new WriterThread(holder, writer, AtLeast(500), Random, latch);
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ReaderThread(holder, latch);
@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
             public override void Run()
             {
                 DirectoryReader currentReader = null;
-                Random random = LuceneTestCase.Random();
+                Random random = LuceneTestCase.Random;
                 try
                 {
                     Document doc = new Document();

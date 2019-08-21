@@ -72,10 +72,10 @@ namespace Lucene.Net.Analysis.Pattern
         public virtual void TestRandomStrings()
         {
             Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
 
             Analyzer b = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckRandomData(Random(), b, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, b, 1000 * RANDOM_MULTIPLIER);
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer

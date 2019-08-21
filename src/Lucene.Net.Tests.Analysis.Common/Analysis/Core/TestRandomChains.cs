@@ -17,6 +17,7 @@ using Lucene.Net.Analysis.Wikipedia;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Tartarus.Snowball;
+using Lucene.Net.TestFramework.Analysis;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
@@ -97,14 +98,8 @@ namespace Lucene.Net.Analysis.Core
                     // offsets offenders?
                     // doesn't actual reset itself:
                     typeof(CachingTokenFilter),
-
-#if NETSTANDARD
-#if FEATURE_BREAKITERATOR
-                    // LUCENENET TODO: icu-dotnet is throwing AccessViolationException, bringing down the test runner
-                    typeof(Th.ThaiTokenizer),
-#endif
-#endif
-
+                    // Not broken, simulates brokenness:
+                    typeof(CrankyTokenFilter),
                     // Not broken: we forcefully add this, so we shouldn't
                     // also randomly pick it:
                     typeof(ValidatingTokenFilter)))
@@ -136,8 +131,6 @@ namespace Lucene.Net.Analysis.Core
                     typeof(CommonGramsQueryFilter),
                     // TODO: probably doesnt handle graph inputs, too afraid to try
                     typeof(WordDelimiterFilter)))
-
-
                 {
                     foreach (ConstructorInfo ctor in c.GetConstructors())
                     {
@@ -330,7 +323,7 @@ namespace Lucene.Net.Analysis.Core
                 return (CJKScript)random.Next(0, max + 1);
             }) },
             { typeof(CultureInfo), new AnonymousProducer((random) => {
-                return LuceneTestCase.RandomLocale(random);
+                return LuceneTestCase.RandomCulture(random);
             }) },
         };
 
@@ -341,7 +334,7 @@ namespace Lucene.Net.Analysis.Core
                 // TODO: could cause huge ram usage to use full int range for some filters
                 // (e.g. allocate enormous arrays)
                 // return Integer.valueOf(random.nextInt());
-                return TestUtil.NextInt(random, -100, 100);
+                return TestUtil.NextInt32(random, -100, 100);
             }
         }
 
@@ -1154,7 +1147,7 @@ namespace Lucene.Net.Analysis.Core
         public void TestRandomChains_()
         {
             int numIterations = AtLeast(20);
-            Random random = Random();
+            Random random = Random;
             for (int i = 0; i < numIterations; i++)
             {
                 MockRandomAnalyzer a = new MockRandomAnalyzer(random.Next());
@@ -1180,7 +1173,7 @@ namespace Lucene.Net.Analysis.Core
         public void TestRandomChainsWithLargeStrings()
         {
             int numIterations = AtLeast(20);
-            Random random = Random();
+            Random random = Random;
             for (int i = 0; i < numIterations; i++)
             {
                 MockRandomAnalyzer a = new MockRandomAnalyzer(random.Next());

@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
         {
             string fieldName = "field1";
             Directory rd = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), rd, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, rd, Similarity, TimeZone);
             for (int i = 0; i < 100; i++)
             {
                 Document doc = new Document();
@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
                 doc.Add(NewStringField(fieldName, "" + term, Field.Store.YES));
                 w.AddDocument(doc);
             }
-            IndexReader reader = w.Reader;
+            IndexReader reader = w.GetReader();
             w.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);

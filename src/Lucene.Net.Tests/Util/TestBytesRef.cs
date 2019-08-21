@@ -53,7 +53,7 @@ namespace Lucene.Net.Util
         {
             for (int i = 0; i < 100; i++)
             {
-                string s = TestUtil.RandomUnicodeString(Random());
+                string s = TestUtil.RandomUnicodeString(Random);
                 string s2 = (new BytesRef(s)).Utf8ToString();
                 Assert.AreEqual(s, s2);
             }
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
         {
             for (int i = 0; i < 100; i++)
             {
-                ICharSequence s = new StringCharSequenceWrapper(TestUtil.RandomUnicodeString(Random()));
+                ICharSequence s = new StringCharSequenceWrapper(TestUtil.RandomUnicodeString(Random));
                 string s2 = (new BytesRef(s)).Utf8ToString();
                 Assert.AreEqual(s, s2);
             }

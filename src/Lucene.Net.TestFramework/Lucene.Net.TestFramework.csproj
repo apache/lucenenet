@@ -36,6 +36,7 @@
       remove all of the warnings this line produces. -->
     <!--<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>-->
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
+    <RootNamespace>Lucene.Net</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

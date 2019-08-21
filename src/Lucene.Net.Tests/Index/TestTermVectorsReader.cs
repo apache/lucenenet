@@ -245,7 +245,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestReader()
         {
-            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
+            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random));
             for (int j = 0; j < 5; j++)
             {
                 Terms vector = reader.Get(j).GetTerms(TestFields[0]);
@@ -268,7 +268,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestDocsEnum()
         {
-            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
+            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random));
             for (int j = 0; j < 5; j++)
             {
                 Terms vector = reader.Get(j).GetTerms(TestFields[0]);
@@ -284,7 +284,7 @@ namespace Lucene.Net.Index
                     //System.out.println("Term: " + term);
                     Assert.AreEqual(TestTerms[i], term);
 
-                    docsEnum = TestUtil.Docs(Random(), termsEnum, null, docsEnum, DocsFlags.NONE);
+                    docsEnum = TestUtil.Docs(Random, termsEnum, null, docsEnum, DocsFlags.NONE);
                     Assert.IsNotNull(docsEnum);
                     int doc = docsEnum.DocID;
                     Assert.AreEqual(-1, doc);
@@ -299,7 +299,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestPositionReader()
         {
-            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
+            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random));
             //BytesRef[] terms; // LUCENENET NOTE: Not used in Lucene
             Terms vector = reader.Get(0).GetTerms(TestFields[0]);
             Assert.IsNotNull(vector);
@@ -362,7 +362,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestOffsetReader()
         {
-            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
+            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random));
             Terms vector = reader.Get(0).GetTerms(TestFields[0]);
             Assert.IsNotNull(vector);
             TermsEnum termsEnum = vector.GetIterator(null);
@@ -405,7 +405,7 @@ namespace Lucene.Net.Index
         public virtual void TestIllegalIndexableField()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
             ft.StoreTermVectors = true;
             ft.StoreTermVectorPayloads = true;

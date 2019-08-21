@@ -49,21 +49,21 @@ namespace Lucene.Net.Index
             MockDirectoryWrapper dir = NewMockDirectory();
             TieredMergePolicy tmp = new TieredMergePolicy();
             tmp.MaxMergeAtOnce = 2;
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2).SetMergePolicy(tmp));
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(tmp));
             const int numDocs = 20;
             for (int docs = 0; docs < numDocs; docs++)
             {
                 StringBuilder sb = new StringBuilder();
                 for (int terms = 0; terms < 100; terms++)
                 {
-                    sb.Append(TestUtil.RandomRealisticUnicodeString(Random()));
+                    sb.Append(TestUtil.RandomRealisticUnicodeString(Random));
                     sb.Append(' ');
                 }
                 Document doc = new Document();
                 doc.Add(new TextField("field", sb.ToString(), Field.Store.NO));
                 w.AddDocument(doc);
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             int cloneCount = dir.InputCloneCount;

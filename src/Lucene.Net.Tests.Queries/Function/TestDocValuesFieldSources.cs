@@ -41,7 +41,7 @@ namespace Lucene.Net.Tests.Queries.Function
         private void DoTest(DocValuesType type)
         {
             Directory d = NewDirectory();
-            IndexWriterConfig iwConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             int nDocs = AtLeast(50);
             Field id = new NumericDocValuesField("id", 0);
             Field f;
@@ -65,7 +65,7 @@ namespace Lucene.Net.Tests.Queries.Function
 
             object[] vals = new object[nDocs];
 
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), d, iwConfig);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, d, iwConfig);
             for (int i = 0; i < nDocs; ++i)
             {
                 id.SetInt64Value(i);
@@ -75,18 +75,18 @@ namespace Lucene.Net.Tests.Queries.Function
                     case DocValuesType.BINARY:
                         do
                         {
-                            vals[i] = TestUtil.RandomSimpleString(Random(), 20);
+                            vals[i] = TestUtil.RandomSimpleString(Random, 20);
                         } while (((string)vals[i]).Length == 0);
                         f.SetBytesValue(new BytesRef((string)vals[i]));
                         break;
                     case DocValuesType.NUMERIC:
-                        int bitsPerValue = Random().NextIntBetween(1, 31); // keep it an int
-                        vals[i] = (long)Random().Next((int)PackedInt32s.MaxValue(bitsPerValue));
+                        int bitsPerValue = RandomInts.RandomInt32Between(Random, 1, 31); // keep it an int
+                        vals[i] = (long)Random.Next((int)PackedInt32s.MaxValue(bitsPerValue));
                         f.SetInt64Value((long) vals[i]);
                         break;
                 }
                 iw.AddDocument(document);
-                if (Random().NextBoolean() && i % 10 == 9)
+                if (Random.NextBoolean() && i % 10 == 9)
                 {
                     iw.Commit();
                 }

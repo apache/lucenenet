@@ -43,7 +43,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         public override void SetUp()
         {
             base.SetUp();
-            db1 = new SingleFieldTestDb(Random(), docs1, fieldName);
+            db1 = new SingleFieldTestDb(Random, docs1, fieldName);
         }
 
         private SingleFieldTestDb db1;

@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Query
         {
             base.SetUp();
             dir = new RAMDirectory();
-            appAnalyzer = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+            appAnalyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, appAnalyzer));
             int numDocs = 200;
             for (int i = 0; i < numDocs; i++)
@@ -141,7 +141,7 @@ namespace Lucene.Net.Analysis.Query
         [Test]
         public virtual void TestTokenStream()
         {
-            QueryAutoStopWordAnalyzer a = new QueryAutoStopWordAnalyzer(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false), reader, 10);
+            QueryAutoStopWordAnalyzer a = new QueryAutoStopWordAnalyzer(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false), reader, 10);
             TokenStream ts = a.GetTokenStream("repetitiveField", "this boring");
             AssertTokenStreamContents(ts, new string[] { "this" });
         }

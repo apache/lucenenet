@@ -24,21 +24,23 @@ namespace Lucene.Net.Analysis
      */
 
     /// <summary>
-    /// Utility class for doing vocabulary-based stemming tests </summary>
-    public class VocabularyAssert
+    /// Utility class for doing vocabulary-based stemming tests. </summary>
+    public static class VocabularyAssert // LUCENENET specific - made static because all members are static
     {
         /// <summary>
         /// Run a vocabulary test against two data files. </summary>
         public static void AssertVocabulary(Analyzer a, Stream voc, Stream @out)
         {
-            TextReader vocReader = (TextReader)(new StreamReader(voc, Encoding.UTF8));
-            TextReader outputReader = (TextReader)(new StreamReader(@out, Encoding.UTF8));
-            string inputWord = null;
-            while ((inputWord = vocReader.ReadLine()) != null)
+            using (TextReader vocReader = new StreamReader(voc, Encoding.UTF8))
+            using (TextReader outputReader = new StreamReader(@out, Encoding.UTF8))
             {
-                string expectedWord = outputReader.ReadLine();
-                Assert.IsNotNull(expectedWord);
-                BaseTokenStreamTestCase.CheckOneTerm(a, inputWord, expectedWord);
+                string inputWord = null;
+                while ((inputWord = vocReader.ReadLine()) != null)
+                {
+                    string expectedWord = outputReader.ReadLine();
+                    Assert.IsNotNull(expectedWord);
+                    BaseTokenStreamTestCase.CheckOneTerm(a, inputWord, expectedWord);
+                }
             }
         }
 
@@ -46,45 +48,41 @@ namespace Lucene.Net.Analysis
         /// Run a vocabulary test against one file: tab separated. </summary>
         public static void AssertVocabulary(Analyzer a, Stream vocOut)
         {
-            TextReader vocReader = (TextReader)(new StreamReader(vocOut, Encoding.UTF8));
-            string inputLine = null;
-            while ((inputLine = vocReader.ReadLine()) != null)
+            using (TextReader vocReader = new StreamReader(vocOut, Encoding.UTF8))
             {
-                if (inputLine.StartsWith("#", System.StringComparison.Ordinal) || inputLine.Trim().Length == 0)
+                string inputLine = null;
+                while ((inputLine = vocReader.ReadLine()) != null)
                 {
-                    continue; // comment
+                    if (inputLine.StartsWith("#", System.StringComparison.Ordinal) || inputLine.Trim().Length == 0)
+                    {
+                        continue; // comment
+                    }
+                    string[] words = inputLine.Split('\t').TrimEnd();
+                    BaseTokenStreamTestCase.CheckOneTerm(a, words[0], words[1]);
                 }
-                string[] words = inputLine.Split('\t').TrimEnd();
-                BaseTokenStreamTestCase.CheckOneTerm(a, words[0], words[1]);
             }
         }
 
         /// <summary>
-        /// Run a vocabulary test against two data files inside a zip file </summary>
+        /// Run a vocabulary test against two data files inside a zip file. </summary>
         public static void AssertVocabulary(Analyzer a, Stream zipFile, string voc, string @out)
         {
             using (ZipArchive zip = new ZipArchive(zipFile, ZipArchiveMode.Read, false, Encoding.UTF8))
+            using (Stream v = zip.GetEntry(voc).Open())
+            using (Stream o = zip.GetEntry(@out).Open())
             {
-                using (Stream v = zip.GetEntry(voc).Open())
-                {
-                    using (Stream o = zip.GetEntry(@out).Open())
-                    {
-                        AssertVocabulary(a, v, o);
-                    }
-                }
+                AssertVocabulary(a, v, o);
             }
         }
 
         /// <summary>
-        /// Run a vocabulary test against a tab-separated data file inside a zip file </summary>
+        /// Run a vocabulary test against a tab-separated data file inside a zip file. </summary>
         public static void AssertVocabulary(Analyzer a, Stream zipFile, string vocOut)
         {
             using (ZipArchive zip = new ZipArchive(zipFile, ZipArchiveMode.Read, false, Encoding.UTF8))
+            using (Stream vo = zip.GetEntry(vocOut).Open())
             {
-                using (Stream vo = zip.GetEntry(vocOut).Open())
-                {
-                    AssertVocabulary(a, vo);
-                }
+                AssertVocabulary(a, vo);
             }
         }
     }

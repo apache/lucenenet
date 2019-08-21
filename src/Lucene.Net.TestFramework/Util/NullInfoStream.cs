@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Util
 {
@@ -20,8 +20,9 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Prints nothing. Just to make sure tests pass w/ and without enabled InfoStream
+    /// Prints nothing. Just to make sure tests pass w/ and without enabled <see cref="InfoStream"/>
     /// without actually making noise.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class NullInfoStream : InfoStream

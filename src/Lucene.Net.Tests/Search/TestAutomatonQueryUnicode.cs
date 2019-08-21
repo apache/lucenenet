@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, Similarity, TimeZone);
             Document doc = new Document();
             Field titleField = NewTextField("title", "some title", Field.Store.NO);
             Field field = NewTextField(FN, "", Field.Store.NO);
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
             writer.AddDocument(doc);
             field.SetStringValue("\uFFFD\uFFFD");
             writer.AddDocument(doc);
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             Searcher = NewSearcher(Reader);
             writer.Dispose();
         }

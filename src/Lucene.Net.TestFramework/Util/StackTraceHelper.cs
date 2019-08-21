@@ -20,16 +20,21 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 #if !FEATURE_STACKTRACE
 using System.Diagnostics;
+#else
+using System.Collections.Generic;
+using System.Linq;
 #endif
 
 namespace Lucene.Net.Util
 {
+    /// <summary>
+    /// LUCENENET specific class to normalize stack trace behavior between different .NET Framework and .NET Standard 1.x,
+    /// which did not support the StackTrace class.
+    /// </summary>
     public static class StackTraceHelper
     {
         private static readonly Regex METHOD_NAME_REGEX = new Regex(@"at\s+(?<fullyQualifiedMethod>.*\.(?<method>[\w`]+))\(");
@@ -38,8 +43,9 @@ namespace Lucene.Net.Util
         /// Matches the StackTrace for a method name.
         /// <para/>
         /// IMPORTANT: To make the tests pass in release mode, the method(s) named here 
-        /// must be decorated with [MethodImpl(MethodImplOptions.NoInlining)].
+        /// must be decorated with <c>[MethodImpl(MethodImplOptions.NoInlining)]</c>.
         /// </summary>
+        // LUCENENET TODO: Check whether no inlining is required in .NET Framework/.NET Standard 2.0 and update documentation/make it conditional throughout the project
         public static bool DoesStackTraceContainMethod(string methodName)
         {
 #if FEATURE_STACKTRACE
@@ -63,9 +69,10 @@ namespace Lucene.Net.Util
         /// Matches the StackTrace for a particular class (not fully-qualified) and method name.
         /// <para/>
         /// IMPORTANT: To make the tests pass in release mode, the method(s) named here 
-        /// must be decorated with [MethodImpl(MethodImplOptions.NoInlining)].
+        /// must be decorated with <c>[MethodImpl(MethodImplOptions.NoInlining)]</c>.
         /// </summary>
-        public static bool DoesStackTraceContainMethod(string className, string methodName)
+        // LUCENENET TODO: Check whether no inlining is required in .NET Framework/.NET Standard 2.0 and update documentation/make it conditional throughout the project
+        public static bool DoesStackTraceContainMethod(string className, string methodName) 
         {
 #if FEATURE_STACKTRACE
             IEnumerable<string> allMethods = GetStackTrace(true);

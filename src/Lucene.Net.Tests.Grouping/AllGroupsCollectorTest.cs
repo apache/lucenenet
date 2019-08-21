@@ -44,11 +44,11 @@ namespace Lucene.Net.Search.Grouping
 
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-                Random(),
+                Random,
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
-                    new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
-            bool canUseIDV = !"Lucene3x".Equals(w.w.Config.Codec.Name, StringComparison.Ordinal);
+                    new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+            bool canUseIDV = !"Lucene3x".Equals(w.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
 
             // 0
             Document doc = new Document();
@@ -99,7 +99,7 @@ namespace Lucene.Net.Search.Grouping
             doc.Add(new Field("id", "6", customType));
             w.AddDocument(doc);
 
-            IndexSearcher indexSearcher = NewSearcher(w.Reader);
+            IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
             IAbstractAllGroupsCollector<object> allGroupsCollector = CreateRandomCollector(groupField, canUseIDV);
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Grouping
         private IAbstractAllGroupsCollector<object> CreateRandomCollector(string groupField, bool canUseIDV)
         {
             IAbstractAllGroupsCollector<object> selected;
-            if (Random().nextBoolean())
+            if (Random.nextBoolean())
             {
                 selected = new TermAllGroupsCollector(groupField);
             }

@@ -53,15 +53,15 @@ namespace Lucene.Net.Search
         public override void SetUp()
         {
             base.SetUp();
-            Analyzer = new MockAnalyzer(Random());
+            Analyzer = new MockAnalyzer(Random);
             Dir = NewDirectory();
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, Analyzer);
             config.SetMergePolicy(NewLogMergePolicy()); // we will use docids to validate
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, config);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, config);
             writer.AddDocument(Doc("lucene", "lucene is a very popular search engine library"));
             writer.AddDocument(Doc("solr", "solr is a very popular search server and is using lucene"));
             writer.AddDocument(Doc("nutch", "nutch is an internet search engine with web crawler and is using lucene and hadoop"));
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
             Searcher = NewSearcher(Reader);
         }

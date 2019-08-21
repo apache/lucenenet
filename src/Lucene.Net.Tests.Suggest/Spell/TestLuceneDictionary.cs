@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.Spell
         {
             base.SetUp();
             store = NewDirectory();
-            IndexWriter writer = new IndexWriter(store, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            IndexWriter writer = new IndexWriter(store, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
 
             Document doc;
 

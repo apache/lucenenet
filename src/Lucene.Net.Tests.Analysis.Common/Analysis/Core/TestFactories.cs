@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Core
 
                 // beast it just a little, it shouldnt throw exceptions:
                 // (it should have thrown them in initialize)
-                CheckRandomData(Random(), new FactoryAnalyzer(factory, null, null), 100, 20, false, false);
+                CheckRandomData(Random, new FactoryAnalyzer(factory, null, null), 100, 20, false, false);
             }
         }
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Core
 
                 // beast it just a little, it shouldnt throw exceptions:
                 // (it should have thrown them in initialize)
-                CheckRandomData(Random(), new FactoryAnalyzer(assertingTokenizer, factory, null), 100, 20, false, false);
+                CheckRandomData(Random, new FactoryAnalyzer(assertingTokenizer, factory, null), 100, 20, false, false);
             }
         }
 
@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis.Core
 
                 // beast it just a little, it shouldnt throw exceptions:
                 // (it should have thrown them in initialize)
-                CheckRandomData(Random(), new FactoryAnalyzer(assertingTokenizer, null, factory), 100, 20, false, false);
+                CheckRandomData(Random, new FactoryAnalyzer(assertingTokenizer, null, factory), 100, 20, false, false);
             }
         }
 

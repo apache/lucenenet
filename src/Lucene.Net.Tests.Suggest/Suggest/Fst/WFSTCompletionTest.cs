@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 new Input("barbara", 6)
             };
 
-            Random random = new Random(Random().Next());
+            Random random = new Random(Random.Next());
             WFSTCompletionLookup suggester = new WFSTCompletionLookup();
             suggester.Build(new InputArrayIterator(keys));
 
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 {
                     // TODO: would be nice to fix this slowCompletor/comparer to
                     // use full range, but we might lose some coverage too...
-                    s = TestUtil.RandomSimpleString(Random());
+                    s = TestUtil.RandomSimpleString(LuceneTestCase.Random);
                     if (!slowCompletor.ContainsKey(s))
                     {
                         break;
@@ -162,7 +162,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                     allPrefixes.add(s.Substring(0, j));
                 }
                 // we can probably do Integer.MAX_VALUE here, but why worry.
-                int weight = Random().nextInt(1 << 24);
+                int weight = LuceneTestCase.Random.nextInt(1 << 24);
                 slowCompletor.Put(s, (long)weight);
                 keys[i] = new Input(s, weight);
             }
@@ -171,10 +171,10 @@ namespace Lucene.Net.Search.Suggest.Fst
             suggester.Build(new InputArrayIterator(keys));
 
             assertEquals(numWords, suggester.Count);
-            Random random = new Random(Random().Next());
+            Random random = new Random(Random.Next());
             foreach (String prefix in allPrefixes)
             {
-                int topN = TestUtil.NextInt(random, 1, 10);
+                int topN = TestUtil.NextInt32(random, 1, 10);
                 IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence(prefix, random).ToString(), false, topN);
 
                 // 2. go thru whole treemap (slowCompletor) and check its actually the best suggestion

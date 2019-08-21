@@ -41,17 +41,17 @@ namespace Lucene.Net.Index
         public virtual void TestSimple()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
             int numDocs = AtLeast(100);
             for (int i = 0; i < numDocs; i++)
             {
                 iw.AddDocument(Doc());
             }
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             VerifyCount(ir);
             ir.Dispose();
             iw.ForceMerge(1);
-            ir = iw.Reader;
+            ir = iw.GetReader();
             VerifyCount(ir);
             ir.Dispose();
             iw.Dispose();
@@ -61,10 +61,10 @@ namespace Lucene.Net.Index
         private IEnumerable<IIndexableField> Doc()
         {
             Document doc = new Document();
-            int numFields = TestUtil.NextInt(Random(), 1, 10);
+            int numFields = TestUtil.NextInt32(Random, 1, 10);
             for (int i = 0; i < numFields; i++)
             {
-                doc.Add(NewStringField("" + TestUtil.NextInt(Random(), 'a', 'z'), "" + TestUtil.NextInt(Random(), 'a', 'z'), Field.Store.NO));
+                doc.Add(NewStringField("" + TestUtil.NextInt32(Random, 'a', 'z'), "" + TestUtil.NextInt32(Random, 'a', 'z'), Field.Store.NO));
             }
             return doc;
         }
@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
                 TermsEnum te = terms.GetIterator(null);
                 while (te.Next() != null)
                 {
-                    DocsEnum de = TestUtil.Docs(Random(), te, null, null, DocsFlags.NONE);
+                    DocsEnum de = TestUtil.Docs(Random, te, null, null, DocsFlags.NONE);
                     while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         visited.Set(de.DocID);

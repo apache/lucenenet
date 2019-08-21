@@ -156,7 +156,7 @@ namespace Lucene.Net.Analysis.Path
         public virtual void TestRandomStrings()
         {
             Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis.Path
         [Test]
         public virtual void TestRandomHugeStrings()
         {
-            Random random = Random();
+            Random random = Random;
             Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
             CheckRandomData(random, a, 100 * RANDOM_MULTIPLIER, 1027);
         }

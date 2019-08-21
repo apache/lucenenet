@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            Writer = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
+            Writer = new RandomIndexWriter(Random, Dir, Similarity, TimeZone);
             int numDocs = AtLeast(100);
             for (int i = 0; i < numDocs; i++)
             {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
         public virtual void TestEarlyTermination_Mem()
         {
             int iters = AtLeast(5);
-            IndexReader reader = Writer.Reader;
+            IndexReader reader = Writer.GetReader();
 
             for (int i = 0; i < iters; ++i)
             {
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
             public CollectorAnonymousInnerClassHelper(TestEarlyTermination outerInstance)
             {
                 this.OuterInstance = outerInstance;
-                outOfOrder = Random().NextBoolean();
+                outOfOrder = Random.NextBoolean();
                 collectionTerminated = true;
             }
 
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
 
             public virtual void SetNextReader(AtomicReaderContext context)
             {
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     collectionTerminated = true;
                     throw new CollectionTerminatedException();

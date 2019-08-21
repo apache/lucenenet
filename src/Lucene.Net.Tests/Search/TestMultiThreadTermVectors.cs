@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Directory = NewDirectory();
-            IndexWriter writer = new IndexWriter(Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            IndexWriter writer = new IndexWriter(Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             //writer.setNoCFSRatio(0.0);
             //writer.infoStream = System.out;
             FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < NumDocs; i++)
             {
                 Documents.Document doc = new Documents.Document();
-                Field fld = NewField("field", English.IntToEnglish(i), customType);
+                Field fld = NewField("field", English.Int32ToEnglish(i), customType);
                 doc.Add(fld);
                 writer.AddDocument(doc);
             }
@@ -237,7 +237,7 @@ namespace Lucene.Net.Search
             {
                 temp.Append(vector.Term.Utf8ToString());
             }
-            if (!English.IntToEnglish(num).Trim().Equals(temp.ToString().Trim(), StringComparison.Ordinal))
+            if (!English.Int32ToEnglish(num).Trim().Equals(temp.ToString().Trim(), StringComparison.Ordinal))
             {
                 Console.WriteLine("wrong term result");
             }

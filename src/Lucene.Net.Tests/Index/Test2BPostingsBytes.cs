@@ -1,6 +1,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -59,10 +60,10 @@ namespace Lucene.Net.Index
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostingsBytes1"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
 
-            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
                             .SetRAMBufferSizeMB(256.0)
                             .SetMergeScheduler(newScheduler())
@@ -108,7 +109,7 @@ namespace Lucene.Net.Index
             BaseDirectoryWrapper dir2 = NewFSDirectory(CreateTempDir("2BPostingsBytes2"));
             if (dir2 is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir2).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir2).Throttling = Throttling.NEVER;
             }
             IndexWriter w2 = new IndexWriter(dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
             w2.AddIndexes(mr);
@@ -123,7 +124,7 @@ namespace Lucene.Net.Index
             BaseDirectoryWrapper dir3 = NewFSDirectory(CreateTempDir("2BPostingsBytes3"));
             if (dir3 is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir3).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir3).Throttling = Throttling.NEVER;
             }
             IndexWriter w3 = new IndexWriter(dir3, new IndexWriterConfig(TEST_VERSION_CURRENT, null));
             w3.AddIndexes(mr);

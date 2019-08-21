@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Sv
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new SwedishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new SwedishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
     }
 }

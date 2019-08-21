@@ -86,7 +86,7 @@ namespace Lucene.Net.Spatial
         public override void SetUp()
         {
             base.SetUp();
-            SpatialStrategy strategy = ((Param)(RandomInts.RandomFrom(Random(), Parameters()))[0]).strategy;
+            SpatialStrategy strategy = ((Param)(RandomPicks.RandomFrom(Random, Parameters()))[0]).strategy;
             this.ctx = strategy.SpatialContext;
             this.strategy = strategy;
         }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Spatial
             SpatialArgs args = new SpatialArgs(op, shape);
             //args.setDistPrecision(0.025);
             Query query;
-            if (Random().nextBoolean())
+            if (Random.nextBoolean())
             {
                 query = strategy.MakeQuery(args);
             }

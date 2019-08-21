@@ -22,37 +22,37 @@ namespace Lucene.Net.Index
     // TODO: what is this used for? just testing BufferedIndexInput?
     // if so it should be pkg-private. otherwise its a dup of ByteArrayIndexInput?
     /// <summary>
-    /// IndexInput backed by a byte[] for testing.
+    /// <see cref="Store.IndexInput"/> backed by a <see cref="T:byte[]"/> for testing.
     /// </summary>
     public class MockIndexInput : BufferedIndexInput
     {
-        private byte[] Buffer;
-        private int Pointer = 0;
-        private readonly long Length_Renamed;
+        private byte[] buffer;
+        private int pointer = 0;
+        private readonly long length;
 
         public MockIndexInput(byte[] bytes)
             : base("MockIndexInput", BufferedIndexInput.BUFFER_SIZE)
         {
-            Buffer = bytes;
-            Length_Renamed = bytes.Length;
+            buffer = bytes;
+            length = bytes.Length;
         }
 
         protected override void ReadInternal(byte[] dest, int destOffset, int len)
         {
             int remainder = len;
-            int start = Pointer;
+            int start = pointer;
             while (remainder != 0)
             {
                 //          int bufferNumber = start / buffer.length;
-                int bufferOffset = start % Buffer.Length;
-                int bytesInBuffer = Buffer.Length - bufferOffset;
+                int bufferOffset = start % buffer.Length;
+                int bytesInBuffer = buffer.Length - bufferOffset;
                 int bytesToCopy = bytesInBuffer >= remainder ? remainder : bytesInBuffer;
-                System.Buffer.BlockCopy(Buffer, bufferOffset, dest, destOffset, bytesToCopy);
+                System.Buffer.BlockCopy(buffer, bufferOffset, dest, destOffset, bytesToCopy);
                 destOffset += bytesToCopy;
                 start += bytesToCopy;
                 remainder -= bytesToCopy;
             }
-            Pointer += len;
+            pointer += len;
         }
 
         protected override void Dispose(bool disposing)
@@ -62,12 +62,12 @@ namespace Lucene.Net.Index
 
         protected override void SeekInternal(long pos)
         {
-            Pointer = (int)pos;
+            pointer = (int)pos;
         }
 
         public override long Length
         {
-            get { return Length_Renamed; }
+            get { return length; }
         }
     }
 }

@@ -614,14 +614,8 @@ namespace Lucene.Net.Support
             "zh-CHT"
         };
         #endregion culturePool
-        private static CultureInfo[] supportedSpecificCultures;
-        private static CultureInfo[] supportedNeutralCultures;
-
-        static CultureInfoSupport()
-        {
-            supportedSpecificCultures = LoadSupportedCultures(specificCulturePool);
-            supportedNeutralCultures = LoadSupportedCultures(neutralCulturePool);
-        }
+        private static readonly CultureInfo[] supportedSpecificCultures = LoadSupportedCultures(specificCulturePool);
+        private static readonly CultureInfo[] supportedNeutralCultures = LoadSupportedCultures(neutralCulturePool);
 
         private static CultureInfo[] LoadSupportedCultures(string[] culturePool)
         {

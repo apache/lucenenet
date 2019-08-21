@@ -237,23 +237,23 @@ namespace Lucene.Net.Search.VectorHighlight
         public void TestRandomDiscreteMultiValueHighlighting()
         {
             String[]
-            randomValues = new String[3 + Random().nextInt(10 * RANDOM_MULTIPLIER)];
+            randomValues = new String[3 + Random.nextInt(10 * RANDOM_MULTIPLIER)];
             for (int i = 0; i < randomValues.Length; i++)
             {
                 String randomValue;
                 do
                 {
-                    randomValue = TestUtil.RandomSimpleString(Random());
+                    randomValue = TestUtil.RandomSimpleString(Random);
                 } while ("".Equals(randomValue, StringComparison.Ordinal));
                 randomValues[i] = randomValue;
             }
 
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-                Random(),
+                Random,
                 dir,
                 NewIndexWriterConfig(TEST_VERSION_CURRENT,
-                    new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+                    new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
 
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             customType.StoreTermVectors = (true);
@@ -261,8 +261,8 @@ namespace Lucene.Net.Search.VectorHighlight
             customType.StoreTermVectorPositions = (true);
 
             int numDocs = randomValues.Length * 5;
-            int numFields = 2 + Random().nextInt(5);
-            int numTerms = 2 + Random().nextInt(3);
+            int numFields = 2 + Random.nextInt(5);
+            int numTerms = 2 + Random.nextInt(3);
             List<Doc> docs = new List<Doc>(numDocs);
             List<Document> documents = new List<Document>(numDocs);
             IDictionary<String, ISet<int>> valueToDocId = new HashMap<String, ISet<int>>();
@@ -292,10 +292,10 @@ namespace Lucene.Net.Search.VectorHighlight
 
             try
             {
-                int highlightIters = 1 + Random().nextInt(120 * RANDOM_MULTIPLIER);
+                int highlightIters = 1 + Random.nextInt(120 * RANDOM_MULTIPLIER);
                 for (int highlightIter = 0; highlightIter < highlightIters; highlightIter++)
                 {
-                    String queryTerm = randomValues[Random().nextInt(randomValues.Length)];
+                    String queryTerm = randomValues[Random.nextInt(randomValues.Length)];
                     var iter = valueToDocId[queryTerm].GetEnumerator();
                     iter.MoveNext();
                     int randomHit = iter.Current;
@@ -352,7 +352,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         private String getRandomValue(String[] randomValues, IDictionary<String, ISet<int>> valueToDocId, int docId)
         {
-            String value = randomValues[Random().nextInt(randomValues.Length)];
+            String value = randomValues[Random.nextInt(randomValues.Length)];
             if (!valueToDocId.ContainsKey(value))
             {
                 valueToDocId.Put(value, new HashSet<int>());

@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
             //Since the complement is stored as well in the fields map
             Assert.IsTrue(fieldInfos.Count == DocHelper.All.Count); //this is all b/c we are using the no-arg constructor
 
-            IndexOutput output = dir.CreateOutput(filename, NewIOContext(Random()));
+            IndexOutput output = dir.CreateOutput(filename, NewIOContext(Random));
             Assert.IsTrue(output != null);
             //Use a RAMOutputStream
 

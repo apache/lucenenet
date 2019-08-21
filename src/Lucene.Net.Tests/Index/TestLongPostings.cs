@@ -50,10 +50,10 @@ namespace Lucene.Net.Index
         // survives MockAnalyzer unchanged:
         private string GetRandomTerm(string other)
         {
-            Analyzer a = new MockAnalyzer(Random());
+            Analyzer a = new MockAnalyzer(Random);
             while (true)
             {
-                string s = TestUtil.RandomRealisticUnicodeString(Random());
+                string s = TestUtil.RandomRealisticUnicodeString(Random);
                 if (other != null && s.Equals(other, StringComparison.Ordinal))
                 {
                     continue;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
         {
             // Don't use TestUtil.getTempDir so that we own the
             // randomness (ie same seed will point to same dir):
-            Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random().NextLong()));
+            Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random.NextInt64()));
 
             int NUM_DOCS = AtLeast(2000);
 
@@ -132,24 +132,24 @@ namespace Lucene.Net.Index
             FixedBitSet isS1 = new FixedBitSet(NUM_DOCS);
             for (int idx = 0; idx < NUM_DOCS; idx++)
             {
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     isS1.Set(idx);
                 }
             }
 
             IndexReader r;
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMergePolicy(NewLogMergePolicy());
-            iwc.SetRAMBufferSizeMB(16.0 + 16.0 * Random().NextDouble());
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMergePolicy(NewLogMergePolicy());
+            iwc.SetRAMBufferSizeMB(16.0 + 16.0 * Random.NextDouble());
             iwc.SetMaxBufferedDocs(-1);
-            RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter riw = new RandomIndexWriter(Random, dir, iwc);
 
             for (int idx = 0; idx < NUM_DOCS; idx++)
             {
                 Document doc = new Document();
                 string s = isS1.Get(idx) ? s1 : s2;
                 Field f = NewTextField("field", s, Field.Store.NO);
-                int count = TestUtil.NextInt(Random(), 1, 4);
+                int count = TestUtil.NextInt32(Random, 1, 4);
                 for (int ct = 0; ct < count; ct++)
                 {
                     doc.Add(f);
@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
                 riw.AddDocument(doc);
             }
 
-            r = riw.Reader;
+            r = riw.GetReader();
             riw.Dispose();
 
             /*
@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
             {
                 string term;
                 bool doS1;
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     term = s1;
                     doS1 = true;
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
                 int docID = -1;
                 while (docID < DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    int what = Random().Next(3);
+                    int what = Random.Next(3);
                     if (what == 0)
                     {
                         if (VERBOSE)
@@ -243,17 +243,17 @@ namespace Lucene.Net.Index
                             break;
                         }
 
-                        if (Random().Next(6) == 3)
+                        if (Random.Next(6) == 3)
                         {
                             int freq = postings.Freq;
                             Assert.IsTrue(freq >= 1 && freq <= 4);
                             for (int pos = 0; pos < freq; pos++)
                             {
                                 Assert.AreEqual(pos, postings.NextPosition());
-                                if (Random().NextBoolean())
+                                if (Random.NextBoolean())
                                 {
                                     var dummy = postings.GetPayload();
-                                    if (Random().NextBoolean())
+                                    if (Random.NextBoolean())
                                     {
                                         dummy = postings.GetPayload(); // get it again
                                     }
@@ -267,11 +267,11 @@ namespace Lucene.Net.Index
                         int targetDocID;
                         if (docID == -1)
                         {
-                            targetDocID = Random().Next(NUM_DOCS + 1);
+                            targetDocID = Random.Next(NUM_DOCS + 1);
                         }
                         else
                         {
-                            targetDocID = docID + TestUtil.NextInt(Random(), 1, NUM_DOCS - docID);
+                            targetDocID = docID + TestUtil.NextInt32(Random, 1, NUM_DOCS - docID);
                         }
                         if (VERBOSE)
                         {
@@ -306,17 +306,17 @@ namespace Lucene.Net.Index
                             break;
                         }
 
-                        if (Random().Next(6) == 3)
+                        if (Random.Next(6) == 3)
                         {
                             int freq = postings.Freq;
                             Assert.IsTrue(freq >= 1 && freq <= 4);
                             for (int pos = 0; pos < freq; pos++)
                             {
                                 Assert.AreEqual(pos, postings.NextPosition());
-                                if (Random().NextBoolean())
+                                if (Random.NextBoolean())
                                 {
                                     var dummy = postings.GetPayload();
-                                    if (Random().NextBoolean())
+                                    if (Random.NextBoolean())
                                     {
                                         dummy = postings.GetPayload(); // get it again
                                     }
@@ -342,7 +342,7 @@ namespace Lucene.Net.Index
         {
             // Don't use TestUtil.getTempDir so that we own the
             // randomness (ie same seed will point to same dir):
-            Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random().NextLong()));
+            Directory dir = NewFSDirectory(CreateTempDir("longpostings" + "." + Random.NextInt64()));
 
             int NUM_DOCS = AtLeast(2000);
 
@@ -370,7 +370,7 @@ namespace Lucene.Net.Index
             FixedBitSet isS1 = new FixedBitSet(NUM_DOCS);
             for (int idx = 0; idx < NUM_DOCS; idx++)
             {
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     isS1.Set(idx);
                 }
@@ -379,10 +379,10 @@ namespace Lucene.Net.Index
             IndexReader r;
             if (true)
             {
-                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.CREATE).SetMergePolicy(NewLogMergePolicy());
-                iwc.SetRAMBufferSizeMB(16.0 + 16.0 * Random().NextDouble());
+                IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetMergePolicy(NewLogMergePolicy());
+                iwc.SetRAMBufferSizeMB(16.0 + 16.0 * Random.NextDouble());
                 iwc.SetMaxBufferedDocs(-1);
-                RandomIndexWriter riw = new RandomIndexWriter(Random(), dir, iwc);
+                RandomIndexWriter riw = new RandomIndexWriter(Random, dir, iwc);
 
                 FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
                 ft.IndexOptions = options;
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
                     Document doc = new Document();
                     string s = isS1.Get(idx) ? s1 : s2;
                     Field f = NewField("field", s, ft);
-                    int count = TestUtil.NextInt(Random(), 1, 4);
+                    int count = TestUtil.NextInt32(Random, 1, 4);
                     for (int ct = 0; ct < count; ct++)
                     {
                         doc.Add(f);
@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
                     riw.AddDocument(doc);
                 }
 
-                r = riw.Reader;
+                r = riw.GetReader();
                 riw.Dispose();
             }
             else
@@ -435,7 +435,7 @@ namespace Lucene.Net.Index
             {
                 string term;
                 bool doS1;
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     term = s1;
                     doS1 = true;
@@ -456,12 +456,12 @@ namespace Lucene.Net.Index
 
                 if (options == IndexOptions.DOCS_ONLY)
                 {
-                    docs = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsFlags.NONE);
+                    docs = TestUtil.Docs(Random, r, "field", new BytesRef(term), null, null, DocsFlags.NONE);
                     postings = null;
                 }
                 else
                 {
-                    docs = postings = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsFlags.FREQS);
+                    docs = postings = TestUtil.Docs(Random, r, "field", new BytesRef(term), null, null, DocsFlags.FREQS);
                     Debug.Assert(postings != null);
                 }
                 Debug.Assert(docs != null);
@@ -469,7 +469,7 @@ namespace Lucene.Net.Index
                 int docID = -1;
                 while (docID < DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    int what = Random().Next(3);
+                    int what = Random.Next(3);
                     if (what == 0)
                     {
                         if (VERBOSE)
@@ -505,7 +505,7 @@ namespace Lucene.Net.Index
                             break;
                         }
 
-                        if (Random().Next(6) == 3 && postings != null)
+                        if (Random.Next(6) == 3 && postings != null)
                         {
                             int freq = postings.Freq;
                             Assert.IsTrue(freq >= 1 && freq <= 4);
@@ -517,11 +517,11 @@ namespace Lucene.Net.Index
                         int targetDocID;
                         if (docID == -1)
                         {
-                            targetDocID = Random().Next(NUM_DOCS + 1);
+                            targetDocID = Random.Next(NUM_DOCS + 1);
                         }
                         else
                         {
-                            targetDocID = docID + TestUtil.NextInt(Random(), 1, NUM_DOCS - docID);
+                            targetDocID = docID + TestUtil.NextInt32(Random, 1, NUM_DOCS - docID);
                         }
                         if (VERBOSE)
                         {
@@ -556,7 +556,7 @@ namespace Lucene.Net.Index
                             break;
                         }
 
-                        if (Random().Next(6) == 3 && postings != null)
+                        if (Random.Next(6) == 3 && postings != null)
                         {
                             int freq = postings.Freq;
                             Assert.IsTrue(freq >= 1 && freq <= 4, "got invalid freq=" + freq);

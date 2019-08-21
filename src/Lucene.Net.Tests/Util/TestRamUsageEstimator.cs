@@ -43,7 +43,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestStaticOverloads()
         {
-            Random rnd = Random();
+            Random rnd = Random;
             {
                 sbyte[] array = new sbyte[rnd.Next(1024)];
                 assertEquals(RamUsageEstimator.SizeOf(array), RamUsageEstimator.SizeOf((object)array));

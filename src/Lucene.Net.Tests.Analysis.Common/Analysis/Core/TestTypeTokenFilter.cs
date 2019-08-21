@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Core
                 }
                 else
                 {
-                    string w = English.IntToEnglish(i).Trim();
+                    string w = English.Int32ToEnglish(i).Trim();
                     sb.Append(w).Append(" ");
                 }
             }

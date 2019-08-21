@@ -43,7 +43,7 @@ namespace Lucene.Net.QueryParsers.Xml
             base.BeforeClass();
 
             // TODO: rewrite test (this needs to set QueryParser.enablePositionIncrements, too, for work with CURRENT):
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
             //initialize the parser
             builder = new CorePlusExtensionsParser("contents", analyzer);
 

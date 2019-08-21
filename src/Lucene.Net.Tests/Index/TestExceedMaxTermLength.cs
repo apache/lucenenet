@@ -60,28 +60,28 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void Test()
         {
-            IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(Random(), TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             try
             {
                 FieldType ft = new FieldType();
                 ft.IsIndexed = true;
-                ft.IsStored = Random().NextBoolean();
+                ft.IsStored = Random.NextBoolean();
                 ft.Freeze();
 
                 Document doc = new Document();
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     // totally ok short field value
-                    doc.Add(new Field(TestUtil.RandomSimpleString(Random(), 1, 10), TestUtil.RandomSimpleString(Random(), 1, 10), ft));
+                    doc.Add(new Field(TestUtil.RandomSimpleString(Random, 1, 10), TestUtil.RandomSimpleString(Random, 1, 10), ft));
                 }
                 // problematic field
-                string name = TestUtil.RandomSimpleString(Random(), 1, 50);
-                string value = TestUtil.RandomSimpleString(Random(), MinTestTermLength, MaxTestTermLegnth);
+                string name = TestUtil.RandomSimpleString(Random, 1, 50);
+                string value = TestUtil.RandomSimpleString(Random, MinTestTermLength, MaxTestTermLegnth);
                 Field f = new Field(name, value, ft);
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     // totally ok short field value
-                    doc.Add(new Field(TestUtil.RandomSimpleString(Random(), 1, 10), TestUtil.RandomSimpleString(Random(), 1, 10), ft));
+                    doc.Add(new Field(TestUtil.RandomSimpleString(Random, 1, 10), TestUtil.RandomSimpleString(Random, 1, 10), ft));
                 }
                 doc.Add(f);
 

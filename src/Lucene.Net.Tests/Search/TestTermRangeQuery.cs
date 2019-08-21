@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
 
         private void InitializeIndex(string[] values)
         {
-            InitializeIndex(values, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
+            InitializeIndex(values, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
         }
 
         private void InitializeIndex(string[] values, Analyzer analyzer)
@@ -284,7 +284,7 @@ namespace Lucene.Net.Search
         // shouldnt create an analyzer for every doc?
         private void AddDoc(string content)
         {
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetOpenMode(OpenMode.APPEND));
+            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetOpenMode(OpenMode.APPEND));
             InsertDoc(writer, content);
             writer.Dispose();
         }

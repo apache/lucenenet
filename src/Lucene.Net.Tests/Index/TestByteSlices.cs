@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
                 Console.WriteLine("Verbosity disabled to keep NUnit from running out of memory - enable manually");
             }
 
-            ByteBlockPool pool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, Random().Next(100)));
+            ByteBlockPool pool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, Random.Next(100)));
 
             int NUM_STREAM = AtLeast(100);
 
@@ -74,13 +74,13 @@ namespace Lucene.Net.Index
                 for (int iter = 0; iter < num; iter++)
                 {
                     int stream;
-                    if (Random().NextBoolean())
+                    if (Random.NextBoolean())
                     {
-                        stream = Random().Next(3);
+                        stream = Random.Next(3);
                     }
                     else
                     {
-                        stream = Random().Next(NUM_STREAM);
+                        stream = Random.Next(NUM_STREAM);
                     }
 
                     if (isVerbose)
@@ -100,17 +100,17 @@ namespace Lucene.Net.Index
 
                     writer.Init(uptos[stream]);
                     int numValue;
-                    if (Random().Next(10) == 3)
+                    if (Random.Next(10) == 3)
                     {
-                        numValue = Random().Next(100);
+                        numValue = Random.Next(100);
                     }
-                    else if (Random().Next(5) == 3)
+                    else if (Random.Next(5) == 3)
                     {
-                        numValue = Random().Next(3);
+                        numValue = Random.Next(3);
                     }
                     else
                     {
-                        numValue = Random().Next(20);
+                        numValue = Random.Next(20);
                     }
 
                     for (int j = 0; j < numValue; j++)
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
                             Console.WriteLine("    write " + (counters[stream] + j));
                         }
                         // write some large (incl. negative) ints:
-                        writer.WriteVInt32(Random().Next());
+                        writer.WriteVInt32(Random.Next());
                         writer.WriteVInt32(counters[stream] + j);
                     }
                     counters[stream] += numValue;

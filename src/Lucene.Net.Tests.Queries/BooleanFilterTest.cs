@@ -40,14 +40,14 @@ namespace Lucene.Net.Tests.Queries
         {
             base.SetUp();
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false), Similarity, TimeZone);
 
             AddDoc(writer, @"admin guest", @"010", @"20040101", @"Y");
             AddDoc(writer, @"guest", @"020", @"20040101", @"Y");
             AddDoc(writer, @"guest", @"020", @"20050101", @"Y");
             AddDoc(writer, @"admin", @"020", @"20050101", @"Maybe");
             AddDoc(writer, @"admin guest", @"030", @"20050101", @"N");
-            reader = SlowCompositeReaderWrapper.Wrap(writer.Reader);
+            reader = SlowCompositeReaderWrapper.Wrap(writer.GetReader());
             writer.Dispose();
         }
 

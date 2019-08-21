@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Hunspell
         public virtual void TestRandomStrings()
         {
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random(), analyzer, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, analyzer, 1000 * RANDOM_MULTIPLIER);
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer

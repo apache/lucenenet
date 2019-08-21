@@ -25,32 +25,30 @@ namespace Lucene.Net.Analysis
     using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
 
     /// <summary>
-    /// Uses <seealso cref="LookaheadTokenFilter"/> to randomly peek at future tokens.
+    /// Uses <see cref="LookaheadTokenFilter"/> to randomly peek at future tokens.
     /// </summary>
-
-    public sealed class MockRandomLookaheadTokenFilter
-        : LookaheadTokenFilter<LookaheadTokenFilter.Position>
+    public sealed class MockRandomLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
     {
-        private readonly ICharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
-        private Random random; //not readonly to reset seed later
-        private readonly long Seed;
+        private readonly ICharTermAttribute termAtt;// = addAttribute(typeof(CharTermAttribute));
+        private Random random; // LUCENENET: not readonly to reset seed later
+        private readonly int seed; // LUCENENET specific: changed to int, since .NET random seed is int, not long
 
         public MockRandomLookaheadTokenFilter(Random random, TokenStream @in)
             : base(@in)
         {
-            this.TermAtt = AddAttribute<ICharTermAttribute>();
-            this.Seed = random.Next();
-            this.random = new Random((int)Seed);
+            this.termAtt = AddAttribute<ICharTermAttribute>();
+            this.seed = random.Next();
+            this.random = new Random(seed);
         }
 
-        protected internal override LookaheadTokenFilter.Position NewPosition()
+        protected override Position NewPosition()
         {
-            return new LookaheadTokenFilter.Position();
+            return new Position();
         }
 
-        protected internal override void AfterPosition()
+        protected override void AfterPosition()
         {
-            if (!end && random.Next(4) == 2)
+            if (!m_end && random.Next(4) == 2)
             {
                 PeekToken();
             }
@@ -63,7 +61,7 @@ namespace Lucene.Net.Analysis
                 Console.WriteLine("\n" + Thread.CurrentThread.Name + ": MRLTF.incrToken");
             }
 
-            if (!end)
+            if (!m_end)
             {
                 while (true)
                 {
@@ -73,13 +71,13 @@ namespace Lucene.Net.Analysis
                         {
                             if (DEBUG)
                             {
-                                Console.WriteLine("  peek; inputPos=" + InputPos + " END");
+                                Console.WriteLine("  peek; inputPos=" + m_inputPos + " END");
                             }
                             break;
                         }
                         if (DEBUG)
                         {
-                            Console.WriteLine("  peek; inputPos=" + InputPos + " token=" + TermAtt);
+                            Console.WriteLine("  peek; inputPos=" + m_inputPos + " token=" + termAtt);
                         }
                     }
                     else
@@ -98,7 +96,7 @@ namespace Lucene.Net.Analysis
             {
                 if (DEBUG)
                 {
-                    Console.WriteLine("  return nextToken token=" + TermAtt);
+                    Console.WriteLine("  return nextToken token=" + termAtt);
                 }
             }
             else
@@ -114,7 +112,7 @@ namespace Lucene.Net.Analysis
         public override void Reset()
         {
             base.Reset();
-            random = new Random((int)Seed);
+            random = new Random(seed);
         }
     }
 }

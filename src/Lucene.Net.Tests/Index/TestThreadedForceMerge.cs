@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
         [SetUp]
         public static void Setup()
         {
-            ANALYZER = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            ANALYZER = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
         }
 
         private void SetFailed()
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
                 {
                     Document d = new Document();
                     d.Add(NewField("id", Convert.ToString(i), customType));
-                    d.Add(NewField("contents", English.IntToEnglish(i), customType));
+                    d.Add(NewField("contents", English.Int32ToEnglish(i), customType));
                     writer.AddDocument(d);
                 }
 
@@ -149,8 +149,8 @@ namespace Lucene.Net.Index
                         for (int k = 0; k < 17 * (1 + IFinal); k++)
                         {
                             Document d = new Document();
-                            d.Add(OuterInstance.NewField("id", IterFinal + "_" + IFinal + "_" + j + "_" + k, CustomType));
-                            d.Add(OuterInstance.NewField("contents", English.IntToEnglish(IFinal + k), CustomType));
+                            d.Add(NewField("id", IterFinal + "_" + IFinal + "_" + j + "_" + k, CustomType));
+                            d.Add(NewField("contents", English.Int32ToEnglish(IFinal + k), CustomType));
                             WriterFinal.AddDocument(d);
                         }
                         for (int k = 0; k < 9 * (1 + IFinal); k++)
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
         public virtual void TestThreadedForceMerge_Mem()
         {
             Directory directory = NewDirectory();
-            RunTest(Random(), directory);
+            RunTest(Random, directory);
             directory.Dispose();
         }
     }

@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
         public virtual void TestBasics()
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
             for (int i = 0; i < 5; i++)
             {
                 Document doc = new Document();
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
                 doc.Add(new StringField("string", "b" + i, Field.Store.NO));
                 writer.AddDocument(doc);
             }
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);

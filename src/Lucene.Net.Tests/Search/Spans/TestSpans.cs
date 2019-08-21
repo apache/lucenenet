@@ -55,14 +55,14 @@ namespace Lucene.Net.Search.Spans
         {
             base.SetUp();
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             for (int i = 0; i < DocFields.Length; i++)
             {
                 Document doc = new Document();
                 doc.Add(NewTextField(field, DocFields[i], Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
             Searcher = NewSearcher(Reader);
         }
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search.Spans
 
         private void CheckHits(Query query, int[] results)
         {
-            Search.CheckHits.DoCheckHits(Random(), query, field, Searcher, results, Similarity);
+            Search.CheckHits.DoCheckHits(Random, query, field, Searcher, results, Similarity);
         }
 
         private void OrderedSlopTest3SQ(SpanQuery q1, SpanQuery q2, SpanQuery q3, int slop, int[] expectedDocs)
@@ -495,7 +495,7 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestNPESpanQuery()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             // Add documents
             AddDoc(writer, "1", "the big dogs went running to the market");

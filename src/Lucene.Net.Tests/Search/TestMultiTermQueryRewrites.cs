@@ -60,9 +60,9 @@ namespace Lucene.Net.Search
             Dir = NewDirectory();
             Sdir1 = NewDirectory();
             Sdir2 = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Dir, new MockAnalyzer(Random()), Similarity, TimeZone);
-            RandomIndexWriter swriter1 = new RandomIndexWriter(Random(), Sdir1, new MockAnalyzer(Random()), Similarity, TimeZone);
-            RandomIndexWriter swriter2 = new RandomIndexWriter(Random(), Sdir2, new MockAnalyzer(Random()), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, new MockAnalyzer(Random), Similarity, TimeZone);
+            RandomIndexWriter swriter1 = new RandomIndexWriter(Random, Sdir1, new MockAnalyzer(Random), Similarity, TimeZone);
+            RandomIndexWriter swriter2 = new RandomIndexWriter(Random, Sdir2, new MockAnalyzer(Random), Similarity, TimeZone);
 
             for (int i = 0; i < 10; i++)
             {

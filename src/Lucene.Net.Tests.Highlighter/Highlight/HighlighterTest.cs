@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Highlight
         [Test]
         public void TestQueryScorerHits()
         {
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
 
             PhraseQuery phraseQuery = new PhraseQuery();
             phraseQuery.Add(new Term(FIELD_NAME, "very"));
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search.Highlight
         [Test]
         public void TestHighlightingCommonTermsQuery()
         {
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             CommonTermsQuery query = new CommonTermsQuery(Occur.MUST, Occur.SHOULD, 3);
             query.Add(new Term(FIELD_NAME, "this"));
             query.Add(new Term(FIELD_NAME, "long"));
@@ -160,7 +160,7 @@ namespace Lucene.Net.Search.Highlight
         {
             Query query = new TestHighlightUnknowQueryAnonymousHelper();
 
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
 
             searcher = NewSearcher(reader);
             TopDocs hits = searcher.Search(query, 10);
@@ -233,7 +233,7 @@ namespace Lucene.Net.Search.Highlight
          */
         private String highlightField(Query query, String fieldName, String text)
         {
-            TokenStream tokenStream = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)
+            TokenStream tokenStream = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)
                 .GetTokenStream(fieldName, text);
             // Assuming "<B>", "</B>" used to highlight
             SimpleHTMLFormatter formatter = new SimpleHTMLFormatter();
@@ -316,7 +316,7 @@ namespace Lucene.Net.Search.Highlight
 
             Highlighter h = new Highlighter(this, scorer);
 
-            Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+            Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
 
             h.GetBestFragment(analyzer, f1, content);
 
@@ -813,7 +813,7 @@ namespace Lucene.Net.Search.Highlight
             TestHighlightRunner helper = new TestHighlightRunner((instance) =>
             {
                 numHighlights = 0;
-                if (Random().nextBoolean())
+                if (Random.nextBoolean())
                 {
                     BooleanQuery bq = new BooleanQuery();
                     bq.Add(new ConstantScoreQuery(new QueryWrapperFilter(new TermQuery(
@@ -1331,7 +1331,7 @@ namespace Lucene.Net.Search.Highlight
         [Test]
         public void TestMaxSizeHighlight()
         {
-            MockAnalyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
+            MockAnalyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
             // we disable MockTokenizer checks because we will forcefully limit the 
             // tokenstream and call end() before incrementToken() returns false.
             analyzer.EnableChecks = (false);
@@ -1364,7 +1364,7 @@ namespace Lucene.Net.Search.Highlight
                 CharacterRunAutomaton stopWords = new CharacterRunAutomaton(BasicAutomata.MakeString("stoppedtoken"));
                 // we disable MockTokenizer checks because we will forcefully limit the 
                 // tokenstream and call end() before incrementToken() returns false.
-                MockAnalyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, stopWords);
+                MockAnalyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, stopWords);
                 analyzer.EnableChecks = (false);
                 TermQuery query = new TermQuery(new Term("data", goodWord));
 
@@ -1416,7 +1416,7 @@ namespace Lucene.Net.Search.Highlight
                 Highlighter hg = instance.GetHighlighter(query, "text", fm);
                 hg.TextFragmenter = (new NullFragmenter());
                 hg.MaxDocCharsToAnalyze = (36);
-                String match = hg.GetBestFragment(new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, stopWords), "text", text);
+                String match = hg.GetBestFragment(new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, stopWords), "text", text);
                 assertTrue(
                     "Matched text should contain remainder of text after highlighted query ",
                     match.EndsWith("in it", StringComparison.Ordinal));
@@ -1433,7 +1433,7 @@ namespace Lucene.Net.Search.Highlight
                 numHighlights = 0;
                 // test to show how rewritten query can still be used
                 searcher = NewSearcher(reader);
-                Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
+                Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
 
                 BooleanQuery query = new BooleanQuery();
                 query.Add(new WildcardQuery(new Term(FIELD_NAME, "jf?")), Occur.SHOULD);
@@ -1849,7 +1849,7 @@ namespace Lucene.Net.Search.Highlight
 
         private void makeIndex()
         {
-            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             writer.AddDocument(doc("t_text1", "random words for highlighting tests del"));
             writer.AddDocument(doc("t_text1", "more random words for second field del"));
             writer.AddDocument(doc("t_text1", "random words for highlighting tests del"));
@@ -1860,7 +1860,7 @@ namespace Lucene.Net.Search.Highlight
 
         private void deleteDocument()
         {
-            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)).SetOpenMode(OpenMode.APPEND));
+            IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetOpenMode(OpenMode.APPEND));
             writer.DeleteDocuments(new Term("t_text1", "del"));
             // To see negative idf, keep comment the following line
             //writer.forceMerge(1);
@@ -1962,12 +1962,12 @@ namespace Lucene.Net.Search.Highlight
         {
             base.SetUp();
 
-            a = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
-            analyzer = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
+            a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
+            analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
             dir = NewDirectory();
             ramDir = NewDirectory();
             IndexWriter writer = new IndexWriter(ramDir, NewIndexWriterConfig(
-                TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)));
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)));
             foreach (String text in texts)
             {
                 addDoc(writer, text);

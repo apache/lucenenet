@@ -104,8 +104,8 @@ namespace Lucene.Net.Search
             Term t1 = RandomTerm();
             Term t2 = RandomTerm();
             Term t3 = RandomTerm();
-            int pos1 = 1 + Random().Next(3);
-            int pos2 = pos1 + 1 + Random().Next(3);
+            int pos1 = 1 + Random.Next(3);
+            int pos2 = pos1 + 1 + Random.Next(3);
             PhraseQuery q1 = new PhraseQuery();
             q1.Add(t1);
             q1.Add(t2, pos1);
@@ -190,8 +190,8 @@ namespace Lucene.Net.Search
         public virtual void TestRepetitiveIncreasingSloppiness3WithHoles()
         {
             Term t = RandomTerm();
-            int pos1 = 1 + Random().Next(3);
-            int pos2 = pos1 + 1 + Random().Next(3);
+            int pos1 = 1 + Random.Next(3);
+            int pos2 = pos1 + 1 + Random.Next(3);
             PhraseQuery q1 = new PhraseQuery();
             q1.Add(t);
             q1.Add(t, pos1);
@@ -213,7 +213,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestRandomIncreasingSloppiness()
         {
-            int seed = Random().Next();
+            int seed = Random.Next();
             MultiPhraseQuery q1 = RandomPhraseQuery(seed);
             MultiPhraseQuery q2 = RandomPhraseQuery(seed);
             for (int i = 0; i < 10; i++)
@@ -227,19 +227,19 @@ namespace Lucene.Net.Search
         private MultiPhraseQuery RandomPhraseQuery(int seed)
         {
             Random random = new Random(seed);
-            int length = TestUtil.NextInt(random, 2, 5);
+            int length = TestUtil.NextInt32(random, 2, 5);
             MultiPhraseQuery pq = new MultiPhraseQuery();
             int position = 0;
             for (int i = 0; i < length; i++)
             {
-                int depth = TestUtil.NextInt(random, 1, 3);
+                int depth = TestUtil.NextInt32(random, 1, 3);
                 Term[] terms = new Term[depth];
                 for (int j = 0; j < depth; j++)
                 {
-                    terms[j] = new Term("field", "" + (char)TestUtil.NextInt(random, 'a', 'z'));
+                    terms[j] = new Term("field", "" + (char)TestUtil.NextInt32(random, 'a', 'z'));
                 }
                 pq.Add(terms, position);
-                position += TestUtil.NextInt(random, 1, 3);
+                position += TestUtil.NextInt32(random, 1, 3);
             }
             return pq;
         }

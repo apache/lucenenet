@@ -127,19 +127,19 @@ namespace Lucene.Net.Search.Payloads
             base.BeforeClass();
 
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(similarity).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(similarity).SetMergePolicy(NewLogMergePolicy()));
             //writer.infoStream = System.out;
             for (int i = 0; i < 1000; i++)
             {
                 Document doc = new Document();
-                Field noPayloadField = NewTextField(PayloadHelper.NO_PAYLOAD_FIELD, English.IntToEnglish(i), Field.Store.YES);
+                Field noPayloadField = NewTextField(PayloadHelper.NO_PAYLOAD_FIELD, English.Int32ToEnglish(i), Field.Store.YES);
                 //noPayloadField.setBoost(0);
                 doc.Add(noPayloadField);
-                doc.Add(NewTextField("field", English.IntToEnglish(i), Field.Store.YES));
-                doc.Add(NewTextField("multiField", English.IntToEnglish(i) + "  " + English.IntToEnglish(i), Field.Store.YES));
+                doc.Add(NewTextField("field", English.Int32ToEnglish(i), Field.Store.YES));
+                doc.Add(NewTextField("multiField", English.Int32ToEnglish(i) + "  " + English.Int32ToEnglish(i), Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
 
             Searcher = NewSearcher(Reader);
@@ -314,7 +314,7 @@ namespace Lucene.Net.Search.Payloads
             Assert.IsTrue(hits.TotalHits == 1, "hits Size: " + hits.TotalHits + " is not: " + 1);
             int[] results = new int[1];
             results[0] = 0; //hits.ScoreDocs[0].Doc;
-            CheckHits.CheckHitCollector(Random(), query, PayloadHelper.NO_PAYLOAD_FIELD, Searcher, results, Similarity);
+            CheckHits.CheckHitCollector(Random, query, PayloadHelper.NO_PAYLOAD_FIELD, Searcher, results, Similarity);
         }
 
         internal class BoostingSimilarity : DefaultSimilarity

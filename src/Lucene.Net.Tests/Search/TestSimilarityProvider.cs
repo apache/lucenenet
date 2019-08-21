@@ -54,8 +54,8 @@ namespace Lucene.Net.Search
             base.SetUp();
             Directory = NewDirectory();
             PerFieldSimilarityWrapper sim = new ExampleSimilarityProvider(this);
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetSimilarity(sim);
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), Directory, iwc);
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetSimilarity(sim);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, Directory, iwc);
             Document doc = new Document();
             Field field = NewTextField("foo", "", Field.Store.NO);
             doc.Add(field);
@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
             field.SetStringValue("jumps over lazy brown dog");
             field2.SetStringValue("jumps over lazy brown dog");
             iw.AddDocument(doc);
-            Reader = iw.Reader;
+            Reader = iw.GetReader();
             iw.Dispose();
             Searcher = NewSearcher(Reader);
             Searcher.Similarity = sim;

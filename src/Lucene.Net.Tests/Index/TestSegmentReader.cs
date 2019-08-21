@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
             Dir = NewDirectory();
             TestDoc = new Document();
             DocHelper.SetupDoc(TestDoc);
-            SegmentCommitInfo info = DocHelper.WriteDoc(Random(), Dir, TestDoc);
+            SegmentCommitInfo info = DocHelper.WriteDoc(Random, Dir, TestDoc);
             Reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, IOContext.READ);
         }
 
@@ -152,10 +152,10 @@ namespace Lucene.Net.Index
                 }
             }
 
-            DocsEnum termDocs = TestUtil.Docs(Random(), Reader, DocHelper.TEXT_FIELD_1_KEY, new BytesRef("field"), MultiFields.GetLiveDocs(Reader), null, 0);
+            DocsEnum termDocs = TestUtil.Docs(Random, Reader, DocHelper.TEXT_FIELD_1_KEY, new BytesRef("field"), MultiFields.GetLiveDocs(Reader), null, 0);
             Assert.IsTrue(termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
-            termDocs = TestUtil.Docs(Random(), Reader, DocHelper.NO_NORMS_KEY, new BytesRef(DocHelper.NO_NORMS_TEXT), MultiFields.GetLiveDocs(Reader), null, 0);
+            termDocs = TestUtil.Docs(Random, Reader, DocHelper.NO_NORMS_KEY, new BytesRef(DocHelper.NO_NORMS_TEXT), MultiFields.GetLiveDocs(Reader), null, 0);
 
             Assert.IsTrue(termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 

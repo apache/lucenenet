@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
 
         internal virtual void DoPrevSetBit(BitArray a, OpenBitSet b)
         {
-            int aa = a.Length + Random().Next(100);
+            int aa = a.Length + Random.Next(100);
             int bb = aa;
             do
             {
@@ -111,7 +111,7 @@ namespace Lucene.Net.Util
 
         internal virtual void DoPrevSetBitLong(BitArray a, OpenBitSet b)
         {
-            int aa = a.Length + Random().Next(100);
+            int aa = a.Length + Random.Next(100);
             int bb = aa;
             do
             {
@@ -146,7 +146,7 @@ namespace Lucene.Net.Util
             do
             {
                 aa = a.NextSetBit(aa + 1);
-                bb = Random().NextBoolean() ? iterator.NextDoc() : iterator.Advance(bb + 1);
+                bb = Random.NextBoolean() ? iterator.NextDoc() : iterator.Advance(bb + 1);
                 Assert.AreEqual(aa == -1 ? DocIdSetIterator.NO_MORE_DOCS : aa, bb);
             } while (aa >= 0);
         }
@@ -158,7 +158,7 @@ namespace Lucene.Net.Util
             do
             {
                 aa = a.NextSetBit(aa + 1);
-                bb = Random().NextBoolean() ? iterator.NextDoc() : iterator.Advance(bb + 1);
+                bb = Random.NextBoolean() ? iterator.NextDoc() : iterator.Advance(bb + 1);
                 Assert.AreEqual(aa == -1 ? DocIdSetIterator.NO_MORE_DOCS : aa, bb);
             } while (aa >= 0);
         }
@@ -170,35 +170,35 @@ namespace Lucene.Net.Util
 
             for (int i = 0; i < iter; i++)
             {
-                int sz = Random().Next(maxSize);
+                int sz = Random.Next(maxSize);
                 BitArray a = new BitArray(sz);
                 OpenBitSet b = new OpenBitSet(sz);
 
                 // test the various ways of setting bits
                 if (sz > 0)
                 {
-                    int nOper = Random().Next(sz);
+                    int nOper = Random.Next(sz);
                     for (int j = 0; j < nOper; j++)
                     {
                         int idx;
 
-                        idx = Random().Next(sz);
+                        idx = Random.Next(sz);
                         a.SafeSet(idx, true);
                         b.FastSet(idx);
 
-                        idx = Random().Next(sz);
+                        idx = Random.Next(sz);
                         a.SafeSet(idx, true);
                         b.FastSet((long)idx);
 
-                        idx = Random().Next(sz);
+                        idx = Random.Next(sz);
                         a.SafeSet(idx, false);
                         b.FastClear(idx);
 
-                        idx = Random().Next(sz);
+                        idx = Random.Next(sz);
                         a.SafeSet(idx, false);
                         b.FastClear((long)idx);
 
-                        idx = Random().Next(sz);
+                        idx = Random.Next(sz);
                         a.SafeSet(idx, !a.SafeGet(idx));
                         b.FastFlip(idx);
 
@@ -206,7 +206,7 @@ namespace Lucene.Net.Util
                         bool val2 = b.FlipAndGet(idx);
                         Assert.IsTrue(val != val2);
 
-                        idx = Random().Next(sz);
+                        idx = Random.Next(sz);
                         a.SafeSet(idx, !a.SafeGet(idx));
                         b.FastFlip((long)idx);
 
@@ -232,8 +232,8 @@ namespace Lucene.Net.Util
 
                 // test ranges, including possible extension
                 int fromIndex, toIndex;
-                fromIndex = Random().Next(sz + 80);
-                toIndex = fromIndex + Random().Next((sz >> 1) + 1);
+                fromIndex = Random.Next(sz + 80);
+                toIndex = fromIndex + Random.Next((sz >> 1) + 1);
 
                 BitArray aa = new BitArray(a);
                 // C# BitArray class does not support dynamic sizing.
@@ -248,8 +248,8 @@ namespace Lucene.Net.Util
 
                 DoIterate(aa, bb, mode); // a problem here is from flip or doIterate
 
-                fromIndex = Random().Next(sz + 80);
-                toIndex = fromIndex + Random().Next((sz >> 1) + 1);
+                fromIndex = Random.Next(sz + 80);
+                toIndex = fromIndex + Random.Next((sz >> 1) + 1);
                 aa = new BitArray(a);
                 if (toIndex > aa.Length)
                 {
@@ -265,8 +265,8 @@ namespace Lucene.Net.Util
                 DoPrevSetBit(aa, bb);
                 DoPrevSetBitLong(aa, bb);
 
-                fromIndex = Random().Next(sz + 80);
-                toIndex = fromIndex + Random().Next((sz >> 1) + 1);
+                fromIndex = Random.Next(sz + 80);
+                toIndex = fromIndex + Random.Next((sz >> 1) + 1);
                 aa = new BitArray(a);
                 if (toIndex > aa.Length)
                 {
@@ -485,7 +485,7 @@ namespace Lucene.Net.Util
         public virtual void TestEnsureCapacity()
         {
             OpenBitSet bits = new OpenBitSet(1);
-            int bit = Random().Next(100) + 10;
+            int bit = Random.Next(100) + 10;
             bits.EnsureCapacity(bit); // make room for more bits
             bits.FastSet(bit - 1);
             Assert.IsTrue(bits.FastGet(bit - 1));
@@ -499,9 +499,9 @@ namespace Lucene.Net.Util
             Assert.IsTrue(bits.FastGet(bit - 1));
 
             // test ensureCapacityWords
-            int numWords = Random().Next(10) + 2; // make sure we grow the array (at least 128 bits)
+            int numWords = Random.Next(10) + 2; // make sure we grow the array (at least 128 bits)
             bits.EnsureCapacityWords(numWords);
-            bit = TestUtil.NextInt(Random(), 127, (numWords << 6) - 1); // pick a bit >= to 128, but still within range
+            bit = TestUtil.NextInt32(Random, 127, (numWords << 6) - 1); // pick a bit >= to 128, but still within range
             bits.FastSet(bit);
             Assert.IsTrue(bits.FastGet(bit));
             bits.FastClear(bit);
@@ -514,49 +514,5 @@ namespace Lucene.Net.Util
             bits.FastSet(bit - 1);
             Assert.IsTrue(bits.FastGet(bit - 1));
         }
-
-
-        #region BaseDocIdSetTestCase<T>
-        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        /// <summary>
-        /// Test length=0.
-        /// </summary>
-        [Test]
-        public override void TestNoBit()
-        {
-            base.TestNoBit();
-        }
-
-        /// <summary>
-        /// Test length=1.
-        /// </summary>
-        [Test]
-        public override void Test1Bit()
-        {
-            base.Test1Bit();
-        }
-
-        /// <summary>
-        /// Test length=2.
-        /// </summary>
-        [Test]
-        public override void Test2Bits()
-        {
-            base.Test2Bits();
-        }
-
-        /// <summary>
-        /// Compare the content of the set against a <seealso cref="BitSet"/>.
-        /// </summary>
-        [Test, LongRunningTest]
-        public override void TestAgainstBitSet()
-        {
-            base.TestAgainstBitSet();
-        }
-
-        #endregion
     }
 }

@@ -54,8 +54,8 @@ namespace Lucene.Net.Util
             DirA = NewDirectory();
             DirB = NewDirectory();
 
-            IndexWriter wA = new IndexWriter(DirA, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
-            IndexWriter wB = new IndexWriter(DirB, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter wA = new IndexWriter(DirA, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            IndexWriter wB = new IndexWriter(DirB, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             long theLong = long.MaxValue;
             double theDouble = double.MaxValue;

@@ -48,11 +48,11 @@ namespace Lucene.Net.Store
 
         private string RandomToken()
         {
-            int tl = 1 + Random().Next(7);
+            int tl = 1 + Random.Next(7);
             StringBuilder sb = new StringBuilder();
             for (int cx = 0; cx < tl; cx++)
             {
-                int c = Random().Next(25);
+                int c = Random.Next(25);
                 sb.Append(Alphabet.Substring(c, 1));
             }
             return sb.ToString();
@@ -60,7 +60,7 @@ namespace Lucene.Net.Store
 
         private string RandomField()
         {
-            int fl = 1 + Random().Next(3);
+            int fl = 1 + Random.Next(3);
             StringBuilder fb = new StringBuilder();
             for (int fx = 0; fx < fl; fx++)
             {
@@ -82,7 +82,7 @@ namespace Lucene.Net.Store
 
             // plan to add a set of useful stopwords, consider changing some of the
             // interior filters.
-            using (var analyzer = new MockAnalyzer(Random()))
+            using (var analyzer = new MockAnalyzer(Random))
             {
                 // TODO: something about lock timeouts and leftover locks.
                 using (var writer = new IndexWriter(dir,

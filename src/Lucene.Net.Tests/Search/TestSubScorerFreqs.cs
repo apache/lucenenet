@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             Dir = new RAMDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter w = new RandomIndexWriter(Random, Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             // make sure we have more than one segment occationally
             int num = AtLeast(31);
             for (int i = 0; i < num; i++)
@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
                 w.AddDocument(doc);
             }
 
-            s = NewSearcher(w.Reader);
+            s = NewSearcher(w.GetReader());
             w.Dispose();
         }
 

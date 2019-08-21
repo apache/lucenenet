@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
         {
             base.BeforeClass();
 
-            Random random = Random();
+            Random random = Random;
             INTS = new int[COUNT];
             LONGS = new long[COUNT];
             RANDOM_TEST_BYTES = new byte[COUNT * (5 + 4 + 9 + 8)];
@@ -62,11 +62,11 @@ namespace Lucene.Net.Index
                 if (Rarely())
                 {
                     // a long with lots of zeroes at the end
-                    l1 = LONGS[i] = TestUtil.NextLong(random, 0, int.MaxValue) << 32;
+                    l1 = LONGS[i] = TestUtil.NextInt64(random, 0, int.MaxValue) << 32;
                 }
                 else
                 {
-                    l1 = LONGS[i] = TestUtil.NextLong(random, 0, long.MaxValue);
+                    l1 = LONGS[i] = TestUtil.NextInt64(random, 0, long.MaxValue);
                 }
                 bdo.WriteVInt64(l1);
                 bdo.WriteInt64(l1);
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRawIndexInputRead()
         {
-            Random random = Random();
+            Random random = Random;
             RAMDirectory dir = new RAMDirectory();
             IndexOutput os = dir.CreateOutput("foo", NewIOContext(random));
             os.WriteBytes(READ_TEST_BYTES, READ_TEST_BYTES.Length);

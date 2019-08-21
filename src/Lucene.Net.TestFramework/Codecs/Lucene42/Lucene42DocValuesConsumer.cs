@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene42
 {
@@ -13,21 +13,21 @@ namespace Lucene.Net.Codecs.Lucene42
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FormatAndBits = Lucene.Net.Util.Packed.PackedInt32s.FormatAndBits;
@@ -46,29 +46,29 @@ namespace Lucene.Net.Codecs.Lucene42
     //   Constants use Lucene42DocValuesProducer.
 
     /// <summary>
-    /// Writer for <seealso cref="Lucene42DocValuesFormat"/>
+    /// Writer for <see cref="Lucene42DocValuesFormat"/>.
     /// </summary>
 #pragma warning disable 612, 618
     internal class Lucene42DocValuesConsumer : DocValuesConsumer
     {
-        internal readonly IndexOutput Data, Meta;
-        internal readonly int MaxDoc;
-        internal readonly float AcceptableOverheadRatio;
+        internal readonly IndexOutput data, meta;
+        internal readonly int maxDoc;
+        internal readonly float acceptableOverheadRatio;
 
         internal Lucene42DocValuesConsumer(SegmentWriteState state, string dataCodec, string dataExtension, string metaCodec, string metaExtension, float acceptableOverheadRatio)
         {
-            this.AcceptableOverheadRatio = acceptableOverheadRatio;
-            MaxDoc = state.SegmentInfo.DocCount;
+            this.acceptableOverheadRatio = acceptableOverheadRatio;
+            maxDoc = state.SegmentInfo.DocCount;
             bool success = false;
             try
             {
                 string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, dataExtension);
-                Data = state.Directory.CreateOutput(dataName, state.Context);
+                data = state.Directory.CreateOutput(dataName, state.Context);
                 // this writer writes the format 4.2 did!
-                CodecUtil.WriteHeader(Data, dataCodec, Lucene42DocValuesProducer.VERSION_GCD_COMPRESSION);
+                CodecUtil.WriteHeader(data, dataCodec, Lucene42DocValuesProducer.VERSION_GCD_COMPRESSION);
                 string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, metaExtension);
-                Meta = state.Directory.CreateOutput(metaName, state.Context);
-                CodecUtil.WriteHeader(Meta, metaCodec, Lucene42DocValuesProducer.VERSION_GCD_COMPRESSION);
+                meta = state.Directory.CreateOutput(metaName, state.Context);
+                CodecUtil.WriteHeader(meta, metaCodec, Lucene42DocValuesProducer.VERSION_GCD_COMPRESSION);
                 success = true;
             }
             finally
@@ -87,9 +87,9 @@ namespace Lucene.Net.Codecs.Lucene42
 
         internal virtual void AddNumericField(FieldInfo field, IEnumerable<long?> values, bool optimizeStorage)
         {
-            Meta.WriteVInt32(field.Number);
-            Meta.WriteByte((byte)Lucene42DocValuesProducer.NUMBER);
-            Meta.WriteInt64(Data.GetFilePointer());
+            meta.WriteVInt32(field.Number);
+            meta.WriteByte((byte)Lucene42DocValuesProducer.NUMBER);
+            meta.WriteInt64(data.GetFilePointer());
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
             long gcd = 0;
@@ -136,39 +136,39 @@ namespace Lucene.Net.Codecs.Lucene42
 
                     ++count;
                 }
-                Debug.Assert(count == MaxDoc);
+                Debug.Assert(count == maxDoc);
             }
 
             if (uniqueValues != null)
             {
                 // small number of unique values
                 int bitsPerValue = PackedInt32s.BitsRequired(uniqueValues.Count - 1);
-                FormatAndBits formatAndBits = PackedInt32s.FastestFormatAndBits(MaxDoc, bitsPerValue, AcceptableOverheadRatio);
+                FormatAndBits formatAndBits = PackedInt32s.FastestFormatAndBits(maxDoc, bitsPerValue, acceptableOverheadRatio);
                 if (formatAndBits.BitsPerValue == 8 && minValue >= sbyte.MinValue && maxValue <= sbyte.MaxValue)
                 {
-                    Meta.WriteByte((byte)Lucene42DocValuesProducer.UNCOMPRESSED); // uncompressed
+                    meta.WriteByte((byte)Lucene42DocValuesProducer.UNCOMPRESSED); // uncompressed
                     foreach (long? nv in values)
                     {
-                        Data.WriteByte((byte)nv.GetValueOrDefault());
+                        data.WriteByte((byte)nv.GetValueOrDefault());
                     }
                 }
                 else
                 {
-                    Meta.WriteByte((byte)Lucene42DocValuesProducer.TABLE_COMPRESSED); // table-compressed
+                    meta.WriteByte((byte)Lucene42DocValuesProducer.TABLE_COMPRESSED); // table-compressed
                     long[] decode = uniqueValues.ToArray(/*new long?[uniqueValues.Count]*/);
                     var encode = new Dictionary<long, int>();
-                    Data.WriteVInt32(decode.Length);
+                    data.WriteVInt32(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
                     {
-                        Data.WriteInt64(decode[i]);
+                        data.WriteInt64(decode[i]);
                         encode[decode[i]] = i;
                     }
 
-                    Meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
-                    Data.WriteVInt32(formatAndBits.Format.Id);
-                    Data.WriteVInt32(formatAndBits.BitsPerValue);
+                    meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
+                    data.WriteVInt32(formatAndBits.Format.Id);
+                    data.WriteVInt32(formatAndBits.BitsPerValue);
 
-                    PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(Data, formatAndBits.Format, MaxDoc, formatAndBits.BitsPerValue, PackedInt32s.DEFAULT_BUFFER_SIZE);
+                    PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(data, formatAndBits.Format, maxDoc, formatAndBits.BitsPerValue, PackedInt32s.DEFAULT_BUFFER_SIZE);
                     foreach (long? nv in values)
                     {
                         writer.Add(encode[nv.GetValueOrDefault()]);
@@ -178,13 +178,13 @@ namespace Lucene.Net.Codecs.Lucene42
             }
             else if (gcd != 0 && gcd != 1)
             {
-                Meta.WriteByte((byte)Lucene42DocValuesProducer.GCD_COMPRESSED);
-                Meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
-                Data.WriteInt64(minValue);
-                Data.WriteInt64(gcd);
-                Data.WriteVInt32(Lucene42DocValuesProducer.BLOCK_SIZE);
+                meta.WriteByte((byte)Lucene42DocValuesProducer.GCD_COMPRESSED);
+                meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
+                data.WriteInt64(minValue);
+                data.WriteInt64(gcd);
+                data.WriteVInt32(Lucene42DocValuesProducer.BLOCK_SIZE);
 
-                BlockPackedWriter writer = new BlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
+                BlockPackedWriter writer = new BlockPackedWriter(data, Lucene42DocValuesProducer.BLOCK_SIZE);
                 foreach (long? nv in values)
                 {
                     writer.Add((nv.GetValueOrDefault() - minValue) / gcd);
@@ -193,12 +193,12 @@ namespace Lucene.Net.Codecs.Lucene42
             }
             else
             {
-                Meta.WriteByte((byte)Lucene42DocValuesProducer.DELTA_COMPRESSED); // delta-compressed
+                meta.WriteByte((byte)Lucene42DocValuesProducer.DELTA_COMPRESSED); // delta-compressed
 
-                Meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
-                Data.WriteVInt32(Lucene42DocValuesProducer.BLOCK_SIZE);
+                meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
+                data.WriteVInt32(Lucene42DocValuesProducer.BLOCK_SIZE);
 
-                BlockPackedWriter writer = new BlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
+                BlockPackedWriter writer = new BlockPackedWriter(data, Lucene42DocValuesProducer.BLOCK_SIZE);
                 foreach (long? nv in values)
                 {
                     writer.Add(nv.GetValueOrDefault());
@@ -214,9 +214,9 @@ namespace Lucene.Net.Codecs.Lucene42
                 bool success = false;
                 try
                 {
-                    if (Meta != null)
+                    if (meta != null)
                     {
-                        Meta.WriteVInt32(-1); // write EOF marker
+                        meta.WriteVInt32(-1); // write EOF marker
                     }
                     success = true;
                 }
@@ -224,11 +224,11 @@ namespace Lucene.Net.Codecs.Lucene42
                 {
                     if (success)
                     {
-                        IOUtils.Dispose(Data, Meta);
+                        IOUtils.Dispose(data, meta);
                     }
                     else
                     {
-                        IOUtils.DisposeWhileHandlingException(Data, Meta);
+                        IOUtils.DisposeWhileHandlingException(data, meta);
                     }
                 }
             }
@@ -237,11 +237,11 @@ namespace Lucene.Net.Codecs.Lucene42
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
             // write the byte[] data
-            Meta.WriteVInt32(field.Number);
-            Meta.WriteByte((byte)Lucene42DocValuesProducer.BYTES);
+            meta.WriteVInt32(field.Number);
+            meta.WriteByte((byte)Lucene42DocValuesProducer.BYTES);
             int minLength = int.MaxValue;
             int maxLength = int.MinValue;
-            long startFP = Data.GetFilePointer();
+            long startFP = data.GetFilePointer();
             foreach (BytesRef v in values)
             {
                 int length = v == null ? 0 : v.Length;
@@ -253,22 +253,22 @@ namespace Lucene.Net.Codecs.Lucene42
                 maxLength = Math.Max(maxLength, length);
                 if (v != null)
                 {
-                    Data.WriteBytes(v.Bytes, v.Offset, v.Length);
+                    data.WriteBytes(v.Bytes, v.Offset, v.Length);
                 }
             }
-            Meta.WriteInt64(startFP);
-            Meta.WriteInt64(Data.GetFilePointer() - startFP);
-            Meta.WriteVInt32(minLength);
-            Meta.WriteVInt32(maxLength);
+            meta.WriteInt64(startFP);
+            meta.WriteInt64(data.GetFilePointer() - startFP);
+            meta.WriteVInt32(minLength);
+            meta.WriteVInt32(maxLength);
 
             // if minLength == maxLength, its a fixed-length byte[], we are done (the addresses are implicit)
             // otherwise, we need to record the length fields...
             if (minLength != maxLength)
             {
-                Meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
-                Meta.WriteVInt32(Lucene42DocValuesProducer.BLOCK_SIZE);
+                meta.WriteVInt32(PackedInt32s.VERSION_CURRENT);
+                meta.WriteVInt32(Lucene42DocValuesProducer.BLOCK_SIZE);
 
-                MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
+                MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(data, Lucene42DocValuesProducer.BLOCK_SIZE);
                 long addr = 0;
                 foreach (BytesRef v in values)
                 {
@@ -284,9 +284,9 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private void WriteFST(FieldInfo field, IEnumerable<BytesRef> values)
         {
-            Meta.WriteVInt32(field.Number);
-            Meta.WriteByte((byte)Lucene42DocValuesProducer.FST);
-            Meta.WriteInt64(Data.GetFilePointer());
+            meta.WriteVInt32(field.Number);
+            meta.WriteByte((byte)Lucene42DocValuesProducer.FST);
+            meta.WriteInt64(data.GetFilePointer());
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             Builder<long?> builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
             Int32sRef scratch = new Int32sRef();
@@ -300,9 +300,9 @@ namespace Lucene.Net.Codecs.Lucene42
             var fst = builder.Finish();
             if (fst != null)
             {
-                fst.Save(Data);
+                fst.Save(data);
             }
-            Meta.WriteVInt64(ord);
+            meta.WriteVInt64(ord);
         }
 
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
@@ -361,21 +361,21 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
         {
-            private readonly Lucene42DocValuesConsumer OuterInstance;
+            private readonly Lucene42DocValuesConsumer outerInstance;
 
-            private IEnumerable<long?> DocToOrdCount;
-            private IEnumerable<long?> Ords;
+            private IEnumerable<long?> docToOrdCount;
+            private IEnumerable<long?> ords;
 
             public IterableAnonymousInnerClassHelper(Lucene42DocValuesConsumer outerInstance, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
-                this.OuterInstance = outerInstance;
-                this.DocToOrdCount = docToOrdCount;
-                this.Ords = ords;
+                this.outerInstance = outerInstance;
+                this.docToOrdCount = docToOrdCount;
+                this.ords = ords;
             }
 
             public IEnumerator<BytesRef> GetEnumerator()
             {
-                return new SortedSetIterator(DocToOrdCount.GetEnumerator(), Ords.GetEnumerator());
+                return new SortedSetIterator(docToOrdCount.GetEnumerator(), ords.GetEnumerator());
             }
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -387,31 +387,31 @@ namespace Lucene.Net.Codecs.Lucene42
         // per-document vint-encoded byte[]
         internal class SortedSetIterator : IEnumerator<BytesRef>
         {
-            internal byte[] Buffer = new byte[10];
+            internal byte[] buffer = new byte[10];
             internal ByteArrayDataOutput @out = new ByteArrayDataOutput();
             internal BytesRef @ref = new BytesRef();
 
-            internal readonly IEnumerator<long?> Counts;
-            internal readonly IEnumerator<long?> Ords;
+            internal readonly IEnumerator<long?> counts;
+            internal readonly IEnumerator<long?> ords;
 
             internal SortedSetIterator(IEnumerator<long?> counts, IEnumerator<long?> ords)
             {
-                this.Counts = counts;
-                this.Ords = ords;
+                this.counts = counts;
+                this.ords = ords;
             }
 
             public bool MoveNext()
             {
-                if (!Counts.MoveNext())
+                if (!counts.MoveNext())
                 {
                     return false;
                 }
 
-                int count = (int)Counts.Current;
+                int count = (int)counts.Current;
                 int maxSize = count * 9; //worst case
-                if (maxSize > Buffer.Length)
+                if (maxSize > buffer.Length)
                 {
-                    Buffer = ArrayUtil.Grow(Buffer, maxSize);
+                    buffer = ArrayUtil.Grow(buffer, maxSize);
                 }
 
                 try
@@ -423,7 +423,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     throw new Exception(bogus.ToString(), bogus);
                 }
 
-                @ref.Bytes = Buffer;
+                @ref.Bytes = buffer;
                 @ref.Offset = 0;
                 @ref.Length = @out.Position;
 
@@ -443,12 +443,12 @@ namespace Lucene.Net.Codecs.Lucene42
             // encodes count values to buffer
             internal virtual void EncodeValues(int count)
             {
-                @out.Reset(Buffer);
+                @out.Reset(buffer);
                 long lastOrd = 0;
                 for (int i = 0; i < count; i++)
                 {
-                    Ords.MoveNext();
-                    long ord = Ords.Current.Value;
+                    ords.MoveNext();
+                    long ord = ords.Current.Value;
                     @out.WriteVInt64(ord - lastOrd);
                     lastOrd = ord;
                 }

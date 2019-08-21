@@ -42,7 +42,7 @@ namespace Lucene.Net.Expressions
 		{
 			base.SetUp();
 			dir = NewDirectory();
-			var iw = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+			var iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 			var doc = new Document
 			{
 			    NewStringField("id", "1", Field.Store.YES),
@@ -71,7 +71,7 @@ namespace Lucene.Net.Expressions
 			    new DoubleField("longitude", -74.0088305, Field.Store.NO)
 			};
 		    iw.AddDocument(doc);
-			reader = iw.Reader;
+			reader = iw.GetReader();
 			searcher = new IndexSearcher(reader);
 			iw.Dispose();
 		}

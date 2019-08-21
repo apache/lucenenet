@@ -555,7 +555,7 @@ namespace Lucene.Net.Search
         public virtual void TestSparseIndex()
         {
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             for (int d = -20; d <= 20; d++)
             {
@@ -596,19 +596,5 @@ namespace Lucene.Net.Search
             reader.Dispose();
             dir.Dispose();
         }
-
-
-        #region SorterTestBase
-        // LUCENENET NOTE: Tests in a base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        [Test]
-        public override void TestPad()
-        {
-            base.TestPad();
-        }
-
-        #endregion
     }
 }

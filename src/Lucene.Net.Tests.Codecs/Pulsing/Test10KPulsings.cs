@@ -46,13 +46,13 @@ namespace Lucene.Net.Codecs.Pulsing
 
             DirectoryInfo f = CreateTempDir("10kpulsed");
             BaseDirectoryWrapper dir = NewFSDirectory(f);
-            dir.CheckIndexOnClose = false; // we do this ourselves explicitly
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
+            dir.CheckIndexOnDispose = false; // we do this ourselves explicitly
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(cp));
 
             Document document = new Document();
             FieldType ft = new FieldType(TextField.TYPE_STORED);
 
-            switch (TestUtil.NextInt(Random(), 0, 2))
+            switch (TestUtil.NextInt32(Random, 0, 2))
             {
                 case 0:
                     ft.IndexOptions = IndexOptions.DOCS_ONLY;
@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 iw.AddDocument(document);
             }
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             TermsEnum te = MultiFields.GetTerms(ir, "field").GetIterator(null);
@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 //string expected = df.format(i);
                 string expected = i.ToString("00000", CultureInfo.InvariantCulture);
                 assertEquals(expected, te.Next().Utf8ToString());
-                de = TestUtil.Docs(Random(), te, null, de, DocsFlags.NONE);
+                de = TestUtil.Docs(Random, te, null, de, DocsFlags.NONE);
                 assertTrue(de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 assertEquals(DocIdSetIterator.NO_MORE_DOCS, de.NextDoc());
             }
@@ -105,18 +105,18 @@ namespace Lucene.Net.Codecs.Pulsing
         public virtual void Test10kNotPulsed()
         {
             // we always run this test with pulsing codec.
-            int freqCutoff = TestUtil.NextInt(Random(), 1, 10);
+            int freqCutoff = TestUtil.NextInt32(Random, 1, 10);
             Codec cp = TestUtil.AlwaysPostingsFormat(new Pulsing41PostingsFormat(freqCutoff));
 
             DirectoryInfo f = CreateTempDir("10knotpulsed");
             BaseDirectoryWrapper dir = NewFSDirectory(f);
-            dir.CheckIndexOnClose = false; // we do this ourselves explicitly
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetCodec(cp));
+            dir.CheckIndexOnDispose = false; // we do this ourselves explicitly
+            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(cp));
 
             Document document = new Document();
             FieldType ft = new FieldType(TextField.TYPE_STORED);
 
-            switch (TestUtil.NextInt(Random(), 0, 2))
+            switch (TestUtil.NextInt32(Random, 0, 2))
             {
                 case 0:
                     ft.IndexOptions = IndexOptions.DOCS_ONLY;
@@ -149,7 +149,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 iw.AddDocument(document);
             }
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             iw.Dispose();
 
             TermsEnum te = MultiFields.GetTerms(ir, "field").GetIterator(null);
@@ -160,7 +160,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 //string expected = df.format(i);
                 string expected = i.ToString("00000", CultureInfo.InvariantCulture);
                 assertEquals(expected, te.Next().Utf8ToString());
-                de = TestUtil.Docs(Random(), te, null, de, DocsFlags.NONE);
+                de = TestUtil.Docs(Random, te, null, de, DocsFlags.NONE);
                 assertTrue(de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 assertEquals(DocIdSetIterator.NO_MORE_DOCS, de.NextDoc());
             }

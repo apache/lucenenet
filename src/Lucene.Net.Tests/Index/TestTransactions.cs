@@ -1,4 +1,5 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
@@ -43,7 +44,7 @@ namespace Lucene.Net.Index
     {
         private static volatile bool DoFail;
 
-        private class RandomFailure : MockDirectoryWrapper.Failure
+        private class RandomFailure : Failure
         {
             private readonly TestTransactions OuterInstance;
 
@@ -54,7 +55,7 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (TestTransactions.DoFail && Random().Next() % 10 <= 3)
+                if (TestTransactions.DoFail && Random.Next() % 10 <= 3)
                 {
                     throw new IOException("now failing randomly but on purpose");
                 }
@@ -136,7 +137,7 @@ namespace Lucene.Net.Index
 
             public override void DoWork()
             {
-                var config = outerInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                var config = outerInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                                 .SetMaxBufferedDocs(3)
                                 .SetMergeScheduler(newScheduler1())
                                 .SetMergePolicy(NewLogMergePolicy(2));
@@ -145,7 +146,7 @@ namespace Lucene.Net.Index
 
                 // Intentionally use different params so flush/merge
                 // happen @ different times
-                var config2 = outerInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                var config2 = outerInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                                 .SetMaxBufferedDocs(2)
                                 .SetMergeScheduler(newScheduler2())
                                 .SetMergePolicy(NewLogMergePolicy(3));
@@ -202,9 +203,9 @@ namespace Lucene.Net.Index
                 for (int j = 0; j < 10; j++)
                 {
                     Document d = new Document();
-                    int n = Random().Next();
-                    d.Add(outerInstance.NewField("id", Convert.ToString(nextID++), customType));
-                    d.Add(outerInstance.NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
+                    int n = Random.Next();
+                    d.Add(NewField("id", Convert.ToString(nextID++), customType));
+                    d.Add(NewTextField("contents", English.Int32ToEnglish(n), Field.Store.NO));
                     writer.AddDocument(d);
                 }
 
@@ -270,12 +271,12 @@ namespace Lucene.Net.Index
 
         public virtual void InitIndex(Directory dir)
         {
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             for (int j = 0; j < 7; j++)
             {
                 Document d = new Document();
-                int n = Random().Next();
-                d.Add(NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
+                int n = Random.Next();
+                d.Add(NewTextField("contents", English.Int32ToEnglish(n), Field.Store.NO));
                 writer.AddDocument(d);
             }
             writer.Dispose();
@@ -288,8 +289,8 @@ namespace Lucene.Net.Index
         {
             Console.WriteLine("Start test");
             // we cant use non-ramdir on windows, because this test needs to double-write.
-            MockDirectoryWrapper dir1 = new MockDirectoryWrapper(Random(), new RAMDirectory());
-            MockDirectoryWrapper dir2 = new MockDirectoryWrapper(Random(), new RAMDirectory());
+            MockDirectoryWrapper dir1 = new MockDirectoryWrapper(Random, new RAMDirectory());
+            MockDirectoryWrapper dir2 = new MockDirectoryWrapper(Random, new RAMDirectory());
             dir1.PreventDoubleWrite = false;
             dir2.PreventDoubleWrite = false;
             dir1.FailOn(new RandomFailure(this));
@@ -299,8 +300,8 @@ namespace Lucene.Net.Index
 
             // We throw exceptions in deleteFile, which creates
             // leftover files:
-            dir1.AssertNoUnrefencedFilesOnClose = false;
-            dir2.AssertNoUnrefencedFilesOnClose = false;
+            dir1.AssertNoUnreferencedFilesOnClose = false;
+            dir2.AssertNoUnreferencedFilesOnClose = false;
 
             InitIndex(dir1);
             InitIndex(dir2);

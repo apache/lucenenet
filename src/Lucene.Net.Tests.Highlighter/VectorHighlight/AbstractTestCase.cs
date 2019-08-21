@@ -68,9 +68,9 @@ namespace Lucene.Net.Search.VectorHighlight
         public override void SetUp()
         {
             base.SetUp();
-            analyzerW = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
+            analyzerW = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             analyzerB = new BigramAnalyzer();
-            analyzerK = new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false);
+            analyzerK = new MockAnalyzer(Random, MockTokenizer.KEYWORD, false);
             dir = NewDirectory();
         }
 

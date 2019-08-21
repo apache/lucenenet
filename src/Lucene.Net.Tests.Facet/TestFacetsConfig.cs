@@ -42,14 +42,14 @@ namespace Lucene.Net.Facet
             int iters = AtLeast(1000);
             for (int i = 0; i < iters; i++)
             {
-                int numParts = TestUtil.NextInt(Random(), 1, 6);
+                int numParts = TestUtil.NextInt32(Random, 1, 6);
                 string[] parts = new string[numParts];
                 for (int j = 0; j < numParts; j++)
                 {
                     string s;
                     while (true)
                     {
-                        s = TestUtil.RandomUnicodeString(Random());
+                        s = TestUtil.RandomUnicodeString(Random);
                         if (s.Length > 0)
                         {
                             break;
@@ -70,7 +70,7 @@ namespace Lucene.Net.Facet
             // LUCENE-5367: this was a problem with the previous code, making sure it
             // works with the new code.
             Directory indexDir = NewDirectory(), taxoDir = NewDirectory();
-            IndexWriter indexWriter = new IndexWriter(indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter indexWriter = new IndexWriter(indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
             FacetsConfig facetsConfig = new FacetsConfig();
             Document doc = new Document();

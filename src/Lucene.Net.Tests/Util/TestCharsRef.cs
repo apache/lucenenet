@@ -35,7 +35,7 @@ namespace Lucene.Net.Util
 
             for (int i = 0; i < numStrings; i++)
             {
-                string s = TestUtil.RandomUnicodeString(Random());
+                string s = TestUtil.RandomUnicodeString(Random);
                 utf8[i] = new BytesRef(s);
                 utf16[i] = new CharsRef(s);
             }
@@ -59,8 +59,8 @@ namespace Lucene.Net.Util
             int numStrings = AtLeast(10);
             for (int i = 0; i < numStrings; i++)
             {
-                char[] charArray = TestUtil.RandomRealisticUnicodeString(Random(), 1, 100).ToCharArray();
-                int offset = Random().Next(charArray.Length);
+                char[] charArray = TestUtil.RandomRealisticUnicodeString(Random, 1, 100).ToCharArray();
+                int offset = Random.Next(charArray.Length);
                 int length = charArray.Length - offset;
                 builder.Append(charArray, offset, length);
                 @ref.Append(charArray, offset, length);
@@ -76,8 +76,8 @@ namespace Lucene.Net.Util
             for (int i = 0; i < numIters; i++)
             {
                 CharsRef @ref = new CharsRef();
-                char[] charArray = TestUtil.RandomRealisticUnicodeString(Random(), 1, 100).ToCharArray();
-                int offset = Random().Next(charArray.Length);
+                char[] charArray = TestUtil.RandomRealisticUnicodeString(Random, 1, 100).ToCharArray();
+                int offset = Random.Next(charArray.Length);
                 int length = charArray.Length - offset;
                 string str = new string(charArray, offset, length);
                 @ref.CopyChars(charArray, offset, length);

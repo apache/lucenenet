@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Core
             List<string> a = new List<string>();
             for (int i = 0; i < 20; i++)
             {
-                string w = English.IntToEnglish(i).Trim();
+                string w = English.Int32ToEnglish(i).Trim();
                 sb.Append(w).Append(" ");
                 if (i % 3 != 0)
                 {
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Core
             {
                 assertTrue(stpf.IncrementToken());
                 log("Token " + i + ": " + stpf);
-                string w = English.IntToEnglish(i).Trim();
+                string w = English.Int32ToEnglish(i).Trim();
                 assertEquals("expecting token " + i + " to be " + w, w, termAtt.ToString());
                 assertEquals("all but first token must have position increment of 3", enableIcrements ? (i == 0 ? 1 : 3) : 1, posIncrAtt.PositionIncrement);
             }

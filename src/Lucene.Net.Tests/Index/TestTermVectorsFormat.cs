@@ -32,18 +32,15 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestTermVectorsFormat : BaseTermVectorsFormatTestCase
     {
-        protected override Codec Codec
+        protected override Codec GetCodec()
         {
-            get
-            {
-                return Codec.Default;
-            }
+            return Codec.Default;
         }
 
         protected override IEnumerable<Options> ValidOptions()
         {
 #pragma warning disable 612, 618
-            if (Codec is Lucene3xCodec)
+            if (GetCodec() is Lucene3xCodec)
 #pragma warning restore 612, 618
             {
                 // payloads are not supported on vectors in 3.x indexes
@@ -60,60 +57,5 @@ namespace Lucene.Net.Index
         {
             AssumeTrue("The MockRandom PF randomizes content on the fly, so we can't check it", false);
         }
-
-
-
-        #region BaseTermVectorsFormatTestCase
-        // LUCENENET NOTE: Tests in an abstract base class are not pulled into the correct
-        // context in Visual Studio. This fixes that with the minimum amount of code necessary
-        // to run them in the correct context without duplicating all of the tests.
-
-        [Test]
-        // only one doc with vectors
-        public override void TestRareVectors()
-        {
-            base.TestRareVectors();
-        }
-
-        [Test]
-        public override void TestHighFreqs()
-        {
-            base.TestHighFreqs();
-        }
-
-        [Test]
-        public override void TestLotsOfFields()
-        {
-            base.TestLotsOfFields();
-        }
-
-        [Test]
-        // different options for the same field
-        public override void TestMixedOptions()
-        {
-            base.TestMixedOptions();
-        }
-
-        [Test]
-        public override void TestRandom()
-        {
-            base.TestRandom();
-        }
-
-        [Test]
-        public override void TestMerge()
-        {
-            base.TestMerge();
-        }
-
-        [Test]
-        // run random tests from different threads to make sure the per-thread clones
-        // don't share mutable data
-        public override void TestClone()
-        {
-            base.TestClone();
-        }
-
-        #endregion
     }
 }

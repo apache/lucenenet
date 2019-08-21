@@ -63,14 +63,14 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            var iw = new RandomIndexWriter(Random(), indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            var iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
             var config = Config;
 
             seedIndex(tw, iw, config);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             tw.Commit();
 
             // prepare index reader and taxonomy.
@@ -96,7 +96,7 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
@@ -104,7 +104,7 @@ namespace Lucene.Net.Facet
             config.SetIndexFieldName("Author", "$author");
             seedIndex(tw, iw, config);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             tw.Commit();
 
             // prepare index reader and taxonomy.
@@ -135,7 +135,7 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
@@ -144,7 +144,7 @@ namespace Lucene.Net.Facet
             config.SetIndexFieldName("Composer", "$music");
             seedIndex(tw, iw, config);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             tw.Commit();
 
             // prepare index reader and taxonomy.
@@ -191,7 +191,7 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            var iw = new RandomIndexWriter(Random(), indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            var iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             var tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
@@ -200,7 +200,7 @@ namespace Lucene.Net.Facet
             config.SetIndexFieldName("Composer", "$composers");
             seedIndex(tw, iw, config);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             tw.Commit();
 
             // prepare index reader and taxonomy.
@@ -232,7 +232,7 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             // create and open an index writer
-            RandomIndexWriter iw = new RandomIndexWriter(Random(), indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false)));
+            RandomIndexWriter iw = new RandomIndexWriter(Random, indexDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)));
             // create and open a taxonomy writer
             ITaxonomyWriter tw = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
@@ -242,7 +242,7 @@ namespace Lucene.Net.Facet
             config.SetIndexFieldName("Author", "$literature");
             seedIndex(tw, iw, config);
 
-            IndexReader ir = iw.Reader;
+            IndexReader ir = iw.GetReader();
             tw.Commit();
 
             // prepare index reader and taxonomy.

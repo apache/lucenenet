@@ -1,5 +1,6 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -44,10 +45,10 @@ namespace Lucene.Net.Index
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BNumerics"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
 
-            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
            .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetRAMBufferSizeMB(256.0).SetMergeScheduler(newScheduler()).SetMergePolicy(NewLogMergePolicy(false, 10)).SetOpenMode(OpenMode.CREATE));
 
             Document doc = new Document();

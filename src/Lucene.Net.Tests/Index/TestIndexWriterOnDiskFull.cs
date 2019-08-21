@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -65,16 +66,16 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: pass=" + pass);
                 }
                 bool doAbort = pass == 1;
-                long diskFree = TestUtil.NextInt(Random(), 100, 300);
+                long diskFree = TestUtil.NextInt32(Random, 100, 300);
                 while (true)
                 {
                     if (VERBOSE)
                     {
                         Console.WriteLine("TEST: cycle: diskFree=" + diskFree);
                     }
-                    MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new RAMDirectory());
+                    MockDirectoryWrapper dir = new MockDirectoryWrapper(Random, new RAMDirectory());
                     dir.MaxSizeInBytes = diskFree;
-                    IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                    IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                     IMergeScheduler ms = writer.Config.MergeScheduler;
                     if (ms is IConcurrentMergeScheduler)
                     {
@@ -152,7 +153,7 @@ namespace Lucene.Net.Index
                         dir.Dispose();
                         // Now try again w/ more space:
 
-                        diskFree += TEST_NIGHTLY ? TestUtil.NextInt(Random(), 400, 600) : TestUtil.NextInt(Random(), 3000, 5000);
+                        diskFree += TEST_NIGHTLY ? TestUtil.NextInt32(Random, 400, 600) : TestUtil.NextInt32(Random, 3000, 5000);
                     }
                     else
                     {
@@ -205,7 +206,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < NUM_DIR; i++)
             {
                 dirs[i] = NewDirectory();
-                IndexWriter writer = new IndexWriter(dirs[i], NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+                IndexWriter writer = new IndexWriter(dirs[i], NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                 for (int j = 0; j < 25; j++)
                 {
                     AddDocWithIndex(writer, 25 * i + j);
@@ -221,7 +222,7 @@ namespace Lucene.Net.Index
             // Now, build a starting index that has START_COUNT docs.  We
             // will then try to addIndexes into a copy of this:
             MockDirectoryWrapper startDir = NewMockDirectory();
-            IndexWriter indWriter = new IndexWriter(startDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
+            IndexWriter indWriter = new IndexWriter(startDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             for (int j = 0; j < START_COUNT; j++)
             {
                 AddDocWithIndex(indWriter, j);
@@ -267,7 +268,7 @@ namespace Lucene.Net.Index
                 }
 
                 // Start with 100 bytes more than we are currently using:
-                long diskFree = diskUsage + TestUtil.NextInt(Random(), 50, 200);
+                long diskFree = diskUsage + TestUtil.NextInt32(Random, 50, 200);
 
                 int method = iter;
 
@@ -296,8 +297,8 @@ namespace Lucene.Net.Index
                     }
 
                     // Make a new dir that will enforce disk usage:
-                    MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new RAMDirectory(startDir, NewIOContext(Random())));
-                    indWriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetOpenMode(OpenMode.APPEND).SetMergePolicy(NewLogMergePolicy(false)));
+                    MockDirectoryWrapper dir = new MockDirectoryWrapper(Random, new RAMDirectory(startDir, NewIOContext(Random)));
+                    indWriter = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMergePolicy(NewLogMergePolicy(false)));
                     IOException err = null;
 
                     IMergeScheduler ms = indWriter.Config.MergeScheduler;
@@ -330,7 +331,7 @@ namespace Lucene.Net.Index
 
                         if (0 == x)
                         {
-                            dir.RandomIOExceptionRateOnOpen = Random().NextDouble() * 0.01;
+                            dir.RandomIOExceptionRateOnOpen = Random.NextDouble() * 0.01;
                             thisDiskFree = diskFree;
                             if (diskRatio >= 2.0)
                             {
@@ -547,7 +548,7 @@ namespace Lucene.Net.Index
                     dir.Dispose();
 
                     // Try again with more free space:
-                    diskFree += TEST_NIGHTLY ? TestUtil.NextInt(Random(), 4000, 8000) : TestUtil.NextInt(Random(), 40000, 80000);
+                    diskFree += TEST_NIGHTLY ? TestUtil.NextInt32(Random, 4000, 8000) : TestUtil.NextInt32(Random, 40000, 80000);
                 }
             }
 
@@ -558,14 +559,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class FailTwiceDuringMerge : MockDirectoryWrapper.Failure
+        private class FailTwiceDuringMerge : Failure
         {
             public bool DidFail1;
             public bool DidFail2;
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (!DoFail)
+                if (!m_doFail)
                 {
                     return;
                 }
@@ -594,7 +595,7 @@ namespace Lucene.Net.Index
         {
             MockDirectoryWrapper dir = NewMockDirectory();
             //IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).setReaderPooling(true));
-            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergeScheduler(new SerialMergeScheduler()).SetReaderPooling(true).SetMergePolicy(NewLogMergePolicy(2)));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(new SerialMergeScheduler()).SetReaderPooling(true).SetMergePolicy(NewLogMergePolicy(2)));
             // we can do this because we add/delete/add (and dont merge to "nothing")
             w.KeepFullyDeletedSegments = true;
 
@@ -639,11 +640,11 @@ namespace Lucene.Net.Index
         public virtual void TestImmediateDiskFull([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             MockDirectoryWrapper dir = NewMockDirectory();
-            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMaxBufferedDocs(2)
                             .SetMergeScheduler(newScheduler());
             IndexWriter writer = new IndexWriter(dir, config);
-            dir.MaxSizeInBytes = Math.Max(1, dir.RecomputedActualSizeInBytes);
+            dir.MaxSizeInBytes = Math.Max(1, dir.GetRecomputedActualSizeInBytes());
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             doc.Add(NewField("field", "aaa bbb ccc ddd eee fff ggg hhh iii jjj", customType));
@@ -686,7 +687,7 @@ namespace Lucene.Net.Index
         {
             Document doc = new Document();
             doc.Add(NewTextField("content", "aaa", Field.Store.NO));
-            if (DefaultCodecSupportsDocValues())
+            if (DefaultCodecSupportsDocValues)
             {
                 doc.Add(new NumericDocValuesField("numericdv", 1));
             }
@@ -698,7 +699,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             doc.Add(NewTextField("content", "aaa " + index, Field.Store.NO));
             doc.Add(NewTextField("id", "" + index, Field.Store.NO));
-            if (DefaultCodecSupportsDocValues())
+            if (DefaultCodecSupportsDocValues)
             {
                 doc.Add(new NumericDocValuesField("numericdv", 1));
             }

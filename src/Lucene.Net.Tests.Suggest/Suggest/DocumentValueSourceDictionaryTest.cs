@@ -73,10 +73,10 @@ namespace Lucene.Net.Search.Suggest
         public void TestEmptyReader()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
             // Make sure the index is created?
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             writer.Commit();
             writer.Dispose();
             IndexReader ir = DirectoryReader.Open(dir);
@@ -95,9 +95,9 @@ namespace Lucene.Net.Search.Suggest
         public void TestBasic()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             IDictionary<string, Document> docs = GenerateIndexDocuments(AtLeast(100));
             foreach (Document doc in docs.Values)
             {
@@ -133,9 +133,9 @@ namespace Lucene.Net.Search.Suggest
         public void TestWithContext()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             IDictionary<string, Document> docs = GenerateIndexDocuments(AtLeast(100));
             foreach (Document doc in docs.Values)
             {
@@ -176,9 +176,9 @@ namespace Lucene.Net.Search.Suggest
         public void TestWithoutPayload()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             IDictionary<string, Document> docs = GenerateIndexDocuments(AtLeast(100));
             foreach (Document doc in docs.Values)
             {
@@ -213,11 +213,11 @@ namespace Lucene.Net.Search.Suggest
         public void TestWithDeletions()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             IDictionary<string, Document> docs = GenerateIndexDocuments(AtLeast(100));
-            Random rand = Random();
+            Random rand = Random;
             List<string> termsToDel = new List<string>();
             foreach (Document doc in docs.Values)
             {
@@ -278,9 +278,9 @@ namespace Lucene.Net.Search.Suggest
         {
 
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             IDictionary<string, Document> docs = GenerateIndexDocuments(AtLeast(100));
             foreach (Document doc in docs.Values)
             {

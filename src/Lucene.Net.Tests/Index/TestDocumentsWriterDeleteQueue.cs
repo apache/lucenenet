@@ -43,11 +43,11 @@ namespace Lucene.Net.Index
         public virtual void TestUpdateDelteSlices()
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
-            int size = 200 + Random().Next(500) * RANDOM_MULTIPLIER;
+            int size = 200 + Random.Next(500) * RANDOM_MULTIPLIER;
             int?[] ids = new int?[size];
             for (int i = 0; i < ids.Length; i++)
             {
-                ids[i] = Random().Next();
+                ids[i] = Random.Next();
             }
             DeleteSlice slice1 = queue.NewSlice();
             DeleteSlice slice2 = queue.NewSlice();
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
                 Term[] term = new Term[] { new Term("id", i.ToString()) };
                 uniqueValues.Add(term[0]);
                 queue.AddDelete(term);
-                if (Random().Next(20) == 0 || j == ids.Length - 1)
+                if (Random.Next(20) == 0 || j == ids.Length - 1)
                 {
                     queue.UpdateSlice(slice1);
                     Assert.IsTrue(slice1.IsTailItem(term));
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
                     AssertAllBetween(last1, j, bd1, ids);
                     last1 = j + 1;
                 }
-                if (Random().Next(10) == 5 || j == ids.Length - 1)
+                if (Random.Next(10) == 5 || j == ids.Length - 1)
                 {
                     queue.UpdateSlice(slice2);
                     Assert.IsTrue(slice2.IsTailItem(term));
@@ -109,13 +109,13 @@ namespace Lucene.Net.Index
             Assert.IsFalse(queue.AnyChanges());
             queue.Clear();
             Assert.IsFalse(queue.AnyChanges());
-            int size = 200 + Random().Next(500) * RANDOM_MULTIPLIER;
+            int size = 200 + Random.Next(500) * RANDOM_MULTIPLIER;
             int termsSinceFreeze = 0;
             int queriesSinceFreeze = 0;
             for (int i = 0; i < size; i++)
             {
                 Term term = new Term("id", "" + i);
-                if (Random().Next(10) == 0)
+                if (Random.Next(10) == 0)
                 {
                     queue.AddDelete(new TermQuery(term));
                     queriesSinceFreeze++;
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
                     termsSinceFreeze++;
                 }
                 Assert.IsTrue(queue.AnyChanges());
-                if (Random().Next(10) == 0)
+                if (Random.Next(10) == 0)
                 {
                     queue.Clear();
                     queue.TryApplyGlobalSlice();
@@ -139,13 +139,13 @@ namespace Lucene.Net.Index
         public virtual void TestAnyChanges()
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
-            int size = 200 + Random().Next(500) * RANDOM_MULTIPLIER;
+            int size = 200 + Random.Next(500) * RANDOM_MULTIPLIER;
             int termsSinceFreeze = 0;
             int queriesSinceFreeze = 0;
             for (int i = 0; i < size; i++)
             {
                 Term term = new Term("id", "" + i);
-                if (Random().Next(10) == 0)
+                if (Random.Next(10) == 0)
                 {
                     queue.AddDelete(new TermQuery(term));
                     queriesSinceFreeze++;
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
                     termsSinceFreeze++;
                 }
                 Assert.IsTrue(queue.AnyChanges());
-                if (Random().Next(5) == 0)
+                if (Random.Next(5) == 0)
                 {
                     FrozenBufferedUpdates freezeGlobalBuffer = queue.FreezeGlobalBuffer(null);
                     Assert.AreEqual(termsSinceFreeze, freezeGlobalBuffer.termCount);
@@ -212,16 +212,16 @@ namespace Lucene.Net.Index
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
             HashSet<Term> uniqueValues = new HashSet<Term>();
-            int size = 10000 + Random().Next(500) * RANDOM_MULTIPLIER;
+            int size = 10000 + Random.Next(500) * RANDOM_MULTIPLIER;
             int?[] ids = new int?[size];
             for (int i = 0; i < ids.Length; i++)
             {
-                ids[i] = Random().Next();
+                ids[i] = Random.Next();
                 uniqueValues.Add(new Term("id", ids[i].ToString()));
             }
             CountdownEvent latch = new CountdownEvent(1);
             AtomicInt32 index = new AtomicInt32(0);
-            int numThreads = 2 + Random().Next(5);
+            int numThreads = 2 + Random.Next(5);
             UpdateThread[] threads = new UpdateThread[numThreads];
             for (int i = 0; i < threads.Length; i++)
             {

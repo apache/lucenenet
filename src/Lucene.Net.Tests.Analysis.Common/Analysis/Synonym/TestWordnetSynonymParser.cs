@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Synonym
         [Test]
         public virtual void TestSynonyms()
         {
-            WordnetSynonymParser parser = new WordnetSynonymParser(true, true, new MockAnalyzer(Random()));
+            WordnetSynonymParser parser = new WordnetSynonymParser(true, true, new MockAnalyzer(Random));
             parser.Parse(new StringReader(synonymsFile));
             SynonymMap map = parser.Build();
 

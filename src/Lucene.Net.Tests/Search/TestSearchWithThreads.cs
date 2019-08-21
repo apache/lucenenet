@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
         public virtual void Test()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
 
             long startTime = Environment.TickCount;
 
@@ -67,17 +67,17 @@ namespace Lucene.Net.Search
             StringBuilder sb = new StringBuilder();
             for (int docCount = 0; docCount < NUM_DOCS; docCount++)
             {
-                int numTerms = Random().Next(10);
+                int numTerms = Random.Next(10);
                 for (int termCount = 0; termCount < numTerms; termCount++)
                 {
-                    sb.Append(Random().NextBoolean() ? "aaa" : "bbb");
+                    sb.Append(Random.NextBoolean() ? "aaa" : "bbb");
                     sb.Append(' ');
                 }
                 body.SetStringValue(sb.ToString());
                 w.AddDocument(doc);
                 sb.Remove(0, sb.Length);
             }
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             long endTime = Environment.TickCount;

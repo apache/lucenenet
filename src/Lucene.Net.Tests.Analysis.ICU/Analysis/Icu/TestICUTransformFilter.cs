@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.Icu
                 return new TokenStreamComponents(tokenizer, new ICUTransformFilter(tokenizer, transform));
             }))
             {
-                CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+                CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
             }
         }
 

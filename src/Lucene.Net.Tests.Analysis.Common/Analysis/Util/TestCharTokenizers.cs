@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Util
         {
             var builder = new StringBuilder();
             // create random input
-            var num = 1024 + Random().Next(1024);
+            var num = 1024 + Random.Next(1024);
             num *= RANDOM_MULTIPLIER;
             for (var i = 1; i < num; i++)
             {
@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.Util
             var num = 1000 * RANDOM_MULTIPLIER;
             for (var i = 0; i < num; i++)
             {
-                var s = TestUtil.RandomUnicodeString(Random());
+                var s = TestUtil.RandomUnicodeString(Random);
                 var ts = analyzer.GetTokenStream("foo", s);
                 try
                 {
@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
             // just for fun
-            CheckRandomData(Random(), analyzer, num);
+            CheckRandomData(Random, analyzer, num);
         }
 
         private sealed class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -186,7 +186,7 @@ namespace Lucene.Net.Analysis.Util
             var num = 1000 * RANDOM_MULTIPLIER;
             for (var i = 0; i < num; i++)
             {
-                var s = TestUtil.RandomUnicodeString(Random());
+                var s = TestUtil.RandomUnicodeString(Random);
                 var ts = analyzer.GetTokenStream("foo", s);
                 try
                 {
@@ -209,7 +209,7 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
             // just for fun
-            CheckRandomData(Random(), analyzer, num);
+            CheckRandomData(Random, analyzer, num);
         }
 
         private sealed class AnalyzerAnonymousInnerClassHelper2 : Analyzer

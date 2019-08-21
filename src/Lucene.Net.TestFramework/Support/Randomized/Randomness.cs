@@ -57,7 +57,7 @@ namespace Lucene.Net.Randomized
         {
         }
 
-        protected Randomness(ThreadClass owner, int seed, List<ISeedDecorator> decorators)
+        protected Randomness(ThreadClass owner, int seed, IList<ISeedDecorator> decorators)
         {
             this.Seed = seed;
             this.decorators = decorators.ToList();

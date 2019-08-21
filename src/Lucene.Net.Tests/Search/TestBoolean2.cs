@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             for (int i = 0; i < DocFields.Length; i++)
             {
                 Document doc = new Document();
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
             Searcher.Similarity = new DefaultSimilarity();
 
             // Make big index
-            Dir2 = new MockDirectoryWrapper(Random(), new RAMDirectory(Directory, IOContext.DEFAULT));
+            Dir2 = new MockDirectoryWrapper(Random, new RAMDirectory(Directory, IOContext.DEFAULT));
 
             // First multiply small test index:
             MulFactor = 1;
@@ -98,15 +98,15 @@ namespace Lucene.Net.Search
                 {
                     Console.WriteLine("\nTEST: cycle...");
                 }
-                Directory copy = new MockDirectoryWrapper(Random(), new RAMDirectory(Dir2, IOContext.DEFAULT));
-                RandomIndexWriter w = new RandomIndexWriter(Random(), Dir2, Similarity, TimeZone);
+                Directory copy = new MockDirectoryWrapper(Random, new RAMDirectory(Dir2, IOContext.DEFAULT));
+                RandomIndexWriter w = new RandomIndexWriter(Random, Dir2, Similarity, TimeZone);
                 w.AddIndexes(copy);
                 docCount = w.MaxDoc;
                 w.Dispose();
                 MulFactor *= 2;
             } while (docCount < 3000);
 
-            RandomIndexWriter riw = new RandomIndexWriter(Random(), Dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(TestUtil.NextInt(Random(), 50, 1000)));
+            RandomIndexWriter riw = new RandomIndexWriter(Random, Dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
             Document doc_ = new Document();
             doc_.Add(NewTextField("field2", "xxx", Field.Store.NO));
             for (int i = 0; i < NUM_EXTRA_DOCS / 2; i++)
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
             {
                 riw.AddDocument(doc_);
             }
-            Reader = riw.Reader;
+            Reader = riw.GetReader();
             BigSearcher = NewSearcher(Reader);
             riw.Dispose();
         }
@@ -303,19 +303,19 @@ namespace Lucene.Net.Search
                 int num = AtLeast(20);
                 for (int i = 0; i < num; i++)
                 {
-                    int level = Random().Next(3);
-                    q1 = RandBoolQuery(new Random(Random().Next()), Random().NextBoolean(), level, field, vals, null);
+                    int level = Random.Next(3);
+                    q1 = RandBoolQuery(new Random(Random.Next()), Random.NextBoolean(), level, field, vals, null);
 
                     // Can't sort by relevance since floating point numbers may not quite
                     // match up.
                     Sort sort = Sort.INDEXORDER;
 
-                    QueryUtils.Check(Random(), q1, Searcher, Similarity); // baseline sim
+                    QueryUtils.Check(Random, q1, Searcher, Similarity); // baseline sim
                     try
                     {
                         // a little hackish, QueryUtils.check is too costly to do on bigSearcher in this loop.
                         Searcher.Similarity = BigSearcher.Similarity; // random sim
-                        QueryUtils.Check(Random(), q1, Searcher, Similarity);
+                        QueryUtils.Check(Random, q1, Searcher, Similarity);
                     }
                     finally
                     {

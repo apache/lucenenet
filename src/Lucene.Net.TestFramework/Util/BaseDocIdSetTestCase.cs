@@ -1,50 +1,48 @@
-using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using System;
 using System.Collections;
-using System.Diagnostics;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Util
 {
-    using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
     /// <summary>
-    /// Base test class for <seealso cref="DocIdSet"/>s. </summary>
+    /// Base test class for <see cref="DocIdSet"/>s. </summary>
     public abstract class BaseDocIdSetTestCase<T> : LuceneTestCase
         where T : Lucene.Net.Search.DocIdSet
     {
         /// <summary>
-        /// Create a copy of the given <seealso cref="BitSet"/> which has <code>length</code> bits. </summary>
+        /// Create a copy of the given <see cref="BitArray"/> which has <paramref name="length"/> bits. </summary>
         public abstract T CopyOf(BitArray bs, int length);
 
         /// <summary>
-        /// Create a random set which has <code>numBitsSet</code> of its <code>numBits</code> bits set. </summary>
-        protected internal static BitArray RandomSet(int numBits, int numBitsSet)
+        /// Create a random set which has <paramref name="numBitsSet"/> of its <paramref name="numBits"/> bits set. </summary>
+        protected static BitArray RandomSet(int numBits, int numBitsSet)
         {
             Debug.Assert(numBitsSet <= numBits);
             BitArray set = new BitArray(numBits);
-            Random random = Random();
+            Random random = Random;
             if (numBitsSet == numBits)
             {
                 set.SafeSet(0, numBits != 0); //convert int to boolean
@@ -68,8 +66,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Same as <seealso cref="#randomSet(int, int)"/> but given a load factor. </summary>
-        protected internal static BitArray RandomSet(int numBits, float percentSet)
+        /// Same as <see cref="RandomSet(int, int)"/> but given a load factor. </summary>
+        protected static BitArray RandomSet(int numBits, float percentSet)
         {
             return RandomSet(numBits, (int)(percentSet * numBits));
         }
@@ -77,7 +75,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Test length=0.
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestNoBit()
         {
             BitArray bs = new BitArray(1);
@@ -88,11 +86,11 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Test length=1.
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void Test1Bit()
         {
             BitArray bs = new BitArray(1);
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 bs.SafeSet(0, true);
             }
@@ -103,15 +101,15 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Test length=2.
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void Test2Bits()
         {
             BitArray bs = new BitArray(2);
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 bs.SafeSet(0, true);
             }
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 bs.SafeSet(1, true);
             }
@@ -120,14 +118,14 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Compare the content of the set against a <seealso cref="BitSet"/>.
+        /// Compare the content of the set against a <see cref="BitArray"/>.
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestAgainstBitSet()
         {
-            int numBits = TestUtil.NextInt(Random(), 100, 1 << 20);
+            int numBits = TestUtil.NextInt32(Random, 100, 1 << 20);
             // test various random sets with various load factors
-            foreach (float percentSet in new float[] { 0f, 0.0001f, (float)Random().NextDouble() / 2, 0.9f, 1f })
+            foreach (float percentSet in new float[] { 0f, 0.0001f, (float)Random.NextDouble() / 2, 0.9f, 1f })
             {
                 BitArray set = RandomSet(numBits, percentSet);
                 T copy = CopyOf(set, numBits);
@@ -139,14 +137,14 @@ namespace Lucene.Net.Util
             T copy_ = CopyOf(set_, numBits);
             AssertEquals(numBits, set_, copy_);
             set_.SafeSet(0, false);
-            set_.SafeSet(Random().Next(numBits), true);
+            set_.SafeSet(Random.Next(numBits), true);
             copy_ = CopyOf(set_, numBits); // then random index
             AssertEquals(numBits, set_, copy_);
             // test regular increments
-            for (int inc = 2; inc < 1000; inc += TestUtil.NextInt(Random(), 1, 100))
+            for (int inc = 2; inc < 1000; inc += TestUtil.NextInt32(Random, 1, 100))
             {
                 set_ = new BitArray(numBits);
-                for (int d = Random().Next(10); d < numBits; d += inc)
+                for (int d = Random.Next(10); d < numBits; d += inc)
                 {
                     set_.SafeSet(d, true);
                 }
@@ -156,7 +154,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Assert that the content of the <seealso cref="DocIdSet"/> is the same as the content of the <seealso cref="BitSet"/>.
+        /// Assert that the content of the <see cref="DocIdSet"/> is the same as the content of the <see cref="BitArray"/>.
         /// </summary>
         public virtual void AssertEquals(int numBits, BitArray ds1, T ds2)
         {
@@ -188,7 +186,7 @@ namespace Lucene.Net.Util
             {
                 for (int doc = -1; doc != DocIdSetIterator.NO_MORE_DOCS; )
                 {
-                    if (Random().NextBoolean())
+                    if (Random.NextBoolean())
                     {
                         doc = ds1.NextSetBit(doc + 1);
                         if (doc == -1)
@@ -200,7 +198,7 @@ namespace Lucene.Net.Util
                     }
                     else
                     {
-                        int target = doc + 1 + Random().Next(Random().NextBoolean() ? 64 : Math.Max(numBits / 8, 1));
+                        int target = doc + 1 + Random.Next(Random.NextBoolean() ? 64 : Math.Max(numBits / 8, 1));
                         doc = ds1.NextSetBit(target);
                         if (doc == -1)
                         {

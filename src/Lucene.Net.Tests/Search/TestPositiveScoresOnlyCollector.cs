@@ -90,9 +90,9 @@ namespace Lucene.Net.Search
             }
 
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
             writer.Commit();
-            IndexReader ir = writer.Reader;
+            IndexReader ir = writer.GetReader();
             writer.Dispose();
             IndexSearcher searcher = NewSearcher(ir);
             Weight fake = (new TermQuery(new Term("fake", "weight"))).CreateWeight(searcher);

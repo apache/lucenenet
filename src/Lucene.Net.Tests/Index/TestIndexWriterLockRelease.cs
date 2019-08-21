@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
             Directory dir = NewFSDirectory(CreateTempDir("testLockRelease"));
             try
             {
-                new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
+                new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
             }
 #pragma warning disable 168
             catch (FileNotFoundException /*| NoSuchFileException*/ e)
@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
+                    new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
                 }
 #pragma warning disable 168
                 catch (FileNotFoundException /*| NoSuchFileException*/ e1)
@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
+                    new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
                 }
 #pragma warning disable 168
                 catch (FileNotFoundException /*| NoSuchFileException*/ e1)

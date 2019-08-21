@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy()));
             //writer.setNoCFSRatio(1.0);
             //writer.infoStream = System.out;
             for (int i = 0; i < 1000; i++)
@@ -87,12 +87,12 @@ namespace Lucene.Net.Search
                 {
                     ft.StoreTermVectors = true;
                 }
-                doc.Add(new Field("field", English.IntToEnglish(i), ft));
+                doc.Add(new Field("field", English.Int32ToEnglish(i), ft));
                 //test no term vectors too
-                doc.Add(new TextField("noTV", English.IntToEnglish(i), Field.Store.YES));
+                doc.Add(new TextField("noTV", English.Int32ToEnglish(i), Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.Reader;
+            Reader = writer.GetReader();
             writer.Dispose();
         }
 
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestMixedVectrosVectors()
         {
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true)).SetOpenMode(OpenMode.CREATE));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true)).SetOpenMode(OpenMode.CREATE));
             Document doc = new Document();
 
             FieldType ft2 = new FieldType(TextField.TYPE_STORED);
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
             doc.Add(NewField("field", "one", ft4));
             doc.Add(NewField("field", "one", ft5));
             writer.AddDocument(doc);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(reader);
@@ -180,7 +180,7 @@ namespace Lucene.Net.Search
 
         private IndexWriter CreateWriter(Directory dir)
         {
-            return new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(2));
+            return new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
         }
 
         private void CreateDir(Directory dir)

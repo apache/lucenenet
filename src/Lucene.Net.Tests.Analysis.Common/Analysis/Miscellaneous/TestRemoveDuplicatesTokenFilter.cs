@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             while (true)
             {
-                string s = TestUtil.RandomUnicodeString(Random()).Trim();
+                string s = TestUtil.RandomUnicodeString(Random).Trim();
                 if (s.Length != 0 && s.IndexOf('\u0000') == -1)
                 {
                     return s;
@@ -143,18 +143,18 @@ namespace Lucene.Net.Analysis.Miscellaneous
             int numIters = AtLeast(10);
             for (int i = 0; i < numIters; i++)
             {
-                SynonymMap.Builder b = new SynonymMap.Builder(Random().nextBoolean());
+                SynonymMap.Builder b = new SynonymMap.Builder(Random.nextBoolean());
                 int numEntries = AtLeast(10);
                 for (int j = 0; j < numEntries; j++)
                 {
-                    Add(b, RandomNonEmptyString(), RandomNonEmptyString(), Random().nextBoolean());
+                    Add(b, RandomNonEmptyString(), RandomNonEmptyString(), Random.nextBoolean());
                 }
                 SynonymMap map = b.Build();
-                bool ignoreCase = Random().nextBoolean();
+                bool ignoreCase = Random.nextBoolean();
 
                 Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, map, ignoreCase);
 
-                CheckRandomData(Random(), analyzer, 200);
+                CheckRandomData(Random, analyzer, 200);
             }
         }
 

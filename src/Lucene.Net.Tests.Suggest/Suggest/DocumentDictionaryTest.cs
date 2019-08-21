@@ -114,10 +114,10 @@ namespace Lucene.Net.Search.Suggest
         public void TestEmptyReader()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
             // Make sure the index is created?
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             writer.Commit();
             writer.Dispose();
             IndexReader ir = DirectoryReader.Open(dir);
@@ -136,9 +136,9 @@ namespace Lucene.Net.Search.Suggest
         public void TestBasic()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             KeyValuePair<List<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), true, false);
             IDictionary<string, Document> docs = res.Value;
             List<String> invalidDocTerms = res.Key;
@@ -180,9 +180,9 @@ namespace Lucene.Net.Search.Suggest
         public void TestWithoutPayload()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             KeyValuePair<List<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), false, false);
             IDictionary<string, Document> docs = res.Value;
             List<string> invalidDocTerms = res.Key;
@@ -225,9 +225,9 @@ namespace Lucene.Net.Search.Suggest
         public void TestWithContexts()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             KeyValuePair<List<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), true, true);
             IDictionary<string, Document> docs = res.Value;
             List<string> invalidDocTerms = res.Key;
@@ -276,13 +276,13 @@ namespace Lucene.Net.Search.Suggest
         public void TestWithDeletions()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             iwc.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, iwc);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
             KeyValuePair<List<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), false, false);
             IDictionary<string, Document> docs = res.Value;
             List<String> invalidDocTerms = res.Key;
-            Random rand = Random();
+            Random rand = Random;
             List<string> termsToDel = new List<string>();
             foreach (Document doc in docs.Values)
             {

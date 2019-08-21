@@ -337,7 +337,7 @@ namespace Lucene.Net.Facet.Taxonomy
             while (true)
             {
                 int len = FacetLabel.MAX_CATEGORY_PATH_LENGTH;
-                bigComp = TestUtil.RandomSimpleString(Random(), len, len);
+                bigComp = TestUtil.RandomSimpleString(Random, len, len);
                 if (bigComp.IndexOf('\u001f') != -1)
                 {
                     continue;

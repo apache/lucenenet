@@ -4,8 +4,8 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Console = Lucene.Net.Support.SystemConsole;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Index
 {
@@ -58,11 +58,11 @@ namespace Lucene.Net.Index
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
-    /// Codec that assigns per-field random postings formats.
+    /// <see cref="Codec"/> that assigns per-field random <see cref="Codecs.PostingsFormat"/>s.
     /// <para/>
     /// The same field/format assignment will happen regardless of order,
     /// a hash is computed up front that determines the mapping.
-    /// this means fields can be put into things like HashSets and added to
+    /// This means fields can be put into things like <see cref="HashSet{T}"/>s and added to
     /// documents in different orders and the test will still be deterministic
     /// and reproducable.
     /// </summary>
@@ -79,11 +79,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// unique set of format names this codec knows about </summary>
-        public ISet<string> formatNames = new HashSet<string>();
+        public ISet<string> FormatNames { get; set; } = new HashSet<string>();
 
         /// <summary>
         /// unique set of docvalues format names this codec knows about </summary>
-        public ISet<string> dvFormatNames = new HashSet<string>();
+        public ISet<string> DvFormatNames { get; set; } = new HashSet<string>();
 
         /// <summary>
         /// memorized field->postingsformat mappings </summary>
@@ -97,14 +97,13 @@ namespace Lucene.Net.Index
 
         public override PostingsFormat GetPostingsFormatForField(string name)
         {
-            PostingsFormat codec;
-            if (!previousMappings.TryGetValue(name, out codec) || codec == null)
+            if (!previousMappings.TryGetValue(name, out PostingsFormat codec) || codec == null)
             {
                 codec = formats[Math.Abs(perFieldSeed ^ name.GetHashCode()) % formats.Count];
                 if (codec is SimpleTextPostingsFormat && perFieldSeed % 5 != 0)
                 {
-                  // make simpletext rarer, choose again
-                  codec = formats[Math.Abs(perFieldSeed ^ name.ToUpperInvariant().GetHashCode()) % formats.Count];
+                    // make simpletext rarer, choose again
+                    codec = formats[Math.Abs(perFieldSeed ^ name.ToUpperInvariant().GetHashCode()) % formats.Count];
                 }
                 previousMappings[name] = codec;
                 // Safety:
@@ -113,7 +112,7 @@ namespace Lucene.Net.Index
 
             //if (LuceneTestCase.VERBOSE)
             //{
-                Console.WriteLine("RandomCodec.GetPostingsFormatForField(\"" + name + "\") returned '" + codec.Name + "' with underlying type '" + codec.GetType().ToString() + "'.");
+            Console.WriteLine("RandomCodec.GetPostingsFormatForField(\"" + name + "\") returned '" + codec.Name + "' with underlying type '" + codec.GetType().ToString() + "'.");
             //}
 
             return codec;
@@ -121,14 +120,13 @@ namespace Lucene.Net.Index
 
         public override DocValuesFormat GetDocValuesFormatForField(string name)
         {
-            DocValuesFormat codec;
-            if (!previousDVMappings.TryGetValue(name, out codec) || codec == null)
+            if (!previousDVMappings.TryGetValue(name, out DocValuesFormat codec) || codec == null)
             {
                 codec = dvFormats[Math.Abs(perFieldSeed ^ name.GetHashCode()) % dvFormats.Count];
                 if (codec is SimpleTextDocValuesFormat && perFieldSeed % 5 != 0)
                 {
-                  // make simpletext rarer, choose again
-                  codec = dvFormats[Math.Abs(perFieldSeed ^ name.ToUpperInvariant().GetHashCode()) % dvFormats.Count];
+                    // make simpletext rarer, choose again
+                    codec = dvFormats[Math.Abs(perFieldSeed ^ name.ToUpperInvariant().GetHashCode()) % dvFormats.Count];
                 }
                 previousDVMappings[name] = codec;
                 // Safety:
@@ -148,9 +146,9 @@ namespace Lucene.Net.Index
             this.perFieldSeed = random.Next();
             // TODO: make it possible to specify min/max iterms per
             // block via CL:
-            int minItemsPerBlock = TestUtil.NextInt(random, 2, 100);
+            int minItemsPerBlock = TestUtil.NextInt32(random, 2, 100);
             int maxItemsPerBlock = 2 * (Math.Max(2, minItemsPerBlock - 1)) + random.Next(100);
-            int lowFreqCutoff = TestUtil.NextInt(random, 2, 100);
+            int lowFreqCutoff = TestUtil.NextInt32(random, 2, 100);
 
             Add(avoidCodecs,
                 new Lucene41PostingsFormat(minItemsPerBlock, maxItemsPerBlock),
@@ -167,8 +165,8 @@ namespace Lucene.Net.Index
                 //with such "wrapper" classes?
                 new TestBloomFilteredLucene41Postings(), 
                 new MockSepPostingsFormat(), 
-                new MockFixedInt32BlockPostingsFormat(TestUtil.NextInt(random, 1, 2000)),
-                new MockVariableInt32BlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), 
+                new MockFixedInt32BlockPostingsFormat(TestUtil.NextInt32(random, 1, 2000)),
+                new MockVariableInt32BlockPostingsFormat(TestUtil.NextInt32(random, 1, 127)), 
                 new MockRandomPostingsFormat(random),
                 new NestedPulsingPostingsFormat(), 
                 new Lucene41WithOrds(), 
@@ -185,8 +183,8 @@ namespace Lucene.Net.Index
                 new SimpleTextDocValuesFormat(), 
                 new AssertingDocValuesFormat());
 
-            Collections.Shuffle(formats);
-            Collections.Shuffle(dvFormats);
+            Collections.Shuffle(formats, random);
+            Collections.Shuffle(dvFormats, random);
 
             // Avoid too many open files:
             if (formats.Count > 4)
@@ -211,7 +209,7 @@ namespace Lucene.Net.Index
                 if (!avoidCodecs.Contains(p.Name))
                 {
                     formats.Add(p);
-                    formatNames.Add(p.Name);
+                    FormatNames.Add(p.Name);
                 }
             }
         }
@@ -223,15 +221,15 @@ namespace Lucene.Net.Index
                 if (!avoidCodecs.Contains(d.Name))
                 {
                     dvFormats.Add(d);
-                    dvFormatNames.Add(d.Name);
+                    DvFormatNames.Add(d.Name);
                 }
             }
         }
 
         public override string ToString()
         {
-            // LUCENENET NOTE: using toString() extension method on dictionaries to print out their contents
-            return base.ToString() + ": " + previousMappings.toString() + ", docValues:" + previousDVMappings.toString();
+            // LUCENENET NOTE: using Collections.ToString() method on dictionaries to print out their contents
+            return base.ToString() + ": " + Collections.ToString(previousMappings) + ", docValues:" + Collections.ToString(previousDVMappings);
         }
     }
 }

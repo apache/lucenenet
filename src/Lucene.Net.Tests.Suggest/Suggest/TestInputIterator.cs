@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Suggest
         [Test]
         public void TestTerms()
         {
-            Random random = Random();
+            Random random = Random;
             int num = AtLeast(10000);
 #pragma warning disable 612, 618
             IComparer<BytesRef> comparer = random.nextBoolean() ? BytesRef.UTF8SortedAsUnicodeComparer : BytesRef.UTF8SortedAsUTF16Comparer;

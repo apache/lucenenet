@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
         public virtual void TestSimple()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             Document doc = new Document();
             Field field = NewTextField("field", "", Field.Store.NO);
             doc.Add(field);
@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
             field.SetStringValue("a f");
             w.AddDocument(doc);
 
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
             HashSet<BytesRef> terms = new HashSet<BytesRef>();
             while (terms.Count < NUM_TERMS)
             {
-                string s = TestUtil.RandomRealisticUnicodeString(Random());
+                string s = TestUtil.RandomRealisticUnicodeString(Random);
                 //final String s = TestUtil.RandomSimpleString(random);
                 if (s.Length > 0)
                 {
@@ -116,17 +116,17 @@ namespace Lucene.Net.Index
 
             int NUM_DOCS = AtLeast(100);
 
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
 
             // Sometimes swap in codec that impls ord():
-            if (Random().Next(10) == 7)
+            if (Random.Next(10) == 7)
             {
                 // Make sure terms index has ords:
                 Codec codec = TestUtil.AlwaysPostingsFormat(PostingsFormat.ForName("Lucene41WithOrds"));
                 conf.SetCodec(codec);
             }
 
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, conf);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, conf);
 
             int[][] idToOrds = new int[NUM_DOCS][];
             HashSet<int?> ordsForDocSet = new HashSet<int?>();
@@ -137,10 +137,10 @@ namespace Lucene.Net.Index
 
                 doc.Add(new Int32Field("id", id, Field.Store.NO));
 
-                int termCount = TestUtil.NextInt(Random(), 0, 20 * RANDOM_MULTIPLIER);
+                int termCount = TestUtil.NextInt32(Random, 0, 20 * RANDOM_MULTIPLIER);
                 while (ordsForDocSet.Count < termCount)
                 {
-                    ordsForDocSet.Add(Random().Next(termsArray.Length));
+                    ordsForDocSet.Add(Random.Next(termsArray.Length));
                 }
                 int[] ordsForDoc = new int[termCount];
                 int upto = 0;
@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
 
             if (VERBOSE)
@@ -202,14 +202,14 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
 
             HashSet<string> prefixes = new HashSet<string>();
-            int numPrefix = TestUtil.NextInt(Random(), 2, 7);
+            int numPrefix = TestUtil.NextInt32(Random, 2, 7);
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: use " + numPrefix + " prefixes");
             }
             while (prefixes.Count < numPrefix)
             {
-                prefixes.Add(TestUtil.RandomRealisticUnicodeString(Random()));
+                prefixes.Add(TestUtil.RandomRealisticUnicodeString(Random));
                 //prefixes.Add(TestUtil.RandomSimpleString(random));
             }
             string[] prefixesArray = prefixes.ToArray(/*new string[prefixes.Count]*/);
@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
             HashSet<BytesRef> terms = new HashSet<BytesRef>();
             while (terms.Count < NUM_TERMS)
             {
-                string s = prefixesArray[Random().Next(prefixesArray.Length)] + TestUtil.RandomRealisticUnicodeString(Random());
+                string s = prefixesArray[Random.Next(prefixesArray.Length)] + TestUtil.RandomRealisticUnicodeString(Random);
                 //final String s = prefixesArray[random.nextInt(prefixesArray.Length)] + TestUtil.RandomSimpleString(random);
                 if (s.Length > 0)
                 {
@@ -230,16 +230,16 @@ namespace Lucene.Net.Index
 
             int NUM_DOCS = AtLeast(100);
 
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
 
             // Sometimes swap in codec that impls ord():
-            if (Random().Next(10) == 7)
+            if (Random.Next(10) == 7)
             {
                 Codec codec = TestUtil.AlwaysPostingsFormat(PostingsFormat.ForName("Lucene41WithOrds"));
                 conf.SetCodec(codec);
             }
 
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, conf);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, conf);
 
             int[][] idToOrds = new int[NUM_DOCS][];
             HashSet<int?> ordsForDocSet = new HashSet<int?>();
@@ -250,10 +250,10 @@ namespace Lucene.Net.Index
 
                 doc.Add(new Int32Field("id", id, Field.Store.NO));
 
-                int termCount = TestUtil.NextInt(Random(), 0, 20 * RANDOM_MULTIPLIER);
+                int termCount = TestUtil.NextInt32(Random, 0, 20 * RANDOM_MULTIPLIER);
                 while (ordsForDocSet.Count < termCount)
                 {
-                    ordsForDocSet.Add(Random().Next(termsArray.Length));
+                    ordsForDocSet.Add(Random.Next(termsArray.Length));
                 }
                 int[] ordsForDoc = new int[termCount];
                 int upto = 0;
@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
 
             if (VERBOSE)
@@ -337,7 +337,7 @@ namespace Lucene.Net.Index
 
         private void Verify(AtomicReader r, int[][] idToOrds, BytesRef[] termsArray, BytesRef prefixRef)
         {
-            DocTermOrds dto = new DocTermOrds(r, r.LiveDocs, "field", prefixRef, int.MaxValue, TestUtil.NextInt(Random(), 2, 10));
+            DocTermOrds dto = new DocTermOrds(r, r.LiveDocs, "field", prefixRef, int.MaxValue, TestUtil.NextInt32(Random, 2, 10));
 
             FieldCache.Int32s docIDToID = FieldCache.DEFAULT.GetInt32s(r, "id", false);
             /*
@@ -465,10 +465,10 @@ namespace Lucene.Net.Index
         public virtual void TestSortedTermsEnum()
         {
             Directory directory = NewDirectory();
-            Analyzer analyzer = new MockAnalyzer(Random());
+            Analyzer analyzer = new MockAnalyzer(Random);
             IndexWriterConfig iwconfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwconfig.SetMergePolicy(NewLogMergePolicy());
-            RandomIndexWriter iwriter = new RandomIndexWriter(Random(), directory, iwconfig);
+            RandomIndexWriter iwriter = new RandomIndexWriter(Random, directory, iwconfig);
 
             Document doc = new Document();
             doc.Add(new StringField("field", "hello", Field.Store.NO));
@@ -483,7 +483,7 @@ namespace Lucene.Net.Index
             iwriter.AddDocument(doc);
             iwriter.ForceMerge(1);
 
-            DirectoryReader ireader = iwriter.Reader;
+            DirectoryReader ireader = iwriter.GetReader();
             iwriter.Dispose();
 
             AtomicReader ar = GetOnlySegmentReader(ireader);

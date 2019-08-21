@@ -50,14 +50,14 @@ namespace Lucene.Net.Facet
         public virtual Facets GetTaxonomyFacetCounts(TaxonomyReader taxoReader, FacetsConfig config, FacetsCollector c, string indexFieldName)
         {
             Facets facets;
-            if (Random().NextBoolean())
+            if (Random.NextBoolean())
             {
                 facets = new FastTaxonomyFacetCounts(indexFieldName, taxoReader, config, c);
             }
             else
             {
                 OrdinalsReader ordsReader = new DocValuesOrdinalsReader(indexFieldName);
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     ordsReader = new CachedOrdinalsReader(ordsReader);
                 }
@@ -72,7 +72,7 @@ namespace Lucene.Net.Facet
             string[] tokens = new string[count];
             for (int i = 0; i < tokens.Length; i++)
             {
-                tokens[i] = TestUtil.RandomRealisticUnicodeString(Random(), 1, 10);
+                tokens[i] = TestUtil.RandomRealisticUnicodeString(Random, 1, 10);
                 //tokens[i] = TestUtil.RandomSimpleString(Random(), 1, 10);
             }
             return tokens;
@@ -82,7 +82,7 @@ namespace Lucene.Net.Facet
         {
             for (int i = 0; i < tokens.Length; i++)
             {
-                if (Random().NextBoolean())
+                if (Random.NextBoolean())
                 {
                     return tokens[i];
                 }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Facet
                 for (int j = 0; j < numDims; j++)
                 {
                     doc.dims[j] = PickToken(tokens);
-                    if (Random().Next(10) < 3)
+                    if (Random.Next(10) < 3)
                     {
                         break;
                     }

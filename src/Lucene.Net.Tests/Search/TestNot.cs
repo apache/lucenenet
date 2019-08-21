@@ -41,13 +41,13 @@ namespace Lucene.Net.Search
         public virtual void TestNot_Mem()
         {
             Directory store = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), store, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, store, Similarity, TimeZone);
 
             Document d1 = new Document();
             d1.Add(NewTextField("field", "a b", Field.Store.YES));
 
             writer.AddDocument(d1);
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
 
             IndexSearcher searcher = NewSearcher(reader);
 

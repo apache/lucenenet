@@ -67,20 +67,20 @@ namespace Lucene.Net.Util
 
             for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
             {
-                int numBytes1 = Random().Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
+                int numBytes1 = Random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
 
                 for (int byteNum = 0; byteNum < numBytes1; ++byteNum)
                 {
-                    int randomInt = Random().Next(0x100);
+                    int randomInt = Random.Next(0x100);
                     originalArray1[byteNum] = (sbyte)randomInt;
                     originalString1[byteNum] = (char)randomInt;
                 }
 
-                int numBytes2 = Random().Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
+                int numBytes2 = Random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
 
                 for (int byteNum = 0; byteNum < numBytes2; ++byteNum)
                 {
-                    int randomInt = Random().Next(0x100);
+                    int randomInt = Random.Next(0x100);
                     original2[byteNum] = (sbyte)randomInt;
                     originalString2[byteNum] = (char)randomInt;
                 }
@@ -152,11 +152,11 @@ namespace Lucene.Net.Util
             sbyte[] decoded = new sbyte[MAX_RANDOM_BINARY_LENGTH];
             for (int testNum = 0; testNum < NUM_RANDOM_TESTS; ++testNum)
             {
-                int numBytes = Random().Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
+                int numBytes = Random.Next(MAX_RANDOM_BINARY_LENGTH - 1) + 1; // Min == 1
 
                 for (int byteNum = 0; byteNum < numBytes; ++byteNum)
                 {
-                    binary[byteNum] = (sbyte)Random().Next(0x100);
+                    binary[byteNum] = (sbyte)Random.Next(0x100);
                 }
 
                 int encodedLen = IndexableBinaryStringTools.GetEncodedLength(binary, 0, numBytes);

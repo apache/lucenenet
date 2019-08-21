@@ -1,5 +1,6 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -46,9 +47,9 @@ namespace Lucene.Net.Index
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BFixedBinary"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
-            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
                             .SetRAMBufferSizeMB(256.0)
                             .SetMergeScheduler(newScheduler())
@@ -112,10 +113,10 @@ namespace Lucene.Net.Index
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BVariableBinary"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
 
-            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+            var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                             .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
                             .SetRAMBufferSizeMB(256.0)
                             .SetMergeScheduler(newScheduler())

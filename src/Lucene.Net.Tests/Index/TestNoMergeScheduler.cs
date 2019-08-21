@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
         {
             MergeScheduler ms = NoMergeScheduler.INSTANCE;
             ms.Dispose();
-            ms.Merge(null, RandomInts.RandomFrom(Random(), Enum.GetValues(typeof(MergeTrigger)).Cast<MergeTrigger>().ToArray()), Random().NextBoolean());
+            ms.Merge(null, RandomPicks.RandomFrom(Random, Enum.GetValues(typeof(MergeTrigger)).Cast<MergeTrigger>().ToArray()), Random.NextBoolean());
         }
 
         [Test]

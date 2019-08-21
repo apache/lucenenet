@@ -17,6 +17,7 @@
 
 using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -41,32 +42,32 @@ namespace Lucene.Net.Util
         [Test, LongRunningTest]
         public virtual void TestDataInputOutput()
         {
-            Random random = Random();
+            Random random = Random;
             for (int iter = 0; iter < 5 * RANDOM_MULTIPLIER; iter++)
             {
                 BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));
                 if (dir is MockDirectoryWrapper)
                 {
-                    ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                    ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
                 }
-                int blockBits = TestUtil.NextInt(random, 1, 20);
+                int blockBits = TestUtil.NextInt32(random, 1, 20);
                 int blockSize = 1 << blockBits;
                 PagedBytes p = new PagedBytes(blockBits);
                 IndexOutput @out = dir.CreateOutput("foo", IOContext.DEFAULT);
-                int numBytes = TestUtil.NextInt(Random(), 2, 10000000);
+                int numBytes = TestUtil.NextInt32(LuceneTestCase.Random, 2, 10000000);
 
                 byte[] answer = new byte[numBytes];
-                Random().NextBytes(answer);
+                LuceneTestCase.Random.NextBytes(answer);
                 int written = 0;
                 while (written < numBytes)
                 {
-                    if (Random().Next(10) == 7)
+                    if (LuceneTestCase.Random.Next(10) == 7)
                     {
                         @out.WriteByte(answer[written++]);
                     }
                     else
                     {
-                        int chunk = Math.Min(Random().Next(1000), numBytes - written);
+                        int chunk = Math.Min(LuceneTestCase.Random.Next(1000), numBytes - written);
                         @out.WriteBytes(answer, written, chunk);
                         written += chunk;
                     }
@@ -83,13 +84,13 @@ namespace Lucene.Net.Util
                 int read = 0;
                 while (read < numBytes)
                 {
-                    if (Random().Next(10) == 7)
+                    if (LuceneTestCase.Random.Next(10) == 7)
                     {
                         verify[read++] = @in.ReadByte();
                     }
                     else
                     {
-                        int chunk = Math.Min(Random().Next(1000), numBytes - read);
+                        int chunk = Math.Min(LuceneTestCase.Random.Next(1000), numBytes - read);
                         @in.ReadBytes(verify, read, chunk);
                         read += chunk;
                     }
@@ -118,27 +119,27 @@ namespace Lucene.Net.Util
         [Test, LongRunningTest]
         public virtual void TestDataInputOutput2()
         {
-            Random random = Random();
+            Random random = Random;
             for (int iter = 0; iter < 5 * RANDOM_MULTIPLIER; iter++)
             {
-                int blockBits = TestUtil.NextInt(random, 1, 20);
+                int blockBits = TestUtil.NextInt32(random, 1, 20);
                 int blockSize = 1 << blockBits;
                 PagedBytes p = new PagedBytes(blockBits);
                 DataOutput @out = p.GetDataOutput();
-                int numBytes = Random().Next(10000000);
+                int numBytes = LuceneTestCase.Random.Next(10000000);
 
                 byte[] answer = new byte[numBytes];
-                Random().NextBytes(answer);
+                LuceneTestCase.Random.NextBytes(answer);
                 int written = 0;
                 while (written < numBytes)
                 {
-                    if (Random().Next(10) == 7)
+                    if (LuceneTestCase.Random.Next(10) == 7)
                     {
                         @out.WriteByte(answer[written++]);
                     }
                     else
                     {
-                        int chunk = Math.Min(Random().Next(1000), numBytes - written);
+                        int chunk = Math.Min(LuceneTestCase.Random.Next(1000), numBytes - written);
                         @out.WriteBytes(answer, written, chunk);
                         written += chunk;
                     }
@@ -152,13 +153,13 @@ namespace Lucene.Net.Util
                 int read = 0;
                 while (read < numBytes)
                 {
-                    if (Random().Next(10) == 7)
+                    if (LuceneTestCase.Random.Next(10) == 7)
                     {
                         verify[read++] = @in.ReadByte();
                     }
                     else
                     {
-                        int chunk = Math.Min(Random().Next(1000), numBytes - read);
+                        int chunk = Math.Min(LuceneTestCase.Random.Next(1000), numBytes - read);
                         @in.ReadBytes(verify, read, chunk);
                         read += chunk;
                     }
@@ -186,16 +187,16 @@ namespace Lucene.Net.Util
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));
             if (dir is MockDirectoryWrapper)
             {
-                ((MockDirectoryWrapper)dir).Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
+                ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
             }
-            int blockBits = TestUtil.NextInt(Random(), 14, 28);
+            int blockBits = TestUtil.NextInt32(Random, 14, 28);
             int blockSize = 1 << blockBits;
-            var arr = new byte[TestUtil.NextInt(Random(), blockSize / 2, blockSize * 2)];
+            var arr = new byte[TestUtil.NextInt32(Random, blockSize / 2, blockSize * 2)];
             for (int i = 0; i < arr.Length; ++i)
             {
                 arr[i] = (byte)(sbyte)i;
             }
-            long numBytes = (1L << 31) + TestUtil.NextInt(Random(), 1, blockSize * 3);
+            long numBytes = (1L << 31) + TestUtil.NextInt32(Random, 1, blockSize * 3);
             var p = new PagedBytes(blockBits);
             var @out = dir.CreateOutput("foo", IOContext.DEFAULT);
             for (long i = 0; i < numBytes; )
@@ -209,9 +210,9 @@ namespace Lucene.Net.Util
             @out.Dispose();
             IndexInput @in = dir.OpenInput("foo", IOContext.DEFAULT);
             p.Copy(@in, numBytes);
-            PagedBytes.Reader reader = p.Freeze(Random().NextBoolean());
+            PagedBytes.Reader reader = p.Freeze(Random.NextBoolean());
 
-            foreach (long offset in new long[] { 0L, int.MaxValue, numBytes - 1, TestUtil.NextLong(Random(), 1, numBytes - 2) })
+            foreach (long offset in new long[] { 0L, int.MaxValue, numBytes - 1, TestUtil.NextInt64(Random, 1, numBytes - 2) })
             {
                 BytesRef b = new BytesRef();
                 reader.FillSlice(b, offset, 1);

@@ -323,14 +323,14 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         [Test]
         public void TestRandomStrings()
         {
-            CheckRandomData(Random(), a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
         }
 
         /** blast some random large strings through the analyzer */
         [Test]
         public void TestRandomHugeStrings()
         {
-            Random random = Random();
+            Random random = Random;
             CheckRandomData(random, a, 100 * RANDOM_MULTIPLIER, 8192);
         }
 

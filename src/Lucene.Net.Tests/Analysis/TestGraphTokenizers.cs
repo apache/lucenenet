@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis
                 // seed:
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
 
-                CheckAnalysisConsistency(Random(), a, false, "a b c d e f g h i j k");
+                CheckAnalysisConsistency(Random, a, false, "a b c d e f g h i j k");
             }
         }
 
@@ -210,7 +210,7 @@ namespace Lucene.Net.Analysis
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t2 = new MockGraphTokenFilter(Random(), t);
+                TokenStream t2 = new MockGraphTokenFilter(Random, t);
                 return new TokenStreamComponents(t, t2);
             }
         }
@@ -229,7 +229,7 @@ namespace Lucene.Net.Analysis
                 // seed:
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
 
-                CheckAnalysisConsistency(Random(), a, false, "a/x:3 c/y:2 d e f/z:4 g h i j k");
+                CheckAnalysisConsistency(Random, a, false, "a/x:3 c/y:2 d e f/z:4 g h i j k");
             }
         }
 
@@ -245,7 +245,7 @@ namespace Lucene.Net.Analysis
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new GraphTokenizer(reader);
-                TokenStream t2 = new MockGraphTokenFilter(Random(), t);
+                TokenStream t2 = new MockGraphTokenFilter(Random, t);
                 return new TokenStreamComponents(t, t2);
             }
         }
@@ -314,7 +314,7 @@ namespace Lucene.Net.Analysis
                 // seed:
                 Analyzer a = new MGTFBHAnalyzerAnonymousInnerClassHelper(this);
 
-                Random random = Random();
+                Random random = Random;
                 CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k");
                 CheckAnalysisConsistency(random, a, false, "x y a b c d e f g h i j k");
                 CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k a");
@@ -334,7 +334,7 @@ namespace Lucene.Net.Analysis
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t2 = new MockGraphTokenFilter(Random(), t);
+                TokenStream t2 = new MockGraphTokenFilter(Random, t);
                 TokenStream t3 = new RemoveATokens(t2);
                 return new TokenStreamComponents(t, t3);
             }
@@ -354,7 +354,7 @@ namespace Lucene.Net.Analysis
                 // seed:
                 Analyzer a = new MGTFAHAnalyzerAnonymousInnerClassHelper2(this);
 
-                Random random = Random();
+                Random random = Random;
                 CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k");
                 CheckAnalysisConsistency(random, a, false, "x y a b c d e f g h i j k");
                 CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k a");
@@ -375,7 +375,7 @@ namespace Lucene.Net.Analysis
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream t2 = new RemoveATokens(t);
-                TokenStream t3 = new MockGraphTokenFilter(Random(), t2);
+                TokenStream t3 = new MockGraphTokenFilter(Random, t2);
                 return new TokenStreamComponents(t, t3);
             }
         }
@@ -394,7 +394,7 @@ namespace Lucene.Net.Analysis
                 // seed:
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
 
-                Random random = Random();
+                Random random = Random;
                 CheckRandomData(random, a, 5, AtLeast(100));
             }
         }
@@ -411,7 +411,7 @@ namespace Lucene.Net.Analysis
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t2 = new MockGraphTokenFilter(Random(), t);
+                TokenStream t2 = new MockGraphTokenFilter(Random, t);
                 return new TokenStreamComponents(t, t2);
             }
         }
@@ -431,7 +431,7 @@ namespace Lucene.Net.Analysis
                 // seed:
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper4(this);
 
-                Random random = Random();
+                Random random = Random;
                 CheckRandomData(random, a, 5, AtLeast(100));
             }
         }
@@ -455,8 +455,8 @@ namespace Lucene.Net.Analysis
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t1 = new MockGraphTokenFilter(Random(), t);
-                TokenStream t2 = new MockGraphTokenFilter(Random(), t1);
+                TokenStream t1 = new MockGraphTokenFilter(Random, t);
+                TokenStream t2 = new MockGraphTokenFilter(Random, t1);
                 return new TokenStreamComponents(t, t2);
             }
         }
@@ -475,7 +475,7 @@ namespace Lucene.Net.Analysis
                 // seed:
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper5(this);
 
-                Random random = Random();
+                Random random = Random;
                 CheckRandomData(random, a, 5, AtLeast(100));
             }
         }
@@ -492,8 +492,8 @@ namespace Lucene.Net.Analysis
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t1 = new MockGraphTokenFilter(Random(), t);
-                TokenStream t2 = new MockHoleInjectingTokenFilter(Random(), t1);
+                TokenStream t1 = new MockGraphTokenFilter(Random, t);
+                TokenStream t2 = new MockHoleInjectingTokenFilter(Random, t1);
                 return new TokenStreamComponents(t, t2);
             }
         }
@@ -512,7 +512,7 @@ namespace Lucene.Net.Analysis
                 // seed:
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper6(this);
 
-                Random random = Random();
+                Random random = Random;
                 CheckRandomData(random, a, 5, AtLeast(100));
             }
         }
@@ -529,8 +529,8 @@ namespace Lucene.Net.Analysis
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t1 = new MockHoleInjectingTokenFilter(Random(), t);
-                TokenStream t2 = new MockGraphTokenFilter(Random(), t1);
+                TokenStream t1 = new MockHoleInjectingTokenFilter(Random, t);
+                TokenStream t2 = new MockGraphTokenFilter(Random, t1);
                 return new TokenStreamComponents(t, t2);
             }
         }

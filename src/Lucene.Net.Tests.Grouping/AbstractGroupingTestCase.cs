@@ -34,8 +34,8 @@ namespace Lucene.Net.Search.Grouping
                 // B/c of DV based impl we can't see the difference between an empty string and a null value.
                 // For that reason we don't generate empty string
                 // groups.
-                randomValue = TestUtil.RandomRealisticUnicodeString(Random());
-                //randomValue = TestUtil.randomSimpleString(random());
+                randomValue = TestUtil.RandomRealisticUnicodeString(Random);
+                //randomValue = TestUtil.randomSimpleString(Random);
             } while ("".Equals(randomValue, StringComparison.Ordinal));
             return randomValue;
         }

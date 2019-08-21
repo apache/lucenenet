@@ -122,7 +122,7 @@ namespace Lucene.Net.Util
             int num = AtLeast(50000);
             for (int i = 0; i < num; i++)
             {
-                string s = TestUtil.RandomUnicodeString(Random());
+                string s = TestUtil.RandomUnicodeString(Random);
                 UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8);
                 assertEquals(s.CodePointCount(0, s.Length),
                    UnicodeUtil.CodePointCount(utf8));
@@ -164,7 +164,7 @@ namespace Lucene.Net.Util
             int num = AtLeast(50000);
             for (int i = 0; i < num; i++)
             {
-                string s = TestUtil.RandomUnicodeString(Random());
+                string s = TestUtil.RandomUnicodeString(Random);
                 UnicodeUtil.UTF16toUTF8(s.ToCharArray(), 0, s.Length, utf8);
                 UnicodeUtil.UTF8toUTF32(utf8, utf32);
 
@@ -241,11 +241,11 @@ namespace Lucene.Net.Util
             int num = AtLeast(3989);
             for (int i = 0; i < num; i++)
             {
-                string unicode = TestUtil.RandomRealisticUnicodeString(Random());
+                string unicode = TestUtil.RandomRealisticUnicodeString(Random);
                 BytesRef @ref = new BytesRef(unicode);
-                char[] arr = new char[1 + Random().Next(100)];
-                int offset = Random().Next(arr.Length);
-                int len = Random().Next(arr.Length - offset);
+                char[] arr = new char[1 + Random.Next(100)];
+                int offset = Random.Next(arr.Length);
+                int len = Random.Next(arr.Length - offset);
                 CharsRef cRef = new CharsRef(arr, offset, len);
                 UnicodeUtil.UTF8toUTF16(@ref, cRef);
                 Assert.AreEqual(cRef.ToString(), unicode);

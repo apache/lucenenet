@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input("boo foo bar foo bee", 20)
             );
 
-            Analyzer a = new MockAnalyzer(Random());
+            Analyzer a = new MockAnalyzer(Random);
             FreeTextSuggester sug = new FreeTextSuggester(a, a, 2, (byte)0x20);
             sug.Build(new InputArrayIterator(keys));
             assertEquals(2, sug.Count);
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             IEnumerable<Input> keys = AnalyzingSuggesterTest.Shuffle(
                 new Input("foo\u001ebar baz", 50)
             );
-            FreeTextSuggester sug = new FreeTextSuggester(new MockAnalyzer(Random()));
+            FreeTextSuggester sug = new FreeTextSuggester(new MockAnalyzer(Random));
             try
             {
                 sug.Build(new InputArrayIterator(keys));
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             IEnumerable<Input> keys = AnalyzingSuggesterTest.Shuffle(
                 new Input("foo bar baz", 50)
             );
-            FreeTextSuggester sug = new FreeTextSuggester(new MockAnalyzer(Random()));
+            FreeTextSuggester sug = new FreeTextSuggester(new MockAnalyzer(Random));
             sug.Build(new InputArrayIterator(keys));
 
             try
@@ -216,7 +216,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             LineFileDocs lfd = new LineFileDocs(null, "/lucenedata/enwiki/enwiki-20120502-lines-1k.txt", false);
             // Skip header:
             lfd.NextDoc();
-            FreeTextSuggester sug = new FreeTextSuggester(new MockAnalyzer(Random()));
+            FreeTextSuggester sug = new FreeTextSuggester(new MockAnalyzer(Random));
             sug.Build(new TestWikiInputIterator(this, lfd));
             if (VERBOSE)
             {
@@ -239,7 +239,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input("foo bar baz blah boo foo bar foo bee", 50)
             );
 
-            Analyzer a = new MockAnalyzer(Random());
+            Analyzer a = new MockAnalyzer(Random);
             FreeTextSuggester sug = new FreeTextSuggester(a, a, 1, (byte)0x20);
             sug.Build(new InputArrayIterator(keys));
             // Sorts first by count, descending, second by term, ascending
@@ -254,7 +254,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             IEnumerable<Input> keys = AnalyzingSuggesterTest.Shuffle(
                 new Input("foo bar bar bar bar", 50)
             );
-            Analyzer a = new MockAnalyzer(Random());
+            Analyzer a = new MockAnalyzer(Random);
             FreeTextSuggester sug = new FreeTextSuggester(a, a, 2, (byte)0x20);
             sug.Build(new InputArrayIterator(keys));
             assertEquals("foo bar/1.00",
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             IEnumerable<Input> keys = AnalyzingSuggesterTest.Shuffle(
                 new Input("foo bar bar bar bar", 50)
             );
-            Analyzer a = new MockAnalyzer(Random());
+            Analyzer a = new MockAnalyzer(Random);
             FreeTextSuggester sug = new FreeTextSuggester(a, a, 2, (byte)0x20);
             sug.Build(new InputArrayIterator(keys));
             try
@@ -399,7 +399,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 get
                 {
-                    return Random().Next();
+                    return Random.Next();
                 }
             }
 
@@ -440,11 +440,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         [Test]
         public void TestRandom()
         {
-            string[] terms = new string[TestUtil.NextInt(Random(), 2, 10)];
+            string[] terms = new string[TestUtil.NextInt32(Random, 2, 10)];
             ISet<string> seen = new HashSet<string>();
             while (seen.size() < terms.Length)
             {
-                string token = TestUtil.RandomSimpleString(Random(), 1, 5);
+                string token = TestUtil.RandomSimpleString(Random, 1, 5);
                 if (!seen.contains(token))
                 {
                     terms[seen.size()] = token;
@@ -452,7 +452,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            Analyzer a = new MockAnalyzer(Random());
+            Analyzer a = new MockAnalyzer(Random);
 
             int numDocs = AtLeast(10);
             long totTokens = 0;
@@ -479,7 +479,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 totTokens += docs[i].Length;
             }
 
-            int grams = TestUtil.NextInt(Random(), 1, 4);
+            int grams = TestUtil.NextInt32(Random, 1, 4);
 
             if (VERBOSE)
             {
@@ -534,7 +534,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             int lookups = AtLeast(100);
             for (int iter = 0; iter < lookups; iter++)
             {
-                string[] tokens = new string[TestUtil.NextInt(Random(), 1, 5)];
+                string[] tokens = new string[TestUtil.NextInt32(Random, 1, 5)];
                 for (int i = 0; i < tokens.Length; i++)
                 {
                     tokens[i] = GetZipfToken(terms);
@@ -551,10 +551,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     trimStart = 0;
                 }
-                int trimAt = TestUtil.NextInt(Random(), trimStart, tokens[tokens.Length - 1].Length);
+                int trimAt = TestUtil.NextInt32(Random, trimStart, tokens[tokens.Length - 1].Length);
                 tokens[tokens.Length - 1] = tokens[tokens.Length - 1].Substring(0, trimAt - 0);
 
-                int num = TestUtil.NextInt(Random(), 1, 100);
+                int num = TestUtil.NextInt32(Random, 1, 100);
                 StringBuilder b = new StringBuilder();
                 foreach (string token in tokens)
                 {
@@ -749,7 +749,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // Zipf-like distribution:
             for (int k = 0; k < tokens.Length; k++)
             {
-                if (Random().nextBoolean() || k == tokens.Length - 1)
+                if (Random.nextBoolean() || k == tokens.Length - 1)
                 {
                     return tokens[k];
                 }

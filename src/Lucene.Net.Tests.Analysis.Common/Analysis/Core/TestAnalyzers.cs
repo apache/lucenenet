@@ -235,9 +235,9 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random(), new WhitespaceAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-            CheckRandomData(Random(), new SimpleAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
-            CheckRandomData(Random(), new StopAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new WhitespaceAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new SimpleAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new StopAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace Lucene.Net.Analysis.Core
         [Test, LongRunningTest]
         public virtual void TestRandomHugeStrings()
         {
-            Random random = Random();
+            Random random = Random;
             CheckRandomData(random, new WhitespaceAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
             CheckRandomData(random, new SimpleAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
             CheckRandomData(random, new StopAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
