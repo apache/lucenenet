@@ -29,6 +29,7 @@
     <AssemblyTitle>Lucene.Net.Tests.TestFramework</AssemblyTitle>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+    <RootNamespace>Lucene.Net</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
