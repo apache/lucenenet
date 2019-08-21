@@ -6,17 +6,16 @@ using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Codecs.Lucene42;
 using Lucene.Net.Codecs.Lucene45;
 using Lucene.Net.JavaCompatibility;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Console = Lucene.Net.Support.SystemConsole;
+using Debug = Lucene.Net.Diagnostics.Debug;
 
 // LUCENENET NOTE: These are primarily here because they are referred to
 // in the XML documentation. Be sure to add a new option if a new test framework

@@ -1,7 +1,6 @@
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
-using System;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Index
 {

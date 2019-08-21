@@ -1,24 +1,25 @@
+using Lucene.Net.Search.Similarities;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.Text;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
-    using System.IO;
+
     using AllDeletedFilterReader = Lucene.Net.Index.AllDeletedFilterReader;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /*
     * Licensed to the Apache Software Foundation (ASF) under one or more
     * contributor license agreements.  See the NOTICE file distributed with
@@ -43,7 +44,6 @@ namespace Lucene.Net.Search
     using MultiReader = Lucene.Net.Index.MultiReader;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
-    using Similarities;
 
     /// <summary>
     /// This is a <see cref="MultiReader"/> that can be used for randomly wrapping other readers

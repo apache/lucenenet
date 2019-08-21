@@ -1,15 +1,13 @@
+using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Globalization;
 using System.Text;
-using Lucene.Net.Documents;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-
     /*
     * Licensed to the Apache Software Foundation (ASF) under one or more
     * contributor license agreements.  See the NOTICE file distributed with

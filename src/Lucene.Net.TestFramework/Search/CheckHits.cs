@@ -1,15 +1,14 @@
+using Lucene.Net.Search.Similarities;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Text;
 
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
-    using Similarities;
-    using System.IO;
-
     /*
     * Licensed to the Apache Software Foundation (ASF) under one or more
     * contributor license agreements.  See the NOTICE file distributed with

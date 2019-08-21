@@ -1,7 +1,6 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
@@ -12,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis
@@ -356,15 +356,18 @@ namespace Lucene.Net.Analysis
                     Assert.AreEqual((int)finalPosInc, posIncrAtt.PositionIncrement, "finalPosInc");
                 }
 
-                ts.Dispose();
+                //ts.Dispose();
             }
             catch (Exception)
             {
                 //ts.Reset();
                 ts.ClearAttributes();
                 ts.End();
-                ts.Dispose();
                 throw;
+            }
+            finally
+            {
+                ts.Dispose();
             }
         }
 
@@ -498,7 +501,7 @@ namespace Lucene.Net.Analysis
             {
                 //ok
             }
-            catch (AssertionException expected)
+            catch (AssertionError expected) // LUCENENET: Actual AssertionError type is Lucene.Net.Diagnostics.AssertionException
             {
                 // ok: MockTokenizer
                 Assert.IsTrue(expected.Message != null && expected.Message.Contains("wrong state"), expected.Message);
@@ -507,7 +510,7 @@ namespace Lucene.Net.Analysis
             {
                 //unexpected.printStackTrace(System.err);
                 Console.Error.WriteLine(unexpected.StackTrace);
-                Assert.Fail("got wrong exception when reset() not called: " + unexpected);
+                Assert.Fail("Got wrong exception when Reset() not called: " + unexpected);
             }
             finally
             {
@@ -530,7 +533,7 @@ namespace Lucene.Net.Analysis
             try
             {
                 ts = a.GetTokenStream("bogus", new StringReader(input));
-                Assert.Fail("didn't get expected exception when Close() not called");
+                Assert.Fail("Didn't get expected exception when Dispose() not called");
             }
             catch (Exception)
             {
@@ -949,7 +952,7 @@ namespace Lucene.Net.Analysis
             TextReader reader = new StringReader(text);
 
             TokenStream ts;
-            using (ts = a.GetTokenStream("dummy", useCharFilter ? (TextReader) new MockCharFilter(reader, remainder) : reader))
+            using (ts = a.GetTokenStream("dummy", useCharFilter ? new MockCharFilter(reader, remainder) : reader))
             {
                 bool isReset = false;
                 try
@@ -986,7 +989,10 @@ namespace Lucene.Net.Analysis
                             endOffsets.Add(offsetAtt.EndOffset);
                         }
                     }
-                    ts.End();
+                    // LUCENENET: We are doing this in the finally block to ensure it happens
+                    // when there are exeptions thrown (such as when the assert fails).
+                    //ts.End();
+                    //ts.Dispose();
                 }
                 finally
                 {
@@ -994,7 +1000,11 @@ namespace Lucene.Net.Analysis
                     {
                         try
                         {
+                            // consume correctly
                             ts.Reset();
+                            while (ts.IncrementToken());
+                            //ts.End();
+                            //ts.Dispose();
                         }
 #pragma warning disable 168
                         catch (Exception ex)
@@ -1003,9 +1013,9 @@ namespace Lucene.Net.Analysis
                             // ignore
                         }
                     }
-                    ts.End();
+                    ts.End(); // ts.end();
                 }
-            }
+            } // ts.close();
 
             // verify reusing is "reproducable" and also get the normal tokenstream sanity checks
             if (tokens.Count > 0)
@@ -1053,18 +1063,12 @@ namespace Lucene.Net.Analysis
                         {
                             ts.End();
                         }
-                        catch (InvalidOperationException ae)
+                        // LUCENENET: Actual AssertionError type is Lucene.Net.Diagnostics.AssertionException
+                        catch (AssertionError ae) when (ae.Message.Contains("End() called before IncrementToken() returned false!"))
                         {
                             // Catch & ignore MockTokenizer's
                             // anger...
-                            if ("End() called before IncrementToken() returned false!".Equals(ae.Message, StringComparison.Ordinal))
-                            {
-                                // OK
-                            }
-                            else
-                            {
-                                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
-                            }
+                            // OK
                         }
                         finally
                         {
@@ -1092,18 +1096,12 @@ namespace Lucene.Net.Analysis
                         {
                             ts.End();
                         }
-                        catch (InvalidOperationException ae)
+                        // LUCENENET: Actual AssertionError type is Lucene.Net.Diagnostics.AssertionException
+                        catch (AssertionError ae) when (ae.Message.Contains("End() called before IncrementToken() returned false!"))
                         {
                             // Catch & ignore MockTokenizer's
                             // anger...
-                            if ("End() called before IncrementToken() returned false!".Equals(ae.Message, StringComparison.Ordinal))
-                            {
-                                // OK
-                            }
-                            else
-                            {
-                                throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
-                            }
+                            // OK
                         }
                         finally
                         {

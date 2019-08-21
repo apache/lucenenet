@@ -22,12 +22,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
-using System.Diagnostics;
-using System.Globalization;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Util
 {

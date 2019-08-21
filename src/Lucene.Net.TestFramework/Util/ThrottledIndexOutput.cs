@@ -1,7 +1,7 @@
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 using System.Threading;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Util
 {

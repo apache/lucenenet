@@ -1,12 +1,10 @@
-using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using System;
 using System.Collections;
-using System.Diagnostics;
+using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Util
 {
-    using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
 
     /*

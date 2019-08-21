@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
