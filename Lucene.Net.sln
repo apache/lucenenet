@@ -182,6 +182,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._U-Z", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.TestFramework", "src\Lucene.Net.Tests.TestFramework\Lucene.Net.Tests.TestFramework.csproj", "{881677D9-03FD-4984-82F1-CDD2B29D92E2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.TestFramework.NUnit", "src\Lucene.Net.TestFramework.NUnit\Lucene.Net.TestFramework.NUnit.csproj", "{845F8491-348C-4242-A58A-1979E8338B5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.TestFramework.NUnit", "src\Lucene.Net.Tests.TestFramework.NUnit\Lucene.Net.Tests.TestFramework.NUnit.csproj", "{3A761C02-C3B2-4672-92F9-B700C68E7EFA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -408,6 +412,14 @@ Global
 		{881677D9-03FD-4984-82F1-CDD2B29D92E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{881677D9-03FD-4984-82F1-CDD2B29D92E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{881677D9-03FD-4984-82F1-CDD2B29D92E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{845F8491-348C-4242-A58A-1979E8338B5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{845F8491-348C-4242-A58A-1979E8338B5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{845F8491-348C-4242-A58A-1979E8338B5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{845F8491-348C-4242-A58A-1979E8338B5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A761C02-C3B2-4672-92F9-B700C68E7EFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A761C02-C3B2-4672-92F9-B700C68E7EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A761C02-C3B2-4672-92F9-B700C68E7EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A761C02-C3B2-4672-92F9-B700C68E7EFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
