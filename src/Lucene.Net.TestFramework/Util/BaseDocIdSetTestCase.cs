@@ -75,7 +75,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Test length=0.
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestNoBit()
         {
             BitArray bs = new BitArray(1);
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Test length=1.
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void Test1Bit()
         {
             BitArray bs = new BitArray(1);
@@ -101,7 +101,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Test length=2.
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void Test2Bits()
         {
             BitArray bs = new BitArray(2);
@@ -120,7 +120,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Compare the content of the set against a <see cref="BitArray"/>.
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestAgainstBitSet()
         {
             int numBits = TestUtil.NextInt32(Random, 100, 1 << 20);

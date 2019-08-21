@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
             return size;
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestUniqueValuesCompression()
         {
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestDateCompression()
         {
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSingleBigValueCompression()
         {
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));

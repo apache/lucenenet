@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestOneNumber()
         {
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestOneSingle() // LUCENENET specific - renamed from TestOneFloat
         {
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestTwoNumbers()
         {
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestTwoBinaryValues()
         {
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestTwoFieldsMixed()
         {
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestThreeFieldsMixed()
         {
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
@@ -339,7 +339,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestThreeFieldsMixed2()
         {
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestTwoDocumentsNumeric()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -420,7 +420,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestTwoDocumentsMerged()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -467,7 +467,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestBigNumericRange()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -499,7 +499,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestBigNumericRange2()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -531,7 +531,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestBytes()
         {
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
@@ -574,7 +574,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestBytesTwoDocumentsMerged()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -623,7 +623,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedBytes()
         {
             string longTerm = "longtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongtermlongterm";
@@ -667,7 +667,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedBytesTwoDocuments()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -702,7 +702,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedBytesThreeDocuments()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -744,7 +744,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedBytesTwoDocumentsMerged()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -798,7 +798,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedMergeAwayAllValues()
         {
             using (Directory directory = NewDirectory())
@@ -848,7 +848,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestBytesWithNewline()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -877,7 +877,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestMissingSortedBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -913,7 +913,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedTermsEnum()
         {
             using (Directory directory = NewDirectory())
@@ -995,7 +995,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestEmptySortedBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -1030,7 +1030,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestEmptyBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -1065,7 +1065,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestVeryLargeButLegalBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -1097,7 +1097,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestVeryLargeButLegalSortedBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -1128,7 +1128,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestCodecUsesOwnBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -1159,7 +1159,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestCodecUsesOwnSortedBytes()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -1190,7 +1190,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestCodecUsesOwnBytesEachTime()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -1228,7 +1228,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestCodecUsesOwnSortedBytesEachTime()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -1269,7 +1269,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Simple test case to show how to use the API
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestDocValuesSimple()
         {
             using (Directory dir = NewDirectory())
@@ -1317,7 +1317,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestRandomSortedBytes()
         {
             using (Directory dir = NewDirectory())
@@ -1604,7 +1604,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
          }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestBooleanNumericsVsStoredFields()
         {
             int numIterations = AtLeast(1);
@@ -1614,7 +1614,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestByteNumericsVsStoredFields()
         {
             int numIterations = AtLeast(1);
@@ -1624,7 +1624,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestByteMissingVsFieldCache()
         {
             int numIterations = AtLeast(1);
@@ -1634,7 +1634,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestInt16NumericsVsStoredFields() // LUCENENET specific - renamed from TestShortNumericsVsStoredFields
         {
             int numIterations = AtLeast(1);
@@ -1644,7 +1644,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestInt16MissingVsFieldCache() // LUCENENET specific - renamed from TestShortMissingVsFieldCache
         {
             int numIterations = AtLeast(1);
@@ -1654,7 +1654,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestInt32NumericsVsStoredFields() // LUCENENET specific - renamed from TestIntNumericsVsStoredFields
         {
             int numIterations = AtLeast(1);
@@ -1664,7 +1664,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestInt32MissingVsFieldCache() // LUCENENET specific - renamed from TestIntMissingVsFieldCache
         {
             int numIterations = AtLeast(1);
@@ -1674,7 +1674,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestInt64NumericsVsStoredFields() // LUCENENET specific - renamed from TestLongNumericsVsStoredFields
         {
             int numIterations = AtLeast(1);
@@ -1684,7 +1684,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestInt64MissingVsFieldCache() // LUCENENET specific - renamed from TestLongMissingVsFieldCache
         {
             int numIterations = AtLeast(1);
@@ -1762,7 +1762,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestBinaryFixedLengthVsStoredFields()
         {
             int numIterations = AtLeast(1);
@@ -1773,7 +1773,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestBinaryVariableLengthVsStoredFields()
         {
             int numIterations = AtLeast(1);
@@ -1913,7 +1913,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedFixedLengthVsStoredFields()
         {
             int numIterations = AtLeast(1);
@@ -1924,7 +1924,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedFixedLengthVsFieldCache()
         {
             int numIterations = AtLeast(1);
@@ -1935,7 +1935,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedVariableLengthVsFieldCache()
         {
             int numIterations = AtLeast(1);
@@ -1945,7 +1945,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedVariableLengthVsStoredFields()
         {
             int numIterations = AtLeast(1);
@@ -1955,7 +1955,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetOneValue()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -1991,7 +1991,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetTwoFields()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2037,7 +2037,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetTwoDocumentsMerged()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2090,7 +2090,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetTwoValues()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2131,7 +2131,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetTwoValuesUnordered()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2172,7 +2172,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetThreeValuesTwoDocs()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2232,7 +2232,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetTwoDocumentsLastMissing()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2275,7 +2275,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetTwoDocumentsLastMissingMerge()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2320,7 +2320,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetTwoDocumentsFirstMissing()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2364,7 +2364,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetTwoDocumentsFirstMissingMerge()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2409,7 +2409,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetMergeAwayAllValues()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2448,7 +2448,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetTermsEnum()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2618,7 +2618,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetFixedLengthVsStoredFields()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2630,7 +2630,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetVariableLengthVsStoredFields()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2641,7 +2641,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetFixedLengthSingleValuedVsStoredFields()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2653,7 +2653,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetVariableLengthSingleValuedVsStoredFields()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2879,7 +2879,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetFixedLengthVsUninvertedField()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2891,7 +2891,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestSortedSetVariableLengthVsUninvertedField()
         {
             AssumeTrue("Codec does not support SORTED_SET", DefaultCodecSupportsSortedSet);
@@ -2902,7 +2902,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestGCDCompression()
         {
             int numIterations = AtLeast(1);
@@ -2935,13 +2935,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestZeros()
         {
             DoTestNumericsVsStoredFields(0, 0);
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestZeroOrMin()
         {
             // try to make GCD compression fail if the format did not anticipate that
@@ -2969,7 +2969,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestTwoNumbersOneMissing()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
@@ -3003,7 +3003,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestTwoNumbersOneMissingWithMerging()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
@@ -3038,7 +3038,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestThreeNumbersOneMissingWithMerging()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
@@ -3079,7 +3079,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestTwoBytesOneMissing()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
@@ -3116,7 +3116,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestTwoBytesOneMissingWithMerging()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
@@ -3154,7 +3154,7 @@ namespace Lucene.Net.Index
             } // directory.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestThreeBytesOneMissingWithMerging()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
@@ -3200,7 +3200,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-4853
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestHugeBinaryValues()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
@@ -3343,7 +3343,7 @@ namespace Lucene.Net.Index
         }
 
         // TODO: get this out of here and into the deprecated codecs (4.0, 4.2)
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestHugeBinaryValueLimit()
         {
             // We only test DVFormats that have a limit
@@ -3440,7 +3440,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Tests dv against stored fields with threads (binary/numeric/sorted, no missing)
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestThreads()
         {
             using (Directory dir = NewDirectory())
@@ -3564,7 +3564,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Tests dv against stored fields with threads (all types + missing)
         /// </summary>
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestThreads2()
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
@@ -3761,7 +3761,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-5218
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestEmptyBinaryValueOnPageSizes()
         {
             // Test larger and larger power-of-two sized values,

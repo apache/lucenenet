@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestRandomStoredFields()
         {
             using (Directory dir = NewDirectory())
@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         // LUCENE-1727: make sure doc fields are stored in order
         public virtual void TestStoredFieldsOrder()
         {
@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
             } // w.Dispose();, d.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         // LUCENE-1219
         public virtual void TestBinaryFieldOffsetLength()
         {
@@ -269,7 +269,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestNumericField()
         {
             using (Directory dir = NewDirectory())
@@ -365,7 +365,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestIndexedBit()
         {
             using (Directory dir = NewDirectory())
@@ -393,7 +393,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestReadSkip()
         {
             using (Directory dir = NewDirectory())
@@ -453,7 +453,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestEmptyDocs()
         {
             using (Directory dir = NewDirectory())
@@ -485,7 +485,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestConcurrentReads()
         {
             using (Directory dir = NewDirectory())
@@ -604,7 +604,7 @@ namespace Lucene.Net.Index
             return result;
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestWriteReadMerge()
         {
             // get another codec, other than the default: so we are merging segments across different codecs
@@ -718,7 +718,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestBigDocuments()
         {
             // "big" as "much bigger than the chunk size"
@@ -798,7 +798,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass
+        [Test]
         public virtual void TestBulkMergeWithDeletes()
         {
             int numDocs = AtLeast(200);
