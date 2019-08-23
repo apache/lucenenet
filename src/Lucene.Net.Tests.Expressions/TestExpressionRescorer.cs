@@ -83,10 +83,10 @@ namespace Lucene.Net.Expressions
 			IndexReader r = searcher.IndexReader;
 			// Just first pass query
 			TopDocs hits = searcher.Search(query, 10);
-			AreEqual(3, hits.TotalHits);
-			AreEqual("3", r.Document(hits.ScoreDocs[0].Doc).Get("id"));
-			AreEqual("1", r.Document(hits.ScoreDocs[1].Doc).Get("id"));
-			AreEqual("2", r.Document(hits.ScoreDocs[2].Doc).Get("id"));
+            Assert.AreEqual(3, hits.TotalHits);
+            Assert.AreEqual("3", r.Document(hits.ScoreDocs[0].Doc).Get("id"));
+            Assert.AreEqual("1", r.Document(hits.ScoreDocs[1].Doc).Get("id"));
+            Assert.AreEqual("2", r.Document(hits.ScoreDocs[2].Doc).Get("id"));
 			// Now, rescore:
 			Expression e = JavascriptCompiler.Compile("sqrt(_score) + ln(popularity)");
 			SimpleBindings bindings = new SimpleBindings();
@@ -94,17 +94,17 @@ namespace Lucene.Net.Expressions
 			bindings.Add(new SortField("_score", SortFieldType.SCORE));
 			Rescorer rescorer = e.GetRescorer(bindings);
 			hits = rescorer.Rescore(searcher, hits, 10);
-			AreEqual(3, hits.TotalHits);
-			AreEqual("2", r.Document(hits.ScoreDocs[0].Doc).Get("id"));
-			AreEqual("1", r.Document(hits.ScoreDocs[1].Doc).Get("id"));
-			AreEqual("3", r.Document(hits.ScoreDocs[2].Doc).Get("id"));
+            Assert.AreEqual(3, hits.TotalHits);
+            Assert.AreEqual("2", r.Document(hits.ScoreDocs[0].Doc).Get("id"));
+            Assert.AreEqual("1", r.Document(hits.ScoreDocs[1].Doc).Get("id"));
+            Assert.AreEqual("3", r.Document(hits.ScoreDocs[2].Doc).Get("id"));
 			string expl = rescorer.Explain(searcher, searcher.Explain(query, hits.ScoreDocs[0].Doc), hits.ScoreDocs[0].Doc).ToString();
-			// Confirm the explanation breaks out the individual
-			// variables:
-			IsTrue(expl.Contains("= variable \"popularity\""));
-			// Confirm the explanation includes first pass details:
-			IsTrue(expl.Contains("= first pass score"));
-			IsTrue(expl.Contains("body:contents in"));
+            // Confirm the explanation breaks out the individual
+            // variables:
+            Assert.IsTrue(expl.Contains("= variable \"popularity\""));
+            // Confirm the explanation includes first pass details:
+            Assert.IsTrue(expl.Contains("= first pass score"));
+            Assert.IsTrue(expl.Contains("body:contents in"));
 		}
 	}
 }

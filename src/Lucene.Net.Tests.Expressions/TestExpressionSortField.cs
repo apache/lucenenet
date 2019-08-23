@@ -32,7 +32,7 @@ namespace Lucene.Net.Expressions
 			bindings.Add(new SortField("_score", SortFieldType.SCORE));
 			bindings.Add(new SortField("popularity", SortFieldType.INT32));
 			SortField sf = expr.GetSortField(bindings, true);
-			AreEqual("<expr \"sqrt(_score) + ln(popularity)\">!", sf.ToString());
+            Assert.AreEqual("<expr \"sqrt(_score) + ln(popularity)\">!", sf.ToString());
 		}
 
 		[Test]
@@ -48,18 +48,18 @@ namespace Lucene.Net.Expressions
 			SortField sf1 = expr.GetSortField(bindings, true);
 			// different order
 			SortField sf2 = expr.GetSortField(bindings, false);
-			IsFalse(sf1.Equals(sf2));
+            Assert.IsFalse(sf1.Equals(sf2));
 			// different bindings
 			sf2 = expr.GetSortField(otherBindings, true);
-			IsFalse(sf1.Equals(sf2));
+            Assert.IsFalse(sf1.Equals(sf2));
 			// different expression
 			Expression other = JavascriptCompiler.Compile("popularity/2");
 			sf2 = other.GetSortField(bindings, true);
-			IsFalse(sf1.Equals(sf2));
-			// null
-			IsFalse(sf1.Equals(null));
-			// same instance:
-			AreEqual(sf1, sf1);
+            Assert.IsFalse(sf1.Equals(sf2));
+            // null
+            Assert.IsFalse(sf1.Equals(null));
+            // same instance:
+            Assert.AreEqual(sf1, sf1);
 		}
 
 		[Test]
@@ -95,15 +95,15 @@ namespace Lucene.Net.Expressions
 			bindings.Add("g", exprG);
 			bindings.Add("h", exprH);
 			bindings.Add("i", exprI);
-			IsTrue(exprA.GetSortField(bindings, true).NeedsScores);
-			IsFalse(exprB.GetSortField(bindings, true).NeedsScores);
-			IsFalse(exprC.GetSortField(bindings, true).NeedsScores);
-			IsTrue(exprD.GetSortField(bindings, true).NeedsScores);
-			IsFalse(exprE.GetSortField(bindings, true).NeedsScores);
-			IsTrue(exprF.GetSortField(bindings, true).NeedsScores);
-			IsFalse(exprG.GetSortField(bindings, true).NeedsScores);
-			IsTrue(exprH.GetSortField(bindings, true).NeedsScores);
-			IsFalse(exprI.GetSortField(bindings, false).NeedsScores);
+            Assert.IsTrue(exprA.GetSortField(bindings, true).NeedsScores);
+            Assert.IsFalse(exprB.GetSortField(bindings, true).NeedsScores);
+            Assert.IsFalse(exprC.GetSortField(bindings, true).NeedsScores);
+            Assert.IsTrue(exprD.GetSortField(bindings, true).NeedsScores);
+            Assert.IsFalse(exprE.GetSortField(bindings, true).NeedsScores);
+            Assert.IsTrue(exprF.GetSortField(bindings, true).NeedsScores);
+            Assert.IsFalse(exprG.GetSortField(bindings, true).NeedsScores);
+            Assert.IsTrue(exprH.GetSortField(bindings, true).NeedsScores);
+            Assert.IsFalse(exprI.GetSortField(bindings, false).NeedsScores);
 		}
 	}
 }

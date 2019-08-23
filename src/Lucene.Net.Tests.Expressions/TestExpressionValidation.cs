@@ -52,11 +52,11 @@ namespace Lucene.Net.Expressions
 			try
 			{
 				bindings.Validate();
-				Fail("didn't get expected exception");
+                Assert.Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				IsTrue(expected.Message.Contains("Invalid reference"));
+                Assert.IsTrue(expected.Message.Contains("Invalid reference"));
 			}
 		}
 
@@ -69,11 +69,11 @@ namespace Lucene.Net.Expressions
 			try
 			{
 				bindings.Validate();
-				Fail("didn't get expected exception");
+                Assert.Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				IsTrue(expected.Message.Contains("Invalid reference"));
+                Assert.IsTrue(expected.Message.Contains("Invalid reference"));
 			}
 		}
 
@@ -85,11 +85,11 @@ namespace Lucene.Net.Expressions
 			try
 			{
 				bindings.Validate();
-				Fail("didn't get expected exception");
+                Assert.Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				IsTrue(expected.Message.Contains("Cycle detected"));
+                Assert.IsTrue(expected.Message.Contains("Cycle detected"));
 			}
 		}
 
@@ -102,11 +102,11 @@ namespace Lucene.Net.Expressions
 			try
 			{
 				bindings.Validate();
-				Fail("didn't get expected exception");
+                Assert.Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				IsTrue(expected.Message.Contains("Cycle detected"));
+                Assert.IsTrue(expected.Message.Contains("Cycle detected"));
 			}
 		}
 
@@ -120,11 +120,11 @@ namespace Lucene.Net.Expressions
 			try
 			{
 				bindings.Validate();
-				Fail("didn't get expected exception");
+                Assert.Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				IsTrue(expected.Message.Contains("Cycle detected"));
+                Assert.IsTrue(expected.Message.Contains("Cycle detected"));
 			}
 		}
 
@@ -138,11 +138,11 @@ namespace Lucene.Net.Expressions
 			try
 			{
 				bindings.Validate();
-				Fail("didn't get expected exception");
+                Assert.Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				IsTrue(expected.Message.Contains("Cycle detected"));
+                Assert.IsTrue(expected.Message.Contains("Cycle detected"));
 			}
 		}
 
@@ -157,11 +157,11 @@ namespace Lucene.Net.Expressions
 			try
 			{
 				bindings.Validate();
-				Fail("didn't get expected exception");
+                Assert.Fail("didn't get expected exception");
 			}
 			catch (ArgumentException expected)
 			{
-				IsTrue(expected.Message.Contains("Cycle detected"));
+                Assert.IsTrue(expected.Message.Contains("Cycle detected"));
 			}
 		}
 	}

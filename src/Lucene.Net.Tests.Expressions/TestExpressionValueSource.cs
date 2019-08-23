@@ -87,33 +87,33 @@ namespace Lucene.Net.Expressions
 			SimpleBindings bindings = new SimpleBindings();
 			bindings.Add(new SortField("popularity", SortFieldType.INT64));
 			ValueSource vs = expr.GetValueSource(bindings);
-			AreEqual(1, reader.Leaves.Count);
+            Assert.AreEqual(1, reader.Leaves.Count);
 			AtomicReaderContext leaf = reader.Leaves[0];
 			FunctionValues values = vs.GetValues(new Dictionary<string, object>(), leaf);
-			AreEqual(10, values.DoubleVal(0), 0);
-			AreEqual(10, values.SingleVal(0), 0);
-			AreEqual(10, values.Int64Val(0));
-			AreEqual(10, values.Int32Val(0));
-			AreEqual(10, values.Int16Val(0));
-			AreEqual(10, values.ByteVal(0));
-			AreEqual("10", values.StrVal(0));
-			AreEqual(System.Convert.ToDouble(10), values.ObjectVal(0));
-			AreEqual(40, values.DoubleVal(1), 0);
-			AreEqual(40, values.SingleVal(1), 0);
-			AreEqual(40, values.Int64Val(1));
-			AreEqual(40, values.Int32Val(1));
-			AreEqual(40, values.Int16Val(1));
-			AreEqual(40, values.ByteVal(1));
-			AreEqual("40", values.StrVal(1));
-			AreEqual(System.Convert.ToDouble(40), values.ObjectVal(1));
-			AreEqual(4, values.DoubleVal(2), 0);
-			AreEqual(4, values.SingleVal(2), 0);
-			AreEqual(4, values.Int64Val(2));
-			AreEqual(4, values.Int32Val(2));
-			AreEqual(4, values.Int16Val(2));
-			AreEqual(4, values.ByteVal(2));
-			AreEqual("4", values.StrVal(2));
-			AreEqual(System.Convert.ToDouble(4), values.ObjectVal(2));
+            Assert.AreEqual(10, values.DoubleVal(0), 0);
+            Assert.AreEqual(10, values.SingleVal(0), 0);
+            Assert.AreEqual(10, values.Int64Val(0));
+            Assert.AreEqual(10, values.Int32Val(0));
+            Assert.AreEqual(10, values.Int16Val(0));
+            Assert.AreEqual(10, values.ByteVal(0));
+            Assert.AreEqual("10", values.StrVal(0));
+            Assert.AreEqual(System.Convert.ToDouble(10), values.ObjectVal(0));
+            Assert.AreEqual(40, values.DoubleVal(1), 0);
+            Assert.AreEqual(40, values.SingleVal(1), 0);
+            Assert.AreEqual(40, values.Int64Val(1));
+            Assert.AreEqual(40, values.Int32Val(1));
+            Assert.AreEqual(40, values.Int16Val(1));
+            Assert.AreEqual(40, values.ByteVal(1));
+            Assert.AreEqual("40", values.StrVal(1));
+            Assert.AreEqual(System.Convert.ToDouble(40), values.ObjectVal(1));
+            Assert.AreEqual(4, values.DoubleVal(2), 0);
+            Assert.AreEqual(4, values.SingleVal(2), 0);
+            Assert.AreEqual(4, values.Int64Val(2));
+            Assert.AreEqual(4, values.Int32Val(2));
+            Assert.AreEqual(4, values.Int16Val(2));
+            Assert.AreEqual(4, values.ByteVal(2));
+            Assert.AreEqual("4", values.StrVal(2));
+            Assert.AreEqual(System.Convert.ToDouble(4), values.ObjectVal(2));
 		}
 
 		[Test]
@@ -123,22 +123,22 @@ namespace Lucene.Net.Expressions
 			SimpleBindings bindings = new SimpleBindings();
 			bindings.Add(new SortField("popularity", SortFieldType.INT64));
 			ValueSource vs = expr.GetValueSource(bindings);
-			AreEqual(1, reader.Leaves.Count);
+            Assert.AreEqual(1, reader.Leaves.Count);
 			AtomicReaderContext leaf = reader.Leaves[0];
 			FunctionValues values = vs.GetValues(new Dictionary<string, object>(), leaf);
 			// everything
 			ValueSourceScorer scorer = values.GetRangeScorer(leaf.Reader, "4"
 				, "40", true, true);
-			AreEqual(-1, scorer.DocID);
-			AreEqual(0, scorer.NextDoc());
-			AreEqual(1, scorer.NextDoc());
-			AreEqual(2, scorer.NextDoc());
-			AreEqual(DocIdSetIterator.NO_MORE_DOCS, scorer.NextDoc());
+            Assert.AreEqual(-1, scorer.DocID);
+            Assert.AreEqual(0, scorer.NextDoc());
+            Assert.AreEqual(1, scorer.NextDoc());
+            Assert.AreEqual(2, scorer.NextDoc());
+            Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, scorer.NextDoc());
 			// just the first doc
 			scorer = values.GetRangeScorer(leaf.Reader, "4", "40", false, false);
-			AreEqual(-1, scorer.DocID);
-			AreEqual(0, scorer.NextDoc());
-			AreEqual(DocIdSetIterator.NO_MORE_DOCS, scorer.NextDoc());
+            Assert.AreEqual(-1, scorer.DocID);
+            Assert.AreEqual(0, scorer.NextDoc());
+            Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, scorer.NextDoc());
 		}
 
 		[Test]
@@ -149,28 +149,28 @@ namespace Lucene.Net.Expressions
 			bindings.Add(new SortField("a", SortFieldType.INT32));
 			bindings.Add(new SortField("b", SortFieldType.INT32));
 			ValueSource vs1 = expr.GetValueSource(bindings);
-			// same instance
-			AreEqual(vs1, vs1);
-			// null
-			IsFalse(vs1.Equals(null));
-			// other object
-			IsFalse(vs1.Equals("foobar"));
+            // same instance
+            Assert.AreEqual(vs1, vs1);
+            // null
+            Assert.IsFalse(vs1.Equals(null));
+            // other object
+            Assert.IsFalse(vs1.Equals("foobar"));
 			// same bindings and expression instances
 			ValueSource vs2 = expr.GetValueSource(bindings);
-			AreEqual(vs1.GetHashCode(), vs2.GetHashCode());
-			AreEqual(vs1, vs2);
+            Assert.AreEqual(vs1.GetHashCode(), vs2.GetHashCode());
+            Assert.AreEqual(vs1, vs2);
 			// equiv bindings (different instance)
 			SimpleBindings bindings2 = new SimpleBindings();
 			bindings2.Add(new SortField("a", SortFieldType.INT32));
 			bindings2.Add(new SortField("b", SortFieldType.INT32));
 			ValueSource vs3 = expr.GetValueSource(bindings2);
-			AreEqual(vs1, vs3);
+            Assert.AreEqual(vs1, vs3);
 			// different bindings (same names, different types)
 			SimpleBindings bindings3 = new SimpleBindings();
 			bindings3.Add(new SortField("a", SortFieldType.INT64));
 			bindings3.Add(new SortField("b", SortFieldType.INT32));
 			ValueSource vs4 = expr.GetValueSource(bindings3);
-			IsFalse(vs1.Equals(vs4));
+            Assert.IsFalse(vs1.Equals(vs4));
 		}
 	}
 }

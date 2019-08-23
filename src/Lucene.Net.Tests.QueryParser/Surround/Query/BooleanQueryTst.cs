@@ -29,7 +29,6 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         private readonly int[] expectedDocNrs;
         private SingleFieldTestDb dBase;
         private string fieldName;
-        private Assert testCase;
         private BasicQueryFactory qf;
         private bool verbose = true;
 
@@ -38,14 +37,12 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             int[] expectedDocNrs,
             SingleFieldTestDb dBase,
             string fieldName,
-            Assert testCase,
             BasicQueryFactory qf)
         {
             this.queryText = queryText;
             this.expectedDocNrs = expectedDocNrs;
             this.dBase = dBase;
             this.fieldName = fieldName;
-            this.testCase = testCase;
             this.qf = qf;
         }
 

@@ -31,7 +31,7 @@ namespace Lucene.Net.Expressions.JS
         {
             Expression evaluator = JavascriptCompiler.Compile(expression);
             double actual = evaluator.Evaluate(0, null);
-            AreEqual(expected, actual, DELTA);
+            Assert.AreEqual(expected, actual, DELTA);
         }
 
         [Test]

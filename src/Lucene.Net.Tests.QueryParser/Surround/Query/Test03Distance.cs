@@ -75,7 +75,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         private void DistanceTst(String query, int[] expdnrs, SingleFieldTestDb db)
         {
-            BooleanQueryTst bqt = new BooleanQueryTst(query, expdnrs, db, fieldName, this,
+            BooleanQueryTst bqt = new BooleanQueryTst(query, expdnrs, db, fieldName,
                                                         new BasicQueryFactory(maxBasicQueries));
             bqt.Verbose = (verbose);
             bqt.DoTest();

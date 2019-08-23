@@ -38,11 +38,11 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("sqrt(20)", functions);
-				Fail();
+                Assert.Fail();
 			}
 			catch (ArgumentException e)
 			{
-				IsTrue(e.Message.Contains("Unrecognized method"));
+                Assert.IsTrue(e.Message.Contains("Unrecognized method"));
 			}
 		}
 
@@ -52,7 +52,7 @@ namespace Lucene.Net.Expressions.JS
 		{
 			IDictionary<string, MethodInfo> functions = JavascriptCompiler.DEFAULT_FUNCTIONS;
 			var expr = JavascriptCompiler.Compile("sqrt(20)", functions);
-			AreEqual(Math.Sqrt(20), expr.Evaluate(0, null), DELTA);
+            Assert.AreEqual(Math.Sqrt(20), expr.Evaluate(0, null), DELTA);
 		}
 
 		public static double ZeroArgMethod()
@@ -67,7 +67,7 @@ namespace Lucene.Net.Expressions.JS
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
 			functions["foo"] = GetType().GetMethod("ZeroArgMethod");
 			var expr = JavascriptCompiler.Compile("foo()", functions);
-			AreEqual(5, expr.Evaluate(0, null), DELTA);
+            Assert.AreEqual(5, expr.Evaluate(0, null), DELTA);
 		}
 
 		public static double OneArgMethod(double arg1)
@@ -82,7 +82,7 @@ namespace Lucene.Net.Expressions.JS
 			IDictionary<string, MethodInfo> functions = new Dictionary<string, MethodInfo>();
 			functions["foo"] = GetType().GetMethod("OneArgMethod", new []{ typeof(double)});
 			var expr = JavascriptCompiler.Compile("foo(3)", functions);
-			AreEqual(6, expr.Evaluate(0, null), DELTA);
+            Assert.AreEqual(6, expr.Evaluate(0, null), DELTA);
 		}
 
 		public static double ThreeArgMethod(double arg1, double arg2, double arg3)
@@ -98,7 +98,7 @@ namespace Lucene.Net.Expressions.JS
 			functions["foo"] = GetType().GetMethod("ThreeArgMethod", new []{ typeof(double), typeof(
 				double), typeof(double)});
 			var expr = JavascriptCompiler.Compile("foo(3, 4, 5)", functions);
-			AreEqual(12, expr.Evaluate(0, null), DELTA);
+            Assert.AreEqual(12, expr.Evaluate(0, null), DELTA);
 		}
 
 		/// <summary>tests a map with 2 functions</summary>
@@ -109,7 +109,7 @@ namespace Lucene.Net.Expressions.JS
 			functions["foo"] = GetType().GetMethod("ZeroArgMethod");
 			functions["bar"] = GetType().GetMethod("OneArgMethod", new []{typeof(double)});
 			var expr = JavascriptCompiler.Compile("foo() + bar(3)", functions);
-			AreEqual(11, expr.Evaluate(0, null), DELTA);
+            Assert.AreEqual(11, expr.Evaluate(0, null), DELTA);
 		}
 
 		public static string BogusReturnType()
@@ -126,11 +126,11 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("foo()", functions);
-				Fail();
+                Assert.Fail();
 			}
 			catch (ArgumentException e)
 			{
-				IsTrue(e.Message.Contains("does not return a double"));
+                Assert.IsTrue(e.Message.Contains("does not return a double"));
 			}
 		}
 
@@ -148,11 +148,11 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("foo(2)", functions);
-				Fail();
+                Assert.Fail();
 			}
 			catch (ArgumentException e)
 			{
-				IsTrue(e.Message.Contains("must take only double parameters"
+                Assert.IsTrue(e.Message.Contains("must take only double parameters"
 					));
 			}
 		}
@@ -171,11 +171,11 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("foo()", functions);
-				Fail();
+                Assert.Fail();
 			}
 			catch (ArgumentException e)
 			{
-				IsTrue(e.Message.Contains("is not static"));
+                Assert.IsTrue(e.Message.Contains("is not static"));
 			}
 		}
 
@@ -194,11 +194,11 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("foo()", functions);
-				Fail();
+                Assert.Fail();
 			}
 			catch (ArgumentException e)
 			{
-				IsTrue(e.Message.Contains("is not public"));
+                Assert.IsTrue(e.Message.Contains("is not public"));
 			}
 		}
 
@@ -219,11 +219,11 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("foo()", functions);
-				Fail();
+                Assert.Fail();
 			}
 			catch (ArgumentException e)
 			{
-				IsTrue(e.Message.Contains("is not public"));
+                Assert.IsTrue(e.Message.Contains("is not public"));
 			}
 		}
 
@@ -251,15 +251,15 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				expr.Evaluate(0, null);
-				Fail();
+                Assert.Fail();
 			}
 			catch (ArithmeticException e)
 			{
-				AreEqual(MESSAGE, e.Message);
+                Assert.AreEqual(MESSAGE, e.Message);
 				StringWriter sw = new StringWriter();
 				e.printStackTrace();
                 //.NET Port
-                IsTrue(e.StackTrace.Contains("Lucene.Net.Expressions.CompiledExpression.Evaluate(Int32 , FunctionValues[] )"));
+                Assert.IsTrue(e.StackTrace.Contains("Lucene.Net.Expressions.CompiledExpression.Evaluate(Int32 , FunctionValues[] )"));
 			}
 		}
 
@@ -272,7 +272,7 @@ namespace Lucene.Net.Expressions.JS
 			functions["foo.bar"] = GetType().GetMethod("ZeroArgMethod");
 			string source = "foo.bar()";
 			var expr = JavascriptCompiler.Compile(source, functions);
-			AreEqual(5, expr.Evaluate(0, null), DELTA);
+            Assert.AreEqual(5, expr.Evaluate(0, null), DELTA);
 		}
 	}
 }

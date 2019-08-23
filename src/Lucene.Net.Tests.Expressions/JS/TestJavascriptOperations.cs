@@ -27,7 +27,7 @@ namespace Lucene.Net.Expressions.JS
 		{
 			Expression evaluator = JavascriptCompiler.Compile(expression);
 			long actual = (long)evaluator.Evaluate(0, null);
-			AreEqual(expected, actual);
+            Assert.AreEqual(expected, actual);
 		}
 
 		[Test]

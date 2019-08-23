@@ -161,7 +161,7 @@ namespace Lucene.Net.Tests.Queries
             try
             {
                 query.Add(null);
-                Fail(@"null values are not supported");
+                Assert.Fail(@"null values are not supported");
             }
 #pragma warning disable 168
             catch (ArgumentException ex)
@@ -306,7 +306,7 @@ namespace Lucene.Net.Tests.Queries
             try
             {
                 new CommonTermsQuery(Occur.MUST_NOT, RandomOccur(random), Random.NextSingle());
-                Fail(@"MUST_NOT is not supproted");
+                Assert.Fail(@"MUST_NOT is not supproted");
             }
 #pragma warning disable 168
             catch (ArgumentException ex)
@@ -317,7 +317,7 @@ namespace Lucene.Net.Tests.Queries
             try
             {
                 new CommonTermsQuery(RandomOccur(random), Occur.MUST_NOT, Random.NextSingle());
-                Fail(@"MUST_NOT is not supproted");
+                Assert.Fail(@"MUST_NOT is not supproted");
             }
 #pragma warning disable 168
             catch (ArgumentException ex)

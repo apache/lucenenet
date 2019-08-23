@@ -26,17 +26,17 @@ namespace Lucene.Net.Expressions.JS
 		[Test]
 		public virtual void TestValidCompiles()
 		{
-			IsNotNull(JavascriptCompiler.Compile("100"));
-			IsNotNull(JavascriptCompiler.Compile("valid0+100"));
-			IsNotNull(JavascriptCompiler.Compile("valid0+\n100"));
-			IsNotNull(JavascriptCompiler.Compile("logn(2, 20+10-5.0)"));
+            Assert.IsNotNull(JavascriptCompiler.Compile("100"));
+            Assert.IsNotNull(JavascriptCompiler.Compile("valid0+100"));
+            Assert.IsNotNull(JavascriptCompiler.Compile("valid0+\n100"));
+            Assert.IsNotNull(JavascriptCompiler.Compile("logn(2, 20+10-5.0)"));
 		}
 
 		[Test]
 		public virtual void TestValidNamespaces()
 		{
-			IsNotNull(JavascriptCompiler.Compile("object.valid0"));
-			IsNotNull(JavascriptCompiler.Compile("object0.object1.valid1"));
+            Assert.IsNotNull(JavascriptCompiler.Compile("object.valid0"));
+            Assert.IsNotNull(JavascriptCompiler.Compile("object0.object1.valid1"));
 		}
 
         //TODO: change all exceptions to ParseExceptions
@@ -46,7 +46,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("object.0invalid");
-				Fail();
+                Assert.Fail();
 			}
 			catch (Exception)
 			{
@@ -55,7 +55,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("0.invalid");
-				Fail();
+                Assert.Fail();
 			}
 			catch (Exception)
 			{
@@ -64,7 +64,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("object..invalid");
-				Fail();
+                Assert.Fail();
 			}
 			catch (Exception)
 			{
@@ -73,7 +73,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile(".invalid");
-				Fail();
+                Assert.Fail();
 			}
 			catch (Exception)
 			{
@@ -87,7 +87,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("100 100");
-				Fail();
+                Assert.Fail();
 			}
 			catch (Exception)
 			{
@@ -96,7 +96,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("7*/-8");
-				Fail();
+                Assert.Fail();
 			}
 			catch (Exception)
 			{
@@ -105,7 +105,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("0y1234");
-				Fail();
+                Assert.Fail();
 			}
 			catch (Exception)
 			{
@@ -114,7 +114,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("500EE");
-				Fail();
+                Assert.Fail();
 			}
 			catch (Exception)
 			{
@@ -123,7 +123,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("500.5EE");
-				Fail();
+                Assert.Fail();
 			}
 			catch (Exception)
 			{
@@ -136,7 +136,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile(string.Empty);
-				Fail();
+                Assert.Fail();
 			}
 			catch (Exception)
 			{
@@ -145,7 +145,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("()");
-				Fail();
+                Assert.Fail();
 			}
 			catch (Exception)
 			{
@@ -154,7 +154,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("   \r\n   \n \t");
-				Fail();
+                Assert.Fail();
 			}
 			catch (Exception)
 			{
@@ -168,7 +168,7 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile(null);
-				Fail();
+                Assert.Fail();
 			}
 			catch (ArgumentNullException)
 			{
@@ -182,21 +182,21 @@ namespace Lucene.Net.Expressions.JS
 			try
 			{
 				JavascriptCompiler.Compile("tan()");
-				Fail();
+                Assert.Fail();
 			}
 			catch (ArgumentException expected)
 			{
-				IsTrue(expected.Message.Contains("arguments for method call"
+                Assert.IsTrue(expected.Message.Contains("arguments for method call"
 					));
 			}
 			try
 			{
 				JavascriptCompiler.Compile("tan(1, 1)");
-				Fail();
+                Assert.Fail();
 			}
 			catch (ArgumentException expected)
 			{
-				IsTrue(expected.Message.Contains("arguments for method call"
+                Assert.IsTrue(expected.Message.Contains("arguments for method call"
 					));
 			}
 		}

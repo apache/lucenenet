@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         public void NormalTest1(String query, int[] expdnrs)
         {
-            BooleanQueryTst bqt = new BooleanQueryTst(query, expdnrs, db1, fieldName, this,
+            BooleanQueryTst bqt = new BooleanQueryTst(query, expdnrs, db1, fieldName,
                                                         new BasicQueryFactory(maxBasicQueries));
             bqt.Verbose = (verbose);
             bqt.DoTest();
