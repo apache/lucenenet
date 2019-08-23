@@ -43,8 +43,8 @@
     <MicrosoftCSharpPackageVersion>4.4.0</MicrosoftCSharpPackageVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>2.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftNETTestSdkPackageVersion>16.2.0</MicrosoftNETTestSdkPackageVersion>
-    <MSTestTestFrameworkPackageVersion>1.1.18</MSTestTestFrameworkPackageVersion>
-    <MSTestTestAdapterPackageVersion>1.1.18</MSTestTestAdapterPackageVersion>
+    <MSTestTestFrameworkPackageVersion>2.0.0-build-20190708-01</MSTestTestFrameworkPackageVersion>
+    <MSTestTestAdapterPackageVersion>2.0.0-build-20190708-01</MSTestTestAdapterPackageVersion>
     <NETStandardLibrary16PackageVersion>1.6.1</NETStandardLibrary16PackageVersion>
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
     <NewtonsoftJsonPackageVersion>10.0.3</NewtonsoftJsonPackageVersion>

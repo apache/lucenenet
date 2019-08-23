@@ -28,6 +28,7 @@ namespace Lucene.Net.Codecs.Asserting
 #endif
     public class TestAssertingDocValuesFormat : BaseDocValuesFormatTestCase
     {
+        // LUCENENET TODO: MSTest is seemingly being fixed to deal with initialization with inheritance for version 2.0. See: https://github.com/microsoft/testfx/issues/143
 
         // LUCENENET TODO: Message: Method Lucene.Net.Codecs.Asserting.TestAssertingDocValuesFormat.BeforeClass has wrong signature. The method must be static, public, does not return a value and should take a single parameter of type TestContext. Additionally, if you are using async-await in method then return-type must be Task.
         //#if TESTFRAMEWORK_MSTEST
