@@ -117,8 +117,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Spatial", "src\L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Suggest", "src\Lucene.Net.Suggest\Lucene.Net.Suggest.csproj", "{ED5520B3-79D6-46DF-AF02-3BA1E89A4B13}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.TestFramework", "src\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj", "{AA0B6851-A597-47B5-A2F8-2A3E28C2B5A2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Analysis.Common", "src\Lucene.Net.Tests.Analysis.Common\Lucene.Net.Tests.Analysis.Common.csproj", "{258BB6A8-A23A-42CE-A3C2-2B577CEC3F5A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Analysis.Kuromoji", "src\Lucene.Net.Tests.Analysis.Kuromoji\Lucene.Net.Tests.Analysis.Kuromoji.csproj", "{8DA818F6-1E5E-4DCF-B152-A0E0A817A42C}"
@@ -180,8 +178,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._J-U", "src\Lucene.Net.Tests._J-U\Lucene.Net.Tests._J-U.csproj", "{5BE1EBA7-876C-4E9D-A78C-46A0D6F588C9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._U-Z", "src\Lucene.Net.Tests._U-Z\Lucene.Net.Tests._U-Z.csproj", "{083EEC05-D092-4F84-8004-41F0C7192ABD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.TestFramework", "src\Lucene.Net.Tests.TestFramework\Lucene.Net.Tests.TestFramework.csproj", "{881677D9-03FD-4984-82F1-CDD2B29D92E2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.TestFramework.NUnit", "src\Lucene.Net.TestFramework.NUnit\Lucene.Net.TestFramework.NUnit.csproj", "{845F8491-348C-4242-A58A-1979E8338B5D}"
 EndProject
@@ -289,10 +285,6 @@ Global
 		{ED5520B3-79D6-46DF-AF02-3BA1E89A4B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED5520B3-79D6-46DF-AF02-3BA1E89A4B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED5520B3-79D6-46DF-AF02-3BA1E89A4B13}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AA0B6851-A597-47B5-A2F8-2A3E28C2B5A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AA0B6851-A597-47B5-A2F8-2A3E28C2B5A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AA0B6851-A597-47B5-A2F8-2A3E28C2B5A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AA0B6851-A597-47B5-A2F8-2A3E28C2B5A2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{258BB6A8-A23A-42CE-A3C2-2B577CEC3F5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{258BB6A8-A23A-42CE-A3C2-2B577CEC3F5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{258BB6A8-A23A-42CE-A3C2-2B577CEC3F5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -417,10 +409,6 @@ Global
 		{083EEC05-D092-4F84-8004-41F0C7192ABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{083EEC05-D092-4F84-8004-41F0C7192ABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{083EEC05-D092-4F84-8004-41F0C7192ABD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{881677D9-03FD-4984-82F1-CDD2B29D92E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{881677D9-03FD-4984-82F1-CDD2B29D92E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{881677D9-03FD-4984-82F1-CDD2B29D92E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{881677D9-03FD-4984-82F1-CDD2B29D92E2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{845F8491-348C-4242-A58A-1979E8338B5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{845F8491-348C-4242-A58A-1979E8338B5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{845F8491-348C-4242-A58A-1979E8338B5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
