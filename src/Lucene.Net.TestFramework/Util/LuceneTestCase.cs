@@ -43,6 +43,7 @@ using System.Text.RegularExpressions;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
+using System.Linq;
 
 #if TESTFRAMEWORK_MSTEST
 using SetUp = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
@@ -827,13 +828,19 @@ namespace Lucene.Net.Util
         {
             get
             {
+#if TESTFRAMEWORK_NUNIT
+                return NUnit.Framework.TestContext.CurrentContext.Random;
+#else
                 return _random ?? (_random = new Random(/* LUCENENET TODO seed */));
                 //return RandomizedContext.Current.Random;
+#endif
             }
         }
 
+#if !TESTFRAMEWORK_NUNIT
         [ThreadStatic]
         private static Random _random;
+#endif
 
         /////// <summary>
         /////// Registers a <see cref="IDisposable"/> resource that should be closed after the test
@@ -856,25 +863,45 @@ namespace Lucene.Net.Util
         ////}*/
 
         /// <summary>
-        /// Return the current class being tested.
+        /// Return the current type being tested.
         /// </summary>
-        public static Type TestClass //LUCENENET TODO: Either implement, or change the doc to indicate it is hard coded
+        public static Type GetTestClass()
         {
-            get
-            {
-                return typeof(LuceneTestCase); // LUCENENET TODO: return this.GetType();
-            }
+            // LUCENENET TODO: MSTest has a TestContext with the type name, but it is only available
+            // through the parameter that is passed through the [ClassInitialize(InheritanceBehavior.BeforeEachDerivedClass)]
+            // decorated static method. Support for superclasses with this feature is still under development.
+#if TESTFRAMEWORK_NUNIT
+            string testClassName = NUnit.Framework.TestContext.CurrentContext.Test.ClassName;
+
+            // 1st attempt - try resolving the type name directly
+            Type testClass = Type.GetType(testClassName);
+            if (testClass != null)
+                return testClass;
+
+            // 2nd attempt - try scanning the referenced assemblies to see if we can find the class by fullname
+            var referencedAssemblies = AssemblyUtils.GetReferencedAssemblies();
+            testClass = referencedAssemblies.SelectMany(a => a.GetTypes().Where(t => t.FullName == testClassName)).FirstOrDefault();
+            if (testClass != null)
+                return testClass;
+#endif
+            // Default in case none of the above attempts worked.
+            return typeof(LuceneTestCase);
         }
+
 
         /// <summary>
         /// Return the name of the currently executing test case.
         /// </summary>
-        public string TestName //LUCENENET TODO: Either implement, or change the doc to indicate it is hard coded
+        public string TestName
         {
             get
             {
+#if TESTFRAMEWORK_NUNIT
+                return NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
+#else
                 //return ThreadAndTestNameRule.TestMethodName;
-                return "LuceneTestCase"; // LUCENENET TODO: return this.GetType().GetTypeInfo().Name
+                return this.GetType().GetTypeInfo().Name; // LUCENENET TODO: return the current test method name if the test framework supports such a thing.
+#endif
             }
         }
 

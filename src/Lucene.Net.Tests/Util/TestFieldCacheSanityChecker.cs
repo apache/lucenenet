@@ -138,7 +138,7 @@ namespace Lucene.Net.Util
 
             if (0 < insanity.Length)
             {
-                DumpArray(TestClass.Name + "#" + TestName + " INSANITY", insanity, Console.Error);
+                DumpArray(GetTestClass().Name + "#" + TestName + " INSANITY", insanity, Console.Error);
             }
 
             Assert.AreEqual(0, insanity.Length, "shouldn't be any cache insanity");
