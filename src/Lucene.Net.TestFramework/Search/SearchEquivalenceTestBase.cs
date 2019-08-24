@@ -61,7 +61,8 @@ namespace Lucene.Net.Search
 #if TESTFRAMEWORK_MSTEST
         private static readonly IList<string> initalizationLock = new List<string>();
 
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
+        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
         new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
         {
             lock (initalizationLock)
@@ -134,7 +135,8 @@ namespace Lucene.Net.Search
 
 #if FEATURE_STATIC_TESTDATA_INITIALIZATION
 #if TESTFRAMEWORK_MSTEST
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
+        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
 #else
         [OneTimeTearDown]
 #endif

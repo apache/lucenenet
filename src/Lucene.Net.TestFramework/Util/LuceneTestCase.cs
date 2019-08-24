@@ -737,7 +737,8 @@ namespace Lucene.Net.Util
         /// and also picks random defaults for culture, time zone, similarity, and default codec.
         /// </summary>
 #if TESTFRAMEWORK_MSTEST
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
+        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
         public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
         {
             lock (initalizationLock)
@@ -804,7 +805,8 @@ namespace Lucene.Net.Util
         /// Tears down random defaults and cleans up temporary files.
         /// </summary>
 #if TESTFRAMEWORK_MSTEST
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
+        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
         public static void AfterClass()
         {
 #else
