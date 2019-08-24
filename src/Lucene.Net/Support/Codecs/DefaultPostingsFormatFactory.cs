@@ -57,9 +57,17 @@ namespace Lucene.Net.Codecs
 
         // NOTE: The following 2 dictionaries are static, since this instance is stored in a static
         // variable in the Codec class.
-        private readonly IDictionary<string, Type> postingsFormatNameToTypeMap = new Dictionary<string, Type>();
-        private readonly IDictionary<Type, PostingsFormat> postingsFormatInstanceCache = new Dictionary<Type, PostingsFormat>();
-        private object syncLock = new object();
+        private readonly IDictionary<string, Type> postingsFormatNameToTypeMap;
+        private readonly IDictionary<Type, PostingsFormat> postingsFormatInstanceCache;
+
+        /// <summary>
+        /// Creates a new instance of <see cref="DefaultPostingsFormatFactory"/>.
+        /// </summary>
+        public DefaultPostingsFormatFactory()
+        {
+            postingsFormatNameToTypeMap = new Dictionary<string, Type>();
+            postingsFormatInstanceCache = new Dictionary<Type, PostingsFormat>();
+        }
 
         /// <summary>
         /// Initializes the codec type cache with the known <see cref="PostingsFormat"/> types.
@@ -125,9 +133,7 @@ namespace Lucene.Net.Codecs
         protected virtual void PutPostingsFormatType(Type postingsFormat)
         {
             if (postingsFormat == null)
-            {
-                throw new ArgumentNullException("postingsFormat", "postingsFormat may not be null");
-            }
+                throw new ArgumentNullException(nameof(postingsFormat));
             if (!typeof(PostingsFormat).GetTypeInfo().IsAssignableFrom(postingsFormat))
             {
                 throw new ArgumentException("The supplied postingsFormat does not subclass PostingsFormat.");
@@ -139,7 +145,10 @@ namespace Lucene.Net.Codecs
         private void PutPostingsFormatTypeImpl(Type postingsFormat)
         {
             string name = GetServiceName(postingsFormat);
-            postingsFormatNameToTypeMap[name] = postingsFormat;
+            lock (m_initializationLock)
+            {
+                postingsFormatNameToTypeMap[name] = postingsFormat;
+            }
         }
 
         /// <summary>
@@ -150,8 +159,11 @@ namespace Lucene.Net.Codecs
         public virtual PostingsFormat GetPostingsFormat(string name)
         {
             EnsureInitialized(); // Safety in case a subclass doesn't call it
-            Type codecType = GetPostingsFormatType(name);
-            return GetPostingsFormat(codecType);
+            lock (m_initializationLock)
+            {
+                Type codecType = GetPostingsFormatType(name);
+                return GetPostingsFormat(codecType);
+            }
         }
 
         /// <summary>
@@ -161,10 +173,11 @@ namespace Lucene.Net.Codecs
         /// <returns>The <see cref="PostingsFormat"/> instance.</returns>
         protected virtual PostingsFormat GetPostingsFormat(Type type)
         {
-            PostingsFormat instance;
-            if (!postingsFormatInstanceCache.TryGetValue(type, out instance))
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (!postingsFormatInstanceCache.TryGetValue(type, out PostingsFormat instance))
             {
-                lock (syncLock)
+                lock (m_initializationLock)
                 {
                     if (!postingsFormatInstanceCache.TryGetValue(type, out instance))
                     {
@@ -184,9 +197,10 @@ namespace Lucene.Net.Codecs
         /// <returns>The <see cref="PostingsFormat"/> <see cref="Type"/>.</returns>
         protected virtual Type GetPostingsFormatType(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
             EnsureInitialized();
-            Type codecType;
-            if (!postingsFormatNameToTypeMap.TryGetValue(name, out codecType) && codecType == null)
+            if (!postingsFormatNameToTypeMap.TryGetValue(name, out Type codecType) && codecType == null)
             {
                 throw new ArgumentException($"PostingsFormat '{name}' cannot be loaded. If the format is not " +
                     $"in a Lucene.Net assembly, you must subclass {typeof(DefaultPostingsFormatFactory).FullName}, " +

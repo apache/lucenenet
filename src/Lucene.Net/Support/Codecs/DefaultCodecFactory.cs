@@ -60,9 +60,17 @@ namespace Lucene.Net.Codecs
 
         // NOTE: The following 2 dictionaries are static, since this instance is stored in a static
         // variable in the Codec class.
-        private readonly IDictionary<string, Type> codecNameToTypeMap = new Dictionary<string, Type>();
-        private readonly IDictionary<Type, Codec> codecInstanceCache = new Dictionary<Type, Codec>();
-        private object syncLock = new object();
+        private readonly IDictionary<string, Type> codecNameToTypeMap;
+        private readonly IDictionary<Type, Codec> codecInstanceCache;
+
+        /// <summary>
+        /// Creates a new instance of <see cref="DefaultCodecFactory"/>.
+        /// </summary>
+        public DefaultCodecFactory()
+        {
+            codecNameToTypeMap = new Dictionary<string, Type>();
+            codecInstanceCache = new Dictionary<Type, Codec>();
+        }
 
         /// <summary>
         /// Initializes the codec type cache with the known <see cref="Codec"/> types.
@@ -80,7 +88,6 @@ namespace Lucene.Net.Codecs
                 PutCodecTypeImpl(codecType);
             }
             ScanForCodecs(this.CodecsAssembly);
-
         }
 
         /// <summary>
@@ -129,9 +136,7 @@ namespace Lucene.Net.Codecs
         protected virtual void PutCodecType(Type codec)
         {
             if (codec == null)
-            {
-                throw new ArgumentNullException("codec", "codec may not be null");
-            }
+                throw new ArgumentNullException(nameof(codec));
             if (!typeof(Codec).GetTypeInfo().IsAssignableFrom(codec))
             {
                 throw new ArgumentException("The supplied codec does not subclass Codec.");
@@ -143,7 +148,10 @@ namespace Lucene.Net.Codecs
         private void PutCodecTypeImpl(Type codec)
         {
             string name = GetServiceName(codec);
-            codecNameToTypeMap[name] = codec;
+            lock (m_initializationLock)
+            {
+                codecNameToTypeMap[name] = codec;
+            }
         }
 
         /// <summary>
@@ -154,8 +162,11 @@ namespace Lucene.Net.Codecs
         public virtual Codec GetCodec(string name)
         {
             EnsureInitialized(); // Safety in case a subclass doesn't call it
-            Type codecType = GetCodecType(name);
-            return GetCodec(codecType);
+            lock (m_initializationLock)
+            {
+                Type codecType = GetCodecType(name);
+                return GetCodec(codecType);
+            }
         }
 
         /// <summary>
@@ -165,10 +176,11 @@ namespace Lucene.Net.Codecs
         /// <returns>The <see cref="Codec"/> instance.</returns>
         protected virtual Codec GetCodec(Type type)
         {
-            Codec instance;
-            if (!codecInstanceCache.TryGetValue(type, out instance))
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (!codecInstanceCache.TryGetValue(type, out Codec instance))
             {
-                lock (syncLock)
+                lock (m_initializationLock)
                 {
                     if (!codecInstanceCache.TryGetValue(type, out instance))
                     {
@@ -188,14 +200,15 @@ namespace Lucene.Net.Codecs
         /// <returns>The <see cref="Codec"/> <see cref="Type"/>.</returns>
         protected virtual Type GetCodecType(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
             EnsureInitialized();
-            Type codecType;
-            if (!codecNameToTypeMap.TryGetValue(name, out codecType) && codecType == null)
+            if (!codecNameToTypeMap.TryGetValue(name, out Type codecType) && codecType == null)
             {
                 throw new ArgumentException($"Codec '{name}' cannot be loaded. If the codec is not " +
                     $"in a Lucene.Net assembly, you must subclass {typeof(DefaultCodecFactory).FullName}, " +
                     "override the Initialize() method, and call PutCodecType() or ScanForCodecs() to add " +
-                    $"the type manually. Call {typeof(Codec).FullName}.SetCodecFactory() at application " + 
+                    $"the type manually. Call {typeof(Codec).FullName}.SetCodecFactory() at application " +
                     "startup to initialize your custom codec.");
             }
 

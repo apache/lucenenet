@@ -57,9 +57,17 @@ namespace Lucene.Net.Codecs
 
         // NOTE: The following 2 dictionaries are static, since this instance is stored in a static
         // variable in the Codec class.
-        private readonly IDictionary<string, Type> docValuesFormatNameToTypeMap = new Dictionary<string, Type>();
-        private readonly IDictionary<Type, DocValuesFormat> docValuesFormatInstanceCache = new Dictionary<Type, DocValuesFormat>();
-        private object syncLock = new object();
+        private readonly IDictionary<string, Type> docValuesFormatNameToTypeMap;
+        private readonly IDictionary<Type, DocValuesFormat> docValuesFormatInstanceCache;
+
+        /// <summary>
+        /// Creates a new instance of <see cref="DefaultDocValuesFormatFactory"/>.
+        /// </summary>
+        public DefaultDocValuesFormatFactory()
+        {
+            docValuesFormatNameToTypeMap = new Dictionary<string, Type>();
+            docValuesFormatInstanceCache = new Dictionary<Type, DocValuesFormat>();
+        }
 
         /// <summary>
         /// Initializes the doc values type cache with the known <see cref="DocValuesFormat"/> types.
@@ -125,9 +133,7 @@ namespace Lucene.Net.Codecs
         protected virtual void PutDocValuesFormatType(Type docValuesFormat)
         {
             if (docValuesFormat == null)
-            {
-                throw new ArgumentNullException("docValuesFormat", "docValuesFormat may not be null");
-            }
+                throw new ArgumentNullException(nameof(docValuesFormat));
             if (!typeof(DocValuesFormat).GetTypeInfo().IsAssignableFrom(docValuesFormat))
             {
                 throw new ArgumentException("The supplied docValuesFormat does not subclass DocValuesFormat.");
@@ -139,7 +145,10 @@ namespace Lucene.Net.Codecs
         private void PutDocValuesFormatTypeImpl(Type docValuesFormat)
         {
             string name = GetServiceName(docValuesFormat);
-            docValuesFormatNameToTypeMap[name] = docValuesFormat;
+            lock (m_initializationLock)
+            {
+                docValuesFormatNameToTypeMap[name] = docValuesFormat;
+            }
         }
 
         /// <summary>
@@ -150,8 +159,11 @@ namespace Lucene.Net.Codecs
         public virtual DocValuesFormat GetDocValuesFormat(string name)
         {
             EnsureInitialized(); // Safety in case a subclass doesn't call it
-            Type codecType = GetDocValuesFormatType(name);
-            return GetDocValuesFormat(codecType);
+            lock (m_initializationLock)
+            {
+                Type codecType = GetDocValuesFormatType(name);
+                return GetDocValuesFormat(codecType);
+            }
         }
 
         /// <summary>
@@ -161,10 +173,11 @@ namespace Lucene.Net.Codecs
         /// <returns>The <see cref="DocValuesFormat"/> instance.</returns>
         protected virtual DocValuesFormat GetDocValuesFormat(Type type)
         {
-            DocValuesFormat instance;
-            if (!docValuesFormatInstanceCache.TryGetValue(type, out instance))
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (!docValuesFormatInstanceCache.TryGetValue(type, out DocValuesFormat instance))
             {
-                lock (syncLock)
+                lock (m_initializationLock)
                 {
                     if (!docValuesFormatInstanceCache.TryGetValue(type, out instance))
                     {
@@ -184,9 +197,10 @@ namespace Lucene.Net.Codecs
         /// <returns>The <see cref="DocValuesFormat"/> <see cref="Type"/>.</returns>
         protected virtual Type GetDocValuesFormatType(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
             EnsureInitialized();
-            Type codecType;
-            if (!docValuesFormatNameToTypeMap.TryGetValue(name, out codecType) && codecType == null)
+            if (!docValuesFormatNameToTypeMap.TryGetValue(name, out Type codecType) && codecType == null)
             {
                 throw new ArgumentException($"DocValuesFormat '{name}' cannot be loaded. If the format is not " +
                     $"in a Lucene.Net assembly, you must subclass {typeof(DefaultDocValuesFormatFactory).FullName}, " +

@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
     {
         private static Assembly codecsAssembly = null;
         private bool initialized = false;
-        private object initializationLock = new object();
+        protected object m_initializationLock = new object();
         private object initializationTarget; // Dummy variable required by LazyInitializer.EnsureInitialized
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
         /// </summary>
         protected void EnsureInitialized()
         {
-            LazyInitializer.EnsureInitialized(ref this.initializationTarget, ref this.initialized, ref this.initializationLock, () =>
+            LazyInitializer.EnsureInitialized(ref this.initializationTarget, ref this.initialized, ref this.m_initializationLock, () =>
             {
                 Initialize();
                 return null;
