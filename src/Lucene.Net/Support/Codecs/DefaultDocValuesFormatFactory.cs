@@ -181,13 +181,23 @@ namespace Lucene.Net.Codecs
                 {
                     if (!docValuesFormatInstanceCache.TryGetValue(type, out instance))
                     {
-                        instance = (DocValuesFormat)Activator.CreateInstance(type, IsFullyTrusted);
+                        instance = NewDocValuesFormat(type);
                         docValuesFormatInstanceCache[type] = instance;
                     }
                 }
             }
 
             return instance;
+        }
+
+        /// <summary>
+        /// Instantiates a <see cref="DocValuesFormat"/> based on the provided <paramref name="type"/>.
+        /// </summary>
+        /// <param name="type">The <see cref="Type"/> of <see cref="DocValuesFormat"/> to instantiate.</param>
+        /// <returns>The new instance.</returns>
+        protected virtual DocValuesFormat NewDocValuesFormat(Type type)
+        {
+            return (DocValuesFormat)Activator.CreateInstance(type, IsFullyTrusted);
         }
 
         /// <summary>

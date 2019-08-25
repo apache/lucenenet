@@ -184,13 +184,23 @@ namespace Lucene.Net.Codecs
                 {
                     if (!codecInstanceCache.TryGetValue(type, out instance))
                     {
-                        instance = (Codec)Activator.CreateInstance(type, IsFullyTrusted);
+                        instance = NewCodec(type);
                         codecInstanceCache[type] = instance;
                     }
                 }
             }
 
             return instance;
+        }
+
+        /// <summary>
+        /// Instantiates a <see cref="Codec"/> based on the provided <paramref name="type"/>.
+        /// </summary>
+        /// <param name="type">The <see cref="Type"/> of <see cref="Codec"/> to instantiate.</param>
+        /// <returns>The new instance.</returns>
+        protected virtual Codec NewCodec(Type type)
+        {
+            return (Codec)Activator.CreateInstance(type, IsFullyTrusted);
         }
 
         /// <summary>

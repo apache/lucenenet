@@ -181,13 +181,23 @@ namespace Lucene.Net.Codecs
                 {
                     if (!postingsFormatInstanceCache.TryGetValue(type, out instance))
                     {
-                        instance = (PostingsFormat)Activator.CreateInstance(type, IsFullyTrusted);
+                        instance = NewPostingsFormat(type);
                         postingsFormatInstanceCache[type] = instance;
                     }
                 }
             }
 
             return instance;
+        }
+
+        /// <summary>
+        /// Instantiates a <see cref="PostingsFormat"/> based on the provided <paramref name="type"/>.
+        /// </summary>
+        /// <param name="type">The <see cref="Type"/> of <see cref="PostingsFormat"/> to instantiate.</param>
+        /// <returns>The new instance.</returns>
+        protected virtual PostingsFormat NewPostingsFormat(Type type)
+        {
+            return (PostingsFormat)Activator.CreateInstance(type, IsFullyTrusted);
         }
 
         /// <summary>
