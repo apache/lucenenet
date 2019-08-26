@@ -742,6 +742,9 @@ namespace Lucene.Net.Util
         //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
         public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
         {
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+
             lock (initalizationLock)
             {
                 if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))

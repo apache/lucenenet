@@ -116,6 +116,20 @@ namespace Lucene.Net.Analysis
 #else
     {
 #endif
+#if TESTFRAMEWORK_MSTEST
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
+        {
+            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
+        }
+
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+        new public static void AfterClass()
+        {
+            Lucene.Net.Util.LuceneTestCase.AfterClass();
+        }
+#endif
+
         // some helpers to test Analyzers and TokenStreams:
 
         // LUCENENET specific - de-nested ICheckClearAttributesAttribute

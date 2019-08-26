@@ -42,35 +42,17 @@ namespace Lucene.Net.Codecs.Asserting
 
 #if TESTFRAMEWORK_MSTEST
         [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute]
-        public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
+        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
         {
             Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
         }
 
-        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute]
-        public static void AfterClass()
+        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute]
+        new public static void AfterClass()
         {
             Lucene.Net.Util.LuceneTestCase.AfterClass();
         }
 #endif
-
-
-        // LUCENENET TODO: Message: Method Lucene.Net.Codecs.Asserting.TestAssertingDocValuesFormat.BeforeClass has wrong signature. The method must be static, public, does not return a value and should take a single parameter of type TestContext. Additionally, if you are using async-await in method then return-type must be Task.
-        //#if TESTFRAMEWORK_MSTEST
-        //        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute]
-        //#endif
-        //        public override void BeforeClass()
-        //        {
-        //            base.BeforeClass();
-        //        }
-
-        //#if TESTFRAMEWORK_MSTEST
-        //        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute]
-        //#endif
-        //        public override void AfterClass()
-        //        {
-        //            base.AfterClass();
-        //        }
 
         private readonly Codec codec = new AssertingCodec();
         protected override Codec GetCodec()
