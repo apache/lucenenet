@@ -280,3 +280,27 @@ steps:
     testResultsFormat: '${{ parameters.testResultsFormat }}'
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.TestFramework.MSTest'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.TestFramework.NUnit'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.TestFramework.xUnit'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
