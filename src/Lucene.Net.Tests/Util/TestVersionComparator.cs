@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lucene.Net.Util
 {
@@ -53,7 +54,7 @@ namespace Lucene.Net.Util
             Assert.IsTrue(comp.Compare("0", "1.0") < 0);
             Assert.IsTrue(comp.Compare("00", "1.0") < 0);
             Assert.IsTrue(comp.Compare("-1.0", "1.0") < 0);
-            Assert.IsTrue(comp.Compare("3.0", Convert.ToString(int.MinValue)) > 0);
+            Assert.IsTrue(comp.Compare("3.0", Convert.ToString(int.MinValue, CultureInfo.InvariantCulture)) > 0);
         }
     }
 }
