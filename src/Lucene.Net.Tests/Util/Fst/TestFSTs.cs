@@ -1052,7 +1052,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         while (true)
                         {
-                            string s = Convert.ToString(Random.NextInt64());
+                            string s = Convert.ToString(Random.NextInt64(), CultureInfo.InvariantCulture);
                             if (!allIDs.Contains(s))
                             {
                                 idString = s;
@@ -1073,8 +1073,8 @@ namespace Lucene.Net.Util.Fst
                 w.Dispose();
 
                 IList<string> allIDsList = new List<string>(allIDs);
-                List<string> sortedAllIDsList = new List<string>(allIDsList);
-                sortedAllIDsList.Sort();
+                IList<string> sortedAllIDsList = new List<string>(allIDsList);
+                CollectionUtil.TimSort(sortedAllIDsList);
 
                 // Sprinkle in some non-existent PKs:
                 HashSet<string> outOfBounds = new HashSet<string>();
@@ -1089,7 +1089,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         while (true)
                         {
-                            idString = Convert.ToString(Random.NextInt64());
+                            idString = Convert.ToString(Random.NextInt64(), CultureInfo.InvariantCulture);
                             if (!allIDs.Contains(idString))
                             {
                                 break;
