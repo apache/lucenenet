@@ -7,6 +7,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System.Globalization;
 
 namespace Lucene.Net.Expressions
 {
@@ -54,9 +55,9 @@ namespace Lucene.Net.Expressions
                 var document = new Document
 				{
 				    NewTextField("english", English.Int32ToEnglish(i), Field.Store.NO),
-				    NewTextField("oddeven", (i%2 == 0) ? "even" : "odd", Field.Store.NO),
-				    NewStringField("byte", string.Empty + (unchecked((byte) Random.Next())), Field.Store.NO),
-				    NewStringField("short", string.Empty + ((short) Random.Next()), Field.Store.NO),
+				    NewTextField("oddeven", (i % 2 == 0) ? "even" : "odd", Field.Store.NO),
+				    NewStringField("byte", string.Empty + (unchecked((byte) Random.Next())).ToString(CultureInfo.InvariantCulture), Field.Store.NO),
+				    NewStringField("short", string.Empty + ((short) Random.Next()).ToString(CultureInfo.InvariantCulture), Field.Store.NO),
 				    new Int32Field("int", Random.Next(), Field.Store.NO),
 				    new Int64Field("long", Random.NextInt64(), Field.Store.NO),
 
