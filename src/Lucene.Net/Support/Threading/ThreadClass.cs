@@ -106,6 +106,7 @@ namespace Lucene.Net.Support.Threading
                 // sure that the unwrapped exception type is caught by Lucene.Net
                 // so it can handle the control flow accordingly.
                 _exception = ex;
+                _exception.Data["OriginalMessage"] = ex.ToString();
             }
         }
 
@@ -236,12 +237,29 @@ namespace Lucene.Net.Support.Threading
         }
 
         /// <summary>
+        /// If <c>true</c> when <see cref="Join()"/>, <see cref="Join(long)"/> or <see cref="Join(long, int)"/> is called,
+        /// any original exception and error message will be wrapped into a new <see cref="Exception"/> when thrown, so
+        /// debugging tools will show the correct stack trace information.
+        /// <para/>
+        /// NOTE: This changes the original exception type to <see cref="Exception"/>, so this setting should not be used if
+        /// control logic depends on the specific exception type being thrown. An alternative way to get the original
+        /// <see cref="Exception.ToString()"/> message is to use <c>exception.Data["OriginalMessage"].ToString()</c>.
+        /// </summary>
+        public bool IsDebug { get; set; }
+
+        /// <summary>
         /// Blocks the calling thread until a thread terminates
         /// </summary>
         public void Join()
         {
             _threadField.Join();
-            IOUtils.ReThrowUnchecked(_exception);
+            if (_exception != null)
+            {
+                if (IsDebug)
+                    throw new Exception(_exception.Data["OriginalMessage"].ToString(), _exception);
+                else
+                    throw _exception;
+            }
         }
 
         /// <summary>
@@ -251,7 +269,13 @@ namespace Lucene.Net.Support.Threading
         public void Join(long milliSeconds)
         {
             _threadField.Join(Convert.ToInt32(milliSeconds));
-            IOUtils.ReThrowUnchecked(_exception);
+            if (_exception != null)
+            {
+                if (IsDebug)
+                    throw new Exception(_exception.Data["OriginalMessage"].ToString(), _exception);
+                else
+                    throw _exception;
+            }
         }
 
         /// <summary>
@@ -264,7 +288,13 @@ namespace Lucene.Net.Support.Threading
             int totalTime = Convert.ToInt32(milliSeconds + (nanoSeconds*0.000001));
 
             _threadField.Join(totalTime);
-            IOUtils.ReThrowUnchecked(_exception);
+            if (_exception != null)
+            {
+                if (IsDebug)
+                    throw new Exception(_exception.Data["OriginalMessage"].ToString(), _exception);
+                else
+                    throw _exception;
+            }
         }
 
         /// <summary>
