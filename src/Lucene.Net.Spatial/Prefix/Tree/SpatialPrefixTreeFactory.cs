@@ -40,9 +40,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         protected SpatialContext m_ctx;
         protected int? m_maxLevels;
 
-        /// <summary>The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".</summary>
+        /// <summary>The factory is looked up via "prefixTree" in <paramref name="args"/>, expecting "geohash" or "quad".</summary>
         /// <remarks>
-        /// The factory  is looked up via "prefixTree" in args, expecting "geohash" or "quad".
+        /// The factory is looked up via "prefixTree" in <paramref name="args"/>, expecting "geohash" or "quad".
         /// If its neither of these, then "geohash" is chosen for a geo context, otherwise "quad" is chosen.
         /// </remarks>
         public static SpatialPrefixTree MakeSPT(IDictionary<string, string> args, SpatialContext ctx)

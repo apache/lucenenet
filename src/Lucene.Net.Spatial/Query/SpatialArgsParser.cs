@@ -4,6 +4,7 @@ using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -57,7 +58,7 @@ namespace Lucene.Net.Spatial.Queries
             str.Append('(');
             str.Append(args.Shape);
             if (args.DistErrPct != null)
-                str.Append(" distErrPct=").Append(string.Format("{0:0.00}%", args.DistErrPct * 100d));
+                str.Append(" distErrPct=").Append(string.Format("{0:0.00}%", args.DistErrPct * 100d, CultureInfo.InvariantCulture));
             if (args.DistErr != null)
                 str.Append(" distErr=").Append(args.DistErr);
             str.Append(')');
@@ -137,14 +138,12 @@ namespace Lucene.Net.Spatial.Queries
 
         protected static double? ReadDouble(string v)
         {
-            double val;
-            return double.TryParse(v, out val) ? val : (double?)null;
+            return double.TryParse(v, NumberStyles.Float, CultureInfo.InvariantCulture, out double val) ? val : (double?)null;
         }
 
         protected static bool ReadBool(string v, bool defaultValue)
         {
-            bool ret;
-            return bool.TryParse(v, out ret) ? ret : defaultValue;
+            return bool.TryParse(v, out bool ret) ? ret : defaultValue;
         }
 
         /// <summary>
