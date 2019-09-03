@@ -1118,6 +1118,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             return result;
         }
 
+        private static readonly CultureInfo LOCALE_ENGLISH = new CultureInfo("en");
+
         /// <summary>
         /// Cleans the input.
         /// </summary>
@@ -1132,7 +1134,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             {
                 return null;
             }
-            return new CultureInfo("en").TextInfo.ToUpper(input);
+            return LOCALE_ENGLISH.TextInfo.ToUpper(input);
         }
 
         /// <summary>

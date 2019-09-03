@@ -78,6 +78,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         {
         }
 
+        private static readonly CultureInfo LOCALE_ENGLISH = new CultureInfo("en");
+
         /// <summary>
         /// Find the metaphone value of a string. This is similar to the
         /// soundex algorithm, but better at finding similar sounding words.
@@ -97,10 +99,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             // single character is itself
             if (txt.Length == 1)
             {
-                return new CultureInfo("en").TextInfo.ToUpper(txt);
+                return LOCALE_ENGLISH.TextInfo.ToUpper(txt);
             }
 
-            char[] inwd = new CultureInfo("en").TextInfo.ToUpper(txt).ToCharArray();
+            char[] inwd = LOCALE_ENGLISH.TextInfo.ToUpper(txt).ToCharArray();
 
             StringBuilder local = new StringBuilder(40); // manipulate
             StringBuilder code = new StringBuilder(10); //   output

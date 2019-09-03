@@ -70,6 +70,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 new string[] { "BB", "CC", "DD", "FF", "GG", "HH", "JJ", "KK", "LL", "MM", "NN", "PP", "QQ", "RR", "SS",
                            "TT", "VV", "WW", "XX", "YY", "ZZ" };
 
+        private static readonly CultureInfo LOCALE_ENGLISH = new CultureInfo("en");
+
         /// <summary>
         /// Cleans up a name: 1. Upper-cases everything 2. Removes some common punctuation 3. Removes accents 4. Removes any
         /// spaces.
@@ -78,7 +80,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns>The cleaned name.</returns>
         internal string CleanName(string name)
         {
-            string upperName = new CultureInfo("en").TextInfo.ToUpper(name);
+            string upperName = LOCALE_ENGLISH.TextInfo.ToUpper(name);
 
             string[] charsToTrim = { "\\-", "[&]", "\\'", "\\.", "[\\,]" };
             foreach (string str in charsToTrim)

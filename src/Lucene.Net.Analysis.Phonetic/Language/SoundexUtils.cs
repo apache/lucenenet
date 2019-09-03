@@ -30,6 +30,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
     /// </summary>
     internal sealed class SoundexUtils
     {
+        private static readonly CultureInfo LOCALE_ENGLISH = new CultureInfo("en");
+
         /// <summary>
         /// Cleans up the input string before Soundex processing by only returning
         /// upper case letters.
@@ -54,9 +56,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             }
             if (count == len)
             {
-                return new CultureInfo("en").TextInfo.ToUpper(str);
+                return LOCALE_ENGLISH.TextInfo.ToUpper(str);
             }
-            return new CultureInfo("en").TextInfo.ToUpper(new string(chars, 0, count));
+            return LOCALE_ENGLISH.TextInfo.ToUpper(new string(chars, 0, count));
         }
 
         /// <summary>

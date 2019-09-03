@@ -473,12 +473,14 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             return GetColognePhonetic(text1).Equals(GetColognePhonetic(text2), StringComparison.Ordinal);
         }
 
+        private static readonly CultureInfo LOCALE_GERMAN = new CultureInfo("de");
+
         /// <summary>
         /// Converts the string to upper case and replaces germanic characters as defined in <see cref="PREPROCESS_MAP"/>.
         /// </summary>
         private string Preprocess(string text)
         {
-            text = new CultureInfo("de").TextInfo.ToUpper(text);
+            text = LOCALE_GERMAN.TextInfo.ToUpper(text);
 
             char[] chrs = text.ToCharArray();
 

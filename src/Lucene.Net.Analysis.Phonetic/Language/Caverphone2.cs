@@ -37,6 +37,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
     {
         private static readonly string TEN_1 = "1111111111";
 
+        private static readonly CultureInfo LOCALE_ENGLISH = new CultureInfo("en");
+
         /// <summary>
         /// Encodes the given string into a Caverphone 2.0 value.
         /// </summary>
@@ -51,7 +53,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             }
 
             // 1. Convert to lowercase
-            txt = new CultureInfo("en").TextInfo.ToLower(txt);
+            txt = LOCALE_ENGLISH.TextInfo.ToLower(txt);
 
             // 2. Remove anything not A-Z
             txt = Regex.Replace(txt, "[^a-z]", "");
