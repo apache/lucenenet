@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
@@ -43,7 +44,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // 3578267, Morne du Vitet, Morne du Vitet, 17.88333, -62.8, ...
             // ID, Name, Alternate name (unused), Lat, Lon, ...
 
-            docData.ID = Convert.ToInt32(parts[0]);//note: overwrites ID assigned by LineDocSource
+            docData.ID = Convert.ToInt32(parts[0], CultureInfo.InvariantCulture);//note: overwrites ID assigned by LineDocSource
             docData.Name = parts[1];
             string latitude = parts[4];
             string longitude = parts[5];

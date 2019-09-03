@@ -164,7 +164,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                         break;
                     case BODY:
                         body = contents.ToString();
-                        //workaround that startswith doesn't have an ignore case option, get at least 20 chars.
+                        //workaround that startswith doesn't have an ignore case option, get at least 10 chars.
                         string startsWith = body.Substring(0, Math.Min(10, contents.Length) - 0).ToLowerInvariant();
                         if (startsWith.StartsWith("#redirect", StringComparison.Ordinal))
                         {

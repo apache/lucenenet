@@ -285,7 +285,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             //util.cal.setTime(date);
             //int sec = util.cal.get(Calendar.HOUR_OF_DAY) * 3600 + util.cal.get(Calendar.MINUTE) * 60 + util.cal.get(Calendar.SECOND);
-            int sec = Convert.ToInt32(date.Value.ToUniversalTime().TimeOfDay.TotalSeconds);
+            int sec = Convert.ToInt32(date.Value.ToUniversalTime().TimeOfDay.TotalSeconds, CultureInfo.InvariantCulture);
 
             Field timeSecField = ds.GetNumericField(TIME_SEC_FIELD, NumericType.INT32);
             timeSecField.SetInt32Value(sec);

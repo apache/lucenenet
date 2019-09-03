@@ -51,7 +51,7 @@ namespace TagSoup
         public virtual void ElementType(string name, int model, int memberOf, int flags)
         {
             var e = new ElementType(name, model, memberOf, flags, this);
-            theElementTypes[name.ToLower()] = e;
+            theElementTypes[name.ToLowerInvariant()] = e;
             if (memberOf == M_ROOT)
             {
                 theRoot = e;
@@ -120,7 +120,7 @@ namespace TagSoup
         /// <returns>The corresponding <see cref="TagSoup.ElementType"/></returns>
         public virtual ElementType GetElementType(string name)
         {
-            return (ElementType)(theElementTypes[name.ToLower()]);
+            return (ElementType)(theElementTypes[name.ToLowerInvariant()]);
         }
 
         /// <summary>

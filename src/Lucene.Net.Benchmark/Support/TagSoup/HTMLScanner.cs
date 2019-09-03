@@ -15,6 +15,7 @@
 
 using Sax;
 using System;
+using System.Globalization;
 using System.IO;
 
 namespace TagSoup
@@ -740,7 +741,7 @@ namespace TagSoup
         private static string NiceChar(int value)
         {
             if (value == '\n') return "\\n";
-            if (value < 32) return "0x" + value.ToString("X");
+            if (value < 32) return "0x" + value.ToString("X", CultureInfo.InvariantCulture);
             return "'" + ((char)value) + "'";
         }
     }

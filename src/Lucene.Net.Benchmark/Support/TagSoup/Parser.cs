@@ -749,7 +749,7 @@ namespace TagSoup
                 {
                     for (int i = 0; i < length; i++)
                     {
-                        if (char.ToLower(buff[offset + i]) != char.ToLower(currentName[i]))
+                        if (char.ToLowerInvariant(buff[offset + i]) != char.ToLowerInvariant(currentName[i]))
                         {
                             realTag = false;
                             break;
