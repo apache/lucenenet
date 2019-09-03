@@ -77,7 +77,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             return Int64Val(doc) != 0;
         }
 
-        public override string StrVal(int doc)
+        public override string StrVal(int doc) // LUCENENET TODO: API - Add overload to include CultureInfo ?
         {
             return Convert.ToString(Int64Val(doc));
         }
@@ -95,7 +95,7 @@ namespace Lucene.Net.Queries.Function.DocValues
         /// <summary>
         /// NOTE: This was externalToLong() in Lucene
         /// </summary>
-        protected virtual long ExternalToInt64(string extVal)
+        protected virtual long ExternalToInt64(string extVal) // LUCENENET TODO: API - Add overload to include CultureInfo ?
         {
             return Convert.ToInt64(extVal);
         }

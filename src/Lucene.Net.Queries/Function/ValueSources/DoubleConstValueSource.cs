@@ -87,7 +87,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return outerInstance.constant;
             }
 
-            public override string StrVal(int doc)
+            public override string StrVal(int doc) // LUCENENET TODO: API - Add overload to include CultureInfo ?
             {
                 return Convert.ToString(outerInstance.constant);
             }

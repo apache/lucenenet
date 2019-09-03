@@ -146,7 +146,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return (vals.SingleVal(doc) - minSource) * scale + outerInstance.m_min;
             }
-            public override string ToString(int doc)
+            public override string ToString(int doc) // LUCENENET TODO: API - Add overload to include CultureInfo ?
             {
                 return "scale(" + vals.ToString(doc) + ",toMin=" + outerInstance.m_min + ",toMax=" + outerInstance.m_max + ",fromMin=" + minSource + ",fromMax=" + maxSource + ")";
             }

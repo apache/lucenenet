@@ -569,7 +569,7 @@ namespace Lucene.Net.QueryParsers.Simple
                     }
                 }
                 int fuzziness = 0;
-                int.TryParse(new string(slopText, 0, slopLength), out fuzziness);
+                int.TryParse(new string(slopText, 0, slopLength), out fuzziness); // LUCENENET TODO: Find a way to pass culture
                 // negative -> 0
                 if (fuzziness < 0)
                 {

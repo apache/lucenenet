@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
         /// Returns <see cref="SegmentCommitInfo"/> at the provided
         /// index.
         /// </summary>
-        public SegmentCommitInfo Info(int i)
+        public SegmentCommitInfo Info(int i) // LUCENENET TODO: API - add indexer for this class
         {
             return segments[i];
         }

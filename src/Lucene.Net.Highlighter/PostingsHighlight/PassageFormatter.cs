@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// return <see cref="string"/>, the <see cref="object.ToString()"/> method on the <see cref="object"/>
         /// returned by this method is used to compute the string.
         /// </returns>
-        public abstract object Format(Passage[] passages, string content); // LUCENENET TODO: Make return type generic?
+        public abstract object Format(Passage[] passages, string content); // LUCENENET TODO: API Make return type generic?
     }
 }
 #endif

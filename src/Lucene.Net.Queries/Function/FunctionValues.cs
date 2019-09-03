@@ -227,7 +227,7 @@ namespace Lucene.Net.Queries.Function
         }
 
         // TODO: should we make a termVal, fills BytesRef[]?
-        public virtual void StrVal(int doc, string[] vals)
+        public virtual void StrVal(int doc, string[] vals) // LUCENENET TODO: API - Add overload to include CultureInfo ?
         {
             throw new System.NotSupportedException();
         }
@@ -247,7 +247,7 @@ namespace Lucene.Net.Queries.Function
         // a setup cost - parsing and normalizing params, and doing a binary search on the StringIndex.
         // TODO: change "reader" to AtomicReaderContext
         public virtual ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal,
-            bool includeLower, bool includeUpper)
+            bool includeLower, bool includeUpper) // LUCENENET TODO: API - Add overload to include CultureInfo ?
         {
             float lower;
             float upper;

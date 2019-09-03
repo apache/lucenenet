@@ -52,23 +52,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
         /// <summary>
         /// NOTE: This was tryParseInt() in Lucene
         /// </summary>
-        private static int? TryParseInt32(string valueStr) 
+        private static int? TryParseInt32(string valueStr) // LUCENENET TODO: API - Add overload to include CultureInfo ?
         {
-            int? intValue = null;
-            try
-            {
-                intValue = Convert.ToInt32(valueStr);
-            }
-            catch (FormatException)
-            {
-            }
-            return intValue;
+            if (int.TryParse(valueStr, out int intValue))
+                return intValue;
+            return null;
         }
 
         /// <summary>
         /// NOTE: This was intValueToStringValue() in Lucene
         /// </summary>
-        private string Int32ValueToStringValue(int? intVal)
+        private string Int32ValueToStringValue(int? intVal) // LUCENENET TODO: API - Add overload to include CultureInfo
         {
             if (intVal == null)
             {
@@ -87,7 +81,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         /// <summary>
         /// NOTE: This was stringValueToIntValue() in Lucene
         /// </summary>
-        private int? StringValueToInt32Value(string stringVal)
+        private int? StringValueToInt32Value(string stringVal) // LUCENENET TODO: API - Add overload to include CultureInfo
         {
             if (stringVal == null)
             {
@@ -199,7 +193,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
 
 
-            public override ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
+            public override ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper) // LUCENENET TODO: API - Add overload to include CultureInfo ?
             {
                 int? lower = outerInstance.StringValueToInt32Value(lowerVal);
                 int? upper = outerInstance.StringValueToInt32Value(upperVal);

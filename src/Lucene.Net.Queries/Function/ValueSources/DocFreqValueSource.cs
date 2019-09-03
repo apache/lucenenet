@@ -36,7 +36,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         internal readonly string sval;
         internal readonly ValueSource parent;
 
-        internal ConstInt32DocValues(int val, ValueSource parent)
+        internal ConstInt32DocValues(int val, ValueSource parent) // LUCENENET TODO: API - Add overload to include CultureInfo ?
             : base(parent)
         {
             ival = val;
@@ -93,7 +93,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         internal readonly string sval;
         internal readonly ValueSource parent;
 
-        internal ConstDoubleDocValues(double val, ValueSource parent)
+        internal ConstDoubleDocValues(double val, ValueSource parent) // LUCENENET TODO: API - Add overload to include CultureInfo ?
             : base(parent)
         {
             ival = (int)val;

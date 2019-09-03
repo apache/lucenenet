@@ -295,7 +295,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// the current thread, QueryParser will utilize it. You can also explicitly set a culture.
         /// Setting the culture to <c>null</c> will restore the default behavior if you have explicitly set a culture.
         /// </summary>
-        public virtual CultureInfo Locale
+        public virtual CultureInfo Locale // LUCENENET TODO: API - Rename Culture
         {
             get { return this.locale == null ? CultureInfo.CurrentCulture : this.locale; }
             set { this.locale = value; }

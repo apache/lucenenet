@@ -108,7 +108,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return (double)(sbyte)arr.Get(doc);
             }
 
-            public override string StrVal(int doc)
+            public override string StrVal(int doc) // LUCENENET TODO: API - Add overload to include CultureInfo ?
             {
                 return Convert.ToString((sbyte)arr.Get(doc));
             }

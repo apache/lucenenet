@@ -78,7 +78,7 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override abstract double DoubleVal(int doc);
 
-        public override string StrVal(int doc)
+        public override string StrVal(int doc) // LUCENENET TODO: API - Add overload to include CultureInfo ?
         {
             return Convert.ToString(DoubleVal(doc));
         }
@@ -94,7 +94,7 @@ namespace Lucene.Net.Queries.Function.DocValues
         }
 
         public override ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal,
-            bool includeLower, bool includeUpper)
+            bool includeLower, bool includeUpper) // LUCENENET TODO: API - Add overload to include CultureInfo ?
         {
             double lower, upper;
 

@@ -101,16 +101,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 switch (numericConfig.Type)
                                 {
                                     case NumericType.INT64:
-                                        number = Convert.ToInt64(number);
+                                        number = Convert.ToInt64(number); // LUCENENET TODO: Find a way to pass culture
                                         break;
                                     case NumericType.INT32:
-                                        number = Convert.ToInt32(number);
+                                        number = Convert.ToInt32(number); // LUCENENET TODO: Find a way to pass culture
                                         break;
                                     case NumericType.DOUBLE:
-                                        number = Convert.ToDouble(number);
+                                        number = Convert.ToDouble(number); // LUCENENET TODO: Find a way to pass culture
                                         break;
                                     case NumericType.SINGLE:
-                                        number = Convert.ToSingle(number);
+                                        number = Convert.ToSingle(number); // LUCENENET TODO: Find a way to pass culture
                                         break;
                                 }
 
