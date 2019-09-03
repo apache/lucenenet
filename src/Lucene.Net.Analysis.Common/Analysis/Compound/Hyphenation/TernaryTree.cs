@@ -789,10 +789,10 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public virtual void PrintStats(TextWriter @out)
         {
-            @out.WriteLine("Number of keys = " + Convert.ToString(m_length));
-            @out.WriteLine("Node count = " + Convert.ToString(m_freenode));
+            @out.WriteLine("Number of keys = " + Convert.ToString(m_length)); // LUCENENET: Intentionally using current culture
+            @out.WriteLine("Node count = " + Convert.ToString(m_freenode)); // LUCENENET: Intentionally using current culture
             // System.out.println("Array length = " + Integer.toString(eq.length));
-            @out.WriteLine("Key Array length = " + Convert.ToString(m_kv.Length));
+            @out.WriteLine("Key Array length = " + Convert.ToString(m_kv.Length)); // LUCENENET: Intentionally using current culture
 
             /*
              * for(int i=0; i<kv.length(); i++) if ( kv.get(i) != 0 )

@@ -411,7 +411,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                         string text = str.Substring(start, end - start);
                         if (toLowerCase)
                         {
-                            text = text.ToLower();
+                            text = text.ToLower(); // LUCENENET: Since this class is obsolete, we aren't going to bother with passing culture in the constructor.
                         }
                         termAtt.SetEmpty().Append(text);
                         offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(end));
@@ -526,7 +526,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                         text = s.Substring(start, i - start);
                         if (toLowerCase)
                         {
-                            text = text.ToLower();
+                            text = text.ToLower(); // LUCENENET: Since this class is obsolete, we aren't going to bother with passing culture in the constructor.
                         }
                         //          if (toLowerCase) {            
                         ////            use next line once JDK 1.5 String.toLowerCase() performance regression is fixed

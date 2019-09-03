@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Cn
             {
                 start = offset - 1;
             }
-            buffer[length++] = char.ToLower(c); // buffer it
+            buffer[length++] = char.ToLowerInvariant(c); // buffer it
 
         }
 

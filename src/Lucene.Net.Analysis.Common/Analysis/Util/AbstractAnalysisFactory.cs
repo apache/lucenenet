@@ -236,7 +236,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         protected float RequireSingle(IDictionary<string, string> args, string name)
         {
-            return float.Parse(Require(args, name));
+            return float.Parse(Require(args, name), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -248,7 +248,7 @@ namespace Lucene.Net.Analysis.Util
             if (args.TryGetValue(name, out s))
             {
                 args.Remove(name);
-                return float.Parse(s);
+                return float.Parse(s, CultureInfo.InvariantCulture);
             }
             return defaultVal;
         }

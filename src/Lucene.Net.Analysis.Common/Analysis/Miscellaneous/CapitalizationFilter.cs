@@ -271,7 +271,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             get
             {
-                return (culture != null) ? culture : CultureInfo.CurrentCulture;
+                return culture ?? CultureInfo.CurrentCulture;
             }
         }
     }

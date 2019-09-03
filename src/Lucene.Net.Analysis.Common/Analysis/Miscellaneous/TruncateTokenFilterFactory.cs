@@ -46,10 +46,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public TruncateTokenFilterFactory(IDictionary<string, string> args) 
             : base(args)
         {
-            prefixLength = sbyte.Parse(Get(args, PREFIX_LENGTH_KEY, "5"), NumberStyles.Integer, CultureInfo.InvariantCulture);
+            var prefixLengthString = Get(args, PREFIX_LENGTH_KEY, "5");
+            prefixLength = sbyte.Parse(prefixLengthString, NumberStyles.Integer, CultureInfo.InvariantCulture);
             if (prefixLength < 1)
             {
-                throw new System.ArgumentException(PREFIX_LENGTH_KEY + " parameter must be a positive number: " + prefixLength.ToString(CultureInfo.InvariantCulture));
+                // LUCENENET specific - showing the original string provided by the user so we don't need to worry about culture-specific number conversion issues
+                throw new System.ArgumentException(PREFIX_LENGTH_KEY + " parameter must be a positive number: " + prefixLengthString);
             }
             if (args.Count > 0)
             {

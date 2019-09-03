@@ -1134,7 +1134,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 if (ignoreCase && iconv == null)
                 {
                     // if we have no input conversion mappings, do this on-the-fly
-                    ch = char.ToLower(ch);
+                    ch = char.ToLowerInvariant(ch);
                 }
 
                 reuse.Append(ch);
@@ -1154,7 +1154,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 {
                     for (int i = 0; i < reuse.Length; i++)
                     {
-                        reuse[i] = char.ToLower(reuse[i]);
+                        reuse[i] = char.ToLowerInvariant(reuse[i]);
                     }
                 }
             }

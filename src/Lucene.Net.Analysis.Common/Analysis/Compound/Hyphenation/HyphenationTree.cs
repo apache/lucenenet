@@ -592,7 +592,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         // public override void printStats(PrintStream @out)
         // {
-        //@out.println("Value space size = " + Convert.ToString(vspace.length()));
+        //@out.println("Value space size = " + Convert.ToString(vspace.length(), CultureInfo.InvariantCulture));
         //base.printStats(@out);
 
         // }

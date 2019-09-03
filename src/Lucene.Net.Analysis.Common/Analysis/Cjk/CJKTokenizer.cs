@@ -252,7 +252,7 @@ namespace Lucene.Net.Analysis.Cjk
                             }
 
                             // store the LowerCase(c) in the buffer
-                            buffer[length++] = char.ToLower(c);
+                            buffer[length++] = char.ToLowerInvariant(c);
                             tokenType = SINGLE_TOKEN_TYPE;
 
                             // break the procedure if buffer overflowed!

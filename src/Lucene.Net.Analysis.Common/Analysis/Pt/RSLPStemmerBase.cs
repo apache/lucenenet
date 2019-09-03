@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -305,8 +306,8 @@ namespace Lucene.Net.Analysis.Pt
             }
             //Debug.Assert(headerPattern.GetGroupNumbers().Length == 4);
             string name = matcher.Groups[1].Value;
-            int min = int.Parse(matcher.Groups[2].Value);
-            int type = int.Parse(matcher.Groups[3].Value);
+            int min = int.Parse(matcher.Groups[2].Value, CultureInfo.InvariantCulture);
+            int type = int.Parse(matcher.Groups[3].Value, CultureInfo.InvariantCulture);
             string[] suffixes = ParseList(matcher.Groups[4].Value);
             Rule[] rules = ParseRules(r, type);
             return new Step(name, rules, min, suffixes);
@@ -321,14 +322,14 @@ namespace Lucene.Net.Analysis.Pt
                 Match matcher = stripPattern.Match(line);
                 if (matcher.Success)
                 {
-                    rules.Add(new Rule(matcher.Groups[1].Value, int.Parse(matcher.Groups[2].Value), ""));
+                    rules.Add(new Rule(matcher.Groups[1].Value, int.Parse(matcher.Groups[2].Value, CultureInfo.InvariantCulture), ""));
                 }
                 else
                 {
                     matcher = repPattern.Match(line);
                     if (matcher.Success)
                     {
-                        rules.Add(new Rule(matcher.Groups[1].Value, int.Parse(matcher.Groups[2].Value), matcher.Groups[3].Value));
+                        rules.Add(new Rule(matcher.Groups[1].Value, int.Parse(matcher.Groups[2].Value, CultureInfo.InvariantCulture), matcher.Groups[3].Value));
                     }
                     else
                     {
@@ -337,11 +338,11 @@ namespace Lucene.Net.Analysis.Pt
                         {
                             if (type == 0)
                             {
-                                rules.Add(new RuleWithSuffixExceptions(matcher.Groups[1].Value, int.Parse(matcher.Groups[2].Value), matcher.Groups[3].Value, ParseList(matcher.Groups[4].Value)));
+                                rules.Add(new RuleWithSuffixExceptions(matcher.Groups[1].Value, int.Parse(matcher.Groups[2].Value, CultureInfo.InvariantCulture), matcher.Groups[3].Value, ParseList(matcher.Groups[4].Value)));
                             }
                             else
                             {
-                                rules.Add(new RuleWithSetExceptions(matcher.Groups[1].Value, int.Parse(matcher.Groups[2].Value), matcher.Groups[3].Value, ParseList(matcher.Groups[4].Value)));
+                                rules.Add(new RuleWithSetExceptions(matcher.Groups[1].Value, int.Parse(matcher.Groups[2].Value, CultureInfo.InvariantCulture), matcher.Groups[3].Value, ParseList(matcher.Groups[4].Value)));
                             }
                         }
                         else

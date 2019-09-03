@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -76,7 +77,7 @@ namespace Egothor.Stemmer
         internal static int Get(int i, string s)
         {
             int result;
-            if (!int.TryParse(s.Substring(i, 1), out result))
+            if (!int.TryParse(s.Substring(i, 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out result))
             {
                 return 1;
             }
