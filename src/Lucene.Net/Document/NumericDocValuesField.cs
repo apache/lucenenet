@@ -36,12 +36,16 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Type for numeric <see cref="DocValues"/>.
         /// </summary>
-        public static readonly FieldType TYPE = new FieldType();
+        public static readonly FieldType TYPE = LoadType();
 
-        static NumericDocValuesField()
+        private static FieldType LoadType() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            TYPE.DocValueType = DocValuesType.NUMERIC;
-            TYPE.Freeze();
+            var type = new FieldType
+            {
+                DocValueType = DocValuesType.NUMERIC
+            };
+            type.Freeze();
+            return type;
         }
 
         /// <summary>

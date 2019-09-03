@@ -138,11 +138,11 @@ namespace Lucene.Net.Search
         /// Lambdas for IB. </summary>
         internal static Lambda[] LAMBDAS = new Lambda[] { new LambdaDF(), new LambdaTTF() };
 
-        internal static IList<Similarity> allSims;
+        internal static IList<Similarity> allSims = LoadAllSims();
 
-        static RandomSimilarityProvider()
+        private static IList<Similarity> LoadAllSims() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            allSims = new List<Similarity>();
+            var allSims = new List<Similarity>();
             allSims.Add(new DefaultSimilarity());
             allSims.Add(new BM25Similarity());
             foreach (BasicModel basicModel in BASIC_MODELS)
@@ -169,6 +169,7 @@ namespace Lucene.Net.Search
             allSims.Add(new LMDirichletSimilarity()); */
             allSims.Add(new LMJelinekMercerSimilarity(0.1f));
             allSims.Add(new LMJelinekMercerSimilarity(0.7f));
+            return allSims;
         }
 
         public override string ToString()

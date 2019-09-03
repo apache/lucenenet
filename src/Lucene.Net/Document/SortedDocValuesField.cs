@@ -39,12 +39,16 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Type for sorted bytes <see cref="DocValues"/>
         /// </summary>
-        public static readonly FieldType TYPE = new FieldType();
+        public static readonly FieldType TYPE = LoadType();
 
-        static SortedDocValuesField()
+        private static FieldType LoadType() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            TYPE.DocValueType = DocValuesType.SORTED;
-            TYPE.Freeze();
+            var type = new FieldType
+            {
+                DocValueType = DocValuesType.SORTED
+            };
+            type.Freeze();
+            return type;
         }
 
         /// <summary>

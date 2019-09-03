@@ -36,22 +36,25 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// <summary>trec parser type used for unknown extensions</summary>
         public static readonly ParsePathType DEFAULT_PATH_TYPE = ParsePathType.GOV2;
 
-        internal static readonly IDictionary<ParsePathType, TrecDocParser> pathType2parser = new Dictionary<ParsePathType, TrecDocParser>();
-        static TrecDocParser()
+        internal static readonly IDictionary<ParsePathType, TrecDocParser> pathType2parser = new Dictionary<ParsePathType, TrecDocParser>() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            pathType2parser[ParsePathType.GOV2] = new TrecGov2Parser();
-            pathType2parser[ParsePathType.FBIS] = new TrecFBISParser();
-            pathType2parser[ParsePathType.FR94] = new TrecFR94Parser();
-            pathType2parser[ParsePathType.FT] = new TrecFTParser();
-            pathType2parser[ParsePathType.LATIMES] = new TrecLATimesParser();
+            { ParsePathType.GOV2, new TrecGov2Parser() },
+            { ParsePathType.FBIS, new TrecFBISParser() },
+            { ParsePathType.FR94, new TrecFR94Parser() },
+            { ParsePathType.FT, new TrecFTParser() },
+            { ParsePathType.LATIMES, new TrecLATimesParser() },
+        };
 
+        internal static readonly IDictionary<string, ParsePathType?> pathName2Type = LoadPathName2Type();
+        private static IDictionary<string, ParsePathType?> LoadPathName2Type() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+            var pathName2Type = new Dictionary<string, ParsePathType?>();
             foreach (ParsePathType ppt in Enum.GetValues(typeof(ParsePathType)))
             {
                 pathName2Type[ppt.ToString().ToUpperInvariant()] = ppt;
             }
+            return pathName2Type;
         }
-
-        internal static readonly IDictionary<string, ParsePathType?> pathName2Type = new Dictionary<string, ParsePathType?>();
 
 
         /// <summary>max length of walk up from file to its ancestors when looking for a known path type.</summary>

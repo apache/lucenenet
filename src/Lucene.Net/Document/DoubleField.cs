@@ -114,30 +114,41 @@ namespace Lucene.Net.Documents
         /// Type for a <see cref="DoubleField"/> that is not stored:
         /// normalization factors, frequencies, and positions are omitted.
         /// </summary>
-        public static readonly FieldType TYPE_NOT_STORED = new FieldType();
+        public static readonly FieldType TYPE_NOT_STORED = LoadTypeNotStored();
+
+        private static FieldType LoadTypeNotStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+            var typeNotStored = new FieldType
+            {
+                IsIndexed = true,
+                IsTokenized = true,
+                OmitNorms = true,
+                IndexOptions = IndexOptions.DOCS_ONLY,
+                NumericType = Documents.NumericType.DOUBLE
+            };
+            typeNotStored.Freeze();
+            return typeNotStored;
+        }
 
         /// <summary>
         /// Type for a stored <see cref="DoubleField"/>:
         /// normalization factors, frequencies, and positions are omitted.
         /// </summary>
-        public static readonly FieldType TYPE_STORED = new FieldType();
+        public static readonly FieldType TYPE_STORED = LoadTypeStored();
 
-        static DoubleField()
+        private static FieldType LoadTypeStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            TYPE_NOT_STORED.IsIndexed = true;
-            TYPE_NOT_STORED.IsTokenized = true;
-            TYPE_NOT_STORED.OmitNorms = true;
-            TYPE_NOT_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.NumericType = Documents.NumericType.DOUBLE;
-            TYPE_NOT_STORED.Freeze();
-
-            TYPE_STORED.IsIndexed = true;
-            TYPE_STORED.IsTokenized = true;
-            TYPE_STORED.OmitNorms = true;
-            TYPE_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_STORED.NumericType = Documents.NumericType.DOUBLE;
-            TYPE_STORED.IsStored = true;
-            TYPE_STORED.Freeze();
+            var typeStored = new FieldType
+            {
+                IsIndexed = true,
+                IsTokenized = true,
+                OmitNorms = true,
+                IndexOptions = IndexOptions.DOCS_ONLY,
+                NumericType = Documents.NumericType.DOUBLE,
+                IsStored = true
+            };
+            typeStored.Freeze();
+            return typeStored;
         }
 
         /// <summary>

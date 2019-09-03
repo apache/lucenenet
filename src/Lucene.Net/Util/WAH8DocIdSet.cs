@@ -87,13 +87,15 @@ namespace Lucene.Net.Util
         /// Default index interval. </summary>
         public const int DEFAULT_INDEX_INTERVAL = 24;
 
-        private static readonly MonotonicAppendingInt64Buffer SINGLE_ZERO_BUFFER = new MonotonicAppendingInt64Buffer(1, 64, PackedInt32s.COMPACT);
+        private static readonly MonotonicAppendingInt64Buffer SINGLE_ZERO_BUFFER = LoadSingleZeroBuffer();
         private static WAH8DocIdSet EMPTY = new WAH8DocIdSet(new byte[0], 0, 1, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
 
-        static WAH8DocIdSet()
+        private static MonotonicAppendingInt64Buffer LoadSingleZeroBuffer() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            SINGLE_ZERO_BUFFER.Add(0L);
-            SINGLE_ZERO_BUFFER.Freeze();
+            var buffer = new MonotonicAppendingInt64Buffer(1, 64, PackedInt32s.COMPACT);
+            buffer.Add(0L);
+            buffer.Freeze();
+            return buffer;
         }
 
         private static readonly IComparer<Iterator> SERIALIZED_LENGTH_COMPARER = new ComparerAnonymousInnerClassHelper();

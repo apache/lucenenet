@@ -37,19 +37,12 @@ namespace Lucene.Net.Support.IO
         /// </summary>
         public static readonly ByteOrder LITTLE_ENDIAN = new ByteOrder("LITTLE_ENDIAN"); //$NON-NLS-1$
 
-        private static readonly ByteOrder NATIVE_ORDER;
+        private static readonly ByteOrder NATIVE_ORDER = LoadNativeOrder();
 
-        static ByteOrder()
+        private static ByteOrder LoadNativeOrder() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             // Read endianness from the current system.
-            if (BitConverter.IsLittleEndian)
-            {
-                NATIVE_ORDER = LITTLE_ENDIAN;
-            }
-            else
-            {
-                NATIVE_ORDER = BIG_ENDIAN;
-            }
+            return BitConverter.IsLittleEndian ? LITTLE_ENDIAN : BIG_ENDIAN;
         }
 
         /// <summary>

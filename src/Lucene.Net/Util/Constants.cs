@@ -28,29 +28,12 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Some useful constants.
     /// </summary>
-    public sealed class Constants
+    public static class Constants // LUCENENET specific - made static because all members are static and constructor in Lucene was private
     {
-        private Constants() // can't construct
-        {
-        }
-
         // LUCENENET NOTE: IMPORTANT - this line must be placed before RUNTIME_VERSION so it can be parsed.
         private static Regex VERSION = new Regex(@"(\d+\.\d+(?:\.\d+)?(?:\.\d+)?)", RegexOptions.Compiled);
 
-#if NETSTANDARD
-        /// <summary>
-        /// The value of the version parsed from <see cref="RuntimeInformation.FrameworkDescription"/>.
-        /// <para/>
-        /// NOTE: This was JAVA_VERSION in Lucene
-        /// </summary>
-#else
-        /// <summary>
-        /// The value of <see cref="Environment.Version"/>.
-        /// <para/>
-        /// NOTE: This was JAVA_VERSION in Lucene
-        /// </summary>
-#endif
-        public static readonly string RUNTIME_VERSION;
+        // LUCENENET specific - renamed JAVA_VERSION to RUNTIME_VERSION and moved below OS constants because loading is dependent upon OS
 
 
         /// <summary>
@@ -68,30 +51,132 @@ namespace Lucene.Net.Util
         /// <summary>
         /// The value of System.Environment.OSVersion.VersionString, excluding the version number.</summary>
 #endif
-        public static readonly string OS_NAME; // = GetEnvironmentVariable("OS", "Windows_NT") ?? "Linux";
+        public static readonly string OS_NAME = LoadOSName();
+
+        private static string LoadOSName() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+#if NETSTANDARD
+            return VERSION.Replace(RuntimeInformation.OSDescription, string.Empty).Trim();
+#else
+            return VERSION.Replace(Environment.OSVersion.VersionString, string.Empty).Trim();
+#endif
+        }
 
         /// <summary>
         /// True iff running on Linux. </summary>
-        public static readonly bool LINUX; // = OS_NAME.StartsWith("Linux", StringComparison.Ordinal);
+        public static readonly bool LINUX = LoadLinux();
+        private static bool LoadLinux()
+        {
+#if NETSTANDARD
+            return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+#else
+            // we use integers instead of enum tags because "MacOS"
+            // requires 2.0 SP2, 3.0 SP2 or 3.5 SP1.
+            // 128 is mono's old platform tag for Unix.
+            // Reference: https://stackoverflow.com/a/5117005
+            int id = (int)Environment.OSVersion.Platform;
+            return id == 4 || id == 6 || id == 128;
+#endif
+        }
+
 
         /// <summary>
         /// True iff running on Windows. </summary>
-        public static readonly bool WINDOWS; // = OS_NAME.StartsWith("Windows", StringComparison.Ordinal);
+        public static readonly bool WINDOWS = LoadWindows();
+        private static bool LoadWindows()
+        {
+#if NETSTANDARD
+            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+#else
+            // LUCENENET NOTE: On .NET Framework, our only possibilities are Windows or Linux
+            PlatformID pid = Environment.OSVersion.Platform;
+            return pid == PlatformID.Win32NT || pid == PlatformID.Win32Windows;
+#endif
+        }
 
         /// <summary>
         /// True iff running on SunOS. </summary>
-        public static readonly bool SUN_OS; // = OS_NAME.StartsWith("SunOS", StringComparison.Ordinal);
+        public static readonly bool SUN_OS = LoadSunOS();
+        private static bool LoadSunOS()
+        {
+#if NETSTANDARD
+            return RuntimeInformation.IsOSPlatform(OSPlatform.Create("SunOS"));
+#else
+            return false; // Not possible
+#endif
+        }
 
         /// <summary>
         /// True iff running on Mac OS X </summary>
-        public static readonly bool MAC_OS_X; // = OS_NAME.StartsWith("Mac OS X", StringComparison.Ordinal);
+        public static readonly bool MAC_OS_X = LoadMacOSX();
+        private static bool LoadMacOSX() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+#if NETSTANDARD
+            return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+#else
+            return false; // Not possible
+#endif
+        }
 
         /// <summary>
         /// True iff running on FreeBSD </summary>
-        public static readonly bool FREE_BSD; // = OS_NAME.StartsWith("FreeBSD", StringComparison.Ordinal);
+        public static readonly bool FREE_BSD = LoadFreeBSD();
+        private static bool LoadFreeBSD() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+#if NETSTANDARD
+            return RuntimeInformation.IsOSPlatform(OSPlatform.Create("FreeBSD"));
+#else
+            return false; // Not possible
+#endif
+        }
 
-        public static readonly string OS_ARCH;
-        public static readonly string OS_VERSION;
+
+        public static readonly string OS_ARCH = LoadOSArch();
+        private static string LoadOSArch() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+#if NETSTANDARD
+            // Possible Values: X86, X64, Arm, Arm64
+            return RuntimeInformation.OSArchitecture.ToString();
+#else
+            return Environment.Is64BitOperatingSystem ? "X64" : "X86";
+#endif
+        }
+
+
+        public static readonly string OS_VERSION = LoadOSVersion();
+        private static string LoadOSVersion() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+#if NETSTANDARD
+            return ExtractString(RuntimeInformation.OSDescription, VERSION);
+#else
+            return Environment.OSVersion.Version.ToString();
+#endif
+        }
+
+#if NETSTANDARD
+        /// <summary>
+        /// The value of the version parsed from <see cref="RuntimeInformation.FrameworkDescription"/>.
+        /// <para/>
+        /// NOTE: This was JAVA_VERSION in Lucene
+        /// </summary>
+#else
+        /// <summary>
+        /// The value of the currently installed .NET Framework version on Windows or <see cref="Environment.Version"/> on other operating systems.
+        /// <para/>
+        /// NOTE: This was JAVA_VERSION in Lucene
+        /// </summary>
+#endif
+        public static readonly string RUNTIME_VERSION = LoadRuntimeVersion();
+
+        private static string LoadRuntimeVersion() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+#if NETSTANDARD
+            return ExtractString(RuntimeInformation.FrameworkDescription, VERSION);
+#else
+            return WINDOWS ? GetFramework45PlusFromRegistry() : Environment.Version.ToString();
+#endif
+        }
+
 
         //[Obsolete("We are not running on Java for heavens sake")]
         //public static readonly bool JRE_IS_MINIMUM_JAVA6 = (bool)new bool?(true); // prevent inlining in foreign class files
@@ -105,76 +190,17 @@ namespace Lucene.Net.Util
         /// <summary>
         /// NOTE: This was JRE_IS_64BIT in Lucene
         /// </summary>
-        public static readonly bool RUNTIME_IS_64BIT; // LUCENENET NOTE: We still need this constant to indicate 64 bit runtime.
-
-        static Constants()
+        public static readonly bool RUNTIME_IS_64BIT = LoadRuntimeIs64Bit(); // LUCENENET NOTE: We still need this constant to indicate 64 bit runtime.
+        private static bool LoadRuntimeIs64Bit() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-#if NETSTANDARD
-            // Possible Values: X86, X64, Arm, Arm64
-            OS_ARCH = RuntimeInformation.OSArchitecture.ToString();
-#else
-            if (Environment.Is64BitOperatingSystem)
-            {
-                OS_ARCH = "X64";
-            }
-            else
-            {
-                OS_ARCH = "X86";
-            }
-#endif
-
             // LUCENENET NOTE: In Java, the check is for sun.misc.Unsafe.addressSize,
             // which is the pointer size of the current environment. We don't need to
             // fallback to the OS bitness in .NET because this property is reliable and 
             // doesn't throw exceptions.
             if (IntPtr.Size == 8)
-            {
-                RUNTIME_IS_64BIT = true;// 64 bit machine
-            }
+                return true;// 64 bit machine
             else // if (IntPtr.Size == 4)
-            {
-                RUNTIME_IS_64BIT = false;// 32 bit machine
-            }
-
-#if NETSTANDARD
-            WINDOWS = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-            LINUX = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-            MAC_OS_X = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-            FREE_BSD = RuntimeInformation.IsOSPlatform(OSPlatform.Create("FreeBSD"));
-            SUN_OS = RuntimeInformation.IsOSPlatform(OSPlatform.Create("SunOS"));
-#else
-            // LUCENENET NOTE: On .NET Framework, our only possibilities are Windows or Linux
-            PlatformID pid = Environment.OSVersion.Platform;
-            WINDOWS = pid == PlatformID.Win32NT || pid == PlatformID.Win32Windows;
-
-            // we use integers instead of enum tags because "MacOS"
-            // requires 2.0 SP2, 3.0 SP2 or 3.5 SP1.
-            // 128 is mono's old platform tag for Unix.
-            // Reference: https://stackoverflow.com/a/5117005
-            int id = (int)pid;
-            LINUX = id == 4 || id == 6 || id == 128;
-#endif
-
-#if NETSTANDARD
-            RUNTIME_VERSION = ExtractString(RuntimeInformation.FrameworkDescription, VERSION);
-#else
-            if (WINDOWS)
-            {
-                RUNTIME_VERSION = GetFramework45PlusFromRegistry();
-            }
-            else
-            {
-                RUNTIME_VERSION = Environment.Version.ToString();
-            }
-#endif
-            
-#if NETSTANDARD
-            OS_VERSION = ExtractString(RuntimeInformation.OSDescription, VERSION);
-            OS_NAME = VERSION.Replace(RuntimeInformation.OSDescription, string.Empty).Trim();
-#else
-            OS_VERSION = Environment.OSVersion.Version.ToString();
-            OS_NAME = VERSION.Replace(Environment.OSVersion.VersionString, string.Empty).Trim();
-#endif
+                return false;// 32 bit machine
         }
 
         // this method prevents inlining the final version constant in compiled classes,

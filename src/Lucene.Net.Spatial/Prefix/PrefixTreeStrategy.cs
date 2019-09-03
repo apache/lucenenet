@@ -145,15 +145,19 @@ namespace Lucene.Net.Spatial.Prefix
         /// <summary>
         /// Indexed, tokenized, not stored.
         /// </summary>
-        public static readonly FieldType FIELD_TYPE = new FieldType();
+        public static readonly FieldType FIELD_TYPE = LoadFieldType();
 
-        static PrefixTreeStrategy()
+        private static FieldType LoadFieldType() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            FIELD_TYPE.IsIndexed = true;
-            FIELD_TYPE.IsTokenized = true;
-            FIELD_TYPE.OmitNorms = true;
-            FIELD_TYPE.IndexOptions = IndexOptions.DOCS_ONLY;
-            FIELD_TYPE.Freeze();
+            var fieldType = new FieldType
+            {
+                IsIndexed = true,
+                IsTokenized = true,
+                OmitNorms = true,
+                IndexOptions = IndexOptions.DOCS_ONLY
+            };
+            fieldType.Freeze();
+            return fieldType;
         }
 
         /// <summary>Outputs the tokenString of a cell, and if its a leaf, outputs it again with the leaf byte.</summary>

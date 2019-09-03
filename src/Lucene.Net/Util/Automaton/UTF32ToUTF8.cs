@@ -38,16 +38,18 @@ namespace Lucene.Net.Util.Automaton
 
         private static readonly int[] endCodes = new int[] { 127, 2047, 65535, 1114111 };
 
-        internal static int[] MASKS = new int[32];
+        internal static int[] MASKS = LoadMasks();
 
-        static UTF32ToUTF8()
+        private static int[] LoadMasks() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
+            int[] masks = new int[32];
             int v = 2;
             for (int i = 0; i < 32; i++)
             {
-                MASKS[i] = v - 1;
+                masks[i] = v - 1;
                 v *= 2;
             }
+            return masks;
         }
 
         // Represents one of the N utf8 bytes that (in sequence)

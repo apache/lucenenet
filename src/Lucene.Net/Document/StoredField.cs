@@ -29,12 +29,16 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Type for a stored-only field.
         /// </summary>
-        public static readonly FieldType TYPE;
+        public static readonly FieldType TYPE = LoadType();
 
-        static StoredField()
+        private static FieldType LoadType() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            TYPE = new FieldType {IsStored = true};
-            TYPE.Freeze();
+            var type = new FieldType
+            {
+                IsStored = true
+            };
+            type.Freeze();
+            return type;
         }
 
         /// <summary>

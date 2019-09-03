@@ -95,22 +95,22 @@ namespace Lucene.Net.Analysis.De
             /// @deprecated in 3.1, remove in Lucene 5.0 (index bw compat) 
             [Obsolete("in 3.1, remove in Lucene 5.0 (index bw compat)")]
             internal static readonly CharArraySet DEFAULT_SET_30 = CharArraySet.UnmodifiableSet(new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.AsList(GERMAN_STOP_WORDS), false));
-            internal static readonly CharArraySet DEFAULT_SET;
-            static DefaultSetHolder()
+            internal static readonly CharArraySet DEFAULT_SET = LoadDefaultSet();
+            private static CharArraySet LoadDefaultSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
             {
                 try
                 {
-                    DEFAULT_SET = WordlistLoader.GetSnowballWordSet(
+                    return WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
 #pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
 #pragma warning restore 612, 618
                 }
-                catch (IOException)
+                catch (IOException ex)
                 {
                     // default set should always be present as it is part of the
                     // distribution (JAR)
-                    throw new Exception("Unable to load default stopword set");
+                    throw new Exception("Unable to load default stopword set", ex);
                 }
             }
         }

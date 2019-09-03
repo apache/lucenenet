@@ -296,7 +296,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             }
         }
 
-        private static readonly IDictionary<string, int?> ELEMENTS = new Dictionary<string, int?>();
+        private static readonly IDictionary<string, int?> ELEMENTS = new Dictionary<string, int?> // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+            { "page", PAGE },
+            { "text", BODY },
+            { "timestamp", DATE },
+            { "title", TITLE },
+            { "id", ID }
+        };
         private const int TITLE = 0;
         private const int DATE = TITLE + 1;
         private const int BODY = DATE + 1;
@@ -309,15 +316,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private static readonly string[] months = {"JAN", "FEB", "MAR", "APR",
                                   "MAY", "JUN", "JUL", "AUG",
                                   "SEP", "OCT", "NOV", "DEC"};
-
-        static EnwikiContentSource()
-        {
-            ELEMENTS["page"] = PAGE;
-            ELEMENTS["text"] = BODY;
-            ELEMENTS["timestamp"] = DATE;
-            ELEMENTS["title"] = TITLE;
-            ELEMENTS["id"] = ID;
-        }
 
         public EnwikiContentSource()
         {

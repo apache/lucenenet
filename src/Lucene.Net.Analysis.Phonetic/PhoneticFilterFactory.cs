@@ -77,17 +77,15 @@ namespace Lucene.Net.Analysis.Phonetic
         private static readonly string PACKAGE_CONTAINING_ENCODERS = "Lucene.Net.Analysis.Phonetic.Language.";
 
         //Effectively constants; uppercase keys
-        private static readonly IDictionary<string, Type> registry = new Dictionary<string, Type>(6);
-
-        static PhoneticFilterFactory()
+        private static readonly IDictionary<string, Type> registry = new Dictionary<string, Type> // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            registry["DoubleMetaphone".ToUpperInvariant()] = typeof(DoubleMetaphone);
-            registry["Metaphone".ToUpperInvariant()] = typeof(Metaphone);
-            registry["Soundex".ToUpperInvariant()] = typeof(Soundex);
-            registry["RefinedSoundex".ToUpperInvariant()] = typeof(RefinedSoundex);
-            registry["Caverphone".ToUpperInvariant()] = typeof(Caverphone2);
-            registry["ColognePhonetic".ToUpperInvariant()] = typeof(ColognePhonetic);
-        }
+            { "DoubleMetaphone".ToUpperInvariant(), typeof(DoubleMetaphone) },
+            { "Metaphone".ToUpperInvariant(), typeof(Metaphone) },
+            { "Soundex".ToUpperInvariant(), typeof(Soundex) },
+            { "RefinedSoundex".ToUpperInvariant(), typeof(RefinedSoundex) },
+            { "Caverphone".ToUpperInvariant(), typeof(Caverphone2) },
+            { "ColognePhonetic".ToUpperInvariant(), typeof(ColognePhonetic) },
+        };
 
         internal bool inject; //accessed by the test
         private readonly string name;

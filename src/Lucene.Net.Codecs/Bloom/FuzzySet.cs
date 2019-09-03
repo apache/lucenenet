@@ -83,19 +83,18 @@ namespace Lucene.Net.Codecs.Bloom
         // a large bitset and then mapped to a smaller set can be looked up using a single
         // AND operation of the query term's hash rather than needing to perform a 2-step
         // translation of the query term that mirrors the stored content's reprojections.
-        private static int[] _usableBitSetSizes;
-
-
-        static FuzzySet()
+        private static int[] _usableBitSetSizes = LoadUsableBitSetSizes();
+        private static int[] LoadUsableBitSetSizes() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            _usableBitSetSizes = new int[30];
+            var usableBitSetSizes = new int[30];
             const int mask = 1;
             var size = mask;
-            for (var i = 0; i < _usableBitSetSizes.Length; i++)
+            for (var i = 0; i < usableBitSetSizes.Length; i++)
             {
                 size = (size << 1) | mask;
-                _usableBitSetSizes[i] = size;
+                usableBitSetSizes[i] = size;
             }
+            return usableBitSetSizes;
         }
 
         /// <summary>

@@ -74,31 +74,37 @@ namespace Lucene.Net.Analysis.Nl
 
         private class DefaultSetHolder
         {
-            internal static readonly CharArraySet DEFAULT_STOP_SET;
-            internal static readonly CharArrayMap<string> DEFAULT_STEM_DICT;
-            static DefaultSetHolder()
+            internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
+            internal static readonly CharArrayMap<string> DEFAULT_STEM_DICT = LoadDefaultStemDict();
+            private static CharArraySet LoadDefaultStopSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
             {
                 try
                 {
-                    DEFAULT_STOP_SET = WordlistLoader.GetSnowballWordSet(
+                    return WordlistLoader.GetSnowballWordSet(
                         IOUtils.GetDecodingReader(typeof(SnowballFilter), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
 #pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
 #pragma warning restore 612, 618
                 }
-                catch (IOException)
+                catch (IOException ex)
                 {
                     // default set should always be present as it is part of the
                     // distribution (JAR)
-                    throw new Exception("Unable to load default stopword set");
+                    throw new Exception("Unable to load default stopword set", ex);
                 }
+
+            }
+
+            private static CharArrayMap<string> LoadDefaultStemDict() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+            {
 #pragma warning disable 612, 618
-                DEFAULT_STEM_DICT = new CharArrayMap<string>(LuceneVersion.LUCENE_CURRENT, 4, false);
+                var DEFAULT_STEM_DICT = new CharArrayMap<string>(LuceneVersion.LUCENE_CURRENT, 4, false);
 #pragma warning restore 612, 618
                 DEFAULT_STEM_DICT.Put("fiets", "fiets"); //otherwise fiet
                 DEFAULT_STEM_DICT.Put("bromfiets", "bromfiets"); //otherwise bromfiet
                 DEFAULT_STEM_DICT.Put("ei", "eier");
                 DEFAULT_STEM_DICT.Put("kind", "kinder");
+                return DEFAULT_STEM_DICT;
             }
         }
 

@@ -40,11 +40,15 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Indexed <see cref="FieldType"/>.
         /// </summary>
-        public static readonly FieldType TYPE = new FieldType();
-        static AssociationFacetField()
+        public static readonly FieldType TYPE = LoadType();
+        private static FieldType LoadType() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            TYPE.IsIndexed = true;
-            TYPE.Freeze();
+            var type = new FieldType
+            {
+                IsIndexed = true
+            };
+            type.Freeze();
+            return type;
         }
 
         /// <summary>

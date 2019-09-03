@@ -536,12 +536,11 @@ namespace Lucene.Net.Util
 
         /* Map UTF-8 encoded prefix byte to sequence length.  -1 (0xFF)
          * means illegal prefix.  see RFC 2279 for details */
-        internal static readonly int[] utf8CodeLength;
-
-        static UnicodeUtil()
+        internal static readonly int[] utf8CodeLength = LoadUTF8CodeLength();
+        private static int[] LoadUTF8CodeLength() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             int v = int.MinValue;
-            utf8CodeLength = new int[] {
+            return new int[] {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,

@@ -30686,13 +30686,14 @@ namespace Lucene.Net.Analysis.CharFilters
                 {"amp", "AMP" },
             };
 
-        private static readonly CharArrayMap<char> entityValues
+        private static readonly CharArrayMap<char> entityValues = LoadEntityValues();
+
+        private static CharArrayMap<char> LoadEntityValues() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+            CharArrayMap<char> entityValues
 #pragma warning disable 612, 618
             = new CharArrayMap<char>(LuceneVersion.LUCENE_CURRENT, 253, false);
 #pragma warning restore 612, 618
-
-        static HTMLStripCharFilter()
-        {
             string[] entities = {
                 "AElig", "\u00C6", "Aacute", "\u00C1", "Acirc", "\u00C2",
                 "Agrave", "\u00C0", "Alpha", "\u0391", "Aring", "\u00C5",
@@ -30772,12 +30773,12 @@ namespace Lucene.Net.Analysis.CharFilters
             {
                 var value = entities[i + 1][0];
                 entityValues.Put(entities[i], value);
-                string upperCaseVariant = upperCaseVariantsAccepted.ContainsKey(entities[i]) ? upperCaseVariantsAccepted[entities[i]] : null;
-                if (upperCaseVariant != null)
+                if (upperCaseVariantsAccepted.TryGetValue(entities[i], out string upperCaseVariant) && upperCaseVariant != null)
                 {
                     entityValues.Put(upperCaseVariant, value);
                 }
             }
+            return entityValues;
         }
         private static readonly int INITIAL_INPUT_SEGMENT_SIZE = 1024;
         private static readonly char BLOCK_LEVEL_START_TAG_REPLACEMENT = '\n';

@@ -29,22 +29,33 @@ namespace Lucene.Net.Documents
     {
         /// <summary>
         /// Indexed, tokenized, not stored. </summary>
-        public static readonly FieldType TYPE_NOT_STORED = new FieldType();
+        public static readonly FieldType TYPE_NOT_STORED = LoadTypeNotStored();
+
+        private static FieldType LoadTypeNotStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+            var typeNotStored = new FieldType
+            {
+                IsIndexed = true,
+                IsTokenized = true
+            };
+            typeNotStored.Freeze();
+            return typeNotStored;
+        }
 
         /// <summary>
         /// Indexed, tokenized, stored. </summary>
-        public static readonly FieldType TYPE_STORED = new FieldType();
+        public static readonly FieldType TYPE_STORED = LoadTypeStored();
 
-        static TextField()
+        private static FieldType LoadTypeStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            TYPE_NOT_STORED.IsIndexed = true;
-            TYPE_NOT_STORED.IsTokenized = true;
-            TYPE_NOT_STORED.Freeze();
-
-            TYPE_STORED.IsIndexed = true;
-            TYPE_STORED.IsTokenized = true;
-            TYPE_STORED.IsStored = true;
-            TYPE_STORED.Freeze();
+            var typeStored = new FieldType
+            {
+                IsIndexed = true,
+                IsTokenized = true,
+                IsStored = true
+            };
+            typeStored.Freeze();
+            return typeStored;
         }
 
         // TODO: add sugar for term vectors...?

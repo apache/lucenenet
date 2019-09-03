@@ -115,11 +115,11 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private static readonly string HASH_INCLUDE = "#include";
 
-        private static readonly IDictionary<NameType, IDictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>>> RULES =
-                new Dictionary<NameType, IDictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>>>();
+        private static readonly IDictionary<NameType, IDictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>>> RULES = LoadRules();
 
-        static Rule()
+        private static IDictionary<NameType, IDictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>>> LoadRules() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
+            var rules = new Dictionary<NameType, IDictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>>>();
             foreach (NameType s in Enum.GetValues(typeof(NameType)))
             {
                 IDictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>> rts =
@@ -149,8 +149,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                     rts[rt] = Collections.UnmodifiableMap(rs);
                 }
 
-                RULES[s] = Collections.UnmodifiableMap(rts);
+                rules[s] = Collections.UnmodifiableMap(rts);
             }
+            return rules;
         }
 
         private static bool Contains(ICharSequence chars, char input)

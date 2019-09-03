@@ -32,9 +32,9 @@ namespace Lucene.Net.Util
     /// </summary>
     public class SPIClassIterator<S> : IEnumerable<Type>
     {
-        private static HashSet<Type> types;
+        private static HashSet<Type> types = LoadTypes();
 
-        static SPIClassIterator()
+        private static HashSet<Type> LoadTypes() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             types = new HashSet<Type>();
 
@@ -103,6 +103,7 @@ namespace Lucene.Net.Util
                     // swallow
                 }
             }
+            return types;
         }
 
         internal static bool IsInvokableSubclassOf<T>(Type type)

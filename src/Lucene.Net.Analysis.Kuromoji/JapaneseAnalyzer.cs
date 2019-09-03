@@ -65,25 +65,38 @@ namespace Lucene.Net.Analysis.Ja
         /// </summary>
         private static class DefaultSetHolder
         {
-            internal static readonly CharArraySet DEFAULT_STOP_SET;
-            internal static readonly ISet<string> DEFAULT_STOP_TAGS;
+            internal static readonly CharArraySet DEFAULT_STOP_SET = LoadDefaultStopSet();
+            internal static readonly ISet<string> DEFAULT_STOP_TAGS = LoadDefaultStopTagSet();
 
-            static DefaultSetHolder()
+            private static CharArraySet LoadDefaultStopSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
             {
                 try
                 {
-                    DEFAULT_STOP_SET = LoadStopwordSet(true, typeof(JapaneseAnalyzer), "stopwords.txt", "#");  // ignore case
-                    CharArraySet tagset = LoadStopwordSet(false, typeof(JapaneseAnalyzer), "stoptags.txt", "#");
-                    DEFAULT_STOP_TAGS = new HashSet<string>();
-                    foreach (string element in tagset)
-                    {
-                        DEFAULT_STOP_TAGS.Add(element);
-                    }
+                    return LoadStopwordSet(true, typeof(JapaneseAnalyzer), "stopwords.txt", "#");  // ignore case
                 }
                 catch (IOException ex)
                 {
                     // default set should always be present as it is part of the distribution (JAR)
-                    throw new Exception("Unable to load default stopword or stoptag set", ex);
+                    throw new Exception("Unable to load default stopword set", ex);
+                }
+            }
+
+            private static ISet<string> LoadDefaultStopTagSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+            {
+                try
+                {
+                    CharArraySet tagset = LoadStopwordSet(false, typeof(JapaneseAnalyzer), "stoptags.txt", "#");
+                    var DEFAULT_STOP_TAGS = new HashSet<string>();
+                    foreach (string element in tagset)
+                    {
+                        DEFAULT_STOP_TAGS.Add(element);
+                    }
+                    return DEFAULT_STOP_TAGS;
+                }
+                catch (IOException ex)
+                {
+                    // default set should always be present as it is part of the distribution (JAR)
+                    throw new Exception("Unable to load default stoptag set", ex);
                 }
             }
         }

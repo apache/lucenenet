@@ -118,31 +118,42 @@ namespace Lucene.Net.Documents
         /// Type for a <see cref="SingleField"/> that is not stored:
         /// normalization factors, frequencies, and positions are omitted.
         /// </summary>
-        public static readonly FieldType TYPE_NOT_STORED = new FieldType();
+        public static readonly FieldType TYPE_NOT_STORED = LoadTypeNotStored();
 
-        static SingleField()
+        private static FieldType LoadTypeNotStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            TYPE_NOT_STORED.IsIndexed = true;
-            TYPE_NOT_STORED.IsTokenized = true;
-            TYPE_NOT_STORED.OmitNorms = true;
-            TYPE_NOT_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.NumericType = Documents.NumericType.SINGLE;
-            TYPE_NOT_STORED.Freeze();
-
-            TYPE_STORED.IsIndexed = true;
-            TYPE_STORED.IsTokenized = true;
-            TYPE_STORED.OmitNorms = true;
-            TYPE_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_STORED.NumericType = Documents.NumericType.SINGLE;
-            TYPE_STORED.IsStored = true;
-            TYPE_STORED.Freeze();
+            var typeNotStored = new FieldType
+            {
+                IsIndexed = true,
+                IsTokenized = true,
+                OmitNorms = true,
+                IndexOptions = IndexOptions.DOCS_ONLY,
+                NumericType = Documents.NumericType.SINGLE
+            };
+            typeNotStored.Freeze();
+            return typeNotStored;
         }
 
         /// <summary>
         /// Type for a stored <see cref="SingleField"/>:
         /// normalization factors, frequencies, and positions are omitted.
         /// </summary>
-        public static readonly FieldType TYPE_STORED = new FieldType();
+        public static readonly FieldType TYPE_STORED = LoadTypeStored();
+
+        private static FieldType LoadTypeStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+            var typeStored = new FieldType
+            {
+                IsIndexed = true,
+                IsTokenized = true,
+                OmitNorms = true,
+                IndexOptions = IndexOptions.DOCS_ONLY,
+                NumericType = Documents.NumericType.SINGLE,
+                IsStored = true
+            };
+            typeStored.Freeze();
+            return typeStored;
+        }
 
         /// <summary>
         /// Creates a stored or un-stored <see cref="SingleField"/> with the provided value

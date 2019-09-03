@@ -32,28 +32,39 @@ namespace Lucene.Net.Documents
         /// Indexed, not tokenized, omits norms, indexes
         /// <see cref="IndexOptions.DOCS_ONLY"/>, not stored.
         /// </summary>
-        public static readonly FieldType TYPE_NOT_STORED = new FieldType();
+        public static readonly FieldType TYPE_NOT_STORED = LoadTypeNotStored();
+
+        private static FieldType LoadTypeNotStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+            var typeNotStored = new FieldType
+            {
+                IsIndexed = true,
+                OmitNorms = true,
+                IndexOptions = IndexOptions.DOCS_ONLY,
+                IsTokenized = false
+            };
+            typeNotStored.Freeze();
+            return typeNotStored;
+        }
 
         /// <summary>
         /// Indexed, not tokenized, omits norms, indexes
         /// <see cref="IndexOptions.DOCS_ONLY"/>, stored
         /// </summary>
-        public static readonly FieldType TYPE_STORED = new FieldType();
+        public static readonly FieldType TYPE_STORED = LoadTypeStored();
 
-        static StringField()
+        private static FieldType LoadTypeStored() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            TYPE_NOT_STORED.IsIndexed = true;
-            TYPE_NOT_STORED.OmitNorms = true;
-            TYPE_NOT_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.IsTokenized = false;
-            TYPE_NOT_STORED.Freeze();
-
-            TYPE_STORED.IsIndexed = true;
-            TYPE_STORED.OmitNorms = true;
-            TYPE_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_STORED.IsStored = true;
-            TYPE_STORED.IsTokenized = false;
-            TYPE_STORED.Freeze();
+            var typeStored = new FieldType
+            {
+                IsIndexed = true,
+                OmitNorms = true,
+                IndexOptions = IndexOptions.DOCS_ONLY,
+                IsStored = true,
+                IsTokenized = false
+            };
+            typeStored.Freeze();
+            return typeStored;
         }
 
         /// <summary>

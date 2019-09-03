@@ -624,13 +624,15 @@ namespace Lucene.Net.Analysis.Hunspell
             }
         }
 
-        internal static readonly IDictionary<string, string> CHARSET_ALIASES;
-        static Dictionary()
+        internal static readonly IDictionary<string, string> CHARSET_ALIASES = LoadCharsetAliases();
+        private static IDictionary<string, string> LoadCharsetAliases() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            IDictionary<string, string> m = new Dictionary<string, string>();
-            m["microsoft-cp1251"] = "windows-1251";
-            m["TIS620-2533"] = "TIS-620";
-            CHARSET_ALIASES = Collections.UnmodifiableMap(m);
+            IDictionary<string, string> m = new Dictionary<string, string>
+            {
+                ["microsoft-cp1251"] = "windows-1251",
+                ["TIS620-2533"] = "TIS-620"
+            };
+            return Collections.UnmodifiableMap(m);
         }
 
         /// <summary>

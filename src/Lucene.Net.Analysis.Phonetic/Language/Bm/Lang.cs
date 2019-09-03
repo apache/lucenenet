@@ -108,16 +108,19 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             }
         }
 
-        private static readonly IDictionary<NameType, Lang> langs = new Dictionary<NameType, Lang>();
-
+        // LUCENENET specific - need to load this first for LoadLangs() to work
         private static readonly string LANGUAGE_RULES_RN = "lang.txt";
 
-        static Lang()
+        private static readonly IDictionary<NameType, Lang> langs = LoadLangs();
+
+        private static IDictionary<NameType, Lang> LoadLangs() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
+            IDictionary<NameType, Lang> langs = new Dictionary<NameType, Lang>();
             foreach (NameType s in Enum.GetValues(typeof(NameType)))
             {
                 langs[s] = LoadFromResource(LANGUAGE_RULES_RN, Languages.GetInstance(s));
             }
+            return langs;
         }
 
         /// <summary>

@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// Indicates the end of iteration </summary>
         public const int DONE = -1;
 
-        public static readonly byte[] DEFAULT_WORD_DELIM_TABLE;
+        public static readonly byte[] DEFAULT_WORD_DELIM_TABLE = LoadDefaultWordDelimTable();
 
         internal char[] text;
         private int length;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         // TODO: should there be a WORD_DELIM category for chars that only separate words (no catenation of subwords will be
         // done if separated by these chars?) "," would be an obvious candidate...
-        static WordDelimiterIterator()
+        private static byte[] LoadDefaultWordDelimTable() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             var tab = new byte[256];
             for (int i = 0; i < 256; i++)
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
                 tab[i] = code;
             }
-            DEFAULT_WORD_DELIM_TABLE = tab;
+            return tab;
         }
 
         /// <summary>

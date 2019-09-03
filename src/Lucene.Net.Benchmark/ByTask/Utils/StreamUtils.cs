@@ -32,15 +32,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
         // LUCENENET specific - de-nested Type and renamed FileType
 
-        private static readonly IDictionary<string, FileType?> extensionToType = new Dictionary<string, FileType?>();
-        static StreamUtils()
+        private static readonly IDictionary<string, FileType?> extensionToType = new Dictionary<string, FileType?>() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             // these in are lower case, we will lower case at the test as well
-            extensionToType[".bz2"] = FileType.BZIP2;
-            extensionToType[".bzip"] = FileType.BZIP2;
-            extensionToType[".gz"] = FileType.GZIP;
-            extensionToType[".gzip"] = FileType.GZIP;
-        }
+            { ".bz2", FileType.BZIP2 },
+            { ".bzip", FileType.BZIP2 },
+            { ".gz", FileType.GZIP },
+            { ".gzip", FileType.GZIP },
+        };
 
         /// <summary>
         /// Returns an <see cref="Stream"/> over the requested file. This method

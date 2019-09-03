@@ -86,153 +86,154 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Number of bytes this .NET runtime uses to represent an object reference.
         /// </summary>
-        public static readonly int NUM_BYTES_OBJECT_REF;
+        public static readonly int NUM_BYTES_OBJECT_REF = Constants.RUNTIME_IS_64BIT ? 8 : 4; // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
 
         /// <summary>
         /// Number of bytes to represent an object header (no fields, no alignments).
         /// </summary>
-        public static readonly int NUM_BYTES_OBJECT_HEADER;
+        public static readonly int NUM_BYTES_OBJECT_HEADER = Constants.RUNTIME_IS_64BIT ? (8 + 8) : 8; // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
 
         /// <summary>
         /// Number of bytes to represent an array header (no content, but with alignments).
         /// </summary>
-        public static readonly int NUM_BYTES_ARRAY_HEADER;
+        public static readonly int NUM_BYTES_ARRAY_HEADER = Constants.RUNTIME_IS_64BIT ? (8 + 2 * 8) : 12; // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
 
         /// <summary>
         /// A constant specifying the object alignment boundary inside the .NET runtime. Objects will
         /// always take a full multiple of this constant, possibly wasting some space.
         /// </summary>
-        public static readonly int NUM_BYTES_OBJECT_ALIGNMENT;
+        public static readonly int NUM_BYTES_OBJECT_ALIGNMENT = Constants.RUNTIME_IS_64BIT ? 8 : 4; // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
 
         /// <summary>
         /// Sizes of primitive classes.
         /// </summary>
-        private static readonly IDictionary<Type, int> primitiveSizes;
-
-        static RamUsageEstimator()
+        private static readonly IDictionary<Type, int> primitiveSizes = new IdentityHashMap<Type, int> // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            primitiveSizes = new IdentityHashMap<Type, int>();
-            primitiveSizes[typeof(bool)] = Convert.ToInt32(NUM_BYTES_BOOLEAN);
-            primitiveSizes[typeof(sbyte)] = Convert.ToInt32(NUM_BYTES_BYTE);
-            primitiveSizes[typeof(byte)] = Convert.ToInt32(NUM_BYTES_BYTE);
-            primitiveSizes[typeof(char)] = Convert.ToInt32(NUM_BYTES_CHAR);
-            primitiveSizes[typeof(short)] = Convert.ToInt32(NUM_BYTES_INT16);
-            primitiveSizes[typeof(ushort)] = Convert.ToInt32(NUM_BYTES_INT16);
-            primitiveSizes[typeof(int)] = Convert.ToInt32(NUM_BYTES_INT32);
-            primitiveSizes[typeof(uint)] = Convert.ToInt32(NUM_BYTES_INT32);
-            primitiveSizes[typeof(float)] = Convert.ToInt32(NUM_BYTES_SINGLE);
-            primitiveSizes[typeof(double)] = Convert.ToInt32(NUM_BYTES_DOUBLE);
-            primitiveSizes[typeof(long)] = Convert.ToInt32(NUM_BYTES_INT64);
-            primitiveSizes[typeof(ulong)] = Convert.ToInt32(NUM_BYTES_INT64);
+            [typeof(bool)] = NUM_BYTES_BOOLEAN,
+            [typeof(sbyte)] = NUM_BYTES_BYTE,
+            [typeof(byte)] = NUM_BYTES_BYTE,
+            [typeof(char)] = NUM_BYTES_CHAR,
+            [typeof(short)] = NUM_BYTES_INT16,
+            [typeof(ushort)] = NUM_BYTES_INT16,
+            [typeof(int)] = NUM_BYTES_INT32,
+            [typeof(uint)] = NUM_BYTES_INT32,
+            [typeof(float)] = NUM_BYTES_SINGLE,
+            [typeof(double)] = NUM_BYTES_DOUBLE,
+            [typeof(long)] = NUM_BYTES_INT64,
+            [typeof(ulong)] = NUM_BYTES_INT64
+        };
 
-            // Initialize empirically measured defaults. We'll modify them to the current
-            // JVM settings later on if possible.
-            int referenceSize = Constants.RUNTIME_IS_64BIT ? 8 : 4;
-            int objectHeader = Constants.RUNTIME_IS_64BIT ? 16 : 8;
-            // The following is objectHeader + NUM_BYTES_INT32, but aligned (object alignment)
-            // so on 64 bit JVMs it'll be align(16 + 4, @8) = 24.
-            int arrayHeader = Constants.RUNTIME_IS_64BIT ? 24 : 12;
-            int objectAlignment = Constants.RUNTIME_IS_64BIT ? 8 : 4;
+        // LUCENENET specific: Moved all estimates to static initializers to avoid using a static constructor
+        //static RamUsageEstimator()
+        //{
+        //    Initialize empirically measured defaults. We'll modify them to the current
+        //     JVM settings later on if possible.
+        //    int referenceSize = Constants.RUNTIME_IS_64BIT ? 8 : 4;
+        //    int objectHeader = Constants.RUNTIME_IS_64BIT ? 16 : 8;
+        //    The following is objectHeader + NUM_BYTES_INT32, but aligned(object alignment)
+        //     so on 64 bit JVMs it'll be align(16 + 4, @8) = 24.
+        //    int arrayHeader = Constants.RUNTIME_IS_64BIT ? 24 : 12;
+        //    int objectAlignment = Constants.RUNTIME_IS_64BIT ? 8 : 4;
 
 
-		    //Type unsafeClass = null;
-		    //object tempTheUnsafe = null;
-		    //try
-		    //{
-		    //  unsafeClass = Type.GetType("sun.misc.Unsafe");
-		    //  FieldInfo unsafeField = unsafeClass.getDeclaredField("theUnsafe");
-		    //  unsafeField.Accessible = true;
-		    //  tempTheUnsafe = unsafeField.get(null);
-		    //}
-		    //catch (Exception e)
-		    //{
-		    //  // Ignore.
-		    //}
-		    //TheUnsafe = tempTheUnsafe;
+        //    Type unsafeClass = null;
+        //    object tempTheUnsafe = null;
+        //    try
+        //    {
+        //        unsafeClass = Type.GetType("sun.misc.Unsafe");
+        //        FieldInfo unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+        //        unsafeField.Accessible = true;
+        //        tempTheUnsafe = unsafeField.get(null);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        // Ignore.
+        //    }
+        //    TheUnsafe = tempTheUnsafe;
 
-		    //// get object reference size by getting scale factor of Object[] arrays:
-		    //try
-		    //{
-		    //  Method arrayIndexScaleM = unsafeClass.GetMethod("arrayIndexScale", typeof(Type));
-		    //  referenceSize = (int)((Number) arrayIndexScaleM.invoke(TheUnsafe, typeof(object[])));
-		    //}
-		    //catch (Exception e)
-		    //{
-		    //  // ignore.
-		    //}
+        //    // get object reference size by getting scale factor of Object[] arrays:
+        //    try
+        //    {
+        //        Method arrayIndexScaleM = unsafeClass.GetMethod("arrayIndexScale", typeof(Type));
+        //        referenceSize = (int)((Number)arrayIndexScaleM.invoke(TheUnsafe, typeof(object[])));
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        // ignore.
+        //    }
 
-            // "best guess" based on reference size. We will attempt to modify
-            // these to exact values if there is supported infrastructure.
-            objectHeader = Constants.RUNTIME_IS_64BIT ? (8 + referenceSize) : 8;
-		    arrayHeader = Constants.RUNTIME_IS_64BIT ? (8 + 2 * referenceSize) : 12;
+        //    // "best guess" based on reference size. We will attempt to modify
+        //    // these to exact values if there is supported infrastructure.
+        //    objectHeader = Constants.RUNTIME_IS_64BIT ? (8 + referenceSize) : 8;
+        //    arrayHeader = Constants.RUNTIME_IS_64BIT ? (8 + 2 * referenceSize) : 12;
 
-		    //// get the object header size:
-		    //// - first try out if the field offsets are not scaled (see warning in Unsafe docs)
-		    //// - get the object header size by getting the field offset of the first field of a dummy object
-		    //// If the scaling is byte-wise and unsafe is available, enable dynamic size measurement for
-		    //// estimateRamUsage().
-		    //Method tempObjectFieldOffsetMethod = null;
-		    //try
-		    //{
-		    //  Method objectFieldOffsetM = unsafeClass.GetMethod("objectFieldOffset", typeof(FieldInfo));
-		    //  FieldInfo dummy1Field = typeof(DummyTwoLongObject).getDeclaredField("dummy1");
-		    //  int ofs1 = (int)((Number) objectFieldOffsetM.invoke(TheUnsafe, dummy1Field));
-		    //  FieldInfo dummy2Field = typeof(DummyTwoLongObject).getDeclaredField("dummy2");
-		    //  int ofs2 = (int)((Number) objectFieldOffsetM.invoke(TheUnsafe, dummy2Field));
-		    //  if (Math.Abs(ofs2 - ofs1) == NUM_BYTES_LONG)
-		    //  {
-			   // FieldInfo baseField = typeof(DummyOneFieldObject).getDeclaredField("base");
-			   // objectHeader = (int)((Number) objectFieldOffsetM.invoke(TheUnsafe, baseField));
-			   // tempObjectFieldOffsetMethod = objectFieldOffsetM;
-		    //  }
-		    //}
-		    //catch (Exception e)
-		    //{
-		    //  // Ignore.
-		    //}
-		    //ObjectFieldOffsetMethod = tempObjectFieldOffsetMethod;
+        //    // get the object header size:
+        //    // - first try out if the field offsets are not scaled (see warning in Unsafe docs)
+        //    // - get the object header size by getting the field offset of the first field of a dummy object
+        //    // If the scaling is byte-wise and unsafe is available, enable dynamic size measurement for
+        //    // estimateRamUsage().
+        //    Method tempObjectFieldOffsetMethod = null;
+        //    try
+        //    {
+        //        Method objectFieldOffsetM = unsafeClass.GetMethod("objectFieldOffset", typeof(FieldInfo));
+        //        FieldInfo dummy1Field = typeof(DummyTwoLongObject).getDeclaredField("dummy1");
+        //        int ofs1 = (int)((Number)objectFieldOffsetM.invoke(TheUnsafe, dummy1Field));
+        //        FieldInfo dummy2Field = typeof(DummyTwoLongObject).getDeclaredField("dummy2");
+        //        int ofs2 = (int)((Number)objectFieldOffsetM.invoke(TheUnsafe, dummy2Field));
+        //        if (Math.Abs(ofs2 - ofs1) == NUM_BYTES_LONG)
+        //        {
+        //            FieldInfo baseField = typeof(DummyOneFieldObject).getDeclaredField("base");
+        //            objectHeader = (int)((Number)objectFieldOffsetM.invoke(TheUnsafe, baseField));
+        //            tempObjectFieldOffsetMethod = objectFieldOffsetM;
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        // Ignore.
+        //    }
+        //    ObjectFieldOffsetMethod = tempObjectFieldOffsetMethod;
 
-		    //// Get the array header size by retrieving the array base offset
-		    //// (offset of the first element of an array).
-		    //try
-		    //{
-		    //  Method arrayBaseOffsetM = unsafeClass.GetMethod("arrayBaseOffset", typeof(Type));
-		    //  // we calculate that only for byte[] arrays, it's actually the same for all types:
-		    //  arrayHeader = (int)((Number) arrayBaseOffsetM.invoke(TheUnsafe, typeof(sbyte[])));
-		    //}
-		    //catch (Exception e)
-		    //{
-		    //  // Ignore.
-		    //}
+        //    // Get the array header size by retrieving the array base offset
+        //    // (offset of the first element of an array).
+        //    try
+        //    {
+        //        Method arrayBaseOffsetM = unsafeClass.GetMethod("arrayBaseOffset", typeof(Type));
+        //        // we calculate that only for byte[] arrays, it's actually the same for all types:
+        //        arrayHeader = (int)((Number)arrayBaseOffsetM.invoke(TheUnsafe, typeof(sbyte[])));
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        // Ignore.
+        //    }
 
-            NUM_BYTES_OBJECT_REF = referenceSize;
-            NUM_BYTES_OBJECT_HEADER = objectHeader;
-            NUM_BYTES_ARRAY_HEADER = arrayHeader;
+        //    NUM_BYTES_OBJECT_REF = referenceSize;
+        //    NUM_BYTES_OBJECT_HEADER = objectHeader;
+        //    NUM_BYTES_ARRAY_HEADER = arrayHeader;
 
-            //// Try to get the object alignment (the default seems to be 8 on Hotspot,
-            //// regardless of the architecture).
-            //int objectAlignment = 8;
-            //try
-            //{
-            //Type beanClazz = Type.GetType("com.sun.management.HotSpotDiagnosticMXBean").asSubclass(typeof(PlatformManagedObject));
-            //object hotSpotBean = ManagementFactory.getPlatformMXBean(beanClazz);
-            //if (hotSpotBean != null)
-            //{
-            //    Method getVMOptionMethod = beanClazz.GetMethod("getVMOption", typeof(string));
-            //    object vmOption = getVMOptionMethod.invoke(hotSpotBean, "ObjectAlignmentInBytes");
-            //    objectAlignment = Convert.ToInt32(vmOption.GetType().GetMethod("getValue").invoke(vmOption).ToString(), CultureInfo.InvariantCulture);
-            //}
-            //}
-            //catch (Exception e)
-            //{
-            //// Ignore.
-            //}
+        //    // Try to get the object alignment (the default seems to be 8 on Hotspot,
+        //    // regardless of the architecture).
+        //    int objectAlignment = 8;
+        //    try
+        //    {
+        //        Type beanClazz = Type.GetType("com.sun.management.HotSpotDiagnosticMXBean").asSubclass(typeof(PlatformManagedObject));
+        //        object hotSpotBean = ManagementFactory.getPlatformMXBean(beanClazz);
+        //        if (hotSpotBean != null)
+        //        {
+        //            Method getVMOptionMethod = beanClazz.GetMethod("getVMOption", typeof(string));
+        //            object vmOption = getVMOptionMethod.invoke(hotSpotBean, "ObjectAlignmentInBytes");
+        //            objectAlignment = Convert.ToInt32(vmOption.GetType().GetMethod("getValue").invoke(vmOption).ToString(), CultureInfo.InvariantCulture);
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        // Ignore.
+        //    }
 
-            NUM_BYTES_OBJECT_ALIGNMENT = objectAlignment;
+        //    NUM_BYTES_OBJECT_ALIGNMENT = objectAlignment;
 
-            // LUCENENET specific - this is not being used
-            //JVM_INFO_STRING = "[JVM: " + Constants.JVM_NAME + ", " + Constants.JVM_VERSION + ", " + Constants.JVM_VENDOR + ", " + Constants.JAVA_VENDOR + ", " + Constants.JAVA_VERSION + "]";
-        }
+        //   // LUCENENET specific -this is not being used
+        //    JVM_INFO_STRING = "[JVM: " + Constants.JVM_NAME + ", " + Constants.JVM_VERSION + ", " + Constants.JVM_VENDOR + ", " + Constants.JAVA_VENDOR + ", " + Constants.JAVA_VERSION + "]";
+        //}
 
         ///// <summary>
         ///// A handle to <code>sun.misc.Unsafe</code>.

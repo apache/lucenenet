@@ -97,13 +97,7 @@ namespace Lucene.Net.Expressions.JS
 
         private readonly IDictionary<string, MethodInfo> functions;
 
-        /// <summary>The default set of functions available to expressions.</summary>
-        /// <remarks>
-        /// The default set of functions available to expressions.
-        /// <para/>
-        /// See the <see cref="Lucene.Net.Expressions.JS">package documentation</see> for a list.
-        /// </remarks>
-        public static readonly IDictionary<string, MethodInfo> DEFAULT_FUNCTIONS;
+        
 
         private ILGenerator gen;
         private AssemblyBuilder asmBuilder;
@@ -601,7 +595,15 @@ namespace Lucene.Net.Expressions.JS
             }
         }
 
-        static JavascriptCompiler()
+        /// <summary>The default set of functions available to expressions.</summary>
+        /// <remarks>
+        /// The default set of functions available to expressions.
+        /// <para/>
+        /// See the <see cref="Lucene.Net.Expressions.JS">package documentation</see> for a list.
+        /// </remarks>
+        public static readonly IDictionary<string, MethodInfo> DEFAULT_FUNCTIONS = LoadDefaultFunctions();
+
+        private static IDictionary<string, MethodInfo> LoadDefaultFunctions() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             IDictionary<string, MethodInfo> map = new Dictionary<string, MethodInfo>();
             try
@@ -627,21 +629,19 @@ namespace Lucene.Net.Expressions.JS
                     }
 
                     string methodName = vals[1].Trim();
-                    int arity = int.Parse(vals[2]);
+                    int arity = int.Parse(vals[2], CultureInfo.InvariantCulture);
                     Type[] args = new Type[arity];
                     Arrays.Fill(args, typeof(double));
                     MethodInfo method = clazz.GetMethod(methodName, args);
                     CheckFunction(method);
                     map[property.Key] = method;
                 }
-
-
             }
             catch (Exception e)
             {
                 throw new Exception("Cannot resolve function", e);
             }
-            DEFAULT_FUNCTIONS = map;
+            return Collections.UnmodifiableMap(map);
         }
 
         private static Type GetType(string typeName)

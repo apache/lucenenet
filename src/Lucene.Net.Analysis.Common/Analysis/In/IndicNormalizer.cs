@@ -53,7 +53,18 @@ namespace Lucene.Net.Analysis.In
             }
         }
 
-        private static readonly IDictionary<Regex, ScriptData> scripts = new Dictionary<Regex, ScriptData>();
+        private static readonly IDictionary<Regex, ScriptData> scripts = new Dictionary<Regex, ScriptData>() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+            { new Regex(@"\p{IsDevanagari}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.DEVANAGARI, 0x0900) },
+            { new Regex(@"\p{IsBengali}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.BENGALI, 0x0980) },
+            { new Regex(@"\p{IsGurmukhi}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.GURMUKHI, 0x0A00) },
+            { new Regex(@"\p{IsGujarati}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.GUJARATI, 0x0A80) },
+            { new Regex(@"\p{IsOriya}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.ORIYA, 0x0B00) },
+            { new Regex(@"\p{IsTamil}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.TAMIL, 0x0B80) },
+            { new Regex(@"\p{IsTelugu}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.TELUGU, 0x0C00) },
+            { new Regex(@"\p{IsKannada}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.KANNADA, 0x0C80) },
+            { new Regex(@"\p{IsMalayalam}", RegexOptions.Compiled), new ScriptData(UnicodeBlock.MALAYALAM, 0x0D00) },
+        };
 
         [Flags]
         internal enum UnicodeBlock
@@ -71,165 +82,6 @@ namespace Lucene.Net.Analysis.In
 
         static IndicNormalizer()
         {
-            // Initialize jagged array
-            decompositions = new int[72][]
-            {
-                /* devanagari, gujarati vowel candra O */
-                new int[] { 0x05, 0x3E, 0x45, 0x11, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
-                /* devanagari short O */
-                new int[] { 0x05, 0x3E, 0x46, 0x12, (int)UnicodeBlock.DEVANAGARI }, 
-                /* devanagari, gujarati letter O */
-                new int[] { 0x05, 0x3E, 0x47, 0x13, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
-                /* devanagari letter AI, gujarati letter AU */
-                new int[] { 0x05, 0x3E, 0x48, 0x14, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI }, 
-                /* devanagari, bengali, gurmukhi, gujarati, oriya AA */
-                new int[] { 0x05, 0x3E,   -1, 0x06, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.GURMUKHI | (int)UnicodeBlock.GUJARATI | (int)UnicodeBlock.ORIYA }, 
-                /* devanagari letter candra A */
-                new int[] { 0x05, 0x45,   -1, 0x72, (int)UnicodeBlock.DEVANAGARI },
-                /* gujarati vowel candra E */
-                new int[] { 0x05, 0x45,   -1, 0x0D, (int)UnicodeBlock.GUJARATI },
-                /* devanagari letter short A */
-                new int[] { 0x05, 0x46,   -1, 0x04, (int)UnicodeBlock.DEVANAGARI },
-                /* gujarati letter E */
-                new int[] { 0x05, 0x47,   -1, 0x0F, (int)UnicodeBlock.GUJARATI }, 
-                /* gurmukhi, gujarati letter AI */
-                new int[] { 0x05, 0x48,   -1, 0x10, (int)UnicodeBlock.GURMUKHI | (int)UnicodeBlock.GUJARATI }, 
-                /* devanagari, gujarati vowel candra O */
-                new int[] { 0x05, 0x49,   -1, 0x11, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI }, 
-                /* devanagari short O */
-                new int[] { 0x05, 0x4A,   -1, 0x12, (int)UnicodeBlock.DEVANAGARI }, 
-                /* devanagari, gujarati letter O */
-                new int[] { 0x05, 0x4B,   -1, 0x13, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI }, 
-                /* devanagari letter AI, gurmukhi letter AU, gujarati letter AU */
-                new int[] { 0x05, 0x4C,   -1, 0x14, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GURMUKHI | (int)UnicodeBlock.GUJARATI }, 
-                /* devanagari, gujarati vowel candra O */
-                new int[] { 0x06, 0x45,   -1, 0x11, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },  
-                /* devanagari short O */
-                new int[] { 0x06, 0x46,   -1, 0x12, (int)UnicodeBlock.DEVANAGARI },
-                /* devanagari, gujarati letter O */
-                new int[] { 0x06, 0x47,   -1, 0x13, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
-                /* devanagari letter AI, gujarati letter AU */
-                new int[] { 0x06, 0x48,   -1, 0x14, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
-                /* malayalam letter II */
-                new int[] { 0x07, 0x57,   -1, 0x08, (int)UnicodeBlock.MALAYALAM },
-                /* devanagari letter UU */
-                new int[] { 0x09, 0x41,   -1, 0x0A, (int)UnicodeBlock.DEVANAGARI },
-                /* tamil, malayalam letter UU (some styles) */
-                new int[] { 0x09, 0x57,   -1, 0x0A, (int)UnicodeBlock.TAMIL | (int)UnicodeBlock.MALAYALAM },
-                /* malayalam letter AI */
-                new int[] { 0x0E, 0x46,   -1, 0x10, (int)UnicodeBlock.MALAYALAM },
-                /* devanagari candra E */
-                new int[] { 0x0F, 0x45,   -1, 0x0D, (int)UnicodeBlock.DEVANAGARI }, 
-                /* devanagari short E */
-                new int[] { 0x0F, 0x46,   -1, 0x0E, (int)UnicodeBlock.DEVANAGARI },
-                /* devanagari AI */
-                new int[] { 0x0F, 0x47,   -1, 0x10, (int)UnicodeBlock.DEVANAGARI },
-                /* oriya AI */
-                new int[] { 0x0F, 0x57,   -1, 0x10, (int)UnicodeBlock.ORIYA },
-                /* malayalam letter OO */
-                new int[] { 0x12, 0x3E,   -1, 0x13, (int)UnicodeBlock.MALAYALAM }, 
-                /* telugu, kannada letter AU */
-                new int[] { 0x12, 0x4C,   -1, 0x14, (int)UnicodeBlock.TELUGU | (int)UnicodeBlock.KANNADA }, 
-                /* telugu letter OO */
-                new int[] { 0x12, 0x55,   -1, 0x13, (int)UnicodeBlock.TELUGU },
-                /* tamil, malayalam letter AU */
-                new int[] { 0x12, 0x57,   -1, 0x14, (int)UnicodeBlock.TAMIL | (int)UnicodeBlock.MALAYALAM },
-                /* oriya letter AU */
-                new int[] { 0x13, 0x57,   -1, 0x14, (int)UnicodeBlock.ORIYA },
-                /* devanagari qa */
-                new int[] { 0x15, 0x3C,   -1, 0x58, (int)UnicodeBlock.DEVANAGARI },
-                /* devanagari, gurmukhi khha */
-                new int[] { 0x16, 0x3C,   -1, 0x59, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GURMUKHI },
-                /* devanagari, gurmukhi ghha */
-                new int[] { 0x17, 0x3C,   -1, 0x5A, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GURMUKHI },
-                /* devanagari, gurmukhi za */
-                new int[] { 0x1C, 0x3C,   -1, 0x5B, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GURMUKHI },
-                /* devanagari dddha, bengali, oriya rra */
-                new int[] { 0x21, 0x3C,   -1, 0x5C, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.ORIYA },
-                /* devanagari, bengali, oriya rha */
-                new int[] { 0x22, 0x3C,   -1, 0x5D, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.ORIYA },
-                /* malayalam chillu nn */
-                new int[] { 0x23, 0x4D, 0xFF, 0x7A, (int)UnicodeBlock.MALAYALAM },
-                /* bengali khanda ta */
-                new int[] { 0x24, 0x4D, 0xFF, 0x4E, (int)UnicodeBlock.BENGALI },
-                /* devanagari nnna */
-                new int[] { 0x28, 0x3C,   -1, 0x29, (int)UnicodeBlock.DEVANAGARI },
-                /* malayalam chillu n */
-                new int[] { 0x28, 0x4D, 0xFF, 0x7B, (int)UnicodeBlock.MALAYALAM },
-                /* devanagari, gurmukhi fa */
-                new int[] { 0x2B, 0x3C,   -1, 0x5E, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GURMUKHI },
-                /* devanagari, bengali yya */
-                new int[] { 0x2F, 0x3C,   -1, 0x5F, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.BENGALI },
-                /* telugu letter vocalic R */
-                new int[] { 0x2C, 0x41, 0x41, 0x0B, (int)UnicodeBlock.TELUGU },
-                /* devanagari rra */
-                new int[] { 0x30, 0x3C,   -1, 0x31, (int)UnicodeBlock.DEVANAGARI },
-                /* malayalam chillu rr */
-                new int[] { 0x30, 0x4D, 0xFF, 0x7C, (int)UnicodeBlock.MALAYALAM },
-                /* malayalam chillu l */
-                new int[] { 0x32, 0x4D, 0xFF, 0x7D, (int)UnicodeBlock.MALAYALAM },
-                /* devanagari llla */
-                new int[] { 0x33, 0x3C,   -1, 0x34, (int)UnicodeBlock.DEVANAGARI },
-                /* malayalam chillu ll */
-                new int[] { 0x33, 0x4D, 0xFF, 0x7E, (int)UnicodeBlock.MALAYALAM },
-                /* telugu letter MA */ 
-                new int[] { 0x35, 0x41,   -1, 0x2E, (int)UnicodeBlock.TELUGU },
-                /* devanagari, gujarati vowel sign candra O */
-                new int[] { 0x3E, 0x45,   -1, 0x49, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
-                /* devanagari vowel sign short O */
-                new int[] { 0x3E, 0x46,   -1, 0x4A, (int)UnicodeBlock.DEVANAGARI },
-                /* devanagari, gujarati vowel sign O */
-                new int[] { 0x3E, 0x47,   -1, 0x4B, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
-                /* devanagari, gujarati vowel sign AU */ 
-                new int[] { 0x3E, 0x48,   -1, 0x4C, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
-                /* kannada vowel sign II */ 
-                new int[] { 0x3F, 0x55,   -1, 0x40, (int)UnicodeBlock.KANNADA },
-                /* gurmukhi vowel sign UU (when stacking) */
-                new int[] { 0x41, 0x41,   -1, 0x42, (int)UnicodeBlock.GURMUKHI },
-                /* tamil, malayalam vowel sign O */
-                new int[] { 0x46, 0x3E,   -1, 0x4A, (int)UnicodeBlock.TAMIL | (int)UnicodeBlock.MALAYALAM },
-                /* kannada vowel sign OO */
-                new int[] { 0x46, 0x42, 0x55, 0x4B, (int)UnicodeBlock.KANNADA },
-                /* kannada vowel sign O */
-                new int[] { 0x46, 0x42,   -1, 0x4A, (int)UnicodeBlock.KANNADA },
-                /* malayalam vowel sign AI (if reordered twice) */
-                new int[]  { 0x46, 0x46,   -1, 0x48, (int)UnicodeBlock.MALAYALAM },
-                /* telugu, kannada vowel sign EE */
-                new int[] { 0x46, 0x55,   -1, 0x47, (int)UnicodeBlock.TELUGU | (int)UnicodeBlock.KANNADA },
-                /* telugu, kannada vowel sign AI */
-                new int[] { 0x46, 0x56,   -1, 0x48, (int)UnicodeBlock.TELUGU | (int)UnicodeBlock.KANNADA },
-                /* tamil, malayalam vowel sign AU */
-                new int[] { 0x46, 0x57,   -1, 0x4C, (int)UnicodeBlock.TAMIL | (int)UnicodeBlock.MALAYALAM },
-                /* bengali, oriya vowel sign O, tamil, malayalam vowel sign OO */
-                new int[] { 0x47, 0x3E,   -1, 0x4B, (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.ORIYA | (int)UnicodeBlock.TAMIL | (int)UnicodeBlock.MALAYALAM },
-                /* bengali, oriya vowel sign AU */
-                new int[] { 0x47, 0x57,   -1, 0x4C, (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.ORIYA },
-                /* kannada vowel sign OO */   
-                new int[] { 0x4A, 0x55,   -1, 0x4B, (int)UnicodeBlock.KANNADA },
-                /* gurmukhi letter I */
-                new int[] { 0x72, 0x3F,   -1, 0x07, (int)UnicodeBlock.GURMUKHI },
-                /* gurmukhi letter II */
-                new int[] { 0x72, 0x40,   -1, 0x08, (int)UnicodeBlock.GURMUKHI },
-                /* gurmukhi letter EE */
-                new int[] { 0x72, 0x47,   -1, 0x0F, (int)UnicodeBlock.GURMUKHI },
-                /* gurmukhi letter U */
-                new int[] { 0x73, 0x41,   -1, 0x09, (int)UnicodeBlock.GURMUKHI },
-                /* gurmukhi letter UU */
-                new int[] { 0x73, 0x42,   -1, 0x0A, (int)UnicodeBlock.GURMUKHI },
-                /* gurmukhi letter OO */
-                new int[] { 0x73, 0x4B,   -1, 0x13, (int)UnicodeBlock.GURMUKHI }
-            };
-
-            scripts[new Regex(@"\p{IsDevanagari}", RegexOptions.Compiled)] = new ScriptData(UnicodeBlock.DEVANAGARI, 0x0900);
-            scripts[new Regex(@"\p{IsBengali}", RegexOptions.Compiled)] = new ScriptData(UnicodeBlock.BENGALI, 0x0980);
-            scripts[new Regex(@"\p{IsGurmukhi}", RegexOptions.Compiled)] = new ScriptData(UnicodeBlock.GURMUKHI, 0x0A00);
-            scripts[new Regex(@"\p{IsGujarati}", RegexOptions.Compiled)] = new ScriptData(UnicodeBlock.GUJARATI, 0x0A80);
-            scripts[new Regex(@"\p{IsOriya}", RegexOptions.Compiled)] = new ScriptData(UnicodeBlock.ORIYA, 0x0B00);
-            scripts[new Regex(@"\p{IsTamil}", RegexOptions.Compiled)] = new ScriptData(UnicodeBlock.TAMIL, 0x0B80);
-            scripts[new Regex(@"\p{IsTelugu}", RegexOptions.Compiled)] = new ScriptData(UnicodeBlock.TELUGU, 0x0C00);
-            scripts[new Regex(@"\p{IsKannada}", RegexOptions.Compiled)] = new ScriptData(UnicodeBlock.KANNADA, 0x0C80);
-            scripts[new Regex(@"\p{IsMalayalam}", RegexOptions.Compiled)] = new ScriptData(UnicodeBlock.MALAYALAM, 0x0D00);
-
             foreach (ScriptData sd in scripts.Values)
             {
                 sd.decompMask = new OpenBitSet(0x7F);
@@ -248,17 +100,163 @@ namespace Lucene.Net.Analysis.In
         /// <summary>
         /// Decompositions according to Unicode 5.2, 
         /// and http://ldc.upenn.edu/myl/IndianScriptsUnicode.html
-        /// 
+        /// <para/>
         /// Most of these are not handled by unicode normalization anyway.
-        /// 
+        /// <para/>
         /// The numbers here represent offsets into the respective codepages,
         /// with -1 representing null and 0xFF representing zero-width joiner.
-        /// 
+        /// <para/>
         /// the columns are: ch1, ch2, ch3, res, flags
         /// ch1, ch2, and ch3 are the decomposition
         /// res is the composition, and flags are the scripts to which it applies.
         /// </summary>
-        private static readonly int[][] decompositions = { };
+        private static readonly int[][] decompositions = new int[][] // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        {
+            /* devanagari, gujarati vowel candra O */
+            new int[] { 0x05, 0x3E, 0x45, 0x11, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
+            /* devanagari short O */
+            new int[] { 0x05, 0x3E, 0x46, 0x12, (int)UnicodeBlock.DEVANAGARI }, 
+            /* devanagari, gujarati letter O */
+            new int[] { 0x05, 0x3E, 0x47, 0x13, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
+            /* devanagari letter AI, gujarati letter AU */
+            new int[] { 0x05, 0x3E, 0x48, 0x14, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI }, 
+            /* devanagari, bengali, gurmukhi, gujarati, oriya AA */
+            new int[] { 0x05, 0x3E,   -1, 0x06, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.GURMUKHI | (int)UnicodeBlock.GUJARATI | (int)UnicodeBlock.ORIYA }, 
+            /* devanagari letter candra A */
+            new int[] { 0x05, 0x45,   -1, 0x72, (int)UnicodeBlock.DEVANAGARI },
+            /* gujarati vowel candra E */
+            new int[] { 0x05, 0x45,   -1, 0x0D, (int)UnicodeBlock.GUJARATI },
+            /* devanagari letter short A */
+            new int[] { 0x05, 0x46,   -1, 0x04, (int)UnicodeBlock.DEVANAGARI },
+            /* gujarati letter E */
+            new int[] { 0x05, 0x47,   -1, 0x0F, (int)UnicodeBlock.GUJARATI }, 
+            /* gurmukhi, gujarati letter AI */
+            new int[] { 0x05, 0x48,   -1, 0x10, (int)UnicodeBlock.GURMUKHI | (int)UnicodeBlock.GUJARATI }, 
+            /* devanagari, gujarati vowel candra O */
+            new int[] { 0x05, 0x49,   -1, 0x11, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI }, 
+            /* devanagari short O */
+            new int[] { 0x05, 0x4A,   -1, 0x12, (int)UnicodeBlock.DEVANAGARI }, 
+            /* devanagari, gujarati letter O */
+            new int[] { 0x05, 0x4B,   -1, 0x13, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI }, 
+            /* devanagari letter AI, gurmukhi letter AU, gujarati letter AU */
+            new int[] { 0x05, 0x4C,   -1, 0x14, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GURMUKHI | (int)UnicodeBlock.GUJARATI }, 
+            /* devanagari, gujarati vowel candra O */
+            new int[] { 0x06, 0x45,   -1, 0x11, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },  
+            /* devanagari short O */
+            new int[] { 0x06, 0x46,   -1, 0x12, (int)UnicodeBlock.DEVANAGARI },
+            /* devanagari, gujarati letter O */
+            new int[] { 0x06, 0x47,   -1, 0x13, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
+            /* devanagari letter AI, gujarati letter AU */
+            new int[] { 0x06, 0x48,   -1, 0x14, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
+            /* malayalam letter II */
+            new int[] { 0x07, 0x57,   -1, 0x08, (int)UnicodeBlock.MALAYALAM },
+            /* devanagari letter UU */
+            new int[] { 0x09, 0x41,   -1, 0x0A, (int)UnicodeBlock.DEVANAGARI },
+            /* tamil, malayalam letter UU (some styles) */
+            new int[] { 0x09, 0x57,   -1, 0x0A, (int)UnicodeBlock.TAMIL | (int)UnicodeBlock.MALAYALAM },
+            /* malayalam letter AI */
+            new int[] { 0x0E, 0x46,   -1, 0x10, (int)UnicodeBlock.MALAYALAM },
+            /* devanagari candra E */
+            new int[] { 0x0F, 0x45,   -1, 0x0D, (int)UnicodeBlock.DEVANAGARI }, 
+            /* devanagari short E */
+            new int[] { 0x0F, 0x46,   -1, 0x0E, (int)UnicodeBlock.DEVANAGARI },
+            /* devanagari AI */
+            new int[] { 0x0F, 0x47,   -1, 0x10, (int)UnicodeBlock.DEVANAGARI },
+            /* oriya AI */
+            new int[] { 0x0F, 0x57,   -1, 0x10, (int)UnicodeBlock.ORIYA },
+            /* malayalam letter OO */
+            new int[] { 0x12, 0x3E,   -1, 0x13, (int)UnicodeBlock.MALAYALAM }, 
+            /* telugu, kannada letter AU */
+            new int[] { 0x12, 0x4C,   -1, 0x14, (int)UnicodeBlock.TELUGU | (int)UnicodeBlock.KANNADA }, 
+            /* telugu letter OO */
+            new int[] { 0x12, 0x55,   -1, 0x13, (int)UnicodeBlock.TELUGU },
+            /* tamil, malayalam letter AU */
+            new int[] { 0x12, 0x57,   -1, 0x14, (int)UnicodeBlock.TAMIL | (int)UnicodeBlock.MALAYALAM },
+            /* oriya letter AU */
+            new int[] { 0x13, 0x57,   -1, 0x14, (int)UnicodeBlock.ORIYA },
+            /* devanagari qa */
+            new int[] { 0x15, 0x3C,   -1, 0x58, (int)UnicodeBlock.DEVANAGARI },
+            /* devanagari, gurmukhi khha */
+            new int[] { 0x16, 0x3C,   -1, 0x59, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GURMUKHI },
+            /* devanagari, gurmukhi ghha */
+            new int[] { 0x17, 0x3C,   -1, 0x5A, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GURMUKHI },
+            /* devanagari, gurmukhi za */
+            new int[] { 0x1C, 0x3C,   -1, 0x5B, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GURMUKHI },
+            /* devanagari dddha, bengali, oriya rra */
+            new int[] { 0x21, 0x3C,   -1, 0x5C, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.ORIYA },
+            /* devanagari, bengali, oriya rha */
+            new int[] { 0x22, 0x3C,   -1, 0x5D, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.ORIYA },
+            /* malayalam chillu nn */
+            new int[] { 0x23, 0x4D, 0xFF, 0x7A, (int)UnicodeBlock.MALAYALAM },
+            /* bengali khanda ta */
+            new int[] { 0x24, 0x4D, 0xFF, 0x4E, (int)UnicodeBlock.BENGALI },
+            /* devanagari nnna */
+            new int[] { 0x28, 0x3C,   -1, 0x29, (int)UnicodeBlock.DEVANAGARI },
+            /* malayalam chillu n */
+            new int[] { 0x28, 0x4D, 0xFF, 0x7B, (int)UnicodeBlock.MALAYALAM },
+            /* devanagari, gurmukhi fa */
+            new int[] { 0x2B, 0x3C,   -1, 0x5E, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GURMUKHI },
+            /* devanagari, bengali yya */
+            new int[] { 0x2F, 0x3C,   -1, 0x5F, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.BENGALI },
+            /* telugu letter vocalic R */
+            new int[] { 0x2C, 0x41, 0x41, 0x0B, (int)UnicodeBlock.TELUGU },
+            /* devanagari rra */
+            new int[] { 0x30, 0x3C,   -1, 0x31, (int)UnicodeBlock.DEVANAGARI },
+            /* malayalam chillu rr */
+            new int[] { 0x30, 0x4D, 0xFF, 0x7C, (int)UnicodeBlock.MALAYALAM },
+            /* malayalam chillu l */
+            new int[] { 0x32, 0x4D, 0xFF, 0x7D, (int)UnicodeBlock.MALAYALAM },
+            /* devanagari llla */
+            new int[] { 0x33, 0x3C,   -1, 0x34, (int)UnicodeBlock.DEVANAGARI },
+            /* malayalam chillu ll */
+            new int[] { 0x33, 0x4D, 0xFF, 0x7E, (int)UnicodeBlock.MALAYALAM },
+            /* telugu letter MA */ 
+            new int[] { 0x35, 0x41,   -1, 0x2E, (int)UnicodeBlock.TELUGU },
+            /* devanagari, gujarati vowel sign candra O */
+            new int[] { 0x3E, 0x45,   -1, 0x49, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
+            /* devanagari vowel sign short O */
+            new int[] { 0x3E, 0x46,   -1, 0x4A, (int)UnicodeBlock.DEVANAGARI },
+            /* devanagari, gujarati vowel sign O */
+            new int[] { 0x3E, 0x47,   -1, 0x4B, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
+            /* devanagari, gujarati vowel sign AU */ 
+            new int[] { 0x3E, 0x48,   -1, 0x4C, (int)UnicodeBlock.DEVANAGARI | (int)UnicodeBlock.GUJARATI },
+            /* kannada vowel sign II */ 
+            new int[] { 0x3F, 0x55,   -1, 0x40, (int)UnicodeBlock.KANNADA },
+            /* gurmukhi vowel sign UU (when stacking) */
+            new int[] { 0x41, 0x41,   -1, 0x42, (int)UnicodeBlock.GURMUKHI },
+            /* tamil, malayalam vowel sign O */
+            new int[] { 0x46, 0x3E,   -1, 0x4A, (int)UnicodeBlock.TAMIL | (int)UnicodeBlock.MALAYALAM },
+            /* kannada vowel sign OO */
+            new int[] { 0x46, 0x42, 0x55, 0x4B, (int)UnicodeBlock.KANNADA },
+            /* kannada vowel sign O */
+            new int[] { 0x46, 0x42,   -1, 0x4A, (int)UnicodeBlock.KANNADA },
+            /* malayalam vowel sign AI (if reordered twice) */
+            new int[]  { 0x46, 0x46,   -1, 0x48, (int)UnicodeBlock.MALAYALAM },
+            /* telugu, kannada vowel sign EE */
+            new int[] { 0x46, 0x55,   -1, 0x47, (int)UnicodeBlock.TELUGU | (int)UnicodeBlock.KANNADA },
+            /* telugu, kannada vowel sign AI */
+            new int[] { 0x46, 0x56,   -1, 0x48, (int)UnicodeBlock.TELUGU | (int)UnicodeBlock.KANNADA },
+            /* tamil, malayalam vowel sign AU */
+            new int[] { 0x46, 0x57,   -1, 0x4C, (int)UnicodeBlock.TAMIL | (int)UnicodeBlock.MALAYALAM },
+            /* bengali, oriya vowel sign O, tamil, malayalam vowel sign OO */
+            new int[] { 0x47, 0x3E,   -1, 0x4B, (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.ORIYA | (int)UnicodeBlock.TAMIL | (int)UnicodeBlock.MALAYALAM },
+            /* bengali, oriya vowel sign AU */
+            new int[] { 0x47, 0x57,   -1, 0x4C, (int)UnicodeBlock.BENGALI | (int)UnicodeBlock.ORIYA },
+            /* kannada vowel sign OO */   
+            new int[] { 0x4A, 0x55,   -1, 0x4B, (int)UnicodeBlock.KANNADA },
+            /* gurmukhi letter I */
+            new int[] { 0x72, 0x3F,   -1, 0x07, (int)UnicodeBlock.GURMUKHI },
+            /* gurmukhi letter II */
+            new int[] { 0x72, 0x40,   -1, 0x08, (int)UnicodeBlock.GURMUKHI },
+            /* gurmukhi letter EE */
+            new int[] { 0x72, 0x47,   -1, 0x0F, (int)UnicodeBlock.GURMUKHI },
+            /* gurmukhi letter U */
+            new int[] { 0x73, 0x41,   -1, 0x09, (int)UnicodeBlock.GURMUKHI },
+            /* gurmukhi letter UU */
+            new int[] { 0x73, 0x42,   -1, 0x0A, (int)UnicodeBlock.GURMUKHI },
+            /* gurmukhi letter OO */
+            new int[] { 0x73, 0x4B,   -1, 0x13, (int)UnicodeBlock.GURMUKHI }
+        };
 
 
         /// <summary>

@@ -302,7 +302,7 @@ namespace Lucene.Net.Search
 
         internal static readonly IndexReader[] emptyReaders = LoadEmptyReaders();
 
-        private static IndexReader[] LoadEmptyReaders()
+        private static IndexReader[] LoadEmptyReaders() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             var emptyReaders = new IndexReader[8];
             try

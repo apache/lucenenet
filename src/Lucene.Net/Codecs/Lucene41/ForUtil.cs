@@ -46,9 +46,9 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <see cref="Lucene41PostingsFormat.BLOCK_SIZE"/> are garbage, it is necessary to allocate value buffers
         /// whose size is &gt;= MAX_DATA_SIZE to avoid <see cref="IndexOutOfRangeException"/>s.
         /// </summary>
-        public static readonly int MAX_DATA_SIZE;
+        public static readonly int MAX_DATA_SIZE = LoadMaxDataSize();
 
-        static ForUtil()
+        private static int LoadMaxDataSize() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             int maxDataSize = 0;
             for (int version = PackedInt32s.VERSION_START; version <= PackedInt32s.VERSION_CURRENT; version++)
@@ -67,7 +67,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     }
                 }
             }
-            MAX_DATA_SIZE = maxDataSize;
+            return maxDataSize;
         }
 
         /// <summary>

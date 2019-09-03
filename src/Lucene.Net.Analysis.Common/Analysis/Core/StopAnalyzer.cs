@@ -41,9 +41,9 @@ namespace Lucene.Net.Analysis.Core
         /// An unmodifiable set containing some common English words that are not usually useful
         /// for searching.
         /// </summary>
-        public static readonly CharArraySet ENGLISH_STOP_WORDS_SET;
+        public static readonly CharArraySet ENGLISH_STOP_WORDS_SET = LoadEnglishStopWordsSet();
 
-        static StopAnalyzer()
+        private static CharArraySet LoadEnglishStopWordsSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             IList<string> stopWords = Arrays.AsList("a", "an", "and", "are", "as", "at", "be", 
                 "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", 
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Core
 #pragma warning disable 612, 618
             var stopSet = new CharArraySet(LuceneVersion.LUCENE_CURRENT, stopWords, false);
 #pragma warning restore 612, 618
-            ENGLISH_STOP_WORDS_SET = CharArraySet.UnmodifiableSet(stopSet);
+            return CharArraySet.UnmodifiableSet(stopSet);
         }
 
         /// <summary>
