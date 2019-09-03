@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 }
                 charsSpare.Grow(spare.Length);
                 UnicodeUtil.UTF8toUTF16(spare.Bytes, spare.Offset, spare.Length, charsSpare);
-                trie.Put(charsSpare.ToString(), Convert.ToInt64(weight));
+                trie.Put(charsSpare.ToString(), weight);
             }
         }
 
@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             sbyte mask = (sbyte)@in.ReadByte();
             if ((mask & HAS_VALUE) != 0)
             {
-                node.data = Convert.ToInt64(@in.ReadInt64());
+                node.data = @in.ReadInt64();
             }
             if ((mask & LO_KID) != 0)
             {

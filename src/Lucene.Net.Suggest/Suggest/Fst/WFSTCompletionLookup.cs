@@ -261,7 +261,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             else
             {
-                return Convert.ToInt32(DecodeWeight(result.GetValueOrDefault() + arc.NextFinalOutput.GetValueOrDefault()));
+                return DecodeWeight(result.GetValueOrDefault() + arc.NextFinalOutput.GetValueOrDefault());
             }
         }
 

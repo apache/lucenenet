@@ -666,13 +666,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 BytesRef payload = new BytesRef(payloadLen);
                 Array.Copy(output2.Bytes, sepIndex + 1, payload.Bytes, 0, payloadLen);
                 payload.Length = payloadLen;
-                result = new LookupResult(spare.ToString(), DecodeWeight(output1.Value), payload);
+                result = new LookupResult(spare.ToString(), DecodeWeight(output1.GetValueOrDefault()), payload);
             }
             else
             {
                 spare.Grow(output2.Length);
                 UnicodeUtil.UTF8toUTF16(output2, spare);
-                result = new LookupResult(spare.ToString(), DecodeWeight(output1.Value));
+                result = new LookupResult(spare.ToString(), DecodeWeight(output1.GetValueOrDefault()));
             }
 
             return result;

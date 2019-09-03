@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Lucene.Net.Search.Spell
@@ -90,6 +91,11 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// the string distance to use </summary>
         private IStringDistance distance = INTERNAL_LEVENSHTEIN;
+
+        /// <summary>
+        /// The culture to use for lowercasing terms.
+        /// </summary>
+        private CultureInfo lowerCaseTermsCulture = null; // LUCENENET specific
 
         /// <summary>
         /// Creates a DirectSpellChecker with default configuration values 
@@ -277,6 +283,21 @@ namespace Lucene.Net.Search.Spell
             }
         }
 
+        /// <summary>
+        /// Gets or sets the culture to use for lowercasing terms.
+        /// Set to <c>null</c> (the default) to use <see cref="CultureInfo.CurrentCulture"/>.
+        /// </summary>
+        public virtual CultureInfo LowerCaseTermsCulture // LUCENENET specific
+        {
+            get
+            {
+                return lowerCaseTermsCulture ?? CultureInfo.CurrentCulture;
+            }
+            set
+            {
+                lowerCaseTermsCulture = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the comparer for sorting suggestions.
@@ -364,7 +385,7 @@ namespace Lucene.Net.Search.Spell
 
             if (lowerCaseTerms)
             {
-                term = new Term(term.Field, text.ToLower());
+                term = new Term(term.Field, LowerCaseTermsCulture.TextInfo.ToLower(text));
             }
 
             int docfreq = ir.DocFreq(term);

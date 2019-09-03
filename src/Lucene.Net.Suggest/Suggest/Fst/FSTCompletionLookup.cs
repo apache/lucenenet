@@ -283,7 +283,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         public virtual object Get(string key)
         {
             int bucket = normalCompletion.GetBucket(key);
-            return bucket == -1 ? (long?)null : Convert.ToInt64(bucket);
+            return bucket == -1 ? (long?)null : bucket;
         }
 
         public override bool Store(DataOutput output)

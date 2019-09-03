@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Suggest.Tst
                 charsSpare.Grow(spare.Length);
                 UnicodeUtil.UTF8toUTF16(spare.Bytes, spare.Offset, spare.Length, charsSpare);
                 tokens.Add(charsSpare.ToString());
-                vals.Add(Convert.ToInt64(tfit.Weight));
+                vals.Add(tfit.Weight);
             }
             autocomplete.BalancedTree(tokens.ToArray(), vals.ToArray(), 0, tokens.Count - 1, root);
         }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search.Suggest.Tst
             }
             if ((mask & HAS_VALUE) != 0)
             {
-                node.val = Convert.ToInt64(@in.ReadInt64());
+                node.val = @in.ReadInt64();
             }
             if ((mask & LO_KID) != 0)
             {
