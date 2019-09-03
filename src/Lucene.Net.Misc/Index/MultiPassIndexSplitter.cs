@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -147,7 +148,7 @@ namespace Lucene.Net.Index
                     }
                     else if (args[i].Equals("-num", StringComparison.Ordinal))
                     {
-                        numParts = Convert.ToInt32(args[++i]);
+                        numParts = Convert.ToInt32(args[++i], CultureInfo.InvariantCulture);
                     }
                     else if (args[i].Equals("-seq", StringComparison.Ordinal))
                     {

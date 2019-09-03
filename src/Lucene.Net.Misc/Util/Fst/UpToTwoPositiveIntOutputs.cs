@@ -128,7 +128,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                return Convert.ToInt64(v);
+                return v;
             }
         }
 
@@ -243,7 +243,7 @@ namespace Lucene.Net.Util.Fst
                 }
                 else
                 {
-                    return Convert.ToInt64(v);
+                    return v;
                 }
             }
             else

@@ -4,6 +4,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using Console = Lucene.Net.Support.SystemConsole;
 
@@ -67,14 +68,8 @@ namespace Lucene.Net.Misc
                 }
                 else
                 {
-                    try
-                    {
-                        numTerms = Convert.ToInt32(args[i]);
-                    }
-                    catch (FormatException)
-                    {
+                    if (!int.TryParse(args[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out numTerms))
                         field = args[i];
-                    }
                 }
             }
 
