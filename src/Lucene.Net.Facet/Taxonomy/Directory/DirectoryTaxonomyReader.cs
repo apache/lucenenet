@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -331,7 +332,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
                 // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
                 // and removing the lock seems to make the performance better.
-                ordinalCache.Put(cp, new Int32Class { Value = Convert.ToInt32(ret) });
+                ordinalCache.Put(cp, new Int32Class { Value = Convert.ToInt32(ret, CultureInfo.InvariantCulture) });
             }
 
             return ret;

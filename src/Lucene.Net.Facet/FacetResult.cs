@@ -112,7 +112,6 @@ namespace Lucene.Net.Facet
             else
             {
                 sb.AppendFormat(CultureInfo.InvariantCulture, "{0:0.0#####}", Value); // Decimal formatting
-                //sb.Append(Number.ToString(Value)); // LUCENENET TODO: Decimal formatting causing a Demo test to fail because of double formatting inaccuracy
             }
             sb.Append(" childCount=");
             sb.Append(ChildCount);
