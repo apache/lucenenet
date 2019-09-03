@@ -249,7 +249,7 @@ namespace Lucene.Net.QueryParsers.Classic
 					default: 
 						if ((ch = str[i]) < 0x20 || ch > 0x7e)
 						{
-							string s = "0000" + System.Convert.ToString(ch, 16);
+							string s = "0000" + Convert.ToString(ch, 16);
 							retval.Append("\\u" + s.Substring(s.Length - 4, (s.Length) - (s.Length - 4)));
 						}
 						else
