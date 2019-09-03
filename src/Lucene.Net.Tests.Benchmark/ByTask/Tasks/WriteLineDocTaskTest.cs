@@ -203,7 +203,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         internal static void assertHeaderLine(String line)
         {
-            assertTrue("First line should be a header line", line.StartsWith(WriteLineDocTask.FIELDS_HEADER_INDICATOR, StringComparison.Ordinal));
+            assertTrue("First line should be a header line", line != null && line.StartsWith(WriteLineDocTask.FIELDS_HEADER_INDICATOR, StringComparison.Ordinal));
         }
 
         /* Tests WriteLineDocTask with a bzip2 format. */
@@ -370,10 +370,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private class ThreadAnonymousHelper : ThreadClass
         {
             private readonly WriteLineDocTask wldt;
-            internal Exception Exception { get; private set; }
             public ThreadAnonymousHelper(string name, WriteLineDocTask wldt)
                 : base(name)
             {
+                this.IsDebug = true;
                 this.wldt = wldt;
             }
 
@@ -385,8 +385,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 catch (Exception e)
                 {
-                    //throw new Exception(e.ToString(), e);
-                    this.Exception = e;
+                    throw new Exception(e.ToString(), e);
                 }
             }
         }
@@ -396,31 +395,21 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             FileInfo file = new FileInfo(Path.Combine(getWorkDir().FullName, "one-line"));
             PerfRunData runData = createPerfRunData(file, false, typeof(ThreadingDocMaker).AssemblyQualifiedName);
-            WriteLineDocTask wldt = new WriteLineDocTask(runData);
             ThreadClass[] threads = new ThreadClass[10];
-            for (int i = 0; i < threads.Length; i++)
+            using (WriteLineDocTask wldt = new WriteLineDocTask(runData))
             {
-                threads[i] = new ThreadAnonymousHelper("t" + i, wldt);
-            }
-
-            foreach (ThreadClass t in threads) t.Start();
-            foreach (ThreadClass t in threads) t.Join();
-
-            wldt.Dispose();
-
-            // LUCENENET specific - need to transfer any exception that occurred back to this thread
-            foreach (ThreadClass t in threads)
-            {
-                var thread = t as ThreadAnonymousHelper;
-
-                if (thread?.Exception != null)
+                for (int i = 0; i < threads.Length; i++)
                 {
-                    throw thread.Exception;
+                    threads[i] = new ThreadAnonymousHelper("t" + i, wldt);
                 }
-            }
+
+                foreach (ThreadClass t in threads) t.Start();
+                foreach (ThreadClass t in threads) t.Join();
+
+            } // wldt.Dispose();
 
             ISet<String> ids = new HashSet<string>();
-            TextReader br = new StreamReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), Encoding.UTF8);
+            TextReader br = new StreamReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.None), Encoding.UTF8);
             try
             {
                 String line = br.ReadLine();
@@ -428,6 +417,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 for (int i = 0; i < threads.Length; i++)
                 {
                     line = br.ReadLine();
+                    assertNotNull($"line for index {i.ToString()} is missing", line); // LUCENENET specific - ensure the line is there before splitting
                     String[] parts = line.Split(WriteLineDocTask.SEP).TrimEnd();
                     assertEquals(line, 3, parts.Length);
                     // check that all thread names written are the same in the same line
