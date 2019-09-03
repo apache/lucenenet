@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
@@ -290,7 +291,7 @@ namespace Lucene.Net.Analysis.Synonym
 
                 if (@params.Length > 1)
                 {
-                    posInc = int.Parse(@params[1]);
+                    posInc = int.Parse(@params[1], CultureInfo.InvariantCulture);
                 }
                 else
                 {
@@ -299,7 +300,7 @@ namespace Lucene.Net.Analysis.Synonym
 
                 if (@params.Length > 2)
                 {
-                    start = int.Parse(@params[2]);
+                    start = int.Parse(@params[2], CultureInfo.InvariantCulture);
                 }
                 else
                 {
@@ -308,7 +309,7 @@ namespace Lucene.Net.Analysis.Synonym
 
                 if (@params.Length > 3)
                 {
-                    end = int.Parse(@params[3]);
+                    end = int.Parse(@params[3], CultureInfo.InvariantCulture);
                 }
                 else
                 {

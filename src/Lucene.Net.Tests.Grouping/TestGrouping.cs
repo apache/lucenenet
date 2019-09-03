@@ -34,6 +34,7 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -1387,7 +1388,7 @@ namespace Lucene.Net.Search.Grouping
                                         if (groupDocsHits.GroupSortValues != null)
                                         {
                                             //Console.WriteLine("remap " + groupDocsHits.groupSortValues[groupSortIDX] + " to " + termScoreMap.get(groupDocsHits.groupSortValues[groupSortIDX]));
-                                            groupDocsHits.GroupSortValues[groupSortIDX] = termScoreMap[Convert.ToSingle(groupDocsHits.GroupSortValues[groupSortIDX])];
+                                            groupDocsHits.GroupSortValues[groupSortIDX] = termScoreMap[Convert.ToSingle(groupDocsHits.GroupSortValues[groupSortIDX], CultureInfo.InvariantCulture)];
                                             assertNotNull(groupDocsHits.GroupSortValues[groupSortIDX]);
                                         }
                                     }
@@ -1406,7 +1407,7 @@ namespace Lucene.Net.Search.Grouping
                                             FieldDoc hit = (FieldDoc)_hit;
                                             if (hit.Fields != null)
                                             {
-                                                hit.Fields[docSortIDX] = termScoreMap[Convert.ToSingle(hit.Fields[docSortIDX])];
+                                                hit.Fields[docSortIDX] = termScoreMap[Convert.ToSingle(hit.Fields[docSortIDX], CultureInfo.InvariantCulture)];
                                                 assertNotNull(hit.Fields[docSortIDX]);
                                             }
                                         }

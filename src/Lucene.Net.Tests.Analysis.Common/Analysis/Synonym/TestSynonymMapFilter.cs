@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -120,12 +121,12 @@ namespace Lucene.Net.Analysis.Synonym
                         expectedToken = expectedAtPos[atPos].Substring(0, colonIndex - 0);
                         if (underbarIndex != -1)
                         {
-                            expectedEndOffset = int.Parse(expectedAtPos[atPos].Substring(1 + colonIndex, underbarIndex - (1 + colonIndex)));
-                            expectedPosLen = int.Parse(expectedAtPos[atPos].Substring(1 + underbarIndex));
+                            expectedEndOffset = int.Parse(expectedAtPos[atPos].Substring(1 + colonIndex, underbarIndex - (1 + colonIndex)), CultureInfo.InvariantCulture);
+                            expectedPosLen = int.Parse(expectedAtPos[atPos].Substring(1 + underbarIndex), CultureInfo.InvariantCulture);
                         }
                         else
                         {
-                            expectedEndOffset = int.Parse(expectedAtPos[atPos].Substring(1 + colonIndex));
+                            expectedEndOffset = int.Parse(expectedAtPos[atPos].Substring(1 + colonIndex), CultureInfo.InvariantCulture);
                             expectedPosLen = 1;
                         }
                     }
