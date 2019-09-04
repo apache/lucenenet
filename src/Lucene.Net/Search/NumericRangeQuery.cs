@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -339,12 +340,12 @@ namespace Lucene.Net.Search
                             long minBound;
                             if (this.outerInstance.dataType == NumericType.INT64)
                             {
-                                minBound = (this.outerInstance.min == null) ? long.MinValue : Convert.ToInt64(this.outerInstance.min.Value);
+                                minBound = (this.outerInstance.min == null) ? long.MinValue : Convert.ToInt64(this.outerInstance.min.Value, CultureInfo.InvariantCulture);
                             }
                             else
                             {
                                 Debug.Assert(this.outerInstance.dataType == NumericType.DOUBLE);
-                                minBound = (this.outerInstance.min == null) ? INT64_NEGATIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.min.Value));
+                                minBound = (this.outerInstance.min == null) ? INT64_NEGATIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.min.Value, CultureInfo.InvariantCulture));
                             }
                             if (!this.outerInstance.minInclusive && this.outerInstance.min != null)
                             {
@@ -359,12 +360,12 @@ namespace Lucene.Net.Search
                             long maxBound;
                             if (this.outerInstance.dataType == NumericType.INT64)
                             {
-                                maxBound = (this.outerInstance.max == null) ? long.MaxValue : Convert.ToInt64(this.outerInstance.max);
+                                maxBound = (this.outerInstance.max == null) ? long.MaxValue : Convert.ToInt64(this.outerInstance.max, CultureInfo.InvariantCulture);
                             }
                             else
                             {
                                 Debug.Assert(this.outerInstance.dataType == NumericType.DOUBLE);
-                                maxBound = (this.outerInstance.max == null) ? INT64_POSITIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.max));
+                                maxBound = (this.outerInstance.max == null) ? INT64_POSITIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.max, CultureInfo.InvariantCulture));
                             }
                             if (!this.outerInstance.maxInclusive && this.outerInstance.max != null)
                             {
@@ -386,12 +387,12 @@ namespace Lucene.Net.Search
                             int minBound;
                             if (this.outerInstance.dataType == NumericType.INT32)
                             {
-                                minBound = (this.outerInstance.min == null) ? int.MinValue : Convert.ToInt32(this.outerInstance.min);
+                                minBound = (this.outerInstance.min == null) ? int.MinValue : Convert.ToInt32(this.outerInstance.min, CultureInfo.InvariantCulture);
                             }
                             else
                             {
                                 Debug.Assert(this.outerInstance.dataType == NumericType.SINGLE);
-                                minBound = (this.outerInstance.min == null) ? INT32_NEGATIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.min));
+                                minBound = (this.outerInstance.min == null) ? INT32_NEGATIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.min, CultureInfo.InvariantCulture));
                             }
                             if (!this.outerInstance.minInclusive && this.outerInstance.min != null)
                             {
@@ -406,12 +407,12 @@ namespace Lucene.Net.Search
                             int maxBound;
                             if (this.outerInstance.dataType == NumericType.INT32)
                             {
-                                maxBound = (this.outerInstance.max == null) ? int.MaxValue : Convert.ToInt32(this.outerInstance.max);
+                                maxBound = (this.outerInstance.max == null) ? int.MaxValue : Convert.ToInt32(this.outerInstance.max, CultureInfo.InvariantCulture);
                             }
                             else
                             {
                                 Debug.Assert(this.outerInstance.dataType == NumericType.SINGLE);
-                                maxBound = (this.outerInstance.max == null) ? INT32_POSITIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.max));
+                                maxBound = (this.outerInstance.max == null) ? INT32_POSITIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.max, CultureInfo.InvariantCulture));
                             }
                             if (!this.outerInstance.maxInclusive && this.outerInstance.max != null)
                             {

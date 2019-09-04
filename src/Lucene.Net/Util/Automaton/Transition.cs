@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 
 /*
@@ -166,7 +167,7 @@ namespace Lucene.Net.Util.Automaton
             else
             {
                 b.Append("\\\\U");
-                string s = c.ToString("x");
+                string s = c.ToString("x", CultureInfo.InvariantCulture);
                 if (c < 0x10)
                 {
                     b.Append("0000000").Append(s);

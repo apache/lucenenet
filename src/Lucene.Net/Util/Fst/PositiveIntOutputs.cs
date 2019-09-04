@@ -139,7 +139,7 @@ namespace Lucene.Net.Util.Fst
 
         public override string OutputToString(long? output)
         {
-            return output.ToString();
+            return output.ToString(); // LUCENENET TODO: Invariant Culture?
         }
 
         public override string ToString()

@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -312,7 +313,7 @@ namespace Lucene.Net.Index
                 {
                     if (file.StartsWith(SNAPSHOTS_PREFIX, StringComparison.Ordinal))
                     {
-                        long gen = Convert.ToInt64(file.Substring(SNAPSHOTS_PREFIX.Length));
+                        long gen = Convert.ToInt64(file.Substring(SNAPSHOTS_PREFIX.Length), CultureInfo.InvariantCulture);
                         if (genLoaded == -1 || gen > genLoaded)
                         {
                             snapshotFiles.Add(file);

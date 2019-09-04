@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
             }
 
             terms.Add(term);
-            positions.Add(Convert.ToInt32(position));
+            positions.Add(position);
             if (position > maxPosition)
             {
                 maxPosition = position;

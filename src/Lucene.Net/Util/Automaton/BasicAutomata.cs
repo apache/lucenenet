@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 /*
@@ -246,8 +247,8 @@ namespace Lucene.Net.Util.Automaton
         public static Automaton MakeInterval(int min, int max, int digits)
         {
             Automaton a = new Automaton();
-            string x = Convert.ToString(min);
-            string y = Convert.ToString(max);
+            string x = Convert.ToString(min, CultureInfo.InvariantCulture);
+            string y = Convert.ToString(max, CultureInfo.InvariantCulture);
             if (min > max || (digits > 0 && y.Length > digits))
             {
                 throw new System.ArgumentException();

@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -60,7 +61,7 @@ namespace Lucene.Net.Store
             }
 
             int arg = 0;
-            int myID = Convert.ToInt32(args[arg++]);
+            int myID = Convert.ToInt32(args[arg++], CultureInfo.InvariantCulture);
 
             if (myID < 0 || myID > 255)
             {
@@ -70,11 +71,11 @@ namespace Lucene.Net.Store
             }
 
             string verifierHost = args[arg++];
-            int verifierPort = Convert.ToInt32(args[arg++]);
+            int verifierPort = Convert.ToInt32(args[arg++], CultureInfo.InvariantCulture);
             string lockFactoryClassName = args[arg++];
             string lockDirName = args[arg++];
-            int sleepTimeMS = Convert.ToInt32(args[arg++]);
-            int count = Convert.ToInt32(args[arg++]);
+            int sleepTimeMS = Convert.ToInt32(args[arg++], CultureInfo.InvariantCulture);
+            int count = Convert.ToInt32(args[arg++], CultureInfo.InvariantCulture);
 
             IPAddress[] addresses = Dns.GetHostAddressesAsync(verifierHost).Result;
             IPAddress addr = addresses.FirstOrDefault();

@@ -129,7 +129,7 @@ namespace Lucene.Net.Support
             {
                 throw new IndexOutOfRangeException();
             }
-            return Character.CodePointAt(text.ToString(), index);
+            return Character.CodePointAt(text, index);
         }
 
         /// <summary>

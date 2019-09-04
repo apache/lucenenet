@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 #if NETSTANDARD1_6
@@ -148,7 +149,7 @@ namespace Lucene.Net.Support
                     return false;
                 }
 
-                var publicKeyToken = string.Concat(publicKey.Select(i => i.ToString("x2")));
+                var publicKeyToken = string.Concat(publicKey.Select(i => i.ToString("x2", CultureInfo.InvariantCulture)));
 
                 return s_microsoftKeys.Contains(publicKeyToken);
             }

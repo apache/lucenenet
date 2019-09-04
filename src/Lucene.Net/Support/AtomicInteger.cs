@@ -86,5 +86,20 @@ namespace Lucene.Net.Support
         {
             return Get().ToString();
         }
+
+        public virtual string ToString(string format)
+        {
+            return Get().ToString(format);
+        }
+
+        public virtual string ToString(IFormatProvider provider)
+        {
+            return Get().ToString(provider);
+        }
+
+        public virtual string ToString(string format, IFormatProvider provider)
+        {
+            return Get().ToString(format, provider);
+        }
     }
 }

@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// NOTE: This was MAX_INT in Lucene
         /// </summary>
-        public static readonly int MAX_INT32 = Convert.ToInt32(int.MaxValue);
+        public static readonly int MAX_INT32 = int.MaxValue;
 
         internal readonly AtomicInt64 bytesUsed;
 
@@ -216,7 +216,7 @@ namespace Lucene.Net.Index
 
         public virtual void AddDocID(int docID)
         {
-            docIDs.Add(Convert.ToInt32(docID));
+            docIDs.Add(docID);
             bytesUsed.AddAndGet(BYTES_PER_DEL_DOCID);
         }
 
@@ -236,7 +236,7 @@ namespace Lucene.Net.Index
                 return;
             }
 
-            terms[term] = Convert.ToInt32(docIDUpto);
+            terms[term] = docIDUpto;
             // note that if current != null then it means there's already a buffered
             // delete on that term, therefore we seem to over-count. this over-counting
             // is done to respect IndexWriterConfig.setMaxBufferedDeleteTerms.

@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Documents
 {
@@ -78,31 +79,31 @@ namespace Lucene.Net.Documents
 
             if (resolution == Resolution.YEAR)
             {
-                return date.ToString(YEAR_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+                return date.ToString(YEAR_FORMAT, CultureInfo.InvariantCulture);
             }
             else if (resolution == Resolution.MONTH)
             {
-                return date.ToString(MONTH_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+                return date.ToString(MONTH_FORMAT, CultureInfo.InvariantCulture);
             }
             else if (resolution == Resolution.DAY)
             {
-                return date.ToString(DAY_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+                return date.ToString(DAY_FORMAT, CultureInfo.InvariantCulture);
             }
             else if (resolution == Resolution.HOUR)
             {
-                return date.ToString(HOUR_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+                return date.ToString(HOUR_FORMAT, CultureInfo.InvariantCulture);
             }
             else if (resolution == Resolution.MINUTE)
             {
-                return date.ToString(MINUTE_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+                return date.ToString(MINUTE_FORMAT, CultureInfo.InvariantCulture);
             }
             else if (resolution == Resolution.SECOND)
             {
-                return date.ToString(SECOND_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+                return date.ToString(SECOND_FORMAT, CultureInfo.InvariantCulture);
             }
             else if (resolution == Resolution.MILLISECOND)
             {
-                return date.ToString(MILLISECOND_FORMAT, System.Globalization.CultureInfo.InvariantCulture);
+                return date.ToString(MILLISECOND_FORMAT, CultureInfo.InvariantCulture);
             }
 
             throw new ArgumentException("unknown resolution " + resolution);
@@ -136,58 +137,58 @@ namespace Lucene.Net.Documents
             DateTime date;
             if (dateString.Length == 4)
             {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
+                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
                     1, 1, 0, 0, 0, 0);
             }
             else if (dateString.Length == 6)
             {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                    Convert.ToInt16(dateString.Substring(4, 2)),
+                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
                     1, 0, 0, 0, 0);
             }
             else if (dateString.Length == 8)
             {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                    Convert.ToInt16(dateString.Substring(4, 2)),
-                    Convert.ToInt16(dateString.Substring(6, 2)),
+                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
                     0, 0, 0, 0);
             }
             else if (dateString.Length == 10)
             {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                    Convert.ToInt16(dateString.Substring(4, 2)),
-                    Convert.ToInt16(dateString.Substring(6, 2)),
-                    Convert.ToInt16(dateString.Substring(8, 2)),
+                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(8, 2), CultureInfo.InvariantCulture),
                     0, 0, 0);
             }
             else if (dateString.Length == 12)
             {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                    Convert.ToInt16(dateString.Substring(4, 2)),
-                    Convert.ToInt16(dateString.Substring(6, 2)),
-                    Convert.ToInt16(dateString.Substring(8, 2)),
-                    Convert.ToInt16(dateString.Substring(10, 2)),
+                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(8, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(10, 2), CultureInfo.InvariantCulture),
                     0, 0);
             }
             else if (dateString.Length == 14)
             {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                    Convert.ToInt16(dateString.Substring(4, 2)),
-                    Convert.ToInt16(dateString.Substring(6, 2)),
-                    Convert.ToInt16(dateString.Substring(8, 2)),
-                    Convert.ToInt16(dateString.Substring(10, 2)),
-                    Convert.ToInt16(dateString.Substring(12, 2)),
+                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(8, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(10, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(12, 2), CultureInfo.InvariantCulture),
                     0);
             }
             else if (dateString.Length == 17)
             {
-                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)),
-                    Convert.ToInt16(dateString.Substring(4, 2)),
-                    Convert.ToInt16(dateString.Substring(6, 2)),
-                    Convert.ToInt16(dateString.Substring(8, 2)),
-                    Convert.ToInt16(dateString.Substring(10, 2)),
-                    Convert.ToInt16(dateString.Substring(12, 2)),
-                    Convert.ToInt16(dateString.Substring(14, 3)));
+                date = new DateTime(Convert.ToInt16(dateString.Substring(0, 4), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(4, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(6, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(8, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(10, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(12, 2), CultureInfo.InvariantCulture),
+                    Convert.ToInt16(dateString.Substring(14, 3), CultureInfo.InvariantCulture));
             }
             else
             {

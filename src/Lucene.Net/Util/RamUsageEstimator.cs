@@ -220,7 +220,7 @@ namespace Lucene.Net.Util
             //{
             //    Method getVMOptionMethod = beanClazz.GetMethod("getVMOption", typeof(string));
             //    object vmOption = getVMOptionMethod.invoke(hotSpotBean, "ObjectAlignmentInBytes");
-            //    objectAlignment = Convert.ToInt32(vmOption.GetType().GetMethod("getValue").invoke(vmOption).ToString());
+            //    objectAlignment = Convert.ToInt32(vmOption.GetType().GetMethod("getValue").invoke(vmOption).ToString(), CultureInfo.InvariantCulture);
             //}
             //}
             //catch (Exception e)

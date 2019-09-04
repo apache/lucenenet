@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
                 for (int i = 0, c = oldReaders.Count; i < c; i++)
                 {
                     SegmentReader sr = (SegmentReader)oldReaders[i];
-                    segmentReaders[sr.SegmentName] = Convert.ToInt32(i);
+                    segmentReaders[sr.SegmentName] = i;
                 }
             }
 

@@ -66,7 +66,7 @@ namespace Lucene.Net.Store
                 Console.WriteLine("Listening on " + ((IPEndPoint)s.LocalEndPoint).Port.ToString() + "...");
 
                 // we set the port as a sysprop, so the ANT task can read it. For that to work, this server must run in-process:
-                SystemProperties.SetProperty("lockverifyserver.port", ((IPEndPoint)s.LocalEndPoint).Port.ToString());
+                SystemProperties.SetProperty("lockverifyserver.port", ((IPEndPoint)s.LocalEndPoint).Port.ToString(CultureInfo.InvariantCulture));
 
                 object localLock = new object();
                 int[] lockedID = new int[1];

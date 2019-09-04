@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
             }
 
             termArrays.Add(terms);
-            positions.Add(Convert.ToInt32(position));
+            positions.Add(position);
         }
 
         /// <summary>

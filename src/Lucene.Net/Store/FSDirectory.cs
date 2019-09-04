@@ -2,6 +2,7 @@ using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;// Used only for WRITE_LOCK_NAME in deprecated create=true case:
 
@@ -408,7 +409,7 @@ namespace Lucene.Net.Store
                 char ch = dirName[charIDX];
                 digest = 31*digest + ch;
             }
-            return "lucene-" + digest.ToString("x");
+            return "lucene-" + digest.ToString("x", CultureInfo.InvariantCulture);
         }
 
         /// <summary>

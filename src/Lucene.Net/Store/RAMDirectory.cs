@@ -3,6 +3,7 @@ using Lucene.Net.Support.Compatibility;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -113,7 +114,7 @@ namespace Lucene.Net.Store
 
         public override string GetLockID()
         {
-            return "lucene-" + GetHashCode().ToString("x");
+            return "lucene-" + GetHashCode().ToString("x", CultureInfo.InvariantCulture);
         }
 
         public override sealed string[] ListAll()

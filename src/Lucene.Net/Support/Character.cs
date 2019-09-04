@@ -21,6 +21,7 @@
 
 using System;
 using System.Globalization;
+using System.Text;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Support
@@ -312,6 +313,23 @@ namespace Lucene.Net.Support
             return ((high << 10) + low) + (MIN_SUPPLEMENTARY_CODE_POINT
                                        - (MIN_HIGH_SURROGATE << 10)
                                        - MIN_LOW_SURROGATE);
+        }
+
+        public static int CodePointAt(StringBuilder seq, int index)
+        {
+            char c1 = seq[index++];
+            if (char.IsHighSurrogate(c1))
+            {
+                if (index < seq.Length)
+                {
+                    char c2 = seq[index];
+                    if (char.IsLowSurrogate(c2))
+                    {
+                        return ToCodePoint(c1, c2);
+                    }
+                }
+            }
+            return c1;
         }
 
         public static int CodePointAt(ICharSequence seq, int index)

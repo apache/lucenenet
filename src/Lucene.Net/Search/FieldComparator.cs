@@ -987,7 +987,7 @@ namespace Lucene.Net.Search
 
             public override IComparable this[int slot]
             {
-                get { return Convert.ToSingle(scores[slot]); }
+                get { return scores[slot]; }
             }
 
             // Override because we sort reverse of natural Float order:
@@ -1058,7 +1058,7 @@ namespace Lucene.Net.Search
 
             public override IComparable this[int slot]
             {
-                get { return Convert.ToInt32(docIDs[slot]); }
+                get { return docIDs[slot]; }
             }
 
             public override int CompareTop(int doc)

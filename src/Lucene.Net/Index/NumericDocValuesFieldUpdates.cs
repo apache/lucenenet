@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // idx points to the "next" element
-                    value = Convert.ToInt64(values.Get(idx - 1));
+                    value = values.Get(idx - 1);
                 }
                 return doc;
             }

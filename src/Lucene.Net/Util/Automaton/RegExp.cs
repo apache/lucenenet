@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 /*
@@ -731,8 +732,8 @@ namespace Lucene.Net.Util.Automaton
                     break;
 
                 case Kind.REGEXP_INTERVAL:
-                    string s1 = Convert.ToString(min);
-                    string s2 = Convert.ToString(max);
+                    string s1 = Convert.ToString(min, CultureInfo.InvariantCulture);
+                    string s2 = Convert.ToString(max, CultureInfo.InvariantCulture);
                     b.Append("<");
                     if (digits > 0)
                     {
@@ -1068,7 +1069,7 @@ namespace Lucene.Net.Util.Automaton
                     {
                         throw new System.ArgumentException("integer expected at position " + pos);
                     }
-                    int n = Convert.ToInt32(b.Substring(start, pos - start));
+                    int n = Convert.ToInt32(b.Substring(start, pos - start), CultureInfo.InvariantCulture);
                     int m = -1;
                     if (Match(','))
                     {
@@ -1079,7 +1080,7 @@ namespace Lucene.Net.Util.Automaton
                         }
                         if (start != pos)
                         {
-                            m = Convert.ToInt32(b.Substring(start, pos - start));
+                            m = Convert.ToInt32(b.Substring(start, pos - start), CultureInfo.InvariantCulture);
                         }
                     }
                     else
@@ -1239,8 +1240,8 @@ namespace Lucene.Net.Util.Automaton
                         }
                         string smin = s.Substring(0, i);
                         string smax = s.Substring(i + 1, s.Length - (i + 1));
-                        int imin = Convert.ToInt32(smin);
-                        int imax = Convert.ToInt32(smax);
+                        int imin = Convert.ToInt32(smin, CultureInfo.InvariantCulture);
+                        int imax = Convert.ToInt32(smax, CultureInfo.InvariantCulture);
                         int digits;
                         if (smin.Length == smax.Length)
                         {

@@ -979,7 +979,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception e)
             {
-                Msg(infoStream, "ERROR [" + Convert.ToString(e.Message) + "]");
+                Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
                 if (infoStream != null)
                 {
@@ -1750,7 +1750,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception e)
             {
-                Msg(infoStream, "ERROR [" + Convert.ToString(e.Message) + "]");
+                Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
                 if (infoStream != null)
                 {
@@ -1799,7 +1799,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception e)
             {
-                Msg(infoStream, "ERROR [" + Convert.ToString(e.Message) + "]");
+                Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
                 if (infoStream != null)
                 {
@@ -2325,7 +2325,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception e)
             {
-                Msg(infoStream, "ERROR [" + Convert.ToString(e.Message) + "]");
+                Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
                 if (infoStream != null)
                 {

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 
 namespace Lucene.Net.Util.Fst
@@ -975,7 +976,7 @@ namespace Lucene.Net.Util.Fst
             {
                 return char.ToString((char)label);
             }
-            return "0x" + label.ToString("x");
+            return "0x" + label.ToString("x", CultureInfo.InvariantCulture);
         }
 
         /// <summary>
