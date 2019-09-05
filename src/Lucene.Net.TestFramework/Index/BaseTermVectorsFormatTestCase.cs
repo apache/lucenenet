@@ -428,7 +428,7 @@ namespace Lucene.Net.Index
                     this.fieldNames[i] = RandomPicks.RandomFrom(Random, fieldNames.Except(usedFileNames).ToArray());
                     //do
                     //{
-                    //    this.FieldNames[i] = RandomInts.RandomFrom(Random(), fieldNames);
+                    //    this.FieldNames[i] = RandomPicks.RandomFrom(Random(), fieldNames);
                     //} while (usedFileNames.Contains(this.FieldNames[i]));
 
                     usedFileNames.Add(this.fieldNames[i]);
