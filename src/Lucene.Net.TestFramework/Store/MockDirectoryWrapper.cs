@@ -113,14 +113,14 @@ namespace Lucene.Net.Store
         internal bool allowReadingFilesStillOpenForWrite = false;
         private ISet<string> unSyncedFiles;
         private ISet<string> createdFiles;
-        private ISet<string> openFilesForWrite = new HashSet<string>();
-        internal ISet<string> openLocks = new ConcurrentHashSet<string>();
+        private ISet<string> openFilesForWrite = new HashSet<string>(StringComparer.Ordinal);
+        internal ISet<string> openLocks = new ConcurrentHashSet<string>(StringComparer.Ordinal);
         internal volatile bool crashed;
         private ThrottledIndexOutput throttledOutput;
         private Throttling throttling = Throttling.SOMETIMES;
         protected LockFactory m_lockFactory;
 
-        internal readonly AtomicInt64 inputCloneCount = new AtomicInt64();
+        internal readonly AtomicInt32 inputCloneCount = new AtomicInt32();
 
         // use this for tracking files for crash.
         // additionally: provides debugging information in case you leave one open
@@ -142,17 +142,17 @@ namespace Lucene.Net.Store
             {
                 if (openFiles == null)
                 {
-                    openFiles = new Dictionary<string, int>();
-                    openFilesDeleted = new HashSet<string>();
+                    openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
+                    openFilesDeleted = new HashSet<string>(StringComparer.Ordinal);
                 }
 
                 if (createdFiles == null)
                 {
-                    createdFiles = new HashSet<string>();
+                    createdFiles = new HashSet<string>(StringComparer.Ordinal);
                 }
                 if (unSyncedFiles == null)
                 {
-                    unSyncedFiles = new HashSet<string>();
+                    unSyncedFiles = new HashSet<string>(StringComparer.Ordinal);
                 }
             }
         }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return (int)inputCloneCount.Get();
+                return inputCloneCount.Get();
             }
         }
 
@@ -279,7 +279,7 @@ namespace Lucene.Net.Store
                 MaybeThrowDeterministicException();
                 if (crashed)
                 {
-                    throw new System.IO.IOException("cannot sync after crash");
+                    throw new IOException("cannot sync after crash");
                 }
                 // don't wear out our hardware so much in tests.
                 if (LuceneTestCase.Rarely(randomState) || MustSync())
@@ -329,12 +329,12 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 crashed = true;
-                openFiles = new Dictionary<string, int>();
-                openFilesForWrite = new HashSet<string>();
-                openFilesDeleted = new HashSet<string>();
+                openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
+                openFilesForWrite = new HashSet<string>(StringComparer.Ordinal);
+                openFilesDeleted = new HashSet<string>(StringComparer.Ordinal);
                 using (IEnumerator<string> it = unSyncedFiles.GetEnumerator())
                 {
-                    unSyncedFiles = new HashSet<string>();
+                    unSyncedFiles = new HashSet<string>(StringComparer.Ordinal);
                     // first force-close all files, so we can corrupt on windows etc.
                     // clone the file map, as these guys want to remove themselves on close.
                     var m = new IdentityHashMap<IDisposable, Exception>(openFileHandles);
@@ -556,7 +556,7 @@ namespace Lucene.Net.Store
                     Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception" + (message == null ? "" : " (" + message + ")"));
                     //(new Exception()).printStackTrace(System.out);
                 }
-                throw new System.IO.IOException("a randomSystem.IO.IOException" + (message == null ? "" : " (" + message + ")"));
+                throw new IOException("a random IOException" + (message == null ? "" : " (" + message + ")"));
             }
         }
 
@@ -571,11 +571,11 @@ namespace Lucene.Net.Store
                 }
                 if (allowRandomFileNotFoundException == false || randomState.NextBoolean())
                 {
-                    throw new System.IO.IOException("a randomSystem.IO.IOException (" + name + ")");
+                    throw new IOException("a random IOException (" + name + ")");
                 }
                 else
                 {
-                    throw randomState.NextBoolean() ? (IOException)new FileNotFoundException("a randomSystem.IO.IOException (" + name + ")") : new DirectoryNotFoundException("a randomSystem.IO.IOException (" + name + ")");
+                    throw randomState.NextBoolean() ? (IOException)new FileNotFoundException("a random IOException (" + name + ")") : new DirectoryNotFoundException("a random IOException (" + name + ")");
                 }
             }
         }
@@ -641,7 +641,7 @@ namespace Lucene.Net.Store
 
                 if (crashed && !forced)
                 {
-                    throw new System.IO.IOException("cannot delete after crash");
+                    throw new IOException("cannot delete after crash");
                 }
 
                 if (unSyncedFiles.Contains(name))
@@ -676,7 +676,7 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                return new HashSet<string>(openFilesDeleted);
+                return new HashSet<string>(openFilesDeleted, StringComparer.Ordinal);
             }
         }
 
@@ -707,31 +707,31 @@ namespace Lucene.Net.Store
                 }
                 if (crashed)
                 {
-                    throw new System.IO.IOException("cannot createOutput after crash");
+                    throw new IOException("cannot createOutput after crash");
                 }
                 Init();
                 lock (this)
                 {
                     if (preventDoubleWrite && createdFiles.Contains(name) && !name.Equals("segments.gen", StringComparison.Ordinal))
                     {
-                        throw new System.IO.IOException("file \"" + name + "\" was already written to");
+                        throw new IOException("file \"" + name + "\" was already written to");
                     }
                 }
                 if ((noDeleteOpenFile || assertNoDeleteOpenFile) && openFiles.ContainsKey(name))
                 {
                     if (!assertNoDeleteOpenFile)
                     {
-                        throw new System.IO.IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
+                        throw new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
                     }
                     else
                     {
-                        throw new InvalidOperationException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
+                        throw new AssertionError("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot overwrite");
                     }
                 }
 
                 if (crashed)
                 {
-                    throw new System.IO.IOException("cannot createOutput after crash");
+                    throw new IOException("cannot createOutput after crash");
                 }
                 unSyncedFiles.Add(name);
                 createdFiles.Add(name);
@@ -740,21 +740,21 @@ namespace Lucene.Net.Store
                 {
                     RAMDirectory ramdir = (RAMDirectory)m_input;
                     RAMFile file = new RAMFile(ramdir);
-                    RAMFile existing = ramdir.m_fileMap.ContainsKey(name) ? ramdir.m_fileMap[name] : null;
+                    ramdir.m_fileMap.TryGetValue(name, out RAMFile existing);
 
                     // Enforce write once:
                     if (existing != null && !name.Equals("segments.gen", StringComparison.Ordinal) && preventDoubleWrite)
                     {
-                        throw new System.IO.IOException("file " + name + " already exists");
+                        throw new IOException("file " + name + " already exists");
                     }
                     else
                     {
                         if (existing != null)
                         {
-                            ramdir.m_sizeInBytes.AddAndGet(-existing.GetSizeInBytes());
+                            ramdir.m_sizeInBytes.AddAndGet(-existing.GetSizeInBytes()); // LUCENENET: GetAndAdd in Lucene, but we are not using the value
                             existing.directory = null;
                         }
-                        ramdir.m_fileMap.Put(name, file);
+                        ramdir.m_fileMap[name] = file;
                     }
                 }
                 //System.out.println(Thread.currentThread().getName() + ": MDW: create " + name);
@@ -762,7 +762,7 @@ namespace Lucene.Net.Store
                 if (randomState.Next(10) == 0)
                 {
                     // once in a while wrap the IO in a Buffered IO with random buffer sizes
-                    delegateOutput = new BufferedIndexOutputWrapper(this, 1 + randomState.Next(BufferedIndexOutput.DEFAULT_BUFFER_SIZE), delegateOutput);
+                    delegateOutput = new BufferedIndexOutputWrapper(1 + randomState.Next(BufferedIndexOutput.DEFAULT_BUFFER_SIZE), delegateOutput);
                 }
                 IndexOutput io = new MockIndexOutputWrapper(this, delegateOutput, name);
                 AddFileHandle(io, name, Handle.Output);
@@ -797,8 +797,7 @@ namespace Lucene.Net.Store
 
             lock (this)
             {
-                int v;
-                if (openFiles.TryGetValue(name, out v))
+                if (openFiles.TryGetValue(name, out int v))
                 {
                     v++;
                     //Debug.WriteLine("Add {0} - {1} - {2}", c, name, v);
@@ -841,7 +840,7 @@ namespace Lucene.Net.Store
                 }
                 if (!LuceneTestCase.SlowFileExists(m_input, name))
                 {
-                    throw new FileNotFoundException(name + " in dir=" + m_input);
+                    throw randomState.NextBoolean() ? (IOException)new FileNotFoundException(name + " in dir=" + m_input) : new DirectoryNotFoundException(name + " in dir=" + m_input);
                 }
 
                 // cannot open a file for input if it's still open for
@@ -967,12 +966,12 @@ namespace Lucene.Net.Store
                 {
                     // files that we tried to delete, but couldn't because readers were open.
                     // all that matters is that we tried! (they will eventually go away)
-                    ISet<string> pendingDeletions = new HashSet<string>(openFilesDeleted);
+                    ISet<string> pendingDeletions = new HashSet<string>(openFilesDeleted, StringComparer.Ordinal);
                     MaybeYield();
                     if (openFiles == null)
                     {
-                        openFiles = new Dictionary<string, int>();
-                        openFilesDeleted = new HashSet<string>();
+                        openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
+                        openFilesDeleted = new HashSet<string>(StringComparer.Ordinal);
                     }
                     if (openFiles.Count > 0)
                     {
@@ -980,14 +979,14 @@ namespace Lucene.Net.Store
                         Exception cause = openFileHandles.Values.FirstOrDefault();
 
                         // RuntimeException instead ofSystem.IO.IOException because
-                        // super() does not throwSystem.IO.IOException currently:
+                        // super() does not throw IOException currently:
                         throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: "
-                            + string.Join(" ,", openFiles.ToArray().Select(x => x.Key)), cause);
+                            + Collections.ToString(openFiles), cause);
                     }
                     if (openLocks.Count > 0)
                     {
                         throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: "
-                            + string.Join(" ,", openLocks.ToArray()));
+                            + Collections.ToString(openLocks));
                     }
 
                     IsOpen = false;
@@ -1013,11 +1012,11 @@ namespace Lucene.Net.Store
                             {
                                 // now look for unreferenced files: discount ones that we tried to delete but could not
                                 HashSet<string> allFiles = new HashSet<string>(Arrays.AsList(ListAll()));
-                                allFiles.RemoveAll(pendingDeletions);
+                                allFiles.ExceptWith(pendingDeletions);
                                 string[] startFiles = allFiles.ToArray(/*new string[0]*/);
                                 IndexWriterConfig iwc = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null);
                                 iwc.SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE);
-                                (new IndexWriter(m_input, iwc)).Rollback();
+                                new IndexWriter(m_input, iwc).Rollback();
                                 string[] endFiles = m_input.ListAll();
 
                                 ISet<string> startSet = new SortedSet<string>(Arrays.AsList(startFiles), StringComparer.Ordinal);
@@ -1052,7 +1051,7 @@ namespace Lucene.Net.Store
                                             sis.Read(m_input, file);
                                         }
 #pragma warning disable 168
-                                        catch (System.IO.IOException ioe)
+                                        catch (IOException ioe)
 #pragma warning restore 168
                                         {
                                             // OK: likely some of the .si files were deleted
@@ -1068,7 +1067,8 @@ namespace Lucene.Net.Store
                                                     Debug.Assert(pendingDeletions.Contains(s));
                                                     if (LuceneTestCase.VERBOSE)
                                                     {
-                                                        Console.WriteLine("MDW: Unreferenced check: Ignoring referenced file: " + s + " " + "from " + file + " that we could not delete.");
+                                                        Console.WriteLine("MDW: Unreferenced check: Ignoring referenced file: " + s + " " + 
+                                                            "from " + file + " that we could not delete.");
                                                     }
                                                     startSet.Add(s);
                                                 }
@@ -1078,7 +1078,6 @@ namespace Lucene.Net.Store
                                         {
                                             Console.Error.WriteLine("ERROR processing leftover segments file " + file + ":");
                                             Console.WriteLine(t.ToString());
-                                            Console.Write(t.StackTrace);
                                         }
                                     }
                                 }
@@ -1109,7 +1108,7 @@ namespace Lucene.Net.Store
                                     string extras;
                                     if (removed.Count != 0)
                                     {
-                                        extras = "\n\nThese files were removed: " + removed;
+                                        extras = "\n\nThese files were removed: " + Collections.ToString(removed);
                                     }
                                     else
                                     {
@@ -1118,7 +1117,7 @@ namespace Lucene.Net.Store
 
                                     if (added.Count != 0)
                                     {
-                                        extras += "\n\nThese files were added (waaaaaaaaaat!): " + added;
+                                        extras += "\n\nThese files were added (waaaaaaaaaat!): " + Collections.ToString(added);
                                     }
 
                                     if (pendingDeletions.Count != 0)
@@ -1151,8 +1150,7 @@ namespace Lucene.Net.Store
 
             lock (this)
             {
-                int v;
-                if (openFiles.TryGetValue(name, out v))
+                if (openFiles.TryGetValue(name, out int v))
                 {
                     if (v == 1)
                     {
@@ -1167,8 +1165,7 @@ namespace Lucene.Net.Store
                     }
                 }
 
-                Exception _;
-                openFileHandles.TryRemove(c, out _);
+                openFileHandles.TryRemove(c, out Exception _);
             }
         }
 
@@ -1393,14 +1390,11 @@ namespace Lucene.Net.Store
 
         internal sealed class BufferedIndexOutputWrapper : BufferedIndexOutput
         {
-            private readonly MockDirectoryWrapper outerInstance;
-
             private readonly IndexOutput io;
 
-            public BufferedIndexOutputWrapper(MockDirectoryWrapper outerInstance, int bufferSize, IndexOutput io)
+            public BufferedIndexOutputWrapper(int bufferSize, IndexOutput io)
                 : base(bufferSize)
             {
-                this.outerInstance = outerInstance;
                 this.io = io;
             }
 
