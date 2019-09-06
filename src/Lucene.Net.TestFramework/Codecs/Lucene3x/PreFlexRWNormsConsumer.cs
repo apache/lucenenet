@@ -100,17 +100,17 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
-            throw new InvalidOperationException();
+            throw new InvalidOperationException(); // LUCENENET TODO: This should be AssertionError (AssertionException)
         }
 
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
-            throw new InvalidOperationException();
+            throw new InvalidOperationException(); // LUCENENET TODO: This should be AssertionError (AssertionException)
         }
 
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
-            throw new InvalidOperationException();
+            throw new InvalidOperationException(); // LUCENENET TODO: This should be AssertionError (AssertionException)
         }
     }
 }
