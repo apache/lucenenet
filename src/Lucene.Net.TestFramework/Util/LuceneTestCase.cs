@@ -1556,7 +1556,14 @@ namespace Lucene.Net.Util
         /// </summary>
         public static CultureInfo RandomCulture(Random random) // LUCENENET specific renamed from RandomLocale
         {
-            return RandomPicks.RandomFrom(random, CultureInfoSupport.GetNeutralAndSpecificCultures());
+            ICollection<CultureInfo> systemCultures = CultureInfoSupport.GetNeutralAndSpecificCultures();
+#if NETSTANDARD1_6
+            // .NET Core 1.0 on macOS seems to be flakey here and not return results occasionally, so compensate by
+            // returning CultureInfo.InvariantCulture when it happens.
+            if (systemCultures.Count == 0)
+                return CultureInfo.InvariantCulture;
+#endif
+            return RandomPicks.RandomFrom(random, systemCultures);
         }
 
         /// <summary>
@@ -1566,7 +1573,14 @@ namespace Lucene.Net.Util
         /// </summary>
         public static TimeZoneInfo RandomTimeZone(Random random)
         {
-            return RandomPicks.RandomFrom(random, TimeZoneInfo.GetSystemTimeZones());
+            var systemTimeZones = TimeZoneInfo.GetSystemTimeZones();
+#if NETSTANDARD1_6
+            // .NET Core 1.0 on macOS seems to be flakey here and not return results occasionally, so compensate by
+            // returning TimeZoneInfo.Local when it happens.
+            if (systemTimeZones.Count == 0)
+                return TimeZoneInfo.Local;
+#endif
+            return RandomPicks.RandomFrom(random, systemTimeZones);
         }
 
         /// <summary>
