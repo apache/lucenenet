@@ -31,7 +31,7 @@ namespace Lucene.Net.Support
 #if NETSTANDARD1_6
 
         #region culturePool
-        private static string[] specificCulturePool = new string[] 
+        private static readonly string[] specificCulturePool =
         {
             "fr-KM",
             "fr-LU",
@@ -333,7 +333,7 @@ namespace Lucene.Net.Support
             "zh-TW",
             "zu-ZA"
         };
-        private static string[] neutralCulturePool = new string[]
+        private static readonly string[] neutralCulturePool =
         {
             "aa",
             "af",
@@ -621,7 +621,7 @@ namespace Lucene.Net.Support
         {
             var cultures = new List<CultureInfo>();
 
-            foreach (var culture in specificCulturePool)
+            foreach (var culture in culturePool)
             {
                 try
                 {
@@ -640,7 +640,7 @@ namespace Lucene.Net.Support
         public static CultureInfo[] GetNeutralAndSpecificCultures()
         {
 #if NETSTANDARD1_6
-            return supportedNeutralCultures.Union(supportedSpecificCultures).ToArray();
+            return supportedSpecificCultures.Union(supportedNeutralCultures).ToArray();
 #else
             return CultureInfo.GetCultures(CultureTypes.SpecificCultures | CultureTypes.NeutralCultures);
 #endif
