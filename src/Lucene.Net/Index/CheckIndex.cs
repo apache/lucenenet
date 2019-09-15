@@ -685,7 +685,7 @@ namespace Lucene.Net.Index
                 int segmentName = 0;
                 try
                 {
-                    segmentName = int.Parse /*Convert.ToInt32*/(info.Info.Name.Substring(1));
+                    segmentName = int.Parse(info.Info.Name.Substring(1), CultureInfo.InvariantCulture);
                 }
                 catch
                 {
