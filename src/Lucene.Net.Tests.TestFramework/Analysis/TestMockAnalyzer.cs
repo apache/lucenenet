@@ -232,6 +232,7 @@ namespace Lucene.Net.Analysis
         }
 
         /** blast some random strings through the analyzer */
+        [Test]
         public void TestRandomStrings()
         {
             CheckRandomData(Random, new MockAnalyzer(Random), AtLeast(1000));
