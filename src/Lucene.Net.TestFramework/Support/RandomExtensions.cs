@@ -230,7 +230,7 @@ namespace Lucene.Net
         /// Returns a random string in the specified length range consisting
         /// entirely of whitespace characters.
         /// </summary>
-        /// <seealso cref="WHITESPACE_CHARACTERS"/>
+        /// <seealso cref="TestUtil.WHITESPACE_CHARACTERS"/>
         public static string NextWhitespace(this Random random, int minLength, int maxLength)
         {
             return TestUtil.RandomWhitespace(random, minLength, maxLength);
