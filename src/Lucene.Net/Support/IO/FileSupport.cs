@@ -97,7 +97,7 @@ namespace Lucene.Net.Support.IO
         public static FileInfo CreateTempFile(string prefix, string suffix, DirectoryInfo directory)
         {
             if (string.IsNullOrEmpty(prefix))
-                throw new ArgumentNullException("prefix");
+                throw new ArgumentNullException(nameof(prefix));
             if (prefix.Length < 3)
                 throw new ArgumentException("Prefix string too short");
 
@@ -135,25 +135,23 @@ namespace Lucene.Net.Support.IO
                         break;
                     }
                 }
-                catch (IOException e)
+                catch (IOException e) when (IsFileAlreadyExistsException(e, fileName))
                 {
                     // If the error was because the file exists, try again.
-                    // On Windows, we can rely on the constant, but we need to fallback
-                    // to doing a physical file check to be portable across platforms.
-                    if (Constants.WINDOWS && (e.HResult & 0xFFFF) == ERROR_FILE_EXISTS)
-                    {
-                        continue;
-                    }
-                    else if (!Constants.WINDOWS && File.Exists(fileName))
-                    {
-                        continue;
-                    }
-
-                    // else rethrow it
-                    throw;
+                    continue;
                 }
             }
             return new FileInfo(fileName);
+        }
+
+        private static bool IsFileAlreadyExistsException(IOException e, string fileName)
+        {
+            // On Windows, we can rely on the constant, but we need to fallback
+            // to doing a physical file check to be portable across platforms.
+            if (Constants.WINDOWS)
+                return (e.HResult & 0xFFFF) == ERROR_FILE_EXISTS;
+            else
+                return File.Exists(fileName);
         }
 
         /// <summary>
