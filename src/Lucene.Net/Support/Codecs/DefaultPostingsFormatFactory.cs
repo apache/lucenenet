@@ -28,17 +28,18 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// The most common use cases are:
     /// <list type="bullet">
-    ///     <item><description>subclass <see cref="DefaultPostingsFormatFactory"/> and override
+    ///     <item><description>Initialize <see cref="DefaultPostingsFormatFactory"/> with a set of <see cref="CustomPostingsFormatTypes"/>.</description></item>
+    ///     <item><description>Subclass <see cref="DefaultPostingsFormatFactory"/> and override
     ///         <see cref="DefaultPostingsFormatFactory.GetPostingsFormat(Type)"/> so an external dependency injection
     ///         container can be used to supply the instances (lifetime should be singleton). Note that you could 
     ///         alternately use the "named type" feature that many DI containers have to supply the type based on name by 
     ///         overriding <see cref="GetPostingsFormat(string)"/>.</description></item>
-    ///     <item><description>subclass <see cref="DefaultPostingsFormatFactory"/> and override
+    ///     <item><description>Subclass <see cref="DefaultPostingsFormatFactory"/> and override
     ///         <see cref="DefaultPostingsFormatFactory.GetPostingsFormatType(string)"/> so a type new type can be
     ///         supplied that is not in the <see cref="DefaultPostingsFormatFactory.postingsFormatNameToTypeMap"/>.</description></item>
-    ///     <item><description>subclass <see cref="DefaultPostingsFormatFactory"/> to add new or override the default <see cref="PostingsFormat"/> 
+    ///     <item><description>Subclass <see cref="DefaultPostingsFormatFactory"/> to add new or override the default <see cref="PostingsFormat"/> 
     ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutPostingsFormatType(Type)"/>.</description></item>
-    ///     <item><description>subclass <see cref="DefaultPostingsFormatFactory"/> to scan additional assemblies for <see cref="PostingsFormat"/>
+    ///     <item><description>Subclass <see cref="DefaultPostingsFormatFactory"/> to scan additional assemblies for <see cref="PostingsFormat"/>
     ///         subclasses in by overriding <see cref="Initialize()"/> and calling <see cref="ScanForPostingsFormats(Assembly)"/>. 
     ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</description></item>
     /// </list>
@@ -70,6 +71,17 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
+        /// An array of custom <see cref="PostingsFormat"/>-derived types to be registered. This property
+        /// can be initialized during construction of <see cref="DefaultPostingsFormatFactory"/>
+        /// to make your custom codecs known to Lucene.
+        /// <para/>
+        /// These types will be registered after the default Lucene types, so if a custom type has the same
+        /// name as a Lucene <see cref="PostingsFormat"/> (via <see cref="PostingsFormatNameAttribute"/>) 
+        /// the custom type will replace the Lucene type with the same name.
+        /// </summary>
+        public IEnumerable<Type> CustomPostingsFormatTypes { get; set; }
+
+        /// <summary>
         /// Initializes the codec type cache with the known <see cref="PostingsFormat"/> types.
         /// Override this method (and optionally call <c>base.Initialize()</c>) to add your
         /// own <see cref="PostingsFormat"/> types by calling <see cref="PutPostingsFormatType(Type)"/> 
@@ -81,10 +93,13 @@ namespace Lucene.Net.Codecs
         protected override void Initialize()
         {
             foreach (var postingsFormatType in localPostingsFormatTypes)
-            {
                 PutPostingsFormatTypeImpl(postingsFormatType);
-            }
             ScanForPostingsFormats(this.CodecsAssembly);
+            if (CustomPostingsFormatTypes != null)
+            {
+                foreach (var postingsFormatType in CustomPostingsFormatTypes)
+                    PutPostingsFormatType(postingsFormatType);
+            }
         }
 
         /// <summary>
@@ -135,9 +150,7 @@ namespace Lucene.Net.Codecs
             if (postingsFormat == null)
                 throw new ArgumentNullException(nameof(postingsFormat));
             if (!typeof(PostingsFormat).GetTypeInfo().IsAssignableFrom(postingsFormat))
-            {
-                throw new ArgumentException("The supplied postingsFormat does not subclass PostingsFormat.");
-            }
+                throw new ArgumentException($"The supplied type {postingsFormat.AssemblyQualifiedName} does not subclass {nameof(PostingsFormat)}.");
 
             PutPostingsFormatTypeImpl(postingsFormat);
         }

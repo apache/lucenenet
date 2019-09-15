@@ -28,17 +28,18 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// The most common use cases are:
     /// <list type="bullet">
-    ///     <item><description>subclass <see cref="DefaultDocValuesFormatFactory"/> and override
+    ///     <item><description>Initialize <see cref="DefaultDocValuesFormatFactory"/> with a set of <see cref="CustomDocValuesFormatTypes"/>.</description></item>
+    ///     <item><description>Subclass <see cref="DefaultDocValuesFormatFactory"/> and override
     ///         <see cref="DefaultDocValuesFormatFactory.GetDocValuesFormat(Type)"/> so an external dependency injection
     ///         container can be used to supply the instances (lifetime should be singleton). Note that you could 
     ///         alternately use the "named type" feature that many DI containers have to supply the type based on name by 
     ///         overriding <see cref="GetDocValuesFormat(string)"/>.</description></item>
-    ///     <item><description>subclass <see cref="DefaultDocValuesFormatFactory"/> and override
+    ///     <item><description>Subclass <see cref="DefaultDocValuesFormatFactory"/> and override
     ///         <see cref="DefaultDocValuesFormatFactory.GetDocValuesFormatType(string)"/> so a type new type can be
     ///         supplied that is not in the <see cref="DefaultDocValuesFormatFactory.docValuesFormatNameToTypeMap"/>.</description></item>
-    ///     <item><description>subclass <see cref="DefaultDocValuesFormatFactory"/> to add new or override the default <see cref="DocValuesFormat"/> 
+    ///     <item><description>Subclass <see cref="DefaultDocValuesFormatFactory"/> to add new or override the default <see cref="DocValuesFormat"/> 
     ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutDocValuesFormatType(Type)"/>.</description></item>
-    ///     <item><description>subclass <see cref="DefaultDocValuesFormatFactory"/> to scan additional assemblies for <see cref="DocValuesFormat"/>
+    ///     <item><description>Subclass <see cref="DefaultDocValuesFormatFactory"/> to scan additional assemblies for <see cref="DocValuesFormat"/>
     ///         subclasses in by overriding <see cref="Initialize()"/> and calling <see cref="ScanForDocValuesFormats(Assembly)"/>. 
     ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</description></item>
     /// </list>
@@ -70,6 +71,17 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
+        /// An array of custom <see cref="DocValuesFormat"/>-derived types to be registered. This property
+        /// can be initialized during construction of <see cref="DefaultDocValuesFormatFactory"/>
+        /// to make your custom codecs known to Lucene.
+        /// <para/>
+        /// These types will be registered after the default Lucene types, so if a custom type has the same
+        /// name as a Lucene <see cref="DocValuesFormat"/> (via <see cref="DocValuesFormatNameAttribute"/>) 
+        /// the custom type will replace the Lucene type with the same name.
+        /// </summary>
+        public IEnumerable<Type> CustomDocValuesFormatTypes { get; set; }
+
+        /// <summary>
         /// Initializes the doc values type cache with the known <see cref="DocValuesFormat"/> types.
         /// Override this method (and optionally call <c>base.Initialize()</c>) to add your
         /// own <see cref="DocValuesFormat"/> types by calling <see cref="PutDocValuesFormatType(Type)"/> 
@@ -81,10 +93,13 @@ namespace Lucene.Net.Codecs
         protected override void Initialize()
         {
             foreach (var docValuesFormatType in localDocValuesFormatTypes)
-            {
                 PutDocValuesFormatTypeImpl(docValuesFormatType);
-            }
             ScanForDocValuesFormats(this.CodecsAssembly);
+            if (CustomDocValuesFormatTypes != null)
+            {
+                foreach (var docValuesFormatType in CustomDocValuesFormatTypes)
+                    PutDocValuesFormatType(docValuesFormatType);
+            }
         }
 
         /// <summary>
@@ -135,9 +150,7 @@ namespace Lucene.Net.Codecs
             if (docValuesFormat == null)
                 throw new ArgumentNullException(nameof(docValuesFormat));
             if (!typeof(DocValuesFormat).GetTypeInfo().IsAssignableFrom(docValuesFormat))
-            {
-                throw new ArgumentException("The supplied docValuesFormat does not subclass DocValuesFormat.");
-            }
+                throw new ArgumentException($"The supplied type {docValuesFormat.AssemblyQualifiedName} does not subclass {nameof(DocValuesFormat)}.");
 
             PutDocValuesFormatTypeImpl(docValuesFormat);
         }
