@@ -29,6 +29,8 @@ namespace Lucene.Net.Index
 
     using Lucene.Net.Analysis;
     using Lucene.Net.Attributes;
+    using Lucene.Net.Codecs;
+    using Lucene.Net.Codecs.SimpleText;
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using Lucene.Net.Util;
@@ -1776,7 +1778,7 @@ namespace Lucene.Net.Index
         public virtual void TestEmptyDirRollback()
         {
             // TODO: generalize this test
-            //AssumeFalse("test makes assumptions about file counts", Codec.Default is SimpleTextCodec);
+            AssumeFalse("test makes assumptions about file counts", Codec.Default is SimpleTextCodec);
 
             // Tests that if IW is created over an empty Directory, some documents are
             // indexed, flushed (but not committed) and then IW rolls back, then no
