@@ -421,7 +421,7 @@ namespace Lucene.Net.Index
         /// Create a new <see cref="CheckIndex"/> on the directory. </summary>
         public CheckIndex(Directory dir)
         {
-            this.dir = dir;
+            this.dir = dir ?? throw new ArgumentNullException(nameof(dir)); // LUCENENET: Added guard clause
             infoStream = null;
         }
 
