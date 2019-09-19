@@ -134,47 +134,6 @@ namespace Lucene.Net.Util
     using TextField = TextField;
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
 
-    /*using After = org.junit.After;
-    using AfterClass = org.junit.AfterClass;
-    using Assert = org.junit.Assert;
-    using Before = org.junit.Before;
-    using BeforeClass = org.junit.BeforeClass;
-    using ClassRule = org.junit.ClassRule;
-    using Rule = org.junit.Rule;
-    using Test = org.junit.Test;
-    using RuleChain = org.junit.rules.RuleChain;
-    using TestRule = org.junit.rules.TestRule;
-    using RunWith = org.junit.runner.RunWith;
-
-    using JUnit4MethodProvider = com.carrotsearch.randomizedtesting.JUnit4MethodProvider;
-    using LifecycleScope = com.carrotsearch.randomizedtesting.LifecycleScope;
-    using MixWithSuiteName = com.carrotsearch.randomizedtesting.MixWithSuiteName;
-    using RandomizedContext = com.carrotsearch.randomizedtesting.RandomizedContext;
-    using RandomizedRunner = com.carrotsearch.randomizedtesting.RandomizedRunner;
-    using RandomizedTest = com.carrotsearch.randomizedtesting.RandomizedTest;
-    using Listeners = com.carrotsearch.randomizedtesting.annotations.Listeners;
-    using SeedDecorators = com.carrotsearch.randomizedtesting.annotations.SeedDecorators;
-    using TestGroup = com.carrotsearch.randomizedtesting.annotations.TestGroup;
-    using TestMethodProviders = com.carrotsearch.randomizedtesting.annotations.TestMethodProviders;
-    using ThreadLeakAction = com.carrotsearch.randomizedtesting.annotations.ThreadLeakAction;
-    using Action = com.carrotsearch.randomizedtesting.annotations.ThreadLeakAction.Action;
-    using ThreadLeakFilters = com.carrotsearch.randomizedtesting.annotations.ThreadLeakFilters;
-    using ThreadLeakGroup = com.carrotsearch.randomizedtesting.annotations.ThreadLeakGroup;
-    using Group = com.carrotsearch.randomizedtesting.annotations.ThreadLeakGroup.Group;
-    using ThreadLeakLingering = com.carrotsearch.randomizedtesting.annotations.ThreadLeakLingering;
-    using ThreadLeakScope = com.carrotsearch.randomizedtesting.annotations.ThreadLeakScope;
-    using Scope = com.carrotsearch.randomizedtesting.annotations.ThreadLeakScope.Scope;
-    using ThreadLeakZombies = com.carrotsearch.randomizedtesting.annotations.ThreadLeakZombies;
-    using Consequence = com.carrotsearch.randomizedtesting.annotations.ThreadLeakZombies.Consequence;
-    using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;
-    using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
-    using NoClassHooksShadowingRule = com.carrotsearch.randomizedtesting.rules.NoClassHooksShadowingRule;
-    using NoInstanceHooksOverridesRule = com.carrotsearch.randomizedtesting.rules.NoInstanceHooksOverridesRule;
-    using StaticFieldsInvariantRule = com.carrotsearch.randomizedtesting.rules.StaticFieldsInvariantRule;
-    using SystemPropertiesInvariantRule = com.carrotsearch.randomizedtesting.rules.SystemPropertiesInvariantRule;
-    using TestRuleAdapter = com.carrotsearch.randomizedtesting.rules.TestRuleAdapter;
-    */
-
     /// <summary>
     /// Base class for all Lucene.Net unit tests.
     ///
@@ -202,40 +161,42 @@ namespace Lucene.Net.Util
     /// <para>
     /// Any test method annotated with <see cref="Test"/> is considered a test case.
     /// </para>
-    ///
-    /// <h3>Randomized execution and test facilities</h3>
-    ///
-    /// <para>
-    /// <see cref="LuceneTestCase"/> uses <see cref="RandomizedRunner"/> to execute test cases.
-    /// <see cref="RandomizedRunner"/> has built-in support for tests randomization
-    /// including access to a repeatable <see cref="Random"/> instance. See
-    /// <see cref="Random"/> property. Any test using <see cref="Random"/> acquired from
-    /// <see cref="Random"/> should be fully reproducible (assuming no race conditions
-    /// between threads etc.). The initial seed for a test case is reported in many
-    /// ways:
-    /// <list type="bullet">
-    ///     <item>
-    ///         <description>
-    ///             as part of any exception thrown from its body (inserted as a dummy stack
-    ///             trace entry),
-    ///         </description>
-    ///     </item>
-    ///     <item>
-    ///         <description>
-    ///             as part of the main thread executing the test case (if your test hangs,
-    ///             just dump the stack trace of all threads and you'll see the seed),
-    ///         </description>
-    ///     </item>
-    ///     <item>
-    ///         <description>
-    ///             the master seed can also be accessed manually by getting the current
-    ///             context (<see cref="RandomizedContext.Current"/>) and then calling
-    ///             <see cref="RandomizedContext.RunnerSeed"/>.
-    ///         </description>
-    ///     </item>
-    /// </list>
-    /// </para>
     /// </summary>
+
+    // LUCENENET TODO: Randomized seed
+    ///// <h3>Randomized execution and test facilities</h3>
+    /////
+    ///// <para>
+    ///// <see cref="LuceneTestCase"/> uses <see cref="RandomizedRunner"/> to execute test cases.
+    ///// <see cref="RandomizedRunner"/> has built-in support for tests randomization
+    ///// including access to a repeatable <see cref="Random"/> instance. See
+    ///// <see cref="Random"/> property. Any test using <see cref="Random"/> acquired from
+    ///// <see cref="Random"/> should be fully reproducible (assuming no race conditions
+    ///// between threads etc.). The initial seed for a test case is reported in many
+    ///// ways:
+    ///// <list type="bullet">
+    /////     <item>
+    /////         <description>
+    /////             as part of any exception thrown from its body (inserted as a dummy stack
+    /////             trace entry),
+    /////         </description>
+    /////     </item>
+    /////     <item>
+    /////         <description>
+    /////             as part of the main thread executing the test case (if your test hangs,
+    /////             just dump the stack trace of all threads and you'll see the seed),
+    /////         </description>
+    /////     </item>
+    /////     <item>
+    /////         <description>
+    /////             the master seed can also be accessed manually by getting the current
+    /////             context (<see cref="RandomizedContext.Current"/>) and then calling
+    /////             <see cref="RandomizedContext.RunnerSeed"/>.
+    /////         </description>
+    /////     </item>
+    ///// </list>
+    ///// </para>
+    ///// </summary>
     [TestFixture]
     public abstract partial class LuceneTestCase //: Assert // Wait long for leaked threads to complete before failure. zk needs this. -  See LUCENE-3995 for rationale.
 #if TESTFRAMEWORK_XUNIT
@@ -875,7 +836,7 @@ namespace Lucene.Net.Util
         // -----------------------------------------------------------------
 
         /// <summary>
-        /// Access to the current <see cref="RandomizedContext"/>'s Random instance. It is safe to use
+        /// Access to the current <see cref="System.Random"/> instance. It is safe to use
         /// this method from multiple threads, etc., but it should be called while within a runner's
         /// scope (so no static initializers). The returned <see cref="System.Random"/> instance will be
         /// <b>different</b> when this method is called inside a <see cref="BeforeClass()"/> hook (static
