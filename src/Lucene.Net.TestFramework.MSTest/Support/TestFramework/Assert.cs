@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using MSTest = Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lucene.Net.TestFramework
@@ -128,6 +129,15 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual<T>(T[] expected, T[] actual, string message, params object[] args)
         {
             MSTest.Assert.AreEqual(expected, actual, message, args);
+        }
+
+        public static void AreEqual<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
+        {
+            AreEqual(expected.Count, actual.Count);
+            foreach (var key in expected.Keys)
+            {
+                AreEqual(expected[key], actual[key]);
+            }
         }
 
         // From CollectionAssert

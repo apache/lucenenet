@@ -101,6 +101,11 @@ namespace Lucene.Net.Util
             Assert.True(expected.SetEquals(actual), message);
         }
 
+        internal static void assertEquals<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
+        {
+            Assert.AreEqual(expected, actual);
+        }
+
         internal static void assertEquals(ICollection expected, ICollection actual)
         {
             Assert.AreEqual(expected, actual);
