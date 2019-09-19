@@ -51,7 +51,11 @@ namespace Lucene.Net.Search
 
         private int Search(Query q)
         {
-            QueryUtils.Check(Random, q, Searcher, Similarity);
+            QueryUtils.Check(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, q, Searcher);
             return Searcher.Search(q, null, 1000).TotalHits;
         }
 
@@ -145,7 +149,11 @@ namespace Lucene.Net.Search
             Dir = NewDirectory();
 
             //
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, Dir);
 
             //
             Document d = new Document();

@@ -99,7 +99,11 @@ namespace Lucene.Net.Search
                     Console.WriteLine("\nTEST: cycle...");
                 }
                 Directory copy = new MockDirectoryWrapper(Random, new RAMDirectory(Dir2, IOContext.DEFAULT));
-                RandomIndexWriter w = new RandomIndexWriter(Random, Dir2, Similarity, TimeZone);
+                RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    this,
+#endif
+                    Random, Dir2);
                 w.AddIndexes(copy);
                 docCount = w.MaxDoc;
                 w.Dispose();
@@ -310,12 +314,20 @@ namespace Lucene.Net.Search
                     // match up.
                     Sort sort = Sort.INDEXORDER;
 
-                    QueryUtils.Check(Random, q1, Searcher, Similarity); // baseline sim
+                    QueryUtils.Check(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                        this,
+#endif
+                        Random, q1, Searcher); // baseline sim
                     try
                     {
                         // a little hackish, QueryUtils.check is too costly to do on bigSearcher in this loop.
                         Searcher.Similarity = BigSearcher.Similarity; // random sim
-                        QueryUtils.Check(Random, q1, Searcher, Similarity);
+                        QueryUtils.Check(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                            this,
+#endif
+                            Random, q1, Searcher);
                     }
                     finally
                     {

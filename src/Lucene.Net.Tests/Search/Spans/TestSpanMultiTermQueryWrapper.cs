@@ -44,7 +44,11 @@ namespace Lucene.Net.Search.Spans
         {
             base.SetUp();
             Directory = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random, Directory, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, Directory);
             Document doc = new Document();
             Field field = NewTextField("field", "", Field.Store.NO);
             doc.Add(field);

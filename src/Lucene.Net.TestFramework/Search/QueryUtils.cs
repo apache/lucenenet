@@ -154,8 +154,8 @@ namespace Lucene.Net.Search
         /// <param name="q1">A <see cref="Query"/>.</param>
         /// <param name="s">An <see cref="IndexSearcher"/>.</param>
         /// <seealso cref="Check(Query)"/>
-        /// <seealso cref="CheckFirstSkipTo(Query, IndexSearcher, Similarity)"/>
-        /// <seealso cref="CheckSkipTo(Query, IndexSearcher, Similarity)"/>
+        /// <seealso cref="CheckFirstSkipTo(Query, IndexSearcher)"/>
+        /// <seealso cref="CheckSkipTo(Query, IndexSearcher)"/>
         /// <seealso cref="CheckExplanations(Query, IndexSearcher)"/>
         /// <seealso cref="CheckEqual(Query, Query)"/>
         public static void Check(Random random, Query q1, IndexSearcher s)

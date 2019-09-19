@@ -110,7 +110,11 @@ namespace Lucene.Net.Tests.Queries.Function
             }
             */
 
-            CheckHits.DoCheckHits(Random, q, "", searcher, expectedDocs, Similarity);
+            CheckHits.DoCheckHits(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, q, "", searcher, expectedDocs);
             CheckHits.CheckHitsQuery(q, expected, docs.ScoreDocs, expectedDocs);
             CheckHits.CheckExplanations(q, "", searcher);
         }

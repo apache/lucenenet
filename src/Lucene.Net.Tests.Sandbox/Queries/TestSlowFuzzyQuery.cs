@@ -40,7 +40,11 @@ namespace Lucene.Net.Sandbox.Queries
             //is exercising the Automaton, not the brute force linear method
 
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory);
             addDoc("aaaaa", writer);
             addDoc("aaaab", writer);
             addDoc("aaabb", writer);
@@ -197,7 +201,11 @@ namespace Lucene.Net.Sandbox.Queries
         {
             //Lucene-5033
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory);
             addDoc("abcdef", writer);
             addDoc("segment", writer);
 
@@ -222,7 +230,11 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestFuzzinessLong()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory);
             addDoc("aaaaaaa", writer);
             addDoc("segment", writer);
 
@@ -330,14 +342,22 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestTieBreaker()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory);
             addDoc("a123456", writer);
             addDoc("c123456", writer);
             addDoc("d123456", writer);
             addDoc("e123456", writer);
 
             Directory directory2 = NewDirectory();
-            RandomIndexWriter writer2 = new RandomIndexWriter(Random, directory2, Similarity, TimeZone);
+            RandomIndexWriter writer2 = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory2);
             addDoc("a123456", writer2);
             addDoc("b123456", writer2);
             addDoc("b123456", writer2);
@@ -366,7 +386,11 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestTokenLengthOpt()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory);
             addDoc("12345678911", writer);
             addDoc("segment", writer);
 
@@ -404,7 +428,11 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestBoostOnlyRewrite()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory);
             addDoc("Lucene", writer);
             addDoc("Lucene", writer);
             addDoc("Lucenne", writer);
@@ -430,7 +458,11 @@ namespace Lucene.Net.Sandbox.Queries
         {
 
             Directory index = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, index, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, index);
 
             addDoc("Lucene in Action", w);
             addDoc("Lucene for Dummies", w);
@@ -467,7 +499,11 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestDistanceAsEditsSearching()
         {
             Directory index = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, index, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, index);
             addDoc("foobar", w);
             addDoc("test", w);
             addDoc("working", w);

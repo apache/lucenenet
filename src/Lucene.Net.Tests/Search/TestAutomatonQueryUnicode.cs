@@ -50,7 +50,11 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, Directory);
             Document doc = new Document();
             Field titleField = NewTextField("title", "some title", Field.Store.NO);
             Field field = NewTextField(FN, "", Field.Store.NO);

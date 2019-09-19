@@ -2062,7 +2062,7 @@ namespace Lucene.Net.Util
 #if FEATURE_STATIC_TESTDATA_INITIALIZATION
                 ret.Similarity = ClassEnvRule.similarity;
 #else
-                ret.Similarity = luceneTestCase.ClassEnvRule.similarity;
+                ret.Similarity = luceneTestCase?.ClassEnvRule.similarity; // LUCENENET special case: passing null allows us to skip the Similarity
 #endif
                 return ret;
             }
@@ -2102,7 +2102,7 @@ namespace Lucene.Net.Util
 #if FEATURE_STATIC_TESTDATA_INITIALIZATION
                 ret.Similarity = ClassEnvRule.similarity;
 #else
-                ret.Similarity = luceneTestCase.ClassEnvRule.similarity;
+                ret.Similarity = luceneTestCase?.ClassEnvRule.similarity; // LUCENENET special case: passing null allows us to skip the Similarity
 #endif
                 return ret;
             }

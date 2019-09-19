@@ -271,7 +271,11 @@ namespace Lucene.Net.Index
         public virtual void TestArbitraryFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
 
             int NUM_DOCS = AtLeast(27);
             if (VERBOSE)

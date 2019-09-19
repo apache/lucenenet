@@ -40,7 +40,11 @@ namespace Lucene.Net.Tests.Queries
         {
             base.SetUp();
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false));
 
             AddDoc(writer, @"admin guest", @"010", @"20040101", @"Y");
             AddDoc(writer, @"guest", @"020", @"20040101", @"Y");

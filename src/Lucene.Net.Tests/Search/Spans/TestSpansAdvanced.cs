@@ -141,7 +141,11 @@ namespace Lucene.Net.Search.Spans
         /// <param name="expectedScores"> the expected scores of the hits </param>
         protected internal void AssertHits(IndexSearcher s, Query query, string description, string[] expectedIds, float[] expectedScores)
         {
-            QueryUtils.Check(Random, query, s, Similarity);
+            QueryUtils.Check(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, query, s);
 
             const float tolerance = 1e-5f;
 

@@ -38,7 +38,11 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            Writer = new RandomIndexWriter(Random, Dir, Similarity, TimeZone);
+            Writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, Dir);
             int numDocs = AtLeast(100);
             for (int i = 0; i < numDocs; i++)
             {

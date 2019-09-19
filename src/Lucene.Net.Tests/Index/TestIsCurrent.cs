@@ -40,7 +40,11 @@ namespace Lucene.Net.Index
 
             // initialize directory
             Directory = NewDirectory();
-            Writer = new RandomIndexWriter(Random, Directory, Similarity, TimeZone);
+            Writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, Directory);
 
             // write document
             Document doc = new Document();

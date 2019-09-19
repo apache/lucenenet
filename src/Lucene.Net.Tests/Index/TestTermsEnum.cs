@@ -57,7 +57,11 @@ namespace Lucene.Net.Index
             Directory d = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(LuceneTestCase.Random);
             analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
-            RandomIndexWriter w = new RandomIndexWriter(LuceneTestCase.Random, d, analyzer, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                LuceneTestCase.Random, d, analyzer);
             int numDocs = AtLeast(10);
             for (int docCount = 0; docCount < numDocs; docCount++)
             {
@@ -234,7 +238,11 @@ namespace Lucene.Net.Index
         public virtual void TestIntersectRandom()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
 
             int numTerms = AtLeast(300);
             //final int numTerms = 50;
@@ -587,7 +595,11 @@ namespace Lucene.Net.Index
         public virtual void TestZeroTerms()
         {
             var d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, d, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, d);
             Document doc = new Document();
             doc.Add(NewTextField("field", "one two three", Field.Store.NO));
             doc = new Document();

@@ -53,7 +53,11 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, Directory);
             Document doc = new Document();
             doc.Add(NewTextField(FN, "the quick brown fox jumps over the lazy ??? dog 493432 49344", Field.Store.NO));
             writer.AddDocument(doc);

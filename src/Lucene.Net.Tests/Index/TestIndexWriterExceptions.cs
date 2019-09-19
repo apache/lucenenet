@@ -1722,7 +1722,11 @@ namespace Lucene.Net.Index
         public virtual void TestAddDocsNonAbortingException()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             int numDocs1 = Random.Next(25);
             for (int docCount = 0; docCount < numDocs1; docCount++)
             {
@@ -1788,7 +1792,11 @@ namespace Lucene.Net.Index
         public virtual void TestUpdateDocsNonAbortingException()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             int numDocs1 = Random.Next(25);
             for (int docCount = 0; docCount < numDocs1; docCount++)
             {

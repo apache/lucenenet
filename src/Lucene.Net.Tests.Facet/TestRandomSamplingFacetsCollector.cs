@@ -49,7 +49,11 @@ namespace Lucene.Net.Facet
             Directory taxoDir = NewDirectory();
 
             DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
-            RandomIndexWriter writer = new RandomIndexWriter(Util.LuceneTestCase.Random, dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Util.LuceneTestCase.Random, dir);
 
             FacetsConfig config = new FacetsConfig();
 

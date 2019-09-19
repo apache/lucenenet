@@ -42,7 +42,11 @@ namespace Lucene.Net.Search
             base.BeforeClass();
 
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, Directory);
             writer.Dispose();
             Reader = DirectoryReader.Open(Directory);
         }

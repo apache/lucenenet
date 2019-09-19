@@ -60,7 +60,11 @@ namespace Lucene.Net.Documents
             /// add the doc to a ram index </summary>
             Directory dir = NewDirectory();
             Random r = Random;
-            RandomIndexWriter writer = new RandomIndexWriter(r, dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                r, dir);
             writer.AddDocument(doc);
 
             /// <summary>
@@ -97,7 +101,11 @@ namespace Lucene.Net.Documents
             var doc = new Documents.Document {binaryFldCompressed, stringFldCompressed};
 
             using (Directory dir = NewDirectory())
-            using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone))
+            using (RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir))
             {
                 writer.AddDocument(doc);
 

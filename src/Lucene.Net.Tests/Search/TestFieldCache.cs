@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
             NUM_DOCS = AtLeast(500);
             NUM_ORDS = AtLeast(2);
             Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random), Similarity, TimeZone).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             long theLong = long.MaxValue;
             double theDouble = double.MaxValue;
             sbyte theByte = sbyte.MaxValue;
@@ -826,7 +826,11 @@ namespace Lucene.Net.Search
         public virtual void TestNonexistantFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             iw.AddDocument(doc);
             DirectoryReader ir = iw.GetReader();
@@ -885,7 +889,11 @@ namespace Lucene.Net.Search
         public virtual void TestNonIndexedFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             doc.Add(new StoredField("bogusbytes", "bogus"));
             doc.Add(new StoredField("bogusshorts", "bogus"));

@@ -43,7 +43,11 @@ namespace Lucene.Net.Tests.Queries.Mlt
         {
             base.SetUp();
             directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory);
 
             // Add series of docs with specific information for MoreLikeThis
             AddDoc(writer, "lucene");
@@ -147,7 +151,11 @@ namespace Lucene.Net.Tests.Queries.Mlt
         public void TestMoreLikeThisQuery()
         {
             Query query = new MoreLikeThisQuery("this is a test", new[] { "text" }, new MockAnalyzer(Random), "text");
-            QueryUtils.Check(Random, query, searcher, Similarity);
+            QueryUtils.Check(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, query, searcher);
         }
 
         // TODO: add tests for the MoreLikeThisQuery

@@ -262,7 +262,11 @@ namespace Lucene.Net.Search
         private Directory GetIndexStore(string field, string[] contents)
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, indexStore);
             for (int i = 0; i < contents.Length; ++i)
             {
                 Document doc = new Document();

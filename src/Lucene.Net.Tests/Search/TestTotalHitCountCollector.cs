@@ -36,7 +36,11 @@ namespace Lucene.Net.Search
         public virtual void TestBasics()
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, indexStore);
             for (int i = 0; i < 5; i++)
             {
                 Document doc = new Document();

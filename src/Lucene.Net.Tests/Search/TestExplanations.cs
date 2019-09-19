@@ -108,7 +108,11 @@ namespace Lucene.Net.Search
         /// check the expDocNrs first, then check the query (and the explanations) </summary>
         public virtual void Qtest(Query q, int[] expDocNrs)
         {
-            CheckHits.CheckHitCollector(Random, q, FIELD, Searcher, expDocNrs, Similarity);
+            CheckHits.CheckHitCollector(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, q, FIELD, Searcher, expDocNrs);
         }
 
         /// <summary>

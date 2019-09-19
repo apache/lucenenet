@@ -45,7 +45,11 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random, Dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, Dir);
             for (int i = 0; i < 100; i++)
             {
                 Document doc = new Document();
@@ -119,7 +123,11 @@ namespace Lucene.Net.Search
         {
             // LUCENE-5128: ensure we get a meaningful message if searchAfter exceeds maxDoc
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             w.AddDocument(new Document());
             IndexReader r = w.GetReader();
             w.Dispose();

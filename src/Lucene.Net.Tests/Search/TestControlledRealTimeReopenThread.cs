@@ -544,7 +544,11 @@ namespace Lucene.Net.Search
         public virtual void TestEvilSearcherFactory()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             w.Commit();
 
             IndexReader other = DirectoryReader.Open(dir);

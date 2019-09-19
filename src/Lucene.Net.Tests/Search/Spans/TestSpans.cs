@@ -84,7 +84,11 @@ namespace Lucene.Net.Search.Spans
 
         private void CheckHits(Query query, int[] results)
         {
-            Search.CheckHits.DoCheckHits(Random, query, field, Searcher, results, Similarity);
+            Search.CheckHits.DoCheckHits(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, query, field, Searcher, results);
         }
 
         private void OrderedSlopTest3SQ(SpanQuery q1, SpanQuery q2, SpanQuery q3, int slop, int[] expectedDocs)

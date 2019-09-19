@@ -44,7 +44,11 @@ namespace Lucene.Net.Search
             Directory directory = NewDirectory();
 
             string[] categories = new string[] { "/Computers", "/Computers/Mac", "/Computers/Windows" };
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory);
             for (int i = 0; i < categories.Length; i++)
             {
                 Document doc = new Document();

@@ -50,7 +50,11 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             Dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random, Dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, Dir);
 
             Document doc = new Document();
             doc.Add(NewStringField("id", "1", Field.Store.YES));
@@ -122,7 +126,11 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             int numDocs = AtLeast(1000);
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
 
             int[] idToNum = new int[numDocs];
             int maxValue = TestUtil.NextInt32(Random, 10, 1000000);

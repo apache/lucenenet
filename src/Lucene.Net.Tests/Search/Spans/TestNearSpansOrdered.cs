@@ -84,7 +84,11 @@ namespace Lucene.Net.Search.Spans
         public virtual void TestSpanNearQuery()
         {
             SpanNearQuery q = MakeQuery();
-            CheckHits.DoCheckHits(Random, q, FIELD, Searcher, new int[] { 0, 1 }, Similarity);
+            CheckHits.DoCheckHits(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, q, FIELD, Searcher, new int[] { 0, 1 });
         }
 
         public virtual string s(Spans span)

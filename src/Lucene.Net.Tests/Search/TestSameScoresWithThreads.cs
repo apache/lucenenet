@@ -49,7 +49,11 @@ namespace Lucene.Net.Search
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random);
             analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, analyzer, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir, analyzer);
             LineFileDocs docs = new LineFileDocs(Random, DefaultCodecSupportsDocValues);
             int charsToIndex = AtLeast(100000);
             int charsIndexed = 0;

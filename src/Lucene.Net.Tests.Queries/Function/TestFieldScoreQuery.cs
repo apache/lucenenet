@@ -98,7 +98,11 @@ namespace Lucene.Net.Tests.Queries.Function
             IndexReader r = DirectoryReader.Open(dir);
             IndexSearcher s = NewSearcher(r);
             Log("test: " + functionQuery);
-            QueryUtils.Check(Random, functionQuery, s, Similarity);
+            QueryUtils.Check(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, functionQuery, s);
             ScoreDoc[] h = s.Search(functionQuery, null, 1000).ScoreDocs;
             assertEquals("All docs should be matched!", N_DOCS, h.Length);
             string prevID = "ID" + (N_DOCS + 1); // greater than all ids of docs in this test

@@ -36,7 +36,11 @@ namespace Lucene.Net.Search.Spell
         {
             base.SetUp();
             dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true));
 
             for (int i = 900; i < 1112; i++)
             {
@@ -284,8 +288,12 @@ namespace Lucene.Net.Search.Spell
             try
             {
                 dir = NewDirectory();
-                writer = new RandomIndexWriter(Random, dir, new MockAnalyzer(Random,
-                    MockTokenizer.WHITESPACE, false), Similarity, TimeZone);
+                writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    this,
+#endif
+                    Random, dir, new MockAnalyzer(Random,
+                    MockTokenizer.WHITESPACE, false));
                 int maxLength = TestUtil.NextInt32(Random, 5, 50);
                 List<string> originals = new List<string>(numDocs);
                 List<string[]> breaks = new List<string[]>(numDocs);

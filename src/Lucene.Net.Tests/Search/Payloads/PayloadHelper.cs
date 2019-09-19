@@ -145,7 +145,11 @@ namespace Lucene.Net.Search.Payloads
             Reader = DirectoryReader.Open(writer, true);
             writer.Dispose();
 
-            IndexSearcher searcher = LuceneTestCase.NewSearcher(Reader, similarity);
+            IndexSearcher searcher = LuceneTestCase.NewSearcher(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                null, // LUCENENET: Passing null allows us to bypass similarity, which we are setting here, anyway
+#endif
+                Reader);
             searcher.Similarity = similarity;
             return searcher;
         }

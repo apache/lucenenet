@@ -314,7 +314,11 @@ namespace Lucene.Net.Search.Payloads
             Assert.IsTrue(hits.TotalHits == 1, "hits Size: " + hits.TotalHits + " is not: " + 1);
             int[] results = new int[1];
             results[0] = 0; //hits.ScoreDocs[0].Doc;
-            CheckHits.CheckHitCollector(Random, query, PayloadHelper.NO_PAYLOAD_FIELD, Searcher, results, Similarity);
+            CheckHits.CheckHitCollector(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, query, PayloadHelper.NO_PAYLOAD_FIELD, Searcher, results);
         }
 
         internal class BoostingSimilarity : DefaultSimilarity

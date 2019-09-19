@@ -57,7 +57,11 @@ namespace Lucene.Net.Classification
         {
             base.SetUp();
             dir = NewDirectory();
-            indexWriter = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            indexWriter = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             textFieldName = "text";
             categoryFieldName = "cat";
             booleanFieldName = "bool";

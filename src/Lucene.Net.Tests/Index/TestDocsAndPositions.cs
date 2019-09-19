@@ -378,7 +378,11 @@ namespace Lucene.Net.Index
         public virtual void TestDocsEnumStart()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("foo", "bar", Field.Store.NO));
             writer.AddDocument(doc);
@@ -405,7 +409,11 @@ namespace Lucene.Net.Index
         public virtual void TestDocsAndPositionsEnumStart()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             doc.Add(NewTextField("foo", "bar", Field.Store.NO));
             writer.AddDocument(doc);

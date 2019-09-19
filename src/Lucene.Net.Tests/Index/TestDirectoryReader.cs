@@ -1253,7 +1253,11 @@ namespace Lucene.Net.Index
         public virtual void TestLoadCertainFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             doc.Add(NewStringField("field1", "foobar", Field.Store.YES));
             doc.Add(NewStringField("field2", "foobaz", Field.Store.YES));

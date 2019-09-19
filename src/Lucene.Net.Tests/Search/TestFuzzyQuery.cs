@@ -46,7 +46,11 @@ namespace Lucene.Net.Search
         public virtual void TestFuzziness()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory);
             AddDoc("aaaaa", writer);
             AddDoc("aaaab", writer);
             AddDoc("aaabb", writer);
@@ -200,7 +204,11 @@ namespace Lucene.Net.Search
         public virtual void Test2()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false), Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false));
             AddDoc("LANGE", writer);
             AddDoc("LUETH", writer);
             AddDoc("PIRSING", writer);
@@ -244,14 +252,22 @@ namespace Lucene.Net.Search
         public virtual void TestTieBreaker()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory);
             AddDoc("a123456", writer);
             AddDoc("c123456", writer);
             AddDoc("d123456", writer);
             AddDoc("e123456", writer);
 
             Directory directory2 = NewDirectory();
-            RandomIndexWriter writer2 = new RandomIndexWriter(Random, directory2, Similarity, TimeZone);
+            RandomIndexWriter writer2 = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory2);
             AddDoc("a123456", writer2);
             AddDoc("b123456", writer2);
             AddDoc("b123456", writer2);
@@ -282,7 +298,11 @@ namespace Lucene.Net.Search
         public virtual void TestBoostOnlyRewrite()
         {
             Directory directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, directory);
             AddDoc("Lucene", writer);
             AddDoc("Lucene", writer);
             AddDoc("Lucenne", writer);
@@ -308,7 +328,11 @@ namespace Lucene.Net.Search
         {
             MockAnalyzer analyzer = new MockAnalyzer(Random);
             Directory index = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, index, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, index);
 
             AddDoc("Lucene in Action", w);
             AddDoc("Lucene for Dummies", w);
@@ -345,7 +369,11 @@ namespace Lucene.Net.Search
         public virtual void TestDistanceAsEditsSearching()
         {
             Directory index = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, index, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, index);
             AddDoc("foobar", w);
             AddDoc("test", w);
             AddDoc("working", w);

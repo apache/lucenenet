@@ -48,7 +48,11 @@ namespace Lucene.Net.Expressions
         {
             base.SetUp();
             dir = NewDirectory();
-            var iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            var iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             int numDocs = TestUtil.NextInt32(Random, 2049, 4000);
             for (int i = 0; i < numDocs; i++)
             {

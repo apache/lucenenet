@@ -56,7 +56,11 @@ namespace Lucene.Net.Search
         public virtual void TestPhrasePrefix()
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, indexStore);
             Add("blueberry pie", writer);
             Add("blueberry strudel", writer);
             Add("blueberry pizza", writer);
@@ -160,7 +164,11 @@ namespace Lucene.Net.Search
         public virtual void TestTall()
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, indexStore);
             Add("blueberry chocolate pie", writer);
             Add("blueberry chocolate tart", writer);
             IndexReader r = writer.GetReader();
@@ -182,7 +190,11 @@ namespace Lucene.Net.Search
         public virtual void TestMultiSloppyWithRepeats() //LUCENE-3821 fixes sloppy phrase scoring, except for this known problem
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, indexStore);
             Add("a b c d e f g h i k", writer);
             IndexReader r = writer.GetReader();
             writer.Dispose();
@@ -204,7 +216,11 @@ namespace Lucene.Net.Search
         public virtual void TestMultiExactWithRepeats()
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, indexStore);
             Add("a b c d e f g h i k", writer);
             IndexReader r = writer.GetReader();
             writer.Dispose();
@@ -233,7 +249,11 @@ namespace Lucene.Net.Search
             // and all terms required.
             // The contained PhraseMultiQuery must contain exactly one term array.
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, indexStore);
             Add("blueberry pie", writer);
             Add("blueberry chewing gum", writer);
             Add("blue raspberry pie", writer);
@@ -265,7 +285,11 @@ namespace Lucene.Net.Search
         public virtual void TestPhrasePrefixWithBooleanQuery()
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, indexStore);
             Add("this is a test", "object", writer);
             Add("a note", "note", writer);
 
@@ -293,7 +317,11 @@ namespace Lucene.Net.Search
         public virtual void TestNoDocs()
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, indexStore);
             Add("a note", "note", writer);
 
             IndexReader reader = writer.GetReader();
@@ -362,7 +390,11 @@ namespace Lucene.Net.Search
         public virtual void TestCustomIDF()
         {
             Directory indexStore = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, indexStore, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, indexStore);
             Add("this is a test", "object", writer);
             Add("a note", "note", writer);
 
@@ -411,7 +443,11 @@ namespace Lucene.Net.Search
             tokens[2].Append("c");
             tokens[2].PositionIncrement = 0;
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             doc.Add(new TextField("field", new CannedTokenStream(tokens)));
             writer.AddDocument(doc);

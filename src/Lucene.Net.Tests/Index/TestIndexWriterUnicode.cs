@@ -318,7 +318,11 @@ namespace Lucene.Net.Index
         {
             Random rnd = Random;
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(rnd, dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                rnd, dir);
             Document d = new Document();
             // Single segment
             Field f = NewStringField("f", "", Field.Store.NO);

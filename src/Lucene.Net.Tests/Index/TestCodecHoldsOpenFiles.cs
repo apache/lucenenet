@@ -36,7 +36,11 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, d, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, d);
             int numDocs = AtLeast(100);
             for (int i = 0; i < numDocs; i++)
             {
@@ -76,7 +80,11 @@ namespace Lucene.Net.Index
         public virtual void TestExposeUnclosedFiles()
         {
             Directory d = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, d, Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, d);
             //int numDocs = AtLeast(100);
             int numDocs = 5;
             for (int i = 0; i < numDocs; i++)

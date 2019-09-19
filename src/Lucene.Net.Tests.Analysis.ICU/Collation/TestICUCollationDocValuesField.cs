@@ -37,7 +37,11 @@ namespace Lucene.Net.Collation
         public void TestBasic()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             Field field = NewField("field", "", StringField.TYPE_STORED);
             ICUCollationDocValuesField collationField = new ICUCollationDocValuesField("collated", Collator.GetInstance(new CultureInfo("en")));
@@ -70,7 +74,11 @@ namespace Lucene.Net.Collation
         public void TestRanges()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             Field field = NewField("field", "", StringField.TYPE_STORED);
             Collator collator = Collator.GetInstance(CultureInfo.CurrentCulture); // uses -Dtests.locale

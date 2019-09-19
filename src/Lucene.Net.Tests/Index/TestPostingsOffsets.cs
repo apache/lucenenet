@@ -440,7 +440,11 @@ namespace Lucene.Net.Index
         public virtual void TestAddFieldTwice()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             FieldType customType3 = new FieldType(TextField.TYPE_STORED);
             customType3.StoreTermVectors = true;

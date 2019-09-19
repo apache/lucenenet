@@ -61,7 +61,11 @@ namespace Lucene.Net.Search.PostingsHighlight
             int maxNumSentences = 20;
 
             Directory dir = NewDirectory();
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true), Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true));
             Document document = new Document();
             Field id = new StringField("id", "", Field.Store.NO);
             FieldType offsetsType = new FieldType(TextField.TYPE_STORED);

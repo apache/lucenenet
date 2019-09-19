@@ -39,7 +39,11 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter riw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter riw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             doc.Add(new TextField("eng", new BugReproTokenStream()));
             riw.AddDocument(doc);
@@ -54,7 +58,11 @@ namespace Lucene.Net.Index
         public virtual void TestMoreDocs()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter riw = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter riw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             for (int i = 0; i < 100; i++)
             {
                 Document doc = new Document();

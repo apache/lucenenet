@@ -97,7 +97,11 @@ namespace Lucene.Net.Index
         public virtual void TestMixupMultiValued()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
             customType.StoreTermVectors = true;
@@ -140,7 +144,11 @@ namespace Lucene.Net.Index
         public virtual void TestPayloadsWithoutPositions()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
             customType.StoreTermVectors = true;

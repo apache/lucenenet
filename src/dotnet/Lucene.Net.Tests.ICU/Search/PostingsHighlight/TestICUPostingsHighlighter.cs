@@ -465,7 +465,11 @@ namespace Lucene.Net.Search.PostingsHighlight
                           "Southeast Asia, and - Buddhism in China, East Asia, and Japan.";
             Directory dir = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, analyzer, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir, analyzer);
 
             FieldType positionsType = new FieldType(TextField.TYPE_STORED);
             positionsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
@@ -498,7 +502,11 @@ namespace Lucene.Net.Search.PostingsHighlight
                           "Firefighters are a famously brave lot, but can they withstand a visit from one curious monkey?";
             Directory dir = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, analyzer, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir, analyzer);
             FieldType positionsType = new FieldType(TextField.TYPE_STORED);
             positionsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
             Field body = new Field("body", text, positionsType);
@@ -532,7 +540,11 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             Store.Directory dir = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, analyzer, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir, analyzer);
             FieldType positionsType = new FieldType(TextField.TYPE_STORED);
             positionsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
             Field body = new Field("body", text, positionsType);
@@ -595,7 +607,11 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             Directory dir = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, analyzer, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir, analyzer);
             FieldType positionsType = new FieldType(TextField.TYPE_STORED);
             positionsType.IndexOptions = (IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
             Field body = new Field("body", "This sentence has both terms.  This sentence has only terms.", positionsType);

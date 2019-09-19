@@ -1977,7 +1977,11 @@ namespace Lucene.Net.Index
         public virtual void TestWickedLongTerm()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, new StringSplitAnalyzer(), Similarity, TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir, new StringSplitAnalyzer());
 
             char[] chars = new char[DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8];
             Arrays.Fill(chars, 'x');
@@ -2032,7 +2036,11 @@ namespace Lucene.Net.Index
             Field contentField = new Field("content", "", customType);
             doc.Add(contentField);
 
-            w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
 
             contentField.SetStringValue("other");
             w.AddDocument(doc);
@@ -2136,7 +2144,11 @@ namespace Lucene.Net.Index
             // somehow "knows" a lock is held against write.lock
             // even if you remove that file:
             d.SetLockFactory(new SimpleFSLockFactory());
-            RandomIndexWriter w1 = new RandomIndexWriter(Random, d, Similarity, TimeZone);
+            RandomIndexWriter w1 = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, d);
             w1.DeleteAll();
             try
             {
@@ -2328,7 +2340,11 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, a, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir, a);
             Document doc = new Document();
             doc.Add(new TextField("body", "just a", Field.Store.NO));
             doc.Add(new TextField("body", "test of gaps", Field.Store.NO));
@@ -2370,7 +2386,11 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             Automaton secondSet = BasicAutomata.MakeString("foobar");
             Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this, secondSet);
-            RandomIndexWriter iw = new RandomIndexWriter(Random, dir, a, Similarity, TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir, a);
             Document doc = new Document();
             doc.Add(new TextField("body", "just a foobar", Field.Store.NO));
             doc.Add(new TextField("body", "test of gaps", Field.Store.NO));
@@ -2904,7 +2924,11 @@ namespace Lucene.Net.Index
                 dir.DeleteFile(fileName);
             }
 
-            w = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            w = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             w.AddDocument(doc);
             w.Dispose();
             r.Dispose();

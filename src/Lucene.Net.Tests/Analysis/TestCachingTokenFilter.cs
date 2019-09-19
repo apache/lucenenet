@@ -42,7 +42,11 @@ namespace Lucene.Net.Analysis
         public virtual void TestCaching()
         {
             Directory dir = new RAMDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, Similarity, TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                this,
+#endif
+                Random, dir);
             Document doc = new Document();
             TokenStream stream = new TokenStreamAnonymousInnerClassHelper(this);
 
