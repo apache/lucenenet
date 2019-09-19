@@ -1,3 +1,5 @@
+// LUCENENET TODO: Get this working on all test frameworks
+#if TESTFRAMEWORK_NUNIT
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -148,3 +150,4 @@ namespace Lucene.Net.Tests.TestFramework
         }
     }
 }
+#endif

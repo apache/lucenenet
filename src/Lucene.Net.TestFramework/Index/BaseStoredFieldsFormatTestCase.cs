@@ -11,14 +11,14 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 #if TESTFRAMEWORK_MSTEST
-
+using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
 #elif TESTFRAMEWORK_NUNIT
 using Test = NUnit.Framework.TestAttribute;
-using Assert = NUnit.Framework.Assert;
 #elif TESTFRAMEWORK_XUNIT
-
+using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
 #endif
 
 namespace Lucene.Net.Index

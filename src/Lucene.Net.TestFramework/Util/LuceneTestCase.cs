@@ -26,6 +26,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.TestFramework;
 using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections;
@@ -38,35 +39,33 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
-using System.Text.RegularExpressions;
-
-// LUCENENET NOTE: These are primarily here because they are referred to
-// in the XML documentation. Be sure to add a new option if a new test framework
-// is being supported.
-#if TESTFRAMEWORK_MSTEST
-
-#elif TESTFRAMEWORK_XUNIT
-
-#else // #elif TESTFRAMEWORK_NUNIT
-
-#endif
+using Assert = Lucene.Net.TestFramework.Assert;
 
 #if TESTFRAMEWORK_MSTEST
-
+using SetUp = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDown = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using OneTimeSetUp = Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute;
+using OneTimeTearDown = Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute;
+using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using TestFixture = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
 #elif TESTFRAMEWORK_NUNIT
 using SetUp = NUnit.Framework.SetUpAttribute;
 using TearDown = NUnit.Framework.TearDownAttribute;
 using OneTimeSetUp = NUnit.Framework.OneTimeSetUpAttribute;
 using OneTimeTearDown = NUnit.Framework.OneTimeTearDownAttribute;
-using Assert = NUnit.Framework.Assert;
 using Test = NUnit.Framework.TestAttribute;
 using TestFixture = NUnit.Framework.TestFixtureAttribute;
 #elif TESTFRAMEWORK_XUNIT
-
+using SetUp = Lucene.Net.Attributes.NoOpAttribute;
+using TearDown = Lucene.Net.Attributes.NoOpAttribute;
+using OneTimeSetUp = Lucene.Net.Attributes.NoOpAttribute;
+using OneTimeTearDown = Lucene.Net.Attributes.NoOpAttribute;
+using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
+using TestFixture = Lucene.Net.Attributes.NoOpAttribute;
 #endif
-
 
 namespace Lucene.Net.Util
 {
@@ -200,7 +199,7 @@ namespace Lucene.Net.Util
     /// <h3>Specifying test cases</h3>
     ///
     /// <para>
-    /// Any test method annotated with <see cref="TestAttribute"/> is considered a test case.
+    /// Any test method annotated with <see cref="Test"/> is considered a test case.
     /// </para>
     ///
     /// <h3>Randomized execution and test facilities</h3>
@@ -238,11 +237,39 @@ namespace Lucene.Net.Util
     /// </summary>
     [TestFixture]
     public abstract partial class LuceneTestCase //: Assert // Wait long for leaked threads to complete before failure. zk needs this. -  See LUCENE-3995 for rationale.
+#if TESTFRAMEWORK_XUNIT
+        : IDisposable, Xunit.IClassFixture<BeforeAfterClass>
+    {
+        private bool isDisposed = false;
+
+        public LuceneTestCase(/*BeforeAfterClass beforeAfter*/)
+        {
+            ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
+            //beforeAfter.SetBeforeAfterClass(BeforeClass, AfterClass);
+            this.SetUp();
+        }
+
+        public void Dispose()
+        {
+            if (!isDisposed)
+            {
+                this.TearDown();
+                Dispose(true);
+                GC.SuppressFinalize(this);
+                isDisposed = true;
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+        }
+#else
     {
         public LuceneTestCase()
         {
             ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
         }
+#endif
 
         // --------------------------------------------------------------------
         // Test groups, system properties and other annotations modifying tests

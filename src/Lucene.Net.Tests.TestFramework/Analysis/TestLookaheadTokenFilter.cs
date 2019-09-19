@@ -1,6 +1,16 @@
 ﻿// Lucene version compatibility level 8.2.0
-using NUnit.Framework;
 using System;
+
+#if TESTFRAMEWORK_MSTEST
+using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using Assert = Lucene.Net.TestFramework.Assert;
+#elif TESTFRAMEWORK_NUNIT
+using Test = NUnit.Framework.TestAttribute;
+using Assert = NUnit.Framework.Assert;
+#elif TESTFRAMEWORK_XUNIT
+using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
+using Assert = Lucene.Net.TestFramework.Assert;
+#endif
 
 namespace Lucene.Net.Analysis
 {
@@ -21,6 +31,9 @@ namespace Lucene.Net.Analysis
     * limitations under the License.
     */
 
+#if TESTFRAMEWORK_MSTEST
+    [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
+#endif
     public class TestLookaheadTokenFilter : BaseTokenStreamTestCase
     {
         [Test]
@@ -60,7 +73,7 @@ namespace Lucene.Net.Analysis
         {
             Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, Random.nextBoolean());
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, Random.NextBoolean());
                 TokenStream output = new NeverPeeksLookaheadTokenFilter(tokenizer);
                 return new TokenStreamComponents(tokenizer, output);
             });

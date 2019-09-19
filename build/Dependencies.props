@@ -43,6 +43,8 @@
     <MicrosoftCSharpPackageVersion>4.4.0</MicrosoftCSharpPackageVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>2.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftNETTestSdkPackageVersion>16.2.0</MicrosoftNETTestSdkPackageVersion>
+    <MSTestTestFrameworkPackageVersion>1.1.18</MSTestTestFrameworkPackageVersion>
+    <MSTestTestAdapterPackageVersion>1.1.18</MSTestTestAdapterPackageVersion>
     <NETStandardLibrary16PackageVersion>1.6.1</NETStandardLibrary16PackageVersion>
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
     <NewtonsoftJsonPackageVersion>10.0.3</NewtonsoftJsonPackageVersion>
@@ -74,5 +76,7 @@
     <SystemThreadingThreadPoolPackageVersion>4.3.0</SystemThreadingThreadPoolPackageVersion>
     <SystemXmlXmlDocumentPackageVersion>4.3.0</SystemXmlXmlDocumentPackageVersion>
     <TeamCityVSTestTestAdapterPackageVersion>1.0.15</TeamCityVSTestTestAdapterPackageVersion>
+    <XUnitPackageVersion>2.3.1</XUnitPackageVersion>
+    <XUnitRunnerVisualStudioPackageVersion>2.3.1</XUnitRunnerVisualStudioPackageVersion>
   </PropertyGroup>
 </Project>

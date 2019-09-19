@@ -23,6 +23,9 @@ namespace Lucene.Net.Codecs.Asserting
     /// <summary>
     /// Test <see cref="AssertingStoredFieldsFormat"/> directly
     /// </summary>
+#if TESTFRAMEWORK_MSTEST
+    [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
+#endif
     public class TestAssertingStoredFieldsFormat : BaseTermVectorsFormatTestCase
     {
         private readonly Codec codec = new AssertingCodec();

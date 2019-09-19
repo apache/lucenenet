@@ -1,3 +1,4 @@
+#if TESTFRAMEWORK_NUNIT
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,7 +30,7 @@ namespace Lucene.Net.Attributes
     /// In other words, apply this attribute to the test if it
     /// did not exist in Java Lucene.
     /// </summary>
-    public class LuceneNetSpecificAttribute : CategoryAttribute
+    internal class LuceneNetSpecificAttribute : CategoryAttribute
     {
         public LuceneNetSpecificAttribute()
             : base("LUCENENET")
@@ -38,3 +39,4 @@ namespace Lucene.Net.Attributes
         }
     }
 }
+#endif

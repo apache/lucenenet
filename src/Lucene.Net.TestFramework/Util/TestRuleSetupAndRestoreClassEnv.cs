@@ -20,11 +20,11 @@ using Debug = Lucene.Net.Diagnostics.Debug;
 // in the XML documentation. Be sure to add a new option if a new test framework
 // is being supported.
 #if TESTFRAMEWORK_MSTEST
-
+using AssumptionViolatedException = Microsoft.VisualStudio.TestTools.UnitTesting.AssertInconclusiveException;
 #elif TESTFRAMEWORK_NUNIT
 using AssumptionViolatedException = NUnit.Framework.InconclusiveException;
 #elif TESTFRAMEWORK_XUNIT
-
+using AssumptionViolatedException = Lucene.Net.TestFramework.SkipTestException;
 #endif
 
 namespace Lucene.Net.Util

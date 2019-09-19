@@ -2,11 +2,11 @@ using Lucene.Net.Support;
 using System;
 
 #if TESTFRAMEWORK_MSTEST
-
+using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
 #elif TESTFRAMEWORK_NUNIT
 using Test = NUnit.Framework.TestAttribute;
 #elif TESTFRAMEWORK_XUNIT
-
+using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
 #endif
 
 namespace Lucene.Net.Index

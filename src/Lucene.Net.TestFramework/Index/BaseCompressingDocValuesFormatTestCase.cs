@@ -1,15 +1,16 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
-using NUnit.Framework;
 using System.Collections.Generic;
 
 #if TESTFRAMEWORK_MSTEST
-
+using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
 #elif TESTFRAMEWORK_NUNIT
-using Assert = NUnit.Framework.Assert;
+using Test = NUnit.Framework.TestAttribute;
 #elif TESTFRAMEWORK_XUNIT
-
+using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
 #endif
+
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {

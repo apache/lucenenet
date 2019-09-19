@@ -6,14 +6,7 @@ using System.IO;
 using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using RegExp = Lucene.Net.Util.Automaton.RegExp;
-
-#if TESTFRAMEWORK_MSTEST
-
-#elif TESTFRAMEWORK_NUNIT
-using Assert = NUnit.Framework.Assert;
-#elif TESTFRAMEWORK_XUNIT
-
-#endif
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis
 {

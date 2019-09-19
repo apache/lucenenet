@@ -1,3 +1,4 @@
+#if TESTFRAMEWORK_NUNIT
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,7 +29,7 @@ namespace Lucene.Net.Attributes
     /// This test runs long and should be skipped in the 1st run.
     /// </summary>
     [ExceptionToNetNumericConvention]
-    public class LongRunningTestAttribute : CategoryAttribute
+    internal class LongRunningTestAttribute : CategoryAttribute
     {
         public LongRunningTestAttribute() : base("LongRunningTest")
         {
@@ -36,3 +37,4 @@ namespace Lucene.Net.Attributes
         }
     }
 }
+#endif

@@ -2,14 +2,7 @@ using Lucene.Net.Support;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-
-#if TESTFRAMEWORK_MSTEST
-
-#elif TESTFRAMEWORK_NUNIT
-using Assert = NUnit.Framework.Assert;
-#elif TESTFRAMEWORK_XUNIT
-
-#endif
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis
 {

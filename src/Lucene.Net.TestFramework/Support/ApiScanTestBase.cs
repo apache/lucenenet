@@ -28,14 +28,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Console = Lucene.Net.Support.SystemConsole;
-
-#if TESTFRAMEWORK_MSTEST
-
-#elif TESTFRAMEWORK_NUNIT
-using Assert = NUnit.Framework.Assert;
-#elif TESTFRAMEWORK_XUNIT
-
-#endif
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Support
 {

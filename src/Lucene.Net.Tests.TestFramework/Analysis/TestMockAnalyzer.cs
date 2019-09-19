@@ -2,9 +2,19 @@
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
-using NUnit.Framework;
 using System;
 using System.IO;
+
+#if TESTFRAMEWORK_MSTEST
+using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using Assert = Lucene.Net.TestFramework.Assert;
+#elif TESTFRAMEWORK_NUNIT
+using Test = NUnit.Framework.TestAttribute;
+using Assert = NUnit.Framework.Assert;
+#elif TESTFRAMEWORK_XUNIT
+using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
+using Assert = Lucene.Net.TestFramework.Assert;
+#endif
 
 namespace Lucene.Net.Analysis
 {
@@ -25,6 +35,9 @@ namespace Lucene.Net.Analysis
     * limitations under the License.
     */
 
+#if TESTFRAMEWORK_MSTEST
+    [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
+#endif
     public class TestMockAnalyzer : BaseTokenStreamTestCase
     {
 
@@ -246,7 +259,7 @@ namespace Lucene.Net.Analysis
             for (int i = 0; i < iters; i++)
             {
                 CharacterRunAutomaton dfa = new CharacterRunAutomaton(AutomatonTestUtil.RandomAutomaton(Random) /*, int.MaxValue*/);
-                bool lowercase = Random.nextBoolean();
+                bool lowercase = Random.NextBoolean();
                 int limit = TestUtil.NextInt32(Random, 0, 500);
                 Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) => {
                     Tokenizer t = new MockTokenizer(reader, dfa, lowercase, limit);

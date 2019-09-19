@@ -13,15 +13,19 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Console = Lucene.Net.Support.SystemConsole;
+using Assert = Lucene.Net.TestFramework.Assert;
+using System.Collections;
 
-#if TESTFRAMEWORK_MSTEST
-
-#elif TESTFRAMEWORK_NUNIT
-using CollectionAssert = NUnit.Framework.CollectionAssert;
-using Assert = NUnit.Framework.Assert;
-#elif TESTFRAMEWORK_XUNIT
-
-#endif
+//#if TESTFRAMEWORK_MSTEST
+//using CollectionAssert = Lucene.Net.TestFramework.Assert;
+//using Assert = Lucene.Net.TestFramework.Assert;
+//#elif TESTFRAMEWORK_NUNIT
+//using CollectionAssert = NUnit.Framework.CollectionAssert;
+//using Assert = NUnit.Framework.Assert;
+//#elif TESTFRAMEWORK_XUNIT
+//using CollectionAssert = Lucene.Net.TestFramework.Assert;
+//using Assert = Lucene.Net.TestFramework.Assert;
+//#endif
 
 namespace Lucene.Net.Util
 {
@@ -1067,7 +1071,7 @@ namespace Lucene.Net.Util
             IDictionary<string, object> newReflectedObjects = new Dictionary<string, object>();
             foreach (KeyValuePair<string, object> de in reflectedValues)
                 newReflectedObjects.Add(de.Key, (object)de.Value);
-            CollectionAssert.AreEqual(newReflectedObjects, map, "Reflection does not produce same map");
+            Assert.AreEqual((ICollection)newReflectedObjects, (ICollection)map, "Reflection does not produce same map");
         }
 
         private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector

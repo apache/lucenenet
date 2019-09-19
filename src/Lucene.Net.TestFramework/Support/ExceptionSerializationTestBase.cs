@@ -1,20 +1,12 @@
 ﻿#if FEATURE_SERIALIZABLE
 using Lucene.Net.Util;
-using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-
-#if TESTFRAMEWORK_MSTEST
-
-#elif TESTFRAMEWORK_NUNIT
-using Assert = NUnit.Framework.Assert;
-#elif TESTFRAMEWORK_XUNIT
-
-#endif
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Support
 {

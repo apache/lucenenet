@@ -9,14 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Directory = Lucene.Net.Store.Directory;
-
-#if TESTFRAMEWORK_MSTEST
-
-#elif TESTFRAMEWORK_NUNIT
-using Assert = NUnit.Framework.Assert;
-#elif TESTFRAMEWORK_XUNIT
-
-#endif
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis
 {

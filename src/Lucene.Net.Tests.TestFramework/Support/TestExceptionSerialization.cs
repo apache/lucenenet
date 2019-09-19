@@ -1,4 +1,6 @@
-﻿#if FEATURE_SERIALIZABLE_EXCEPTIONS
+﻿// LUCENENET TODO: Get this working on all test frameworks
+#if TESTFRAMEWORK_NUNIT
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
@@ -51,4 +53,5 @@ namespace Lucene.Net.Support
         }
     }
 }
+#endif
 #endif

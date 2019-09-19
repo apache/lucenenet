@@ -23,6 +23,9 @@ namespace Lucene.Net.Codecs.Asserting
     /// <summary>
     /// Test <see cref="AssertingPostingsFormat"/> directly
     /// </summary>
+#if TESTFRAMEWORK_MSTEST
+    [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
+#endif
     public class TestAssertingPostingsFormat : BasePostingsFormatTestCase
     {
         private readonly Codec codec = new AssertingCodec();

@@ -19,8 +19,14 @@
  *
 */
 
-using NUnit.Framework;
 
+#if TESTFRAMEWORK_MSTEST
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+#elif TESTFRAMEWORK_NUNIT
+using NUnit.Framework;
+#elif TESTFRAMEWORK_XUNIT
+using Lucene.Net.TestFramework;
+#endif
 
 namespace Lucene.Net.Randomized
 {
@@ -28,12 +34,29 @@ namespace Lucene.Net.Randomized
     {
         public static void AssumeTrue(string msg, bool value)
         {
+#if TESTFRAMEWORK_MSTEST
+            if (!value)
+                Assert.Inconclusive(msg);
+#elif TESTFRAMEWORK_NUNIT
             Assume.That(value, msg);
+#elif TESTFRAMEWORK_XUNIT
+            if (!value)
+                throw new SkipTestException(msg);
+#endif
         }
 
         public static void AssumeFalse(string msg, bool value)
         {
+#if TESTFRAMEWORK_MSTEST
+            if (value)
+                Assert.Inconclusive(msg);
+#elif TESTFRAMEWORK_NUNIT
             Assume.That(!value, msg);
+#elif TESTFRAMEWORK_XUNIT
+            if (value)
+                throw new SkipTestException(msg);
+#endif
         }
     }
 }
+

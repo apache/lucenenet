@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
+using Assert = Lucene.Net.TestFramework.Assert;
 
 #if TESTFRAMEWORK_MSTEST
-
+using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
 #elif TESTFRAMEWORK_NUNIT
 using Test = NUnit.Framework.TestAttribute;
-using Assert = NUnit.Framework.Assert;
 #elif TESTFRAMEWORK_XUNIT
-
+using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
 #endif
 
 namespace Lucene.Net.Index
