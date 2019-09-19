@@ -155,15 +155,18 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Returns a list of all available format names. </summary>
-        public static ICollection<string> AvailableDocValuesFormats()
+        public static ICollection<string> AvailableDocValuesFormats
         {
-            if (docValuesFormatFactory is IServiceListable)
+            get
             {
-                return ((IServiceListable)docValuesFormatFactory).AvailableServices();
-            }
-            else
-            {
-                throw new NotSupportedException("The current DocValuesFormatFactory class does not implement IServiceListable.");
+                if (docValuesFormatFactory is IServiceListable)
+                {
+                    return ((IServiceListable)docValuesFormatFactory).AvailableServices;
+                }
+                else
+                {
+                    throw new NotSupportedException("The current DocValuesFormatFactory class does not implement IServiceListable.");
+                }
             }
         }
 

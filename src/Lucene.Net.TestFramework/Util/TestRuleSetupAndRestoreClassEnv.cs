@@ -133,13 +133,13 @@ namespace Lucene.Net.Util
             // if verbose: print some debugging stuff about which codecs are loaded.
             if (LuceneTestCase.VERBOSE)
             {
-                ICollection<string> codecs = Codec.AvailableCodecs();
+                ICollection<string> codecs = Codec.AvailableCodecs;
                 foreach (string codec in codecs)
                 {
                     Console.WriteLine("Loaded codec: '" + codec + "': " + Codec.ForName(codec).GetType().Name);
                 }
 
-                ICollection<string> postingsFormats = PostingsFormat.AvailablePostingsFormats();
+                ICollection<string> postingsFormats = PostingsFormat.AvailablePostingsFormats;
                 foreach (string postingsFormat in postingsFormats)
                 {
                     Console.WriteLine("Loaded postingsFormat: '" + postingsFormat + "': " + PostingsFormat.ForName(postingsFormat).GetType().Name);

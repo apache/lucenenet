@@ -30,7 +30,7 @@ namespace Lucene.Net.Codecs
         {
             var factory = new DefaultPostingsFormatFactory();
 
-            var postingsFormats = factory.AvailableServices();
+            var postingsFormats = factory.AvailableServices;
 
             assertEquals(11, postingsFormats.Count);
 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Codecs
         {
             var factory = new ScanningPostingsFormatFactory();
 
-            var postingsFormats = factory.AvailableServices();
+            var postingsFormats = factory.AvailableServices;
 
             assertEquals(13, postingsFormats.Count);
 
@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs
         {
             var factory = new ExplicitPostingsFormatFactory();
 
-            var postingsFormats = factory.AvailableServices();
+            var postingsFormats = factory.AvailableServices;
 
             assertTrue(postingsFormats.Contains("Private"));
         }
@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs
         {
             var factory = new CustomNamePostingsFormatFactory();
 
-            assertTrue(factory.AvailableServices().Contains("FooBar"));
+            assertTrue(factory.AvailableServices.Contains("FooBar"));
         }
 
         [Test]

@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public class DefaultPostingsFormatFactory : NamedServiceFactory<PostingsFormat>, IPostingsFormatFactory, IServiceListable
     {
-        private static Type[] localPostingsFormatTypes = new Type[]
+        private static readonly Type[] localPostingsFormatTypes = new Type[]
         {
             typeof(Lucene41.Lucene41PostingsFormat),
 #pragma warning disable 612, 618
@@ -226,10 +226,13 @@ namespace Lucene.Net.Codecs
         /// Gets a list of the available <see cref="PostingsFormat"/>s (by name).
         /// </summary>
         /// <returns>A <see cref="T:ICollection{string}"/> of <see cref="PostingsFormat"/> names.</returns>
-        public virtual ICollection<string> AvailableServices()
+        public virtual ICollection<string> AvailableServices
         {
-            EnsureInitialized();
-            return postingsFormatNameToTypeMap.Keys;
+            get
+            {
+                EnsureInitialized();
+                return postingsFormatNameToTypeMap.Keys;
+            }
         }
     }
 }

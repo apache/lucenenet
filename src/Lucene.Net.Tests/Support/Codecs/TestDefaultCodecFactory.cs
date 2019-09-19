@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs
         {
             var factory = new DefaultCodecFactory();
 
-            var codecs = factory.AvailableServices();
+            var codecs = factory.AvailableServices;
 
             assertEquals(8, codecs.Count);
 
@@ -57,7 +57,7 @@ namespace Lucene.Net.Codecs
         {
             var factory = new ScanningCodecFactory();
 
-            var codecs = factory.AvailableServices();
+            var codecs = factory.AvailableServices;
 
             assertEquals(10, codecs.Count);
 
@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs
         {
             var factory = new ExplicitCodecFactory();
 
-            var codecs = factory.AvailableServices();
+            var codecs = factory.AvailableServices;
 
             assertTrue(codecs.Contains("Private"));
         }
@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs
         {
             var factory = new CustomNameCodecFactory();
 
-            assertTrue(factory.AvailableServices().Contains("FooBar"));
+            assertTrue(factory.AvailableServices.Contains("FooBar"));
         }
 
         [Test]

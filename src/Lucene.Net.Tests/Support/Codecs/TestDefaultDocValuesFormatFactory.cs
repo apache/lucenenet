@@ -30,7 +30,7 @@ namespace Lucene.Net.Codecs
         {
             var factory = new DefaultDocValuesFormatFactory();
 
-            var docValuesFormats = factory.AvailableServices();
+            var docValuesFormats = factory.AvailableServices;
 
             assertEquals(7, docValuesFormats.Count);
 
@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs
         {
             var factory = new ScanningDocValuesFormatFactory();
 
-            var docValuesFormats = factory.AvailableServices();
+            var docValuesFormats = factory.AvailableServices;
 
             assertEquals(9, docValuesFormats.Count);
 
@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs
         {
             var factory = new ExplicitDocValuesFormatFactory();
 
-            var docValuesFormats = factory.AvailableServices();
+            var docValuesFormats = factory.AvailableServices;
 
             assertTrue(docValuesFormats.Contains("Private"));
         }
@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs
         {
             var factory = new CustomNameDocValuesFormatFactory();
 
-            assertTrue(factory.AvailableServices().Contains("FooBar"));
+            assertTrue(factory.AvailableServices.Contains("FooBar"));
         }
 
         [Test]

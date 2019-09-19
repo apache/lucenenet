@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public class DefaultDocValuesFormatFactory : NamedServiceFactory<DocValuesFormat>, IDocValuesFormatFactory, IServiceListable
     {
-        private static Type[] localDocValuesFormatTypes = new Type[] {
+        private static readonly Type[] localDocValuesFormatTypes = new Type[] {
             typeof(Lucene45.Lucene45DocValuesFormat),
 #pragma warning disable 612, 618
             typeof(Lucene42.Lucene42DocValuesFormat),
@@ -226,10 +226,13 @@ namespace Lucene.Net.Codecs
         /// Gets a list of the available <see cref="DocValuesFormat"/>s (by name).
         /// </summary>
         /// <returns>A <see cref="T:ICollection{string}"/> of <see cref="DocValuesFormat"/> names.</returns>
-        public virtual ICollection<string> AvailableServices()
+        public virtual ICollection<string> AvailableServices
         {
-            EnsureInitialized();
-            return docValuesFormatNameToTypeMap.Keys;
+            get
+            {
+                EnsureInitialized();
+                return docValuesFormatNameToTypeMap.Keys;
+            }
         }
     }
 }

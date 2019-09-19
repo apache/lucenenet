@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public class DefaultCodecFactory : NamedServiceFactory<Codec>, ICodecFactory, IServiceListable
     {
-        private static Type[] localCodecTypes = new Type[] {
+        private static readonly Type[] localCodecTypes = new Type[] {
             typeof(Lucene46.Lucene46Codec),
 #pragma warning disable 612, 618
             typeof(Lucene3x.Lucene3xCodec), // Optimize 3.x codec over < 4.6 codecs
@@ -229,10 +229,13 @@ namespace Lucene.Net.Codecs
         /// Gets a list of the available <see cref="Codec"/>s (by name).
         /// </summary>
         /// <returns>A <see cref="T:ICollection{string}"/> of <see cref="Codec"/> names.</returns>
-        public virtual ICollection<string> AvailableServices()
+        public virtual ICollection<string> AvailableServices
         {
-            EnsureInitialized();
-            return codecNameToTypeMap.Keys;
+            get
+            {
+                EnsureInitialized();
+                return codecNameToTypeMap.Keys;
+            }
         }
     }
 }

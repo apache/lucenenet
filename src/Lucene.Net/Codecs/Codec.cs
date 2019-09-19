@@ -148,15 +148,18 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Returns a list of all available codec names. </summary>
-        public static ICollection<string> AvailableCodecs()
+        public static ICollection<string> AvailableCodecs
         {
-            if (codecFactory is IServiceListable)
+            get
             {
-                return ((IServiceListable)codecFactory).AvailableServices();
-            }
-            else
-            {
-                throw new NotSupportedException("The current CodecFactory class does not implement IServiceListable.");
+                if (codecFactory is IServiceListable)
+                {
+                    return ((IServiceListable)codecFactory).AvailableServices;
+                }
+                else
+                {
+                    throw new NotSupportedException("The current CodecFactory class does not implement IServiceListable.");
+                }
             }
         }
 
