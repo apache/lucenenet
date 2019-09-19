@@ -1,3 +1,4 @@
+#if FEATURE_RANDOMIZEDCONTEXT
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -95,3 +96,4 @@ namespace Lucene.Net.Randomized
         }
     }
 }
+#endif
