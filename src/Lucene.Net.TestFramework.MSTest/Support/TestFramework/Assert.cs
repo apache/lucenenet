@@ -125,13 +125,13 @@ namespace Lucene.Net.TestFramework
         // From CollectionAssert
         public static void AreEqual<T>(T[] expected, T[] actual)
         {
-            MSTest.Assert.AreEqual(expected, actual);
+            MSTest.CollectionAssert.AreEqual(expected, actual);
         }
 
         // From CollectionAssert
         public static void AreEqual<T>(T[] expected, T[] actual, string message, params object[] args)
         {
-            MSTest.Assert.AreEqual(expected, actual, message, args);
+            MSTest.CollectionAssert.AreEqual(expected, actual, message, args);
         }
 
         public static void AreEqual<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
