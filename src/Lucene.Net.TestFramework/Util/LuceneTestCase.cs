@@ -198,6 +198,9 @@ namespace Lucene.Net.Util
     ///// </para>
     ///// </summary>
     [TestFixture]
+#if TESTFRAMEWORK_XUNIT
+    [Xunit.Collection("NonParallel")]
+#endif
     public abstract partial class LuceneTestCase //: Assert // Wait long for leaked threads to complete before failure. zk needs this. -  See LUCENE-3995 for rationale.
 #if TESTFRAMEWORK_XUNIT
         : IDisposable, Xunit.IClassFixture<BeforeAfterClass>
