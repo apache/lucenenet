@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Spans
         protected internal virtual void Check(SpanQuery q, int[] docs)
         {
             CheckHits.CheckHitCollector(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, null, Searcher, docs);

@@ -466,7 +466,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Directory dir = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             RandomIndexWriter iw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir, analyzer);
@@ -503,7 +503,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Directory dir = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             RandomIndexWriter iw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir, analyzer);
@@ -541,7 +541,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Store.Directory dir = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             RandomIndexWriter iw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir, analyzer);
@@ -608,7 +608,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             Directory dir = NewDirectory();
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true);
             RandomIndexWriter iw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir, analyzer);

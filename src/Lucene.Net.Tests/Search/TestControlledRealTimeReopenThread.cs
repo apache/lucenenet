@@ -545,7 +545,7 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -585,7 +585,11 @@ namespace Lucene.Net.Search
 
             public override IndexSearcher NewSearcher(IndexReader ignored)
             {
-                return OuterInstance.NewSearcher(Other);
+                return NewSearcher(
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                    OuterInstance,
+#endif
+                    Other);
             }
         }
 

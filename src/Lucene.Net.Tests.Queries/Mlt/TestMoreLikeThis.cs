@@ -44,7 +44,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
             base.SetUp();
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, directory);
@@ -152,7 +152,7 @@ namespace Lucene.Net.Tests.Queries.Mlt
         {
             Query query = new MoreLikeThisQuery("this is a test", new[] { "text" }, new MockAnalyzer(Random), "text");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, query, searcher);

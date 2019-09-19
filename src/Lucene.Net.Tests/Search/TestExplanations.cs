@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
         public virtual void Qtest(Query q, int[] expDocNrs)
         {
             CheckHits.CheckHitCollector(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, FIELD, Searcher, expDocNrs);

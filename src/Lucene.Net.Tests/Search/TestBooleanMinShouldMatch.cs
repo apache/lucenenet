@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
 
             Index = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Index);
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(expected, h2.Length, "result count (bs2)");
 
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, s);
@@ -369,12 +369,12 @@ namespace Lucene.Net.Search
                 if (i < 100)
                 {
                     QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
                         Random, q1, s);
                     QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
                         Random, q2, s);

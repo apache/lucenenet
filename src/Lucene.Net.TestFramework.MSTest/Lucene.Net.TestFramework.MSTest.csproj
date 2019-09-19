@@ -35,7 +35,7 @@
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
 
-    <DefineConstants>$(DefineConstants);TESTFRAMEWORK_MSTEST;FEATURE_STATIC_TESTDATA_INITIALIZATION</DefineConstants>
+    <DefineConstants>$(DefineConstants);TESTFRAMEWORK_MSTEST</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

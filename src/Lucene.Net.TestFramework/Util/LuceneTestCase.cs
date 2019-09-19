@@ -210,7 +210,7 @@ namespace Lucene.Net.Util
 
         public LuceneTestCase(BeforeAfterClass beforeAfter)
         {
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
 #endif
             beforeAfter.SetBeforeAfterClassActions(BeforeClass, AfterClass);
@@ -228,9 +228,36 @@ namespace Lucene.Net.Util
             if (disposing && Interlocked.CompareExchange(ref isDisposed, 1, 0) == 0)
                 this.TearDown();
         }
+#elif TESTFRAMEWORK_MSTEST
+    {
+        //private static LuceneTestCase _currentTestInstance;
+        //private static int isInitialized = 0;
+
+
+        public LuceneTestCase()
+        {
+            lock (initalizationLock)
+            {
+                var thisType = this.GetType();
+                if (!initalizationLock.Contains(thisType.FullName))
+                    initalizationLock.Add(thisType.FullName);
+                else
+                    return; // Only allow this class to initialize once
+
+                //if (_currentTestInstance != null)
+                //    _currentTestInstance.AfterClass();
+                //_currentTestInstance = this;
+
+                _testClassName = thisType.FullName;
+                _testName = string.Empty;
+                _testClassType = thisType;
+
+                BeforeClass();
+            }
+        }
 #else
     {
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         public LuceneTestCase()
         {
             ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
@@ -505,7 +532,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Class environment setup rule.
         /// </summary>
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         [ThreadStatic]
         private static TestRuleSetupAndRestoreClassEnv classEnvRule = new TestRuleSetupAndRestoreClassEnv();
         internal static TestRuleSetupAndRestoreClassEnv ClassEnvRule { get => classEnvRule; }
@@ -725,14 +752,15 @@ namespace Lucene.Net.Util
         private static readonly TestDocValuesFormatFactory TEST_DOCVALUES_FORMAT_FACTORY = new TestDocValuesFormatFactory();
         private static readonly TestPostingsFormatFactory TEST_POSTINGS_FORMAT_FACTORY = new TestPostingsFormatFactory();
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+
 #if TESTFRAMEWORK_MSTEST
         private static readonly IList<string> initalizationLock = new List<string>();
-        [ThreadStatic]
         private static string _testClassName = string.Empty;
-        [ThreadStatic]
         private static string _testName = string.Empty;
+        private static Type _testClassType;
 #endif
+
+
         /// <summary>
         /// Sets up dependency injection of codec factories for running the test class,
         /// and also picks random defaults for culture, time zone, similarity, and default codec.
@@ -751,17 +779,18 @@ namespace Lucene.Net.Util
                     initalizationLock.Add(context.FullyQualifiedTestClassName);
                 else
                     return; // Only allow this class to initialize once (MSTest bug)
-                
+
                 _testClassName = context.FullyQualifiedTestClassName;
                 _testName = context.TestName;
-            }
+
+#if !NETSTANDARD1_6
+                var callingAssembly = Assembly.GetCallingAssembly();
+                _testClassType = callingAssembly.GetType(_testClassName);
 #else
-        [OneTimeSetUp]
-#pragma warning disable xUnit1013
-        public static void BeforeClass()
-#pragma warning restore xUnit1013
-        {
+                _testClassType = Type.GetType(_testClassName);
 #endif
+            }
+
             try
             {
                 // Setup the factories
@@ -769,11 +798,20 @@ namespace Lucene.Net.Util
                 DocValuesFormat.SetDocValuesFormatFactory(TEST_DOCVALUES_FORMAT_FACTORY);
                 PostingsFormat.SetPostingsFormatFactory(TEST_POSTINGS_FORMAT_FACTORY);
 
-                ClassEnvRule.Before();
+                ClassEnvRule.Before(null);
+
 
                 // LUCENENET TODO: Scan for a custom attribute and setup ordering to
                 // initialize data from this class to the top class
-#else
+            }
+            catch (Exception ex)
+            {
+                // Write the stack trace so we have something to go on if an error occurs here.
+                throw new Exception($"An exception occurred during BeforeClass:\n{ex.ToString()}", ex);
+            }
+        }
+#endif
+
         /// <summary>
         /// Sets up dependency injection of codec factories for running the test class,
         /// and also picks random defaults for culture, time zone, similarity, and default codec.
@@ -795,7 +833,6 @@ namespace Lucene.Net.Util
                 PostingsFormat.SetPostingsFormatFactory(TEST_POSTINGS_FORMAT_FACTORY);
 
                 ClassEnvRule.Before(this);
-#endif
             }
             catch (Exception ex)
             {
@@ -804,26 +841,27 @@ namespace Lucene.Net.Util
             }
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
         /// <summary>
         /// Tears down random defaults and cleans up temporary files.
         /// </summary>
 #if TESTFRAMEWORK_MSTEST
         // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
         //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-        public static void AfterClass()
+        public static void ClassCleanup()
         {
-#else
-        [OneTimeTearDown]
-#pragma warning disable xUnit1013
-        public static void AfterClass()
-#pragma warning restore xUnit1013
-        {
-#endif
             try
             {
-                ClassEnvRule.After();
-#else
+                ClassEnvRule.After(null);
+                CleanupTemporaryFiles();
+            }
+            catch (Exception ex)
+            {
+                // Write the stack trace so we have something to go on if an error occurs here.
+                throw new Exception($"An exception occurred during AfterClass:\n{ex.ToString()}", ex);
+            }
+        }
+#endif
+
         /// <summary>
         /// Tears down random defaults and cleans up temporary files.
         /// <para/>
@@ -839,7 +877,6 @@ namespace Lucene.Net.Util
             try
             {
                 ClassEnvRule.After(this);
-#endif
                 CleanupTemporaryFiles();
             }
             catch (Exception ex)
@@ -917,10 +954,12 @@ namespace Lucene.Net.Util
         public static Type GetTestClass()
         {
 #if !TESTFRAMEWORK_XUNIT
-#if TESTFRAMEWORK_NUNIT || FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if TESTFRAMEWORK_NUNIT || !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
 #if TESTFRAMEWORK_NUNIT
             string testClassName = NUnit.Framework.TestContext.CurrentContext.Test.ClassName;
 #else
+            if (_testClassType != null)
+                return _testClassType;
             string testClassName = _testClassName;
 #endif
 
@@ -950,7 +989,7 @@ namespace Lucene.Net.Util
             {
 #if TESTFRAMEWORK_NUNIT
                 return NUnit.Framework.TestContext.CurrentContext.Test.MethodName;
-#elif TESTFRAMEWORK_MSTEST && FEATURE_STATIC_TESTDATA_INITIALIZATION
+#elif TESTFRAMEWORK_MSTEST
                 return _testName;
 #else
                 //return ThreadAndTestNameRule.TestMethodName;
@@ -1145,18 +1184,26 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Create a new <see cref="IndexWriterConfig"/> with random defaults.
         /// </summary>
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
-        public static IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
-#else
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         // LUCENENET specific
         // Non-static so that we do not depend on any hidden static dependencies
         public IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
+#else
+        public static IndexWriterConfig NewIndexWriterConfig(LuceneVersion v, Analyzer a)
 #endif
         {
             return NewIndexWriterConfig(Random, v, a);
         }
 
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+        /// <summary>
+        /// Create a new <see cref="IndexWriterConfig"/> with random defaults.
+        /// </summary>
+        public static IndexWriterConfig NewIndexWriterConfig(LuceneTestCase luceneTestCase, LuceneVersion v, Analyzer a)
+        {
+            return NewIndexWriterConfig(luceneTestCase, Random, v, a);
+        }
+
         /// <summary>
         /// Create a new <see cref="IndexWriterConfig"/> with random defaults using the specified <paramref name="random"/>.
         /// </summary>
@@ -1169,7 +1216,7 @@ namespace Lucene.Net.Util
         }
 #endif
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Create a new <see cref="IndexWriterConfig"/> with random defaults using the specified <paramref name="random"/>.
         /// </summary>
@@ -1192,7 +1239,7 @@ namespace Lucene.Net.Util
 #endif
         {
             IndexWriterConfig c = new IndexWriterConfig(v, a);
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             c.SetSimilarity(ClassEnvRule.similarity);
 #else
             c.SetSimilarity(luceneTestCase.ClassEnvRule.similarity);
@@ -1290,7 +1337,7 @@ namespace Lucene.Net.Util
                     c.SetMaxThreadStates(maxNumThreadStates);
                 }
             }
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             c.SetMergePolicy(NewMergePolicy(random));
 #else
             c.SetMergePolicy(NewMergePolicy(random, luceneTestCase.ClassEnvRule.timeZone));
@@ -1306,14 +1353,27 @@ namespace Lucene.Net.Util
             return c;
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+        public MergePolicy NewMergePolicy(Random r)
+        {
+            return NewMergePolicy(this, r);
+        }
+
+        public MergePolicy NewMergePolicy()
+        {
+            return NewMergePolicy(this);
+        }
+#endif
+
+
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         public static MergePolicy NewMergePolicy(Random r)
 #else
         /// <param name="timeZone">
         /// LUCENENET specific
         /// Timezone added to remove dependency on the then-static <see cref="ClassEnvRule"/>
         /// </param>
-        public static MergePolicy NewMergePolicy(Random r, TimeZoneInfo timeZone)
+        public static MergePolicy NewMergePolicy(LuceneTestCase luceneTestCase, Random r)
 #endif
         {
             if (Rarely(r))
@@ -1326,16 +1386,16 @@ namespace Lucene.Net.Util
             }
             else if (r.Next(5) == 0)
             {
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 return NewAlcoholicMergePolicy(r, ClassEnvRule.timeZone);
 #else
-                return NewAlcoholicMergePolicy(r, timeZone);
+                return NewAlcoholicMergePolicy(r, luceneTestCase.ClassEnvRule.timeZone);
 #endif
             }
             return NewLogMergePolicy(r);
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         public static MergePolicy NewMergePolicy()
         {
             return NewMergePolicy(Random);
@@ -1345,9 +1405,9 @@ namespace Lucene.Net.Util
         // LUCENENET specific
         // Timezone added to remove dependency on the then-static <see cref="ClassEnvRule"/>
         //
-        public static MergePolicy NewMergePolicy(TimeZoneInfo timeZone)
+        public static MergePolicy NewMergePolicy(LuceneTestCase luceneTestCase)
         {
-            return NewMergePolicy(Random, timeZone);
+            return NewMergePolicy(luceneTestCase, Random);
         }
 #endif
 
@@ -1362,7 +1422,7 @@ namespace Lucene.Net.Util
         }
 
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         public static AlcoholicMergePolicy NewAlcoholicMergePolicy()
         {
             return NewAlcoholicMergePolicy(Random, ClassEnvRule.timeZone);
@@ -1950,7 +2010,7 @@ namespace Lucene.Net.Util
             }
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
@@ -2012,7 +2072,7 @@ namespace Lucene.Net.Util
         }
 #endif
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Create a new searcher over the reader. This searcher might randomly use
         /// threads. If <paramref name="maybeWrap"/> is true, this searcher might wrap the
@@ -2059,7 +2119,7 @@ namespace Lucene.Net.Util
                 {
                     ret = random.NextBoolean() ? new IndexSearcher(r) : new IndexSearcher(r.Context);
                 }
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 ret.Similarity = ClassEnvRule.similarity;
 #else
                 ret.Similarity = luceneTestCase?.ClassEnvRule.similarity; // LUCENENET special case: passing null allows us to skip the Similarity
@@ -2099,7 +2159,7 @@ namespace Lucene.Net.Util
                 {
                     ret = random.NextBoolean() ? new IndexSearcher(r, ex) : new IndexSearcher(r.Context, ex);
                 }
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 ret.Similarity = ClassEnvRule.similarity;
 #else
                 ret.Similarity = luceneTestCase?.ClassEnvRule.similarity; // LUCENENET special case: passing null allows us to skip the Similarity

@@ -175,7 +175,7 @@ namespace Lucene.Net.Index.Sorter
         {
             try
             {
-                new SortingMergePolicy(NewMergePolicy(TimeZone), Sort.RELEVANCE);
+                new SortingMergePolicy(NewMergePolicy(), Sort.RELEVANCE);
                 fail("Didn't get expected exception");
             }
             catch (ArgumentException e)

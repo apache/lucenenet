@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
             {
                 dir = NewDirectory();
                 RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, dir);

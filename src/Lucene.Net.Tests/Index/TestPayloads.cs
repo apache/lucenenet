@@ -650,7 +650,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true));
@@ -660,7 +660,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true));
@@ -718,7 +718,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);

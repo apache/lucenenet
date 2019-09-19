@@ -1160,7 +1160,11 @@ namespace Lucene.Net.Index
                 // make a little directory for addIndexes
                 // LUCENE-2239: won't work with NIOFS/MMAP
                 adder = new MockDirectoryWrapper(this.random, new RAMDirectory());
-                IndexWriterConfig conf = this.outerInstance.NewIndexWriterConfig(this.random, TEST_VERSION_CURRENT, new MockAnalyzer(this.random));
+                IndexWriterConfig conf = NewIndexWriterConfig(
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                    outerInstance,
+#endif
+                    this.random, TEST_VERSION_CURRENT, new MockAnalyzer(this.random));
                 using (IndexWriter w = new IndexWriter(adder, conf))
                 {
                     Document doc = new Document();
@@ -1224,7 +1228,11 @@ namespace Lucene.Net.Index
                                 w.Dispose();
                                 w = null;
                             }
-                            IndexWriterConfig conf = outerInstance.NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMaxBufferedDocs(2);
+                            IndexWriterConfig conf = NewIndexWriterConfig(
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                                outerInstance,
+#endif
+                                random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMaxBufferedDocs(2);
                             w = new IndexWriter(dir, conf);
 
                             Document doc = new Document();
@@ -1978,7 +1986,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir, new StringSplitAnalyzer());
@@ -2037,7 +2045,7 @@ namespace Lucene.Net.Index
             doc.Add(contentField);
 
             w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -2145,7 +2153,7 @@ namespace Lucene.Net.Index
             // even if you remove that file:
             d.SetLockFactory(new SimpleFSLockFactory());
             RandomIndexWriter w1 = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, d);
@@ -2341,7 +2349,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
             RandomIndexWriter iw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir, a);
@@ -2387,7 +2395,7 @@ namespace Lucene.Net.Index
             Automaton secondSet = BasicAutomata.MakeString("foobar");
             Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this, secondSet);
             RandomIndexWriter iw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir, a);
@@ -2925,7 +2933,7 @@ namespace Lucene.Net.Index
             }
 
             w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);

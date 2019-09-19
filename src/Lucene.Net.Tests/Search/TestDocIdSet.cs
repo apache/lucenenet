@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
             // IndexSearcher, everything works fine. this came up in LUCENE-1754.
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);

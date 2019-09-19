@@ -73,7 +73,7 @@ namespace Lucene.Net.Facet.Taxonomy
             config.SetHierarchical("Publish Date", true);
 
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -168,7 +168,7 @@ namespace Lucene.Net.Facet.Taxonomy
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
 
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -234,7 +234,7 @@ namespace Lucene.Net.Facet.Taxonomy
             FacetsConfig config = new FacetsConfig();
             config.SetIndexFieldName("a", "$facets2");
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -342,7 +342,7 @@ namespace Lucene.Net.Facet.Taxonomy
             config.SetHierarchical("a", true);
             config.SetMultiValued("a", true);
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -392,7 +392,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -431,7 +431,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory dir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -546,7 +546,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory taxoDir = NewDirectory();
             var taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
             var writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -576,7 +576,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory taxoDir = NewDirectory();
             ITaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -793,7 +793,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Store.Directory taxoDir = NewDirectory();
 
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, indexDir);

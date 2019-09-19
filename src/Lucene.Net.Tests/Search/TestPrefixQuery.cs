@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
 
             string[] categories = new string[] { "/Computers", "/Computers/Mac", "/Computers/Windows" };
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, directory);

@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
             Directory = NewDirectory();
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Directory, analyzer);
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -151,7 +151,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -169,7 +169,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length, "exact match");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -180,7 +180,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length, "reverse not exact");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -196,7 +196,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length, "in order");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -210,7 +210,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length, "reversed, slop not 2 or more");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length, "just sloppy enough");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -240,7 +240,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length, "not sloppy enough");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -260,7 +260,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length, "two total moves");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -273,7 +273,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length, "slop of 5 not close enough");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -282,7 +282,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length, "slop of 6 just right");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -309,7 +309,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, query, searcher);
@@ -323,7 +323,7 @@ namespace Lucene.Net.Search
         {
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, directory);
@@ -348,7 +348,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = searcher.Search(phraseQuery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, phraseQuery, searcher);
@@ -360,7 +360,7 @@ namespace Lucene.Net.Search
             hits = searcher.Search(booleanQuery, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, termQuery, searcher);
@@ -407,7 +407,7 @@ namespace Lucene.Net.Search
             hits = searcher.Search(booleanQuery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, booleanQuery, searcher);
@@ -454,7 +454,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0.31, hits[2].Score, 0.01);
             Assert.AreEqual(2, hits[2].Doc);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, query, searcher);
@@ -486,7 +486,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length, "slop of 100 just right");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -496,7 +496,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length, "slop of 99 not enough");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -515,7 +515,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length, "phrase without repetitions exists in 2 docs");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -530,7 +530,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length, "phrase with repetitions exists in two docs");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -545,7 +545,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length, "nonexisting phrase with repetitions does not exist in any doc");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -561,7 +561,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(Query, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length, "nonexisting phrase with repetitions does not exist in any doc");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -588,7 +588,7 @@ namespace Lucene.Net.Search
             float score0 = hits[0].Score;
             //System.out.println("(exact) field: two three: "+score0);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -601,7 +601,7 @@ namespace Lucene.Net.Search
             //System.out.println("(sloppy) field: two three: "+score1);
             Assert.AreEqual(score0, score1, SCORE_COMP_THRESH, "exact scorer and sloppy scorer score the same when slop does not matter");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -616,7 +616,7 @@ namespace Lucene.Net.Search
             //float score2 = hits[0].Score;
             //System.out.println("palindrome: two three: "+score2);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -634,7 +634,7 @@ namespace Lucene.Net.Search
             //float score3 = hits[0].Score;
             //System.out.println("palindrome: three two: "+score3);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -666,7 +666,7 @@ namespace Lucene.Net.Search
             float score0 = hits[0].Score;
             //System.out.println("(exact) field: one two three: "+score0);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -682,7 +682,7 @@ namespace Lucene.Net.Search
             //System.out.println("(sloppy) field: one two three: "+score1);
             Assert.AreEqual(score0, score1, SCORE_COMP_THRESH, "exact scorer and sloppy scorer score the same when slop does not matter");
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -702,7 +702,7 @@ namespace Lucene.Net.Search
             //float score2 = hits[0].Score;
             //System.out.println("palindrome: one two three: "+score2);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);
@@ -721,7 +721,7 @@ namespace Lucene.Net.Search
             //float score3 = hits[0].Score;
             //System.out.println("palindrome: three two one: "+score3);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Query, Searcher);

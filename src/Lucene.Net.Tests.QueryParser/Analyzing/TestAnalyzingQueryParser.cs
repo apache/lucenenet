@@ -312,7 +312,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             using (Directory ramDir = NewDirectory())
             {
                 using (RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, ramDir, analyzer))

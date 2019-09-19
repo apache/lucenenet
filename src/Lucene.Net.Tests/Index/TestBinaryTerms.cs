@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);

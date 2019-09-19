@@ -85,7 +85,7 @@ namespace Lucene.Net.Search.Spans
         {
             SpanNearQuery q = MakeQuery();
             CheckHits.DoCheckHits(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, FIELD, Searcher, new int[] { 0, 1 });

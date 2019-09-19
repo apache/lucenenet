@@ -298,7 +298,7 @@ namespace Lucene.Net.Index
                     var numDocs = AtLeast(500);
                     var answers = new object[numDocs];
                     using (var w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
                         Random, dir))
@@ -396,7 +396,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     using (RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
                         Random, dir))
@@ -849,7 +849,7 @@ namespace Lucene.Net.Index
                     w.Commit();
                     w.Dispose();
                     w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
                         Random, dir);

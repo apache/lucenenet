@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
             using (Directory directory = NewDirectory())
             {
                 using (RandomIndexWriter iwriter = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, directory))
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
             using (Directory directory = NewDirectory())
             {
                 using (RandomIndexWriter iwriter = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, directory))
@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
             using (Directory directory = NewDirectory())
             {
                 using (RandomIndexWriter iwriter = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, directory))
@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
             using (Directory directory = NewDirectory())
             {
                 using (RandomIndexWriter iwriter = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, directory))
@@ -288,7 +288,7 @@ namespace Lucene.Net.Index
             using (Directory directory = NewDirectory())
             {
                 using (RandomIndexWriter iwriter = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, directory))
@@ -336,7 +336,7 @@ namespace Lucene.Net.Index
             using (Directory directory = NewDirectory())
             {
                 using (RandomIndexWriter iwriter = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, directory))
@@ -389,7 +389,7 @@ namespace Lucene.Net.Index
             using (Directory directory = NewDirectory())
             {
                 using (RandomIndexWriter iwriter = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, directory))
@@ -2011,7 +2011,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     using (RandomIndexWriter iwriter = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                         Random, directory))
@@ -2051,7 +2051,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     using (RandomIndexWriter iwriter = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
                         Random, directory))
@@ -2154,7 +2154,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     using (RandomIndexWriter iwriter = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
                         Random, directory))
@@ -2199,7 +2199,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     using (RandomIndexWriter iwriter = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
                         Random, directory))
@@ -3840,7 +3840,7 @@ namespace Lucene.Net.Index
                     try
                     {
                         using (RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                             this,
 #endif
                             Random, dir))

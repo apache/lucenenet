@@ -147,7 +147,7 @@ namespace Lucene.Net.Store
 //#else
 //            using (Directory dir = new MockDirectoryWrapper(Random, NewMockDirectory()))
 //#endif
-//#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+//#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
 //            using (RandomIndexWriter iw = new RandomIndexWriter(Random, dir))
 //#elif FEATURE_INSTANCE_CODEC_IMPERSONATION
 //            using (RandomIndexWriter iw = new RandomIndexWriter(this, Random, dir))
@@ -200,23 +200,17 @@ namespace Lucene.Net.Store
 
         //            dir = new PreventCloseDirectoryWrapper(dir);
 
-        //#if FEATURE_INSTANCE_CODEC_IMPERSONATION
-        //            using (MockDirectoryWrapper wrapped = new MockDirectoryWrapper(this, Random, dir))
-        //#else
         //            using (MockDirectoryWrapper wrapped = new MockDirectoryWrapper(Random, dir))
-        //#endif
         //            {
 
         //                // otherwise MDW sometimes randomly leaves the file intact and we'll see false test failures:
         //                wrapped.AlwaysCorrupt = true;
 
         //                // MDW will only try to corrupt things if it sees an index:
-        //#if FEATURE_STATIC_TESTDATA_INITIALIZATION
-        //                using (RandomIndexWriter iw = new RandomIndexWriter(Random, dir))
-        //#elif FEATURE_INSTANCE_CODEC_IMPERSONATION
+        //#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         //                using (RandomIndexWriter iw = new RandomIndexWriter(this, Random, dir))
         //#else
-        //                using (RandomIndexWriter iw = new RandomIndexWriter(Random, dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
+        //                using (RandomIndexWriter iw = new RandomIndexWriter(Random, dir))
         //#endif
         //                {
         //                    iw.AddDocument(new Document());

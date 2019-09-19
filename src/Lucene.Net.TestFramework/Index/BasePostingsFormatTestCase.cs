@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
         public BasePostingsFormatTestCase(BeforeAfterClass beforeAfter)
             : base(beforeAfter)
         {
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             beforeAfter.SetBeforeAfterClassActions(BeforeClass, AfterClass);
 #endif
         }
@@ -388,32 +388,33 @@ namespace Lucene.Net.Index
             return new SeedPostings(seed, minDocFreq, maxDocFreq, withLiveDocs ? globalLiveDocs : null, options);
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
-#if TESTFRAMEWORK_MSTEST
-        private static readonly IList<string> initalizationLock = new List<string>();
+//#if TESTFRAMEWORK_MSTEST
+//        private static readonly IList<string> initalizationLock = new List<string>();
 
-        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
-        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
-        {
-            lock (initalizationLock)
-            {
-                if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))
-                    initalizationLock.Add(context.FullyQualifiedTestClassName);
-                else
-                    return; // Only allow this class to initialize once (MSTest bug)
-            }
-#else
-        [OneTimeSetUp]
-        new public static void BeforeClass()
-        {
+//        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
+//        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+//        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
+//        {
+//            lock (initalizationLock)
+//            {
+//                if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))
+//                    initalizationLock.Add(context.FullyQualifiedTestClassName);
+//                else
+//                    return; // Only allow this class to initialize once (MSTest bug)
+//            }
+//#else
+#if TESTFRAMEWORK_NUNIT
+        [NUnit.Framework.OneTimeSetUp]
 #endif
-#else
+//        new public static void BeforeClass()
+//        {
+//#endif
+//#else
         //[OneTimeSetUp]
         public override void BeforeClass() // Renamed from CreatePostings to ensure the base class setup is called before this one
         {
             base.BeforeClass();
-#endif
+//#endif
 
             totalPostings = 0;
             totalPayloadBytes = 0;
@@ -534,26 +535,24 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
-#if TESTFRAMEWORK_MSTEST
-        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
-        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-#else
-        [OneTimeTearDown]
+
+//#if TESTFRAMEWORK_MSTEST
+//        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
+//        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+//# el
+#if TESTFRAMEWORK_NUNIT
+        [NUnit.Framework.OneTimeTearDown]
 #endif
-        new public static void AfterClass()
-#else
+//        new public static void AfterClass()
+//#else
         //[OneTimeTearDown]
         public override void AfterClass()
-#endif
         {
             allTerms = null;
             fieldInfos = null;
             fields = null;
             globalLiveDocs = null;
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
             base.AfterClass();
-#endif
         }
 
         // TODO maybe instead of @BeforeClass just make a single test run: build postings & index & test it?

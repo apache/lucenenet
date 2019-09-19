@@ -393,7 +393,11 @@ namespace Lucene.Net.Store
                     try
                     {
                         reader = DirectoryReader.Open(Dir);
-                        searcher = OuterInstance.NewSearcher(reader);
+                        searcher = NewSearcher(
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                            OuterInstance,
+#endif
+                            reader);
                     }
                     catch (Exception e)
                     {

@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Spell
             base.SetUp();
             dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true));
@@ -289,7 +289,7 @@ namespace Lucene.Net.Search.Spell
             {
                 dir = NewDirectory();
                 writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, dir, new MockAnalyzer(Random,

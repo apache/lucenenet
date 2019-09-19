@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
 
 
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/> and <see cref="MockAnalyzer"/>.
         /// </summary>

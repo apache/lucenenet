@@ -820,7 +820,7 @@ namespace Lucene.Net.Index
                     }
                 }
                 IndexSearcher searcher = 
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     outerInstance.
 #endif
                     NewSearcher(reader);

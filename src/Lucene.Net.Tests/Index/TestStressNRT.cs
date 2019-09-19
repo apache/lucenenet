@@ -468,7 +468,11 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            searcher = OuterInstance.NewSearcher(r);
+                            searcher = NewSearcher(
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                                OuterInstance,
+#endif
+                                r);
                             lastReader = r;
                             lastSearcher = searcher;
                         }

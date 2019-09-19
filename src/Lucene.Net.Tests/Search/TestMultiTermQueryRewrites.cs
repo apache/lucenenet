@@ -61,17 +61,17 @@ namespace Lucene.Net.Search
             Sdir1 = NewDirectory();
             Sdir2 = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Dir, new MockAnalyzer(Random));
             RandomIndexWriter swriter1 = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Sdir1, new MockAnalyzer(Random));
             RandomIndexWriter swriter2 = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Sdir2, new MockAnalyzer(Random));

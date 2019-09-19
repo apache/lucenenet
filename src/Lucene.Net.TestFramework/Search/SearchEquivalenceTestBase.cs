@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
         public SearchEquivalenceTestBase(BeforeAfterClass beforeAfter)
             : base(beforeAfter)
         {
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             beforeAfter.SetBeforeAfterClassActions(BeforeClass, AfterClass);
 #endif
         }
@@ -70,35 +70,37 @@ namespace Lucene.Net.Search
         protected static Analyzer m_analyzer;
         protected static string m_stopword; // we always pick a character as a stopword
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
-#if TESTFRAMEWORK_MSTEST
-        private static readonly IList<string> initalizationLock = new List<string>();
+//#if TESTFRAMEWORK_MSTEST
+//        private static readonly IList<string> initalizationLock = new List<string>();
 
-        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
-        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
-        {
-            lock (initalizationLock)
-            {
-                if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))
-                    initalizationLock.Add(context.FullyQualifiedTestClassName);
-                else
-                    return; // Only allow this class to initialize once (MSTest bug)
-            }
-#else
-        new public static void BeforeClass()
-        {
+//        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
+//        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+//        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
+//        {
+//            lock (initalizationLock)
+//            {
+//                if (!initalizationLock.Contains(context.FullyQualifiedTestClassName))
+//                    initalizationLock.Add(context.FullyQualifiedTestClassName);
+//                else
+//                    return; // Only allow this class to initialize once (MSTest bug)
+//            }
+//#else
+#if TESTFRAMEWORK_NUNIT
+        [NUnit.Framework.OneTimeSetUp]
 #endif
-#else
+//        new public static void BeforeClass()
+//        {
+//#endif
+
         /// <summary>
         /// LUCENENET specific
         /// Is non-static because ClassEnvRule is no longer static.
         /// </summary>
-        //[OneTimeSetUp]
+        ////[OneTimeSetUp]
         public override void BeforeClass()
         {
             base.BeforeClass();
-#endif
+
 
             Random random = Random;
             m_directory = NewDirectory();
@@ -106,7 +108,7 @@ namespace Lucene.Net.Search
             CharacterRunAutomaton stopset = new CharacterRunAutomaton(BasicAutomata.MakeString(m_stopword));
             m_analyzer = new MockAnalyzer(random, MockTokenizer.WHITESPACE, false, stopset);
             RandomIndexWriter iw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 random, m_directory, m_analyzer);
@@ -146,18 +148,18 @@ namespace Lucene.Net.Search
             iw.Dispose();
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
-#if TESTFRAMEWORK_MSTEST
-        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
-        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-#else
-        [OneTimeTearDown]
+
+//#if TESTFRAMEWORK_MSTEST
+//        // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
+//        //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+//# el
+#if TESTFRAMEWORK_NUNIT
+        [NUnit.Framework.OneTimeTearDown]
 #endif
-        new public static void AfterClass()
-#else
+//        new public static void AfterClass()
+//#else
         //[OneTimeTearDown]
         public override void AfterClass()
-#endif
         {
             m_reader.Dispose();
             m_directory.Dispose();
@@ -166,9 +168,7 @@ namespace Lucene.Net.Search
             m_directory = null;
             m_analyzer = null;
             m_s1 = m_s2 = null;
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
             base.AfterClass();
-#endif
         }
 
         /// <summary>

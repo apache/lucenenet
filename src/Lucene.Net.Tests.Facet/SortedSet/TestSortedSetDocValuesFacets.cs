@@ -58,7 +58,7 @@ namespace Lucene.Net.Facet.SortedSet
             FacetsConfig config = new FacetsConfig();
             config.SetMultiValued("a", true);
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -111,7 +111,7 @@ namespace Lucene.Net.Facet.SortedSet
             Directory dir = NewDirectory();
 
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -163,7 +163,7 @@ namespace Lucene.Net.Facet.SortedSet
             Directory dir = NewDirectory();
 
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -225,7 +225,7 @@ namespace Lucene.Net.Facet.SortedSet
             Directory dir = NewDirectory();
 
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -271,7 +271,7 @@ namespace Lucene.Net.Facet.SortedSet
             Directory dir = NewDirectory();
 
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -314,7 +314,7 @@ namespace Lucene.Net.Facet.SortedSet
             Directory taxoDir = NewDirectory();
 
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, indexDir);

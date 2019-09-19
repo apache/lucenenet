@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
         private int Search(Query q)
         {
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, Searcher);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
 
             //
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Dir);

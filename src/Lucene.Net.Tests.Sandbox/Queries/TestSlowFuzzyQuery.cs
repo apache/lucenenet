@@ -41,7 +41,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, directory);
@@ -202,7 +202,7 @@ namespace Lucene.Net.Sandbox.Queries
             //Lucene-5033
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, directory);
@@ -231,7 +231,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, directory);
@@ -343,7 +343,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, directory);
@@ -354,7 +354,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             Directory directory2 = NewDirectory();
             RandomIndexWriter writer2 = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, directory2);
@@ -387,7 +387,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, directory);
@@ -429,7 +429,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             Directory directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, directory);
@@ -459,7 +459,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             Directory index = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, index);
@@ -500,7 +500,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             Directory index = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, index);

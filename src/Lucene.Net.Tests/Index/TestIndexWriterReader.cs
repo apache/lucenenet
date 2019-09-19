@@ -489,7 +489,11 @@ namespace Lucene.Net.Index
                 this.NumDirs = numDirs;
                 this.MainWriter = mainWriter;
                 AddDir = NewDirectory();
-                IndexWriter writer = new IndexWriter(AddDir, OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
+                IndexWriter writer = new IndexWriter(AddDir, NewIndexWriterConfig(
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                    OuterInstance,
+#endif
+                    TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
                 TestUtil.ReduceOpenFiles(writer);
                 for (int i = 0; i < NUM_INIT_DOCS; i++)
                 {
@@ -703,13 +707,13 @@ namespace Lucene.Net.Index
 #endif
 
         /*
-         * Delete a document by term and return the doc id
-         *
-         * public static int deleteDocument(Term term, IndexWriter writer) throws
-         * IOException { IndexReader reader = writer.GetReader(); TermDocs td =
-         * reader.termDocs(term); int doc = -1; //if (td.Next()) { // doc = td.Doc();
-         * //} //writer.DeleteDocuments(term); td.Dispose(); return doc; }
-         */
+        * Delete a document by term and return the doc id
+        *
+        * public static int deleteDocument(Term term, IndexWriter writer) throws
+        * IOException { IndexReader reader = writer.GetReader(); TermDocs td =
+        * reader.termDocs(term); int doc = -1; //if (td.Next()) { // doc = td.Doc();
+        * //} //writer.DeleteDocuments(term); td.Dispose(); return doc; }
+        */
 
         public void CreateIndex(Random random, Directory dir1, string indexName, bool multiSegment)
         {
@@ -1200,7 +1204,11 @@ namespace Lucene.Net.Index
 
             public override void Warm(AtomicReader r)
             {
-                IndexSearcher s = OuterInstance.NewSearcher(r);
+                IndexSearcher s = NewSearcher(
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                    OuterInstance,
+#endif
+                    r);
                 TopDocs hits = s.Search(new TermQuery(new Term("foo", "bar")), 10);
                 Assert.AreEqual(20, hits.TotalHits);
                 DidWarm.Set(true);
@@ -1438,5 +1446,5 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 #endif
-    }
-}
+            }
+        }

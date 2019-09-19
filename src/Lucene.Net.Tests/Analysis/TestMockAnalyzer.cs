@@ -350,7 +350,7 @@ namespace Lucene.Net.Analysis
             Analyzer a = new AnalyzerWrapperAnonymousInnerClassHelper2(this, @delegate.Strategy, positionGap, offsetGap, @delegate);
 
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, NewDirectory());

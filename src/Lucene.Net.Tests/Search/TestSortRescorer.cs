@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
             base.SetUp();
             Dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Dir);
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search
             Directory dir = NewDirectory();
             int numDocs = AtLeast(1000);
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);

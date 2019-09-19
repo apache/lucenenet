@@ -38,19 +38,19 @@ namespace Lucene.Net.Codecs.Asserting
 #else
     {
 #endif
-#if TESTFRAMEWORK_MSTEST
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute]
-        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
-        {
-            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
-        }
+//#if TESTFRAMEWORK_MSTEST
+//        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute]
+//        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
+//        {
+//            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
+//        }
 
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute]
-        new public static void AfterClass()
-        {
-            Lucene.Net.Util.LuceneTestCase.AfterClass();
-        }
-#endif
+//        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute]
+//        new public static void AfterClass()
+//        {
+//            Lucene.Net.Util.LuceneTestCase.AfterClass();
+//        }
+//#endif
 
         private readonly Codec codec = new AssertingCodec();
         protected override Codec GetCodec()

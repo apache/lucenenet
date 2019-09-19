@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
             CheckHits.CheckExplanations(q, null, s, true);
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Various query sanity checks on a searcher, some checks are only done for
         /// instance of <see cref="IndexSearcher"/>.
@@ -249,7 +249,7 @@ namespace Lucene.Net.Search
 
         // LUCENENET specific - de-nested FCInvisibleMultiReader
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Given an <see cref="IndexSearcher"/>, returns a new <see cref="IndexSearcher"/> whose <see cref="IndexReader"/>
         /// is a <see cref="MultiReader"/> containing the <see cref="IndexReader"/> of the original <see cref="IndexSearcher"/>,
@@ -292,7 +292,7 @@ namespace Lucene.Net.Search
             };
 
             IndexSearcher @out = LuceneTestCase.NewSearcher(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 luceneTestCase,
 #endif
                 new FCInvisibleMultiReader(readers));
@@ -335,7 +335,7 @@ namespace Lucene.Net.Search
             return new AllDeletedFilterReader(LuceneTestCase.GetOnlySegmentReader(reader));
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Alternate scorer skipTo(),skipTo(),next(),next(),skipTo(),skipTo(), etc
         /// and ensure a hitcollector receives same docs and scores.
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search
                 AtomicReader[] lastReader = new AtomicReader[] { null };
 
                 s.Search(q, new CollectorAnonymousInnerClassHelper(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     luceneTestCase,
 #endif
                     q, s, readerContextArray, skip_op, order, opidx, lastDoc, maxDiff, lastReader));
@@ -390,7 +390,7 @@ namespace Lucene.Net.Search
                     // previous reader, hits NO_MORE_DOCS
                     AtomicReader previousReader = lastReader[0];
                     IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         luceneTestCase,
 #endif
                         previousReader, false);
@@ -409,7 +409,7 @@ namespace Lucene.Net.Search
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             private readonly LuceneTestCase luceneTestCase;
 #endif
             private Query q;
@@ -423,13 +423,13 @@ namespace Lucene.Net.Search
             private AtomicReader[] lastReader;
 
             public CollectorAnonymousInnerClassHelper(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 LuceneTestCase luceneTestCase,
 #endif                
                 Query q, IndexSearcher s, IList<AtomicReaderContext> readerContextArray, 
                 int skip_op, int[] order, int[] opidx, int[] lastDoc, float maxDiff, AtomicReader[] lastReader)
             {
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this.luceneTestCase = luceneTestCase;
 #endif
                 this.q = q;
@@ -498,7 +498,7 @@ namespace Lucene.Net.Search
                 {
                     AtomicReader previousReader = lastReader[0];
                     IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         luceneTestCase,
 #endif
                         previousReader);
@@ -525,7 +525,7 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Check that first skip on just created scorers always goes to the right doc.</summary>
         public static void CheckFirstSkipTo(Query q, IndexSearcher s)
@@ -546,7 +546,7 @@ namespace Lucene.Net.Search
             AtomicReader[] lastReader = new AtomicReader[] { null };
             IList<AtomicReaderContext> context = s.TopReaderContext.Leaves;
             s.Search(q, new CollectorAnonymousInnerClassHelper2(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 luceneTestCase,
 #endif
                 q, s, maxDiff, lastDoc, lastReader, context));
@@ -557,7 +557,7 @@ namespace Lucene.Net.Search
                 // previous reader, hits NO_MORE_DOCS
                 AtomicReader previousReader = lastReader[0];
                 IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     luceneTestCase,
 #endif
                     previousReader);
@@ -574,7 +574,7 @@ namespace Lucene.Net.Search
 
         private class CollectorAnonymousInnerClassHelper2 : ICollector
         {
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             private readonly LuceneTestCase luceneTestCase;
 #endif
             private Query q;
@@ -585,12 +585,12 @@ namespace Lucene.Net.Search
             private IList<AtomicReaderContext> context;
 
             public CollectorAnonymousInnerClassHelper2(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION                
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION                
                 LuceneTestCase luceneTestCase, 
  #endif                
                 Query q, IndexSearcher s, float maxDiff, int[] lastDoc, AtomicReader[] lastReader, IList<AtomicReaderContext> context)
             {
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this.luceneTestCase = luceneTestCase;
 #endif
                 this.q = q;
@@ -649,7 +649,7 @@ namespace Lucene.Net.Search
                 {
                     AtomicReader previousReader = lastReader[0];
                     IndexSearcher indexSearcher = LuceneTestCase.NewSearcher(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         luceneTestCase,
 #endif
                         previousReader);

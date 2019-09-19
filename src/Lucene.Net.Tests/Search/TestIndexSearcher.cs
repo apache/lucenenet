@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
             base.SetUp();
             Dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Dir);
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
             // LUCENE-5128: ensure we get a meaningful message if searchAfter exceeds maxDoc
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);

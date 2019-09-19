@@ -49,7 +49,7 @@ namespace Lucene.Net.Search
             // create an index
             Directory indexStore = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, indexStore);
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
             // create an index
             Directory indexStore = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, indexStore);

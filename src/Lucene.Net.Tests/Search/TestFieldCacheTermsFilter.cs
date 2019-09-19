@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
             string fieldName = "field1";
             Directory rd = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, rd);

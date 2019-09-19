@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
             // The documents have no content - the test uses MatchAllDocsQuery().
             Dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, Dir);

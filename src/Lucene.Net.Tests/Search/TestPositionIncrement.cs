@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
             Directory store = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, store, analyzer);
@@ -237,7 +237,7 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir, new MockPayloadAnalyzer());

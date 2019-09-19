@@ -702,7 +702,7 @@ namespace Lucene.Net.Index
                 Document emptyDoc = new Document();
                 using (Directory dir = NewDirectory())
                 using (RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, dir))
@@ -754,7 +754,7 @@ namespace Lucene.Net.Index
                 }
                 using (Directory dir = NewDirectory())
                 using (RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, dir))
@@ -776,7 +776,7 @@ namespace Lucene.Net.Index
             {
                 using (Directory dir = NewDirectory())
                 using (RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, dir))
@@ -806,7 +806,7 @@ namespace Lucene.Net.Index
                     }
                     using (Directory dir = NewDirectory())
                     using (var writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
                         Random, dir))
@@ -839,7 +839,7 @@ namespace Lucene.Net.Index
             }
             using (Directory dir = NewDirectory())
             using (RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir))
@@ -879,7 +879,7 @@ namespace Lucene.Net.Index
                 }
                 using (Directory dir = NewDirectory())
                 using (RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, dir))
@@ -931,7 +931,7 @@ namespace Lucene.Net.Index
                 AtomicObject<Exception> exception = new AtomicObject<Exception>();
                 using (Directory dir = NewDirectory())
                 using (RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, dir))

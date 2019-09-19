@@ -84,7 +84,7 @@ namespace Lucene.Net.Facet
             config.SetHierarchical("Publish Date", true);
 
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -259,7 +259,7 @@ namespace Lucene.Net.Facet
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -319,7 +319,7 @@ namespace Lucene.Net.Facet
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -1314,7 +1314,7 @@ namespace Lucene.Net.Facet
             Directory dir = NewDirectory();
             Directory taxoDir = NewDirectory();
             var writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);

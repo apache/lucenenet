@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -164,7 +164,7 @@ namespace Lucene.Net.Search
         {
             Directory dir1 = NewDirectory();
             RandomIndexWriter iw1 = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir1);
@@ -176,7 +176,7 @@ namespace Lucene.Net.Search
 
             Directory dir2 = NewDirectory();
             RandomIndexWriter iw2 = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir2);
@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
         {
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, d);
@@ -392,7 +392,7 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);

@@ -75,7 +75,7 @@ namespace Lucene.Net.Facet.Range
         {
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, d);
@@ -156,7 +156,7 @@ namespace Lucene.Net.Facet.Range
 
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, d);
@@ -191,7 +191,7 @@ namespace Lucene.Net.Facet.Range
         {
             Directory d = NewDirectory();
             var w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, d);
@@ -231,7 +231,7 @@ namespace Lucene.Net.Facet.Range
         {
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, d);
@@ -347,7 +347,7 @@ namespace Lucene.Net.Facet.Range
         {
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, d);
@@ -378,7 +378,7 @@ namespace Lucene.Net.Facet.Range
         {
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, d);
@@ -410,7 +410,7 @@ namespace Lucene.Net.Facet.Range
         {
             Directory dir = NewDirectory();
             var w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -607,7 +607,7 @@ namespace Lucene.Net.Facet.Range
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -816,7 +816,7 @@ namespace Lucene.Net.Facet.Range
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -1009,7 +1009,7 @@ namespace Lucene.Net.Facet.Range
             AssumeTrue("codec does not support docsWithField", DefaultCodecSupportsDocsWithField);
             Directory d = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, d);
@@ -1046,7 +1046,7 @@ namespace Lucene.Net.Facet.Range
         {
             Directory dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);

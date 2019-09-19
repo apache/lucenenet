@@ -111,7 +111,7 @@ namespace Lucene.Net.Tests.Queries.Function
             */
 
             CheckHits.DoCheckHits(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, "", searcher, expectedDocs);

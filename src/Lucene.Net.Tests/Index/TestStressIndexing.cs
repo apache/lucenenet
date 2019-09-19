@@ -159,7 +159,11 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < 100; i++)
                 {
                     IndexReader ir = DirectoryReader.Open(Directory);
-                    IndexSearcher @is = OuterInstance.NewSearcher(ir);
+                    IndexSearcher @is =
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                        OuterInstance.
+#endif
+                        NewSearcher(ir);
                     ir.Dispose();
                 }
                 Count += 100;

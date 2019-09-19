@@ -46,7 +46,7 @@ namespace Lucene.Net.Classification
             base.SetUp();
             _dir = NewDirectory();
             _indexWriter = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, _dir, new MockAnalyzer(Random));

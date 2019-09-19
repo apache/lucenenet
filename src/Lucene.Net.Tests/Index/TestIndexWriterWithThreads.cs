@@ -636,7 +636,11 @@ namespace Lucene.Net.Index
                     Document doc = new Document();
                     Field field = NewTextField("field", "testData", Field.Store.YES);
                     doc.Add(field);
-                    using (IndexWriter writer = new IndexWriter(Dir, OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))))
+                    using (IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                        OuterInstance,
+#endif
+                        TEST_VERSION_CURRENT, new MockAnalyzer(Random))))
                     {
                         if (IwConstructed.CurrentCount > 0)
                         {
@@ -750,7 +754,11 @@ namespace Lucene.Net.Index
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": rollback done; now open new writer");
                                     }
                                     WriterRef.Value = 
-                                        new IndexWriter(d, OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+                                        new IndexWriter(d, NewIndexWriterConfig(
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                                            OuterInstance,
+#endif
+                                            TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                                 }
                                 finally
                                 {

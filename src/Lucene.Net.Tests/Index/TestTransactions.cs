@@ -137,7 +137,11 @@ namespace Lucene.Net.Index
 
             public override void DoWork()
             {
-                var config = outerInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                var config = NewIndexWriterConfig(
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                    outerInstance,
+#endif
+                    TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                                 .SetMaxBufferedDocs(3)
                                 .SetMergeScheduler(newScheduler1())
                                 .SetMergePolicy(NewLogMergePolicy(2));
@@ -146,7 +150,11 @@ namespace Lucene.Net.Index
 
                 // Intentionally use different params so flush/merge
                 // happen @ different times
-                var config2 = outerInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
+                var config2 = NewIndexWriterConfig(
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                    outerInstance,
+#endif
+                    TEST_VERSION_CURRENT, new MockAnalyzer(Random))
                                 .SetMaxBufferedDocs(2)
                                 .SetMergeScheduler(newScheduler2())
                                 .SetMergePolicy(NewLogMergePolicy(3));

@@ -55,7 +55,7 @@ namespace Lucene.Net.Tests.Queries
             string fieldName = "field1";
             Directory rd = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, rd);
@@ -98,7 +98,7 @@ namespace Lucene.Net.Tests.Queries
             string fieldName = "field1";
             Directory rd1 = NewDirectory();
             RandomIndexWriter w1 = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, rd1);
@@ -111,7 +111,7 @@ namespace Lucene.Net.Tests.Queries
             fieldName = "field2";
             Directory rd2 = NewDirectory();
             RandomIndexWriter w2 = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, rd2);
@@ -148,7 +148,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -188,7 +188,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -234,7 +234,7 @@ namespace Lucene.Net.Tests.Queries
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);

@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
         {
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);
@@ -79,14 +79,14 @@ namespace Lucene.Net.Search
 
             // no boosting
             IndexSearcher searcher1 = NewSearcher(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 ir, false);
             Similarity @base = searcher1.Similarity;
             // boosting
             IndexSearcher searcher2 = NewSearcher(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 ir, false);
@@ -95,12 +95,12 @@ namespace Lucene.Net.Search
             // in this case, we searched on field "foo". first document should have 2x the score.
             TermQuery tq = new TermQuery(new Term("foo", "quick"));
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, tq, searcher1);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, tq, searcher2);
@@ -116,12 +116,12 @@ namespace Lucene.Net.Search
             // this query matches only the second document, which should have 4x the score.
             tq = new TermQuery(new Term("foo", "jumps"));
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, tq, searcher1);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, tq, searcher2);
@@ -137,12 +137,12 @@ namespace Lucene.Net.Search
             // our sim provider to only use foo_boost for field foo.
             tq = new TermQuery(new Term("bar", "quick"));
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, tq, searcher1);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, tq, searcher2);

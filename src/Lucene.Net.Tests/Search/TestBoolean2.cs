@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
                 }
                 Directory copy = new MockDirectoryWrapper(Random, new RAMDirectory(Dir2, IOContext.DEFAULT));
                 RandomIndexWriter w = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, Dir2);
@@ -315,7 +315,7 @@ namespace Lucene.Net.Search
                     Sort sort = Sort.INDEXORDER;
 
                     QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
                         Random, q1, Searcher); // baseline sim
@@ -324,7 +324,7 @@ namespace Lucene.Net.Search
                         // a little hackish, QueryUtils.check is too costly to do on bigSearcher in this loop.
                         Searcher.Similarity = BigSearcher.Similarity; // random sim
                         QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                             this,
 #endif
                             Random, q1, Searcher);

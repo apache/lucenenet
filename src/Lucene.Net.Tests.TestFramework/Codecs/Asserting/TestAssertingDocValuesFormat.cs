@@ -40,19 +40,19 @@ namespace Lucene.Net.Codecs.Asserting
 #endif
         // LUCENENET TODO: MSTest is seemingly being fixed to deal with initialization with inheritance for version 2.0. See: https://github.com/microsoft/testfx/issues/143
 
-#if TESTFRAMEWORK_MSTEST
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute]
-        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
-        {
-            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
-        }
+//#if TESTFRAMEWORK_MSTEST
+//        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute]
+//        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
+//        {
+//            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
+//        }
 
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute]
-        new public static void AfterClass()
-        {
-            Lucene.Net.Util.LuceneTestCase.AfterClass();
-        }
-#endif
+//        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute]
+//        new public static void AfterClass()
+//        {
+//            Lucene.Net.Util.LuceneTestCase.AfterClass();
+//        }
+//#endif
 
         private readonly Codec codec = new AssertingCodec();
         protected override Codec GetCodec()

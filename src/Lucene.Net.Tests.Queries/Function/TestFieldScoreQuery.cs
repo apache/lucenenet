@@ -99,7 +99,7 @@ namespace Lucene.Net.Tests.Queries.Function
             IndexSearcher s = NewSearcher(r);
             Log("test: " + functionQuery);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, functionQuery, s);

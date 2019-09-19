@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
 
             (new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir2)).Dispose();
@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
 
             (new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir2)).Dispose();
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
 
             (new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir2)).Dispose();

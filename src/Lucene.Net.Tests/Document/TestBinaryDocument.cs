@@ -61,7 +61,7 @@ namespace Lucene.Net.Documents
             Directory dir = NewDirectory();
             Random r = Random;
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 r, dir);
@@ -102,7 +102,7 @@ namespace Lucene.Net.Documents
 
             using (Directory dir = NewDirectory())
             using (RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir))

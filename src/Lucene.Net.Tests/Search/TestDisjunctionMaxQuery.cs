@@ -187,7 +187,7 @@ namespace Lucene.Net.Search
             dq.Add(Tq("dek", "DOES_NOT_EXIST"));
 
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dq, s);
@@ -210,7 +210,7 @@ namespace Lucene.Net.Search
             dq.Add(Tq("dek", "DOES_NOT_EXIST"));
             Assert.IsTrue(s.TopReaderContext is AtomicReaderContext);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dq, s);
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search
             q.Add(Tq("hed", "albino"));
             q.Add(Tq("hed", "elephant"));
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, s);
@@ -259,7 +259,7 @@ namespace Lucene.Net.Search
             q.Add(Tq("dek", "albino"));
             q.Add(Tq("dek", "elephant"));
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, s);
@@ -291,7 +291,7 @@ namespace Lucene.Net.Search
             q.Add(Tq("dek", "albino"));
             q.Add(Tq("dek", "elephant"));
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, s);
@@ -321,7 +321,7 @@ namespace Lucene.Net.Search
             q.Add(Tq("dek", "albino"));
             q.Add(Tq("dek", "elephant"));
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, s);
@@ -355,7 +355,7 @@ namespace Lucene.Net.Search
                 q1.Add(Tq("dek", "albino"));
                 q.Add(q1, Occur.MUST); // true,false);
                 QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, q1, s);
@@ -366,14 +366,14 @@ namespace Lucene.Net.Search
                 q2.Add(Tq("dek", "elephant"));
                 q.Add(q2, Occur.MUST); // true,false);
                 QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     Random, q2, s);
             }
 
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, s);
@@ -413,7 +413,7 @@ namespace Lucene.Net.Search
                 q.Add(q2, Occur.SHOULD); // false,false);
             }
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, s);
@@ -456,7 +456,7 @@ namespace Lucene.Net.Search
                 q.Add(q2, Occur.SHOULD); // false,false);
             }
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, s);
@@ -510,7 +510,7 @@ namespace Lucene.Net.Search
                 q.Add(q2, Occur.SHOULD); // false,false);
             }
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, s);

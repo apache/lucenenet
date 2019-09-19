@@ -94,7 +94,7 @@ namespace Lucene.Net.Tests.Queries.Function
             }
             TopDocs docs = @is.Search(q, 10, new Sort(new SortField("id", SortFieldType.STRING)));
             CheckHits.DoCheckHits(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, q, "", @is, expectedDocs);

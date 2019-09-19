@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
             INDEX_SIZE = AtLeast(2000);
             Index = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 LuceneTestCase.Random, Index);

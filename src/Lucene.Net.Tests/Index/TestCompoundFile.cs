@@ -861,7 +861,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             // riw should sometimes create docvalues fields, etc
             RandomIndexWriter riw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir);

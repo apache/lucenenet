@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, hits.Length);
             Assert.AreEqual(1, hits[0].Doc);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, filteredquery, Searcher);
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, filteredquery, Searcher);
@@ -179,7 +179,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, filteredquery, Searcher);
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(1, hits.Length);
             Assert.AreEqual(3, hits[0].Doc);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, filteredquery, Searcher);
@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, filteredquery, Searcher);
@@ -280,7 +280,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, filteredquery, Searcher);
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, query, Searcher);
@@ -330,7 +330,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, query, Searcher);
@@ -356,7 +356,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(query, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, query, Searcher);
@@ -377,7 +377,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits = Searcher.Search(query, 10).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, query, Searcher);
@@ -387,7 +387,7 @@ namespace Lucene.Net.Search
             hits = Searcher.Search(query, 10).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, query, Searcher);

@@ -126,11 +126,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        public override void Before(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-            LuceneTestCase testInstance
-#endif
-            )
+        public override void Before(LuceneTestCase testInstance)
         {
             // LUCENENET specific - SOLR setup code removed
 
@@ -162,11 +158,7 @@ namespace Lucene.Net.Util
                 InfoStream.Default = new NullInfoStream();
             }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
-            Type targetClass = LuceneTestCase.GetTestClass();
-#else
-            Type targetClass = testInstance.GetType();
-#endif
+            Type targetClass = testInstance?.GetType() ?? LuceneTestCase.GetTestClass();
             avoidCodecs = new HashSet<string>();
             var suppressCodecsAttribute = targetClass.GetTypeInfo().GetCustomAttribute<LuceneTestCase.SuppressCodecsAttribute>();
             if (suppressCodecsAttribute != null)
@@ -386,11 +378,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// After suite cleanup (always invoked).
         /// </summary>
-        public override void After(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-            LuceneTestCase testInstance
-#endif
-            )
+        public override void After(LuceneTestCase testInstance)
         {
             foreach (KeyValuePair<string, string> e in restoreProperties)
             {

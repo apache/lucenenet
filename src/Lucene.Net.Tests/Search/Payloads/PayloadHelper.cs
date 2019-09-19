@@ -146,7 +146,7 @@ namespace Lucene.Net.Search.Payloads
             writer.Dispose();
 
             IndexSearcher searcher = LuceneTestCase.NewSearcher(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 null, // LUCENENET: Passing null allows us to bypass similarity, which we are setting here, anyway
 #endif
                 Reader);

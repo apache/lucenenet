@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Tests that a query matches the an expected set of documents using a
         /// HitCollector.
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
 #endif
         {
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 luceneTestCase,
 #endif
                 random, query, searcher);
@@ -137,7 +137,7 @@ namespace Lucene.Net.Search
             {
                 actual.Clear();
                 IndexSearcher s = QueryUtils.WrapUnderlyingReader(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     luceneTestCase,
 #endif
                     random, searcher, i);
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
 
         // LUCENENET specific - de-nested SetCollector
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Tests that a query matches the an expected set of documents using Hits.
         ///
@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
 
             QueryUtils.Check(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 luceneTestCase,
 #endif
                 random, query, searcher, LuceneTestCase.Rarely(random));

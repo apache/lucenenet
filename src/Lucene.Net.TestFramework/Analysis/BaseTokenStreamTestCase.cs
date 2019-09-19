@@ -116,19 +116,19 @@ namespace Lucene.Net.Analysis
 #else
     {
 #endif
-#if TESTFRAMEWORK_MSTEST
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
-        {
-            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
-        }
+//#if TESTFRAMEWORK_MSTEST
+//        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+//        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
+//        {
+//            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
+//        }
 
-        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-        new public static void AfterClass()
-        {
-            Lucene.Net.Util.LuceneTestCase.AfterClass();
-        }
-#endif
+//        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+//        new public static void AfterClass()
+//        {
+//            Lucene.Net.Util.LuceneTestCase.AfterClass();
+//        }
+//#endif
 
         // some helpers to test Analyzers and TokenStreams:
 
@@ -577,7 +577,7 @@ namespace Lucene.Net.Analysis
             AssertAnalyzesTo(a, input, new string[] { expected });
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         /// <summary>
         /// Utility method for blasting tokenstreams with data to make sure they don't do anything crazy
         /// </summary>
@@ -703,7 +703,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         public static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool simple)
         {
             CheckRandomData(random, a, iterations, maxWordLength, simple, true);
@@ -732,7 +732,7 @@ namespace Lucene.Net.Analysis
             {
                 dir = NewFSDirectory(CreateTempDir("bttc"));
                 iw = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
                     new Random((int)seed), dir, a);

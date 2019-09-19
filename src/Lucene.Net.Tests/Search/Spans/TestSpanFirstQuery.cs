@@ -47,7 +47,7 @@ namespace Lucene.Net.Search.Spans
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, stopSet);
 
             RandomIndexWriter writer = new RandomIndexWriter(
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
                 Random, dir, analyzer);
