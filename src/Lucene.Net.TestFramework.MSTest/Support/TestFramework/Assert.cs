@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using Lucene.Net.Support;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using MSTest = Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Lucene.Net.TestFramework
@@ -24,7 +27,7 @@ namespace Lucene.Net.TestFramework
     /// <summary>
     /// Facade for MSTest Assertions
     /// </summary>
-    internal class Assert
+    internal partial class Assert
     {
         //
         // Summary:
@@ -539,6 +542,87 @@ namespace Lucene.Net.TestFramework
         public static void True(bool condition)
         {
             MSTest.Assert.IsTrue(condition);
+        }
+
+
+        public static Exception Throws<TException>(Action action)
+        {
+            return Throws(typeof(TException), action);
+        }
+
+        public static Exception Throws(Type expectedExceptionType, Action action)
+        {
+            if (expectedExceptionType == null)
+                throw new ArgumentNullException(nameof(expectedExceptionType));
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
+
+            var messagePrefix = $"Expected: {expectedExceptionType.GetType().FullName}\nBut was:";
+            Exception exception = null;
+            try
+            {
+                action();
+            }
+            catch (Exception ex) when (!ex.GetType().Equals(expectedExceptionType))
+            {
+                exception = ex;
+            }
+            catch (Exception ex)
+            {
+                return ex; // Success
+            }
+            string exString = exception == null ? "<null>" : exception.GetType().FullName;
+            MSTest.Assert.Fail($"{messagePrefix} {exString}");
+            return null;
+        }
+
+        public static Exception ThrowsFileAlreadyExistsException(string filePath, Action action)
+        {
+            var messagePrefix = $"Expected: IOException indicating file not found\nBut was:";
+            Exception exception = null;
+            try
+            {
+                action();
+            }
+            catch (Exception ex) when (!IsFileAlreadyExistsException(ex, filePath))
+            {
+                exception = ex;
+            }
+            catch (Exception ex)
+            {
+                return ex; // Success
+            }
+            string exString = exception == null ? "<null>" : exception.GetType().FullName;
+            MSTest.Assert.Fail($"{messagePrefix} {exString}");
+            return null;
+        }
+
+        public static Exception ThrowsAnyOf<TException1, TException2>(Action action)
+        {
+            return ThrowsAnyOf(new Type[] { typeof(TException1), typeof(TException2) }, action);
+        }
+
+        public static Exception ThrowsAnyOf<TException1, TException2, TException3>(Action action)
+        {
+            return ThrowsAnyOf(new Type[] { typeof(TException1), typeof(TException2), typeof(TException3) }, action);
+        }
+
+        public static Exception ThrowsAnyOf(IEnumerable<Type> expectedExceptionTypes, Action action)
+        {
+            var messagePrefix = $"Expected one of: {Collections.ToString(expectedExceptionTypes.Select(ex => ex.FullName).ToArray())}\nBut was:";
+            try
+            {
+                action();
+                throw new MSTest.AssertFailedException($"{messagePrefix} <null>");
+            }
+            catch (Exception ex) when (!expectedExceptionTypes.Contains(ex.GetType()))
+            {
+                throw new MSTest.AssertFailedException($"{messagePrefix} {ex.GetType().FullName}", ex);
+            }
+            catch (Exception ex)
+            {
+                return ex; // Success
+            }
         }
     }
 }

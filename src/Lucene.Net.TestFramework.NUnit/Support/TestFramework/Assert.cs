@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using Lucene.Net.Support;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using _NUnit = NUnit.Framework;
 
 namespace Lucene.Net.TestFramework
@@ -24,7 +27,7 @@ namespace Lucene.Net.TestFramework
     /// <summary>
     /// Facade for MSTest Assertions
     /// </summary>
-    internal class Assert
+    internal partial class Assert
     {
         //
         // Summary:
@@ -538,6 +541,65 @@ namespace Lucene.Net.TestFramework
         public static void True(bool condition)
         {
             _NUnit.Assert.True(condition);
+        }
+
+
+        public static Exception Throws<TException>(Action action)
+        {
+            return Throws(typeof(TException), action);
+        }
+
+        public static Exception Throws(Type expectedExceptionType, Action action)
+        {
+            return _NUnit.Assert.Throws(expectedExceptionType, () => action());
+        }
+
+        public static Exception ThrowsFileAlreadyExistsException(string filePath, Action action)
+        {
+            var messagePrefix = $"Expected: IOException indicating file not found\nBut was:";
+            try
+            {
+                action();
+                throw new _NUnit.AssertionException($"{messagePrefix} <null>");
+            }
+            catch (Exception ex) when (!IsFileAlreadyExistsException(ex, filePath))
+            {
+                throw new _NUnit.AssertionException($"{messagePrefix} {ex.GetType().FullName}", ex);
+            }
+            catch (Exception ex)
+            {
+                return ex; // Success
+            }
+        }
+
+        public static Exception ThrowsAnyOf<TException1, TException2>(Action action)
+        {
+            return ThrowsAnyOf(new Type[] { typeof(TException1), typeof(TException2) }, action);
+        }
+
+        public static Exception ThrowsAnyOf<TException1, TException2, TException3>(Action action)
+        {
+            return ThrowsAnyOf(new Type[] { typeof(TException1), typeof(TException2), typeof(TException3) }, action);
+        }
+
+        public static Exception ThrowsAnyOf(IEnumerable<Type> expectedExceptionTypes, Action action)
+        {
+            var messagePrefix = $"Expected one of: {Collections.ToString(expectedExceptionTypes.Select(ex => ex.FullName).ToArray())}\nBut was:";
+            Exception exception = null;
+            try
+            {
+                action();
+            }
+            catch (Exception ex) when (!expectedExceptionTypes.Contains(ex.GetType()))
+            {
+                exception = ex;
+            }
+            catch (Exception ex)
+            {
+                return ex; // Success
+            }
+            string exString = exception == null ? "<null>" : exception.GetType().FullName;
+            throw new _NUnit.AssertionException($"{messagePrefix} {exString}");
         }
     }
 }

@@ -302,6 +302,13 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             FileInfo file = new FileInfo(Path.Combine(m_directory.FullName, name));
+            // LUCENENET specific: We need to explicitly throw when the file has already been deleted,
+            // since FileInfo doesn't do that for us.
+            // (An enhancement carried over from Lucene 8.2.0)
+            if (!File.Exists(file.FullName))
+            {
+                throw new FileNotFoundException("Cannot delete " + file + " because it doesn't exist.");
+            }
             try
             {
                 file.Delete();
