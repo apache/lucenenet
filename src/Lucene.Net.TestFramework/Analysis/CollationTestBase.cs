@@ -3,13 +3,14 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Directory = Lucene.Net.Store.Directory;
 using Assert = Lucene.Net.TestFramework.Assert;
+using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Analysis
 {
@@ -34,7 +35,16 @@ namespace Lucene.Net.Analysis
     /// Base test class for testing Unicode collation.
     /// </summary>
     public abstract class CollationTestBase : LuceneTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public CollationTestBase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
         protected string m_firstRangeBeginningOriginal = "\u062F";
         protected string m_firstRangeEndOriginal = "\u0698";
 

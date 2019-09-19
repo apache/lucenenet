@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 8.2.0
 using System;
+using Lucene.Net.TestFramework;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -35,7 +36,16 @@ namespace Lucene.Net.Analysis
     [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
 #endif
     public class TestLookaheadTokenFilter : BaseTokenStreamTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public TestLookaheadTokenFilter(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
         [Test]
         public void TestRandomStrings()
         {

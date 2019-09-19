@@ -1,5 +1,6 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using Lucene.Net.TestFramework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,7 +51,19 @@ namespace Lucene.Net.Search
     /// <see cref="AssertSubsetOf(Query, Query)"/>.
     /// </summary>
     public abstract class SearchEquivalenceTestBase : LuceneTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public SearchEquivalenceTestBase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+            beforeAfter.SetBeforeAfterClassActions(BeforeClass, AfterClass);
+#endif
+        }
+#else
+    {
+#endif
         protected static IndexSearcher m_s1, m_s2;
         protected static Directory m_directory;
         protected static IndexReader m_reader;

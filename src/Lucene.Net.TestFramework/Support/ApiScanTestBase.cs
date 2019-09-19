@@ -19,16 +19,16 @@
  *
 */
 
+using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using Console = Lucene.Net.Support.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Support
 {
@@ -37,8 +37,17 @@ namespace Lucene.Net.Support
     /// naming and .NET conventions are followed consistently.
     /// </summary>
     public abstract class ApiScanTestBase : LuceneTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
+    {
+        internal ApiScanTestBase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
     {
         internal ApiScanTestBase() { } // LUCENENET: Not for use by end users
+#endif
 
         /// <summary>
         /// Private fields must be upper case separated with underscores, 

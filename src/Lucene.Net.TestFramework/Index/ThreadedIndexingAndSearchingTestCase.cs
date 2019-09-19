@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.TestFramework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -62,7 +63,16 @@ namespace Lucene.Net.Index
     /// searching threads.
     /// </summary>
     public abstract class ThreadedIndexingAndSearchingTestCase : LuceneTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public ThreadedIndexingAndSearchingTestCase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
         protected readonly AtomicBoolean m_failed = new AtomicBoolean();
         protected readonly AtomicInt32 m_addCount = new AtomicInt32();
         protected readonly AtomicInt32 m_delCount = new AtomicInt32();

@@ -28,7 +28,16 @@ namespace Lucene.Net.Codecs.Asserting
     [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
 #endif
     public class TestAssertingNormsFormat : BaseTermVectorsFormatTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public TestAssertingNormsFormat(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
 #if TESTFRAMEWORK_MSTEST
         [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute]
         new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)

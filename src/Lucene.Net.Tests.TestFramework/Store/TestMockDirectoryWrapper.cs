@@ -44,7 +44,16 @@ namespace Lucene.Net.Store
     [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
 #endif
     public class TestMockDirectoryWrapper : BaseDirectoryTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public TestMockDirectoryWrapper(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
 
         protected override Directory GetDirectory(DirectoryInfo path)
         {

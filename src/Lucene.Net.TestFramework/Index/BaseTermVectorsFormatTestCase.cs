@@ -4,6 +4,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.TestFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +68,16 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
     public abstract class BaseTermVectorsFormatTestCase : BaseIndexFileFormatTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public BaseTermVectorsFormatTestCase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
         /// <summary>
         /// A combination of term vectors options.
         /// </summary>
@@ -533,8 +543,8 @@ namespace Lucene.Net.Index
         {
             Assert.AreEqual(1, terms.DocCount);
             int termCount = (new HashSet<string>(Arrays.AsList(tk.terms))).Count;
-            Assert.AreEqual(termCount, terms.Count);
-            Assert.AreEqual(termCount, terms.SumDocFreq);
+            Assert.AreEqual((long)termCount, terms.Count); // LUCENENET specific - cast required because types don't match (xUnit checks this)
+            Assert.AreEqual((long)termCount, terms.SumDocFreq); // LUCENENET specific - cast required because types don't match (xUnit checks this)
             Assert.AreEqual(ft.StoreTermVectorPositions, terms.HasPositions);
             Assert.AreEqual(ft.StoreTermVectorOffsets, terms.HasOffsets);
             Assert.AreEqual(ft.StoreTermVectorPayloads && tk.HasPayloads(), terms.HasPayloads);

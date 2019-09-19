@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.TestFramework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -18,7 +19,6 @@ namespace Lucene.Net.Search
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /*
     * Licensed to the Apache Software Foundation (ASF) under one or more
     * contributor license agreements.  See the NOTICE file distributed with
@@ -38,10 +38,10 @@ namespace Lucene.Net.Search
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using OpenMode = Lucene.Net.Index.OpenMode;
-    using TextWriterInfoStream = Lucene.Net.Util.TextWriterInfoStream;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
     using TestUtil = Lucene.Net.Util.TestUtil;
+    using TextWriterInfoStream = Lucene.Net.Util.TextWriterInfoStream;
 
     // TODO: maybe SLM should throw this instead of returning null...
     /// <summary>
@@ -80,7 +80,16 @@ namespace Lucene.Net.Search
     /// Base test class for simulating distributed search across multiple shards.
     /// </summary>
     public abstract class ShardSearchingTestBase : LuceneTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public ShardSearchingTestBase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
         // LUCENENET specific - de-nested SearcherExpiredException
 
         internal class FieldAndShardVersion

@@ -38,6 +38,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -205,30 +206,27 @@ namespace Lucene.Net.Util
 #if TESTFRAMEWORK_XUNIT
         : IDisposable, Xunit.IClassFixture<BeforeAfterClass>
     {
-        private bool isDisposed = false;
+        private int isDisposed = 0;
 
-        public LuceneTestCase(/*BeforeAfterClass beforeAfter*/)
+        public LuceneTestCase(BeforeAfterClass beforeAfter)
         {
 #if !FEATURE_STATIC_TESTDATA_INITIALIZATION
             ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
 #endif
-            //beforeAfter.SetBeforeAfterClass(BeforeClass, AfterClass);
+            beforeAfter.SetBeforeAfterClassActions(BeforeClass, AfterClass);
             this.SetUp();
         }
 
         public void Dispose()
         {
-            if (!isDisposed)
-            {
-                this.TearDown();
-                Dispose(true);
-                GC.SuppressFinalize(this);
-                isDisposed = true;
-            }
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
         {
+            if (disposing && Interlocked.CompareExchange(ref isDisposed, 1, 0) == 0)
+                this.TearDown();
         }
 #else
     {

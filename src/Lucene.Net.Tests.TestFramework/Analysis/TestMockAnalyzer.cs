@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using System;
 using System.IO;
+using Lucene.Net.TestFramework;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -39,7 +40,16 @@ namespace Lucene.Net.Analysis
     [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
 #endif
     public class TestMockAnalyzer : BaseTokenStreamTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public TestMockAnalyzer(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
 
         /** Test a configuration that behaves a lot like WhitespaceAnalyzer */
         [Test]

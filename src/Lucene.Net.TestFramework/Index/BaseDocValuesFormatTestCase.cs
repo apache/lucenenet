@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.TestFramework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -38,7 +39,6 @@ namespace Lucene.Net.Index
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BinaryDocValuesField = BinaryDocValuesField;
-    using BooleanClause = Lucene.Net.Search.BooleanClause;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using BytesRefHash = Lucene.Net.Util.BytesRefHash;
@@ -73,7 +73,17 @@ namespace Lucene.Net.Index
     /// test fails to catch then this test needs to be improved!
     /// </summary>
     public abstract class BaseDocValuesFormatTestCase : BaseIndexFileFormatTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        
+        public BaseDocValuesFormatTestCase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
         protected override void AddRandomFields(Document doc)
         {
             if (Usually())
@@ -127,7 +137,7 @@ namespace Lucene.Net.Index
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
                         Debug.Assert(ireader.Leaves.Count == 1);
                         NumericDocValues dv = ((AtomicReader)((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader))).GetNumericDocValues("dv");
-                        Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
+                        Assert.AreEqual(5L, dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - 5L required because types don't match (xUnit checks this)
                     }
 
                 } // ireader.Dispose();
@@ -170,7 +180,7 @@ namespace Lucene.Net.Index
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
                         Debug.Assert(ireader.Leaves.Count == 1);
                         NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv");
-                        Assert.AreEqual(Number.SingleToInt32Bits(5.7f), dv.Get(hits.ScoreDocs[i].Doc));
+                        Assert.AreEqual((long)Number.SingleToInt32Bits(5.7f), dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - cast required because types don't match (xUnit checks this)
                     }
                 } // ireader.Dispose();
             } // directory.Dispose();
@@ -212,9 +222,9 @@ namespace Lucene.Net.Index
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
                         Debug.Assert(ireader.Leaves.Count == 1);
                         NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv1");
-                        Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
+                        Assert.AreEqual(5L, dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - 5L required because types don't match (xUnit checks this)
                         dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv2");
-                        Assert.AreEqual(17, dv.Get(hits.ScoreDocs[i].Doc));
+                        Assert.AreEqual(17L, dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - 17L required because types don't match (xUnit checks this)
                     }
 
                 } // ireader.Dispose();
@@ -308,7 +318,7 @@ namespace Lucene.Net.Index
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
                         Debug.Assert(ireader.Leaves.Count == 1);
                         NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv1");
-                        Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
+                        Assert.AreEqual(5L, dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - 5L required because types don't match (xUnit checks this)
                         BinaryDocValues dv2 = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetBinaryDocValues("dv2");
                         dv2.Get(hits.ScoreDocs[i].Doc, scratch);
                         Assert.AreEqual(new BytesRef("hello world"), scratch);
@@ -361,7 +371,7 @@ namespace Lucene.Net.Index
                         dv.LookupOrd(ord, scratch);
                         Assert.AreEqual(new BytesRef("hello hello"), scratch);
                         NumericDocValues dv2 = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv2");
-                        Assert.AreEqual(5, dv2.Get(hits.ScoreDocs[i].Doc));
+                        Assert.AreEqual(5L, dv2.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - 5L required because types don't match (xUnit checks this)
                         BinaryDocValues dv3 = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv3");
                         dv3.Get(hits.ScoreDocs[i].Doc, scratch);
                         Assert.AreEqual(new BytesRef("hello world"), scratch);
@@ -414,7 +424,7 @@ namespace Lucene.Net.Index
                         dv.LookupOrd(ord, scratch);
                         Assert.AreEqual(new BytesRef("hello hello"), scratch);
                         NumericDocValues dv2 = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv3");
-                        Assert.AreEqual(5, dv2.Get(hits.ScoreDocs[i].Doc));
+                        Assert.AreEqual(5L, dv2.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - 5L required because types don't match (xUnit checks this)
                         BinaryDocValues dv3 = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv1");
                         dv3.Get(hits.ScoreDocs[i].Doc, scratch);
                         Assert.AreEqual(new BytesRef("hello world"), scratch);
@@ -449,8 +459,8 @@ namespace Lucene.Net.Index
                 {
                     Debug.Assert(ireader.Leaves.Count == 1);
                     NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
-                    Assert.AreEqual(1, dv.Get(0));
-                    Assert.AreEqual(2, dv.Get(1));
+                    Assert.AreEqual(1L, dv.Get(0)); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
+                    Assert.AreEqual(2L, dv.Get(1)); // LUCENENET specific - 2L required because types don't match (xUnit checks this)
 
                 } // ireader.Dispose();
             } // directory.Dispose();
@@ -986,43 +996,43 @@ namespace Lucene.Net.Index
 
                     // next()
                     Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());
-                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.AreEqual(0L, termsEnum.Ord); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.AreEqual("hello", termsEnum.Next().Utf8ToString());
-                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.AreEqual(1L, termsEnum.Ord); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     Assert.AreEqual("world", termsEnum.Next().Utf8ToString());
-                    Assert.AreEqual(2, termsEnum.Ord);
+                    Assert.AreEqual(2L, termsEnum.Ord); // LUCENENET specific - 2L required because types don't match (xUnit checks this)
 
                     // seekCeil()
                     Assert.AreEqual(SeekStatus.NOT_FOUND, termsEnum.SeekCeil(new BytesRef("ha!")));
                     Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.AreEqual(1L, termsEnum.Ord); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef("beer")));
                     Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.AreEqual(0L, termsEnum.Ord); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SeekStatus.END, termsEnum.SeekCeil(new BytesRef("zzz")));
 
                     // seekExact()
                     Assert.IsTrue(termsEnum.SeekExact(new BytesRef("beer")));
                     Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.AreEqual(0L, termsEnum.Ord); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.IsTrue(termsEnum.SeekExact(new BytesRef("hello")));
                     Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.AreEqual(1L, termsEnum.Ord); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     Assert.IsTrue(termsEnum.SeekExact(new BytesRef("world")));
                     Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(2, termsEnum.Ord);
+                    Assert.AreEqual(2L, termsEnum.Ord); // LUCENENET specific - 2L required because types don't match (xUnit checks this)
                     Assert.IsFalse(termsEnum.SeekExact(new BytesRef("bogus")));
 
                     // seek(ord)
                     termsEnum.SeekExact(0);
                     Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.AreEqual(0L, termsEnum.Ord); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     termsEnum.SeekExact(1);
                     Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.AreEqual(1L, termsEnum.Ord); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     termsEnum.SeekExact(2);
                     Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(2, termsEnum.Ord);
+                    Assert.AreEqual(2L, termsEnum.Ord); // LUCENENET specific - 2L required because types don't match (xUnit checks this)
                 }
                 finally
                 {
@@ -1347,7 +1357,7 @@ namespace Lucene.Net.Index
                     for (int i = 0; i < scoreDocs.Length; i++)
                     {
                         Assert.AreEqual(i, scoreDocs[i].Doc);
-                        Assert.AreEqual(i, docValues.Get(scoreDocs[i].Doc));
+                        Assert.AreEqual((long)i, docValues.Get(scoreDocs[i].Doc)); // LUCENENET specific - cast required because types don't match (xUnit checks this)
                     }
                 } // reader.Dispose();
             } // dir.Dispose();
@@ -2017,7 +2027,7 @@ namespace Lucene.Net.Index
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
                     dv.SetDocument(0);
-                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(0L, dv.NextOrd()); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     BytesRef bytes = new BytesRef();
@@ -2058,7 +2068,7 @@ namespace Lucene.Net.Index
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
                     dv.SetDocument(0);
-                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(0L, dv.NextOrd()); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     BytesRef bytes = new BytesRef();
@@ -2068,7 +2078,7 @@ namespace Lucene.Net.Index
                     dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field2");
 
                     dv.SetDocument(0);
-                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(0L, dv.NextOrd()); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     dv.LookupOrd(0, bytes);
@@ -2110,10 +2120,10 @@ namespace Lucene.Net.Index
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-                    Assert.AreEqual(2, dv.ValueCount);
+                    Assert.AreEqual(2L, dv.ValueCount); // LUCENENET specific - 2L required because types don't match (xUnit checks this)
 
                     dv.SetDocument(0);
-                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(0L, dv.NextOrd()); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     BytesRef bytes = new BytesRef();
@@ -2121,7 +2131,7 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(new BytesRef("hello"), bytes);
 
                     dv.SetDocument(1);
-                    Assert.AreEqual(1, dv.NextOrd());
+                    Assert.AreEqual(1L, dv.NextOrd()); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     dv.LookupOrd(1, bytes);
@@ -2161,8 +2171,8 @@ namespace Lucene.Net.Index
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
                     dv.SetDocument(0);
-                    Assert.AreEqual(0, dv.NextOrd());
-                    Assert.AreEqual(1, dv.NextOrd());
+                    Assert.AreEqual(0L, dv.NextOrd()); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
+                    Assert.AreEqual(1L, dv.NextOrd()); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     BytesRef bytes = new BytesRef();
@@ -2206,8 +2216,8 @@ namespace Lucene.Net.Index
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
 
                     dv.SetDocument(0);
-                    Assert.AreEqual(0, dv.NextOrd());
-                    Assert.AreEqual(1, dv.NextOrd());
+                    Assert.AreEqual(0L, dv.NextOrd()); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
+                    Assert.AreEqual(1L, dv.NextOrd()); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     BytesRef bytes = new BytesRef();
@@ -2255,16 +2265,16 @@ namespace Lucene.Net.Index
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-                    Assert.AreEqual(3, dv.ValueCount);
+                    Assert.AreEqual(3L, dv.ValueCount); // LUCENENET specific - 3L required because types don't match (xUnit checks this)
 
                     dv.SetDocument(0);
-                    Assert.AreEqual(1, dv.NextOrd());
-                    Assert.AreEqual(2, dv.NextOrd());
+                    Assert.AreEqual(1L, dv.NextOrd()); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
+                    Assert.AreEqual(2L, dv.NextOrd()); // LUCENENET specific - 2L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     dv.SetDocument(1);
-                    Assert.AreEqual(0, dv.NextOrd());
-                    Assert.AreEqual(1, dv.NextOrd());
+                    Assert.AreEqual(0L, dv.NextOrd()); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
+                    Assert.AreEqual(1L, dv.NextOrd()); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     BytesRef bytes = new BytesRef();
@@ -2310,10 +2320,10 @@ namespace Lucene.Net.Index
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-                    Assert.AreEqual(1, dv.ValueCount);
+                    Assert.AreEqual(1L, dv.ValueCount); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
 
                     dv.SetDocument(0);
-                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(0L, dv.NextOrd()); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     BytesRef bytes = new BytesRef();
@@ -2355,10 +2365,10 @@ namespace Lucene.Net.Index
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-                    Assert.AreEqual(1, dv.ValueCount);
+                    Assert.AreEqual(1L, dv.ValueCount); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
 
                     dv.SetDocument(0);
-                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(0L, dv.NextOrd()); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     BytesRef bytes = new BytesRef();
@@ -2399,10 +2409,10 @@ namespace Lucene.Net.Index
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-                    Assert.AreEqual(1, dv.ValueCount);
+                    Assert.AreEqual(1L, dv.ValueCount); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
 
                     dv.SetDocument(1);
-                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(0L, dv.NextOrd()); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     BytesRef bytes = new BytesRef();
@@ -2444,10 +2454,10 @@ namespace Lucene.Net.Index
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-                    Assert.AreEqual(1, dv.ValueCount);
+                    Assert.AreEqual(1L, dv.ValueCount); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
 
                     dv.SetDocument(1);
-                    Assert.AreEqual(0, dv.NextOrd());
+                    Assert.AreEqual(0L, dv.NextOrd()); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SortedSetDocValues.NO_MORE_ORDS, dv.NextOrd());
 
                     BytesRef bytes = new BytesRef();
@@ -2491,7 +2501,7 @@ namespace Lucene.Net.Index
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-                    Assert.AreEqual(0, dv.ValueCount);
+                    Assert.AreEqual(0L, dv.ValueCount); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                 }
                 finally
                 {
@@ -2525,49 +2535,49 @@ namespace Lucene.Net.Index
                     } // iwriter.Dispose();
 
                     SortedSetDocValues dv = GetOnlySegmentReader(ireader).GetSortedSetDocValues("field");
-                    Assert.AreEqual(3, dv.ValueCount);
+                    Assert.AreEqual(3L, dv.ValueCount); // LUCENENET specific - 3L required because types don't match (xUnit checks this)
 
                     TermsEnum termsEnum = dv.GetTermsEnum();
 
                     // next()
                     Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());
-                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.AreEqual(0L, termsEnum.Ord); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.AreEqual("hello", termsEnum.Next().Utf8ToString());
-                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.AreEqual(1L, termsEnum.Ord); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     Assert.AreEqual("world", termsEnum.Next().Utf8ToString());
-                    Assert.AreEqual(2, termsEnum.Ord);
+                    Assert.AreEqual(2L, termsEnum.Ord); // LUCENENET specific - 2L required because types don't match (xUnit checks this)
 
                     // seekCeil()
                     Assert.AreEqual(SeekStatus.NOT_FOUND, termsEnum.SeekCeil(new BytesRef("ha!")));
                     Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.AreEqual(1L, termsEnum.Ord); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef("beer")));
                     Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.AreEqual(0L, termsEnum.Ord); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.AreEqual(SeekStatus.END, termsEnum.SeekCeil(new BytesRef("zzz")));
 
                     // seekExact()
                     Assert.IsTrue(termsEnum.SeekExact(new BytesRef("beer")));
                     Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.AreEqual(0L, termsEnum.Ord); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     Assert.IsTrue(termsEnum.SeekExact(new BytesRef("hello")));
                     Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.AreEqual(1L, termsEnum.Ord); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     Assert.IsTrue(termsEnum.SeekExact(new BytesRef("world")));
                     Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(2, termsEnum.Ord);
+                    Assert.AreEqual(2L, termsEnum.Ord); // LUCENENET specific - 2L required because types don't match (xUnit checks this)
                     Assert.IsFalse(termsEnum.SeekExact(new BytesRef("bogus")));
 
                     // seek(ord)
                     termsEnum.SeekExact(0);
                     Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(0, termsEnum.Ord);
+                    Assert.AreEqual(0L, termsEnum.Ord); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     termsEnum.SeekExact(1);
                     Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(1, termsEnum.Ord);
+                    Assert.AreEqual(1L, termsEnum.Ord); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     termsEnum.SeekExact(2);
                     Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
-                    Assert.AreEqual(2, termsEnum.Ord);
+                    Assert.AreEqual(2L, termsEnum.Ord); // LUCENENET specific - 2L required because types don't match (xUnit checks this)
                 }
                 finally
                 {
@@ -3046,8 +3056,8 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(1, ir.Leaves.Count);
                     AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
                     NumericDocValues dv = ar.GetNumericDocValues("dv1");
-                    Assert.AreEqual(0, dv.Get(0));
-                    Assert.AreEqual(0, dv.Get(1));
+                    Assert.AreEqual(0L, dv.Get(0)); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
+                    Assert.AreEqual(0L, dv.Get(1)); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     IBits docsWithField = ar.GetDocsWithField("dv1");
                     Assert.IsTrue(docsWithField.Get(0));
                     Assert.IsFalse(docsWithField.Get(1));
@@ -3081,8 +3091,8 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(1, ir.Leaves.Count);
                     AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
                     NumericDocValues dv = ar.GetNumericDocValues("dv1");
-                    Assert.AreEqual(0, dv.Get(0));
-                    Assert.AreEqual(0, dv.Get(1));
+                    Assert.AreEqual(0L, dv.Get(0)); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
+                    Assert.AreEqual(0L, dv.Get(1)); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                     IBits docsWithField = ar.GetDocsWithField("dv1");
                     Assert.IsTrue(docsWithField.Get(0));
                     Assert.IsFalse(docsWithField.Get(1));
@@ -3120,9 +3130,9 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(1, ir.Leaves.Count);
                     AtomicReader ar = (AtomicReader)ir.Leaves[0].Reader;
                     NumericDocValues dv = ar.GetNumericDocValues("dv1");
-                    Assert.AreEqual(0, dv.Get(0));
-                    Assert.AreEqual(0, dv.Get(1));
-                    Assert.AreEqual(5, dv.Get(2));
+                    Assert.AreEqual(0L, dv.Get(0)); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
+                    Assert.AreEqual(0L, dv.Get(1)); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
+                    Assert.AreEqual(5L, dv.Get(2)); // LUCENENET specific - 5L required because types don't match (xUnit checks this)
                     IBits docsWithField = ar.GetDocsWithField("dv1");
                     Assert.IsTrue(docsWithField.Get(0));
                     Assert.IsFalse(docsWithField.Get(1));
@@ -3776,7 +3786,7 @@ namespace Lucene.Net.Index
                             else if (numerics != null)
                             {
                                 Assert.IsFalse(numericBits.Get(j));
-                                Assert.AreEqual(0, numerics.Get(j));
+                                Assert.AreEqual(0L, numerics.Get(j)); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
                             }
 
                             string[] values = r.Document(j).GetValues("storedSortedSet");

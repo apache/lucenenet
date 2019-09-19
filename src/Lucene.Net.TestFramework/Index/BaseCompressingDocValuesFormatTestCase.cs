@@ -1,5 +1,6 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.TestFramework;
 using System.Collections.Generic;
 
 #if TESTFRAMEWORK_MSTEST
@@ -43,7 +44,16 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Extends <see cref="BaseDocValuesFormatTestCase"/> to add compression checks. </summary>
     public abstract class BaseCompressingDocValuesFormatTestCase : BaseDocValuesFormatTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public BaseCompressingDocValuesFormatTestCase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
         internal static long DirSize(Directory d)
         {
             long size = 0;

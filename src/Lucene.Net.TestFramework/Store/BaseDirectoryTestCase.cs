@@ -49,7 +49,16 @@ namespace Lucene.Net.Store
     [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
 #endif
     public abstract class BaseDirectoryTestCase : LuceneTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public BaseDirectoryTestCase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
 
         /// <summary>
         /// A subclass returns the <see cref="Directory"/> to be tested; if it's

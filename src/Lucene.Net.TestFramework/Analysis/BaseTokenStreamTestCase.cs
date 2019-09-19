@@ -3,6 +3,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.TestFramework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,9 +11,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Assert = Lucene.Net.TestFramework.Assert;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Console = Lucene.Net.Support.SystemConsole;
-using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis
 {
@@ -32,7 +33,7 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     using Attribute = Lucene.Net.Util.Attribute;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -105,7 +106,16 @@ namespace Lucene.Net.Analysis
     /// <seealso cref="MockAnalyzer"/>
     /// <seealso cref="MockTokenizer"/>
     public abstract class BaseTokenStreamTestCase : LuceneTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public BaseTokenStreamTestCase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
         // some helpers to test Analyzers and TokenStreams:
 
         // LUCENENET specific - de-nested ICheckClearAttributesAttribute

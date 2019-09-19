@@ -1,4 +1,5 @@
 ﻿#if FEATURE_SERIALIZABLE
+using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using System;
 using System.Globalization;
@@ -28,8 +29,18 @@ namespace Lucene.Net.Support
      */
 
     public abstract class ExceptionSerializationTestBase : LuceneTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
-        protected static bool TypeCanSerialize<T>(T exception)
+        public ExceptionSerializationTestBase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
+
+    protected static bool TypeCanSerialize<T>(T exception)
         {
             T clone;
 

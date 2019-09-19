@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using Lucene.Net.TestFramework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,9 +20,7 @@ using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
 
 namespace Lucene.Net.Index
 {
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
-
     /*
     * Licensed to the Apache Software Foundation (ASF) under one or more
     * contributor license agreements.  See the NOTICE file distributed with
@@ -50,6 +49,7 @@ namespace Lucene.Net.Index
     using FieldType = FieldType;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using FlushInfo = Lucene.Net.Store.FlushInfo;
+    using IBits = Lucene.Net.Util.IBits;
     using IOContext = Lucene.Net.Store.IOContext;
     using PostingsConsumer = Lucene.Net.Codecs.PostingsConsumer;
     using TermsConsumer = Lucene.Net.Codecs.TermsConsumer;
@@ -83,7 +83,19 @@ namespace Lucene.Net.Index
 
     //[TestFixture]
     public abstract class BasePostingsFormatTestCase : BaseIndexFileFormatTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public BasePostingsFormatTestCase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+#if FEATURE_STATIC_TESTDATA_INITIALIZATION
+            beforeAfter.SetBeforeAfterClassActions(BeforeClass, AfterClass);
+#endif
+        }
+#else
+    {
+#endif
         private enum Option
         {
             // Sometimes use .Advance():

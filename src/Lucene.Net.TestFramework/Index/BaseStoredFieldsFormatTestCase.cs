@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
+using Lucene.Net.TestFramework;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -73,7 +74,16 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
     public abstract class BaseStoredFieldsFormatTestCase : BaseIndexFileFormatTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public BaseStoredFieldsFormatTestCase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
         protected override void AddRandomFields(Document d)
         {
             int numValues = Random.Next(3);

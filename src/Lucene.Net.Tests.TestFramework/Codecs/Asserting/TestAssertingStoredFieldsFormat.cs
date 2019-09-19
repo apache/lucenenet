@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 8.2.0
 using Lucene.Net.Index;
+using Lucene.Net.TestFramework;
 
 namespace Lucene.Net.Codecs.Asserting
 {
@@ -27,7 +28,16 @@ namespace Lucene.Net.Codecs.Asserting
     [Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute]
 #endif
     public class TestAssertingStoredFieldsFormat : BaseTermVectorsFormatTestCase
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
     {
+        public TestAssertingStoredFieldsFormat(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+    {
+#endif
         private readonly Codec codec = new AssertingCodec();
         protected override Codec GetCodec()
         {

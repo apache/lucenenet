@@ -1,8 +1,10 @@
 using Lucene.Net.Support;
+using Lucene.Net.TestFramework;
 using System;
 using System.Collections;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
+
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -37,8 +39,19 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Base test class for <see cref="DocIdSet"/>s. </summary>
     public abstract class BaseDocIdSetTestCase<T> : LuceneTestCase
+        
+#if TESTFRAMEWORK_XUNIT
+        , Xunit.IClassFixture<BeforeAfterClass>
         where T : Lucene.Net.Search.DocIdSet
     {
+        public BaseDocIdSetTestCase(BeforeAfterClass beforeAfter)
+            : base(beforeAfter)
+        {
+        }
+#else
+        where T : Lucene.Net.Search.DocIdSet
+    {
+#endif
         /// <summary>
         /// Create a copy of the given <see cref="BitArray"/> which has <paramref name="length"/> bits. </summary>
         public abstract T CopyOf(BitArray bs, int length);

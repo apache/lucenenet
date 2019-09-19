@@ -335,7 +335,7 @@ namespace Lucene.Net.Analysis
             base.End();
             int finalOffset = CorrectOffset(off);
             offsetAtt.SetOffset(finalOffset, finalOffset);
-            // some tokenizers, such as limiting tokenizers, call end() before IncrementToken() returns false.
+            // some tokenizers, such as limiting tokenizers, call End() before IncrementToken() returns false.
             // these tests should disable this check (in general you should consume the entire stream)
             try
             {
