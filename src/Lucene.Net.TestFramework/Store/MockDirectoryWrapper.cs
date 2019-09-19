@@ -255,7 +255,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Returns true if <see cref="m_input"/> must sync its files.
+        /// Returns true if <see cref="FilterDirectory.m_input"/> must sync its files.
         /// Currently, only <see cref="NRTCachingDirectory"/> requires sync'ing its files
         /// because otherwise they are cached in an internal <see cref="RAMDirectory"/>. If
         /// other directories require that too, they should be added to this method.
