@@ -297,11 +297,11 @@ namespace Lucene.Net.Index
                 {
                     var numDocs = AtLeast(500);
                     var answers = new object[numDocs];
-                    using (var w = new RandomIndexWriter(Random, dir
+                    using (var w = new RandomIndexWriter(
 #if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-                        , ClassEnvRule.similarity, ClassEnvRule.timeZone
-#endif             
-                        ))
+                        this,
+#endif
+                        Random, dir))
                     {
                         NumericType[] typeAnswers = new NumericType[numDocs];
                         for (int id = 0; id < numDocs; id++)
@@ -395,11 +395,11 @@ namespace Lucene.Net.Index
                 IndexReader r = null;
                 try
                 {
-                    using (RandomIndexWriter w = new RandomIndexWriter(Random, dir
+                    using (RandomIndexWriter w = new RandomIndexWriter(
 #if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-                        , ClassEnvRule.similarity, ClassEnvRule.timeZone
+                        this,
 #endif
-                        ))
+                        Random, dir))
                     {
                         Document doc = new Document();
                         FieldType onlyStored = new FieldType();
@@ -848,11 +848,11 @@ namespace Lucene.Net.Index
                     }
                     w.Commit();
                     w.Dispose();
-                    w = new RandomIndexWriter(Random, dir
+                    w = new RandomIndexWriter(
 #if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-                        , ClassEnvRule.similarity, ClassEnvRule.timeZone
-#endif  
-                        );
+                        this,
+#endif
+                        Random, dir);
                     w.ForceMerge(TestUtil.NextInt32(Random, 1, 3));
                     w.Commit();
                 }

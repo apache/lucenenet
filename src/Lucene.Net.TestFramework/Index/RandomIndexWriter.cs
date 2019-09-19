@@ -112,55 +112,52 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/> and <see cref="MockAnalyzer"/>.
         /// </summary>
+        /// <param name="luceneTestCase">The current test instance.</param>
         /// <param name="r"></param>
         /// <param name="dir"></param>
-        /// <param name="similarity">Generally, should always be <see cref="LuceneTestCase.Similarity"/>.</param>
-        /// <param name="timezone">Generally, should always be <see cref="LuceneTestCase.TimeZone"/>.</param>
         // LUCENENET specific
         // Similarity and TimeZone parameters allow a RandomIndexWriter to be
         // created without adding a dependency on 
         // <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
         // <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
-        public RandomIndexWriter(Random r, Directory dir, Similarity similarity, TimeZoneInfo timezone)
-            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r), similarity, timezone))
+        public RandomIndexWriter(LuceneTestCase luceneTestCase, Random r, Directory dir)
+            : this(r, dir, luceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(r)))
         {
         }
 
         /// <summary>
         /// Create a <see cref="RandomIndexWriter"/> with a random config: Uses <see cref="LuceneTestCase.TEST_VERSION_CURRENT"/>.
         /// </summary>
+        /// <param name="luceneTestCase">The current test instance.</param>
         /// <param name="r"></param>
         /// <param name="dir"></param>
         /// <param name="a"></param>
-        /// <param name="similarity">Generally, should always be <see cref="LuceneTestCase.Similarity"/>.</param>
-        /// <param name="timezone">Generally, should always be <see cref="LuceneTestCase.TimeZone"/>.</param>
         // LUCENENET specific
         // Similarity and TimeZone parameters allow a RandomIndexWriter to be
         // created without adding a dependency on 
         // <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
         // <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
-        public RandomIndexWriter(Random r, Directory dir, Analyzer a, Similarity similarity, TimeZoneInfo timezone)
-            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a, similarity, timezone))
+        public RandomIndexWriter(LuceneTestCase luceneTestCase, Random r, Directory dir, Analyzer a)
+            : this(r, dir, luceneTestCase.NewIndexWriterConfig(r, LuceneTestCase.TEST_VERSION_CURRENT, a))
         {
         }
 
         /// <summary>
         /// Creates a <see cref="RandomIndexWriter"/> with a random config.
         /// </summary>
+        /// <param name="luceneTestCase">The current test instance.</param>
         /// <param name="r"></param>
         /// <param name="dir"></param>
         /// <param name="v"></param>
         /// <param name="a"></param>
-        /// <param name="similarity">Generally, should always be <see cref="LuceneTestCase.Similarity"/>.</param>
-        /// <param name="timezone">Generally, should always be <see cref="LuceneTestCase.TimeZone"/>.</param>
 
         // LUCENENET specific
         // Similarity and TimeZone parameters allow a RandomIndexWriter to be
         // created without adding a dependency on 
         // <see cref="LuceneTestCase.ClassEnv.Similarity"/> and
         // <see cref="LuceneTestCase.ClassEnv.TimeZone"/>
-        public RandomIndexWriter(Random r, Directory dir, LuceneVersion v, Analyzer a, Similarity similarity, TimeZoneInfo timezone)
-            : this(r, dir, LuceneTestCase.NewIndexWriterConfig(r, v, a, similarity, timezone))
+        public RandomIndexWriter(LuceneTestCase luceneTestCase, Random r, Directory dir, LuceneVersion v, Analyzer a)
+            : this(r, dir, luceneTestCase.NewIndexWriterConfig(r, v, a))
         {
         }
 #endif

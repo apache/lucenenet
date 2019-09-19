@@ -819,11 +819,12 @@ namespace Lucene.Net.Index
                         sum += doc.Fields.Count;
                     }
                 }
-#if FEATURE_STATIC_TESTDATA_INITIALIZATION
-                IndexSearcher searcher = NewSearcher(reader);
-#else
-                IndexSearcher searcher = outerInstance.NewSearcher(reader);
+                IndexSearcher searcher = 
+#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
+                    outerInstance.
 #endif
+                    NewSearcher(reader);
+
                 sum += searcher.Search(new TermQuery(new Term("body", "united")), 10).TotalHits;
 
                 if (VERBOSE)

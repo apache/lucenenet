@@ -102,22 +102,22 @@ namespace Lucene.Net.Search
         /// if they "match" regardless of what their score is.
         /// </para>
         /// </summary>
+        /// <param name="luceneTestCase"> The current test instance. </param>
         /// <param name="query"> The query to test. </param>
         /// <param name="searcher"> The searcher to test the query against. </param>
         /// <param name="defaultFieldName"> Used for displaying the query in assertion messages. </param>
         /// <param name="results"> A list of documentIds that must match the query. </param>
-        /// <param name="similarity">Generally, should always be <see cref="LuceneTestCase.Similarity"/>.</param>
-        /// <seealso cref="DoCheckHits(Random, Query, string, IndexSearcher, int[], Similarity)"/>
+        /// <seealso cref="DoCheckHits(LuceneTestCase, Random, Query, string, IndexSearcher, int[])"/>
         // LUCENENET specific
         // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        public static void CheckHitCollector(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results, Similarity similarity)
+        public static void CheckHitCollector(LuceneTestCase luceneTestCase, Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
 #endif
         {
-            QueryUtils.Check(random, query, searcher
+            QueryUtils.Check(
 #if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-                , similarity
+                luceneTestCase,
 #endif
-                );
+                random, query, searcher);
 
             Trace.TraceInformation("Checked");
 
@@ -136,11 +136,11 @@ namespace Lucene.Net.Search
             for (int i = -1; i < 2; i++)
             {
                 actual.Clear();
-                IndexSearcher s = QueryUtils.WrapUnderlyingReader(random, searcher, i
+                IndexSearcher s = QueryUtils.WrapUnderlyingReader(
 #if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-                    , similarity
+                    luceneTestCase,
 #endif
-                    );
+                    random, searcher, i);
                 s.Search(query, c);
                 Assert.AreEqual(correct, actual, "Wrap Reader " + i + ": " + query.ToString(defaultFieldName));
             }
@@ -170,15 +170,15 @@ namespace Lucene.Net.Search
         /// if they have a positive normalized score.
         /// </para>
         /// </summary>
+        /// <param name="luceneTestCase"> The current test instance. </param>
         /// <param name="query"> the query to test </param>
         /// <param name="searcher"> the searcher to test the query against </param>
         /// <param name="defaultFieldName"> used for displaing the query in assertion messages </param>
         /// <param name="results"> a list of documentIds that must match the query </param>
-        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
-        /// <seealso cref="CheckHitCollector(Random, Query, string, IndexSearcher, int[], Similarity)"/>
+        /// <seealso cref="CheckHitCollector(LuceneTestCase, Random, Query, string, IndexSearcher, int[])"/>
         // LUCENENET specific
         // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        public static void DoCheckHits(Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results, Similarity similarity)
+        public static void DoCheckHits(LuceneTestCase luceneTestCase, Random random, Query query, string defaultFieldName, IndexSearcher searcher, int[] results)
 #endif
         {
             ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
@@ -197,11 +197,11 @@ namespace Lucene.Net.Search
 
             Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
 
-            QueryUtils.Check(random, query, searcher, LuceneTestCase.Rarely(random)
+            QueryUtils.Check(
 #if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-                , similarity
+                luceneTestCase,
 #endif
-                );
+                random, query, searcher, LuceneTestCase.Rarely(random));
         }
 
         /// <summary>

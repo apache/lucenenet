@@ -1164,7 +1164,7 @@ namespace Lucene.Net.Util
         // Non-static so that we do not depend on any hidden static dependencies
         public IndexWriterConfig NewIndexWriterConfig(Random random, LuceneVersion v, Analyzer a)
         {
-            return NewIndexWriterConfig(random, v, a, ClassEnvRule.similarity, ClassEnvRule.timeZone);
+            return NewIndexWriterConfig(this, random, v, a);
 
         }
 #endif
@@ -1181,22 +1181,21 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Create a new <see cref="IndexWriterConfig"/> with random defaults using the specified <paramref name="random"/>.
         /// </summary>
+        /// <param name="luceneTestCase">The current test instance.</param>
         /// <param name="random">A random instance (usually <see cref="LuceneTestCase.Random"/>).</param>
         /// <param name="v"></param>
         /// <param name="a"></param>
-        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
-        /// <param name="timeZone">Generally, this should always be <see cref="LuceneTestCase.TimeZone"/>.</param>
         // LUCENENET specific
         // This is the only static ctor for IndexWriterConfig because it removes the dependency
         // on ClassEnvRule by using parameters Similarity and TimeZone.
-        public static IndexWriterConfig NewIndexWriterConfig(Random random, LuceneVersion v, Analyzer a, Similarity similarity, TimeZoneInfo timeZone)
+        public static IndexWriterConfig NewIndexWriterConfig(LuceneTestCase luceneTestCase, Random random, LuceneVersion v, Analyzer a)
 #endif
         {
             IndexWriterConfig c = new IndexWriterConfig(v, a);
 #if FEATURE_STATIC_TESTDATA_INITIALIZATION
             c.SetSimilarity(ClassEnvRule.similarity);
 #else
-            c.SetSimilarity(similarity);
+            c.SetSimilarity(luceneTestCase.ClassEnvRule.similarity);
 #endif
             if (VERBOSE)
             {
@@ -1294,7 +1293,7 @@ namespace Lucene.Net.Util
 #if FEATURE_STATIC_TESTDATA_INITIALIZATION
             c.SetMergePolicy(NewMergePolicy(random));
 #else
-            c.SetMergePolicy(NewMergePolicy(random, timeZone));
+            c.SetMergePolicy(NewMergePolicy(random, luceneTestCase.ClassEnvRule.timeZone));
 #endif
             if (Rarely(random))
             {
@@ -1974,16 +1973,14 @@ namespace Lucene.Net.Util
         // Is non-static because <see cref="ClassEnvRule"/> is now non-static.
         public IndexSearcher NewSearcher(IndexReader r)
         {
-            return NewSearcher(r, ClassEnvRule.similarity);
+            return NewSearcher(this, r, true);
         }
 
-        /// <param name="r"></param>
-        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
         // LUCENENET specific
         // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        public static IndexSearcher NewSearcher(IndexReader r, Similarity similarity)
+        public static IndexSearcher NewSearcher(LuceneTestCase luceneTestCase, IndexReader r)
         {
-            return NewSearcher(r, true, similarity);
+            return NewSearcher(luceneTestCase, r, true);
         }
 
 
@@ -1991,13 +1988,13 @@ namespace Lucene.Net.Util
         /// Create a new searcher over the reader. this searcher might randomly use
         /// threads.
         /// </summary>
-        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        /// <param name="luceneTestCase">The current test instance.</param>
         // LUCENENET specific
         // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
 
-        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, Similarity similarity)
+        public static IndexSearcher NewSearcher(LuceneTestCase luceneTestCase, IndexReader r, bool maybeWrap)
         {
-            return NewSearcher(r, maybeWrap, true, similarity);
+            return NewSearcher(luceneTestCase, r, maybeWrap, true);
         }
 
         /// <summary>
@@ -2006,12 +2003,12 @@ namespace Lucene.Net.Util
         /// </summary>
         public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap)
         {
-            return NewSearcher(r, maybeWrap, true);
+            return NewSearcher(this, r, maybeWrap, true);
         }
 
         public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions)
         {
-            return NewSearcher(r, maybeWrap, wrapWithAssertions, ClassEnvRule.similarity);
+            return NewSearcher(this, r, maybeWrap, wrapWithAssertions);
         }
 #endif
 
@@ -2032,10 +2029,10 @@ namespace Lucene.Net.Util
         /// <paramref name="wrapWithAssertions"/> is true, this searcher might be an
         /// <see cref="AssertingIndexSearcher"/> instance.
         /// </summary>
-        /// <param name="similarity">Generally, this should always be <see cref="LuceneTestCase.Similarity"/>.</param>
+        /// <param name="luceneTestCase">The current test instance.</param>
         // LUCENENET specific
         // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
-        public static IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions, Similarity similarity)
+        public static IndexSearcher NewSearcher(LuceneTestCase luceneTestCase, IndexReader r, bool maybeWrap, bool wrapWithAssertions)
 #endif
         {
             Random random = Random;
@@ -2065,7 +2062,7 @@ namespace Lucene.Net.Util
 #if FEATURE_STATIC_TESTDATA_INITIALIZATION
                 ret.Similarity = ClassEnvRule.similarity;
 #else
-                ret.Similarity = similarity;
+                ret.Similarity = luceneTestCase.ClassEnvRule.similarity;
 #endif
                 return ret;
             }
@@ -2105,7 +2102,7 @@ namespace Lucene.Net.Util
 #if FEATURE_STATIC_TESTDATA_INITIALIZATION
                 ret.Similarity = ClassEnvRule.similarity;
 #else
-                ret.Similarity = similarity;
+                ret.Similarity = luceneTestCase.ClassEnvRule.similarity;
 #endif
                 return ret;
             }

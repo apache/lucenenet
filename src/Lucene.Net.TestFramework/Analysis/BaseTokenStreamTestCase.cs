@@ -643,9 +643,6 @@ namespace Lucene.Net.Analysis
 
         internal class AnalysisThread : ThreadClass
         {
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-            private readonly BaseTokenStreamTestCase outerInstance;
-#endif
             internal readonly int iterations;
             internal readonly int maxWordLength;
             internal readonly long seed;
@@ -662,14 +659,8 @@ namespace Lucene.Net.Analysis
             public bool Failed { get; set; }
             public Exception FirstException { get; set; } = null;
 
-            // LUCENENET specific
-            // Added outerInstance to remove a call to the then-static BaseTokenStreamTestCase methods</param>
             internal AnalysisThread(long seed, CountdownEvent latch, Analyzer a, int iterations, int maxWordLength, 
-                bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-                , BaseTokenStreamTestCase outerInstance
-#endif
-                )
+                bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
             {
                 this.seed = seed;
                 this.a = a;
@@ -680,9 +671,6 @@ namespace Lucene.Net.Analysis
                 this.offsetsAreCorrect = offsetsAreCorrect;
                 this.iw = iw;
                 this.latch = latch;
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-                this.outerInstance = outerInstance;
-#endif
             }
 
             public override void Run()
@@ -743,11 +731,11 @@ namespace Lucene.Net.Analysis
             if (Rarely(random) && codecOk)
             {
                 dir = NewFSDirectory(CreateTempDir("bttc"));
-                iw = new RandomIndexWriter(new Random((int)seed), dir, a
+                iw = new RandomIndexWriter(
 #if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-                    , ClassEnvRule.similarity, ClassEnvRule.timeZone
+                    this,
 #endif
-                    );
+                    new Random((int)seed), dir, a);
             }
 
             bool success = false;
@@ -761,11 +749,7 @@ namespace Lucene.Net.Analysis
                 var threads = new AnalysisThread[numThreads];
                 for (int i = 0; i < threads.Length; i++)
                 {
-                    threads[i] = new AnalysisThread(seed, startingGun, a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw
-#if !FEATURE_STATIC_TESTDATA_INITIALIZATION
-                        , this
-#endif                  
-                        );
+                    threads[i] = new AnalysisThread(seed, startingGun, a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw);
                 }
                 
                 foreach (AnalysisThread thread in threads)
