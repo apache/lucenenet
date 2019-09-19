@@ -679,7 +679,9 @@ namespace Lucene.Net.Util
         /// For subclasses to override. Overrides must call <c>base.SetUp()</c>.
         /// </summary>
         [Before]
+#pragma warning disable xUnit1013
         public virtual void SetUp()
+#pragma warning restore xUnit1013
         {
             // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
@@ -707,7 +709,9 @@ namespace Lucene.Net.Util
         /// For subclasses to override. Overrides must call <c>base.TearDown()</c>.
         /// </summary>
         [After]
+#pragma warning disable xUnit1013
         public virtual void TearDown()
+#pragma warning restore xUnit1013
         {
             /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
@@ -748,7 +752,9 @@ namespace Lucene.Net.Util
             }
 #else
         [OneTimeSetUp]
+#pragma warning disable xUnit1013
         public static void BeforeClass()
+#pragma warning restore xUnit1013
         {
 #endif
             try
@@ -772,7 +778,9 @@ namespace Lucene.Net.Util
         /// </summary>
         // LUCENENET specific method for setting up dependency injection of test classes.
         [OneTimeSetUp]
+#pragma warning disable xUnit1013
         public virtual void BeforeClass()
+#pragma warning restore xUnit1013
         {
             try
             {
@@ -801,7 +809,9 @@ namespace Lucene.Net.Util
         {
 #else
         [OneTimeTearDown]
+#pragma warning disable xUnit1013
         public static void AfterClass()
+#pragma warning restore xUnit1013
         {
 #endif
             try
@@ -816,7 +826,9 @@ namespace Lucene.Net.Util
         /// </summary>
         // LUCENENET specific method for setting up dependency injection of test classes.
         [OneTimeTearDown]
+#pragma warning disable xUnit1013
         public virtual void AfterClass()
+#pragma warning restore xUnit1013
         {
             try
             {
