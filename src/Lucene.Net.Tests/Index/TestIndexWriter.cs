@@ -1429,7 +1429,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, LongRunningTest, Repeat(10)] // LUCENENET TODO: Remove the Repeat attribute after the test is fixed. We are only using this because it is failing intermittently and don't want to let it fall off our radar.
+        [Test, LongRunningTest]
         public virtual void TestThreadInterruptDeadlock()
         {
             IndexerThreadInterrupt t = new IndexerThreadInterrupt(this);
@@ -1468,7 +1468,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// testThreadInterruptDeadlock but with 2 indexer threads </summary>
-        [Test, LongRunningTest, Repeat(10)] // LUCENENET TODO: Remove the Repeat attribute after the test is fixed. We are only using this because it is failing intermittently and don't want to let it fall off our radar.
+        [Test, LongRunningTest]
         public virtual void TestTwoThreadsInterruptDeadlock()
         {
             IndexerThreadInterrupt t1 = new IndexerThreadInterrupt(this);
