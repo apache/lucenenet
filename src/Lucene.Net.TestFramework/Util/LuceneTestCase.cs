@@ -744,11 +744,10 @@ namespace Lucene.Net.Util
                 */
         }
 
-        // LUCENENET TODO: API - make these settable by end users so additional codecs can be injected into tests
         // LUCENENET specific constants to scan the test framework for codecs/docvaluesformats/postingsformats only once
-        private static readonly TestCodecFactory TEST_CODEC_FACTORY = new TestCodecFactory();
-        private static readonly TestDocValuesFormatFactory TEST_DOCVALUES_FORMAT_FACTORY = new TestDocValuesFormatFactory();
-        private static readonly TestPostingsFormatFactory TEST_POSTINGS_FORMAT_FACTORY = new TestPostingsFormatFactory();
+        public static ICodecFactory CodecFactory { get; set; } = new TestCodecFactory();
+        public static IDocValuesFormatFactory DocValuesFormatFactory { get; set; } = new TestDocValuesFormatFactory();
+        public static IPostingsFormatFactory PostingsFormatFactory { get; set; } = new TestPostingsFormatFactory();
 
 
 #if TESTFRAMEWORK_MSTEST
@@ -759,11 +758,11 @@ namespace Lucene.Net.Util
 #endif
 
 
+#if TESTFRAMEWORK_MSTEST
         /// <summary>
         /// Sets up dependency injection of codec factories for running the test class,
         /// and also picks random defaults for culture, time zone, similarity, and default codec.
         /// </summary>
-#if TESTFRAMEWORK_MSTEST
         // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
         //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
         public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
@@ -792,9 +791,9 @@ namespace Lucene.Net.Util
             try
             {
                 // Setup the factories
-                Codec.SetCodecFactory(TEST_CODEC_FACTORY);
-                DocValuesFormat.SetDocValuesFormatFactory(TEST_DOCVALUES_FORMAT_FACTORY);
-                PostingsFormat.SetPostingsFormatFactory(TEST_POSTINGS_FORMAT_FACTORY);
+                Codec.SetCodecFactory(CodecFactory);
+                DocValuesFormat.SetDocValuesFormatFactory(DocValuesFormatFactory);
+                PostingsFormat.SetPostingsFormatFactory(PostingsFormatFactory);
 
                 ClassEnvRule.Before(null);
 
@@ -826,9 +825,9 @@ namespace Lucene.Net.Util
             try
             {
                 // Setup the factories
-                Codec.SetCodecFactory(TEST_CODEC_FACTORY);
-                DocValuesFormat.SetDocValuesFormatFactory(TEST_DOCVALUES_FORMAT_FACTORY);
-                PostingsFormat.SetPostingsFormatFactory(TEST_POSTINGS_FORMAT_FACTORY);
+                Codec.SetCodecFactory(CodecFactory);
+                DocValuesFormat.SetDocValuesFormatFactory(DocValuesFormatFactory);
+                PostingsFormat.SetPostingsFormatFactory(PostingsFormatFactory);
 
                 ClassEnvRule.Before(this);
             }
@@ -839,10 +838,10 @@ namespace Lucene.Net.Util
             }
         }
 
+#if TESTFRAMEWORK_MSTEST
         /// <summary>
         /// Tears down random defaults and cleans up temporary files.
         /// </summary>
-#if TESTFRAMEWORK_MSTEST
         // LUCENENET TODO: Add support for attribute inheritance when it is released (2.0.0)
         //[Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanup(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
         public static void ClassCleanup()
@@ -1197,6 +1196,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Create a new <see cref="IndexWriterConfig"/> with random defaults.
         /// </summary>
+        // LUCENENET specific
+        // Pass LuceneTestCase so we can access instance properties similarity and timeZone
         public static IndexWriterConfig NewIndexWriterConfig(LuceneTestCase luceneTestCase, LuceneVersion v, Analyzer a)
         {
             return NewIndexWriterConfig(luceneTestCase, Random, v, a);
@@ -1205,8 +1206,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Create a new <see cref="IndexWriterConfig"/> with random defaults using the specified <paramref name="random"/>.
         /// </summary>
-        // LUCENENET specific
-        // Non-static so that we do not depend on any hidden static dependencies
+        // LUCENENET specific - non-static overload so we don't have to explicitly
+        // pass LuceneTestCase
         public IndexWriterConfig NewIndexWriterConfig(Random random, LuceneVersion v, Analyzer a)
         {
             return NewIndexWriterConfig(this, random, v, a);
@@ -1352,11 +1353,15 @@ namespace Lucene.Net.Util
         }
 
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+        // LUCENENET specific - non-static overload so we don't have to explicitly
+        // pass LuceneTestCase
         public MergePolicy NewMergePolicy(Random r)
         {
             return NewMergePolicy(this, r);
         }
 
+        // LUCENENET specific - non-static overload so we don't have to explicitly
+        // pass LuceneTestCase
         public MergePolicy NewMergePolicy()
         {
             return NewMergePolicy(this);
@@ -1367,10 +1372,8 @@ namespace Lucene.Net.Util
 #if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
         public static MergePolicy NewMergePolicy(Random r)
 #else
-        /// <param name="timeZone">
-        /// LUCENENET specific
-        /// Timezone added to remove dependency on the then-static <see cref="ClassEnvRule"/>
-        /// </param>
+        // LUCENENET specific
+        // LuceneTestCase added to remove dependency on the then-static <see cref="ClassEnvRule"/>
         public static MergePolicy NewMergePolicy(LuceneTestCase luceneTestCase, Random r)
 #endif
         {
@@ -1399,7 +1402,7 @@ namespace Lucene.Net.Util
             return NewMergePolicy(Random);
         }
 #else
-        /// <param name="timeZone">Generally, this should always be <see cref="LuceneTestCase.TimeZone"/>.</param>
+        /// <param name="luceneTestCase">The current test instance.</param>
         // LUCENENET specific
         // Timezone added to remove dependency on the then-static <see cref="ClassEnvRule"/>
         //
@@ -2027,6 +2030,10 @@ namespace Lucene.Net.Util
             return NewSearcher(r, maybeWrap, true);
         }
 #else
+        /// <summary>
+        /// Create a new searcher over the reader. this searcher might randomly use
+        /// threads.
+        /// </summary>
         // LUCENENET specific
         // Is non-static because <see cref="ClassEnvRule"/> is now non-static.
         public IndexSearcher NewSearcher(IndexReader r)
@@ -2034,8 +2041,12 @@ namespace Lucene.Net.Util
             return NewSearcher(this, r, true);
         }
 
+        /// <summary>
+        /// Create a new searcher over the reader. This searcher might randomly use
+        /// threads.
+        /// </summary>
         // LUCENENET specific
-        // Removes dependency on <see cref="LuceneTestCase.ClassEnv.Similarity"/>
+        // Removes dependency on <see cref="LuceneTestCase.ClassEnvRule"/>
         public static IndexSearcher NewSearcher(LuceneTestCase luceneTestCase, IndexReader r)
         {
             return NewSearcher(luceneTestCase, r, true);
@@ -2059,11 +2070,22 @@ namespace Lucene.Net.Util
         /// Create a new searcher over the reader. This searcher might randomly use
         /// threads.
         /// </summary>
+        // LUCENENET specific
+        // Is non-static because <see cref="ClassEnvRule"/> is now non-static.
         public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap)
         {
             return NewSearcher(this, r, maybeWrap, true);
         }
 
+        /// <summary>
+        /// Create a new searcher over the reader. This searcher might randomly use
+        /// threads. If <paramref name="maybeWrap"/> is true, this searcher might wrap the
+        /// reader with one that returns null for <see cref="CompositeReader.GetSequentialSubReaders()"/>. If
+        /// <paramref name="wrapWithAssertions"/> is true, this searcher might be an
+        /// <see cref="AssertingIndexSearcher"/> instance.
+        /// </summary>
+        // LUCENENET specific
+        // Is non-static because <see cref="ClassEnvRule"/> is now non-static.
         public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions)
         {
             return NewSearcher(this, r, maybeWrap, wrapWithAssertions);
@@ -3041,7 +3063,7 @@ namespace Lucene.Net.Util
             //}
             // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
             // in Lucene, we need to catch it here to be on the safe side.
-            catch (System.IO.DirectoryNotFoundException)
+            catch (DirectoryNotFoundException)
             {
                 return false;
             }
@@ -3175,7 +3197,7 @@ namespace Lucene.Net.Util
             //DirectoryInfo @base = BaseTempDirForTestClass();
 
             //int attempt = 0;
-            FileInfo f = FileSupport.CreateTempFile(prefix, suffix, new DirectoryInfo(System.IO.Path.GetTempPath()));
+            FileInfo f = FileSupport.CreateTempFile(prefix, suffix, new DirectoryInfo(Path.GetTempPath()));
             //do
             //{
             //    if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
