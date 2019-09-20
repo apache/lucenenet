@@ -65,7 +65,7 @@ namespace Lucene.Net.Replicator
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public SessionExpiredException(SerializationInfo info, StreamingContext context)
+        protected SessionExpiredException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

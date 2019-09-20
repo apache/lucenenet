@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 #endif
 using System.Text;
 
@@ -55,9 +56,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             : base(new Message(QueryParserMessages.INVALID_SYNTAX, Initialize(
                 currentTokenVal, expectedTokenSequencesVal, tokenImageVal)))
         {
-            this.currentToken = currentTokenVal;
-            this.expectedTokenSequences = expectedTokenSequencesVal;
-            this.tokenImage = tokenImageVal;
+            this.CurrentToken = currentTokenVal;
+            this.ExpectedTokenSequences = expectedTokenSequencesVal;
+            this.TokenImage = tokenImageVal;
         }
 
         /// <summary>
@@ -88,9 +89,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public ParseException(SerializationInfo info, StreamingContext context)
+        protected ParseException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+            CurrentToken = (Token)info.GetValue("CurrentToken", typeof(Token));
+            ExpectedTokenSequences = (int[][])info.GetValue("ExpectedTokenSequences", typeof(int[][]));
+            TokenImage = (string[])info.GetValue("TokenImage", typeof(string[]));
+        }
+
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("CurrentToken", CurrentToken, typeof(Token));
+            info.AddValue("ExpectedTokenSequences", ExpectedTokenSequences, typeof(int[][]));
+            info.AddValue("TokenImage", TokenImage, typeof(string[]));
         }
 #endif
 
@@ -99,12 +112,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// this object has been created due to a parse error, the token
         /// followng this token will (therefore) be the first error token.
         /// </summary>
-        public Token CurrentToken
-        {
-            get { return currentToken; }
-            set { currentToken = value; }
-        }
-        private Token currentToken;
+        public Token CurrentToken { get; set; }
 
         /// <summary>
         /// Each entry in this array is an array of integers.  Each array
@@ -113,12 +121,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public int[][] ExpectedTokenSequences
-        {
-            get { return expectedTokenSequences; }
-            set { expectedTokenSequences = value; }
-        }
-        private int[][] expectedTokenSequences;
+        public int[][] ExpectedTokenSequences { get; set; }
 
         /// <summary>
         /// This is a reference to the "tokenImage" array of the generated
@@ -127,12 +130,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public string[] TokenImage
-        {
-            get { return tokenImage; }
-            set { tokenImage = value; }
-        }
-        private string[] tokenImage;
+        public string[] TokenImage { get; set; }
 
         /// <summary>
         /// It uses <paramref name="currentToken"/> and <paramref name="expectedTokenSequences"/> to generate a parse
@@ -180,7 +178,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
                 retval += " " + tokenImage[tok.Kind];
                 retval += " \"";
-                retval += Add_Escapes(tok.Image);
+                retval += AddEscapes(tok.Image);
                 retval += " \"";
                 tok = tok.Next;
             }
@@ -208,7 +206,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// when these raw version cannot be used as part of an ASCII
         /// string literal.
         /// </summary>
-        static string Add_Escapes(string str)
+        static string AddEscapes(string str)
         {
             StringBuilder retval = new StringBuilder();
             char ch;

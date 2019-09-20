@@ -42,7 +42,7 @@ namespace Lucene.Net.Support.IO
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public BufferUnderflowException(SerializationInfo info, StreamingContext context)
+        private BufferUnderflowException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -66,7 +66,7 @@ namespace Lucene.Net.Support.IO
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public BufferOverflowException(SerializationInfo info, StreamingContext context)
+        private BufferOverflowException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Support.IO
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public ReadOnlyBufferException(SerializationInfo info, StreamingContext context)
+        private ReadOnlyBufferException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -114,7 +114,7 @@ namespace Lucene.Net.Support.IO
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public InvalidMarkException(SerializationInfo info, StreamingContext context)
+        private InvalidMarkException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

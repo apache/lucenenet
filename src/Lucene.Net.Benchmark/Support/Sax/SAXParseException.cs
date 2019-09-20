@@ -6,6 +6,7 @@
 using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 #endif
 
 namespace Sax
@@ -167,9 +168,23 @@ namespace Sax
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public SAXParseException(SerializationInfo info, StreamingContext context)
+        protected SAXParseException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+            publicId = info.GetString("publicId");
+            systemId = info.GetString("systemId");
+            lineNumber = info.GetInt32("lineNumber");
+            columnNumber = info.GetInt32("columnNumber");
+        }
+
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("publicId", publicId, typeof(string));
+            info.AddValue("systemId", systemId, typeof(string));
+            info.AddValue("lineNumber", lineNumber, typeof(int));
+            info.AddValue("columnNumber", columnNumber, typeof(int));
         }
 #endif
 

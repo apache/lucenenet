@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Text;
 
 namespace Lucene.Net.QueryParsers.Flexible.Messages
@@ -24,6 +25,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
     /// Default implementation of Message interface.
     /// For Native Language Support (NLS), system of software internationalization.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class Message : IMessage
     {
         private string key;

@@ -40,7 +40,7 @@ namespace Lucene.Net.Support
     {
 #endif
 
-    protected static bool TypeCanSerialize<T>(T exception)
+        protected static bool TypeCanSerialize<T>(T exception)
         {
             T clone;
 

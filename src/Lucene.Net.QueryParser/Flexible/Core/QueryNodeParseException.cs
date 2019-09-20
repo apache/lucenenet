@@ -3,6 +3,7 @@ using Lucene.Net.QueryParsers.Flexible.Messages;
 using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 #endif
 
 namespace Lucene.Net.QueryParsers.Flexible.Core
@@ -72,9 +73,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public QueryNodeParseException(SerializationInfo info, StreamingContext context)
+        protected QueryNodeParseException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+            query = info.GetString("query");
+            beginColumn = info.GetInt32("beginColumn");
+            beginLine = info.GetInt32("beginLine");
+            errorToken = info.GetString("errorToken");
+        }
+
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("query", query, typeof(string));
+            info.AddValue("beginColumn", beginColumn, typeof(int));
+            info.AddValue("beginLine", beginLine, typeof(int));
+            info.AddValue("errorToken", errorToken, typeof(string));
         }
 #endif
 

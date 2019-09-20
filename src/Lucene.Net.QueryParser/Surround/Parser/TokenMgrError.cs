@@ -1,6 +1,7 @@
 ﻿using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 #endif
 using System.Text;
 
@@ -180,9 +181,17 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public TokenMgrError(SerializationInfo info, StreamingContext context)
+        protected TokenMgrError(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+            errorCode = info.GetInt32("errorCode");
+        }
+
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue("errorCode", errorCode, typeof(int));
         }
 #endif
     }

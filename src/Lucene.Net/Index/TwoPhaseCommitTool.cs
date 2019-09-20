@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
             public PrepareCommitFailException(Exception cause, ITwoPhaseCommit obj)
                 : base("prepareCommit() failed on " + obj, cause)
             {
-            }  
+            }
 
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
             // For testing purposes
@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
             /// </summary>
             /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
             /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-            public PrepareCommitFailException(SerializationInfo info, StreamingContext context)
+            protected PrepareCommitFailException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
             {
             }
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
             /// </summary>
             /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
             /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-            public CommitFailException(SerializationInfo info, StreamingContext context)
+            protected CommitFailException(SerializationInfo info, StreamingContext context)
                 : base(info, context)
             {
             }

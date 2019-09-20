@@ -7105,7 +7105,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public InternalException(SerializationInfo info, StreamingContext context)
+        protected InternalException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7140,7 +7140,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public ReadOnlyCollectionException(SerializationInfo info, StreamingContext context)
+        protected ReadOnlyCollectionException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7172,7 +7172,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public FixedSizeCollectionException(SerializationInfo info, StreamingContext context)
+        protected FixedSizeCollectionException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7204,7 +7204,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public UnlistenableEventException(SerializationInfo info, StreamingContext context)
+        protected UnlistenableEventException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7240,7 +7240,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public ConcurrentEnumerationException(SerializationInfo info, StreamingContext context)
+        protected ConcurrentEnumerationException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7276,7 +7276,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public MultipleEnumerationException(SerializationInfo info, StreamingContext context)
+        protected MultipleEnumerationException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7308,7 +7308,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public CollectionModifiedException(SerializationInfo info, StreamingContext context)
+        protected CollectionModifiedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7346,7 +7346,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public ViewDisposedException(SerializationInfo info, StreamingContext context)
+        protected ViewDisposedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7381,7 +7381,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public NoSuchItemException(SerializationInfo info, StreamingContext context)
+        protected NoSuchItemException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7414,7 +7414,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public NotAViewException(SerializationInfo info, StreamingContext context)
+        protected NotAViewException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7451,7 +7451,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public DuplicateNotAllowedException(SerializationInfo info, StreamingContext context)
+        protected DuplicateNotAllowedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7483,7 +7483,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public InvalidPriorityQueueHandleException(SerializationInfo info, StreamingContext context)
+        protected InvalidPriorityQueueHandleException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7516,7 +7516,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public NotComparableException(SerializationInfo info, StreamingContext context)
+        protected NotComparableException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -7549,7 +7549,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public IncompatibleViewException(SerializationInfo info, StreamingContext context)
+        protected IncompatibleViewException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
