@@ -26,7 +26,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Lucene.Net.Tests.Support
+namespace Lucene.Net.Support
 {
     public class TestCollections : LuceneTestCase
     {
