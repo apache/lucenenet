@@ -36,6 +36,9 @@
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
 
     <DefineConstants>$(DefineConstants);TESTFRAMEWORK_MSTEST</DefineConstants>
+
+    <!-- LUCENENET: Not distributed because of incomplete support (ClassInitialize/ClassCleanup don't support inheritance, no reasonable way to run one class at a time) -->
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>

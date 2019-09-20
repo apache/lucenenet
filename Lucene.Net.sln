@@ -183,8 +183,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.TestFramework.NU
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.TestFramework.NUnit", "src\Lucene.Net.Tests.TestFramework.NUnit\Lucene.Net.Tests.TestFramework.NUnit.csproj", "{3A761C02-C3B2-4672-92F9-B700C68E7EFA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.TestFramework.MSTest", "src\Lucene.Net.Tests.TestFramework.MSTest\Lucene.Net.Tests.TestFramework.MSTest.csproj", "{384AE8E5-A05E-45EF-88D8-57686F31064A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.TestFramework.xUnit", "src\Lucene.Net.TestFramework.xUnit\Lucene.Net.TestFramework.xUnit.csproj", "{1337D725-C90B-4F96-8FEE-29C3BB3FBE6D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.TestFramework.xUnit", "src\Lucene.Net.Tests.TestFramework.xUnit\Lucene.Net.Tests.TestFramework.xUnit.csproj", "{AF33069F-8639-4EA9-8C24-17484E6C94E9}"
@@ -417,10 +415,6 @@ Global
 		{3A761C02-C3B2-4672-92F9-B700C68E7EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A761C02-C3B2-4672-92F9-B700C68E7EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A761C02-C3B2-4672-92F9-B700C68E7EFA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{384AE8E5-A05E-45EF-88D8-57686F31064A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{384AE8E5-A05E-45EF-88D8-57686F31064A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{384AE8E5-A05E-45EF-88D8-57686F31064A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{384AE8E5-A05E-45EF-88D8-57686F31064A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1337D725-C90B-4F96-8FEE-29C3BB3FBE6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1337D725-C90B-4F96-8FEE-29C3BB3FBE6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1337D725-C90B-4F96-8FEE-29C3BB3FBE6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
