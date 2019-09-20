@@ -173,6 +173,12 @@ namespace Lucene.Net.Replicator
             {
                 // expected
             }
+#pragma warning disable 168
+            catch (DirectoryNotFoundException e) // LUCENENET specific: In Java, a FileNotFound exception is thrown when there is no directory, so we need to cover this case as well
+#pragma warning restore 168
+            {
+                // expected
+            }
         }
 
         [Test]
