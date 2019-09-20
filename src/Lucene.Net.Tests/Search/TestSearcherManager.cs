@@ -593,7 +593,7 @@ namespace Lucene.Net.Search
 
             public override IndexSearcher NewSearcher(IndexReader ignored)
             {
-                return NewSearcher(
+                return LuceneTestCase.NewSearcher(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     outerInstance,
 #endif
