@@ -26,7 +26,8 @@
   <PropertyGroup>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
 
-    <AssemblyTitle>Lucene.Net.Tests._J-U</AssemblyTitle>
+    <AssemblyTitle>Lucene.Net.Tests._J-S</AssemblyTitle>
+    <RootNamespace>Lucene.Net</RootNamespace>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
   </PropertyGroup>
@@ -36,9 +37,7 @@
     <Compile Include="..\Lucene.Net.Tests\Search\**\*.cs" LinkBase="Search" />
     <Compile Include="..\Lucene.Net.Tests\Store\**\*.cs" LinkBase="Store" />
     <Compile Include="..\Lucene.Net.Tests\Support\**\*.cs" LinkBase="Support" />
-    <Compile Include="..\Lucene.Net.Tests\Util\*.cs" LinkBase="Util" />
-    <Compile Remove="..\Lucene.Net.Tests\Util\TestOfflineSorter.cs" Link="Util\TestOfflineSorter.cs" />
-    <Compile Remove="..\Lucene.Net.Tests\Util\JunitCompat\**\*;..\Lucene.Net.Tests\Util\TestMaxFailuresRule.cs" />
+    <Compile Include="..\Lucene.Net.Tests\Util\TestNumericUtils.cs" Link="Util\TestNumericUtils.cs" />
     <EmbeddedResource Include="..\Lucene.Net.Tests\Store\LUCENENET521.zip" Link="Store\LUCENENET521.zip" />
     <EmbeddedResource Include="..\Lucene.Net.Tests\Support\IO\ReadFully.txt" Link="Support\IO\ReadFully.txt" />
     <EmbeddedResource Include="..\Lucene.Net.Tests\Support\hyts_PropertiesTest.properties" Link="Support\hyts_PropertiesTest.properties" />

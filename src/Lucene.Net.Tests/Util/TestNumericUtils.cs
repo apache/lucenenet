@@ -27,6 +27,9 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestNumericUtils : LuceneTestCase
     {
+
+#if FEATURE_UTIL_TESTS
+
         [Test]
         public virtual void TestLongConversionAndOrdering()
         {
@@ -187,7 +190,17 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static readonly double[] DOUBLE_NANs = new double[] { double.NaN, BitConverter.Int64BitsToDouble(0x7ff0000000000001L), BitConverter.Int64BitsToDouble(0x7fffffffffffffffL), BitConverter.Int64BitsToDouble(unchecked((long)0xfff0000000000001L)), BitConverter.Int64BitsToDouble(unchecked((long)0xffffffffffffffffL)) };
+#endif
+
+        public static readonly double[] DOUBLE_NANs = new double[] {
+            double.NaN,
+            BitConverter.Int64BitsToDouble(0x7ff0000000000001L),
+            BitConverter.Int64BitsToDouble(0x7fffffffffffffffL),
+            BitConverter.Int64BitsToDouble(unchecked((long)0xfff0000000000001L)),
+            BitConverter.Int64BitsToDouble(unchecked((long)0xffffffffffffffffL))
+        };
+
+#if FEATURE_UTIL_TESTS
 
         [Test]
         public virtual void TestSortableDoubleNaN()
@@ -220,8 +233,17 @@ namespace Lucene.Net.Util
                 Assert.IsTrue(intVals[i - 1] < intVals[i], "check sort order");
             }
         }
+#endif
 
-        public static readonly float[] FLOAT_NANs = new float[] { float.NaN, Number.Int32BitsToSingle(0x7f800001), Number.Int32BitsToSingle(0x7fffffff), Number.Int32BitsToSingle(unchecked((int)0xff800001)), Number.Int32BitsToSingle(unchecked((int)0xffffffff)) };
+        public static readonly float[] FLOAT_NANs = new float[] {
+            float.NaN,
+            Number.Int32BitsToSingle(0x7f800001),
+            Number.Int32BitsToSingle(0x7fffffff),
+            Number.Int32BitsToSingle(unchecked((int)0xff800001)),
+            Number.Int32BitsToSingle(unchecked((int)0xffffffff))
+        };
+
+#if FEATURE_UTIL_TESTS
 
         [Test]
         public virtual void TestSortableFloatNaN()
@@ -537,5 +559,6 @@ namespace Lucene.Net.Util
             // a 0-length range should reproduce the range itself
             AssertIntRangeSplit(9500, 9500, 4, false, Arrays.AsList(unchecked((int)0x8000251c), unchecked((int)0x8000251c)), Arrays.AsList(0));
         }
+#endif
     }
 }

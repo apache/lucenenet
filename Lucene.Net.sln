@@ -173,9 +173,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.ICU", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Cli", "src\dotnet\tools\Lucene.Net.Tests.Cli\Lucene.Net.Tests.Cli.csproj", "{1F5574FE-19F7-4F10-9B88-76A938621F5B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._A-I", "src\Lucene.Net.Tests._A-I\Lucene.Net.Tests._A-I.csproj", "{86FADACC-57EC-4AA3-8BBE-C6ED526EE596}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._A-D", "src\Lucene.Net.Tests._A-D\Lucene.Net.Tests._A-D.csproj", "{86FADACC-57EC-4AA3-8BBE-C6ED526EE596}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._J-U", "src\Lucene.Net.Tests._J-U\Lucene.Net.Tests._J-U.csproj", "{5BE1EBA7-876C-4E9D-A78C-46A0D6F588C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._E-I", "src\Lucene.Net.Tests._E-I\Lucene.Net.Tests._E-I.csproj", "{8251BB22-EDA9-4850-A9B7-259C5B171040}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._J-S", "src\Lucene.Net.Tests._J-S\Lucene.Net.Tests._J-S.csproj", "{5BE1EBA7-876C-4E9D-A78C-46A0D6F588C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._T-U", "src\Lucene.Net.Tests._T-U\Lucene.Net.Tests._T-U.csproj", "{DF60E276-91AD-4386-A5B5-13EB24E335E6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._U-Z", "src\Lucene.Net.Tests._U-Z\Lucene.Net.Tests._U-Z.csproj", "{083EEC05-D092-4F84-8004-41F0C7192ABD}"
 EndProject
@@ -399,10 +403,18 @@ Global
 		{86FADACC-57EC-4AA3-8BBE-C6ED526EE596}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86FADACC-57EC-4AA3-8BBE-C6ED526EE596}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86FADACC-57EC-4AA3-8BBE-C6ED526EE596}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8251BB22-EDA9-4850-A9B7-259C5B171040}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8251BB22-EDA9-4850-A9B7-259C5B171040}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8251BB22-EDA9-4850-A9B7-259C5B171040}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8251BB22-EDA9-4850-A9B7-259C5B171040}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5BE1EBA7-876C-4E9D-A78C-46A0D6F588C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5BE1EBA7-876C-4E9D-A78C-46A0D6F588C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BE1EBA7-876C-4E9D-A78C-46A0D6F588C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BE1EBA7-876C-4E9D-A78C-46A0D6F588C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF60E276-91AD-4386-A5B5-13EB24E335E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF60E276-91AD-4386-A5B5-13EB24E335E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF60E276-91AD-4386-A5B5-13EB24E335E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF60E276-91AD-4386-A5B5-13EB24E335E6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{083EEC05-D092-4F84-8004-41F0C7192ABD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{083EEC05-D092-4F84-8004-41F0C7192ABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{083EEC05-D092-4F84-8004-41F0C7192ABD}.Release|Any CPU.ActiveCfg = Release|Any CPU

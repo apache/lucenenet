@@ -83,7 +83,7 @@ steps:
 
 - template: publish-test-results-for-target-frameworks.yml
   parameters:
-    testProjectName: 'Lucene.Net.Tests._A-I'
+    testProjectName: 'Lucene.Net.Tests._A-D'
     osName: '${{ parameters.osName }}'
     testResultsFormat: '${{ parameters.testResultsFormat }}'
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
@@ -91,7 +91,23 @@ steps:
 
 - template: publish-test-results-for-target-frameworks.yml
   parameters:
-    testProjectName: 'Lucene.Net.Tests._J-U'
+    testProjectName: 'Lucene.Net.Tests._E-I'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests._J-S'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results-for-target-frameworks.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests._T-U'
     osName: '${{ parameters.osName }}'
     testResultsFormat: '${{ parameters.testResultsFormat }}'
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'

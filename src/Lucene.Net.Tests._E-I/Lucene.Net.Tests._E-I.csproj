@@ -26,16 +26,12 @@
   <PropertyGroup>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
 
-    <AssemblyTitle>Lucene.Net.Tests._A-I</AssemblyTitle>
+    <AssemblyTitle>Lucene.Net.Tests._E-I</AssemblyTitle>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
   </PropertyGroup>
   
   <ItemGroup>
-    <Compile Include="..\Lucene.Net.Tests\*.cs" />
-    <Compile Include="..\Lucene.Net.Tests\Analysis\**\*.cs" LinkBase="Analysis" />
-    <Compile Include="..\Lucene.Net.Tests\Codecs\**\*.cs" LinkBase="Codecs" />
-    <Compile Include="..\Lucene.Net.Tests\Document\**\*.cs" LinkBase="Document" />
     <Compile Include="..\Lucene.Net.Tests\Index\**\*.cs" LinkBase="Index" />
     <EmbeddedResource Include="..\Lucene.Net.Tests\Index\*.zip" LinkBase="Index" />
   </ItemGroup>

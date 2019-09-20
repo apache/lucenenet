@@ -47,8 +47,10 @@ using System.Runtime.InteropServices;
 // Note that some of the APIs we use to test Lucene.Net are internal because they are only meant to
 // make porting tests from Java easier. This means that every Lucene.Net test project requires
 // InternalsVisibleTo, now and in the future to keep these APIs from public view.
-[assembly: InternalsVisibleTo("Lucene.Net.Tests._A-I, PublicKey=" + AssemblyKeys.PublicKey)]
-[assembly: InternalsVisibleTo("Lucene.Net.Tests._J-U, PublicKey=" + AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests._A-D, PublicKey=" + AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests._E-I, PublicKey=" + AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests._J-S, PublicKey=" + AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests._T-U, PublicKey=" + AssemblyKeys.PublicKey)]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests._U-Z, PublicKey=" + AssemblyKeys.PublicKey)]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Common, PublicKey=" + AssemblyKeys.PublicKey)]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Kuromoji, PublicKey=" + AssemblyKeys.PublicKey)]
