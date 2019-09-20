@@ -533,9 +533,7 @@ namespace Lucene.Net.Util
         /// Class environment setup rule.
         /// </summary>
 #if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-        [ThreadStatic]
-        private static TestRuleSetupAndRestoreClassEnv classEnvRule = new TestRuleSetupAndRestoreClassEnv();
-        internal static TestRuleSetupAndRestoreClassEnv ClassEnvRule { get => classEnvRule; }
+        internal static TestRuleSetupAndRestoreClassEnv ClassEnvRule { get; } = new TestRuleSetupAndRestoreClassEnv();
 #else
         // LUCENENET specific
         // Is non-static to remove inter-class dependencies on this variable
