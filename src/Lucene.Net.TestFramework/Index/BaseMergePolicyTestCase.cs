@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
 #endif
         /// <summary>
         /// Create a new <see cref="Index.MergePolicy"/> instance. </summary>
-        protected abstract MergePolicy NewMergePolicy(); // LUCENENET specific - renamed from MergePolicy() to be consistent
+        new protected abstract MergePolicy NewMergePolicy(); // LUCENENET specific - renamed from MergePolicy() to be consistent
 
         [Test]
         public virtual void TestForceMergeNotNeeded()

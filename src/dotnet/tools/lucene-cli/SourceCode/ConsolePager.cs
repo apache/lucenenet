@@ -122,7 +122,7 @@ namespace Lucene.Net.Cli.SourceCode
         /// Enumerates through a list of files (embedded resources)
         /// as if they were one contiguous set of text.
         /// </summary>
-        internal class MultipleFileLineEnumerator : IEnumerator<string>
+        internal sealed class MultipleFileLineEnumerator : IEnumerator<string>
         {
             private static Assembly thisAssembly = typeof(Program).GetTypeInfo().Assembly;
 

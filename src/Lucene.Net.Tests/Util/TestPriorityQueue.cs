@@ -183,7 +183,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        new private class Less : IComparer<int?>
+        private class Less : IComparer<int?>
         {
             public int Compare(int? a, int? b)
             {
@@ -193,7 +193,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        new private class Greater : IComparer<int?>
+        private class Greater : IComparer<int?>
         {
             public int Compare(int? a, int? b)
             {
