@@ -39,7 +39,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public override void BeforeClass()
         {
             base.BeforeClass();
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            OldFormatImpersonationIsActive = true;
         }
 
         private static string MakeDifficultRandomUnicodeString(Random r)

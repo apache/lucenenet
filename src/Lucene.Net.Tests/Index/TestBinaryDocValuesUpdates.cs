@@ -1134,7 +1134,7 @@ namespace Lucene.Net.Index
             // create a segment with an old Codec
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             conf.SetCodec(oldCodecs[Random.Next(oldCodecs.Length)]);
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            OldFormatImpersonationIsActive = true;
             IndexWriter writer = new IndexWriter(dir, conf);
             Document doc = new Document();
             doc.Add(new StringField("id", "doc", Store.NO));
@@ -1147,9 +1147,9 @@ namespace Lucene.Net.Index
         [Test, LuceneNetSpecific]
         public virtual void TestUpdateOldSegments_OldFormatNotActive()
         {
-            bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
+            bool oldValue = OldFormatImpersonationIsActive;
 
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+            OldFormatImpersonationIsActive = false;
 
             Codec[] oldCodecs = new Codec[] {
                 new Lucene40RWCodec(),
@@ -1183,7 +1183,7 @@ namespace Lucene.Net.Index
             }
             finally
             {
-                OLD_FORMAT_IMPERSONATION_IS_ACTIVE = oldValue;
+                OldFormatImpersonationIsActive = oldValue;
             }
 
             dir.Dispose();

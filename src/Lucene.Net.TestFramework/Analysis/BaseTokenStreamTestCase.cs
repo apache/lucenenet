@@ -816,7 +816,7 @@ namespace Lucene.Net.Analysis
                     ft.StoreTermVectors = true;
                     ft.StoreTermVectorOffsets = random.NextBoolean();
                     ft.StoreTermVectorPositions = random.NextBoolean();
-                    if (ft.StoreTermVectorPositions && !OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                    if (ft.StoreTermVectorPositions && !OldFormatImpersonationIsActive)
                     {
                         ft.StoreTermVectorPayloads = random.NextBoolean();
                     }

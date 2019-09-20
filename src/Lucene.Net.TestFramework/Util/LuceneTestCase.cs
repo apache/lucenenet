@@ -518,7 +518,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// @lucene.internal
         /// </summary>
-        public static bool OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+        public static bool OldFormatImpersonationIsActive { get; set; } = false; // LUCENENET specific - made into a property, since this is intended for end users to set
 
         // -----------------------------------------------------------------
         // Class level (suite) rules.
@@ -1747,7 +1747,7 @@ namespace Lucene.Net.Util
                 {
                     newType.StoreTermVectorPositions = random.NextBoolean();
 
-                    if (newType.StoreTermVectorPositions && !newType.StoreTermVectorPayloads && !OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                    if (newType.StoreTermVectorPositions && !newType.StoreTermVectorPayloads && !OldFormatImpersonationIsActive)
                     {
                         newType.StoreTermVectorPayloads = random.NextBoolean();
                     }

@@ -73,7 +73,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             base.BeforeClass();
 
             // NOTE: turn off compound file, this test will open some index files directly.
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            OldFormatImpersonationIsActive = true;
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetUseCompoundFile(false);
 
             TermIndexInterval = config.TermIndexInterval;

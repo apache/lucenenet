@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
         {
             base.BeforeClass();
 
-            assertFalse("test infra is broken!", OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
+            assertFalse("test infra is broken!", OldFormatImpersonationIsActive);
             IList<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
             names.AddRange(Arrays.AsList(OldNames));
             names.AddRange(Arrays.AsList(OldSingleSegmentNames));

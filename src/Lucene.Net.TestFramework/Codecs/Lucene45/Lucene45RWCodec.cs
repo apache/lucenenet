@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 get
                 {
-                    if (!LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                    if (!LuceneTestCase.OldFormatImpersonationIsActive)
                     {
                         return base.FieldInfosWriter;
                     }

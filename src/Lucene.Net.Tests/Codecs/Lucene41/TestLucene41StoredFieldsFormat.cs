@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Lucene41
         public override void BeforeClass()
         {
             base.BeforeClass();
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
+            OldFormatImpersonationIsActive = true; // explicitly instantiates ancient codec
         }
 
         protected override Codec GetCodec()

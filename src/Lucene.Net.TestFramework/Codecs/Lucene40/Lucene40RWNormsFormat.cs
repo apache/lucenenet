@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.Lucene40
     {
         public override DocValuesConsumer NormsConsumer(SegmentWriteState state)
         {
-            if (!LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+            if (!LuceneTestCase.OldFormatImpersonationIsActive)
             {
                 return base.NormsConsumer(state);
             }

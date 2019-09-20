@@ -55,8 +55,8 @@ namespace Lucene.Net.Store
 
             FileSwitchDirectory fsd = new FileSwitchDirectory(fileExtensions, primaryDir, secondaryDir, true);
             // for now we wire Lucene40Codec because we rely upon its specific impl
-            bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            bool oldValue = OldFormatImpersonationIsActive;
+            OldFormatImpersonationIsActive = true;
             IndexWriter writer = new IndexWriter(fsd, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NewLogMergePolicy(false)).SetCodec(Codec.ForName("Lucene40")).SetUseCompoundFile(false));
             TestIndexWriterReader.CreateIndexNoClose(true, "ram", writer);
             IndexReader reader = DirectoryReader.Open(writer, true);
@@ -87,7 +87,7 @@ namespace Lucene.Net.Store
                 Assert.IsNotNull(files[i]);
             }
             fsd.Dispose();
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = oldValue;
+            OldFormatImpersonationIsActive = oldValue;
         }
 
         private Directory NewFSSwitchDirectory(ISet<string> primaryExtensions)

@@ -38,7 +38,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                if (LuceneTestCase.OldFormatImpersonationIsActive)
                 {
                     return postings;
                 }
@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                if (LuceneTestCase.OldFormatImpersonationIsActive)
                 {
                     return norms;
                 }
@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                if (LuceneTestCase.OldFormatImpersonationIsActive)
                 {
                     return segmentInfos;
                 }
@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                if (LuceneTestCase.OldFormatImpersonationIsActive)
                 {
                     return fieldInfos;
                 }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                if (LuceneTestCase.OldFormatImpersonationIsActive)
                 {
                     return termVectors;
                 }
@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                if (LuceneTestCase.OldFormatImpersonationIsActive)
                 {
                     return storedFields;
                 }

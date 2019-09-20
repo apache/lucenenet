@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public override void SetUp()
         {
             base.SetUp();
-            LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            LuceneTestCase.OldFormatImpersonationIsActive = true;
         }
 
 

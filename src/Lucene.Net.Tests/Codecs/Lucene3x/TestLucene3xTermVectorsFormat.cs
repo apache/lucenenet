@@ -30,7 +30,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         [SetUp]
         public override void SetUp()
         {
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            OldFormatImpersonationIsActive = true;
             base.SetUp();
         }
 

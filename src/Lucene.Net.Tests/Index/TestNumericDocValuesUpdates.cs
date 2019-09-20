@@ -1073,11 +1073,11 @@ namespace Lucene.Net.Index
             Codec[] oldCodecs = new Codec[] { new Lucene40RWCodec(), new Lucene41RWCodec(), new Lucene42RWCodec(), new Lucene45RWCodec() };
             Directory dir = NewDirectory();
 
-            bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
+            bool oldValue = OldFormatImpersonationIsActive;
             // create a segment with an old Codec
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             conf.SetCodec(oldCodecs[Random.Next(oldCodecs.Length)]);
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+            OldFormatImpersonationIsActive = true;
             IndexWriter writer = new IndexWriter(dir, conf);
             Document doc = new Document();
             doc.Add(new StringField("id", "doc", Store.NO));
@@ -1088,7 +1088,7 @@ namespace Lucene.Net.Index
             conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
             writer = new IndexWriter(dir, conf);
             writer.UpdateNumericDocValue(new Term("id", "doc"), "f", 4L);
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+            OldFormatImpersonationIsActive = false;
             try
             {
                 writer.Dispose();
@@ -1102,7 +1102,7 @@ namespace Lucene.Net.Index
             }
             finally
             {
-                OLD_FORMAT_IMPERSONATION_IS_ACTIVE = oldValue;
+                OldFormatImpersonationIsActive = oldValue;
             }
 
             dir.Dispose();

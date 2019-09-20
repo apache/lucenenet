@@ -911,7 +911,7 @@ namespace Lucene.Net.Index
                 doc.Add(new NumericDocValuesField("n", 18L));
                 writer.AddDocument(doc);
 
-                OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+                OldFormatImpersonationIsActive = false;
                 try
                 {
                     writer.Dispose();
@@ -925,7 +925,7 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+                    OldFormatImpersonationIsActive = true;
                 }
 
             }
