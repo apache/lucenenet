@@ -1335,33 +1335,35 @@ namespace Lucene.Net.Store
         //    }
         //}
 
-        [Test]
-        public virtual void TestDoubleCloseOutput()
-        {
-            using (Directory dir = GetDirectory(CreateTempDir()))
-            {
-                IndexOutput @out = dir.CreateOutput("foobar", NewIOContext(Random));
-                @out.WriteString("testing");
-                @out.Dispose();
-                @out.Dispose(); // close again
-            }
-        }
+        // LUCENENET: This test compiles, but is not compatible with 4.8.0 (randomly fails), as it was ported from 8.2.0
+        //[Test]
+        //public virtual void TestDoubleDisposeOutput()
+        //{
+        //    using (Directory dir = GetDirectory(CreateTempDir()))
+        //    {
+        //        IndexOutput @out = dir.CreateOutput("foobar", NewIOContext(Random));
+        //        @out.WriteString("testing");
+        //        @out.Dispose();
+        //        @out.Dispose(); // close again
+        //    }
+        //}
 
-        [Test]
-        public virtual void TestDoubleCloseInput()
-        {
-            using (Directory dir = GetDirectory(CreateTempDir()))
-            {
-                using (IndexOutput @out = dir.CreateOutput("foobar", NewIOContext(Random)))
-                {
-                    @out.WriteString("testing");
-                } // @out.close();
-                IndexInput @in = dir.OpenInput("foobar", NewIOContext(Random));
-                assertEquals("testing", @in.ReadString());
-                @in.Dispose();
-                @in.Dispose(); // close again
-            }
-        }
+        // LUCENENET: This test compiles, but is not compatible with 4.8.0 (randomly fails), as it was ported from 8.2.0
+        //[Test]
+        //public virtual void TestDoubleDisposeInput()
+        //{
+        //    using (Directory dir = GetDirectory(CreateTempDir()))
+        //    {
+        //        using (IndexOutput @out = dir.CreateOutput("foobar", NewIOContext(Random)))
+        //        {
+        //            @out.WriteString("testing");
+        //        } // @out.close();
+        //        IndexInput @in = dir.OpenInput("foobar", NewIOContext(Random));
+        //        assertEquals("testing", @in.ReadString());
+        //        @in.Dispose();
+        //        @in.Dispose(); // close again
+        //    }
+        //}
 
         // LUCENENET: This test is not compatible with 4.8.0, as it was ported from 8.2.0
         //[Test]
