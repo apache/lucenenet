@@ -515,7 +515,7 @@ namespace Lucene.Net.Util
             Assert.IsTrue(bits.FastGet(bit - 1));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific] // https://github.com/apache/lucenenet/pull/154
         public virtual void TestXorWithDifferentCapacity()
         {
             OpenBitSet smaller = new OpenBitSet(2);

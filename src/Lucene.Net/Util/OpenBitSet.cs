@@ -932,6 +932,11 @@ namespace Lucene.Net.Util
         public virtual void Union(OpenBitSet other)
         {
             int newLen = Math.Max(m_wlen, other.m_wlen);
+            // LUCENENET specific: Since EnsureCapacityWords
+            // sets m_wlen, we need to save the value here to ensure the
+            // tail of the array is copied. Also removed the double-set
+            // after Array.Copy.
+            // https://github.com/apache/lucenenet/pull/154
             int oldLen = m_wlen;
             EnsureCapacityWords(newLen);
             Debug.Assert((numBits = Math.Max(other.numBits, numBits)) >= 0);
@@ -967,6 +972,11 @@ namespace Lucene.Net.Util
         public virtual void Xor(OpenBitSet other)
         {
             int newLen = Math.Max(m_wlen, other.m_wlen);
+            // LUCENENET specific: Since EnsureCapacityWords
+            // sets m_wlen, we need to save the value here to ensure the
+            // tail of the array is copied. Also removed the double-set
+            // after Array.Copy.
+            // https://github.com/apache/lucenenet/pull/154
             int oldLen = m_wlen;
             EnsureCapacityWords(newLen);
             Debug.Assert((numBits = Math.Max(other.numBits, numBits)) >= 0);
