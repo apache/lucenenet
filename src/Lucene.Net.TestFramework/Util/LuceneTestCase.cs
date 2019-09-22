@@ -142,7 +142,7 @@ namespace Lucene.Net.Util
     ///
     /// <para>
     /// The preferred way to specify class (suite-level) setup/cleanup is to use
-    /// static methods annotated with <see cref="BeforeClass"/> and <see cref="AfterClass"/>. Any
+    /// static methods annotated with <see cref="OneTimeSetUp"/> and <see cref="OneTimeTearDown"/>. Any
     /// code in these methods is executed within the test framework's control and
     /// ensure proper setup has been made. <b>Try not to use static initializers
     /// (including complex final field initializers).</b> Static initializers are
@@ -2191,7 +2191,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Gets a resource from the classpath as <see cref="Stream"/>. This method should only
         /// be used, if a real file is needed. To get a stream, code should prefer
-        /// <see cref="AssemblyExtensions.FindAndGetManifestResourceStream(Assembly, Type, string)"/> using 
+        /// <see cref="Lucene.Net.Support.AssemblyExtensions.FindAndGetManifestResourceStream(Assembly, Type, string)"/> using 
         /// <c>this.GetType().Assembly</c> and <c>this.GetType()</c>.
         /// </summary>
         protected virtual Stream GetDataFile(string name)

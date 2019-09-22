@@ -92,10 +92,9 @@ namespace Lucene.Net.Search
 //        {
 //#endif
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because ClassEnvRule is no longer static.
-        /// </summary>
+
+        // LUCENENET specific
+        // Is non-static because ClassEnvRule is no longer static.
         ////[OneTimeSetUp]
         public override void BeforeClass()
         {
