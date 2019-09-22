@@ -31,7 +31,6 @@
     <AssemblyTitle>Lucene.Net.ICU</AssemblyTitle>
     <Description>International Components for Unicode-based features including Thai analyzer support, an international postings highlighter, and BreakIterator support for the vector highlighter for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
     <PackageTags>$(PackageTags);icu;international;unicode</PackageTags>
-    <PackageReleaseNotes>This package runs natively on Linux. To run on Windows, install the Icu4c.Win.Full.Lib NuGet package into your application. See: https://github.com/sillsdev/icu-dotnet#windows-1.</PackageReleaseNotes>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
     <DefineConstants>$(DefineConstants);FEATURE_BREAKITERATOR</DefineConstants>
