@@ -17,7 +17,7 @@
 
 # Taxonomy of Categories
 
-	Facets are defined using a hierarchy of categories, known as a *Taxonomy*.
+	Facets are defined using a hierarchy of categories, known as a _Taxonomy_.
 	For example, the taxonomy of a book store application might have the following structure:
 
 *   Author
@@ -34,7 +34,7 @@
 
     *   2009
 
-	The *Taxonomy* translates category-paths into interger identifiers (often termed *ordinals*) and vice versa.
+	The _Taxonomy_ translates category-paths into interger identifiers (often termed _ordinals_) and vice versa.
 	The category `Author/Mark Twain` adds two nodes to the taxonomy: `Author` and 
 	`Author/Mark Twain`, each is assigned a different ordinal. The taxonomy maintains the invariant that a 
 	node always has an ordinal that is < all its children.

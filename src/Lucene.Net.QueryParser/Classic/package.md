@@ -31,7 +31,7 @@ Sorry.
 Note that because JavaCC defines a class named <tt>Token</tt>, <tt>org.apache.lucene.analysis.Token</tt>
 must always be fully qualified in source code in this package.
 
-**NOTE**: <xref:Lucene.Net.QueryParsers.Flexible.Standard> has an alternative queryparser that matches the syntax of this one, but is more modular,
+__NOTE__: <xref:Lucene.Net.QueryParsers.Flexible.Standard> has an alternative queryparser that matches the syntax of this one, but is more modular,
 enabling substantial customization to how a query is created.
 
 ## Query Parser Syntax

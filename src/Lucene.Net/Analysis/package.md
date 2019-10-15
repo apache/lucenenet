@@ -30,8 +30,8 @@ Lucene, an indexing and search library, accepts only plain text input.
 ## Parsing
 
 Applications that build their search capabilities upon Lucene may support documents in various formats – HTML, XML, PDF, Word – just to name a few.
-Lucene does not care about the *Parsing* of these and other document formats, and it is the responsibility of the 
-application using Lucene to use an appropriate *Parser* to convert the original format into plain text before passing that plain text to Lucene.
+Lucene does not care about the _Parsing_ of these and other document formats, and it is the responsibility of the 
+application using Lucene to use an appropriate _Parser_ to convert the original format into plain text before passing that plain text to Lucene.
 
 ## Tokenization
 
@@ -41,7 +41,7 @@ The way input text is broken into tokens heavily influences how people will then
 For instance, sentences beginnings and endings can be identified to provide for more accurate phrase 
 and proximity searches (though sentence identification is not provided by Lucene).
 
- In some cases simply breaking the input text into tokens is not enough – a deeper *Analysis* may be needed. Lucene includes both pre- and post-tokenization analysis facilities. 
+ In some cases simply breaking the input text into tokens is not enough – a deeper _Analysis_ may be needed. Lucene includes both pre- and post-tokenization analysis facilities. 
 
  Pre-tokenization analysis can include (but is not limited to) stripping HTML markup, and transforming or removing text matching arbitrary patterns or sets of fixed strings. 
 
@@ -166,7 +166,7 @@ and proximity searches (though sentence identification is not provided by Lucene
 
 ## Implementing your own Analyzer
 
- Creating your own Analyzer is straightforward. Your Analyzer can wrap existing analysis components — CharFilter(s) *(optional)*, a Tokenizer, and TokenFilter(s) *(optional)* — or components you create, or a combination of existing and newly created components. Before pursuing this approach, you may find it worthwhile to explore the [analyzers-common]({@docRoot}/../analyzers-common/overview-summary.html) library and/or ask on the [java-user@lucene.apache.org mailing list](http://lucene.apache.org/core/discussion.html) first to see if what you need already exists. If you are still committed to creating your own Analyzer, have a look at the source code of any one of the many samples located in this package. 
+ Creating your own Analyzer is straightforward. Your Analyzer can wrap existing analysis components — CharFilter(s) _(optional)_, a Tokenizer, and TokenFilter(s) _(optional)_ — or components you create, or a combination of existing and newly created components. Before pursuing this approach, you may find it worthwhile to explore the [analyzers-common]({@docRoot}/../analyzers-common/overview-summary.html) library and/or ask on the [java-user@lucene.apache.org mailing list](http://lucene.apache.org/core/discussion.html) first to see if what you need already exists. If you are still committed to creating your own Analyzer, have a look at the source code of any one of the many samples located in this package. 
 
  The following sections discuss some aspects of implementing your own analyzer. 
 
@@ -358,7 +358,7 @@ as described below.
 
 *   You should create your tokenizer class by extending <xref:Lucene.Net.Analysis.Tokenizer>.
 
-*   Your tokenizer must **never** make direct use of the
+*   Your tokenizer must __never__ make direct use of the
   {@link java.io.Reader} supplied to its constructor(s). (A future
   release of Apache Lucene may remove the reader parameters from the
   Tokenizer constructors.)
@@ -367,15 +367,15 @@ as described below.
   should only reference the input via the protected 'input' field
   of Tokenizer.
 
-*   Your tokenizer **must** override [#end()](xref:Lucene.Net.Analysis.TokenStream).
-  Your implementation **must** call
+*   Your tokenizer __must__ override [#end()](xref:Lucene.Net.Analysis.TokenStream).
+  Your implementation __must__ call
   `super.end()`. It must set a correct final offset into
   the offset attribute, and finish up and other attributes to reflect
   the end of the stream.
 
 *   If your tokenizer overrides [#reset()](xref:Lucene.Net.Analysis.TokenStream)
   or [#close()](xref:Lucene.Net.Analysis.TokenStream), it
-    **must** call the corresponding superclass method.
+  __must__ call the corresponding superclass method.
 
 #### Token Filter
 
@@ -383,7 +383,7 @@ as described below.
   If your token filter overrides [#reset()](xref:Lucene.Net.Analysis.TokenStream),
   [#end()](xref:Lucene.Net.Analysis.TokenStream)
   or [#close()](xref:Lucene.Net.Analysis.TokenStream), it
-  **must** call the corresponding superclass method.
+  __must__ call the corresponding superclass method.
 
 #### Creating delegates
 
@@ -432,8 +432,8 @@ in incrementToken() will avoid attribute lookups for every token in the document
 4.    
 
 All methods in AttributeSource are idempotent, which means calling them multiple times always yields the same
-result. This is especially important to know for addAttribute(). The method takes the **type** (`Class`)
-of an Attribute as an argument and returns an **instance**. If an Attribute of the same type was previously added, then
+result. This is especially important to know for addAttribute(). The method takes the __type__ (`Class`)
+of an Attribute as an argument and returns an __instance__. If an Attribute of the same type was previously added, then
 the already existing instance is returned, otherwise a new instance is created and returned. Therefore TokenStreams/-Filters
 can safely call addAttribute() with the same Attribute type multiple times. Even consumers of TokenStreams should
 normally call addAttribute() instead of getAttribute(), because it would not fail if the TokenStream does not have this

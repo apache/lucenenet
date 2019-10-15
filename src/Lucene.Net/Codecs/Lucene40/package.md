@@ -72,19 +72,19 @@ The same sequence of bytes in two different fields is considered a different ter
 
 ### Inverted Indexing
 
-The index stores statistics about terms in order to make term-based search more efficient. Lucene's index falls into the family of indexes known as an *inverted index.* This is because it can list, for a term, the documents that contain it. This is the inverse of the natural relationship, in which documents list terms.
+The index stores statistics about terms in order to make term-based search more efficient. Lucene's index falls into the family of indexes known as an _inverted index._ This is because it can list, for a term, the documents that contain it. This is the inverse of the natural relationship, in which documents list terms.
 
 ### Types of Fields
 
-In Lucene, fields may be *stored*, in which case their text is stored in the index literally, in a non-inverted manner. Fields that are inverted are called *indexed*. A field may be both stored and indexed.
+In Lucene, fields may be _stored_, in which case their text is stored in the index literally, in a non-inverted manner. Fields that are inverted are called _indexed_. A field may be both stored and indexed.
 
-The text of a field may be *tokenized* into terms to be indexed, or the text of a field may be used literally as a term to be indexed. Most fields are tokenized, but sometimes it is useful for certain identifier fields to be indexed literally.
+The text of a field may be _tokenized_ into terms to be indexed, or the text of a field may be used literally as a term to be indexed. Most fields are tokenized, but sometimes it is useful for certain identifier fields to be indexed literally.
 
 See the [Field](xref:Lucene.Net.Documents.Field) java docs for more information on Fields.
 
 ### Segments
 
-Lucene indexes may be composed of multiple sub-indexes, or *segments*. Each segment is a fully independent index, which could be searched separately. Indexes evolve by:
+Lucene indexes may be composed of multiple sub-indexes, or _segments_. Each segment is a fully independent index, which could be searched separately. Indexes evolve by:
 
 1.  Creating new segments for newly added documents.
 2.  Merging existing segments.
@@ -93,13 +93,13 @@ Searches may involve multiple segments and/or multiple indexes, each index poten
 
 ### Document Numbers
 
-Internally, Lucene refers to documents by an integer *document number*. The first document added to an index is numbered zero, and each subsequent document added gets a number one greater than the previous.
+Internally, Lucene refers to documents by an integer _document number_. The first document added to an index is numbered zero, and each subsequent document added gets a number one greater than the previous.
 
 Note that a document's number may change, so caution should be taken when storing these numbers outside of Lucene. In particular, numbers may change in the following situations:
 
 *   
 
-The numbers stored in each segment are unique only within the segment, and must be converted before they can be used in a larger context. The standard technique is to allocate each segment a range of values, based on the range of numbers used in that segment. To convert a document number from a segment to an external value, the segment's *base* document number is added. To convert an external value back to a segment-specific value, the segment is identified by the range that the external value is in, and the segment's base value is subtracted. For example two five document segments might be combined, so that the first segment has a base value of zero, and the second of five. Document three from the second segment would have an external value of eight.
+The numbers stored in each segment are unique only within the segment, and must be converted before they can be used in a larger context. The standard technique is to allocate each segment a range of values, based on the range of numbers used in that segment. To convert a document number from a segment to an external value, the segment's _base_ document number is added. To convert an external value back to a segment-specific value, the segment is identified by the range that the external value is in, and the segment's base value is subtracted. For example two five document segments might be combined, so that the first segment has a base value of zero, and the second of five. Document three from the second segment would have an external value of eight.
 
 *   
 

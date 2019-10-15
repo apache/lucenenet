@@ -88,7 +88,7 @@ A [FuzzyQuery](xref:Lucene.Net.Search.FuzzyQuery) matches documents that contain
 
 Lucene scoring is the heart of why we all love Lucene. It is blazingly fast and it hides almost all of the complexity from the user. In a nutshell, it works. At least, that is, until it doesn't work, or doesn't work as one would expect it to work. Then we are left digging into Lucene internals or asking for help on [java-user@lucene.apache.org](mailto:java-user@lucene.apache.org) to figure out why a document with five of our query terms scores lower than a different document with only one of the query terms. 
 
-While this document won't answer your specific scoring issues, it will, hopefully, point you to the places that can help you figure out the *what* and *why* of Lucene scoring. 
+While this document won't answer your specific scoring issues, it will, hopefully, point you to the places that can help you figure out the _what_ and _why_ of Lucene scoring. 
 
 Lucene scoring supports a number of pluggable information retrieval [models](http://en.wikipedia.org/wiki/Information_retrieval#Model_types), including: * [Vector Space Model (VSM)](http://en.wikipedia.org/wiki/Vector_Space_Model) * [Probablistic Models](http://en.wikipedia.org/wiki/Probabilistic_relevance_model) such as [Okapi BM25](http://en.wikipedia.org/wiki/Probabilistic_relevance_model_(BM25)) and [DFR](http://en.wikipedia.org/wiki/Divergence-from-randomness_model) * [Language models](http://en.wikipedia.org/wiki/Language_model) These models can be plugged in via the [Similarity API](xref:Lucene.Net.Search.Similarities), and offer extension hooks and parameters for tuning. In general, Lucene first finds the documents that need to be scored based on boolean logic in the Query specification, and then ranks this subset of matching documents via the retrieval model. For some valuable references on VSM and IR in general refer to [Lucene Wiki IR references](http://wiki.apache.org/lucene-java/InformationRetrieval). 
 
@@ -111,7 +111,7 @@ In Lucene, the objects we are scoring are [Document](xref:Lucene.Net.Documents.D
 
 #### Score Boosting
 
-Lucene allows influencing search results by "boosting" at different times: * **Index-time boost** by calling [Field.setBoost](xref:Lucene.Net.Documents.Field#methods) before a document is added to the index. * **Query-time boost** by setting a boost on a query clause, calling [Query.setBoost](xref:Lucene.Net.Search.Query#methods). 
+Lucene allows influencing search results by "boosting" at different times: * __Index-time boost__ by calling [Field.setBoost](xref:Lucene.Net.Documents.Field#methods) before a document is added to the index. * __Query-time boost__ by setting a boost on a query clause, calling [Query.setBoost](xref:Lucene.Net.Search.Query#methods). 
 
 Indexing time boosts are pre-processed for storage efficiency and written to storage for a field as follows: * All boosts of that field (i.e. all boosts under the same field name in that doc) are multiplied. * The boost is then encoded into a normalization value by the Similarity object at index-time: [ComputeNorm](xref:Lucene.Net.Search.Similarities.Similarity#methods). The actual encoding depends upon the Similarity implementation, but note that most use a lossy encoding (such as multiplying the boost with document length or similar, packed into a single byte!). * Decoding of any index-time normalization values and integration into the document's score is also performed at search time by the Similarity. 
 

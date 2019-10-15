@@ -30,7 +30,7 @@ changing norms, finding high freq terms, and others.
 
 ## NativeUnixDirectory
 
-**NOTE**: This uses C++ sources (accessible via JNI), which you'll
+__NOTE__: This uses C++ sources (accessible via JNI), which you'll
 have to compile on your platform.
 
 <xref:Lucene.Net.Store.NativeUnixDirectory> is a Directory implementation that bypasses the

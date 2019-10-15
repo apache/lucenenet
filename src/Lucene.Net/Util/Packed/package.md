@@ -23,49 +23,49 @@
 
 ### In-memory structures
 
-*   **<xref:Lucene.Net.Util.Packed.PackedInts.Mutable>**
+*   __<xref:Lucene.Net.Util.Packed.PackedInts.Mutable>__
 
     *   Only supports positive longs.
     *   Requires the number of bits per value to be known in advance.
     *   Random-access for both writing and reading.
-*   **<xref:Lucene.Net.Util.Packed.GrowableWriter>**
+*   __<xref:Lucene.Net.Util.Packed.GrowableWriter>__
 
     *   Same as PackedInts.Mutable but grows the number of bits per values when needed.
     *   Useful to build a PackedInts.Mutable from a read-once stream of longs.
-*   **<xref:Lucene.Net.Util.Packed.PagedGrowableWriter>**
+*   __<xref:Lucene.Net.Util.Packed.PagedGrowableWriter>__
 
     *   Slices data into fixed-size blocks stored in GrowableWriters.
     *   Supports more than 2B values.
     *   You should use Appending(Delta)PackedLongBuffer instead if you don't need random write access.
-*   **<xref:Lucene.Net.Util.Packed.AppendingDeltaPackedLongBuffer>**
+*   __<xref:Lucene.Net.Util.Packed.AppendingDeltaPackedLongBuffer>__
 
     *   Can store any sequence of longs.
     *   Compression is good when values are close to each other.
     *   Supports random reads, but only sequential writes.
     *   Can address up to 2^42 values.
-*   **<xref:Lucene.Net.Util.Packed.AppendingPackedLongBuffer>**
+*   __<xref:Lucene.Net.Util.Packed.AppendingPackedLongBuffer>__
 
     *   Same as AppendingDeltaPackedLongBuffer but assumes values are 0-based.
-*   **<xref:Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer>**
+*   __<xref:Lucene.Net.Util.Packed.MonotonicAppendingLongBuffer>__
 
     *   Same as AppendingDeltaPackedLongBuffer except that compression is good when the stream is a succession of affine functions.
 
 ### Disk-based structures
 
-*   **<xref:Lucene.Net.Util.Packed.PackedInts.Writer>, <xref:Lucene.Net.Util.Packed.PackedInts.Reader>, <xref:Lucene.Net.Util.Packed.PackedInts.ReaderIterator>**
+*   __<xref:Lucene.Net.Util.Packed.PackedInts.Writer>, <xref:Lucene.Net.Util.Packed.PackedInts.Reader>, <xref:Lucene.Net.Util.Packed.PackedInts.ReaderIterator>__
 
     *   Only supports positive longs.
     *   Requires the number of bits per value to be known in advance.
     *   Supports both fast sequential access with low memory footprint with ReaderIterator and random-access by either loading values in memory or leaving them on disk with Reader.
-*   **<xref:Lucene.Net.Util.Packed.BlockPackedWriter>, <xref:Lucene.Net.Util.Packed.BlockPackedReader>, <xref:Lucene.Net.Util.Packed.BlockPackedReaderIterator>**
+*   __<xref:Lucene.Net.Util.Packed.BlockPackedWriter>, <xref:Lucene.Net.Util.Packed.BlockPackedReader>, <xref:Lucene.Net.Util.Packed.BlockPackedReaderIterator>__
 
     *   Splits the stream into fixed-size blocks.
     *   Compression is good when values are close to each other.
     *   Can address up to 2B * blockSize values.
-*   **<xref:Lucene.Net.Util.Packed.MonotonicBlockPackedWriter>, <xref:Lucene.Net.Util.Packed.MonotonicBlockPackedReader>**
+*   __<xref:Lucene.Net.Util.Packed.MonotonicBlockPackedWriter>, <xref:Lucene.Net.Util.Packed.MonotonicBlockPackedReader>__
 
     *   Same as the non-monotonic variants except that compression is good when the stream is a succession of affine functions.
     *   The reason why there is no sequential access is that if you need sequential access, you should rather delta-encode and use BlockPackedWriter.
-*   **<xref:Lucene.Net.Util.Packed.PackedDataOutput>, <xref:Lucene.Net.Util.Packed.PackedDataInput>**
+*   __<xref:Lucene.Net.Util.Packed.PackedDataOutput>, <xref:Lucene.Net.Util.Packed.PackedDataInput>__
 
     *   Writes sequences of longs where each long can use any number of bits.

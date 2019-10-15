@@ -29,7 +29,7 @@ stemmers.
 
  See the Snowball [home page](http://snowball.tartarus.org/) for more information about the algorithms. 
 
- **IMPORTANT NOTICE ON BACKWARDS COMPATIBILITY!** 
+ __IMPORTANT NOTICE ON BACKWARDS COMPATIBILITY!__ 
 
  An index created using the Snowball module in Lucene 2.3.2 and below might not be compatible with the Snowball module in Lucene 2.4 or greater. 
 

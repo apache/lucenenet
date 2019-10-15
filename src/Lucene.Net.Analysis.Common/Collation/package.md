@@ -91,7 +91,7 @@
 
 ## Caveats and Comparisons
 
- **WARNING:** Make sure you use exactly the same `Collator` at index and query time -- `CollationKey`s are only comparable when produced by the same `Collator`. Since {@link java.text.RuleBasedCollator}s are not independently versioned, it is unsafe to search against stored `CollationKey`s unless the following are exactly the same (best practice is to store this information with the index and check that they remain the same at query time): 
+ __WARNING:__ Make sure you use exactly the same `Collator` at index and query time -- `CollationKey`s are only comparable when produced by the same `Collator`. Since {@link java.text.RuleBasedCollator}s are not independently versioned, it is unsafe to search against stored `CollationKey`s unless the following are exactly the same (best practice is to store this information with the index and check that they remain the same at query time): 
 
 1.  JVM vendor
 2.  JVM version, including patch version

@@ -28,13 +28,12 @@ The demo module offers simple example code to show the features of Lucene.
 
 *   [About this Document](#about-this-document)
 *   [About the Demo](#about-the-demo)
-*   [Setting your CLASSPATH](#setting-your-classpath)
+
 *   [Indexing Files](#indexing-files)
 *   [About the code](#about-the-code)
 *   [Location of the source](#location-of-the-source)
 *   [IndexFiles](xref:Lucene.Net.Demo.IndexFiles)
 *   [Searching Files](#searching-files)
-
 
 
 ## About this Document
@@ -57,14 +56,14 @@ The Lucene command-line demo code consists of an application that demonstrates v
 
 
 
-Once you've gotten this far you're probably itching to go. Let's **build an index!** Assuming you've set your CLASSPATH correctly, just type:
+Once you've gotten this far you're probably itching to go. Let's __build an index!__ Assuming you've set your CLASSPATH correctly, just type:
 
         java org.apache.lucene.demo.IndexFiles -docs {path-to-lucene}/src
 
 This will produce a subdirectory called <span class="codefrag">index</span>
 which will contain an index of all of the Lucene source code.
 
-To **search the index** type:
+To __search the index__ type:
 
         java org.apache.lucene.demo.SearchFiles
 
@@ -111,7 +110,7 @@ Lucene [Analyzer](xref:Lucene.Net.Analysis.Analyzer)s are processing pipelines t
 
 The <span class="codefrag">IndexWriterConfig</span> instance holds all configuration for <span class="codefrag">IndexWriter</span>. For example, we set the <span class="codefrag">OpenMode</span> to use here based on the value of the <span class="codefrag">-update</span> command-line parameter.
 
-Looking further down in the file, after <span class="codefrag">IndexWriter</span> is instantiated, you should see the <span class="codefrag">indexDocs()</span> code. This recursive function crawls the directories and creates [Document](xref:Lucene.Net.Documents.Document) objects. The <span class="codefrag">Document</span> is simply a data object to represent the text content from the file as well as its creation time and location. These instances are added to the <span class="codefrag">IndexWriter</span>. If the <span class="codefrag">-update</span> command-line parameter is given, the <span class="codefrag">IndexWriterConfig</span> <span class="codefrag">OpenMode</span> will be set to [OpenMode.CREATE_OR_APPEND](xref:Lucene.Net.Index.IndexWriterConfig.OpenMode#methods), and rather than adding documents to the index, the <span class="codefrag">IndexWriter</span> will **update** them in the index by attempting to find an already-indexed document with the same identifier (in our case, the file path serves as the identifier); deleting it from the index if it exists; and then adding the new document to the index.
+Looking further down in the file, after <span class="codefrag">IndexWriter</span> is instantiated, you should see the <span class="codefrag">indexDocs()</span> code. This recursive function crawls the directories and creates [Document](xref:Lucene.Net.Documents.Document) objects. The <span class="codefrag">Document</span> is simply a data object to represent the text content from the file as well as its creation time and location. These instances are added to the <span class="codefrag">IndexWriter</span>. If the <span class="codefrag">-update</span> command-line parameter is given, the <span class="codefrag">IndexWriterConfig</span> <span class="codefrag">OpenMode</span> will be set to [OpenMode.CREATE_OR_APPEND](xref:Lucene.Net.Index.IndexWriterConfig.OpenMode#methods), and rather than adding documents to the index, the <span class="codefrag">IndexWriter</span> will __update__ them in the index by attempting to find an already-indexed document with the same identifier (in our case, the file path serves as the identifier); deleting it from the index if it exists; and then adding the new document to the index.
 
 
 

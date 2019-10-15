@@ -20,7 +20,7 @@ summary: *content
  limitations under the License.
 -->
 
-# *Stempel* - Algorithmic Stemmer for Polish Language
+# _Stempel_ - Algorithmic Stemmer for Polish Language
 
 ## Introduction
 
@@ -36,7 +36,7 @@ This work is available under Apache-style Open Source license - the stemmer code
 
 A short explanation is in order about the terminology used in this text.
 
-In the following sections I make a distinction between **stem** and **lemma**.
+In the following sections I make a distinction between __stem__ and __lemma__.
 
 Lemma is a base grammatical form (dictionary form, headword) of a word. Lemma is an existing, grammatically correct word in some human language.
 
@@ -146,7 +146,7 @@ the P-commands stored there). The result is a word stem.
 
 ## Corpus
 
-*(to be completed...)*
+_(to be completed...)_
 
 The following Polish corpora have been used:
 
@@ -182,7 +182,7 @@ Since the sets were already randomized, the training samples were also
 randomized, but this procedure ensured that each larger training sample
 contained all smaller samples.
 *   Part 2 was used for testing. Note: this means that the testing
-run used *only* words previously unseen during the training
+run used _only_ words previously unseen during the training
 phase. This is the worst scenario, because it means that stemmer must
 extrapolate the learned rules to unknown cases. This also means that in
 a real-life case (where the input is a mix between known and unknown
@@ -193,24 +193,24 @@ table below.
 
 The following table summarizes test results for varying sizes of training samples. The meaning of the table columns is described below: 
 
-*   **training sets:** the number of training sets. One set
+*   __training sets:__ the number of training sets. One set
 consists of one lemma and at least 4 and up to ~80 inflected forms
 (including pre- and suffixed forms).
-*   **testing forms:** the number of testing forms. Only inflected
+*   __testing forms:__ the number of testing forms. Only inflected
 forms were used in testing.
-*   **stem OK:** the number of cases when produced output was a
+*   __stem OK:__ the number of cases when produced output was a
 correct (unique) stem. Note: quite often correct stems were also
 correct lemmas.
-*   **lemma OK:** the number of cases when produced output was a
+*   __lemma OK:__ the number of cases when produced output was a
 correct lemma.
-*   **missing:** the number of cases when stemmer was unable to
+*   __missing:__ the number of cases when stemmer was unable to
 provide any output.
-*   **stem bad:** the number of cases when produced output was a
+*   __stem bad:__ the number of cases when produced output was a
 stem, but already in use identifying a different set.
-*   **lemma bad:** the number of cases when produced output was an
+*   __lemma bad:__ the number of cases when produced output was an
 incorrect lemma. Note: quite often in such case the output was a
 correct stem.
-*   **table size:** the size in bytes of the stemmer table.
+*   __table size:__ the size in bytes of the stemmer table.
 <div align="center">
 <table border="1" cellpadding="2" cellspacing="0">
   <tbody>

@@ -51,7 +51,7 @@ Apache Lucene is a high-performance, full-featured text search engine library. H
 
 The Lucene API is divided into several packages:
 
-*   **<xref:Lucene.Net.Analysis>**
+*   __<xref:Lucene.Net.Analysis>__
 defines an abstract [Analyzer](xref:Lucene.Net.Analysis.Analyzer)
 API for converting text from a {@link java.io.Reader}
 into a [TokenStream](xref:Lucene.Net.Analysis.TokenStream),
@@ -62,19 +62,19 @@ Tokenizers and TokenFilters are strung together and applied with an [Analyzer](x
 [analyzers-common](../analyzers-common/overview-summary.html) provides a number of Analyzer implementations, including 
 [StopAnalyzer](../analyzers-common/org/apache/lucene/analysis/core/StopAnalyzer.html)
 and the grammar-based [StandardAnalyzer](../analyzers-common/org/apache/lucene/analysis/standard/StandardAnalyzer.html).
-*   **<xref:Lucene.Net.Codecs>**
+*   __<xref:Lucene.Net.Codecs>__
 provides an abstraction over the encoding and decoding of the inverted index structure,
 as well as different implementations that can be chosen depending upon application needs.
 
-    **<xref:Lucene.Net.Documents>**
+__<xref:Lucene.Net.Documents>__
 provides a simple [Document](xref:Lucene.Net.Documents.Document)
 class.  A Document is simply a set of named [Field](xref:Lucene.Net.Documents.Field)s,
 whose values may be strings or instances of {@link java.io.Reader}.
-*   **<xref:Lucene.Net.Index>**
+*   __<xref:Lucene.Net.Index>__
 provides two primary classes: [IndexWriter](xref:Lucene.Net.Index.IndexWriter),
 which creates and adds documents to indices; and <xref:Lucene.Net.Index.IndexReader>,
 which accesses the data in the index.
-*   **<xref:Lucene.Net.Search>**
+*   __<xref:Lucene.Net.Search>__
 provides data structures to represent queries (ie [TermQuery](xref:Lucene.Net.Search.TermQuery)
 for individual words, [PhraseQuery](xref:Lucene.Net.Search.PhraseQuery) 
 for phrases, and [BooleanQuery](xref:Lucene.Net.Search.BooleanQuery) 
@@ -83,14 +83,14 @@ which turns queries into [TopDocs](xref:Lucene.Net.Search.TopDocs).
 A number of [QueryParser](../queryparser/overview-summary.html)s are provided for producing
 query structures from strings or xml.
 
-    **<xref:Lucene.Net.Store>**
+__<xref:Lucene.Net.Store>__
 defines an abstract class for storing persistent data, the [Directory](xref:Lucene.Net.Store.Directory),
 which is a collection of named files written by an [IndexOutput](xref:Lucene.Net.Store.IndexOutput)
 and read by an [IndexInput](xref:Lucene.Net.Store.IndexInput). 
 Multiple implementations are provided, including [FSDirectory](xref:Lucene.Net.Store.FSDirectory),
 which uses a file system directory to store files, and [RAMDirectory](xref:Lucene.Net.Store.RAMDirectory)
 which implements files as memory-resident data structures.
-*   **<xref:Lucene.Net.Util>**
+*   __<xref:Lucene.Net.Util>__
 contains a few handy data structures and util classes, ie [OpenBitSet](xref:Lucene.Net.Util.OpenBitSet)
 and [PriorityQueue](xref:Lucene.Net.Util.PriorityQueue).
 To use Lucene, an application should:

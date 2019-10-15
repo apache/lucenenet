@@ -63,10 +63,10 @@ languages into the word parts. This example shows what it does:
 The input token is always preserved and the filters do not alter the case of word parts. There are two variants of the
 filter available:
 
-*   *HyphenationCompoundWordTokenFilter*: it uses a
+*   _HyphenationCompoundWordTokenFilter_: it uses a
 	hyphenation grammar based approach to find potential word parts of a
 	given word.
-*   *DictionaryCompoundWordTokenFilter*: it uses a
+*   _DictionaryCompoundWordTokenFilter_: it uses a
 	brute-force dictionary-only based approach to find the word parts of a given
 	word.
 
@@ -92,7 +92,7 @@ For Formatting Objects](http://offo.sourceforge.net/hyphenation/index.html)
 (OFFO) Sourceforge project (direct link to download the pattern files:
 [http://downloads.sourceforge.net/offo/offo-hyphenation.zip](http://downloads.sourceforge.net/offo/offo-hyphenation.zip)
 ). The files you need are in the subfolder
-*offo-hyphenation/hyph/*
+_offo-hyphenation/hyph/_
 .
 
 Credits for the hyphenation code go to the

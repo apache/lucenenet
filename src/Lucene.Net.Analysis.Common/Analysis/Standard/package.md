@@ -25,7 +25,7 @@ The `org.apache.lucene.analysis.standard` package contains three fast grammar-ba
         Segmentation algorithm, as specified in 
         [Unicode Standard Annex #29](http://unicode.org/reports/tr29/).
         Unlike `UAX29URLEmailTokenizer`, URLs and email addresses are
-    **not** tokenized as single tokens, but are instead split up into 
+        __not__ tokenized as single tokens, but are instead split up into 
         tokens according to the UAX#29 word break rules.
 
         [StandardAnalyzer](xref:Lucene.Net.Analysis.Standard.StandardAnalyzer) includes

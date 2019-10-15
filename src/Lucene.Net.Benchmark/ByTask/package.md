@@ -28,8 +28,8 @@ Benchmarking Lucene By Tasks.
 
 <table border="1" cellpadding="4">
  <tr>
-   <td>**Package**</td>
-   <td>**Description**</td>
+   <td>__Package__</td>
+   <td>__Description__</td>
  </tr>
  <tr>
    <td>[stats](stats/package-summary.html)</td>
@@ -71,11 +71,11 @@ Benchmarking Lucene By Tasks.
 - would run `your perf test` "algorithm". * java org.apache.lucene.benchmark.byTask.programmatic.Sample   
 - would run a performance test programmatically - without using an alg file. This is less readable, and less convenient, but possible. 
 
- You may find existing tasks sufficient for defining the benchmark *you* need, otherwise, you can extend the framework to meet your needs, as explained herein. 
+ You may find existing tasks sufficient for defining the benchmark _you_ need, otherwise, you can extend the framework to meet your needs, as explained herein. 
 
  Each benchmark run has a DocMaker and a QueryMaker. These two should usually match, so that "meaningful" queries are used for a certain collection. Properties set at the header of the alg file define which "makers" should be used. You can also specify your own makers, extending DocMaker and implementing QueryMaker. 
 
-> **Note:** since 2.9, DocMaker is a concrete class which accepts a ContentSource. In most cases, you can use the DocMaker class to create Documents, while providing your own ContentSource implementation. For example, the current Benchmark package includes ContentSource implementations for TREC, Enwiki and Reuters collections, as well as others like LineDocSource which reads a 'line' file produced by WriteLineDocTask.
+> __Note:__ since 2.9, DocMaker is a concrete class which accepts a ContentSource. In most cases, you can use the DocMaker class to create Documents, while providing your own ContentSource implementation. For example, the current Benchmark package includes ContentSource implementations for TREC, Enwiki and Reuters collections, as well as others like LineDocSource which reads a 'line' file produced by WriteLineDocTask.
 
  Benchmark .alg file contains the benchmark "algorithm". The syntax is described below. Within the algorithm, you can specify groups of commands, assign them names, specify commands that should be repeated, do commands in serial or in parallel, and also control the speed of "firing" the commands. 
 
@@ -83,25 +83,25 @@ Benchmarking Lucene By Tasks.
 
  If the commands available for use in the algorithm do not meet your needs, you can add commands by adding a new task under org.apache.lucene.benchmark.byTask.tasks - you should extend the PerfTask abstract class. Make sure that your new task class name is suffixed by Task. Assume you added the class "WonderfulTask" - doing so also enables the command "Wonderful" to be used in the algorithm. 
 
- <u>External classes</u>: It is sometimes useful to invoke the benchmark package with your external alg file that configures the use of your own doc/query maker and or html parser. You can work this out without modifying the benchmark package code, by passing your class path with the benchmark.ext.classpath property: * ant run-task -Dtask.alg=[full-path-to-your-alg-file] <font color="#FF0000">-Dbenchmark.ext.classpath=/mydir/classes </font> -Dtask.mem=512M <u>External tasks</u>: When writing your own tasks under a package other than **org.apache.lucene.benchmark.byTask.tasks** specify that package thru the <font color="#FF0000">alt.tasks.packages</font> property. 
+ <u>External classes</u>: It is sometimes useful to invoke the benchmark package with your external alg file that configures the use of your own doc/query maker and or html parser. You can work this out without modifying the benchmark package code, by passing your class path with the benchmark.ext.classpath property: * ant run-task -Dtask.alg=[full-path-to-your-alg-file] <font color="#FF0000">-Dbenchmark.ext.classpath=/mydir/classes </font> -Dtask.mem=512M <u>External tasks</u>: When writing your own tasks under a package other than __org.apache.lucene.benchmark.byTask.tasks__ specify that package thru the <font color="#FF0000">alt.tasks.packages</font> property. 
 
 ## Benchmark "algorithm"
 
  The following is an informal description of the supported syntax. 
 
-1.  **Measuring**: When a command is executed, statistics for the elapsed
+1.  __Measuring__: When a command is executed, statistics for the elapsed
  execution time and memory consumption are collected.
  At any time, those statistics can be printed, using one of the
  available ReportTasks.
 
-2.  **Comments** start with '<font color="#FF0066">#</font>'.
+2.  __Comments__ start with '<font color="#FF0066">#</font>'.
 
-3.  **Serial** sequences are enclosed within '<font color="#FF0066">{ }</font>'.
+3.  __Serial__ sequences are enclosed within '<font color="#FF0066">{ }</font>'.
 
-4.  **Parallel** sequences are enclosed within
+4.  __Parallel__ sequences are enclosed within
  '<font color="#FF0066">[ ]</font>'
 
-5.  **Sequence naming:** To name a sequence, put
+5.  __Sequence naming:__ To name a sequence, put
  '<font color="#FF0066">"name"</font>' just after
  '<font color="#FF0066">{</font>' or '<font color="#FF0066">[</font>'.
 
@@ -112,7 +112,7 @@ Example - <font color="#FF0066">{ "ManyAdds" AddDoc } : 1000000</font> -
  If you don't specify a name for a sequence, it is given one: you can see it as
  the  algorithm is printed just before benchmark execution starts.
 
-6.  **Repeating**:
+6.  __Repeating__:
  To repeat sequence tasks N times, add '<font color="#FF0066">: N</font>' just
  after the
  sequence closing tag - '<font color="#FF0066">}</font>' or
@@ -130,7 +130,7 @@ Example -  <font color="#FF0066">{ AddDoc } : 30</font> - would do addDoc
 Example -  <font color="#FF0066">{ AddDoc AddDoc } : 30</font> - would do
  addDoc 60 times in a row.
 
-**Exhaustive repeating**: use <font color="#FF0066">*</font> instead of
+__Exhaustive repeating__: use <font color="#FF0066">*</font> instead of
  a number to repeat exhaustively.
  This is sometimes useful, for adding as many files as a doc maker can create,
  without iterating over the same file again, especially when the exact
@@ -141,32 +141,32 @@ Example -  <font color="#FF0066">{ AddDoc AddDoc } : 30</font> - would do
 Example -  <font color="#FF0066">{ AddDoc } : *</font>  - would add docs
  until the doc maker is "exhausted".
 
-7.  **Command parameter**: a command can optionally take a single parameter.
+7.  __Command parameter__: a command can optionally take a single parameter.
  If the certain command does not support a parameter, or if the parameter is of
  the wrong type,
  reading the algorithm will fail with an exception and the test would not start.
  Currently the following tasks take optional parameters:
 
-    *   **AddDoc** takes a numeric parameter, indicating the required size of
+    *   __AddDoc__ takes a numeric parameter, indicating the required size of
        added document. Note: if the DocMaker implementation used in the test
        does not support makeDoc(size), an exception would be thrown and the test
        would fail.
 
-    *   **DeleteDoc** takes numeric parameter, indicating the docid to be
+    *   __DeleteDoc__ takes numeric parameter, indicating the docid to be
        deleted. The latter is not very useful for loops, since the docid is
        fixed, so for deletion in loops it is better to use the
        `doc.delete.step` property.
 
-    *   **SetProp** takes a `name,value` mandatory param,
+    *   __SetProp__ takes a `name,value` mandatory param,
        ',' used as a separator.
 
-    *   **SearchTravRetTask** and **SearchTravTask** take a numeric
+    *   __SearchTravRetTask__ and __SearchTravTask__ take a numeric
               parameter, indicating the required traversal size.
 
-    *   **SearchTravRetLoadFieldSelectorTask** takes a string
+    *   __SearchTravRetLoadFieldSelectorTask__ takes a string
               parameter: a comma separated list of Fields to load.
 
-    *   **SearchTravRetHighlighterTask** takes a string
+    *   __SearchTravRetHighlighterTask__ takes a string
               parameter: a comma separated list of parameters to define highlighting.  See that
      tasks javadocs for more information
 
@@ -179,7 +179,7 @@ See conf/task-sample.alg for how this can be used, for instance, to check
  Next candidates for supporting a parameter may be the Search tasks,
  for controlling the query size.
 
-8.  **Statistic recording elimination**: - a sequence can also end with
+8.  __Statistic recording elimination__: - a sequence can also end with
  '<font color="#FF0066">></font>',
  in which case child tasks would not store their statistics.
  This can be useful to avoid exploding stats data, for adding say 1M docs.
@@ -194,7 +194,7 @@ Notice that the granularity of System.currentTimeMillis() (which is used
  Therefore it is sometimes more accurate to look at the elapsed time of a larger
  sequence, as demonstrated here.
 
-9.  **Rate**:
+9.  __Rate__:
  To set a rate (ops/sec or ops/min) for a sequence, add
  '<font color="#FF0066">: N : R</font>' just after sequence closing tag.
  This would specify repetition of N with rate of R operations/sec.
@@ -210,7 +210,7 @@ Example -  <font color="#FF0066">{ AddDoc } : 100 : 200/min</font> - would
  do 100 addDoc serially,
  waiting before starting next add, if otherwise rate would exceed 200 adds/min.
 
-10.  **Disable Counting**: Each task executed contributes to the records count.
+10.  __Disable Counting__: Each task executed contributes to the records count.
  This count is reflected in reports under recs/s and under recsPerRun.
  Most tasks count 1, some count 0, and some count more.
  (See [Results record counting clarified](#recscounting) for more details.)
@@ -219,7 +219,7 @@ Example -  <font color="#FF0066">{ AddDoc } : 100 : 200/min</font> - would
 Example -  <font color="#FF0066"> -CreateIndex </font> - would count 0 while
  the default behavior for CreateIndex is to count 1.
 
-11.  **Command names**: Each class "AnyNameTask" in the
+11.  __Command names__: Each class "AnyNameTask" in the
  package org.apache.lucene.benchmark.byTask.tasks,
  that extends PerfTask, is supported as command "AnyName" that can be
  used in the benchmark "algorithm" description.
@@ -229,7 +229,7 @@ Example -  <font color="#FF0066"> -CreateIndex </font> - would count 0 while
 
  Existing tasks can be divided into a few groups: regular index/search work tasks, report tasks, and control tasks. 
 
-1.  **Report tasks**: There are a few Report commands for generating reports.
+1.  __Report tasks__: There are a few Report commands for generating reports.
  Only task runs that were completed are reported.
  (The 'Report tasks' themselves are not measured and not reported.)
 
@@ -267,7 +267,7 @@ Example -  <font color="#FF0066"> -CreateIndex </font> - would count 0 while
  ReportTask, and by
  manipulating the statistics data in Points and TaskStats.
 
-2.  **Control tasks**: Few of the tasks control the benchmark algorithm
+2.  __Control tasks__: Few of the tasks control the benchmark algorithm
  all over:
 
     *   <font color="#FF0066">ClearStats</font> - clears the entire statistics.
@@ -356,8 +356,8 @@ An additional effect of NewRound, is that numeric and boolean
    1).
 
 	 <font color="#FF0066">WriteLineDoc</font> prepares a 'line'
-	 file where each line holds a document with *title*, 
-	 *date* and *body* elements, separated by [TAB].
+	 file where each line holds a document with _title_, 
+	 _date_ and _body_ elements, separated by [TAB].
 	 A line file is useful if one wants to measure pure indexing
 	 performance, without the overhead of parsing the data.  
 
@@ -382,7 +382,7 @@ An additional effect of NewRound, is that numeric and boolean
 2.  <font color="#FF0066">directory</font> - valid values are
     This tells which directory to use for the performance test.
 
-3.  **Index work parameters**:
+3.  __Index work parameters__:
     Multi int/boolean values would be iterated with calls to NewRound.
     There would be also added as columns in the reports, first string in the
     sequence is the column name.
@@ -402,10 +402,10 @@ Example: max.buffered=buf:10:10:100:100 -
 
  Here is a list of currently defined properties: 
 
-1.  **Root directory for data and indexes:**
+1.  __Root directory for data and indexes:__
 2.  *   work.dir (default is System property "benchmark.work.dir" or "work".)
 
-3.  **Docs and queries creation:**
+3.  __Docs and queries creation:__
 4.  *   analyzer
 
     *   doc.maker
@@ -436,7 +436,7 @@ Example: max.buffered=buf:10:10:100:100 -
 
     *   search.num.hits
 
-5.  **Logging**:
+5.  __Logging__:
 
     *   log.step
 
@@ -446,7 +446,7 @@ Example: max.buffered=buf:10:10:100:100 -
 
     *   task.max.depth.log
 
-6.  **Index writing**:
+6.  __Index writing__:
 
     *   compound
 
@@ -458,13 +458,13 @@ Example: max.buffered=buf:10:10:100:100 -
 
     *   ram.flush.mb
 
-7.  **Doc deletion**:
+7.  __Doc deletion__:
 
     *   doc.delete.step
 
-8.  **Spatial**: Numerous; see spatial.alg
+8.  __Spatial__: Numerous; see spatial.alg
 
-9.  **Task alternative packages**:
+9.  __Task alternative packages__:
 
     *   alt.tasks.packages
       - comma separated list of additional packages where tasks classes will be looked for
