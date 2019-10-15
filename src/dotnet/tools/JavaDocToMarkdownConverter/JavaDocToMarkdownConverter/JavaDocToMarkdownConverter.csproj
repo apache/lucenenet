@@ -60,10 +60,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Html2Markdown, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Html2Markdown.3.0.0.223\lib\netstandard1.4\Html2Markdown.dll</HintPath>
+      <HintPath>..\packages\Html2Markdown.3.2.1.341\lib\net45\Html2Markdown.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlAgilityPack.NetCore, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.NetCore.1.5.0.1\lib\net45\HtmlAgilityPack.NetCore.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.5.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.5.0\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
@@ -128,12 +128,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomMarkdownScheme.cs" />
+    <Compile Include="Formatters\CodeExtractor.cs" />
     <Compile Include="Formatters\CodeLinkReplacer.cs" />
     <Compile Include="DocConverter.cs" />
+    <Compile Include="Formatters\ConvertedDocument.cs" />
     <Compile Include="Formatters\DivWrapperReplacer.cs" />
     <Compile Include="Formatters\DocTypeReplacer.cs" />
     <Compile Include="Formatters\ExtraHtmlElementReplacer.cs" />
-    <Compile Include="Formatters\IReplacer.cs" />
     <Compile Include="Formatters\JavaDocFormatters.cs" />
     <Compile Include="Formatters\NamedAnchorLinkReplacer.cs" />
     <Compile Include="Formatters\PatternReplacer.cs" />

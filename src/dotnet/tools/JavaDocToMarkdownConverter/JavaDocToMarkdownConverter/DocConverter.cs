@@ -1,4 +1,21 @@
-﻿//using JavaDocToMarkdownConverter.MarkdownParsers;
+﻿/*
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements.  See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+using Html2Markdown;
 using JavaDocToMarkdownConverter.Formatters;
 using System;
 using System.Collections.Generic;
@@ -6,31 +23,19 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace JavaDocToMarkdownConverter
 {
 
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
     public class DocConverter
-    {   
+    {
+
+        public DocConverter()
+        {
+            _converter = new Converter(new CustomMarkdownScheme());
+        }
+
+        private readonly Converter _converter;
 
         /// <summary>
         /// 
@@ -72,8 +77,7 @@ namespace JavaDocToMarkdownConverter
                 return;
             }
 
-            var converter = new Html2Markdown.Converter();
-            var markdown = converter.ConvertFile(inputDoc);
+            var markdown = _converter.ConvertFile(inputDoc);
 
             var ns = ExtractNamespaceFromFile(outputFile);
             if (NamespaceFileMappings.TryGetValue(ns, out var realNs))
@@ -85,8 +89,12 @@ namespace JavaDocToMarkdownConverter
             }
             if (JavaDocFormatters.CustomReplacers.TryGetValue(ns, out var replacers))
             {
-                foreach(var r in replacers)
+                foreach (var r in replacers)
                     markdown = r.Replace(markdown);
+            }
+            if (JavaDocFormatters.CustomProcessors.TryGetValue(ns, out var processor))
+            {
+                processor(new ConvertedDocument(new FileInfo(inputDoc), new FileInfo(outputFile), ns, markdown));
             }
 
             var appendYamlHeader = ShouldAppendYamlHeader(inputDoc, ns);
@@ -108,7 +116,7 @@ namespace JavaDocToMarkdownConverter
             var fileName = Path.GetFileNameWithoutExtension(inputFile); //should be either "overview" or "package"
             if (string.Equals("overview", fileName, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (YamlHeadersForPackageFiles.Contains(ns, StringComparer.InvariantCultureIgnoreCase)) 
+                if (YamlHeadersForPackageFiles.Contains(ns, StringComparer.InvariantCultureIgnoreCase))
                     return false; //don't append yaml header for this overview file, it will be put on the package file
 
                 return true; //the default for 'overview' files
@@ -157,7 +165,7 @@ namespace JavaDocToMarkdownConverter
         /// Maps the file based namespace folders to the actual namespaces
         /// </summary>
         private static readonly Dictionary<string, string> NamespaceFileMappings = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase)
-        { 
+        {
             ["Lucene.Net.Memory"] = "Lucene.Net.Index.Memory",
             ["Lucene.Net.QueryParser.Classic"] = "Lucene.Net.QueryParsers.Classic",
             ["Lucene.Net.Document"] = "Lucene.Net.Documents",
@@ -173,7 +181,7 @@ namespace JavaDocToMarkdownConverter
             if (NamespaceFileMappings.TryGetValue(ns, out var realNs))
                 sb.AppendLine(realNs);
             else
-                sb.AppendLine(ns);            
+                sb.AppendLine(ns);
             sb.AppendLine("summary: *content");
             sb.AppendLine("---");
             sb.AppendLine();
@@ -192,7 +200,7 @@ namespace JavaDocToMarkdownConverter
             var folderParts = folder.Split(Path.DirectorySeparatorChar);
 
             var index = folderParts.Length - 1;
-            for(int i = index; i >= 0;i--)
+            for (int i = index; i >= 0; i--)
             {
                 if (folderParts[i].StartsWith("Lucene.Net", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -202,15 +210,15 @@ namespace JavaDocToMarkdownConverter
             }
 
             var nsParts = new List<string>();
-            for(var i = index;i< folderParts.Length;i++)
+            for (var i = index; i < folderParts.Length; i++)
             {
                 var innerParts = folderParts[i].Split('.');
-                foreach(var innerPart in innerParts)
+                foreach (var innerPart in innerParts)
                 {
                     nsParts.Add(innerPart);
                 }
             }
-                                    
+
             var textInfo = new CultureInfo("en-US", false).TextInfo;
             return string.Join(".", nsParts.Select(x => textInfo.ToTitleCase(x)).ToArray());
         }

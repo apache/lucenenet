@@ -17,13 +17,24 @@
  * under the License.
  */
 
+using System;
+using System.IO;
+
 namespace JavaDocToMarkdownConverter.Formatters
 {
-
-    //This is exposed in the newer version of Html2Markdown but the later versions don't parse correctly so we have 
-    //to remain on our current version and just do this ourselves. 
-    public interface IReplacer
+    public class ConvertedDocument
     {
-        string Replace(string html);
+        public ConvertedDocument(FileInfo inputFile, FileInfo outputFile, string @namespace, string markdown)
+        {
+            InputFile = inputFile ?? throw new ArgumentNullException(nameof(inputFile));
+            OutputFile = outputFile ?? throw new ArgumentNullException(nameof(outputFile));
+            Namespace = @namespace ?? throw new ArgumentNullException(nameof(@namespace));
+            Markdown = markdown ?? throw new ArgumentNullException(nameof(markdown));
+        }
+
+        public FileInfo InputFile { get; }
+        public FileInfo OutputFile { get; }
+        public string Namespace { get; }
+        public string Markdown { get; }
     }
 }
