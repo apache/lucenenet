@@ -60,7 +60,10 @@ PM> Install-Package Lucene.Net -Pre
 
 <!--- TO BE ADDED WHEN RELEASED 
 
-- [Lucene.Net.Analysis.UIMA](https://www.nuget.org/packages/Lucene.Net.Analysis.UIMA/) - Analysis integration with Apache UIMA)
+- [Lucene.Net.Analysis.OpenNLP](https://www.nuget.org/packages/Lucene.Net.Analysis.OpenNLP/) - OpenNLP Library Integration
+- [Lucene.Net.Analysis.Nori](https://www.nuget.org/packages/Lucene.Net.Analysis.Nori/) - Korean Morphological Analyzer
+- [Lucene.Net.Analysis.Morfologik](https://www.nuget.org/packages/Lucene.Net.Analysis.Morfologik/) - Analyzer for dictionary stemming, built-in Polish dictionary
+- [Lucene.Net.TestFramework](https://www.nuget.org/packages/Lucene.Net.TestFramework/) - Framework for testing Lucene-based applications
 
 -->
 

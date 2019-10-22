@@ -11,9 +11,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using AttributeFactory = Lucene.Net.Util.AttributeSource.AttributeFactory;
 using Assert = Lucene.Net.TestFramework.Assert;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Console = Lucene.Net.Support.SystemConsole;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
 {
@@ -139,7 +141,7 @@ namespace Lucene.Net.Analysis
         //     arriving to pos Y have the same endOffset)
         //   - offsets only move forwards (startOffset >=
         //     lastStartOffset)
-        public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, int? finalPosInc, bool[] keywordAtts, bool offsetsAreCorrect)
+        public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, int? finalPosInc, bool[] keywordAtts, bool offsetsAreCorrect, byte[][] payloads)
         {
             // LUCENENET: Bug fix: NUnit throws an exception when something fails. 
             // This causes Dispose() to be skipped and it pollutes other tests indicating false negatives.
@@ -192,6 +194,17 @@ namespace Lucene.Net.Analysis
                     keywordAtt = ts.GetAttribute<IKeywordAttribute>();
                 }
 
+                // *********** From Lucene 8.2.0 **************
+
+                IPayloadAttribute payloadAtt = null;
+                if (payloads != null)
+                {
+                    Assert.IsTrue(ts.HasAttribute<IPayloadAttribute>(), "has no PayloadAttribute");
+                    payloadAtt = ts.GetAttribute<IPayloadAttribute>();
+                }
+
+                // *********** End From Lucene 8.2.0 **************
+
                 // Maps position to the start/end offset:
                 IDictionary<int?, int?> posToStartOffset = new Dictionary<int?, int?>();
                 IDictionary<int?, int?> posToEndOffset = new Dictionary<int?, int?>();
@@ -224,6 +237,12 @@ namespace Lucene.Net.Analysis
                     {
                         keywordAtt.IsKeyword = (i & 1) == 0;
                     }
+                    // *********** From Lucene 8.2.0 **************
+                    if (payloadAtt != null)
+                    {
+                        payloadAtt.Payload = new BytesRef(new byte[] { 0x00, unchecked((byte)-0x21), 0x12, unchecked((byte)-0x43), 0x24 });
+                    }
+                    // *********** End From Lucene 8.2.0 **************
 
                     bool reset = checkClearAtt.GetAndResetClearCalled(); // reset it, because we called clearAttribute() before
                     Assert.IsTrue(ts.IncrementToken(), "token " + i + " does not exist");
@@ -254,6 +273,20 @@ namespace Lucene.Net.Analysis
                     {
                         Assert.AreEqual(keywordAtts[i], keywordAtt.IsKeyword, "keywordAtt " + i);
                     }
+                    // *********** From Lucene 8.2.0 **************
+                    if (payloads != null)
+                    {
+                        if (payloads[i] != null)
+                        {
+                            Assert.AreEqual(new BytesRef(payloads[i]), payloadAtt.Payload, "payloads " + i);
+                        }
+                        else
+                        {
+                            Assert.IsNull(payloads[i], "payloads " + i);
+                        }
+                    }
+                    // *********** End From Lucene 8.2.0 **************
+
 
                     // we can enforce some basic things about a few attributes even if the caller doesn't check:
                     if (offsetAtt != null)
@@ -394,7 +427,7 @@ namespace Lucene.Net.Analysis
 
         public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, bool[] keywordAtts, bool offsetsAreCorrect)
         {
-            AssertTokenStreamContents(ts, output, startOffsets, endOffsets, types, posIncrements, posLengths, finalOffset, null, null, offsetsAreCorrect);
+            AssertTokenStreamContents(ts, output, startOffsets, endOffsets, types, posIncrements, posLengths, finalOffset, null, null, offsetsAreCorrect, null);
         }
 
         public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, bool offsetsAreCorrect)
@@ -473,6 +506,13 @@ namespace Lucene.Net.Analysis
         {
             CheckResetException(a, input);
             AssertTokenStreamContents(a.GetTokenStream("dummy", new StringReader(input)), output, startOffsets, endOffsets, types, posIncrements, posLengths, input.Length, offsetsAreCorrect);
+        }
+
+        // LUCENENET: Overload from Lucene 8.2.0
+        public static void AssertAnalyzesTo(Analyzer a, string input, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, bool graphOffsetsAreCorrect, byte[][] payloads)
+        {
+            CheckResetException(a, input);
+            AssertTokenStreamContents(a.GetTokenStream("dummy", input), output, startOffsets, endOffsets, types, posIncrements, posLengths, input.Length, null, null, graphOffsetsAreCorrect, payloads);
         }
 
         public static void AssertAnalyzesTo(Analyzer a, string input, string[] output)
@@ -1266,5 +1306,41 @@ namespace Lucene.Net.Analysis
             }
             return ret;
         }
+
+        // *********** From Lucene 8.2.0 **************
+
+        /// <summary>Returns a random <see cref="AttributeFactory"/> impl</summary>
+        public static AttributeFactory NewAttributeFactory(Random random)
+        {
+            switch (random.nextInt(2))
+            {
+                case 0:
+                    return Token.TOKEN_ATTRIBUTE_FACTORY;
+                case 1:
+                    return AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY;
+                default:
+                    throw new AssertionError("Please fix the Random.nextInt() call above");
+            }
+
+            //switch (random.nextInt(3))
+            //{
+            //    case 0:
+            //        return TokenStream.DEFAULT_TOKEN_ATTRIBUTE_FACTORY;
+            //    case 1:
+            //        return Token.TOKEN_ATTRIBUTE_FACTORY;
+            //    case 2:
+            //        return AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY;
+            //    default:
+            //        throw new AssertionError("Please fix the Random.nextInt() call above");
+            //}
+        }
+
+        /// <summary>Returns a random <see cref="AttributeFactory"/> impl</summary>
+        public static AttributeFactory NewAttributeFactory()
+        {
+            return NewAttributeFactory(Random);
+        }
+
+        // *********** End From Lucene 8.2.0 **************
     }
 }

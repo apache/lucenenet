@@ -1,0 +1,71 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(SolutionDir)TestTargetFramework.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks></TargetFrameworks>
+    <TargetFramework>net451</TargetFramework>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+
+    <AssemblyTitle>Lucene.Net.Tests.Analysis.OpenNLP</AssemblyTitle>
+    <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <!-- OpenNLP is not strong-named -->
+  <PropertyGroup Label="Assembly Signing">
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="en-test-chunker.bin" />
+    <None Remove="en-test-lemmas.dict" />
+    <None Remove="en-test-lemmatizer.bin" />
+    <None Remove="en-test-ner.bin" />
+    <None Remove="en-test-pos-maxent.bin" />
+    <None Remove="en-test-sent.bin" />
+    <None Remove="en-test-tokenizer.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="en-test-chunker.bin" />
+    <EmbeddedResource Include="en-test-lemmas.dict" />
+    <EmbeddedResource Include="en-test-lemmatizer.bin" />
+    <EmbeddedResource Include="en-test-ner.bin" />
+    <EmbeddedResource Include="en-test-pos-maxent.bin" />
+    <EmbeddedResource Include="en-test-sent.bin" />
+    <EmbeddedResource Include="en-test-tokenizer.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.OpenNLP\Lucene.Net.Analysis.OpenNLP.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework.NUnit\Lucene.Net.TestFramework.NUnit.csproj" />
+  </ItemGroup>
+
+  <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD1_6</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+</Project>
