@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// An <see cref="AttributeFactory"/> creates instances of <see cref="Attribute"/>s.
         /// </summary>
-        public abstract class AttributeFactory
+        public abstract class AttributeFactory // LUCENENET TODO: API - de-nest
         {
             /// <summary>
             /// returns an <see cref="Attribute"/> for the supplied <see cref="IAttribute"/> interface.
