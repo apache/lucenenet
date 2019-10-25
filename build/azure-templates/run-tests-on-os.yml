@@ -161,7 +161,7 @@ steps:
                 Start-Sleep -Milliseconds 500
     
                 # Execute the jobs in parallel
-                Start-Job $scriptBlock -ArgumentList $testExpression
+                Start-Job -Name "$testName,$framework" -ScriptBlock $scriptBlock -ArgumentList $testExpression
             }
         }
     }
@@ -177,6 +177,12 @@ steps:
             if ($running.Count -gt 0) {
                 Write-Host ""
                 Write-Host "  Almost finished, only $($running.Count) projects left..." -ForegroundColor Cyan
+                [int]$number = 0
+                foreach ($runningJob in $running) {
+                    $number++
+                    $jobName = $runningJob | Select -ExpandProperty Name
+                    Write-Host "$number. $jobName"
+                }
                 $running | Wait-Job -Any
             }
         } until ($running.Count -eq 0)
