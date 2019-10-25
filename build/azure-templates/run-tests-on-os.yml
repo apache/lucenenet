@@ -30,6 +30,7 @@ parameters:
   publishedArtifactZipFileName: 'published.zip' # The name of the zip file (within the Azure DevOps build artifact binaryArtifactName) where the published test binaries can be extracted from. Default 'published.zip'.
   maximumParallelJobs: 8
   maximumAllowedFailures: 0
+  where: '' # A test filter expression, as defined by dotnet vstest
 
 steps:
 - powershell: |
@@ -75,6 +76,7 @@ steps:
     $testBinaryFilesPattern = '${{ parameters.testBinaryFilesPattern }}'
     $testResultsFileName = '${{ parameters.testResultsFileName }}'
     $maximumParalellJobs = '${{ parameters.maximumParallelJobs }}'
+    $where = '${{ parameters.where }}'
     $testTargetFrameworks = $testTargetFrameworksString.Split([char]',',[char]';')
     
     function SeparateVersionDigits([string]$digits) {
@@ -144,6 +146,10 @@ steps:
             $testExpression = "dotnet vstest ""$($testBinary.FullName)"" --Framework:""$fwork"" --Platform:""$testPlatform""" + `
                 " --logger:""console;verbosity=normal"" --logger:""trx;LogFileName=$testResultsFileName""" + `
                 " --ResultsDirectory:""$testResultDirectory"" --Blame"
+    
+            if (![string]::IsNullOrEmpty($where)) {
+                $testExpression = "$testExpression --TestCaseFilter:""$where"""
+            }
     
             Write-Host "Testing '$($testBinary.FullName)' on framework '$fwork' and outputting test results to '$testResultDirectory/$testResultsFileName'..."
             Write-Host $testExpression -ForegroundColor Magenta

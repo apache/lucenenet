@@ -230,7 +230,7 @@ stages:
       matrix:
         Windows:
           osName: 'Windows'
-          imageName: 'windows-2019'
+          imageName: 'vs2017-win2016'
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
@@ -252,8 +252,9 @@ stages:
         publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
         maximumParallelJobs: 7
         maximumAllowedFailures: $(maximumAllowedFailures)
+        where: 'TestCategory!=LongRunningTest' # Skip long running tests on .NET Core 1.1
 
-  - job: Test_net451
+  - job: Test_net451_Windows
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     displayName: 'Test net451 on Windows'
     pool:
