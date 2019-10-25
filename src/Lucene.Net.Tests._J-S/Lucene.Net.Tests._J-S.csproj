@@ -24,7 +24,7 @@
   <Import Project="$(SolutionDir)TestTargetFramework.props" />
   
   <PropertyGroup>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
 
     <AssemblyTitle>Lucene.Net.Tests._J-S</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
@@ -57,8 +57,6 @@
     <DefineConstants>$(DefineConstants);NETSTANDARD;FEATURE_CONCURRENTMERGESCHEDULER;FEATURE_SERIALIZABLE</DefineConstants>
     <DebugType>portable</DebugType>
   </PropertyGroup>
-  
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">
     <DefineConstants>$(DefineConstants);NETSTANDARD;NETSTANDARD1_6</DefineConstants>
@@ -70,7 +68,7 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">
     <Compile Remove="..\Lucene.Net.Tests\Support\TestCase.cs" />
   </ItemGroup>
 
