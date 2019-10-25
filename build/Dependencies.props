@@ -50,7 +50,6 @@
     <NewtonsoftJsonPackageVersion>10.0.3</NewtonsoftJsonPackageVersion>
     <NUnit3TestAdapterPackageVersion>3.13.0</NUnit3TestAdapterPackageVersion>
     <NUnitPackageVersion>3.9.0</NUnitPackageVersion>
-    <NUnitExtensionTeamCityEventListenerPackageVersion>1.0.6</NUnitExtensionTeamCityEventListenerPackageVersion>
     <SharpZipLibPackageVersion>1.1.0</SharpZipLibPackageVersion>
     <SharpZipLibNETStandardPackageVersion>0.86.0.1</SharpZipLibNETStandardPackageVersion>
     <Spatial4nCorePackageVersion>0.4.1</Spatial4nCorePackageVersion>
@@ -70,12 +69,10 @@
     <SystemReflectionEmitPackageVersion>4.3.0</SystemReflectionEmitPackageVersion>
     <SystemReflectionEmitILGenerationPackageVersion>4.3.0</SystemReflectionEmitILGenerationPackageVersion>
     <SystemReflectionTypeExtensionsPackageVersion>4.3.0</SystemReflectionTypeExtensionsPackageVersion>
-    <SystemRuntimeInteropServicesRuntimeInformationPackageVersion>4.3.0</SystemRuntimeInteropServicesRuntimeInformationPackageVersion>
     <SystemTextEncodingCodePagesPackageVersion>4.3.0</SystemTextEncodingCodePagesPackageVersion>
     <SystemThreadingThreadPackageVersion>4.3.0</SystemThreadingThreadPackageVersion>
     <SystemThreadingThreadPoolPackageVersion>4.3.0</SystemThreadingThreadPoolPackageVersion>
     <SystemXmlXmlDocumentPackageVersion>4.3.0</SystemXmlXmlDocumentPackageVersion>
-    <TeamCityVSTestTestAdapterPackageVersion>1.0.15</TeamCityVSTestTestAdapterPackageVersion>
     <XUnitPackageVersion>2.3.1</XUnitPackageVersion>
     <XUnitRunnerVisualStudioPackageVersion>$(XUnitPackageVersion)</XUnitRunnerVisualStudioPackageVersion>
   </PropertyGroup>
