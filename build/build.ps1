@@ -323,8 +323,8 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 			# doing release inspection and on the CI server.
 			$testExpression = "$testExpression --logger:""trx;LogFileName=TestResults.trx"""
 			
-			if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
-				$testExpression = "$testExpression --filter $where"
+			if (![string]::IsNullOrEmpty($where)) {
+				$testExpression = "$testExpression --TestCaseFilter:""$where"""
 			}
 
 			Write-Host $testExpression -ForegroundColor Magenta
