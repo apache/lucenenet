@@ -266,7 +266,7 @@ stages:
         testTargetFrameworks: 'net451'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
-        maximumParallelJobs: 7
+        maximumParallelJobs: 8
         maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
 
 
