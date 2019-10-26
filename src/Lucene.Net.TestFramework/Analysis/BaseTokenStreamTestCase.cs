@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public interface ICheckClearAttributesAttribute : IAttribute
     {
-        bool AndResetClearCalled { get; }
+        bool GetAndResetClearCalled();
     }
 
     /// <summary>
@@ -64,14 +64,11 @@ namespace Lucene.Net.Analysis
     {
         private bool clearCalled = false;
 
-        public bool AndResetClearCalled
+        public bool GetAndResetClearCalled()
         {
-            get
-            {
-                bool old = clearCalled;
-                clearCalled = false;
-                return old;
-            }
+            bool old = clearCalled;
+            clearCalled = false;
+            return old;
         }
 
         public override void Clear()
@@ -228,7 +225,7 @@ namespace Lucene.Net.Analysis
                         keywordAtt.IsKeyword = (i & 1) == 0;
                     }
 
-                    bool reset = checkClearAtt.AndResetClearCalled; // reset it, because we called clearAttribute() before
+                    bool reset = checkClearAtt.GetAndResetClearCalled(); // reset it, because we called clearAttribute() before
                     Assert.IsTrue(ts.IncrementToken(), "token " + i + " does not exist");
                     Assert.IsTrue(reset, "ClearAttributes() was not called correctly in TokenStream chain");
 
@@ -362,10 +359,10 @@ namespace Lucene.Net.Analysis
                     posLengthAtt.PositionLength = 45987653;
                 }
 
-                var reset_ = checkClearAtt.AndResetClearCalled; // reset it, because we called clearAttribute() before
+                var reset_ = checkClearAtt.GetAndResetClearCalled(); // reset it, because we called clearAttribute() before
 
                 ts.End();
-                Assert.IsTrue(checkClearAtt.AndResetClearCalled, "super.End()/ClearAttributes() was not called correctly in End()");
+                Assert.IsTrue(checkClearAtt.GetAndResetClearCalled(), "base.End()/ClearAttributes() was not called correctly in End()");
 
                 if (finalOffset != null)
                 {
