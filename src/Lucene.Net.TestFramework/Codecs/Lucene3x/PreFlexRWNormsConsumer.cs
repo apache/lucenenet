@@ -1,5 +1,6 @@
 using System;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
+using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -100,17 +101,17 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
-            throw new InvalidOperationException(); // LUCENENET TODO: This should be AssertionError (AssertionException)
+            throw new AssertionError();
         }
 
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
-            throw new InvalidOperationException(); // LUCENENET TODO: This should be AssertionError (AssertionException)
+            throw new AssertionError();
         }
 
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
-            throw new InvalidOperationException(); // LUCENENET TODO: This should be AssertionError (AssertionException)
+            throw new AssertionError();
         }
     }
 }
