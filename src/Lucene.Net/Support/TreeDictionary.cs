@@ -40,14 +40,14 @@ namespace Lucene.Net.Support
         /// Create a red-black tree dictionary using the natural comparer for keys.
         /// <exception cref="ArgumentException"/> if the key type K is not comparable.
         /// </summary>
-		public TreeDictionary(MemoryType memoryType = MemoryType.Normal) : this(SCG.Comparer<K>.Default, C5.EqualityComparer<K>.Default, memoryType) { }
+        public TreeDictionary(MemoryType memoryType = MemoryType.Normal) : this(SCG.Comparer<K>.Default, C5.EqualityComparer<K>.Default, memoryType) { }
 
         /// <summary>
         /// Create a red-black tree dictionary using an external comparer for keys.
         /// </summary>
         /// <param name="comparer">The external comparer</param>
-		/// <param name = "memoryType"></param>
-		public TreeDictionary(SCG.IComparer<K> comparer, MemoryType memoryType = MemoryType.Normal) : this(comparer, new ComparerZeroHashCodeEqualityComparer<K>(comparer)) { }
+        /// <param name = "memoryType"></param>
+        public TreeDictionary(SCG.IComparer<K> comparer, MemoryType memoryType = MemoryType.Normal) : this(comparer, new ComparerZeroHashCodeEqualityComparer<K>(comparer)) { }
 
         TreeDictionary(SCG.IComparer<K> comparer, SCG.IEqualityComparer<K> equalityComparer, MemoryType memoryType = MemoryType.Normal)
             : base(comparer, equalityComparer, memoryType)
