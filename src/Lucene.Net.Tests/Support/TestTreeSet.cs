@@ -2971,6 +2971,208 @@ namespace Lucene.Net.Support.RBTreeSet
                 dut = null;
             }
         }
+    }
 
+    [TestFixture]
+    public class SCGISet
+    {
+        private SCG.ISet<string> tree;
+
+        [SetUp]
+        public void Init()
+        {
+            tree = new TreeSet<string>(new SC())
+                {
+                    "A", "C", "E"
+                };
+        }
+
+        [TearDown]
+        public void Dispose()
+        {
+            tree = null;
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Add()
+        {
+            Assert.IsTrue(tree.Add("Z"));
+            Assert.AreEqual(4, tree.Count);
+            Assert.IsTrue(tree.Contains("Z"));
+            Assert.IsFalse(tree.Add("A"));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void ExceptWith()
+        {
+            tree.ExceptWith(new SCG.List<string> { "C", "E", "Z" });
+            Assert.AreEqual(1, tree.Count);
+            Assert.IsTrue(tree.Contains("A"));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void IntersectWith()
+        {
+            tree.IntersectWith(new SCG.List<string> { "C", "E", "Z" });
+            Assert.AreEqual(2, tree.Count);
+            Assert.IsTrue(tree.Contains("C"));
+            Assert.IsTrue(tree.Contains("E"));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void IsProperSubsetOf()
+        {
+            Assert.IsFalse(tree.IsProperSubsetOf(new SCG.List<string>()));
+            Assert.IsFalse(tree.IsProperSubsetOf(new SCG.List<string> { "C", "E", "A" }));
+            Assert.IsTrue(tree.IsProperSubsetOf(new SCG.List<string> { "C", "E", "A", "X" }));
+            Assert.IsFalse(tree.IsProperSubsetOf(new SCG.List<string> { "C", "Z" }));
+            tree.Clear();
+            Assert.IsTrue(tree.IsProperSubsetOf(new SCG.List<string> { "C", "A" }));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void IsProperSupersetOf()
+        {
+            Assert.IsTrue(tree.IsProperSupersetOf(new SCG.List<string>()));
+            Assert.IsFalse(tree.IsProperSupersetOf(new SCG.List<string> { "C", "E", "A" }));
+            Assert.IsTrue(tree.IsProperSupersetOf(new SCG.List<string> { "C", "A" }));
+            Assert.IsFalse(tree.IsProperSupersetOf(new SCG.List<string> { "C", "Z" }));
+            tree.Clear();
+            Assert.IsFalse(tree.IsProperSupersetOf(new SCG.List<string> { "C", "A" }));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void IsSubsetOf()
+        {
+            Assert.IsFalse(tree.IsSubsetOf(new SCG.List<string>()));
+            Assert.IsTrue(tree.IsSubsetOf(new SCG.List<string> { "C", "E", "A" }));
+            Assert.IsTrue(tree.IsSubsetOf(new SCG.List<string> { "C", "E", "A", "X" }));
+            Assert.IsFalse(tree.IsSubsetOf(new SCG.List<string> { "C", "Z" }));
+            Assert.IsFalse(tree.IsSubsetOf(new SCG.List<string> { "C", "A", "Z" }));
+            tree.Clear();
+            Assert.IsTrue(tree.IsSubsetOf(new SCG.List<string> { "C", "A" }));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void IsSupersetOf()
+        {
+            Assert.IsTrue(tree.IsSupersetOf(new SCG.List<string>()));
+            Assert.IsTrue(tree.IsSupersetOf(new SCG.List<string> { "C", "E", "A" }));
+            Assert.IsFalse(tree.IsSupersetOf(new SCG.List<string> { "C", "E", "A", "X" }));
+            Assert.IsFalse(tree.IsSupersetOf(new SCG.List<string> { "C", "Z" }));
+            Assert.IsTrue(tree.IsSupersetOf(new SCG.List<string> { "C", "A" }));
+            tree.Clear();
+            Assert.IsFalse(tree.IsSupersetOf(new SCG.List<string> { "C", "A" }));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Overlaps()
+        {
+            Assert.IsFalse(tree.Overlaps(new SCG.List<string>()));
+            Assert.IsTrue(tree.Overlaps(new SCG.List<string> { "C", "E", "A" }));
+            Assert.IsTrue(tree.Overlaps(new SCG.List<string> { "C", "E", "A", "X" }));
+            Assert.IsFalse(tree.Overlaps(new SCG.List<string> { "X", "Z" }));
+            Assert.IsTrue(tree.Overlaps(new SCG.List<string> { "C", "A" }));
+            tree.Clear();
+            Assert.IsFalse(tree.Overlaps(new SCG.List<string> { "C", "A" }));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void SetEquals()
+        {
+            Assert.IsFalse(tree.SetEquals(new SCG.List<string>()));
+            Assert.IsTrue(tree.SetEquals(new SCG.List<string> { "C", "E", "A" }));
+            Assert.IsFalse(tree.SetEquals(new SCG.List<string> { "C", "E", "A", "X" }));
+            Assert.IsFalse(tree.SetEquals(new SCG.List<string> { "X", "Z" }));
+            Assert.IsFalse(tree.SetEquals(new SCG.List<string> { "C", "A" }));
+            tree.Clear();
+            Assert.IsFalse(tree.SetEquals(new SCG.List<string> { "C", "A" }));
+            Assert.IsTrue(tree.SetEquals(new SCG.List<string>()));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void SymmetricExceptWith()
+        {
+            tree.SymmetricExceptWith(new SCG.List<string>());
+            Assert.AreEqual(3, tree.Count);
+            tree.SymmetricExceptWith(new SCG.List<string> { "C", "E", "R", "X" });
+            Assert.AreEqual(3, tree.Count);
+            Assert.IsTrue(tree.SetEquals(new SCG.List<string> { "A", "R", "X" }));
+            tree.SymmetricExceptWith(new SCG.List<string>(new SCG.List<string> { "A", "R", "X" }));
+            Assert.AreEqual(0, tree.Count);
+
+            tree.Clear();
+            tree.SymmetricExceptWith(new SCG.List<string> { "C", "E", "A" });
+            Assert.IsTrue(tree.SetEquals(new SCG.List<string> { "C", "E", "A" }));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void UnionWith()
+        {
+            tree.UnionWith(new SCG.List<string>());
+            Assert.AreEqual(3, tree.Count);
+            tree.UnionWith(new SCG.List<string> { "C", "E", "R", "X" });
+            Assert.AreEqual(5, tree.Count);
+            Assert.IsTrue(tree.SetEquals(new SCG.List<string> { "A", "C", "E", "R", "X" }));
+            tree.UnionWith(new SCG.List<string>(new SCG.List<string> { "A", "R", "X" }));
+            Assert.AreEqual(5, tree.Count);
+            Assert.IsTrue(tree.SetEquals(new SCG.List<string> { "A", "C", "E", "R", "X" }));
+
+            tree.Clear();
+            tree.UnionWith(new SCG.List<string> { "C", "E", "A" });
+            Assert.IsTrue(tree.SetEquals(new SCG.List<string> { "C", "E", "A" }));
+        }
+
+        // ICollection<T> members
+        [Test, LuceneNetSpecific]
+        public void Clear()
+        {
+            Assert.AreEqual(3, tree.Count);
+            tree.Clear();
+            Assert.AreEqual(0, tree.Count);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Contains()
+        {
+            Assert.IsTrue(tree.Contains("A"));
+            Assert.IsFalse(tree.Contains("Z"));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void CopyTo()
+        {
+            var values = new string[tree.Count + 2];
+            tree.CopyTo(values, 1);
+            Assert.AreEqual(null, values[0]);
+            Assert.AreEqual("A", values[1]);
+            Assert.AreEqual("C", values[2]);
+            Assert.AreEqual("E", values[3]);
+            Assert.AreEqual(null, values[4]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Remove()
+        {
+            Assert.AreEqual(3, tree.Count);
+            Assert.IsTrue(tree.Remove("A"));
+            Assert.AreEqual(2, tree.Count);
+            Assert.IsFalse(tree.Remove("A"));
+            Assert.AreEqual(2, tree.Count);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Count()
+        {
+            Assert.AreEqual(3, tree.Count);
+            tree.Add("Foo");
+            Assert.AreEqual(4, tree.Count);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void IsReadOnly()
+        {
+            Assert.AreEqual(false, tree.IsReadOnly);
+        }
     }
 }
