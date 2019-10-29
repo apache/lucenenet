@@ -580,25 +580,13 @@ namespace Lucene.Net.Support
             // if other is empty, intersection is empty set; remove all elements and we're done
             // can only figure this out if implements ICollection<T>. (IEnumerable<T> has no count)
             var otherAsCollection = other as SCG.ICollection<T>;
-            if (otherAsCollection != null)
+            if (otherAsCollection != null && otherAsCollection.Count == 0)
             {
-                if (otherAsCollection.Count == 0)
-                {
-                    Clear();
-                    return;
-                }
-
-                var otherAsSet = other as TreeSet<T>;
-                // faster if other is a hashset using same equality comparer; so check 
-                // that other is a hashset using the same equality comparer.
-                if (otherAsSet != null && AreEqualityComparersEqual(this, otherAsSet))
-                {
-                    IntersectWithHashSetWithSameEC(otherAsSet);
-                    return;
-                }
+                Clear();
+                return;
             }
 
-            IntersectWithEnumerable(other);
+            RetainAll(other);
         }
 
         /// <summary>
@@ -610,7 +598,7 @@ namespace Lucene.Net.Support
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
 
-            // this is already the enpty set; return
+            // this is already the empty set; return
             if (this.size == 0)
                 return;
 
@@ -621,11 +609,7 @@ namespace Lucene.Net.Support
                 return;
             }
 
-            // remove every element in other from this
-            foreach (T element in other)
-            {
-                Remove(element);
-            }
+            RemoveAll(other);
         }
 
         /// <summary>
@@ -939,44 +923,6 @@ namespace Lucene.Net.Support
         private static bool AreEqualityComparersEqual(TreeSet<T> set1, TreeSet<T> set2)
         {
             return set1.Comparer.Equals(set2.Comparer);
-        }
-
-        /// <summary>
-        /// If other is a hashset that uses same equality comparer, intersect is much faster 
-        /// because we can use other's Contains
-        /// </summary>
-        /// <param name="other"></param>
-        private void IntersectWithHashSetWithSameEC(TreeSet<T> other)
-        {
-            foreach (var item in this)
-            {
-                if (!other.Contains(item))
-                {
-                    Remove(item);
-                }
-            }
-        }
-
-        private void IntersectWithEnumerable(SCG.IEnumerable<T> other)
-        {
-            // keep track of current last index; don't want to move past the end of our bit array
-            // (could happen if another thread is modifying the collection)
-            int originalLastIndex = this.size;
-            var bitArray = new System.Collections.BitArray(originalLastIndex, false);
-
-            foreach (var item in other)
-            {
-                int index = IndexOf(item);
-                if (index >= 0)
-                    bitArray.Set(index, true);
-            }
-
-            // if anything unmarked, remove it.
-            for (int i = originalLastIndex - 1; i >= 0; i--)
-            {
-                if (!bitArray.Get(i))
-                    RemoveAt(i);
-            }
         }
 
         /// <summary>
