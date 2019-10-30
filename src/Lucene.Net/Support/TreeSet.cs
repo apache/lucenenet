@@ -228,7 +228,7 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <exception cref="NotComparableException">If <code>T</code> is not comparable.
         /// </exception>
-		public TreeSet(MemoryType memoryType = MemoryType.Normal) : this(SCG.Comparer<T>.Default, C5.EqualityComparer<T>.Default, memoryType) { }
+        public TreeSet(MemoryType memoryType = MemoryType.Normal) : this(SCG.Comparer<T>.Default, C5.EqualityComparer<T>.Default, memoryType) { }
 
 
         /// <summary>
@@ -242,8 +242,8 @@ namespace Lucene.Net.Support
         /// </para>
         /// </summary>
         /// <param name="comparer">The external comparer</param>
-		/// <param name = "memoryType"></param>
-		public TreeSet(SCG.IComparer<T> comparer, MemoryType memoryType = MemoryType.Normal) : this(comparer, new ComparerZeroHashCodeEqualityComparer<T>(comparer)) { }
+        /// <param name = "memoryType"></param>
+        public TreeSet(SCG.IComparer<T> comparer, MemoryType memoryType = MemoryType.Normal) : this(comparer, new ComparerZeroHashCodeEqualityComparer<T>(comparer)) { }
 
         /// <summary>
         /// Create a red-black tree collection with an external comparer and an external
@@ -251,8 +251,8 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="comparer">The external comparer</param>
         /// <param name="equalityComparer">The external item equalitySCG.Comparer</param>
-		/// <param name = "memoryType"></param>
-		public TreeSet(SCG.IComparer<T> comparer, SCG.IEqualityComparer<T> equalityComparer, MemoryType memoryType = MemoryType.Normal)
+        /// <param name = "memoryType"></param>
+        public TreeSet(SCG.IComparer<T> comparer, SCG.IEqualityComparer<T> equalityComparer, MemoryType memoryType = MemoryType.Normal)
             : base(equalityComparer, memoryType)
         {
             if (comparer == null)
