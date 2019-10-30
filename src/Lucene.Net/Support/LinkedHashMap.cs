@@ -54,7 +54,7 @@ namespace Lucene.Net.Support
     /// <list type="bullet">
     ///     <item><description><see cref="LinkedHashMap{TKey, TValue}"/> - use when you need to preserve entry insertion order. Keys are nullable.</description></item>
     ///     <item><description><see cref="SortedDictionary{TKey, TValue}"/> - use when you need natural sort order. Keys must be unique.</description></item>
-    ///     <item><description><see cref="TreeDictionary{K, V}"/> - use when you need natural sort order. Keys may contain duplicates.</description></item>
+    ///     <item><description><see cref="TreeDictionary{K, V}"/> - use when you need natural sort order. Keys are nullable.</description></item>
     ///     <item><description><see cref="LurchTable{TKey, TValue}"/> - use when you need to sort by most recent access or most recent update. Works well for LRU caching.</description></item>
     /// </list>
     /// </remarks>
