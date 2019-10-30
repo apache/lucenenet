@@ -1,4 +1,6 @@
 using Lucene.Net.Support;
+using Lucene.Net.Support.C5Compatibility;
+using System.Collections.Generic;
 using System.IO;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
@@ -100,10 +102,9 @@ namespace Lucene.Net.Analysis
 
         protected override int Correct(int currentOff)
         {
-            Support.C5.KeyValuePair<int, int> lastEntry;
             int ret;
             // LUCENENET NOTE: TryPredecessor is equivalent to TreeMap.lowerEntry() in Java
-            if (corrections.TryPredecessor(currentOff + 1, out lastEntry))
+            if (corrections.TryPredecessor(currentOff + 1, out KeyValuePair<int, int> lastEntry))
             {
                 ret = currentOff + lastEntry.Value;
             }
