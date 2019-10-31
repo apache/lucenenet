@@ -389,7 +389,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
             IndexReader reader = searcher.IndexReader;
             Query rewritten = Rewrite(query);
-            SortedSet<Term> queryTerms = new SortedSet<Term>();//new TreeSet<>();
+            TreeSet<Term> queryTerms = new TreeSet<Term>();
             rewritten.ExtractTerms(queryTerms);
 
             IndexReaderContext readerContext = reader.Context;
@@ -417,7 +417,10 @@ namespace Lucene.Net.Search.PostingsHighlight
                 int numPassages = maxPassages[i];
                 Term floor = new Term(field, "");
                 Term ceiling = new Term(field, UnicodeUtil.BIG_TERM);
-                SortedSet<Term> fieldTerms = queryTerms.GetViewBetween(floor, ceiling); //SubSet(floor, ceiling);
+                // LUCENENET NOTE: System.Collections.Generic.SortedSet<T>.GetViewBetween ceiling is inclusive.
+                // However, in Java, subSet ceiling is exclusive. Also,
+                // SortedSet<T> doesn't seem to have the correct logic, but C5.TreeSet<T> does.
+                var fieldTerms = queryTerms.RangeFromTo(floor, ceiling); //SubSet(floor, ceiling);
                 // TODO: should we have some reasonable defaults for term pruning? (e.g. stopwords)
 
                 // Strip off the redundant field:
