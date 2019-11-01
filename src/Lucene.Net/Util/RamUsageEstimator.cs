@@ -42,15 +42,15 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// One kilobyte bytes. </summary>
-        public static readonly long ONE_KB = 1024;
+        public const long ONE_KB = 1024;
 
         /// <summary>
         /// One megabyte bytes. </summary>
-        public static readonly long ONE_MB = ONE_KB * ONE_KB;
+        public const long ONE_MB = ONE_KB * ONE_KB;
 
         /// <summary>
         /// One gigabyte bytes. </summary>
-        public static readonly long ONE_GB = ONE_KB * ONE_MB;
+        public const long ONE_GB = ONE_KB * ONE_MB;
 
         /// <summary>
         /// No instantiation. </summary>
@@ -552,8 +552,7 @@ namespace Lucene.Net.Util
                      */
                     try
                     {
-                        ClassCache cachedInfo = classCache[obClazz];
-                        if (cachedInfo == null)
+                        if (!classCache.TryGetValue(obClazz, out ClassCache cachedInfo) || cachedInfo == null)
                         {
                             classCache[obClazz] = cachedInfo = CreateCacheEntry(obClazz);
                         }
@@ -631,7 +630,11 @@ namespace Lucene.Net.Util
         private static long AdjustForField(long sizeSoFar, FieldInfo f)
         {
             Type type = f.FieldType;
-            int fsize = type.GetTypeInfo().IsPrimitive ? primitiveSizes[type] : NUM_BYTES_OBJECT_REF;
+            int fsize = 0;
+            
+            if (!typeof(IntPtr).Equals(type) && !typeof(UIntPtr).Equals(type))
+                fsize = type.GetTypeInfo().IsPrimitive ? primitiveSizes[type] : NUM_BYTES_OBJECT_REF;
+
             // LUCENENET NOTE: I dont think this will ever not be null
             //if (ObjectFieldOffsetMethod != null)
             //{
@@ -691,6 +694,15 @@ namespace Lucene.Net.Util
         public static string HumanSizeOf(object @object)
         {
             return HumanReadableUnits(SizeOf(@object));
+        }
+
+        /// <summary>
+        /// Return a human-readable size of a given object. </summary>
+        /// <seealso cref="SizeOf(object)"/>
+        /// <seealso cref="HumanReadableUnits(long)"/>
+        public static string HumanSizeOf(object @object, IFormatProvider df)
+        {
+            return HumanReadableUnits(SizeOf(@object), df);
         }
 
         /// <summary>

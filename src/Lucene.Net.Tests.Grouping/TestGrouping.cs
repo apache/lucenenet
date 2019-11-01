@@ -588,8 +588,7 @@ namespace Lucene.Net.Search.Grouping
                     }
                 }
 
-                List<GroupDoc> l = groups[d.group];
-                if (l == null)
+                if (!groups.TryGetValue(d.group, out List<GroupDoc> l) || l == null)
                 {
                     //Console.WriteLine("    add sortedGroup=" + groupToString(d.group));
                     sortedGroups.Add(d.group);

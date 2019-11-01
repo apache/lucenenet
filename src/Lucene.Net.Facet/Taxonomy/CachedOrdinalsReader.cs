@@ -77,8 +77,7 @@ namespace Lucene.Net.Facet.Taxonomy
             lock (this)
             {
                 object cacheKey = context.Reader.CoreCacheKey;
-                CachedOrds ords = ordsCache[cacheKey];
-                if (ords == null)
+                if (!ordsCache.TryGetValue(cacheKey, out CachedOrds ords) || ords == null)
                 {
                     ords = new CachedOrds(source.GetReader(context), context.Reader.MaxDoc);
                     ordsCache[cacheKey] = ords;

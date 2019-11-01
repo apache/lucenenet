@@ -116,7 +116,7 @@ namespace Lucene.Net.Support
         {
             var dict = GetDefaultHashMap1();
             Assert.IsFalse(dict.ContainsKey(null));
-            Assert.IsNull(dict[null]);
+            Assert.IsFalse(dict.TryGetValue(null, out _));
 
             dict.Add(null, "value");
             Assert.IsTrue(dict.ContainsKey(null));
@@ -151,35 +151,41 @@ namespace Lucene.Net.Support
             Assert.AreEqual(2, dict.Count);
         }
 
-        [Test, LuceneNetSpecific]
-        public virtual void TestGetWithNonExistantKey_EmptyCollection()
-        {
-            var dict = GetNewHashMap<string, string>();
-            Assert.IsNull(dict["nothing"]);
-            Assert.IsNull(dict[null]);
-        }
+        // LUCENENET NOTE: The original "java like" functionality was replaced with a standard
+        // dictionary that accepts null keys. The following tests will not pass because we should be
+        // using TryGetValue and ContainsKey to test whether a value exists. The problem with this
+        // approach is that it does not support value types and also does not distinguish between
+        // a null value in a KeyValuePair or a missing KeyValuePair.
 
-        [Test, LuceneNetSpecific]
-        public virtual void TestGetWithNonExistantKey()
-        {
-            var dict = GetDefaultHashMap1();
-            Assert.IsNull(dict["nothing"]);
-            Assert.IsNull(dict[null]);
-        }
+        //[Test, LuceneNetSpecific]
+        //public virtual void TestGetWithNonExistantKey_EmptyCollection()
+        //{
+        //    var dict = GetNewHashMap<string, string>();
+        //    Assert.IsNull(dict["nothing"]);
+        //    Assert.IsNull(dict[null]);
+        //}
 
-        [Test, LuceneNetSpecific]
-        public virtual void TestAddsUpdate_NotThrowException()
-        {
-            var dict = GetNewHashMap<string, string>();
+        //[Test, LuceneNetSpecific]
+        //public virtual void TestGetWithNonExistantKey()
+        //{
+        //    var dict = GetDefaultHashMap1();
+        //    Assert.IsNull(dict["nothing"]);
+        //    Assert.IsNull(dict[null]);
+        //}
 
-            dict.Add("key1", "value1");
-            Assert.AreEqual("value1", dict["key1"]);
-            Assert.AreEqual(1, dict.Count);
+        //[Test, LuceneNetSpecific]
+        //public virtual void TestAddsUpdate_NotThrowException()
+        //{
+        //    var dict = GetNewHashMap<string, string>();
 
-            dict.Add("key1", "value2");
-            Assert.AreEqual("value2", dict["key1"], "Value was not updated by Add!");
-            Assert.AreEqual(1, dict.Count);
-        }
+        //    dict.Add("key1", "value1");
+        //    Assert.AreEqual("value1", dict["key1"]);
+        //    Assert.AreEqual(1, dict.Count);
+
+        //    dict.Add("key1", "value2");
+        //    Assert.AreEqual("value2", dict["key1"], "Value was not updated by Add!");
+        //    Assert.AreEqual(1, dict.Count);
+        //}
 
         [Test, LuceneNetSpecific]
         public virtual void TestIndexersUpdate_NotThrowException()

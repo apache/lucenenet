@@ -274,8 +274,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         private static Util.Automaton.State Convert(State s, IdentityHashMap<State, Lucene.Net.Util.Automaton.State> visited)
         {
-            Util.Automaton.State converted = visited[s];
-            if (converted != null)
+            if (visited.TryGetValue(s, out Util.Automaton.State converted) && converted != null)
             {
                 return converted;
             }

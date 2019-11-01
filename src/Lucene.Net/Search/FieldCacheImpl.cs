@@ -229,8 +229,7 @@ namespace Lucene.Net.Search
                 object readerKey = reader.CoreCacheKey;
                 lock (readerCache)
                 {
-                    IDictionary<CacheKey, object> innerCache = readerCache[readerKey];
-                    if (innerCache == null)
+                    if (!readerCache.TryGetValue(readerKey, out IDictionary<CacheKey, object> innerCache) || innerCache == null)
                     {
                         // First time this reader is using FieldCache
                         innerCache = new Dictionary<CacheKey, object>();
@@ -241,8 +240,7 @@ namespace Lucene.Net.Search
                     // don't overwrite value variable with the null
                     // that will result when this if block succeeds; otherwise
                     // we won't have a value to put in the cache.
-                    object temp;
-                    if (!innerCache.TryGetValue(key, out temp))
+                    if (!innerCache.TryGetValue(key, out object temp))
                     {
                         innerCache[key] = value;
                     }

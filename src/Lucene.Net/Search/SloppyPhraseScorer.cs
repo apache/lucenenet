@@ -593,9 +593,10 @@ namespace Lucene.Net.Search
             {
                 FixedBitSet b = new FixedBitSet(tord.Count);
                 var ord = new int?();
-                foreach (var t in pp.terms.Where(t => (ord = tord[t]) != null))
+                foreach (var t in pp.terms)
                 {
-                    b.Set((int)ord);
+                    if (tord.TryGetValue(t, out ord) && ord != null)
+                        b.Set((int)ord);
                 }
                 bb.Add(b);
             }

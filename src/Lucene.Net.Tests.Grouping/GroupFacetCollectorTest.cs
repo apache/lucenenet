@@ -809,8 +809,7 @@ namespace Lucene.Net.Search.Grouping
             // Only include null count when no facet prefix is specified
             if (facetPrefix == null)
             {
-                ISet<string> groups = facetGroups[null];
-                if (groups != null)
+                if (facetGroups.TryGetValue(null, out ISet<string> groups) && groups != null)
                 {
                     totalMissCount = groups.size();
                 }

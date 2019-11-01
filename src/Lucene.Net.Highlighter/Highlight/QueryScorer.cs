@@ -114,9 +114,8 @@ namespace Lucene.Net.Search.Highlight
 
             foreach (WeightedSpanTerm t in weightedTerms)
             {
-                WeightedSpanTerm existingTerm = fieldWeightedSpanTerms[t.Term];
-
-                if ((existingTerm == null) ||
+                if (!fieldWeightedSpanTerms.TryGetValue(t.Term, out WeightedSpanTerm existingTerm) ||
+                    (existingTerm == null) ||
                     (existingTerm.Weight < t.Weight))
                 {
                     // if a term is defined more than once, always use the highest

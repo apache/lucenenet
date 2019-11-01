@@ -313,13 +313,16 @@ namespace Lucene.Net.Search.VectorHighlight
         [Test]
         public void TestQueryPhraseMap1Term()
         {
+            // LUCENENET specific - altered some of the tests because
+            // dictionaries throw KeyNotFoundException rather than returning null.
+
             Query query = tq("a");
 
             // phraseHighlight = true, fieldMatch = true
             FieldQuery fq = new FieldQuery(query, true, true);
             IDictionary<String, QueryPhraseMap> map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[null]);
+            assertFalse(map.TryGetValue(null, out _)); // assertNull(map[null]);
             assertNotNull(map[F]);
             QueryPhraseMap qpm = map[F];
             assertEquals(1, qpm.subMap.size());
@@ -331,7 +334,7 @@ namespace Lucene.Net.Search.VectorHighlight
             fq = new FieldQuery(query, true, false);
             map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[F]);
+            assertFalse(map.TryGetValue(F, out _)); // assertNull(map[F]);
             assertNotNull(map[null]);
             qpm = map[null];
             assertEquals(1, qpm.subMap.size());
@@ -343,7 +346,7 @@ namespace Lucene.Net.Search.VectorHighlight
             fq = new FieldQuery(query, false, true);
             map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[null]);
+            assertFalse(map.TryGetValue(null, out _)); // assertNull(map[null]);
             assertNotNull(map[F]);
             qpm = map[F];
             assertEquals(1, qpm.subMap.size());
@@ -355,7 +358,7 @@ namespace Lucene.Net.Search.VectorHighlight
             fq = new FieldQuery(query, false, false);
             map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[F]);
+            assertFalse(map.TryGetValue(F, out _)); // assertNull(map[F]);
             assertNotNull(map[null]);
             qpm = map[null];
             assertEquals(1, qpm.subMap.size());
@@ -374,13 +377,16 @@ namespace Lucene.Net.Search.VectorHighlight
         [Test]
         public void TestQueryPhraseMap1Phrase()
         {
+            // LUCENENET specific - altered some of the tests because
+            // dictionaries throw KeyNotFoundException rather than returning null.
+
             Query query = pqF("a", "b");
 
             // phraseHighlight = true, fieldMatch = true
             FieldQuery fq = new FieldQuery(query, true, true);
             IDictionary<String, QueryPhraseMap> map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[null]);
+            assertFalse(map.TryGetValue(null, out _)); //assertNull(map[null]);
             assertNotNull(map[F]);
             QueryPhraseMap qpm = map[F];
             assertEquals(1, qpm.subMap.size());
@@ -397,7 +403,7 @@ namespace Lucene.Net.Search.VectorHighlight
             fq = new FieldQuery(query, true, false);
             map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[F]);
+            assertFalse(map.TryGetValue(F, out _)); //assertNull(map[F]);
             assertNotNull(map[null]);
             qpm = map[null];
             assertEquals(1, qpm.subMap.size());
@@ -414,7 +420,7 @@ namespace Lucene.Net.Search.VectorHighlight
             fq = new FieldQuery(query, false, true);
             map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[null]);
+            assertFalse(map.TryGetValue(null, out _)); // assertNull(map[null]);
             assertNotNull(map[F]);
             qpm = map[F];
             assertEquals(2, qpm.subMap.size());
@@ -437,7 +443,7 @@ namespace Lucene.Net.Search.VectorHighlight
             fq = new FieldQuery(query, false, false);
             map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[F]);
+            assertFalse(map.TryGetValue(F, out _)); // assertNull(map[F]);
             assertNotNull(map[null]);
             qpm = map[null];
             assertEquals(2, qpm.subMap.size());
@@ -473,13 +479,16 @@ namespace Lucene.Net.Search.VectorHighlight
         [Test]
         public void TestQueryPhraseMap1PhraseAnother()
         {
+            // LUCENENET specific - altered some of the tests because
+            // dictionaries throw KeyNotFoundException rather than returning null.
+
             Query query = pqF("search", "engines");
 
             // phraseHighlight = true, fieldMatch = true
             FieldQuery fq = new FieldQuery(query, true, true);
             IDictionary<String, QueryPhraseMap> map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[null]);
+            assertFalse(map.TryGetValue(null, out _)); // assertNull(map[null]);
             assertNotNull(map[F]);
             QueryPhraseMap qpm = map[F];
             assertEquals(1, qpm.subMap.size());
@@ -496,6 +505,9 @@ namespace Lucene.Net.Search.VectorHighlight
         [Test]
         public void TestQueryPhraseMap2Phrases()
         {
+            // LUCENENET specific - altered some of the tests because
+            // dictionaries throw KeyNotFoundException rather than returning null.
+
             BooleanQuery query = new BooleanQuery();
             query.Add(pqF("a", "b"), Occur.SHOULD);
             query.Add(pqF(2, "c", "d"), Occur.SHOULD);
@@ -504,7 +516,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldQuery fq = new FieldQuery(query, true, true);
             IDictionary<String, QueryPhraseMap> map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[null]);
+            assertFalse(map.TryGetValue(null, out _)); // assertNull(map[null]);
             assertNotNull(map[F]);
             QueryPhraseMap qpm = map[F];
             assertEquals(2, qpm.subMap.size());
@@ -533,6 +545,9 @@ namespace Lucene.Net.Search.VectorHighlight
         [Test]
         public void TestQueryPhraseMap2PhrasesFields()
         {
+            // LUCENENET specific - altered some of the tests because
+            // dictionaries throw KeyNotFoundException rather than returning null.
+
             BooleanQuery query = new BooleanQuery();
             query.Add(pq(F1, "a", "b"), Occur.SHOULD);
             query.Add(pq(2F, F2, "c", "d"), Occur.SHOULD);
@@ -541,7 +556,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldQuery fq = new FieldQuery(query, true, true);
             IDictionary<String, QueryPhraseMap> map = fq.rootMaps;
             assertEquals(2, map.size());
-            assertNull(map[null]);
+            assertFalse(map.TryGetValue(null, out _)); // assertNull(map[null]);
 
             // "a b"
             assertNotNull(map[F1]);
@@ -573,8 +588,8 @@ namespace Lucene.Net.Search.VectorHighlight
             fq = new FieldQuery(query, true, false);
             map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[F1]);
-            assertNull(map[F2]);
+            assertFalse(map.TryGetValue(F1, out _)); // assertNull(map[F1]);
+            assertFalse(map.TryGetValue(F2, out _)); // assertNull(map[F2]);
             assertNotNull(map[null]);
             qpm = map[null];
             assertEquals(2, qpm.subMap.size());
@@ -611,6 +626,9 @@ namespace Lucene.Net.Search.VectorHighlight
         [Test]
         public void TestQueryPhraseMapOverlapPhrases()
         {
+            // LUCENENET specific - altered some of the tests because
+            // dictionaries throw KeyNotFoundException rather than returning null.
+
             BooleanQuery query = new BooleanQuery();
             query.Add(pqF("a", "b", "c"), Occur.SHOULD);
             query.Add(pqF(2, "b", "c", "d"), Occur.SHOULD);
@@ -620,7 +638,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldQuery fq = new FieldQuery(query, true, true);
             IDictionary<String, QueryPhraseMap> map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[null]);
+            assertFalse(map.TryGetValue(null, out _)); // assertNull(map[null]);
             assertNotNull(map[F]);
             QueryPhraseMap qpm = map[F];
             assertEquals(2, qpm.subMap.size());
@@ -671,6 +689,9 @@ namespace Lucene.Net.Search.VectorHighlight
         [Test]
         public void TestQueryPhraseMapOverlapPhrases2()
         {
+            // LUCENENET specific - altered some of the tests because
+            // dictionaries throw KeyNotFoundException rather than returning null.
+
             BooleanQuery query = new BooleanQuery();
             query.Add(pqF("a", "b"), Occur.SHOULD);
             query.Add(pqF(2, "a", "b", "c"), Occur.SHOULD);
@@ -679,7 +700,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldQuery fq = new FieldQuery(query, true, true);
             IDictionary<String, QueryPhraseMap> map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[null]);
+            assertFalse(map.TryGetValue(null, out _)); // assertNull(map[null]);
             assertNotNull(map[F]);
             QueryPhraseMap qpm = map[F];
             assertEquals(1, qpm.subMap.size());
@@ -713,6 +734,9 @@ namespace Lucene.Net.Search.VectorHighlight
         [Test]
         public void TestQueryPhraseMapOverlapPhrases3()
         {
+            // LUCENENET specific - altered some of the tests because
+            // dictionaries throw KeyNotFoundException rather than returning null.
+
             BooleanQuery query = new BooleanQuery();
             query.Add(pqF("a", "a", "a", "a"), Occur.SHOULD);
             query.Add(pqF(2, "a", "a", "a"), Occur.SHOULD);
@@ -721,7 +745,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldQuery fq = new FieldQuery(query, true, true);
             IDictionary<String, QueryPhraseMap> map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[null]);
+            assertFalse(map.TryGetValue(null, out _)); // assertNull(map[null]);
             assertNotNull(map[F]);
             QueryPhraseMap qpm = map[F];
             assertEquals(1, qpm.subMap.size());
@@ -761,6 +785,9 @@ namespace Lucene.Net.Search.VectorHighlight
         [Test]
         public void TestQueryPhraseMapOverlap2gram()
         {
+            // LUCENENET specific - altered some of the tests because
+            // dictionaries throw KeyNotFoundException rather than returning null.
+
             BooleanQuery query = new BooleanQuery();
             query.Add(toPhraseQuery(analyze("abc", F, analyzerB), F), Occur.MUST);
             query.Add(toPhraseQuery(analyze("bcd", F, analyzerB), F), Occur.MUST);
@@ -769,7 +796,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldQuery fq = new FieldQuery(query, true, true);
             IDictionary<String, QueryPhraseMap> map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[null]);
+            assertFalse(map.TryGetValue(null, out _)); // assertNull(map[null]);
             assertNotNull(map[F]);
             QueryPhraseMap qpm = map[F];
             assertEquals(2, qpm.subMap.size());
@@ -805,7 +832,7 @@ namespace Lucene.Net.Search.VectorHighlight
             fq = new FieldQuery(query, false, true);
             map = fq.rootMaps;
             assertEquals(1, map.size());
-            assertNull(map[null]);
+            assertFalse(map.TryGetValue(null, out _)); // assertNull(map[null]);
             assertNotNull(map[F]);
             qpm = map[F];
             assertEquals(3, qpm.subMap.size());
