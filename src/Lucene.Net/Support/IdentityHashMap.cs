@@ -19,20 +19,20 @@ namespace Lucene.Net.Support
 	 * limitations under the License.
 	 */
 
-    public class IdentityHashMap<TKey, TValue> : HashMap<TKey, TValue>
+    public class IdentityHashMap<TKey, TValue> : HashMap<TKey, TValue> where TKey : class
     {
         public IdentityHashMap()
-            : base(new IdentityComparer<TKey>())
+            : base(IdentityComparer<TKey>.Default)
         {
         }
 
         public IdentityHashMap(int initialCapacity)
-            : base(initialCapacity, new IdentityComparer<TKey>())
+            : base(initialCapacity, IdentityComparer<TKey>.Default)
         {
         }
 
         public IdentityHashMap(IDictionary<TKey, TValue> wrappedDictionary)
-            : base(wrappedDictionary, new IdentityComparer<TKey>())
+            : base(wrappedDictionary, IdentityComparer<TKey>.Default)
         {
         }
     }
