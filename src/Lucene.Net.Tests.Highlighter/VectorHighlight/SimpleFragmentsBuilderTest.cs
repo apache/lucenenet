@@ -8,6 +8,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using OpenMode = Lucene.Net.Index.OpenMode;
 
@@ -236,8 +237,7 @@ namespace Lucene.Net.Search.VectorHighlight
         [Test]
         public void TestRandomDiscreteMultiValueHighlighting()
         {
-            String[]
-            randomValues = new String[3 + Random.nextInt(10 * RANDOM_MULTIPLIER)];
+            String[] randomValues = new String[3 + Random.nextInt(10 * RANDOM_MULTIPLIER)];
             for (int i = 0; i < randomValues.Length; i++)
             {
                 String randomValue;
@@ -278,9 +278,9 @@ namespace Lucene.Net.Search.VectorHighlight
                     for (int k = 1; k < numTerms; k++)
                     {
                         fieldValues[k] = getRandomValue(randomValues, valueToDocId, i);
-                        builder.append(' ').append(fieldValues[k]);
+                        builder.Append(' ').Append(fieldValues[k]);
                     }
-                    document.Add(new Field(F, builder.toString(), customType));
+                    document.Add(new Field(F, builder.ToString(), customType));
                     fields[j] = fieldValues;
                 }
                 docs.Add(new Doc(fields));
@@ -295,10 +295,10 @@ namespace Lucene.Net.Search.VectorHighlight
                 int highlightIters = 1 + Random.nextInt(120 * RANDOM_MULTIPLIER);
                 for (int highlightIter = 0; highlightIter < highlightIters; highlightIter++)
                 {
+                    Console.WriteLine($"Highlighter iter: {highlightIter}");
+
                     String queryTerm = randomValues[Random.nextInt(randomValues.Length)];
-                    var iter = valueToDocId[queryTerm].GetEnumerator();
-                    iter.MoveNext();
-                    int randomHit = iter.Current;
+                    int randomHit = valueToDocId[queryTerm].First();
                     List<StringBuilder> builders = new List<StringBuilder>();
                     foreach (String[] fieldValues in docs[randomHit].fieldValues)
                     {
@@ -308,16 +308,16 @@ namespace Lucene.Net.Search.VectorHighlight
                         {
                             if (queryTerm.Equals(fieldValues[i], StringComparison.Ordinal))
                             {
-                                builder.append("<b>").append(queryTerm).append("</b>");
+                                builder.Append("<b>").Append(queryTerm).Append("</b>");
                                 hit = true;
                             }
                             else
                             {
-                                builder.append(fieldValues[i]);
+                                builder.Append(fieldValues[i]);
                             }
                             if (i != fieldValues.Length - 1)
                             {
-                                builder.append(' ');
+                                builder.Append(' ');
                             }
                         }
                         if (hit)
@@ -336,10 +336,10 @@ namespace Lucene.Net.Search.VectorHighlight
                     SimpleFragmentsBuilder sfb = new SimpleFragmentsBuilder();
                     sfb.IsDiscreteMultiValueHighlighting = (true);
                     String[] actualFragments = sfb.CreateFragments(reader, randomHit, F, ffl, numFields);
-                    assertEquals(builders.size(), actualFragments.Length);
+                    assertEquals(builders.Count, actualFragments.Length);
                     for (int i = 0; i < actualFragments.Length; i++)
                     {
-                        assertEquals(builders[i].toString(), actualFragments[i]);
+                        assertEquals(builders[i].ToString(), actualFragments[i]);
                     }
                 }
             }
