@@ -17,17 +17,10 @@
  * under the License.
  */
 
-using System;
 using System.Collections.Generic;
 using System.Composition;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.DocAsCode.Common;
 using Microsoft.DocAsCode.Dfm;
 using Microsoft.DocAsCode.MarkdownLite;
-using Microsoft.DocAsCode.MarkdownLite.Matchers;
 
 namespace LuceneDocsPlugins
 {
