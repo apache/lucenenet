@@ -23,6 +23,7 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 # BuildConfiguration: (Optional. Defaults to 'Release')
 # BuildPlatform: (Optional. Defaults to 'Any CPU')
 # GenerateDocs: (Optional. Only builds documentation website if set to 'true'.)
+# GenerateWebsite: (Optional. Only builds lucene.net website if set to 'true'.)
 # IsRelease: (Optional. By default the Release job is disabled, setting this to 'true' will enable it)
 # RunTests: 'true' (Optional - set to 'false' to disable test jobs - useful for debugging. If not provided, tests will be run.)
 
@@ -36,10 +37,14 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 variables:
 - name: BuildCounter
   value: $[counter(variables['VersionSuffix'],coalesce(variables['BuildCounterSeed'], 1250))]
-- name: DocumenationArtifactName
+- name: DocumentationArtifactName
   value: 'docs'
 - name: DocumentationArtifactZipFileName
   value: 'documentation.zip'
+- name: WebsiteArtifactName
+  value: 'website'
+- name: WebsiteArtifactZipFileName
+  value: 'website.zip'  
 - name: BinaryArtifactName
   value: 'testbinaries'
 - name: NuGetArtifactName
@@ -183,14 +188,39 @@ stages:
       inputs:
         rootFolderOrFile: '$(Build.SourcesDirectory)/websites/apidocs/_site'
         includeRootFolder: false
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(DocumenationArtifactName)/$(DocumentationArtifactZipFileName)'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(DocumentationArtifactName)/$(DocumentationArtifactZipFileName)'
 
     - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact: $(DocumenationArtifactName)'
+      displayName: 'Publish Artifact: $(DocumentationArtifactName)'
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(DocumenationArtifactName)'
-        ArtifactName: '$(DocumenationArtifactName)'
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(DocumentationArtifactName)'
+        ArtifactName: '$(DocumentationArtifactName)'
 
+  - job: Website
+    condition: and(succeeded(), eq(variables['GenerateWebsite'], 'true'))
+    pool:
+      vmImage: 'vs2017-win2016'
+
+    steps:
+    - powershell: |
+         $(Build.SourcesDirectory)/websites/site/site.ps1 0 1
+      errorActionPreference: 'continue'
+      ignoreLASTEXITCODE: true
+      failOnStderr: false
+      displayName: 'Generate Website'
+
+    - task: ArchiveFiles@2
+      displayName: 'Zip Website Files'
+      inputs:
+        rootFolderOrFile: '$(Build.SourcesDirectory)/websites/site/_site'
+        includeRootFolder: false
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(WebsiteArtifactName)/$(WebsiteArtifactZipFileName)'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: $(WebsiteArtifactName)'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(WebsiteArtifactName)'
+        ArtifactName: '$(WebsiteArtifactName)'
 
 - stage: Test_Stage
   displayName: 'Test Stage:'
