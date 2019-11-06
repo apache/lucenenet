@@ -52,19 +52,24 @@ namespace JavaDocToMarkdownConverter.Formatters
                     var type = $"{ns}.{c}";
                     //naming is based on a docfx convention - not a strict convention but we might as well be consistent
                     var overrideFileName = $"{ns.Replace(".", "_")}_{c}.md";
-                    File.WriteAllText(Path.Combine(apiSpecFolder, overrideFileName), AppendYamlHeader(type, "hello", code));
+                    File.WriteAllText(Path.Combine(apiSpecFolder, overrideFileName), AppendYamlHeader(type, code));
                 }
             }
             
         }
 
-        private static string AppendYamlHeader(string typeName, string summary, string fileContent)
+        private static string AppendYamlHeader(string typeName, string fileContent)
         {
             var sb = new StringBuilder();
             sb.AppendLine("---");
             sb.Append("uid: ");
             sb.AppendLine(typeName);
-            sb.AppendLine("summary: *content");
+            // This is special syntax to denote an 'array' of strings since that is what the 'example' metadata requires, 
+            // see:https://dotnet.github.io/docfx/tutorial/intro_overwrite_files.html#managed-reference-model
+            // This syntax doesn't seem to be documented anywhere except in the issue tracker
+            //  see https://github.com/dotnet/docfx/issues/375#issuecomment-225407949
+            //  see https://github.com/dotnet/docfx/issues/1685#issuecomment-303644744
+            sb.AppendLine("example: [*content]");
             //sb.Append("summary: ");
             //sb.AppendLine(summary);
             sb.AppendLine("---");

@@ -143,6 +143,6 @@ if ($?) {
     else {
         # build + serve (for testing)
         Write-Host "starting website..."
-        & $DocFxExe $DocFxJson --serve
+        & $DocFxExe $DocFxJson --serve -l "$DocFxLog" --loglevel $LogLevel
     }
 }
