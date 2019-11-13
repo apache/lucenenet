@@ -23,38 +23,41 @@ summary: *content
 Apache Lucene.NET is a high-performance, full-featured text search engine library. Here's a simple example how to use Lucene.NET for indexing and searching (Using NUnit for Asserts)
 
 ```
-   Analyzer analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+Analyzer analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
 
-			// Store the index in memory:
-			Directory directory = new RAMDirectory();
-			// To store an index on disk, use this instead:
-			//Directory directory = FSDirectory.Open("/tmp/testindex");
-			IndexWriterConfig config = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer);
-			using (IndexWriter writer = new IndexWriter(directory, config))
-			{
-				Document doc = new Document();
-				String text = "This is the text to be indexed.";
-				doc.Add(new Field("fieldname", text, TextField.TYPE_STORED));
-				writer.AddDocument(doc);
-			}
+// Store the index in memory:
+Directory directory = new RAMDirectory();
 
-			// Now search the index:
-			using (DirectoryReader reader = DirectoryReader.Open(directory))
-			{
-				IndexSearcher searcher = new IndexSearcher(reader);
-				// Parse a simple query that searches for "text":
-				QueryParser parser = new QueryParser(LuceneVersion.LUCENE_48, "fieldname", analyzer);
-				Query query = parser.Parse("text");
-				ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
-				Assert.AreEqual(1, hits.Length);
+// To store an index on disk, use this instead:
+//Directory directory = FSDirectory.Open("/tmp/testindex");
 
-				// Iterate through the results:
-				for (int i = 0; i < hits.Length; i++)
-				{
-					var hitDoc = searcher.Doc(hits[i].Doc);
-					Assert.AreEqual("This is the text to be indexed.", hitDoc.Get("fieldname"));
-				}
-			}
+IndexWriterConfig config = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer);
+using (IndexWriter writer = new IndexWriter(directory, config))
+{
+	Document doc = new Document();
+	String text = "This is the text to be indexed.";
+	doc.Add(new Field("fieldname", text, TextField.TYPE_STORED));
+	writer.AddDocument(doc);
+}
+
+// Now search the index:
+using (DirectoryReader reader = DirectoryReader.Open(directory))
+{
+	IndexSearcher searcher = new IndexSearcher(reader);
+	
+	// Parse a simple query that searches for "text":
+	QueryParser parser = new QueryParser(LuceneVersion.LUCENE_48, "fieldname", analyzer);
+	Query query = parser.Parse("text");
+	ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
+	Assert.AreEqual(1, hits.Length);
+
+	// Iterate through the results:
+	for (int i = 0; i < hits.Length; i++)
+	{
+		var hitDoc = searcher.Doc(hits[i].Doc);
+		Assert.AreEqual("This is the text to be indexed.", hitDoc.Get("fieldname"));
+	}
+}
 ```
 
 The Lucene.NET API is divided into several packages:
