@@ -1,0 +1,11 @@
+ukrainian.dict is a binary dictionary file for morphological analysis in fsa_morph program
+(see http://www.eti.pg.gda.pl/katedry/kiw/pracownicy/Jan.Daciuk/personal/fsa.html).
+
+See tagset.txt for description of the tags.
+
+This dictionary is currently under development and is based on dict_uk project (https://github.com/brown-uk/dict_uk)
+
+Note: to better fit into full-text search model this dictionary has all word forms in lower case but keeps lemmas for proper nouns in upper case.
+Also letter ґ was normalized to г.
+
+Licensed under GPL/LGPL, CC BY-NC-SA 4.0, and Apache License 2.0.

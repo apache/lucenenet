@@ -220,6 +220,11 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 					continue
 				}
 
+				# Special case - Morfologik doesn't support .NET Standard 1.x
+				if ($projectName.Contains("Tests.Analysis.Morfologik") -and ($framework.StartsWith("netcoreapp1."))) {
+					continue
+				}
+
 				$logPath = "$outDirectory/$framework"
 				$outputPath = "$logPath/$projectName"
 
@@ -299,6 +304,13 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 			
 			# Special case - OpenNLP.NET only supports .NET Framework
 			if ($testName.Contains("Tests.Analysis.OpenNLP") -and (!$framework.StartsWith("net45"))) {
+				$totalProjects--
+				$remainingProjects--
+				continue
+			}
+
+			# Special case - Morfologik doesn't support .NET Standard 1.x
+			if ($testName.Contains("Tests.Analysis.Morfologik") -and ($framework.StartsWith("netcoreapp1."))) {
 				$totalProjects--
 				$remainingProjects--
 				continue

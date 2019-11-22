@@ -43,6 +43,9 @@
     <MicrosoftCSharpPackageVersion>4.4.0</MicrosoftCSharpPackageVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>2.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftNETTestSdkPackageVersion>16.2.0</MicrosoftNETTestSdkPackageVersion>
+    <MorfologikFsaPackageVersion>2.1.6-alpha-0001</MorfologikFsaPackageVersion>
+    <MorfologikPolishPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikPolishPackageVersion>
+    <MorfologikStemmingPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikStemmingPackageVersion>
     <MSTestTestFrameworkPackageVersion>2.0.0</MSTestTestFrameworkPackageVersion>
     <MSTestTestAdapterPackageVersion>$(MSTestTestFrameworkPackageVersion)</MSTestTestAdapterPackageVersion>
     <NETStandardLibrary16PackageVersion>1.6.1</NETStandardLibrary16PackageVersion>
