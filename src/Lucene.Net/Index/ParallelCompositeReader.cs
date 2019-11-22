@@ -78,8 +78,8 @@ namespace Lucene.Net.Index
             : base(PrepareSubReaders(readers, storedFieldReaders))
         {
             this.closeSubReaders = closeSubReaders;
-            Collections.AddAll(completeReaderSet, readers);
-            Collections.AddAll(completeReaderSet, storedFieldReaders);
+            completeReaderSet.UnionWith(readers);
+            completeReaderSet.UnionWith(storedFieldReaders);
             // update ref-counts (like MultiReader):
             if (!closeSubReaders)
             {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                 }
             }
             // finally add our own synthetic readers, so we close or decRef them, too (it does not matter what we do)
-            Collections.AddAll(completeReaderSet, GetSequentialSubReaders());
+            completeReaderSet.UnionWith(GetSequentialSubReaders());
         }
 
         private static IndexReader[] PrepareSubReaders(CompositeReader[] readers, CompositeReader[] storedFieldsReaders)
