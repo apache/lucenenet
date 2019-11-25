@@ -54,7 +54,7 @@ namespace Lucene.Net.Util
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public int[] Int32s
+        public int[] Int32s // LUCENENET TODO: API - change to indexer
         {
             get { return ints; }
             set
