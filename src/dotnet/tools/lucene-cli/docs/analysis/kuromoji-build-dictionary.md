@@ -56,5 +56,5 @@ Normalize the entries using normalization form KC.
 
 ### Example
 
-<code>lucene analysis kuromoji-build-dictionary X:\kuromoji-data X:\kuromoji-dictionary --normalize</code>
+<code>lucene analysis kuromoji-build-dictionary IPADIC X:\kuromoji-data X:\kuromoji-dictionary --normalize</code>
 
