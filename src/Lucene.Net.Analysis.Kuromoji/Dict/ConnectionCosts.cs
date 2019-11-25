@@ -66,10 +66,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             return costs[backwardId][forwardId];
         }
 
-        public static ConnectionCosts GetInstance()
-        {
-            return SingletonHolder.INSTANCE;
-        }
+        public static ConnectionCosts Instance => SingletonHolder.INSTANCE;
 
         private class SingletonHolder
         {

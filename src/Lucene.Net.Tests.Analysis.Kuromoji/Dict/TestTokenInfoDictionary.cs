@@ -35,8 +35,8 @@ namespace Lucene.Net.Analysis.Ja.Dict
             int numWords = 0;
             int lastWordId = -1;
             int lastSourceId = -1;
-            TokenInfoDictionary tid = TokenInfoDictionary.GetInstance();
-            ConnectionCosts matrix = ConnectionCosts.GetInstance();
+            TokenInfoDictionary tid = TokenInfoDictionary.Instance;
+            ConnectionCosts matrix = ConnectionCosts.Instance;
             FST<long?> fst = tid.FST.InternalFST;
             Int32sRefFSTEnum<long?> fstEnum = new Int32sRefFSTEnum<long?>(fst);
             Int32sRefFSTEnum.InputOutput<long?> mapping;

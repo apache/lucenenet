@@ -43,15 +43,9 @@ namespace Lucene.Net.Analysis.Ja.Dict
             this.fst = new TokenInfoFST(fst, true);
         }
 
-        public TokenInfoFST FST
-        {
-            get { return fst; }
-        }
+        public TokenInfoFST FST => fst;
 
-        public static TokenInfoDictionary GetInstance()
-        {
-            return SingletonHolder.INSTANCE;
-        }
+        public static TokenInfoDictionary Instance => SingletonHolder.INSTANCE;
 
         private class SingletonHolder
         {
