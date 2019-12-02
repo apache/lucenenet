@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.OpenNlp.Tools;
+﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System.Collections.Generic;
@@ -119,6 +120,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         private void Clear()
         {
             sentenceTokenAttrs.Clear();
+            sentenceTokenAttrsIter?.Dispose();
             sentenceTokenAttrsIter = null;
             sentenceTokens = null;
             sentenceTokenTypes = null;

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+﻿// Lucene version compatibility level 8.2.0
 using Lucene.Net.Analysis.Payloads;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;

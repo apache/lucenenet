@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.OpenNlp.Tools;
+﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -42,8 +43,8 @@ namespace Lucene.Net.Analysis.OpenNlp
     /// </summary>
     public class OpenNLPLemmatizerFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
-        public static readonly string DICTIONARY = "dictionary";
-        public static readonly string LEMMATIZER_MODEL = "lemmatizerModel";
+        public const string DICTIONARY = "dictionary";
+        public const string LEMMATIZER_MODEL = "lemmatizerModel";
 
         private readonly string dictionaryFile;
         private readonly string lemmatizerModelFile;

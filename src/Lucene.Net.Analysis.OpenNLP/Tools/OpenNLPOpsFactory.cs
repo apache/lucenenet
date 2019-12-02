@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Analysis.Util;
 using opennlp.tools.chunker;
 using opennlp.tools.lemmatizer;
 using opennlp.tools.namefind;
@@ -59,9 +60,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static SentenceModel GetSentenceModel(string modelName, IResourceLoader loader)
         {
-            //SentenceModel model = sentenceModels.get(modelName);
-            sentenceModels.TryGetValue(modelName, out SentenceModel model);
-            if (model == null)
+            if (!sentenceModels.TryGetValue(modelName, out SentenceModel model) || model == null)
             {
                 using (Stream resource = loader.OpenResource(modelName))
                 {
@@ -87,8 +86,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static TokenizerModel GetTokenizerModel(string modelName, IResourceLoader loader)
         {
-            tokenizerModels.TryGetValue(modelName, out TokenizerModel model);
-            if (model == null)
+            if (!tokenizerModels.TryGetValue(modelName, out TokenizerModel model) || model == null)
             {
                 using (Stream resource = loader.OpenResource(modelName))
                 {
@@ -107,8 +105,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static POSModel GetPOSTaggerModel(string modelName, IResourceLoader loader)
         {
-            posTaggerModels.TryGetValue(modelName, out POSModel model);
-            if (model == null)
+            if (!posTaggerModels.TryGetValue(modelName, out POSModel model) || model == null)
             {
                 using (Stream resource = loader.OpenResource(modelName))
                 {
@@ -127,8 +124,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static ChunkerModel GetChunkerModel(string modelName, IResourceLoader loader)
         {
-            chunkerModels.TryGetValue(modelName, out ChunkerModel model);
-            if (model == null)
+            if (!chunkerModels.TryGetValue(modelName, out ChunkerModel model) || model == null)
             {
                 using (Stream resource = loader.OpenResource(modelName))
                 {
@@ -147,8 +143,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static TokenNameFinderModel GetNERTaggerModel(string modelName, IResourceLoader loader)
         {
-            nerModels.TryGetValue(modelName, out TokenNameFinderModel model);
-            if (model == null)
+            if (!nerModels.TryGetValue(modelName, out TokenNameFinderModel model) || model == null)
             {
                 using (Stream resource = loader.OpenResource(modelName))
                 {
@@ -174,8 +169,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static string GetLemmatizerDictionary(string dictionaryFile, IResourceLoader loader)
         {
-            lemmaDictionaries.TryGetValue(dictionaryFile, out string dictionary);
-            if (dictionary == null)
+            if (!lemmaDictionaries.TryGetValue(dictionaryFile, out string dictionary) || dictionary == null)
             {
                 using (TextReader reader = new StreamReader(loader.OpenResource(dictionaryFile), Encoding.UTF8))
                 {
@@ -199,8 +193,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
 
         public static LemmatizerModel GetLemmatizerModel(string modelName, IResourceLoader loader)
         {
-            lemmatizerModels.TryGetValue(modelName, out LemmatizerModel model);
-            if (model == null)
+            if (!lemmatizerModels.TryGetValue(modelName, out LemmatizerModel model) || model == null)
             {
                 using (Stream resource = loader.OpenResource(modelName))
                 {

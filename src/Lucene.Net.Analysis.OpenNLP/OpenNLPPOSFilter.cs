@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.OpenNlp.Tools;
+﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace Lucene.Net.Analysis.OpenNlp
     /// </summary>
     public sealed class OpenNLPPOSFilter : TokenFilter
     {
-        private IList<AttributeSource> sentenceTokenAttrs = new List<AttributeSource>();
+        private readonly IList<AttributeSource> sentenceTokenAttrs = new List<AttributeSource>();
         string[] tags = null;
         private int tokenNum = 0;
         private bool moreTokensAvailable = true;
@@ -39,7 +40,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         private readonly ICharTermAttribute termAtt;
 
         public OpenNLPPOSFilter(TokenStream input, NLPPOSTaggerOp posTaggerOp)
-                  : base(input)
+            : base(input)
         {
             this.posTaggerOp = posTaggerOp;
             this.typeAtt = AddAttribute<ITypeAttribute>();

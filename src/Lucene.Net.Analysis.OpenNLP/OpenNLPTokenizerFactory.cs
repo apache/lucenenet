@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.OpenNlp.Tools;
+﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;

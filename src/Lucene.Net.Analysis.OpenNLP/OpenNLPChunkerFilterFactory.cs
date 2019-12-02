@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.OpenNlp.Tools;
+﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -39,7 +40,7 @@ namespace Lucene.Net.Analysis.OpenNlp
     /// <since>7.3.0</since>
     public class OpenNLPChunkerFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
-        public static readonly string CHUNKER_MODEL = "chunkerModel";
+        public const string CHUNKER_MODEL = "chunkerModel";
 
         private readonly string chunkerModelFile;
 

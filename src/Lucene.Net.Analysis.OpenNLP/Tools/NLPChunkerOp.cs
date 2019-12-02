@@ -1,4 +1,5 @@
-﻿using opennlp.tools.chunker;
+﻿// Lucene version compatibility level 8.2.0
+using opennlp.tools.chunker;
 
 
 namespace Lucene.Net.Analysis.OpenNlp.Tools
@@ -26,7 +27,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
     /// </summary>
     public class NLPChunkerOp
     {
-        private ChunkerME chunker = null;
+        private readonly ChunkerME chunker = null;
 
         public NLPChunkerOp(ChunkerModel chunkerModel) 
         {

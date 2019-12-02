@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.OpenNlp.Tools;
+﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using opennlp.tools.util;
@@ -41,8 +42,8 @@ namespace Lucene.Net.Analysis.OpenNlp
         private int termNum = 0;
         private int sentenceStart = 0;
 
-        private NLPSentenceDetectorOp sentenceOp = null;
-        private NLPTokenizerOp tokenizerOp = null;
+        private readonly NLPSentenceDetectorOp sentenceOp = null;
+        private readonly NLPTokenizerOp tokenizerOp = null;
 
         /// <summary>
         /// Creates a new <see cref="OpenNLPTokenizer"/> </summary>

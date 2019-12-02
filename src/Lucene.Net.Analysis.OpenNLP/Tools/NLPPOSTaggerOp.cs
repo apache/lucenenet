@@ -1,4 +1,5 @@
-﻿using opennlp.tools.postag;
+﻿// Lucene version compatibility level 8.2.0
+using opennlp.tools.postag;
 
 namespace Lucene.Net.Analysis.OpenNlp.Tools
 {
@@ -25,7 +26,7 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
     /// </summary>
     public class NLPPOSTaggerOp
     {
-        private POSTagger tagger = null;
+        private readonly POSTagger tagger = null;
 
         public NLPPOSTaggerOp(POSModel model)
         {

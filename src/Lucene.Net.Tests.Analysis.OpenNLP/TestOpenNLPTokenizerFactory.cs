@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,5 @@
-﻿using opennlp.tools.sentdetect;
+﻿// Lucene version compatibility level 8.2.0
+using opennlp.tools.sentdetect;
 using opennlp.tools.util;
 
 namespace Lucene.Net.Analysis.OpenNlp.Tools

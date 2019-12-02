@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.OpenNlp.Tools;
+﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         private readonly string posTaggerModelFile;
 
         public OpenNLPPOSFilterFactory(IDictionary<string, string> args)
-                  : base(args)
+            : base(args)
         {
             posTaggerModelFile = Require(args, POS_TAGGER_MODEL);
             if (args.Any())

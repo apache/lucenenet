@@ -1,11 +1,11 @@
-﻿using Lucene.Net.Analysis.Payloads;
+﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Analysis.Payloads;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Analysis.OpenNlp
 {

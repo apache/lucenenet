@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.OpenNlp.Tools;
+﻿// Lucene version compatibility level 8.2.0
+using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace Lucene.Net.Analysis.OpenNlp
     /// </summary>
     public sealed class OpenNLPChunkerFilter : TokenFilter
     {
-        private List<AttributeSource> sentenceTokenAttrs = new List<AttributeSource>();
+        private readonly IList<AttributeSource> sentenceTokenAttrs = new List<AttributeSource>();
         private int tokenNum = 0;
         private bool moreTokensAvailable = true;
         private string[] sentenceTerms = null;
@@ -41,7 +42,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         private readonly ICharTermAttribute termAtt;
 
         public OpenNLPChunkerFilter(TokenStream input, NLPChunkerOp chunkerOp)
-                  : base(input)
+            : base(input)
         {
             this.chunkerOp = chunkerOp;
             this.typeAtt = AddAttribute<ITypeAttribute>();
