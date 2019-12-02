@@ -70,12 +70,10 @@ namespace Lucene.Net.Util
 #if NETSTANDARD
             return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 #else
-            // we use integers instead of enum tags because "MacOS"
-            // requires 2.0 SP2, 3.0 SP2 or 3.5 SP1.
             // 128 is mono's old platform tag for Unix.
             // Reference: https://stackoverflow.com/a/5117005
             int id = (int)Environment.OSVersion.Platform;
-            return id == 4 || id == 6 || id == 128;
+            return id == 4 || id == 128;
 #endif
         }
 
@@ -88,7 +86,6 @@ namespace Lucene.Net.Util
 #if NETSTANDARD
             return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 #else
-            // LUCENENET NOTE: On .NET Framework, our only possibilities are Windows or Linux
             PlatformID pid = Environment.OSVersion.Platform;
             return pid == PlatformID.Win32NT || pid == PlatformID.Win32Windows;
 #endif
@@ -114,7 +111,8 @@ namespace Lucene.Net.Util
 #if NETSTANDARD
             return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
 #else
-            return false; // Not possible
+            // Reference: https://stackoverflow.com/a/5117005
+            return Environment.OSVersion.Platform == PlatformID.MacOSX;
 #endif
         }
 
