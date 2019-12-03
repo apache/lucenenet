@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Util
             string[] words = new string[] { "Hello", "World", "this", "is", "a", "test" };
             char[] findme = "xthisy".ToCharArray();
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
-            set.AddAll(words);
+            set.UnionWith(words);
             assertTrue(set.Contains(findme, 1, 4));
             assertTrue(set.Contains(new string(findme, 1, 4)));
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual void TestClear()
         {
             var set = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
-            set.AddAll(TEST_STOP_WORDS);
+            set.UnionWith(TEST_STOP_WORDS);
             assertEquals("Not all words added", TEST_STOP_WORDS.Length, set.size());
             set.Clear();
             assertEquals("not empty", 0, set.size());
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 assertFalse(set.Contains(TEST_STOP_WORDS[i]));
             }
-            set.AddAll(TEST_STOP_WORDS);
+            set.UnionWith(TEST_STOP_WORDS);
             assertEquals("Not all words added", TEST_STOP_WORDS.Length, set.size());
             for (var i = 0; i < TEST_STOP_WORDS.Length; i++)
             {
@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual void TestModifyOnUnmodifiable()
         {
             CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
-            set.AddAll(TEST_STOP_WORDS);
+            set.UnionWith(TEST_STOP_WORDS);
             int size = set.size();
             set = CharArraySet.UnmodifiableSet(set);
             assertEquals("Set size changed due to unmodifiableSet call", size, set.size());
@@ -249,7 +249,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual void TestUnmodifiableSet()
         {
             var set = new CharArraySet(TEST_VERSION_CURRENT, 10, true);
-            set.AddAll(TEST_STOP_WORDS);
+            set.UnionWith(TEST_STOP_WORDS);
             set.Add(Convert.ToInt32(1));
             int size = set.size();
             set = CharArraySet.UnmodifiableSet(set);
@@ -662,7 +662,7 @@ namespace Lucene.Net.Analysis.Util
 
             values = new List<string> { "sally", "seashells", "by", "the", "sea", "shore" };
             charArraySet.Clear();
-            charArraySet.AddAll(values);
+            charArraySet.UnionWith(values);
 
             assertFalse(charArraySet.GetHashCode().Equals(charArraySetCopy.GetHashCode()));
             assertFalse(charArraySet.Equals(charArraySetCopy));

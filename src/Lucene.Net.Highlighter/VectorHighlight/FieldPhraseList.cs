@@ -220,7 +220,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 {
                     // WeightedPhraseInfo.addIfNoOverlap() dumps the second part of, for example, hyphenated words (social-economics). 
                     // The result is that all informations in TermInfo are lost and not available for further operations. 
-                    existWpi.TermsInfos.AddAll(wpi.TermsInfos);
+                    existWpi.TermsInfos.AddRange(wpi.TermsInfos);
                     return;
                 }
             }
@@ -343,7 +343,7 @@ namespace Lucene.Net.Search.VectorHighlight
                         {
                             WeightedPhraseInfo info = toMergeItr.Current;
                             boost += info.boost;
-                            termsInfos.AddAll(info.termsInfos);
+                            termsInfos.AddRange(info.termsInfos);
                             allToffs[index++] = info.termsOffsets.GetEnumerator();
                         }
 

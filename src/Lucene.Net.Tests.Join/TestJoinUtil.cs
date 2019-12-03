@@ -715,7 +715,7 @@ namespace Lucene.Net.Tests.Join
                             TermsEnum termsEnum = null;
                             SortedSet<BytesRef> joinValues =
                                 new SortedSet<BytesRef>(BytesRef.UTF8SortedAsUnicodeComparer);
-                            joinValues.AddAll(joinValueToJoinScores.Keys);
+                            joinValues.UnionWith(joinValueToJoinScores.Keys);
                             foreach (BytesRef joinValue in joinValues)
                             {
                                 termsEnum = terms.GetIterator(termsEnum);

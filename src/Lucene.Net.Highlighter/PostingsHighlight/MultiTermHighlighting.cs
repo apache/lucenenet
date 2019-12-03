@@ -41,72 +41,68 @@ namespace Lucene.Net.Search.PostingsHighlight
         internal static CharacterRunAutomaton[] ExtractAutomata(Query query, string field)
         {
             List<CharacterRunAutomaton> list = new List<CharacterRunAutomaton>();
-            if (query is BooleanQuery)
+            if (query is BooleanQuery booleanQuery)
             {
-                BooleanClause[] clauses = ((BooleanQuery)query).GetClauses();
-                foreach (BooleanClause clause in clauses)
+                foreach (BooleanClause clause in booleanQuery.GetClauses())
                 {
                     if (!clause.IsProhibited)
                     {
-                        list.AddAll(Arrays.AsList(ExtractAutomata(clause.Query, field)));
+                        list.AddRange(ExtractAutomata(clause.Query, field));
                     }
                 }
             }
-            else if (query is DisjunctionMaxQuery)
+            else if (query is DisjunctionMaxQuery disjunctionMaxQuery)
             {
-                foreach (Query sub in ((DisjunctionMaxQuery)query).Disjuncts)
+                foreach (Query sub in disjunctionMaxQuery.Disjuncts)
                 {
-                    list.AddAll(Arrays.AsList(ExtractAutomata(sub, field)));
+                    list.AddRange(ExtractAutomata(sub, field));
                 }
             }
-            else if (query is SpanOrQuery)
+            else if (query is SpanOrQuery spanOrQuery)
             {
-                foreach (Query sub in ((SpanOrQuery)query).GetClauses())
+                foreach (Query sub in spanOrQuery.GetClauses())
                 {
-                    list.AddAll(Arrays.AsList(ExtractAutomata(sub, field)));
+                    list.AddRange(ExtractAutomata(sub, field));
                 }
             }
-            else if (query is SpanNearQuery)
+            else if (query is SpanNearQuery spanNearQuery)
             {
-                foreach (Query sub in ((SpanNearQuery)query).GetClauses())
+                foreach (Query sub in spanNearQuery.GetClauses())
                 {
-                    list.AddAll(Arrays.AsList(ExtractAutomata(sub, field)));
+                    list.AddRange(ExtractAutomata(sub, field));
                 }
             }
-            else if (query is SpanNotQuery)
+            else if (query is SpanNotQuery spanNotQuery)
             {
-                list.AddAll(Arrays.AsList(ExtractAutomata(((SpanNotQuery)query).Include, field)));
+                list.AddRange(ExtractAutomata(spanNotQuery.Include, field));
             }
-            else if (query is SpanPositionCheckQuery)
+            else if (query is SpanPositionCheckQuery spanPositionCheckQuery)
             {
-                list.AddAll(Arrays.AsList(ExtractAutomata(((SpanPositionCheckQuery)query).Match, field)));
+                list.AddRange(ExtractAutomata(spanPositionCheckQuery.Match, field));
             }
-            else if (query is ISpanMultiTermQueryWrapper)
+            else if (query is ISpanMultiTermQueryWrapper spanMultiTermQueryWrapper)
             {
-                list.AddAll(Arrays.AsList(ExtractAutomata(((ISpanMultiTermQueryWrapper)query).WrappedQuery, field)));
+                list.AddRange(ExtractAutomata(spanMultiTermQueryWrapper.WrappedQuery, field));
             }
-            else if (query is AutomatonQuery)
+            else if (query is AutomatonQuery aq)
             {
-                AutomatonQuery aq = (AutomatonQuery)query;
                 if (aq.Field.Equals(field, StringComparison.Ordinal))
                 {
                     list.Add(new CharacterRunAutomatonToStringAnonymousHelper(aq.Automaton, () => aq.ToString()));
                 }
             }
-            else if (query is PrefixQuery)
+            else if (query is PrefixQuery pq)
             {
-                PrefixQuery pq = (PrefixQuery)query;
                 Term prefix = pq.Prefix;
                 if (prefix.Field.Equals(field, StringComparison.Ordinal))
                 {
                     list.Add(new CharacterRunAutomatonToStringAnonymousHelper(
-                        BasicOperations.Concatenate(BasicAutomata.MakeString(prefix.Text()), BasicAutomata.MakeAnyString()), 
+                        BasicOperations.Concatenate(BasicAutomata.MakeString(prefix.Text()), BasicAutomata.MakeAnyString()),
                         () => pq.ToString()));
                 }
             }
-            else if (query is FuzzyQuery)
+            else if (query is FuzzyQuery fq)
             {
-                FuzzyQuery fq = (FuzzyQuery)query;
                 if (fq.Field.Equals(field, StringComparison.Ordinal))
                 {
                     string utf16 = fq.Term.Text();
@@ -128,9 +124,8 @@ namespace Lucene.Net.Search.PostingsHighlight
                     list.Add(new CharacterRunAutomatonToStringAnonymousHelper(automaton, () => fq.ToString()));
                 }
             }
-            else if (query is TermRangeQuery)
+            else if (query is TermRangeQuery tq)
             {
-                TermRangeQuery tq = (TermRangeQuery)query;
                 if (tq.Field.Equals(field, StringComparison.Ordinal))
                 {
                     // this is *not* an automaton, but its very simple

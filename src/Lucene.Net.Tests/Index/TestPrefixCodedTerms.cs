@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
                     Term term = new Term(TestUtil.RandomUnicodeString(Random, 2), TestUtil.RandomUnicodeString(Random, 4));
                     terms.Add(term);
                 }
-                superSet.AddAll(terms);
+                superSet.UnionWith(terms);
 
                 PrefixCodedTerms.Builder b = new PrefixCodedTerms.Builder();
                 foreach (Term @ref in terms)

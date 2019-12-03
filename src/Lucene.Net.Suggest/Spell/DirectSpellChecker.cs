@@ -428,8 +428,8 @@ namespace Lucene.Net.Search.Spell
             if (maxEdits > 1 && terms.Count() < inspections)
             {
                 var moreTerms = new HashSet<ScoreTerm>();
-                moreTerms.AddAll(terms);
-                moreTerms.AddAll(SuggestSimilar(term, inspections, ir, docfreq, maxEdits, accuracy, spare));
+                moreTerms.UnionWith(terms);
+                moreTerms.UnionWith(SuggestSimilar(term, inspections, ir, docfreq, maxEdits, accuracy, spare));
                 terms = moreTerms;
             }
 

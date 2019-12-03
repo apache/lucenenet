@@ -231,7 +231,7 @@ namespace Lucene.Net
 
         public static void addAll<T>(this ISet<T> s, IEnumerable<T> other)
         {
-            s.AddAll(other);
+            s.UnionWith(other);
         }
 
         public static bool contains<T>(this ISet<T> s, T item)

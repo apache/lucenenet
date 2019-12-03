@@ -30,14 +30,5 @@ namespace Lucene.Net.Support
                 theSet.Remove(elt);
             }
         }
-
-        [DebuggerStepThrough]
-        public static void AddAll<T>(this ICollection<T> set, IEnumerable<T> itemsToAdd)
-        {
-            foreach (var item in itemsToAdd)
-            {
-                set.Add(item);
-            }
-        }
     }
 }

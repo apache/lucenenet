@@ -163,7 +163,7 @@ namespace Lucene.Net.Util
             var suppressCodecsAttribute = targetClass.GetTypeInfo().GetCustomAttribute<LuceneTestCase.SuppressCodecsAttribute>();
             if (suppressCodecsAttribute != null)
             {
-                avoidCodecs.AddAll(suppressCodecsAttribute.Value);
+                avoidCodecs.UnionWith(suppressCodecsAttribute.Value);
             }
 
             // set back to default

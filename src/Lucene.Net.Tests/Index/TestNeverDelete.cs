@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: check files: " + ic.FileNames);
                 }
-                allFiles.AddAll(ic.FileNames);
+                allFiles.UnionWith(ic.FileNames);
                 // Make sure no old files were removed
                 foreach (string fileName in allFiles)
                 {

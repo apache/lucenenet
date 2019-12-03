@@ -348,7 +348,7 @@ namespace Lucene.Net.Search.VectorHighlight
             List<WeightedFragInfo> result = new List<WeightedFragInfo>();
             foreach (List<WeightedFragInfo> weightedFragInfos in fieldNameToFragInfos.Values)
             {
-                result.AddAll(weightedFragInfos);
+                result.AddRange(weightedFragInfos);
             }
             CollectionUtil.TimSort(result, new DiscreteMultiValueHighlightingComparerAnonymousHelper());
 

@@ -356,7 +356,7 @@ namespace Lucene.Net.Queries
 
         public override void ExtractTerms(ISet<Term> terms)
         {
-            terms.AddAll(this.m_terms);
+            terms.UnionWith(this.m_terms);
         }
 
         public override string ToString(string field)

@@ -276,7 +276,7 @@ namespace Lucene.Net.Index
                                 if (delSubDocs != null)
                                 {
                                     delSubDocs.Deleted = true;
-                                    delIDs.AddAll(delSubDocs.SubIDs);
+                                    delIDs.UnionWith(delSubDocs.SubIDs);
                                     outerInstance.m_delCount.AddAndGet(delSubDocs.SubIDs.Count);
                                     if (VERBOSE)
                                     {
@@ -366,7 +366,7 @@ namespace Lucene.Net.Index
                             {
                                 Console.WriteLine(Thread.CurrentThread.Name + ": tot " + count + " deletes");
                             }
-                            delIDs.AddAll(toDeleteIDs);
+                            delIDs.UnionWith(toDeleteIDs);
                             toDeleteIDs.Clear();
 
                             foreach (SubDocs subDocs in toDeleteSubDocs)
@@ -379,7 +379,7 @@ namespace Lucene.Net.Index
                                 {
                                     Console.WriteLine(Thread.CurrentThread.Name + ": del subs: " + subDocs.SubIDs + " packID=" + subDocs.PackID);
                                 }
-                                delIDs.AddAll(subDocs.SubIDs);
+                                delIDs.UnionWith(subDocs.SubIDs);
                                 outerInstance.m_delCount.AddAndGet(subDocs.SubIDs.Count);
                             }
                             toDeleteSubDocs.Clear();
