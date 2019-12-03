@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// In this example, <see cref="Standard.StandardAnalyzer"/> will be used for all fields except "firstname"
     /// and "lastname", for which <see cref="Core.KeywordAnalyzer"/> will be used.
     /// </para>
-    /// <para>A PerFieldAnalyzerWrapper can be used like any other analyzer, for both indexing
+    /// <para>A <see cref="PerFieldAnalyzerWrapper"/> can be used like any other analyzer, for both indexing
     /// and query parsing.
     /// </para>
     /// </summary>
@@ -63,11 +63,37 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Constructs with default analyzer and a map of analyzers to use for 
         /// specific fields.
+        /// <para/>
+        /// The type of <see cref="IDictionary{TKey, TValue}"/> supplied will determine the type of behavior.
+        /// <list type="table">
+        ///     <item>
+        ///         <term><see cref="Dictionary{TKey, TValue}"/></term>
+        ///         <description>General use. <c>null</c> keys are not supported.</description>
+        ///     </item>
+        ///     <item>
+        ///         <term><see cref="SortedDictionary{TKey, TValue}"/></term>
+        ///         <description>Use when sorted keys are required. <c>null</c> keys are not supported.</description>
+        ///     </item>
+        ///     <item>
+        ///         <term><see cref="HashMap{TKey, TValue}"/></term>
+        ///         <description>Similar behavior as <see cref="Dictionary{TKey, TValue}"/>. <c>null</c> keys are supported.</description>
+        ///     </item>
+        ///     <item>
+        ///         <term><see cref="TreeDictionary{TKey, TValue}"/></term>
+        ///         <description>Use when sorted keys are required. <c>null</c> keys are supported.</description>
+        ///     </item>
+        ///     <item>
+        ///         <term><see cref="LinkedHashMap{TKey, TValue}"/></term>
+        ///         <description>Use when insertion order must be preserved (<see cref="Dictionary{TKey, TValue}"/> preserves insertion
+        ///             order only until items are removed). <c>null</c> keys are supported.</description>
+        ///     </item>
+        /// </list>
+        /// Or, use a 3rd party or custom <see cref="IDictionary{TKey, TValue}"/> if other behavior is desired.
         /// </summary>
         /// <param name="defaultAnalyzer"> Any fields not specifically
         /// defined to use a different analyzer will use the one provided here. </param>
-        /// <param name="fieldAnalyzers"> a <see cref="IDictionary{TKey, TValue}"/> (String field name to the Analyzer) to be 
-        /// used for those fields  </param>
+        /// <param name="fieldAnalyzers"> A <see cref="IDictionary{TKey, TValue}"/> (String field name to the Analyzer) to be 
+        /// used for those fields. </param>
         public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer, IDictionary<string, Analyzer> fieldAnalyzers)
             : base(PER_FIELD_REUSE_STRATEGY)
         {
