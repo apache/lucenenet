@@ -993,7 +993,7 @@ namespace Lucene.Net.Tests.Join
                 ? context.FromHitsToJoinScore[queryValue]
                 : context.ToHitsToJoinScore[queryValue];
 
-            var hits = new List<KeyValuePair<int, JoinScore>>(hitsToJoinScores.EntrySet());
+            var hits = new List<KeyValuePair<int, JoinScore>>(hitsToJoinScores);
             hits.Sort(new ComparerAnonymousInnerClassHelper(this, scoreMode));
             ScoreDoc[] scoreDocs = new ScoreDoc[Math.Min(10, hits.Count)];
             for (int i = 0; i < scoreDocs.Length; i++)

@@ -1448,9 +1448,8 @@ namespace Lucene.Net.Index
                             Assert.AreEqual(i, ord);
                         }
                         AtomicReader slowR = SlowCompositeReaderWrapper.Wrap(reader);
-                        ISet<KeyValuePair<string, string>> entrySet = docToString.EntrySet();
 
-                        foreach (KeyValuePair<string, string> entry in entrySet)
+                        foreach (KeyValuePair<string, string> entry in docToString)
                         {
                             // pk lookup
                             DocsEnum termDocsEnum = slowR.GetTermDocsEnum(new Term("id", entry.Key));
