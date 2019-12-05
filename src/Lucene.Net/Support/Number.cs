@@ -341,15 +341,14 @@ namespace Lucene.Net.Support
         }
 
         // Returns the number of 1-bits in the number
-        public static int BitCount(int num)
+        public static int BitCount(int value)
         {
-            int bitcount = 0;
-            while (num > 0)
-            {
-                bitcount += (num & 1);
-                num >>= 1;
-            }
-            return bitcount;
+            value -= ((value >> 1) & 0x55555555);
+            value = (value & 0x33333333) + ((value >> 2) & 0x33333333);
+            value = (((value >> 4) + value) & 0x0F0F0F0F);
+            value += (value >> 8);
+            value += (value >> 16);
+            return (value & 0x0000003F);
         }
 
         public static int RotateLeft(int i, int reps)
