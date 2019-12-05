@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
                 BooleanQuery bq = new BooleanQuery(false);
                 bq.Add(query, Occur.MUST);
-                bq.Add(new TermQuery(new Term("id", Number.ToString(doc))), Occur.MUST);
+                bq.Add(new TermQuery(new Term("id", doc.ToString(CultureInfo.InvariantCulture))), Occur.MUST);
                 TopDocs td = @is.Search(bq, 1);
                 p1.Highlight("body", bq, @is, td, n);
                 p2.Highlight("body", bq, @is, td, n + 1);

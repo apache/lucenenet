@@ -47,38 +47,6 @@ namespace Lucene.Net.Support
         /// <summary>
         /// Converts a number to System.String.
         /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        public static string ToString(long number)
-        {
-            var s = new System.Text.StringBuilder();
-
-            if (number == 0)
-            {
-                s.Append("0");
-            }
-            else
-            {
-                if (number < 0)
-                {
-                    s.Append("-");
-                    number = -number;
-                }
-
-                while (number > 0)
-                {
-                    char c = digits[(int)number % 36];
-                    s.Insert(0, c);
-                    number = number / 36;
-                }
-            }
-
-            return s.ToString();
-        }
-
-        /// <summary>
-        /// Converts a number to System.String.
-        /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
         public static System.String ToString(float f)
