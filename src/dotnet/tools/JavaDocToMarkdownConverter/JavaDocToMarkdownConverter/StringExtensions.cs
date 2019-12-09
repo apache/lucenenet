@@ -135,6 +135,8 @@ namespace JavaDocToMarkdownConverter
             { "Lucene.Net.Document", "Lucene.Net.Documents" },
             { "Lucene.Net.Benchmark", "Lucene.Net.Benchmarks" },
             { "Lucene.Net.Queryparser", "Lucene.Net.QueryParsers" },
+            { "Lucene.Net.Search.Join", "Lucene.Net.Join" },
+            { "Lucene.Net.Search.Grouping", "Lucene.Net.Grouping" },
             { ".Tokenattributes", ".TokenAttributes" },
             { ".Charfilter", ".CharFilter" },
             { ".Commongrams", ".CommonGrams" },

@@ -30,11 +30,11 @@ namespace JavaDocToMarkdownConverter
             if (args == null || args.Length < 2)
             {
                 Usage();
+                return;
             }
 
             Console.WriteLine(string.Format("Converting '{0}' to '{1}'...", args[0], args[1]));
 
-            //new DocConverter().ConvertDoc(@"F:\Projects\_Test\lucene-solr-4.8.0\lucene\demo\src\java\overview.html", @"F:\Projects\lucenenet\");
             new DocConverter().Convert(args[0], args[1]);
 
             Console.WriteLine("Conversion complete!");
