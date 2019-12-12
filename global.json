@@ -1,3 +1,6 @@
-{
-    "sources": [ "src" ]
+﻿{
+  "sources": [ "src" ],
+  "sdk": {
+    "version": "2.2.300"
+  }
 }

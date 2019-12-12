@@ -1,0 +1,68 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(SolutionDir)build/NuGet.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net451</TargetFrameworks>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+
+    <AssemblyTitle>Lucene.Net.Analysis.Morfologik</AssemblyTitle>
+    <RootNamespace>Lucene.Net.Analysis</RootNamespace>
+    <Description>Japanese Morphological Analyzer for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
+    <PackageTags>$(PackageTags);analysis;japanese</PackageTags>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591;1573</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Uk\mapping_uk.txt" />
+    <None Remove="Uk\README" />
+    <None Remove="Uk\stopwords.txt" />
+    <None Remove="Uk\tagset.txt" />
+    <None Remove="Uk\ukrainian.dict" />
+    <None Remove="Uk\ukrainian.info" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyKeys.cs" Link="Properties\CommonAssemblyKeys.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Uk\mapping_uk.txt" />
+    <EmbeddedResource Include="Uk\README" />
+    <EmbeddedResource Include="Uk\stopwords.txt" />
+    <EmbeddedResource Include="Uk\tagset.txt" />
+    <EmbeddedResource Include="Uk\ukrainian.dict" />
+    <EmbeddedResource Include="Uk\ukrainian.info" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Morfologik.Fsa" Version="$(MorfologikFsaPackageVersion)" />
+    <PackageReference Include="Morfologik.Polish" Version="$(MorfologikPolishPackageVersion)" />
+    <PackageReference Include="Morfologik.Stemming" Version="$(MorfologikStemmingPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+</Project>

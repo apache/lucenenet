@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Core
         {
             CharArraySet stopSet = StopFilter.MakeStopSet(TEST_VERSION_CURRENT, "of");
             StopFilter stpf = new StopFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("test of"), MockTokenizer.WHITESPACE, false), stopSet);
-            AssertTokenStreamContents(stpf, new string[] { "test" }, new int[] { 0 }, new int[] { 4 }, null, new int[] { 1 }, null, 7, 1, null, true);
+            AssertTokenStreamContents(stpf, new string[] { "test" }, new int[] { 0 }, new int[] { 4 }, null, new int[] { 1 }, null, 7, 1, null, true, null);
         }
 
         private void DoTestStopPositons(StopFilter stpf, bool enableIcrements)

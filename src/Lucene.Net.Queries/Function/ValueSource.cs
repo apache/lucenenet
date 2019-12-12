@@ -65,7 +65,7 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public static IDictionary NewContext(IndexSearcher searcher)
         {
-            var context = new Hashtable(new IdentityComparer());
+            var context = new Hashtable(IdentityComparer.Default);
             context["searcher"] = searcher;
             return context;
         }

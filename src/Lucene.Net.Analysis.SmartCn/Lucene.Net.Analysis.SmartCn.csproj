@@ -30,7 +30,6 @@
 
     <AssemblyTitle>Lucene.Net.Analysis.SmartCn</AssemblyTitle>
     <Description>Analyzer for indexing Chinese for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
-    <PackageReleaseNotes>This package runs natively on Linux. To run on Windows, install the Icu4c.Win.Full.Lib NuGet package into your application. See: https://github.com/sillsdev/icu-dotnet#windows-1.</PackageReleaseNotes>
     
     <PackageTags>$(PackageTags);analysis;chinese;smart</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>

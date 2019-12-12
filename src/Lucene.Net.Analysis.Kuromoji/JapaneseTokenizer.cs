@@ -168,12 +168,12 @@ namespace Lucene.Net.Analysis.Ja
             this.readingAtt = AddAttribute<IReadingAttribute>();
             this.inflectionAtt = AddAttribute<IInflectionAttribute>();
 
-            dictionary = TokenInfoDictionary.GetInstance();
+            dictionary = TokenInfoDictionary.Instance;
             fst = dictionary.FST;
-            unkDictionary = UnknownDictionary.GetInstance();
+            unkDictionary = UnknownDictionary.Instance;
             characterDefinition = unkDictionary.CharacterDefinition;
             this.userDictionary = userDictionary;
-            costs = ConnectionCosts.GetInstance();
+            costs = ConnectionCosts.Instance;
             fstReader = fst.GetBytesReader();
             if (userDictionary != null)
             {

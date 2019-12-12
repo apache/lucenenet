@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -567,7 +568,7 @@ namespace Lucene.Net.TestFramework
             {
                 action();
             }
-            catch (Exception ex) when (!IsFileAlreadyExistsException(ex, filePath))
+            catch (Exception ex) when (!FileSupport.IsFileAlreadyExistsException(ex, filePath))
             {
                 exception = ex;
             }

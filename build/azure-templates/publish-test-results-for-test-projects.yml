@@ -81,6 +81,36 @@ steps:
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
 
+# Special case: Only supports .net45
+- template: publish-test-results.yml
+  parameters:
+    framework: 'net451'
+    testProjectName: 'Lucene.Net.Tests.Analysis.OpenNLP'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+# Special case: Doesn't support .netcoreapp1.1
+- template: publish-test-results.yml
+  parameters:
+    framework: 'netcoreapp2.1'
+    testProjectName: 'Lucene.Net.Tests.Analysis.Morfologik'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results.yml
+  parameters:
+    framework: 'net451'
+    testProjectName: 'Lucene.Net.Tests.Analysis.Morfologik'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+
 - template: publish-test-results-for-target-frameworks.yml
   parameters:
     testProjectName: 'Lucene.Net.Tests._A-D'

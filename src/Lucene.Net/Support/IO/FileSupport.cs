@@ -29,7 +29,62 @@ namespace Lucene.Net.Support.IO
     /// </summary>
     public static class FileSupport
     {
-        private static int ERROR_FILE_EXISTS = 0x0050;
+        // LUCNENENET NOTE: Lookup the HResult value we are interested in for the current OS
+        // by provoking the exception during initialization and caching its HResult value for later.
+        // We optimize for Windows because those HResult values are known and documented, but for
+        // other platforms, this is the only way we can reliably determine the HResult values
+        // we are interested in.
+        //
+        // Reference: https://stackoverflow.com/q/46380483
+        private const int WIN_HRESULT_FILE_ALREADY_EXISTS = unchecked((int)0x80070050);
+        private static readonly int? HRESULT_FILE_ALREADY_EXISTS = LoadFileAlreadyExistsHResult();
+
+        private static int? LoadFileAlreadyExistsHResult()
+        {
+            if (Constants.WINDOWS)
+                return WIN_HRESULT_FILE_ALREADY_EXISTS;
+
+            return GetFileIOExceptionHResult(provokeException: (fileName) =>
+            {
+                //Try to create the file again -this should throw an IOException with the correct HResult for the current platform
+                using (var stream = new FileStream(fileName, FileMode.CreateNew, FileAccess.Write, FileShare.Read)) { }
+            });
+        }
+
+        internal static int? GetFileIOExceptionHResult(Action<string> provokeException)
+        {
+            string fileName;
+            try
+            {
+                // This could throw, but we don't care about this HResult value.
+                fileName = Path.GetTempFileName();
+            }
+            catch
+            {
+                return null; // We couldn't create a temp file
+            }
+            try
+            {
+                provokeException(fileName);
+            }
+            catch (IOException ex) when (ex.HResult != 0) // Assume 0 means the platform is not completely implemented, thus unknown
+            {
+                return ex.HResult;
+            }
+            catch
+            {
+                return null; // Unknown exception
+            }
+            finally
+            {
+                try
+                {
+                    File.Delete(fileName);
+                }
+                catch { }
+            }
+            return null; // Should never get here
+        }
 
         /// <summary>
         /// Creates a new empty file in a random subdirectory of <see cref="Path.GetTempPath()"/>, using the given prefix and 
@@ -144,14 +199,26 @@ namespace Lucene.Net.Support.IO
             return new FileInfo(fileName);
         }
 
-        private static bool IsFileAlreadyExistsException(IOException e, string fileName)
+        /// <summary>
+        /// Tests whether the passed in <see cref="Exception"/> is an <see cref="IOException"/>
+        /// corresponding to the underlying operating system's "File Already Exists" violation.
+        /// This works by forcing the exception to occur during initialization and caching the
+        /// <see cref="Exception.HResult"/> value for the current OS.
+        /// </summary>
+        /// <param name="ex">An exception, for comparison.</param>
+        /// <param name="filePath">The path of the file to check. This is used as a fallback in case the
+        /// current OS doesn't have an HResult (an edge case).</param>
+        /// <returns><c>true</c> if the exception passed is an <see cref="IOException"/> with an 
+        /// <see cref="Exception.HResult"/> corresponding to the operating system's "File Already Exists" violation, which
+        /// occurs when an attempt is made to create a file that already exists.</returns>
+        public static bool IsFileAlreadyExistsException(Exception ex, string filePath)
         {
-            // On Windows, we can rely on the constant, but we need to fallback
-            // to doing a physical file check to be portable across platforms.
-            if (Constants.WINDOWS)
-                return (e.HResult & 0xFFFF) == ERROR_FILE_EXISTS;
+            if (!typeof(IOException).Equals(ex))
+                return false;
+            else if (HRESULT_FILE_ALREADY_EXISTS.HasValue)
+                return ex.HResult == HRESULT_FILE_ALREADY_EXISTS;
             else
-                return File.Exists(fileName);
+                return File.Exists(filePath);
         }
 
         /// <summary>

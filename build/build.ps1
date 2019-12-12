@@ -48,7 +48,7 @@ properties {
 	[int]$maximumParalellJobs = 8
 	
 	#test paramters
-	[string]$frameworks_to_test = "netcoreapp2.1,netcoreapp1.0,net451"
+	[string]$frameworks_to_test = "netcoreapp2.1,netcoreapp1.1,net451"
 	[string]$where = ""
 }
 
@@ -215,6 +215,16 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 					continue
 				}
 
+				# Special case - OpenNLP.NET only supports .NET Framework
+				if ($projectName.Contains("Tests.Analysis.OpenNLP") -and (!$framework.StartsWith("net45"))) {
+					continue
+				}
+
+				# Special case - Morfologik doesn't support .NET Standard 1.x
+				if ($projectName.Contains("Tests.Analysis.Morfologik") -and ($framework.StartsWith("netcoreapp1."))) {
+					continue
+				}
+
 				$logPath = "$outDirectory/$framework"
 				$outputPath = "$logPath/$projectName"
 
@@ -272,7 +282,7 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 	$testProjects = $testProjects | Sort-Object -Property FullName
 
 	$frameworksToTest = Get-FrameworksToTest
-	
+
 	Write-Host "frameworksToTest: $frameworksToTest" -ForegroundColor Yellow
 
 	[int]$totalProjects = $testProjects.Length * $frameworksToTest.Length
@@ -287,6 +297,20 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 
 			# Special case - our CLI tool only supports .NET Core 2.1
 			if ($testName.Contains("Tests.Cli") -and (!$framework.StartsWith("netcoreapp2."))) {
+				$totalProjects--
+				$remainingProjects--
+				continue
+			}
+			
+			# Special case - OpenNLP.NET only supports .NET Framework
+			if ($testName.Contains("Tests.Analysis.OpenNLP") -and (!$framework.StartsWith("net45"))) {
+				$totalProjects--
+				$remainingProjects--
+				continue
+			}
+
+			# Special case - Morfologik doesn't support .NET Standard 1.x
+			if ($testName.Contains("Tests.Analysis.Morfologik") -and ($framework.StartsWith("netcoreapp1."))) {
 				$totalProjects--
 				$remainingProjects--
 				continue
@@ -323,8 +347,8 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 			# doing release inspection and on the CI server.
 			$testExpression = "$testExpression --logger:""trx;LogFileName=TestResults.trx"""
 			
-			if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
-				$testExpression = "$testExpression --filter $where"
+			if (![string]::IsNullOrEmpty($where)) {
+				$testExpression = "$testExpression --TestCaseFilter:""$where"""
 			}
 
 			Write-Host $testExpression -ForegroundColor Magenta

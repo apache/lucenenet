@@ -108,8 +108,8 @@ namespace Lucene.Net.Index
                 this.maxDoc = this.numDocs = 0;
                 this.hasDeletions = false;
             }
-            Collections.AddAll(completeReaderSet, this.parallelReaders);
-            Collections.AddAll(completeReaderSet, this.storedFieldsReaders);
+            completeReaderSet.UnionWith(this.parallelReaders);
+            completeReaderSet.UnionWith(this.storedFieldsReaders);
 
             // check compatibility:
             foreach (AtomicReader reader in completeReaderSet)

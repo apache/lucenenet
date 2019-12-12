@@ -19,17 +19,15 @@
  SOFTWARE.
 */
 
-using System;
 using Lucene.Net.Attributes;
-using Lucene.Net.Support.C5;
+using Lucene.Net.Support.C5Compatibility;
 using NUnit.Framework;
-using SCG = System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
 
 namespace Lucene.Net.Support.RBDictionary
 {
-    using DictionaryIntToInt = TreeDictionary<int, int>;
-
     static class Factory
     {
         public static IDictionary<K, V> New<K, V>() { return new TreeDictionary<K, V>(); }
@@ -46,26 +44,26 @@ namespace Lucene.Net.Support.RBDictionary
     //}
 
 
-    [TestFixture]
-    public class Formatting
-    {
-        IDictionary<int, int> coll;
-        IFormatProvider rad16;
-        [SetUp]
-        public void Init() { coll = Factory.New<int, int>(); rad16 = new RadixFormatProvider(16); }
-        [TearDown]
-        public void Dispose() { coll = null; rad16 = null; }
-        [Test, LuceneNetSpecific]
-        public void Format()
-        {
-            Assert.AreEqual("[  ]", coll.ToString());
-            coll.Add(23, 67); coll.Add(45, 89);
-            Assert.AreEqual("[ 23 => 67, 45 => 89 ]", coll.ToString());
-            Assert.AreEqual("[ 17 => 43, 2D => 59 ]", coll.ToString(null, rad16));
-            Assert.AreEqual("[ 23 => 67, ... ]", coll.ToString("L14", null));
-            Assert.AreEqual("[ 17 => 43, ... ]", coll.ToString("L14", rad16));
-        }
-    }
+    //[TestFixture]
+    //public class Formatting
+    //{
+    //    IDictionary<int, int> coll;
+    //    IFormatProvider rad16;
+    //    [SetUp]
+    //    public void Init() { coll = Factory.New<int, int>(); rad16 = new RadixFormatProvider(16); }
+    //    [TearDown]
+    //    public void Dispose() { coll = null; rad16 = null; }
+    //    [Test, LuceneNetSpecific]
+    //    public void Format()
+    //    {
+    //        Assert.AreEqual("[  ]", coll.ToString());
+    //        coll.Add(23, 67); coll.Add(45, 89);
+    //        Assert.AreEqual("[ 23 => 67, 45 => 89 ]", coll.ToString());
+    //        Assert.AreEqual("[ 17 => 43, 2D => 59 ]", coll.ToString(null, rad16));
+    //        Assert.AreEqual("[ 23 => 67, ... ]", coll.ToString("L14", null));
+    //        Assert.AreEqual("[ 17 => 43, ... ]", coll.ToString("L14", rad16));
+    //    }
+    //}
 
     [TestFixture]
     public class RBDict
@@ -80,40 +78,40 @@ namespace Lucene.Net.Support.RBDictionary
         [TearDown]
         public void Dispose() { dict = null; }
 
-        [Test, LuceneNetSpecific]
-        public void NullEqualityComparerinConstructor1()
-        {
-            Assert.Throws<NullReferenceException>(() => new TreeDictionary<int, int>(null));
-        }
+        //[Test, LuceneNetSpecific]
+        //public void NullEqualityComparerinConstructor1()
+        //{
+        //    Assert.Throws<NullReferenceException>(() => new TreeDictionary<int, int>(null));
+        //}
 
-        [Test, LuceneNetSpecific]
-        public void Choose()
-        {
-            dict.Add("YES", "NO");
-            Assert.AreEqual(new KeyValuePair<string, string>("YES", "NO"), dict.Choose());
-        }
+        //[Test, LuceneNetSpecific]
+        //public void Choose()
+        //{
+        //    dict.Add("YES", "NO");
+        //    Assert.AreEqual(new KeyValuePair<string, string>("YES", "NO"), dict.Choose());
+        //}
 
-        [Test, LuceneNetSpecific]
-        public void BadChoose()
-        {
-            Assert.Throws<NoSuchItemException>(() => dict.Choose());
-        }
+        //[Test, LuceneNetSpecific]
+        //public void BadChoose()
+        //{
+        //    Assert.Throws<NoSuchItemException>(() => dict.Choose());
+        //}
 
-        [Test, LuceneNetSpecific]
-        public void Pred1()
-        {
-            dict.Add("A", "1");
-            dict.Add("C", "2");
-            dict.Add("E", "3");
-            Assert.AreEqual("1", dict.Predecessor("B").Value);
-            Assert.AreEqual("1", dict.Predecessor("C").Value);
-            Assert.AreEqual("1", dict.WeakPredecessor("B").Value);
-            Assert.AreEqual("2", dict.WeakPredecessor("C").Value);
-            Assert.AreEqual("2", dict.Successor("B").Value);
-            Assert.AreEqual("3", dict.Successor("C").Value);
-            Assert.AreEqual("2", dict.WeakSuccessor("B").Value);
-            Assert.AreEqual("2", dict.WeakSuccessor("C").Value);
-        }
+        //[Test, LuceneNetSpecific]
+        //public void Pred1()
+        //{
+        //    dict.Add("A", "1");
+        //    dict.Add("C", "2");
+        //    dict.Add("E", "3");
+        //    Assert.AreEqual("1", dict.Predecessor("B").Value);
+        //    Assert.AreEqual("1", dict.Predecessor("C").Value);
+        //    Assert.AreEqual("1", dict.WeakPredecessor("B").Value);
+        //    Assert.AreEqual("2", dict.WeakPredecessor("C").Value);
+        //    Assert.AreEqual("2", dict.Successor("B").Value);
+        //    Assert.AreEqual("3", dict.Successor("C").Value);
+        //    Assert.AreEqual("2", dict.WeakSuccessor("B").Value);
+        //    Assert.AreEqual("2", dict.WeakSuccessor("C").Value);
+        //}
 
         [Test, LuceneNetSpecific]
         public void Pred2()
@@ -126,34 +124,34 @@ namespace Lucene.Net.Support.RBDictionary
             Assert.AreEqual("1", res.Value);
             Assert.IsTrue(dict.TryPredecessor("C", out res));
             Assert.AreEqual("1", res.Value);
-            Assert.IsTrue(dict.TryWeakPredecessor("B", out res));
-            Assert.AreEqual("1", res.Value);
-            Assert.IsTrue(dict.TryWeakPredecessor("C", out res));
-            Assert.AreEqual("2", res.Value);
+            //Assert.IsTrue(dict.TryWeakPredecessor("B", out res));
+            //Assert.AreEqual("1", res.Value);
+            //Assert.IsTrue(dict.TryWeakPredecessor("C", out res));
+            //Assert.AreEqual("2", res.Value);
             Assert.IsTrue(dict.TrySuccessor("B", out res));
             Assert.AreEqual("2", res.Value);
             Assert.IsTrue(dict.TrySuccessor("C", out res));
             Assert.AreEqual("3", res.Value);
-            Assert.IsTrue(dict.TryWeakSuccessor("B", out res));
-            Assert.AreEqual("2", res.Value);
-            Assert.IsTrue(dict.TryWeakSuccessor("C", out res));
-            Assert.AreEqual("2", res.Value);
+            //Assert.IsTrue(dict.TryWeakSuccessor("B", out res));
+            //Assert.AreEqual("2", res.Value);
+            //Assert.IsTrue(dict.TryWeakSuccessor("C", out res));
+            //Assert.AreEqual("2", res.Value);
 
             Assert.IsFalse(dict.TryPredecessor("A", out res));
             Assert.AreEqual(null, res.Key);
             Assert.AreEqual(null, res.Value);
 
-            Assert.IsFalse(dict.TryWeakPredecessor("@", out res));
-            Assert.AreEqual(null, res.Key);
-            Assert.AreEqual(null, res.Value);
+            //Assert.IsFalse(dict.TryWeakPredecessor("@", out res));
+            //Assert.AreEqual(null, res.Key);
+            //Assert.AreEqual(null, res.Value);
 
             Assert.IsFalse(dict.TrySuccessor("E", out res));
             Assert.AreEqual(null, res.Key);
             Assert.AreEqual(null, res.Value);
 
-            Assert.IsFalse(dict.TryWeakSuccessor("F", out res));
-            Assert.AreEqual(null, res.Key);
-            Assert.AreEqual(null, res.Value);
+            //Assert.IsFalse(dict.TryWeakSuccessor("F", out res));
+            //Assert.AreEqual(null, res.Key);
+            //Assert.AreEqual(null, res.Value);
         }
 
         [Test, LuceneNetSpecific]
@@ -183,11 +181,11 @@ namespace Lucene.Net.Support.RBDictionary
             Assert.AreEqual(dict.Count, 0, "dict should be empty");
         }
         [Test, LuceneNetSpecific]
-        public void Contains()
+        public void ContainsKey()
         {
             dict.Add("C", "D");
-            Assert.IsTrue(dict.Contains("C"));
-            Assert.IsFalse(dict.Contains("D"));
+            Assert.IsTrue(dict.ContainsKey("C"));
+            Assert.IsFalse(dict.ContainsKey("D"));
         }
 
 
@@ -196,15 +194,19 @@ namespace Lucene.Net.Support.RBDictionary
         {
             dict.Add("A", "B");
 
-            var exception = Assert.Throws<DuplicateNotAllowedException>(() => dict.Add("A", "B"));
-            Assert.AreEqual("Key being added: 'A'", exception.Message);
+            //var exception = Assert.Throws<C5.DuplicateNotAllowedException>(() => dict.Add("A", "B"));
+            //Assert.AreEqual("Key being added: 'A'", exception.Message);
+
+            var exception = Assert.Throws<ArgumentException>(() => dict.Add("A", "B"));
+            Assert.AreEqual("An element with the key 'A' already exists.", exception.Message);
         }
 
 
         [Test, LuceneNetSpecific]
         public void GettingNonExisting()
         {
-            Assert.Throws<NoSuchItemException>(() => Console.WriteLine(dict["R"]));
+            //Assert.Throws<NoSuchItemException>(() => Console.WriteLine(dict["R"]));
+            Assert.Throws<KeyNotFoundException>(() => Console.WriteLine(dict["R"]));
         }
 
 
@@ -222,127 +224,421 @@ namespace Lucene.Net.Support.RBDictionary
         }
     }
 
-    [TestFixture]
-    public class GuardedSortedDictionaryTest
+
+    public class SCGIDictionary_TreeDictionary : SCGIDictionaryBase
     {
-        private GuardedSortedDictionary<string, string> dict;
+        public override void Init()
+        {
+            dict = new TreeDictionary<string, string>(testData, comparer);
+        }
+    }
+
+    public class SCGIDictionary_SortedDictionary : SCGIDictionaryBase
+    {
+        public override void Init()
+        {
+            dict = new SortedDictionary<string, string>(testData, comparer);
+        }
+    }
+
+
+    [TestFixture]
+    public abstract class SCGIDictionaryBase
+    {
+        protected IComparer<string> comparer = new SC();
+        protected IDictionary<string, string> testData = new Dictionary<string, string>()
+        {
+            { "A", "1" },
+            { "C", "2" },
+            { "E", "3" }
+        };
+
+        protected IDictionary<string, string> dict;
 
         [SetUp]
-        public void Init()
-        {
-            ISortedDictionary<string, string> dict = new TreeDictionary<string, string>(new SC());
-            dict.Add("A", "1");
-            dict.Add("C", "2");
-            dict.Add("E", "3");
-            this.dict = new GuardedSortedDictionary<string, string>(dict);
-        }
+        public abstract void Init();
 
         [TearDown]
-        public void Dispose() { dict = null; }
-
-        [Test, LuceneNetSpecific]
-        public void Pred1()
+        public void Dispose()
         {
-            Assert.AreEqual("1", dict.Predecessor("B").Value);
-            Assert.AreEqual("1", dict.Predecessor("C").Value);
-            Assert.AreEqual("1", dict.WeakPredecessor("B").Value);
-            Assert.AreEqual("2", dict.WeakPredecessor("C").Value);
-            Assert.AreEqual("2", dict.Successor("B").Value);
-            Assert.AreEqual("3", dict.Successor("C").Value);
-            Assert.AreEqual("2", dict.WeakSuccessor("B").Value);
-            Assert.AreEqual("2", dict.WeakSuccessor("C").Value);
+            dict = null;
         }
 
         [Test, LuceneNetSpecific]
-        public void Pred2()
+        public void Add()
         {
-            KeyValuePair<String, String> res;
-            Assert.IsTrue(dict.TryPredecessor("B", out res));
-            Assert.AreEqual("1", res.Value);
-            Assert.IsTrue(dict.TryPredecessor("C", out res));
-            Assert.AreEqual("1", res.Value);
-            Assert.IsTrue(dict.TryWeakPredecessor("B", out res));
-            Assert.AreEqual("1", res.Value);
-            Assert.IsTrue(dict.TryWeakPredecessor("C", out res));
-            Assert.AreEqual("2", res.Value);
-            Assert.IsTrue(dict.TrySuccessor("B", out res));
-            Assert.AreEqual("2", res.Value);
-            Assert.IsTrue(dict.TrySuccessor("C", out res));
-            Assert.AreEqual("3", res.Value);
-            Assert.IsTrue(dict.TryWeakSuccessor("B", out res));
-            Assert.AreEqual("2", res.Value);
-            Assert.IsTrue(dict.TryWeakSuccessor("C", out res));
-            Assert.AreEqual("2", res.Value);
-
-            Assert.IsFalse(dict.TryPredecessor("A", out res));
-            Assert.AreEqual(null, res.Key);
-            Assert.AreEqual(null, res.Value);
-
-            Assert.IsFalse(dict.TryWeakPredecessor("@", out res));
-            Assert.AreEqual(null, res.Key);
-            Assert.AreEqual(null, res.Value);
-
-            Assert.IsFalse(dict.TrySuccessor("E", out res));
-            Assert.AreEqual(null, res.Key);
-            Assert.AreEqual(null, res.Value);
-
-            Assert.IsFalse(dict.TryWeakSuccessor("F", out res));
-            Assert.AreEqual(null, res.Key);
-            Assert.AreEqual(null, res.Value);
-        }
-
-        [Test, LuceneNetSpecific]
-        public void Initial()
-        {
-            Assert.IsTrue(dict.IsReadOnly);
-
             Assert.AreEqual(3, dict.Count);
-            Assert.AreEqual("1", dict["A"]);
+            dict.Add("S", "4");
+            Assert.AreEqual(4, dict.Count);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void ContainsKey()
+        {
+            Assert.IsTrue(dict.ContainsKey("A"));
+            Assert.IsFalse(dict.ContainsKey("Z"));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Remove()
+        {
+            Assert.AreEqual(3, dict.Count);
+            Assert.IsTrue(dict.Remove("A"));
+            Assert.AreEqual(2, dict.Count);
+            Assert.IsFalse(dict.Remove("Z"));
+            Assert.AreEqual(2, dict.Count);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void TryGetValue()
+        {
+            Assert.IsTrue(dict.TryGetValue("C", out string value));
+            Assert.AreEqual("2", value);
+            Assert.IsFalse(dict.TryGetValue("Z", out value));
+            Assert.IsNull(value);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void GetItem()
+        {
+            Assert.AreEqual("3", dict["E"]);
+            Assert.Throws<KeyNotFoundException>(() => { var x = dict["Z"]; });
+        }
+
+        [Test, LuceneNetSpecific]
+        public void SetItem()
+        {
+            dict["C"] = "9";
+            Assert.AreEqual("9", dict["C"]);
+            dict["Z"] = "5";
+            Assert.AreEqual("5", dict["Z"]);
+        }
+
+        // KeyValuePair
+        [Test, LuceneNetSpecific]
+        public void KeyValuePairEquality()
+        {
+            Assert.IsTrue(new KeyValuePair<string, string>("Foo", "Bar").Equals(new KeyValuePair<string, string>("Foo", "Bar")));
+            Assert.IsFalse(new KeyValuePair<string, string>("Foo", "Bar").Equals(new KeyValuePair<string, string>("Foo", "Tree")));
+            Assert.IsFalse(new KeyValuePair<string, string>("Foo", "Bar").Equals(new KeyValuePair<string, string>("Tree", "Bar")));
+
+            Assert.IsTrue(new KeyValuePair<string, string>("Foo", "Bar").Equals((object)new KeyValuePair<string, string>("Foo", "Bar")));
+            Assert.IsFalse(new KeyValuePair<string, string>("Foo", "Bar").Equals((object)new KeyValuePair<string, string>("Foo", "Tree")));
+            Assert.IsFalse(new KeyValuePair<string, string>("Foo", "Bar").Equals((object)new KeyValuePair<string, string>("Tree", "Bar")));
+        }
+
+        // ICollection<SCG.KeyValuePair<TKey, TValue>>
+        [Test, LuceneNetSpecific]
+        public void Clear()
+        {
+            dict.Clear();
+            Assert.AreEqual(0, dict.Count);
         }
 
         [Test, LuceneNetSpecific]
         public void Contains()
         {
-            Assert.IsTrue(dict.Contains("A"));
-            Assert.IsFalse(dict.Contains("1"));
+            Assert.IsTrue(((ICollection<KeyValuePair<string, string>>)dict).Contains(new KeyValuePair<string, string>("C", "2")));
+            Assert.IsFalse(((ICollection<KeyValuePair<string, string>>)dict).Contains(new KeyValuePair<string, string>("D", "2")));
+            Assert.IsFalse(((ICollection<KeyValuePair<string, string>>)dict).Contains(new KeyValuePair<string, string>("C", "6")));
         }
 
         [Test, LuceneNetSpecific]
-        public void IllegalAdd()
+        public void CopyTo()
         {
-            Assert.Throws<ReadOnlyCollectionException>(() => dict.Add("Q", "7"));
+            var pairs = new KeyValuePair<string, string>[dict.Count];
+            dict.CopyTo(pairs, 0);
+            Assert.AreEqual("C", pairs[1].Key);
+            Assert.AreEqual("2", pairs[1].Value);
+            Assert.AreEqual("E", pairs[2].Key);
+            Assert.AreEqual("3", pairs[2].Value);
         }
 
         [Test, LuceneNetSpecific]
-        public void IllegalClear()
+        public void RemovePair()
         {
-            Assert.Throws<ReadOnlyCollectionException>(() => dict.Clear());
-        }
-        [Test, LuceneNetSpecific]
-
-        public void IllegalSet()
-        {
-            Assert.Throws<ReadOnlyCollectionException>(() => dict["A"] = "8");
-        }
-
-        public void IllegalRemove()
-        {
-            Assert.Throws<ReadOnlyCollectionException>(() => dict.Remove("A"));
+            Assert.AreEqual(3, dict.Count);
+            Assert.IsTrue(dict.Remove(new KeyValuePair<string, string>("A", "1")));
+            Assert.AreEqual(2, dict.Count);
+            Assert.IsFalse(dict.Remove(new KeyValuePair<string, string>("Z", "9")));
+            Assert.AreEqual(2, dict.Count);
         }
 
         [Test, LuceneNetSpecific]
-        public void GettingNonExisting()
+        public void Count()
         {
-            Assert.Throws<NoSuchItemException>(() => Console.WriteLine(dict["R"]));
+            Assert.AreEqual(3, dict.Count);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void IsReadOnly()
+        {
+            Assert.AreEqual(false, dict.IsReadOnly);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void GetEnumerable()
+        {
+            var enumerable = dict.GetEnumerator();
+            Assert.IsTrue(enumerable.MoveNext());
+            Assert.AreEqual(new KeyValuePair<string, string>("A", "1"), enumerable.Current);
+            Assert.IsTrue(enumerable.MoveNext());
+            Assert.AreEqual(new KeyValuePair<string, string>("C", "2"), enumerable.Current);
+            Assert.IsTrue(enumerable.MoveNext());
+            Assert.AreEqual(new KeyValuePair<string, string>("E", "3"), enumerable.Current);
+            Assert.IsFalse(enumerable.MoveNext());
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Keys_GetEnumerable()
+        {
+            var enumerable = dict.Keys.GetEnumerator();
+            Assert.IsTrue(enumerable.MoveNext());
+            Assert.AreEqual("A", enumerable.Current);
+            Assert.IsTrue(enumerable.MoveNext());
+            Assert.AreEqual("C", enumerable.Current);
+            Assert.IsTrue(enumerable.MoveNext());
+            Assert.AreEqual("E", enumerable.Current);
+            Assert.IsFalse(enumerable.MoveNext());
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Keys_Count()
+        {
+            Assert.AreEqual(3, dict.Keys.Count);
+            dict.Remove("C");
+            Assert.AreEqual(2, dict.Keys.Count);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Keys_IsReadOnly()
+        {
+            Assert.AreEqual(true, dict.Keys.IsReadOnly);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Keys_Add()
+        {
+            Assert.Throws<NotSupportedException>(() => dict.Keys.Add("Foo"));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Keys_Clear()
+        {
+            Assert.Throws<NotSupportedException>(() => dict.Keys.Clear());
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Keys_Contains()
+        {
+            Assert.IsTrue(dict.Keys.Contains("A"));
+            Assert.IsFalse(dict.Keys.Contains("B"));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Keys_CopyTo()
+        {
+            var keys = new string[dict.Keys.Count + 2];
+            dict.Keys.CopyTo(keys, 1);
+            Assert.AreEqual(null, keys[0]);
+            Assert.AreEqual("A", keys[1]);
+            Assert.AreEqual("C", keys[2]);
+            Assert.AreEqual("E", keys[3]);
+            Assert.AreEqual(null, keys[4]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Keys_Remove()
+        {
+            Assert.Throws<NotSupportedException>(() => dict.Keys.Remove("Foo"));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Values_GetEnumerable()
+        {
+            var enumerable = dict.Values.GetEnumerator();
+            Assert.IsTrue(enumerable.MoveNext());
+            Assert.AreEqual("1", enumerable.Current);
+            Assert.IsTrue(enumerable.MoveNext());
+            Assert.AreEqual("2", enumerable.Current);
+            Assert.IsTrue(enumerable.MoveNext());
+            Assert.AreEqual("3", enumerable.Current);
+            Assert.IsFalse(enumerable.MoveNext());
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Values_Count()
+        {
+            Assert.AreEqual(3, dict.Values.Count);
+            dict.Remove("C");
+            Assert.AreEqual(2, dict.Values.Count);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Values_IsReadOnly()
+        {
+            Assert.AreEqual(true, dict.Values.IsReadOnly);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Values_Add()
+        {
+            Assert.Throws<NotSupportedException>(() => dict.Values.Add("Foo"));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Values_Clear()
+        {
+            Assert.Throws<NotSupportedException>(() => dict.Values.Clear());
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Values_Contains()
+        {
+            Assert.IsTrue(dict.Values.Contains("1"));
+            Assert.IsFalse(dict.Values.Contains("9"));
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Values_CopyTo()
+        {
+            var values = new string[dict.Values.Count + 2];
+            dict.Values.CopyTo(values, 1);
+            Assert.AreEqual(null, values[0]);
+            Assert.AreEqual("1", values[1]);
+            Assert.AreEqual("2", values[2]);
+            Assert.AreEqual("3", values[3]);
+            Assert.AreEqual(null, values[4]);
+        }
+
+        [Test, LuceneNetSpecific]
+        public void Values_Remove()
+        {
+            Assert.Throws<NotSupportedException>(() => dict.Values.Remove("1"));
         }
     }
+
+    //[TestFixture]
+    //public class GuardedSortedDictionaryTest
+    //{
+    //    private GuardedSortedDictionary<string, string> dict;
+
+    //    [SetUp]
+    //    public void Init()
+    //    {
+    //        ISortedDictionary<string, string> dict = new TreeDictionary<string, string>(new SC());
+    //        dict.Add("A", "1");
+    //        dict.Add("C", "2");
+    //        dict.Add("E", "3");
+    //        this.dict = new GuardedSortedDictionary<string, string>(dict);
+    //    }
+
+    //    [TearDown]
+    //    public void Dispose() { dict = null; }
+
+    //    [Test, LuceneNetSpecific]
+    //    public void Pred1()
+    //    {
+    //        Assert.AreEqual("1", dict.Predecessor("B").Value);
+    //        Assert.AreEqual("1", dict.Predecessor("C").Value);
+    //        Assert.AreEqual("1", dict.WeakPredecessor("B").Value);
+    //        Assert.AreEqual("2", dict.WeakPredecessor("C").Value);
+    //        Assert.AreEqual("2", dict.Successor("B").Value);
+    //        Assert.AreEqual("3", dict.Successor("C").Value);
+    //        Assert.AreEqual("2", dict.WeakSuccessor("B").Value);
+    //        Assert.AreEqual("2", dict.WeakSuccessor("C").Value);
+    //    }
+
+    //    [Test, LuceneNetSpecific]
+    //    public void Pred2()
+    //    {
+    //        KeyValuePair<String, String> res;
+    //        Assert.IsTrue(dict.TryPredecessor("B", out res));
+    //        Assert.AreEqual("1", res.Value);
+    //        Assert.IsTrue(dict.TryPredecessor("C", out res));
+    //        Assert.AreEqual("1", res.Value);
+    //        Assert.IsTrue(dict.TryWeakPredecessor("B", out res));
+    //        Assert.AreEqual("1", res.Value);
+    //        Assert.IsTrue(dict.TryWeakPredecessor("C", out res));
+    //        Assert.AreEqual("2", res.Value);
+    //        Assert.IsTrue(dict.TrySuccessor("B", out res));
+    //        Assert.AreEqual("2", res.Value);
+    //        Assert.IsTrue(dict.TrySuccessor("C", out res));
+    //        Assert.AreEqual("3", res.Value);
+    //        Assert.IsTrue(dict.TryWeakSuccessor("B", out res));
+    //        Assert.AreEqual("2", res.Value);
+    //        Assert.IsTrue(dict.TryWeakSuccessor("C", out res));
+    //        Assert.AreEqual("2", res.Value);
+
+    //        Assert.IsFalse(dict.TryPredecessor("A", out res));
+    //        Assert.AreEqual(null, res.Key);
+    //        Assert.AreEqual(null, res.Value);
+
+    //        Assert.IsFalse(dict.TryWeakPredecessor("@", out res));
+    //        Assert.AreEqual(null, res.Key);
+    //        Assert.AreEqual(null, res.Value);
+
+    //        Assert.IsFalse(dict.TrySuccessor("E", out res));
+    //        Assert.AreEqual(null, res.Key);
+    //        Assert.AreEqual(null, res.Value);
+
+    //        Assert.IsFalse(dict.TryWeakSuccessor("F", out res));
+    //        Assert.AreEqual(null, res.Key);
+    //        Assert.AreEqual(null, res.Value);
+    //    }
+
+    //    [Test, LuceneNetSpecific]
+    //    public void Initial()
+    //    {
+    //        Assert.IsTrue(dict.IsReadOnly);
+
+    //        Assert.AreEqual(3, dict.Count);
+    //        Assert.AreEqual("1", dict["A"]);
+    //    }
+
+    //    [Test, LuceneNetSpecific]
+    //    public void Contains()
+    //    {
+    //        Assert.IsTrue(dict.Contains("A"));
+    //        Assert.IsFalse(dict.Contains("1"));
+    //    }
+
+    //    [Test, LuceneNetSpecific]
+    //    public void IllegalAdd()
+    //    {
+    //        Assert.Throws<ReadOnlyCollectionException>(() => dict.Add("Q", "7"));
+    //    }
+
+    //    [Test, LuceneNetSpecific]
+    //    public void IllegalClear()
+    //    {
+    //        Assert.Throws<ReadOnlyCollectionException>(() => dict.Clear());
+    //    }
+    //    [Test, LuceneNetSpecific]
+
+    //    public void IllegalSet()
+    //    {
+    //        Assert.Throws<ReadOnlyCollectionException>(() => dict["A"] = "8");
+    //    }
+
+    //    public void IllegalRemove()
+    //    {
+    //        Assert.Throws<ReadOnlyCollectionException>(() => dict.Remove("A"));
+    //    }
+
+    //    [Test, LuceneNetSpecific]
+    //    public void GettingNonExisting()
+    //    {
+    //        Assert.Throws<NoSuchItemException>(() => Console.WriteLine(dict["R"]));
+    //    }
+    //}
 
     [TestFixture]
     public class Enumerators
     {
         private TreeDictionary<string, string> dict;
 
-        private SCG.IEnumerator<KeyValuePair<string, string>> dictenum;
+        private IEnumerator<KeyValuePair<string, string>> dictenum;
 
 
         [SetUp]
@@ -366,7 +662,7 @@ namespace Lucene.Net.Support.RBDictionary
         [Test, LuceneNetSpecific]
         public void KeysEnumerator()
         {
-            SCG.IEnumerator<string> keys = dict.Keys.GetEnumerator();
+            IEnumerator<string> keys = dict.Keys.GetEnumerator();
             Assert.AreEqual(3, dict.Keys.Count);
             Assert.IsTrue(keys.MoveNext());
             Assert.AreEqual("R", keys.Current);
@@ -377,59 +673,59 @@ namespace Lucene.Net.Support.RBDictionary
             Assert.IsFalse(keys.MoveNext());
         }
 
-        [Test, LuceneNetSpecific]
-        public void KeysISorted()
-        {
-            ISorted<string> keys = dict.Keys;
-            Assert.IsTrue(keys.IsReadOnly);
-            Assert.AreEqual("R", keys.FindMin());
-            Assert.AreEqual("T", keys.FindMax());
-            Assert.IsTrue(keys.Contains("S"));
-            Assert.AreEqual(3, keys.Count);
-            // This doesn't hold, maybe because the dict uses a special key comparer?
-            // Assert.IsTrue(keys.SequencedEquals(new WrappedArray<string>(new string[] { "R", "S", "T" })));
-            Assert.IsTrue(keys.UniqueItems().All(delegate (String s) { return s == "R" || s == "S" || s == "T"; }));
-            Assert.IsTrue(keys.All(delegate (String s) { return s == "R" || s == "S" || s == "T"; }));
-            Assert.IsFalse(keys.Exists(delegate (String s) { return s != "R" && s != "S" && s != "T"; }));
-            String res;
-            Assert.IsTrue(keys.Find(delegate (String s) { return s == "R"; }, out res));
-            Assert.AreEqual("R", res);
-            Assert.IsFalse(keys.Find(delegate (String s) { return s == "Q"; }, out res));
-            Assert.AreEqual(null, res);
-        }
+        //[Test, LuceneNetSpecific]
+        //public void KeysISorted()
+        //{
+        //    C5.ISorted<string> keys = (C5.ISorted<string>)dict.Keys;
+        //    Assert.IsTrue(keys.IsReadOnly);
+        //    Assert.AreEqual("R", keys.FindMin());
+        //    Assert.AreEqual("T", keys.FindMax());
+        //    Assert.IsTrue(keys.Contains("S"));
+        //    Assert.AreEqual(3, keys.Count);
+        //    // This doesn't hold, maybe because the dict uses a special key comparer?
+        //    // Assert.IsTrue(keys.SequencedEquals(new WrappedArray<string>(new string[] { "R", "S", "T" })));
+        //    Assert.IsTrue(keys.UniqueItems().All(delegate (String s) { return s == "R" || s == "S" || s == "T"; }));
+        //    Assert.IsTrue(keys.All(delegate (String s) { return s == "R" || s == "S" || s == "T"; }));
+        //    Assert.IsFalse(keys.Exists(delegate (String s) { return s != "R" && s != "S" && s != "T"; }));
+        //    String res;
+        //    Assert.IsTrue(keys.Find(delegate (String s) { return s == "R"; }, out res));
+        //    Assert.AreEqual("R", res);
+        //    Assert.IsFalse(keys.Find(delegate (String s) { return s == "Q"; }, out res));
+        //    Assert.AreEqual(null, res);
+        //}
 
-        [Test, LuceneNetSpecific]
-        public void KeysISortedPred()
-        {
-            ISorted<string> keys = dict.Keys;
-            String res;
-            Assert.IsTrue(keys.TryPredecessor("S", out res));
-            Assert.AreEqual("R", res);
-            Assert.IsTrue(keys.TryWeakPredecessor("R", out res));
-            Assert.AreEqual("R", res);
-            Assert.IsTrue(keys.TrySuccessor("S", out res));
-            Assert.AreEqual("T", res);
-            Assert.IsTrue(keys.TryWeakSuccessor("T", out res));
-            Assert.AreEqual("T", res);
-            Assert.IsFalse(keys.TryPredecessor("R", out res));
-            Assert.AreEqual(null, res);
-            Assert.IsFalse(keys.TryWeakPredecessor("P", out res));
-            Assert.AreEqual(null, res);
-            Assert.IsFalse(keys.TrySuccessor("T", out res));
-            Assert.AreEqual(null, res);
-            Assert.IsFalse(keys.TryWeakSuccessor("U", out res));
-            Assert.AreEqual(null, res);
+        //[Test, LuceneNetSpecific]
+        //public void KeysISortedPred()
+        //{
+        //    C5.ISorted<string> keys = (C5.ISorted<string>)dict.Keys;
+        //    String res;
+        //    Assert.IsTrue(keys.TryPredecessor("S", out res));
+        //    Assert.AreEqual("R", res);
+        //    Assert.IsTrue(keys.TryWeakPredecessor("R", out res));
+        //    Assert.AreEqual("R", res);
+        //    Assert.IsTrue(keys.TrySuccessor("S", out res));
+        //    Assert.AreEqual("T", res);
+        //    Assert.IsTrue(keys.TryWeakSuccessor("T", out res));
+        //    Assert.AreEqual("T", res);
+        //    Assert.IsFalse(keys.TryPredecessor("R", out res));
+        //    Assert.AreEqual(null, res);
+        //    Assert.IsFalse(keys.TryWeakPredecessor("P", out res));
+        //    Assert.AreEqual(null, res);
+        //    Assert.IsFalse(keys.TrySuccessor("T", out res));
+        //    Assert.AreEqual(null, res);
+        //    Assert.IsFalse(keys.TryWeakSuccessor("U", out res));
+        //    Assert.AreEqual(null, res);
 
-            Assert.AreEqual("R", keys.Predecessor("S"));
-            Assert.AreEqual("R", keys.WeakPredecessor("R"));
-            Assert.AreEqual("T", keys.Successor("S"));
-            Assert.AreEqual("T", keys.WeakSuccessor("T"));
-        }
+        //    Assert.AreEqual("R", keys.Predecessor("S"));
+        //    Assert.AreEqual("R", keys.WeakPredecessor("R"));
+        //    Assert.AreEqual("T", keys.Successor("S"));
+        //    Assert.AreEqual("T", keys.WeakSuccessor("T"));
+        //}
 
         [Test, LuceneNetSpecific]
         public void ValuesEnumerator()
         {
-            SCG.IEnumerator<string> values = dict.Values.GetEnumerator();
+            IEnumerator<string> values = dict.Values.GetEnumerator();
             Assert.AreEqual(3, dict.Values.Count);
             Assert.IsTrue(values.MoveNext());
             Assert.AreEqual("C", values.Current);
@@ -440,11 +736,11 @@ namespace Lucene.Net.Support.RBDictionary
             Assert.IsFalse(values.MoveNext());
         }
 
-        [Test, LuceneNetSpecific]
-        public void Fun()
-        {
-            Assert.AreEqual("B", dict.Func("T"));
-        }
+        //[Test, LuceneNetSpecific]
+        //public void Fun()
+        //{
+        //    Assert.AreEqual("B", dict.Func("T"));
+        //}
 
 
         [Test, LuceneNetSpecific]
@@ -506,7 +802,8 @@ namespace Lucene.Net.Support.RBDictionary
             [Test, LuceneNetSpecific]
             public void UpdateSnap()
             {
-                Assert.Throws<ReadOnlyCollectionException>(() => snap["Y"] = "J");
+                //Assert.Throws<ReadOnlyCollectionException>(() => snap["Y"] = "J");
+                Assert.Throws<NotSupportedException>(() => snap["Y"] = "J");
             }
 
 

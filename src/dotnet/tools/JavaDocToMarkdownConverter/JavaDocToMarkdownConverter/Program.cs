@@ -30,6 +30,7 @@ namespace JavaDocToMarkdownConverter
             if (args == null || args.Length < 2)
             {
                 Usage();
+                return;
             }
 
             Console.WriteLine(string.Format("Converting '{0}' to '{1}'...", args[0], args[1]));

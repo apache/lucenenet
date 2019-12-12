@@ -43,6 +43,9 @@
     <MicrosoftCSharpPackageVersion>4.4.0</MicrosoftCSharpPackageVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>2.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftNETTestSdkPackageVersion>16.2.0</MicrosoftNETTestSdkPackageVersion>
+    <MorfologikFsaPackageVersion>2.1.6-alpha-0001</MorfologikFsaPackageVersion>
+    <MorfologikPolishPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikPolishPackageVersion>
+    <MorfologikStemmingPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikStemmingPackageVersion>
     <MSTestTestFrameworkPackageVersion>2.0.0</MSTestTestFrameworkPackageVersion>
     <MSTestTestAdapterPackageVersion>$(MSTestTestFrameworkPackageVersion)</MSTestTestAdapterPackageVersion>
     <NETStandardLibrary16PackageVersion>1.6.1</NETStandardLibrary16PackageVersion>
@@ -50,7 +53,7 @@
     <NewtonsoftJsonPackageVersion>10.0.3</NewtonsoftJsonPackageVersion>
     <NUnit3TestAdapterPackageVersion>3.13.0</NUnit3TestAdapterPackageVersion>
     <NUnitPackageVersion>3.9.0</NUnitPackageVersion>
-    <NUnitExtensionTeamCityEventListenerPackageVersion>1.0.6</NUnitExtensionTeamCityEventListenerPackageVersion>
+    <OpenNLPNETPackageVersion>1.9.1</OpenNLPNETPackageVersion>
     <SharpZipLibPackageVersion>1.1.0</SharpZipLibPackageVersion>
     <SharpZipLibNETStandardPackageVersion>0.86.0.1</SharpZipLibNETStandardPackageVersion>
     <Spatial4nCorePackageVersion>0.4.1</Spatial4nCorePackageVersion>
@@ -75,7 +78,6 @@
     <SystemThreadingThreadPackageVersion>4.3.0</SystemThreadingThreadPackageVersion>
     <SystemThreadingThreadPoolPackageVersion>4.3.0</SystemThreadingThreadPoolPackageVersion>
     <SystemXmlXmlDocumentPackageVersion>4.3.0</SystemXmlXmlDocumentPackageVersion>
-    <TeamCityVSTestTestAdapterPackageVersion>1.0.15</TeamCityVSTestTestAdapterPackageVersion>
     <XUnitPackageVersion>2.3.1</XUnitPackageVersion>
     <XUnitRunnerVisualStudioPackageVersion>$(XUnitPackageVersion)</XUnitRunnerVisualStudioPackageVersion>
   </PropertyGroup>

@@ -1,8 +1,7 @@
-using Lucene.Net.Util;
-using System;
-using System.IO;
+﻿// Lucene version compatibility level 8.2.0
+using opennlp.tools.postag;
 
-namespace Lucene.Net.TestFramework
+namespace Lucene.Net.Analysis.OpenNlp.Tools
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,20 +21,24 @@ namespace Lucene.Net.TestFramework
      */
 
     /// <summary>
-    /// Common assertion code
+    /// Supply OpenNLP Parts-Of-Speech Tagging tool.
+    /// Requires binary models from OpenNLP project on SourceForge.
     /// </summary>
-    internal partial class Assert
+    public class NLPPOSTaggerOp
     {
-        private const int WARN_WIN32_FILE_EXISTS = unchecked((int)0x80070050);
+        private readonly POSTagger tagger = null;
 
-        private static bool IsFileAlreadyExistsException(Exception ex, string filePath)
+        public NLPPOSTaggerOp(POSModel model)
         {
-            if (!typeof(IOException).Equals(ex))
-                return false;
-            else if (Constants.WINDOWS)
-                return ex.HResult == WARN_WIN32_FILE_EXISTS;
-            else
-                return File.Exists(filePath);
+            tagger = new POSTaggerME(model);
+        }
+
+        public virtual string[] GetPOSTags(string[] words)
+        {
+            lock (this)
+            {
+                return tagger.tag(words);
+            }
         }
     }
 }

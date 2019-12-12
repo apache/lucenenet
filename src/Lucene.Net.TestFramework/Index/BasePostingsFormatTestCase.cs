@@ -523,7 +523,7 @@ namespace Lucene.Net.Index
             foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in fields)
             {
                 string field = fieldEnt.Key;
-                foreach (KeyValuePair<BytesRef, long> termEnt in fieldEnt.Value.EntrySet())
+                foreach (KeyValuePair<BytesRef, long> termEnt in fieldEnt.Value)
                 {
                     allTerms.Add(new FieldAndTerm(field, termEnt.Key));
                 }

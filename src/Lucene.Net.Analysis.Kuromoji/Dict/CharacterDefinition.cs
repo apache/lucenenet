@@ -100,10 +100,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             return (byte)Enum.Parse(typeof(CharacterClass), characterClassName, true);
         }
 
-        public static CharacterDefinition GetInstance()
-        {
-            return SingletonHolder.INSTANCE;
-        }
+        public static CharacterDefinition Instance => SingletonHolder.INSTANCE;
 
         private class SingletonHolder
         {

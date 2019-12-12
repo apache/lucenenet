@@ -124,7 +124,7 @@ namespace Lucene.Net.Store
 
         // use this for tracking files for crash.
         // additionally: provides debugging information in case you leave one open
-        private readonly ConcurrentDictionary<IDisposable, Exception> openFileHandles = new ConcurrentDictionary<IDisposable, Exception>(new IdentityComparer<IDisposable>());
+        private readonly ConcurrentDictionary<IDisposable, Exception> openFileHandles = new ConcurrentDictionary<IDisposable, Exception>(IdentityComparer<IDisposable>.Default);
 
         // NOTE: we cannot initialize the Map here due to the
         // order in which our constructor actually does this

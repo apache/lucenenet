@@ -254,13 +254,13 @@ stages:
         maximumParallelJobs: 7
         maximumAllowedFailures: $(maximumAllowedFailures)
 
-  - job: Test_netcoreapp1_0
+  - job: Test_netcoreapp1_1
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     strategy:
       matrix:
         Windows:
           osName: 'Windows'
-          imageName: 'windows-2019'
+          imageName: 'vs2017-win2016'
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
@@ -270,20 +270,21 @@ stages:
           osName: 'macOS'
           imageName: 'macOS-10.14'
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-    displayName: 'Test netcoreapp1.0 on'
+    displayName: 'Test netcoreapp1.1 on'
     pool:
       vmImage: $(imageName)
     steps:
     - template: 'build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        testTargetFrameworks: 'netcoreapp1.0'
+        testTargetFrameworks: 'netcoreapp1.1'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
         maximumParallelJobs: 7
         maximumAllowedFailures: $(maximumAllowedFailures)
+        where: 'TestCategory!=LongRunningTest' # Skip long running tests on .NET Core 1.1
 
-  - job: Test_net451
+  - job: Test_net451_Windows
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     displayName: 'Test net451 on Windows'
     pool:
@@ -295,7 +296,7 @@ stages:
         testTargetFrameworks: 'net451'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
-        maximumParallelJobs: 7
+        maximumParallelJobs: 8
         maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
 
 

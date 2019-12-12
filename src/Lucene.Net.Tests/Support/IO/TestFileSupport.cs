@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Lucene.Net.Support.IO
 {
@@ -26,7 +27,7 @@ namespace Lucene.Net.Support.IO
 
     public class TestFileSupport : LuceneTestCase
     {
-        private static String platformId = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription.Replace('.', '-');
+        private static String platformId = RuntimeInformation.FrameworkDescription.Replace('.', '-');
 
         /** Location to store tests in */
         private DirectoryInfo tempDirectory;

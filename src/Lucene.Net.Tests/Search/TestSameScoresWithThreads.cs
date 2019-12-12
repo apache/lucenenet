@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
                     StartingGun.Wait();
                     for (int i = 0; i < 20; i++)
                     {
-                        IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new List<KeyValuePair<BytesRef, TopDocs>>(Answers.EntrySet());
+                        IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new List<KeyValuePair<BytesRef, TopDocs>>(Answers);
                         Collections.Shuffle(shuffled);
                         foreach (KeyValuePair<BytesRef, TopDocs> ent in shuffled)
                         {

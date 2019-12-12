@@ -418,7 +418,7 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestLatticeToDot()
         {
-            GraphvizFormatter gv2 = new GraphvizFormatter(ConnectionCosts.GetInstance());
+            GraphvizFormatter gv2 = new GraphvizFormatter(ConnectionCosts.Instance);
             Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 JapaneseTokenizer tokenizer = new JapaneseTokenizer(reader, ReadDict(), false, JapaneseTokenizerMode.SEARCH)

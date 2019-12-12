@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private readonly ISet<ICoreDisposedListener> coreClosedListeners = new ConcurrentHashSet<ICoreDisposedListener>(new IdentityComparer<ICoreDisposedListener>());
+        private readonly ISet<ICoreDisposedListener> coreClosedListeners = new ConcurrentHashSet<ICoreDisposedListener>(IdentityComparer<ICoreDisposedListener>.Default);
 
         internal SegmentCoreReaders(SegmentReader owner, Directory dir, SegmentCommitInfo si, IOContext context, int termsIndexDivisor)
         {

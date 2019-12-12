@@ -403,7 +403,7 @@ namespace Lucene.Net.Codecs.Bloom
             public override long RamBytesUsed()
             {
                 var sizeInBytes = ((_delegateFieldsProducer != null) ? _delegateFieldsProducer.RamBytesUsed() : 0);
-                foreach (var entry in _bloomsByFieldName.EntrySet())
+                foreach (var entry in _bloomsByFieldName)
                 {
                     sizeInBytes += entry.Key.Length * RamUsageEstimator.NUM_BYTES_CHAR;
                     sizeInBytes += entry.Value.RamBytesUsed();
@@ -455,7 +455,7 @@ namespace Lucene.Net.Codecs.Bloom
                 {
                     _delegateFieldsConsumer.Dispose();
                     // Now we are done accumulating values for these fields
-                    var nonSaturatedBlooms = (from entry in _bloomFilters.EntrySet() let bloomFilter = entry.Value where !outerInstance._bloomFilterFactory.IsSaturated(bloomFilter, entry.Key) select entry).ToList();
+                    var nonSaturatedBlooms = (from entry in _bloomFilters let bloomFilter = entry.Value where !outerInstance._bloomFilterFactory.IsSaturated(bloomFilter, entry.Key) select entry).ToList();
 
                     var bloomFileName = IndexFileNames.SegmentFileName(
                         _state.SegmentInfo.Name, _state.SegmentSuffix, BLOOM_EXTENSION);

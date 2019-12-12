@@ -228,7 +228,7 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <exception cref="NotComparableException">If <code>T</code> is not comparable.
         /// </exception>
-		public TreeSet(MemoryType memoryType = MemoryType.Normal) : this(SCG.Comparer<T>.Default, C5.EqualityComparer<T>.Default, memoryType) { }
+        public TreeSet(MemoryType memoryType = MemoryType.Normal) : this(SCG.Comparer<T>.Default, C5.EqualityComparer<T>.Default, memoryType) { }
 
 
         /// <summary>
@@ -242,8 +242,8 @@ namespace Lucene.Net.Support
         /// </para>
         /// </summary>
         /// <param name="comparer">The external comparer</param>
-		/// <param name = "memoryType"></param>
-		public TreeSet(SCG.IComparer<T> comparer, MemoryType memoryType = MemoryType.Normal) : this(comparer, new ComparerZeroHashCodeEqualityComparer<T>(comparer)) { }
+        /// <param name = "memoryType"></param>
+        public TreeSet(SCG.IComparer<T> comparer, MemoryType memoryType = MemoryType.Normal) : this(comparer, new ComparerZeroHashCodeEqualityComparer<T>(comparer)) { }
 
         /// <summary>
         /// Create a red-black tree collection with an external comparer and an external
@@ -251,8 +251,8 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="comparer">The external comparer</param>
         /// <param name="equalityComparer">The external item equalitySCG.Comparer</param>
-		/// <param name = "memoryType"></param>
-		public TreeSet(SCG.IComparer<T> comparer, SCG.IEqualityComparer<T> equalityComparer, MemoryType memoryType = MemoryType.Normal)
+        /// <param name = "memoryType"></param>
+        public TreeSet(SCG.IComparer<T> comparer, SCG.IEqualityComparer<T> equalityComparer, MemoryType memoryType = MemoryType.Normal)
             : base(equalityComparer, memoryType)
         {
             if (comparer == null)
@@ -553,37 +553,106 @@ namespace Lucene.Net.Support
         /// <summary>
         /// Modifies the current <see cref="TreeSet{T}"/> object to contain all elements that are present in itself, the specified collection, or both.
         /// </summary>
-        /// <param name="other"></param>
-        public void UnionWith(SCG.IEnumerable<T> other)
+        /// <param name="other">The collection to compare to the current set.</param>
+        public virtual void UnionWith(SCG.IEnumerable<T> other)
         {
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
             AddAll(other);
         }
 
         /// <summary>
-        /// Not implemented
+        /// Modifies the current <see cref="TreeSet{T}"/> object so that it contains only elements that are also in a specified collection.
         /// </summary>
-        /// <param name="other"></param>
-        public void IntersectWith(SCG.IEnumerable<T> other)
+        /// <param name="other">The collection to compare to the current set.</param>
+        public virtual void IntersectWith(SCG.IEnumerable<T> other)
         {
-            throw new NotImplementedException("Implement as required");
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            // intersection of anything with empty set is empty set, so return if count is 0
+            if (this.size == 0)
+            {
+                return;
+            }
+
+            // if other is empty, intersection is empty set; remove all elements and we're done
+            // can only figure this out if implements ICollection<T>. (IEnumerable<T> has no count)
+            var otherAsCollection = other as SCG.ICollection<T>;
+            if (otherAsCollection != null && otherAsCollection.Count == 0)
+            {
+                Clear();
+                return;
+            }
+
+            RetainAll(other);
         }
 
         /// <summary>
-        /// Not implemented
+        /// Removes all elements in the specified collection from the current <see cref="TreeSet{T}"/> object.
         /// </summary>
-        /// <param name="other"></param>
-        public void ExceptWith(SCG.IEnumerable<T> other)
+        /// <param name="other">The collection of items to remove from the set.</param>
+        public virtual void ExceptWith(SCG.IEnumerable<T> other)
         {
-            throw new NotImplementedException("Implement as required");
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            // this is already the empty set; return
+            if (this.size == 0)
+                return;
+
+            // special case if other is this; a set minus itself is the empty set
+            if (other == this)
+            {
+                Clear();
+                return;
+            }
+
+            RemoveAll(other);
         }
 
         /// <summary>
-        /// Not implemented
+        /// Modifies the current set so that it contains only elements that are present either in the current 
+        /// <see cref="TreeSet{T}"/> object or in the specified collection, but not both.
         /// </summary>
-        /// <param name="other"></param>
-        public void SymmetricExceptWith(SCG.IEnumerable<T> other)
+        /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/> object.</param>
+        public virtual void SymmetricExceptWith(SCG.IEnumerable<T> other)
         {
-            throw new NotImplementedException("Implement as required");
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            // if set is empty, then symmetric difference is other
+            if (this.size == 0)
+            {
+                UnionWith(other);
+                return;
+            }
+
+            // special case this; the symmetric difference of a set with itself is the empty set
+            if (other == this)
+            {
+                Clear();
+                return;
+            }
+
+            var otherAsSet = other as TreeSet<T>;
+            // If other is a HashSet, it has unique elements according to its equality comparer,
+            // but if they're using different equality comparers, then assumption of uniqueness
+            // will fail. So first check if other is a hashset using the same equality comparer;
+            // symmetric except is a lot faster and avoids bit array allocations if we can assume
+            // uniqueness
+            if (otherAsSet != null && AreEqualityComparersEqual(this, otherAsSet))
+            {
+                SymmetricExceptWithUniqueTreeSet(otherAsSet);
+            }
+            else
+            {
+                var temp = new SCG.SortedSet<T>(other, comparer);
+                temp.ExceptWith(this);
+                this.ExceptWith(other);
+                this.UnionWith(temp);
+            }
         }
 
         /// <summary>
@@ -591,22 +660,39 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/> object.</param>
         /// <returns><c>true</c> if the <see cref="TreeSet{T}"/> object is a subset of other; otherwise, <c>false</c>.</returns>
-        public bool IsSubsetOf(SCG.IEnumerable<T> other)
+        public virtual bool IsSubsetOf(SCG.IEnumerable<T> other)
         {
             if (other == null)
-            {
-                throw new ArgumentNullException("other");
-            }
-            if (this.Count == 0)
+                throw new ArgumentNullException(nameof(other));
+
+            if (this.size == 0)
             {
                 return true;
             }
-            // we just need to return true if the other set
-            // contains all of the elements of the this set,
-            // but we need to use the comparison rules of the current set.
-            int foundCount, unfoundCount;
-            this.GetFoundAndUnfoundCounts(other, out foundCount, out unfoundCount);
-            return foundCount == this.Count;
+
+            var otherAsSet = other as TreeSet<T>;
+            // faster if other has unique elements according to this equality comparer; so check 
+            // that other is a hashset using the same equality comparer.
+            if (otherAsSet != null && AreEqualityComparersEqual(this, otherAsSet))
+            {
+                // if this has more elements then it can't be a subset
+                if (this.size > otherAsSet.Count)
+                {
+                    return false;
+                }
+
+                // already checked that we're using same equality comparer. simply check that 
+                // each element in this is contained in other.
+                return IsSubsetOfTreeSetWithSameEC(otherAsSet);
+            }
+            else
+            {
+                // we just need to return true if the other set
+                // contains all of the elements of the this set,
+                // but we need to use the comparison rules of the current set.
+                this.CheckUniqueAndUnfoundElements(other, false, out int uniqueCount, out int unfoundCount);
+                return uniqueCount == this.size;
+            }
         }
 
         /// <summary>
@@ -614,17 +700,31 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/> object.</param>
         /// <returns><c>true</c> if the <see cref="TreeSet{T}"/> object is a superset of other; otherwise, <c>false</c>.</returns>
-        public bool IsSupersetOf(SCG.IEnumerable<T> other)
+        public virtual bool IsSupersetOf(SCG.IEnumerable<T> other)
         {
             if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            // try to fall out early based on counts
+            var is2 = other as SCG.ICollection<T>;
+            if (is2 != null)
             {
-                throw new ArgumentNullException("other");
+                // if other is the empty set then this is a superset
+                if (is2.Count == 0)
+                    return true;
+
+                var otherAsSet = other as TreeSet<T>;
+                // try to compare based on counts alone if other is a hashset with
+                // same equality comparer
+                if (otherAsSet != null && AreEqualityComparersEqual(this, otherAsSet))
+                {
+                    if (otherAsSet.Count > this.size)
+                    {
+                        return false;
+                    }
+                }
             }
-            ICollection<T> is2 = other as ICollection<T>;
-            if (is2 != null && is2.Count == 0)
-            {
-                return true;
-            }
+
             return this.ContainsAll(other);
         }
 
@@ -633,24 +733,40 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/> object.</param>
         /// <returns><c>true</c> if the <see cref="TreeSet{T}"/> object is a proper superset of other; otherwise, <c>false</c>.</returns>
-        public bool IsProperSupersetOf(SCG.IEnumerable<T> other)
+        public virtual bool IsProperSupersetOf(SCG.IEnumerable<T> other)
         {
             if (other == null)
-            {
-                throw new ArgumentNullException("other");
-            }
-            if (this.Count == 0)
+                throw new ArgumentNullException(nameof(other));
+
+            // the empty set isn't a proper superset of any set.
+            if (this.size == 0)
             {
                 return false;
             }
-            ICollection<T> is2 = other as ICollection<T>;
-            if (is2 != null && is2.Count == 0)
+
+            var otherAsCollection = other as SCG.ICollection<T>;
+            if (otherAsCollection != null)
             {
-                return true;
+                // if other is the empty set then this is a superset
+                if (otherAsCollection.Count == 0)
+                    return true; // note that this has at least one element, based on above check
+
+                var otherAsSet = other as TreeSet<T>;
+                // faster if other is a hashset with the same equality comparer
+                if (otherAsSet != null && AreEqualityComparersEqual(this, otherAsSet))
+                {
+                    if (otherAsSet.Count >= this.size)
+                    {
+                        return false;
+                    }
+                    // now perform element check
+                    return ContainsAll(otherAsSet);
+                }
             }
-            int foundCount, unfoundCount;
-            this.GetFoundAndUnfoundCounts(other, out foundCount, out unfoundCount);
-            return foundCount < this.Count && unfoundCount == 0;
+
+            // couldn't fall out in the above cases; do it the long way
+            this.CheckUniqueAndUnfoundElements(other, true, out int uniqueCount, out int unfoundCount);
+            return uniqueCount < this.size && unfoundCount == 0;
         }
 
         /// <summary>
@@ -658,23 +774,35 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/> object.</param>
         /// <returns><c>true</c> if the <see cref="TreeSet{T}"/> object is a proper subset of other; otherwise, <c>false</c>.</returns>
-        public bool IsProperSubsetOf(SCG.IEnumerable<T> other)
+        public virtual bool IsProperSubsetOf(SCG.IEnumerable<T> other)
         {
             if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+
+            var otherAsCollection = other as SCG.ICollection<T>;
+            if (otherAsCollection != null)
             {
-                throw new ArgumentNullException("other");
+                // the empty set is a proper subset of anything but the empty set
+                if (this.size == 0)
+                    return otherAsCollection.Count > 0;
+
+                var otherAsSet = other as TreeSet<T>;
+                // faster if other is a hashset (and we're using same equality comparer)
+                if (otherAsSet != null && AreEqualityComparersEqual(this, otherAsSet))
+                {
+                    if (this.size >= otherAsSet.Count)
+                    {
+                        return false;
+                    }
+                    // this has strictly less than number of items in other, so the following
+                    // check suffices for proper subset.
+                    return IsSubsetOfTreeSetWithSameEC(otherAsSet);
+                }
             }
-            ICollection<T> is2 = other as ICollection<T>;
-            if (is2 != null && this.Count == 0)
-            {
-                return (is2.Count > 0);
-            }
-            // we just need to return true if the other set
-            // contains all of the elements of the this set plus at least one more,
-            // but we need to use the comparison rules of the current set.
-            int foundCount, unfoundCount;
-            this.GetFoundAndUnfoundCounts(other, out foundCount, out unfoundCount);
-            return foundCount == this.Count && unfoundCount > 0;
+
+            this.CheckUniqueAndUnfoundElements(other, false, out int uniqueCount, out int unfoundCount);
+            return uniqueCount == this.size && unfoundCount > 0;
         }
 
         /// <summary>
@@ -682,13 +810,12 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/> object.</param>
         /// <returns><c>true</c> if the <see cref="TreeSet{T}"/> object and other share at least one common element; otherwise, <c>false</c>.</returns>
-        public bool Overlaps(SCG.IEnumerable<T> other)
+        public virtual bool Overlaps(SCG.IEnumerable<T> other)
         {
             if (other == null)
-            {
-                throw new ArgumentNullException("other");
-            }
-            if (this.Count != 0)
+                throw new ArgumentNullException(nameof(other));
+
+            if (this.size != 0)
             {
                 foreach (var local in other)
                 {
@@ -706,27 +833,143 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="other">The collection to compare to the current <see cref="TreeSet{T}"/>.</param>
         /// <returns><c>true</c> if the current <see cref="TreeSet{T}"/> is equal to other; otherwise, <c>false</c>.</returns>
-        public bool SetEquals(SCG.IEnumerable<T> other)
+        public virtual bool SetEquals(SCG.IEnumerable<T> other)
         {
-            return this.Count.Equals(other.Count()) && this.ContainsAll(other);
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            var otherAsSet = other as TreeSet<T>;
+            // faster if other is a hashset and we're using same equality comparer
+            if (otherAsSet != null && AreEqualityComparersEqual(this, otherAsSet))
+            {
+                // attempt to return early: since both contain unique elements, if they have 
+                // different counts, then they can't be equal
+                if (this.size != otherAsSet.Count)
+                    return false;
+
+                // already confirmed that the sets have the same number of distinct elements, so if
+                // one is a superset of the other then they must be equal
+                return ContainsAll(otherAsSet);
+            }
+            else
+            {
+                var otherAsCollection = other as SCG.ICollection<T>;
+                if (otherAsCollection != null)
+                {
+                    // if this count is 0 but other contains at least one element, they can't be equal
+                    if (this.size == 0 && otherAsCollection.Count > 0)
+                        return false;
+                }
+
+                this.CheckUniqueAndUnfoundElements(other, true, out int uniqueCount, out int unfoundCount);
+                return uniqueCount == this.size && unfoundCount == 0;
+            }
         }
 
-        private void GetFoundAndUnfoundCounts(SCG.IEnumerable<T> other, out int foundCount, out int unfoundCount)
+        private void CheckUniqueAndUnfoundElements(SCG.IEnumerable<T> other, bool returnIfUnfound, out int uniqueCount, out int unfoundCount)
         {
-            foundCount = 0;
+            // need special case in case this has no elements.
+            if (this.size == 0)
+            {
+                int numElementsInOther = 0;
+                foreach (T item in other)
+                {
+                    numElementsInOther++;
+                    // break right away, all we want to know is whether other has 0 or 1 elements
+                    break;
+                }
+                uniqueCount = 0;
+                unfoundCount = numElementsInOther;
+                return;
+            }
+
+            int originalLastIndex = this.size;
+            var bitArray = new System.Collections.BitArray(originalLastIndex, false);
+
+            // count of unique items in other found in this
+            uniqueCount = 0;
+            // count of items in other not found in this
             unfoundCount = 0;
+
             foreach (var item in other)
             {
-                if (this.Contains(item))
+                var index = IndexOf(item);
+                if (index >= 0)
                 {
-                    foundCount++;
+                    if (!bitArray.Get(index))
+                    {
+                        // item hasn't been seen yet
+                        bitArray.Set(index, true);
+                        uniqueCount++;
+                    }
                 }
                 else
                 {
                     unfoundCount++;
+                    if (returnIfUnfound)
+                        break;
                 }
             }
         }
+
+        /// <summary>
+        /// Checks if equality comparers are equal. This is used for algorithms that can
+        /// speed up if it knows the other item has unique elements. I.e. if they're using 
+        /// different equality comparers, then uniqueness assumption between sets break.
+        /// </summary>
+        /// <param name="set1"></param>
+        /// <param name="set2"></param>
+        /// <returns></returns>
+        private static bool AreEqualityComparersEqual(TreeSet<T> set1, TreeSet<T> set2)
+        {
+            return set1.Comparer.Equals(set2.Comparer);
+        }
+
+        /// <summary>
+        /// if other is a set, we can assume it doesn't have duplicate elements, so use this
+        /// technique: if can't remove, then it wasn't present in this set, so add.
+        /// 
+        /// As with other methods, callers take care of ensuring that other is a hashset using the
+        /// same equality comparer.
+        /// </summary>
+        /// <param name="other"></param>
+        private void SymmetricExceptWithUniqueTreeSet(TreeSet<T> other)
+        {
+            foreach (T item in other)
+            {
+                if (!Remove(item))
+                {
+                    Add(item);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Implementation Notes:
+        /// If other is a hashset and is using same equality comparer, then checking subset is 
+        /// faster. Simply check that each element in this is in other.
+        /// 
+        /// Note: if other doesn't use same equality comparer, then Contains check is invalid,
+        /// which is why callers must take are of this.
+        /// 
+        /// If callers are concerned about whether this is a proper subset, they take care of that.
+        ///
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        private bool IsSubsetOfTreeSetWithSameEC(TreeSet<T> other)
+        {
+
+            foreach (T item in this)
+            {
+                if (!other.Contains(item))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
 
         #endregion
 

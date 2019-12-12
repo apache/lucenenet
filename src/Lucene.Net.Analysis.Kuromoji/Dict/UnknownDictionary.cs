@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
     /// </summary>
     public class UnknownDictionary : BinaryDictionary
     {
-        private readonly CharacterDefinition characterDefinition = CharacterDefinition.GetInstance();
+        private readonly CharacterDefinition characterDefinition = CharacterDefinition.Instance;
 
         private UnknownDictionary()
         {
@@ -76,10 +76,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             return null;
         }
 
-        public static UnknownDictionary GetInstance()
-        {
-            return SingletonHolder.INSTANCE;
-        }
+        public static UnknownDictionary Instance => SingletonHolder.INSTANCE;
 
         private class SingletonHolder
         {

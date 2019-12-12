@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(SolutionDir)build/NuGet.props" />
+
+  <PropertyGroup>
+    <!--<TargetFrameworks>netstandard2.0;netstandard1.6</TargetFrameworks>-->
+    <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net45</TargetFrameworks>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+
+    <AssemblyTitle>Lucene.Net.Analysis.OpenNLP</AssemblyTitle>
+    <Description>Analyzer for indexing phonetic signatures (for sounds-alike search) for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
+    <PackageTags>$(PackageTags);analysis;soundex;double;metaphone;sounds;like;beider;morse;cologne;caverphone;nysiis;match;rating</PackageTags>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591;1573</NoWarn>
+    <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
+  </PropertyGroup>
+
+  <!-- OpenNLP is not strong-named -->
+  <PropertyGroup Label="Assembly Signing">
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyKeys.cs" Link="Properties\CommonAssemblyKeys.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
+    <PackageReference Include="OpenNLP.NET" Version="$(OpenNLPNETPackageVersion)" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+</Project>
