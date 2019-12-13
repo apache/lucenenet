@@ -113,17 +113,17 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             }
         }
 
-        public override string GetType(int script, RuleStatus ruleStatus)
+        public override string GetType(int script, int ruleStatus)
         {
             switch (ruleStatus)
             {
-                case RuleStatus.WordIdeo:
+                case BreakIterator.WordIdeo:
                     return WORD_IDEO;
-                case RuleStatus.WordKana: //RuleBasedBreakIterator.WORD_KANA:
+                case BreakIterator.WordKana: //RuleBasedBreakIterator.WORD_KANA:
                     return script == UScript.Hiragana ? WORD_HIRAGANA : WORD_KATAKANA;
-                case RuleStatus.WordLetter: //RuleBasedBreakIterator.WORD_LETTER:
+                case BreakIterator.WordLetter: //RuleBasedBreakIterator.WORD_LETTER:
                     return script == UScript.Hangul ? WORD_HANGUL : WORD_LETTER;
-                case RuleStatus.WordNumber: //RuleBasedBreakIterator.WORD_NUMBER:
+                case BreakIterator.WordNumber: //RuleBasedBreakIterator.WORD_NUMBER:
                     return WORD_NUMBER;
                 default: /* some other custom code */
                     return "<OTHER>";

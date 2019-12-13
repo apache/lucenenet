@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         public abstract int Next();
         public abstract int Current { get; }
-        public abstract ICU4N.Text.RuleStatus RuleStatus { get; }
+        public abstract int RuleStatus { get; }
         public abstract void SetText(CharacterIterator text);
 
         public void SetText(char[] text, int start, int length)
@@ -87,15 +87,9 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                 this.rbbi = rbbi;
             }
 
-            public override int Current
-            {
-                get { return rbbi.Current; }
-            }
+            public override int Current => rbbi.Current;
 
-            public override ICU4N.Text.RuleStatus RuleStatus
-            {
-                get { return rbbi.RuleStatus; }
-            }
+            public override int RuleStatus => rbbi.RuleStatus;
 
             public override int Next()
             {
@@ -119,22 +113,16 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         private sealed class BIWrapper : BreakIteratorWrapper
         {
             private readonly BreakIterator bi;
-            private ICU4N.Text.RuleStatus status;
+            private int status;
 
             internal BIWrapper(BreakIterator bi)
             {
                 this.bi = bi;
             }
 
-            public override int Current
-            {
-                get { return bi.Current; }
-            }
+            public override int Current => bi.Current;
 
-            public override ICU4N.Text.RuleStatus RuleStatus
-            {
-                get { return status; }
-            }
+            public override int RuleStatus => status;
 
             public override int Next()
             {
@@ -144,10 +132,10 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                 return next;
             }
 
-            private RuleStatus CalcStatus(int current, int next)
+            private int CalcStatus(int current, int next)
             {
                 if (current == BreakIterator.Done || next == BreakIterator.Done)
-                    return ICU4N.Text.RuleStatus.WordNone;
+                    return BreakIterator.WordNone;
 
                 int begin = m_start + current;
                 int end = m_start + next;
@@ -158,22 +146,22 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                     codepoint = UTF16.CharAt(m_text, 0, end, begin);
 
                     if (UChar.IsDigit(codepoint))
-                        return ICU4N.Text.RuleStatus.WordNumber;
+                        return BreakIterator.WordNumber;
                     else if (UChar.IsLetter(codepoint))
                     {
                         // TODO: try to separately specify ideographic, kana? 
                         // [currently all bundled as letter for this case]
-                        return ICU4N.Text.RuleStatus.WordLetter;
+                        return BreakIterator.WordLetter;
                     }
                 }
 
-                return ICU4N.Text.RuleStatus.WordNone;
+                return BreakIterator.WordNone;
             }
 
             public override void SetText(CharacterIterator text)
             {
                 bi.SetText(text);
-                status = ICU4N.Text.RuleStatus.WordNone;
+                status = BreakIterator.WordNone;
             }
         }
     }

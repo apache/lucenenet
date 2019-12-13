@@ -128,21 +128,15 @@ namespace Lucene.Net.Analysis.Icu
                 this.length = token.Length;
             }
 
-            public int Char32At(int pos)
-            {
-                return UTF16.CharAt(buffer, 0, length, pos);
-            }
+            public int Char32At(int pos) => UTF16.CharAt(buffer, 0, length, pos);
 
-            public char this[int pos]
-            {
-                get { return buffer[pos]; }
-            }
+            public char this[int pos] => buffer[pos];
 
-            public void Copy(int start, int limit, int dest)
+            public void Copy(int startIndex, int length, int destinationIndex) // LUCENENET: Changed 2nd parameter from limit to length
             {
-                char[] text = new char[limit - start];
-                CopyTo(start, text, 0, limit - start);
-                Replace(dest, dest, text, 0, limit - start);
+                char[] text = new char[length]; // LUCENENET: Corrected length
+                CopyTo(startIndex, text, 0, length); // LUCENENET: Corrected length
+                Replace(destinationIndex, destinationIndex - destinationIndex, text, 0, length); // LUCENENET: Corrected length & charsLen
             }
 
             public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count)
@@ -150,33 +144,27 @@ namespace Lucene.Net.Analysis.Icu
                 System.Array.Copy(buffer, sourceIndex, destination, destinationIndex, count);
             }
 
-            public bool HasMetaData
-            {
-                get { return false; }
-            }
+            public bool HasMetaData => false;
 
-            public int Length
-            {
-                get { return length; }
-            }
+            public int Length => length;
 
-            public void Replace(int start, int limit, string text)
+            public void Replace(int start, int length, string text) // LUCENENET: Changed 2nd parameter from limit to length
             {
                 int charsLen = text.Length;
-                int newLength = ShiftForReplace(start, limit, charsLen);
+                int newLength = ShiftForReplace(start, length + start, charsLen); // LUCENENET: Changed 2nd parameter to calculate limit
                 // insert the replacement text
                 text.CopyTo(0, buffer, start, charsLen);
-                token.Length = (length = newLength);
+                token.Length = (this.length = newLength);
             }
 
-            public void Replace(int start, int limit, char[] text, int charsStart,
+            public void Replace(int start, int length, char[] text, int charsStart,
                 int charsLen)
             {
                 // shift text if necessary for the replacement
-                int newLength = ShiftForReplace(start, limit, charsLen);
+                int newLength = ShiftForReplace(start, length + start, charsLen); // LUCENENET: Changed 2nd parameter to calculate limit
                 // insert the replacement text
                 System.Array.Copy(text, charsStart, buffer, start, charsLen);
-                token.Length = (length = newLength);
+                token.Length = (this.length = newLength);
             }
 
             /// <summary>shift text (if necessary) for a replacement operation</summary>

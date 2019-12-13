@@ -91,19 +91,13 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         /// Gets the rule status code (token type) from the underlying break
         /// iterator. See <see cref="RuleBasedBreakIterator"/> constants.
         /// </summary>
-        public RuleStatus RuleStatus
-        {
-            get { return rbbi.RuleStatus; }
-        }
+        public int RuleStatus => rbbi.RuleStatus;
 
         /// <summary>
         /// Gets the <see cref="UScript"/> script code for the current token. This code can be
         /// decoded with <see cref="UScript"/> into a name or ISO 15924 code.
         /// </summary>
-        public int ScriptCode
-        {
-            get { return scriptIterator.ScriptCode; }
-        }
+        public int ScriptCode => scriptIterator.ScriptCode;
 
         /// <summary>
         /// Set a new region of text to be examined by this iterator.

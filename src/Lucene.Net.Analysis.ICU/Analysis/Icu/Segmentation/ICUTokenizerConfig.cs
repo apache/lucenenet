@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         /// <summary>
         /// Return a token type value for a given script and BreakIterator rule status.
         /// </summary>
-        public abstract string GetType(int script, RuleStatus ruleStatus);
+        public abstract string GetType(int script, int ruleStatus);
         /// <summary>
         /// true if Han, Hiragana, and Katakana scripts should all be returned as Japanese
         /// </summary>
