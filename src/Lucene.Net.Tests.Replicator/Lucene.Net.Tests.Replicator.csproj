@@ -34,7 +34,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Replicator\Lucene.Net.Replicator.csproj" />
     <ProjectReference Include="..\dotnet\Lucene.Net.Replicator.AspNetCore\Lucene.Net.Replicator.AspNetCore.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework.NUnit\Lucene.Net.TestFramework.NUnit.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
   </ItemGroup>
   
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />

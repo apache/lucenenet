@@ -37,7 +37,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Analysis.Stempel\Lucene.Net.Analysis.Stempel.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework.NUnit\Lucene.Net.TestFramework.NUnit.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />

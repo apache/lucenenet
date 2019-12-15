@@ -327,26 +327,9 @@ steps:
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
 
-# LUCENENET: Incomplete support for MSTest
-#- template: publish-test-results-for-target-frameworks.yml
-#  parameters:
-#    testProjectName: 'Lucene.Net.Tests.TestFramework.MSTest'
-#    osName: '${{ parameters.osName }}'
-#    testResultsFormat: '${{ parameters.testResultsFormat }}'
-#    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
-#    testResultsFileName: '${{ parameters.testResultsFileName }}'
-
 - template: publish-test-results-for-target-frameworks.yml
   parameters:
-    testProjectName: 'Lucene.Net.Tests.TestFramework.NUnit'
-    osName: '${{ parameters.osName }}'
-    testResultsFormat: '${{ parameters.testResultsFormat }}'
-    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
-    testResultsFileName: '${{ parameters.testResultsFileName }}'
-
-- template: publish-test-results-for-target-frameworks.yml
-  parameters:
-    testProjectName: 'Lucene.Net.Tests.TestFramework.xUnit'
+    testProjectName: 'Lucene.Net.Tests.TestFramework'
     osName: '${{ parameters.osName }}'
     testResultsFormat: '${{ parameters.testResultsFormat }}'
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'

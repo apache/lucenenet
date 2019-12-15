@@ -183,15 +183,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._T-U", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests._U-Z", "src\Lucene.Net.Tests._U-Z\Lucene.Net.Tests._U-Z.csproj", "{083EEC05-D092-4F84-8004-41F0C7192ABD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.TestFramework.NUnit", "src\Lucene.Net.TestFramework.NUnit\Lucene.Net.TestFramework.NUnit.csproj", "{845F8491-348C-4242-A58A-1979E8338B5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.TestFramework", "src\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj", "{845F8491-348C-4242-A58A-1979E8338B5D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.TestFramework.NUnit", "src\Lucene.Net.Tests.TestFramework.NUnit\Lucene.Net.Tests.TestFramework.NUnit.csproj", "{3A761C02-C3B2-4672-92F9-B700C68E7EFA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.TestFramework.xUnit", "src\Lucene.Net.TestFramework.xUnit\Lucene.Net.TestFramework.xUnit.csproj", "{1337D725-C90B-4F96-8FEE-29C3BB3FBE6D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.TestFramework.xUnit", "src\Lucene.Net.Tests.TestFramework.xUnit\Lucene.Net.Tests.TestFramework.xUnit.csproj", "{AF33069F-8639-4EA9-8C24-17484E6C94E9}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.TestFramework.MSTest", "src\Lucene.Net.TestFramework.MSTest\Lucene.Net.TestFramework.MSTest.csproj", "{48520313-3B78-40D9-AE34-4864BFADF747}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.TestFramework", "src\Lucene.Net.Tests.TestFramework\Lucene.Net.Tests.TestFramework.csproj", "{3A761C02-C3B2-4672-92F9-B700C68E7EFA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Analysis.OpenNLP", "src\Lucene.Net.Analysis.OpenNLP\Lucene.Net.Analysis.OpenNLP.csproj", "{CC2CE069-5BBB-429E-8510-7C3FBA8069D5}"
 EndProject
@@ -199,7 +193,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Analysis.O
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Analysis.Morfologik", "src\Lucene.Net.Analysis.Morfologik\Lucene.Net.Analysis.Morfologik.csproj", "{17C7E54C-7A95-46A5-9905-90F68D349F3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Analysis.Morfologik", "src\Lucene.Net.Tests.Analysis.Morfologik\Lucene.Net.Tests.Analysis.Morfologik.csproj", "{435F91AD-8BA4-4376-904C-385A165C1AF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Analysis.Morfologik", "src\Lucene.Net.Tests.Analysis.Morfologik\Lucene.Net.Tests.Analysis.Morfologik.csproj", "{435F91AD-8BA4-4376-904C-385A165C1AF0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -435,18 +429,6 @@ Global
 		{3A761C02-C3B2-4672-92F9-B700C68E7EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A761C02-C3B2-4672-92F9-B700C68E7EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A761C02-C3B2-4672-92F9-B700C68E7EFA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1337D725-C90B-4F96-8FEE-29C3BB3FBE6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1337D725-C90B-4F96-8FEE-29C3BB3FBE6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1337D725-C90B-4F96-8FEE-29C3BB3FBE6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1337D725-C90B-4F96-8FEE-29C3BB3FBE6D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AF33069F-8639-4EA9-8C24-17484E6C94E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AF33069F-8639-4EA9-8C24-17484E6C94E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AF33069F-8639-4EA9-8C24-17484E6C94E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AF33069F-8639-4EA9-8C24-17484E6C94E9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{48520313-3B78-40D9-AE34-4864BFADF747}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48520313-3B78-40D9-AE34-4864BFADF747}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{48520313-3B78-40D9-AE34-4864BFADF747}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48520313-3B78-40D9-AE34-4864BFADF747}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CC2CE069-5BBB-429E-8510-7C3FBA8069D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CC2CE069-5BBB-429E-8510-7C3FBA8069D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC2CE069-5BBB-429E-8510-7C3FBA8069D5}.Release|Any CPU.ActiveCfg = Release|Any CPU

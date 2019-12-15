@@ -42,7 +42,7 @@
     <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj" />
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
     <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework.NUnit\Lucene.Net.TestFramework.NUnit.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
   </ItemGroup>
   
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />

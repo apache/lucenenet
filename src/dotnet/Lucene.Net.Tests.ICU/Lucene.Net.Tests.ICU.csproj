@@ -53,7 +53,7 @@
     <ProjectReference Include="..\..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
     <ProjectReference Include="..\..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
     <ProjectReference Include="..\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
-    <ProjectReference Include="..\..\Lucene.Net.TestFramework.NUnit\Lucene.Net.TestFramework.NUnit.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
     <ProjectReference Include="..\..\Lucene.Net.Tests.Analysis.Common\Lucene.Net.Tests.Analysis.Common.csproj" />
   </ItemGroup>
 
