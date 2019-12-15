@@ -1,9 +1,8 @@
+using J2N.Text;
 using Lucene.Net.Analysis;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -344,8 +343,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         public virtual void TestSurrogatesOrder()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))
-                .SetCodec(new PreFlexRWCodec()));
+            var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            config.Codec = new PreFlexRWCodec();
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, config);
 
             int numField = TestUtil.NextInt32(Random, 2, 5);
 

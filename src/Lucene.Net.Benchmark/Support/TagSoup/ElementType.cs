@@ -11,7 +11,7 @@
 // OF ANY KIND, either express or implied; not even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-using Lucene.Net.Support;
+using J2N.Text;
 using Sax.Helpers;
 using System;
 using System.Text;

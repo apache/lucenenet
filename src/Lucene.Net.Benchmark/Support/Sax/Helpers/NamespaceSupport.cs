@@ -4,7 +4,7 @@
 // This class is in the Public Domain.  NO WARRANTY!
 // $Id: NamespaceSupport.java,v 1.15 2004/04/26 17:34:35 dmegginson Exp $
 
-using Lucene.Net.Support;
+using J2N.Text;
 using System;
 using System.Collections;
 using System.Collections.Generic;

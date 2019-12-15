@@ -14,7 +14,7 @@
 // 
 // The TagSoup parser
 
-using Lucene.Net.Support;
+using J2N.Text;
 using Sax;
 using Sax.Ext;
 using Sax.Helpers;
