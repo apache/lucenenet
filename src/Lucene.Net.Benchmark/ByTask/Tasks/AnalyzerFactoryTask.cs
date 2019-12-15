@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿using J2N.IO;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Benchmarks.ByTask.Utils;
-using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -114,14 +114,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             stok.CommentChar('#');
             stok.QuoteChar('"');
             stok.QuoteChar('\'');
-            stok.IsEOLSignificant = false;
+            stok.EndOfLineIsSignificant = false;
             stok.OrdinaryChar('(');
             stok.OrdinaryChar(')');
             stok.OrdinaryChar(':');
             stok.OrdinaryChar(',');
             try
             {
-                while (stok.NextToken() != StreamTokenizer.TT_EOF)
+                while (stok.NextToken() != StreamTokenizer.TokenType_EndOfStream)
                 {
                     switch (stok.TokenType)
                     {
@@ -130,7 +130,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                 // Do nothing
                                 break;
                             }
-                        case StreamTokenizer.TT_WORD:
+                        case StreamTokenizer.TokenType_Word:
                             {
                                 if (expectedArgType.Equals(ArgType.ANALYZER_ARG))
                                 {
@@ -153,7 +153,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                     string argValue = stok.StringValue;
                                     switch (stok.TokenType)
                                     {
-                                        case StreamTokenizer.TT_NUMBER:
+                                        case StreamTokenizer.TokenType_Number:
                                             {
                                                 argValue = stok.NumberValue.ToString(CultureInfo.InvariantCulture);
                                                 // Drop the ".0" from numbers, for integer arguments
@@ -190,7 +190,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                             }
                                         case '"':
                                         case '\'':
-                                        case StreamTokenizer.TT_WORD:
+                                        case StreamTokenizer.TokenType_Word:
                                             {
                                                 if (argName.Equals("name", StringComparison.OrdinalIgnoreCase))
                                                 {
@@ -220,7 +220,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                                 }
                                                 break;
                                             }
-                                        case StreamTokenizer.TT_EOF:
+                                        case StreamTokenizer.TokenType_EndOfStream:
                                             {
                                                 throw new Exception("Unexpected EOF: " + stok.ToString());
                                             }
@@ -250,7 +250,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                         {
                                             case '"':
                                             case '\'':
-                                            case StreamTokenizer.TT_WORD:
+                                            case StreamTokenizer.TokenType_Word:
                                                 {
                                                     intArgValue = 0;
                                                     try
@@ -274,7 +274,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                                     }
                                                     break;
                                                 }
-                                            case StreamTokenizer.TT_NUMBER:
+                                            case StreamTokenizer.TokenType_Number:
                                                 {
                                                     if (argName.Equals("positionIncrementGap", StringComparison.OrdinalIgnoreCase))
                                                     {
@@ -286,7 +286,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                                     }
                                                     break;
                                                 }
-                                            case StreamTokenizer.TT_EOF:
+                                            case StreamTokenizer.TokenType_EndOfStream:
                                                 {
                                                     throw new Exception("Unexpected EOF: " + stok.ToString());
                                                 }
@@ -377,7 +377,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             bool parenthetical = false;
             try
             {
-                while (stok.NextToken() != StreamTokenizer.TT_EOF)
+                while (stok.NextToken() != StreamTokenizer.TokenType_EndOfStream)
                 {
                     switch (stok.TokenType)
                     {
@@ -417,7 +417,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                 }
                                 break;
                             }
-                        case StreamTokenizer.TT_WORD:
+                        case StreamTokenizer.TokenType_Word:
                             {
                                 if (!parenthetical)
                                 {
@@ -434,7 +434,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                 string argValue = stok.StringValue;
                                 switch (stok.TokenType)
                                 {
-                                    case StreamTokenizer.TT_NUMBER:
+                                    case StreamTokenizer.TokenType_Number:
                                         {
                                             argValue = stok.NumberValue.ToString(CultureInfo.InvariantCulture);
                                             // Drop the ".0" from numbers, for integer arguments
@@ -445,12 +445,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                                         }
                                     case '"':
                                     case '\'':
-                                    case StreamTokenizer.TT_WORD:
+                                    case StreamTokenizer.TokenType_Word:
                                         {
                                             argMap[argName] = argValue;
                                             break;
                                         }
-                                    case StreamTokenizer.TT_EOF:
+                                    case StreamTokenizer.TokenType_EndOfStream:
                                         {
                                             throw new Exception("Unexpected EOF: " + stok.ToString());
                                         }

@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N.IO;
+using Lucene.Net.Analysis;
 using Lucene.Net.Benchmarks.ByTask.Utils;
-using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -139,11 +139,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             StreamTokenizer stok = new StreamTokenizer(new StringReader(@params));
             stok.QuoteChar('"');
             stok.QuoteChar('\'');
-            stok.IsEOLSignificant = false;
+            stok.EndOfLineIsSignificant = false;
             stok.OrdinaryChar(',');
             try
             {
-                while (stok.NextToken() != StreamTokenizer.TT_EOF)
+                while (stok.NextToken() != StreamTokenizer.TokenType_EndOfStream)
                 {
                     switch (stok.TokenType)
                     {
@@ -154,7 +154,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             }
                         case '\'':
                         case '\"':
-                        case StreamTokenizer.TT_WORD:
+                        case StreamTokenizer.TokenType_Word:
                             {
                                 analyzerNames.Add(stok.StringValue);
                                 break;

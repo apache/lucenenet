@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Tasks;
+﻿using J2N.IO;
+using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Support;
-using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -61,7 +61,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             PerfTask prevTask = null;
             StreamTokenizer stok = new StreamTokenizer(new StringReader(algTxt));
             stok.CommentChar('#');
-            stok.IsEOLSignificant = false;
+            stok.EndOfLineIsSignificant = false;
             stok.QuoteChar('"');
             stok.QuoteChar('\'');
             stok.OrdinaryChar('/');
@@ -71,12 +71,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             bool isDisableCountNextTask = false; // only for primitive tasks
             currSequence.Depth = 0;
 
-            while (stok.NextToken() != StreamTokenizer.TT_EOF)
+            while (stok.NextToken() != StreamTokenizer.TokenType_EndOfStream)
             {
                 switch (stok.TokenType)
                 {
 
-                    case StreamTokenizer.TT_WORD:
+                    case StreamTokenizer.TokenType_Word:
                         string s = stok.StringValue;
                         PerfTask task = (PerfTask)Activator.CreateInstance(TaskClass(config, s), runData);
                         task.AlgLineNum = stok.LineNumber;
@@ -102,7 +102,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                         else
                         {
                             // get params, for tasks that supports them - allow recursive parenthetical expressions
-                            stok.IsEOLSignificant = true;  // Allow params tokenizer to keep track of line number
+                            stok.EndOfLineIsSignificant = true;  // Allow params tokenizer to keep track of line number
                             StringBuilder @params = new StringBuilder();
                             stok.NextToken();
                             if (stok.TokenType != ')')
@@ -112,17 +112,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                 {
                                     switch (stok.TokenType)
                                     {
-                                        case StreamTokenizer.TT_NUMBER:
+                                        case StreamTokenizer.TokenType_Number:
                                             {
                                                 @params.Append(stok.NumberValue.ToString(CultureInfo.InvariantCulture));
                                                 break;
                                             }
-                                        case StreamTokenizer.TT_WORD:
+                                        case StreamTokenizer.TokenType_Word:
                                             {
                                                 @params.Append(stok.StringValue);
                                                 break;
                                             }
-                                        case StreamTokenizer.TT_EOF:
+                                        case StreamTokenizer.TokenType_EndOfStream:
                                             {
                                                 throw new Exception("Unexpexted EOF: - " + stok.ToString());
                                             }
@@ -163,7 +163,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                 }
                                 BALANCED_PARENS_BREAK: { }
                             }
-                            stok.IsEOLSignificant = false;
+                            stok.EndOfLineIsSignificant = false;
                             string prm = @params.ToString().Trim();
                             if (prm.Length > 0)
                             {
@@ -192,7 +192,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                 }
                                 else
                                 {
-                                    if (stok.TokenType != StreamTokenizer.TT_NUMBER)
+                                    if (stok.TokenType != StreamTokenizer.TokenType_Number)
                                     {
                                         throw new Exception("expected repetitions number or XXXs: - " + stok.ToString());
                                     }
@@ -200,7 +200,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                     {
                                         double num = stok.NumberValue;
                                         stok.NextToken();
-                                        if (stok.TokenType == StreamTokenizer.TT_WORD && stok.StringValue.Equals("s", StringComparison.Ordinal))
+                                        if (stok.TokenType == StreamTokenizer.TokenType_Word && stok.StringValue.Equals("s", StringComparison.Ordinal))
                                         {
                                             ((TaskSequence)prevTask).SetRunTime(num);
                                         }
@@ -221,7 +221,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                 {
                                     // get rate number
                                     stok.NextToken();
-                                    if (stok.TokenType != StreamTokenizer.TT_NUMBER) throw new Exception("expected rate number: - " + stok.ToString());
+                                    if (stok.TokenType != StreamTokenizer.TokenType_Number) throw new Exception("expected rate number: - " + stok.ToString());
                                     // check for unit - min or sec, sec is default
                                     stok.NextToken();
                                     if (stok.TokenType != '/')
@@ -232,7 +232,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                     else
                                     {
                                         stok.NextToken();
-                                        if (stok.TokenType != StreamTokenizer.TT_WORD) throw new Exception("expected rate unit: 'min' or 'sec' - " + stok.ToString());
+                                        if (stok.TokenType != StreamTokenizer.TokenType_Word) throw new Exception("expected rate unit: 'min' or 'sec' - " + stok.ToString());
                                         string unit = stok.StringValue.ToLowerInvariant();
                                         if ("min".Equals(unit, StringComparison.Ordinal))
                                         {
@@ -283,7 +283,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                 }
                                 stok.NextToken();
                                 int deltaPri;
-                                if (stok.TokenType != StreamTokenizer.TT_NUMBER)
+                                if (stok.TokenType != StreamTokenizer.TokenType_Number)
                                 {
                                     stok.PushBack();
                                     deltaPri = 0;
