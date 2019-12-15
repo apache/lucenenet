@@ -1,3 +1,4 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
@@ -928,7 +929,7 @@ namespace Lucene.Net.Index
                 {
                     docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), AtLeast(10), options);
                 }
-                AtomicObject<Exception> exception = new AtomicObject<Exception>();
+                AtomicReference<Exception> exception = new AtomicReference<Exception>();
                 using (Directory dir = NewDirectory())
                 using (RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
@@ -974,10 +975,10 @@ namespace Lucene.Net.Index
             private int numDocs;
             private RandomDocument[] docs;
             private IndexReader reader;
-            private AtomicObject<Exception> exception;
+            private AtomicReference<Exception> exception;
             private int i;
 
-            public ThreadAnonymousInnerClassHelper(BaseTermVectorsFormatTestCase outerInstance, int numDocs, RandomDocument[] docs, IndexReader reader, AtomicObject<Exception> exception, int i)
+            public ThreadAnonymousInnerClassHelper(BaseTermVectorsFormatTestCase outerInstance, int numDocs, RandomDocument[] docs, IndexReader reader, AtomicReference<Exception> exception, int i)
             {
                 this.outerInstance = outerInstance;
                 this.numDocs = numDocs;

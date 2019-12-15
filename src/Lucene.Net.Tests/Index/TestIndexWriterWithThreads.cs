@@ -1,3 +1,4 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
@@ -9,6 +10,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -674,13 +676,13 @@ namespace Lucene.Net.Index
 
             MockAnalyzer analyzer = new MockAnalyzer(Random);
             analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
-            AtomicObject<IndexWriter> writerRef =
-                new AtomicObject<IndexWriter>(new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)));
+            AtomicReference<IndexWriter> writerRef =
+                new AtomicReference<IndexWriter>(new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)));
 
             LineFileDocs docs = new LineFileDocs(Random);
             ThreadClass[] threads = new ThreadClass[threadCount];
             int iters = AtLeast(100);
-            AtomicBoolean failed = new AtomicBoolean();
+            AtomicBoolean failed = new J2N.Threading.Atomic.AtomicBoolean();
             ReentrantLock rollbackLock = new ReentrantLock();
             ReentrantLock commitLock = new ReentrantLock();
             for (int threadID = 0; threadID < threadCount; threadID++)
@@ -701,7 +703,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            Assert.IsTrue(!failed.Get());
+            Assert.IsTrue(!failed.Value);
             writerRef.Value.Dispose();
             d.Dispose();
         }
@@ -711,14 +713,14 @@ namespace Lucene.Net.Index
             private readonly TestIndexWriterWithThreads OuterInstance;
 
             private BaseDirectoryWrapper d;
-            private AtomicObject<IndexWriter> WriterRef;
+            private AtomicReference<IndexWriter> WriterRef;
             private LineFileDocs Docs;
             private int Iters;
             private AtomicBoolean Failed;
             private ReentrantLock RollbackLock;
             private ReentrantLock CommitLock;
 
-            public ThreadAnonymousInnerClassHelper(TestIndexWriterWithThreads outerInstance, BaseDirectoryWrapper d, AtomicObject<IndexWriter> writerRef, LineFileDocs docs, int iters, AtomicBoolean failed, ReentrantLock rollbackLock, ReentrantLock commitLock)
+            public ThreadAnonymousInnerClassHelper(TestIndexWriterWithThreads outerInstance, BaseDirectoryWrapper d, AtomicReference<IndexWriter> writerRef, LineFileDocs docs, int iters, AtomicBoolean failed, ReentrantLock rollbackLock, ReentrantLock commitLock)
             {
                 this.OuterInstance = outerInstance;
                 this.d = d;
@@ -732,7 +734,7 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-                for (int iter = 0; iter < Iters && !Failed.Get(); iter++)
+                for (int iter = 0; iter < Iters && !Failed.Value; iter++)
                 {
                     //final int x = Random().nextInt(5);
                     int x = Random.Next(3);
@@ -820,7 +822,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception t)
                     {
-                        Failed.Set(true);
+                        Failed.Value = (true);
                         throw new Exception(t.Message, t);
                     }
                 }

@@ -13,6 +13,7 @@ using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Lucene.Net.TestFramework;
+using J2N.Threading.Atomic;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -533,7 +534,7 @@ namespace Lucene.Net.Index
                     }
                     iw.Commit();
 
-                    AtomicObject<Exception> ex = new AtomicObject<Exception>();
+                    AtomicReference<Exception> ex = new AtomicReference<Exception>();
                     using (DirectoryReader rd = DirectoryReader.Open(dir))
                     {
                         IndexSearcher searcher = new IndexSearcher(rd);
@@ -569,11 +570,11 @@ namespace Lucene.Net.Index
             private readonly DirectoryReader rd;
             private readonly IndexSearcher searcher;
             private int readsPerThread;
-            private AtomicObject<Exception> ex;
+            private AtomicReference<Exception> ex;
             private int i;
             private readonly int[] queries;
 
-            public ThreadAnonymousInnerClassHelper(int numDocs, DirectoryReader rd, IndexSearcher searcher, int readsPerThread, AtomicObject<Exception> ex, int i)
+            public ThreadAnonymousInnerClassHelper(int numDocs, DirectoryReader rd, IndexSearcher searcher, int readsPerThread, AtomicReference<Exception> ex, int i)
             {
                 this.numDocs = numDocs;
                 this.rd = rd;

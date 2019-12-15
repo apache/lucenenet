@@ -54,6 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
     <PackageReference Include="NUnit" Version="$(NUnitPackageVersion)" />
   </ItemGroup>
 
