@@ -346,10 +346,10 @@ namespace Lucene.Net.Support.IO
         //    }
 
 
-        public override sealed Int64Buffer AsInt64Buffer()
-        {
-            return Int64ToByteBufferAdapter.Wrap(this);
-        }
+        //public override sealed Int64Buffer AsInt64Buffer()
+        //{
+        //    return Int64ToByteBufferAdapter.Wrap(this);
+        //}
 
 
         //public override sealed Int16Buffer AsInt16Buffer()

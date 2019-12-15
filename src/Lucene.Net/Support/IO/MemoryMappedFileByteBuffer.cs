@@ -328,13 +328,13 @@ namespace Lucene.Net.Support.IO
             }
         }
 
-        /// <summary>
-        /// NOTE: This was asLongBuffer() in the JDK
-        /// </summary>
-        public override Int64Buffer AsInt64Buffer()
-        {
-            throw new NotSupportedException();
-        }
+        ///// <summary>
+        ///// NOTE: This was asLongBuffer() in the JDK
+        ///// </summary>
+        //public override Int64Buffer AsInt64Buffer()
+        //{
+        //    throw new NotSupportedException();
+        //}
 
         protected override byte[] ProtectedArray
         {

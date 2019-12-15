@@ -1369,69 +1369,70 @@ namespace Lucene.Net.Support.IO
         //    buf.SetOrder(ByteOrder.BIG_ENDIAN);
         //}
 
-        [Test, LuceneNetSpecific]
-        public virtual void TestAsLongBuffer()
-        {
-            Int64Buffer longBuffer;
-            byte[] bytes = new byte[8];
-            long value;
+        // LUCENENET NOTE: Not supported
+        //[Test, LuceneNetSpecific]
+        //public virtual void TestAsLongBuffer()
+        //{
+        //    Int64Buffer longBuffer;
+        //    byte[] bytes = new byte[8];
+        //    long value;
 
-            // test BIG_ENDIAN long buffer, read
-            buf.Clear();
-            buf.SetOrder(ByteOrder.BIG_ENDIAN);
-            longBuffer = buf.AsInt64Buffer();
-            assertSame(ByteOrder.BIG_ENDIAN, longBuffer.Order);
-            while (longBuffer.Remaining > 0)
-            {
-                buf.Get(bytes);
-                value = longBuffer.Get();
-                assertEquals(bytes2long(bytes, buf.Order), value);
-            }
+        //    // test BIG_ENDIAN long buffer, read
+        //    buf.Clear();
+        //    buf.SetOrder(ByteOrder.BIG_ENDIAN);
+        //    longBuffer = buf.AsInt64Buffer();
+        //    assertSame(ByteOrder.BIG_ENDIAN, longBuffer.Order);
+        //    while (longBuffer.Remaining > 0)
+        //    {
+        //        buf.Get(bytes);
+        //        value = longBuffer.Get();
+        //        assertEquals(bytes2long(bytes, buf.Order), value);
+        //    }
 
-            // test LITTLE_ENDIAN long buffer, read
-            buf.Clear();
-            buf.SetOrder(ByteOrder.LITTLE_ENDIAN);
-            longBuffer = buf.AsInt64Buffer();
-            assertSame(ByteOrder.LITTLE_ENDIAN, longBuffer.Order);
-            while (longBuffer.Remaining > 0)
-            {
-                buf.Get(bytes);
-                value = longBuffer.Get();
-                assertEquals(bytes2long(bytes, buf.Order), value);
-            }
+        //    // test LITTLE_ENDIAN long buffer, read
+        //    buf.Clear();
+        //    buf.SetOrder(ByteOrder.LITTLE_ENDIAN);
+        //    longBuffer = buf.AsInt64Buffer();
+        //    assertSame(ByteOrder.LITTLE_ENDIAN, longBuffer.Order);
+        //    while (longBuffer.Remaining > 0)
+        //    {
+        //        buf.Get(bytes);
+        //        value = longBuffer.Get();
+        //        assertEquals(bytes2long(bytes, buf.Order), value);
+        //    }
 
-            if (!buf.IsReadOnly)
-            {
-                // test BIG_ENDIAN long buffer, write
-                buf.Clear();
-                buf.SetOrder(ByteOrder.BIG_ENDIAN);
-                longBuffer = buf.AsInt64Buffer();
-                assertSame(ByteOrder.BIG_ENDIAN, longBuffer.Order);
-                while (longBuffer.Remaining > 0)
-                {
-                    value = (long)longBuffer.Remaining;
-                    longBuffer.Put(value);
-                    buf.Get(bytes);
-                    assertTrue(Arrays.Equals(bytes, long2bytes(value, buf.Order)));
-                }
+        //    if (!buf.IsReadOnly)
+        //    {
+        //        // test BIG_ENDIAN long buffer, write
+        //        buf.Clear();
+        //        buf.SetOrder(ByteOrder.BIG_ENDIAN);
+        //        longBuffer = buf.AsInt64Buffer();
+        //        assertSame(ByteOrder.BIG_ENDIAN, longBuffer.Order);
+        //        while (longBuffer.Remaining > 0)
+        //        {
+        //            value = (long)longBuffer.Remaining;
+        //            longBuffer.Put(value);
+        //            buf.Get(bytes);
+        //            assertTrue(Arrays.Equals(bytes, long2bytes(value, buf.Order)));
+        //        }
 
-                // test LITTLE_ENDIAN long buffer, write
-                buf.Clear();
-                buf.SetOrder(ByteOrder.LITTLE_ENDIAN);
-                longBuffer = buf.AsInt64Buffer();
-                assertSame(ByteOrder.LITTLE_ENDIAN, longBuffer.Order);
-                while (longBuffer.Remaining > 0)
-                {
-                    value = (long)longBuffer.Remaining;
-                    longBuffer.Put(value);
-                    buf.Get(bytes);
-                    assertTrue(Arrays.Equals(bytes, long2bytes(value, buf.Order)));
-                }
-            }
+        //        // test LITTLE_ENDIAN long buffer, write
+        //        buf.Clear();
+        //        buf.SetOrder(ByteOrder.LITTLE_ENDIAN);
+        //        longBuffer = buf.AsInt64Buffer();
+        //        assertSame(ByteOrder.LITTLE_ENDIAN, longBuffer.Order);
+        //        while (longBuffer.Remaining > 0)
+        //        {
+        //            value = (long)longBuffer.Remaining;
+        //            longBuffer.Put(value);
+        //            buf.Get(bytes);
+        //            assertTrue(Arrays.Equals(bytes, long2bytes(value, buf.Order)));
+        //        }
+        //    }
 
-            buf.Clear();
-            buf.SetOrder(ByteOrder.BIG_ENDIAN);
-        }
+        //    buf.Clear();
+        //    buf.SetOrder(ByteOrder.BIG_ENDIAN);
+        //}
 
         // LUCENENET NOTE: Not supported
         //[Test, LuceneNetSpecific]

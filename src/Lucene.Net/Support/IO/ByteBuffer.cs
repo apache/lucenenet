@@ -154,21 +154,21 @@ namespace Lucene.Net.Support.IO
         //public abstract FloatBuffer AsSingleBuffer();
         //public abstract IntBuffer AsInt32Buffer();
 
-        /// <summary>
-        /// Returns a long buffer which is based on the remaining content of this
-        /// byte buffer.
-        /// <para/>
-        /// The new buffer's position is zero, its limit and capacity is the number
-        /// of remaining bytes divided by eight, and its mark is not set. The new
-        /// buffer's read-only property and byte order are the same as this buffer's.
-        /// The new buffer is direct if this byte buffer is direct.
-        /// <para/>
-        /// The new buffer shares its content with this buffer, which means either
-        /// buffer's change of content will be visible to the other. The two buffer's
-        /// position, limit and mark are independent.
-        /// </summary>
-        /// <returns>a long buffer which is based on the content of this byte buffer.</returns>
-        public abstract Int64Buffer AsInt64Buffer();
+        ///// <summary>
+        ///// Returns a long buffer which is based on the remaining content of this
+        ///// byte buffer.
+        ///// <para/>
+        ///// The new buffer's position is zero, its limit and capacity is the number
+        ///// of remaining bytes divided by eight, and its mark is not set. The new
+        ///// buffer's read-only property and byte order are the same as this buffer's.
+        ///// The new buffer is direct if this byte buffer is direct.
+        ///// <para/>
+        ///// The new buffer shares its content with this buffer, which means either
+        ///// buffer's change of content will be visible to the other. The two buffer's
+        ///// position, limit and mark are independent.
+        ///// </summary>
+        ///// <returns>a long buffer which is based on the content of this byte buffer.</returns>
+        //public abstract Int64Buffer AsInt64Buffer();
 
         /// <summary>
         /// Returns a read-only buffer that shares its content with this buffer.
