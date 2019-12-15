@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Support;
-using Lucene.Net.Support.IO;
+﻿using J2N.IO;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -19,9 +19,9 @@
  *
 */
 
+using J2N.IO;
 using Lucene.Net;
 using Lucene.Net.Support;
-using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;

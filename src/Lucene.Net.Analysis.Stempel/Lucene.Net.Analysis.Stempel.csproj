@@ -44,6 +44,10 @@
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
+  </ItemGroup>
+
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <DebugType>portable</DebugType>
   </PropertyGroup>

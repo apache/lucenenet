@@ -1,5 +1,5 @@
 ﻿using Egothor.Stemmer;
-using Lucene.Net.Support.IO;
+using J2N.IO;
 using System.IO;
 using System.Text;
 
