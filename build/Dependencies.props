@@ -38,6 +38,7 @@
     <ICU4NLanguageDataPackageVersion>$(ICU4NPackageVersion)</ICU4NLanguageDataPackageVersion>
     <ICU4NRegionDataPackageVersion>$(ICU4NPackageVersion)</ICU4NRegionDataPackageVersion>
     <ICU4NTransliteratorPackageVersion>$(ICU4NPackageVersion)</ICU4NTransliteratorPackageVersion>
+    <J2NPackageVersion>1.0.0-alpha-0030</J2NPackageVersion>
     <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>1.0.3</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>1.0.3</MicrosoftAspNetCoreTestHostPackageVersion>
     <MicrosoftCSharpPackageVersion>4.4.0</MicrosoftCSharpPackageVersion>
