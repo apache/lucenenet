@@ -85,7 +85,7 @@ namespace Lucene.Net.Util.Automaton
             public override bool Equals(object obj)
             {
                 State other = (State)obj;
-                return is_final == other.is_final && Array.Equals(this.labels, other.labels) && ReferenceEquals(this.states, other.states);
+                return is_final == other.is_final && Arrays.Equals(this.labels, other.labels) && ReferenceEquals(this.states, other.states);
             }
 
             /// <summary>
