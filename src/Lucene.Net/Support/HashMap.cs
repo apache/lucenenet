@@ -35,22 +35,14 @@ namespace Lucene.Net.Support
     /// the Hashmap supports both null keys and values, where the C# Dictionary
     /// only supports null values not keys.  Also, <c>V Get(TKey)</c>
     /// method in Java returns null if the key doesn't exist, instead of throwing
-    /// an exception.  This implementation doesn't throw an exception when a key
-    /// doesn't exist, it will return null.  This class is slower than using a
+    /// an exception. In .NET, using <see cref="TryGetValue(TKey, out TValue)"/>
+    /// will provide similar behavior as <c>V Get(TKey)</c> This class is slower than using a
     /// <see cref="Dictionary{TKey, TValue}"/>, because of extra checks that have to be
     /// done on each access, to check for null.
     /// </para>
-    /// <para>
-    /// <b>NOTE:</b> This class works best with nullable types.  default(T) is returned
-    /// when a key doesn't exist in the collection (this being similar to how Java returns
-    /// null).  Therefore, if the expected behavior of the java code is to execute code
-    /// based on if the key exists, when the key is an integer type, it will return 0 instead of null.
-    /// </para>
-    /// <remaks>
     /// Consider also implementing IDictionary, IEnumerable, and ICollection
     /// like <see cref="Dictionary{TKey, TValue}" /> does, so HashMap can be
     /// used in substituted in place for the same interfaces it implements.
-    /// </remaks>
     /// </summary>
     /// <typeparam name="TKey">The type of keys in the dictionary</typeparam>
     /// <typeparam name="TValue">The type of values in the dictionary</typeparam>
@@ -63,7 +55,7 @@ namespace Lucene.Net.Support
     /// <h2>Ordered Dictionaries</h2>
     /// <list type="bullet">
     ///     <item><description><see cref="LinkedHashMap{TKey, TValue}"/> - use when you need to preserve entry insertion order. Keys are nullable.</description></item>
-    ///     <item><description><see cref="SortedDictionary{TKey, TValue}"/> - use when you need natural sort order. Keys must be unique.</description></item>
+    ///     <item><description><see cref="SortedDictionary{TKey, TValue}"/> - use when you need natural sort order. Null keys are not supported.</description></item>
     ///     <item><description><see cref="TreeDictionary{K, V}"/> - use when you need natural sort order. Keys are nullable.</description></item>
     ///     <item><description><see cref="LurchTable{TKey, TValue}"/> - use when you need to sort by most recent access or most recent update. Works well for LRU caching.</description></item>
     /// </list>
@@ -390,7 +382,7 @@ namespace Lucene.Net.Support
                     }
                     return _nullValue;
                 }
-                return _dict.ContainsKey(key) ? _dict[key] : default(TValue);
+                return _dict[key];
             }
             set { Add(key, value); }
         }
