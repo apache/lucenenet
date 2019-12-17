@@ -239,7 +239,7 @@ namespace Lucene.Net.Support
         {
             set
             {
-                var info = new AddInfo { Value = value, CanUpdate = true };
+                var info = new AddInfo<TKey, TValue> { Value = value, CanUpdate = true };
                 Insert(key, ref info);
             }
             get
@@ -268,7 +268,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public void Add(TKey key, TValue value)
         {
-            var info = new AddInfo { Value = value };
+            var info = new AddInfo<TKey, TValue> { Value = value };
             if (InsertResult.Inserted != Insert(key, ref info))
                 throw new ArgumentOutOfRangeException();
         }
@@ -282,7 +282,7 @@ namespace Lucene.Net.Support
         /// <param name="key">The key of the element to remove.</param>
         public bool Remove(TKey key)
         {
-            var del = new DelInfo();
+            var del = new DelInfo<TKey, TValue>();
             return Delete(key, ref del);
         }
 
@@ -297,7 +297,7 @@ namespace Lucene.Net.Support
         /// <param name="value">The value to be added, if the key does not already exist.</param>
         public TValue GetOrAdd(TKey key, TValue value)
         {
-            var info = new AddInfo { Value = value, CanUpdate = false };
+            var info = new AddInfo<TKey, TValue> { Value = value, CanUpdate = false };
             if (InsertResult.Exists == Insert(key, ref info))
                 return info.Value;
             return value;
@@ -310,7 +310,7 @@ namespace Lucene.Net.Support
         /// <param name="value">The object to use as the value of the element to add.</param>
         public bool TryAdd(TKey key, TValue value)
         {
-            var info = new AddInfo { Value = value, CanUpdate = false };
+            var info = new AddInfo<TKey, TValue> { Value = value, CanUpdate = false };
             return InsertResult.Inserted == Insert(key, ref info);
         }
 
@@ -322,7 +322,7 @@ namespace Lucene.Net.Support
         /// <param name="value">The new value for the key if found.</param>
         public bool TryUpdate(TKey key, TValue value)
         {
-            var info = new UpdateInfo { Value = value };
+            var info = new UpdateInfo<TKey, TValue> { Value = value };
             return InsertResult.Updated == Insert(key, ref info);
         }
 
@@ -335,7 +335,7 @@ namespace Lucene.Net.Support
         /// <param name="comparisonValue">The value that is compared to the value of the element with key.</param>
         public bool TryUpdate(TKey key, TValue value, TValue comparisonValue)
         {
-            var info = new UpdateInfo(comparisonValue) { Value = value };
+            var info = new UpdateInfo<TKey, TValue>(comparisonValue) { Value = value };
             return InsertResult.Updated == Insert(key, ref info);
         }
 
@@ -349,7 +349,7 @@ namespace Lucene.Net.Support
         /// <param name="value">The value that was removed.</param>
         public bool TryRemove(TKey key, out TValue value)
         {
-            var info = new DelInfo();
+            var info = new DelInfo<TKey, TValue>();
             if (Delete(key, ref info))
             {
                 value = info.Value;
@@ -370,7 +370,7 @@ namespace Lucene.Net.Support
         /// <param name="fnCreate">Constructs a new value for the key.</param>
         public TValue GetOrAdd(TKey key, Func<TKey, TValue> fnCreate)
         {
-            var info = new Add2Info { Create = fnCreate };
+            var info = new Add2Info<TKey, TValue> { Create = fnCreate };
             Insert(key, ref info);
             return info.Value;
         }
@@ -381,7 +381,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public TValue AddOrUpdate(TKey key, TValue addValue, KeyValueUpdate<TKey, TValue> fnUpdate)
         {
-            var info = new Add2Info(addValue) { Update = fnUpdate };
+            var info = new Add2Info<TKey, TValue>(addValue) { Update = fnUpdate };
             Insert(key, ref info);
             return info.Value;
         }
@@ -397,7 +397,7 @@ namespace Lucene.Net.Support
         /// </remarks>
         public TValue AddOrUpdate(TKey key, Func<TKey, TValue> fnCreate, KeyValueUpdate<TKey, TValue> fnUpdate)
         {
-            var info = new Add2Info { Create = fnCreate, Update = fnUpdate };
+            var info = new Add2Info<TKey, TValue> { Create = fnCreate, Update = fnUpdate };
             Insert(key, ref info);
             return info.Value;
         }
@@ -418,7 +418,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public bool TryAdd(TKey key, Func<TKey, TValue> fnCreate)
         {
-            var info = new Add2Info { Create = fnCreate };
+            var info = new Add2Info<TKey, TValue> { Create = fnCreate };
             return InsertResult.Inserted == Insert(key, ref info);
         }
 
@@ -429,7 +429,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public bool TryUpdate(TKey key, KeyValueUpdate<TKey, TValue> fnUpdate)
         {
-            var info = new Add2Info { Update = fnUpdate };
+            var info = new Add2Info<TKey, TValue> { Update = fnUpdate };
             return InsertResult.Updated == Insert(key, ref info);
         }
 
@@ -439,7 +439,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public bool TryRemove(TKey key, KeyValuePredicate<TKey, TValue> fnCondition)
         {
-            var info = new DelInfo { Condition = fnCondition };
+            var info = new DelInfo<TKey, TValue> { Condition = fnCondition };
             return Delete(key, ref info);
         }
 
@@ -482,7 +482,7 @@ namespace Lucene.Net.Support
 
         bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
         {
-            var del = new DelInfo(item.Value);
+            var del = new DelInfo<TKey, TValue>(item.Value);
             return Delete(item.Key, ref del);
         }
 
@@ -1407,131 +1407,141 @@ namespace Lucene.Net.Support
             }
         }
 
-        struct DelInfo : IRemoveValue<TKey, TValue>
-        {
-            public TValue Value;
-            readonly bool _hasTestValue;
-            readonly TValue _testValue;
-            public KeyValuePredicate<TKey, TValue> Condition;
-
-            public DelInfo(TValue expected)
-            {
-                Value = default(TValue);
-                _testValue = expected;
-                _hasTestValue = true;
-                Condition = null;
-            }
-
-            public bool RemoveValue(TKey key, TValue value)
-            {
-                Value = value;
-
-                if (_hasTestValue && !EqualityComparer<TValue>.Default.Equals(_testValue, value))
-                    return false;
-                if (Condition != null && !Condition(key, value))
-                    return false;
-
-                return true;
-            }
-        }
-
-        struct AddInfo : ICreateOrUpdateValue<TKey, TValue>
-        {
-            public bool CanUpdate;
-            public TValue Value;
-            public bool CreateValue(TKey key, out TValue value)
-            {
-                value = Value;
-                return true;
-            }
-
-            public bool UpdateValue(TKey key, ref TValue value)
-            {
-                if (!CanUpdate)
-                {
-                    Value = value;
-                    return false;
-                }
-
-                value = Value;
-                return true;
-            }
-        }
-
-        struct Add2Info : ICreateOrUpdateValue<TKey, TValue>
-        {
-            readonly bool _hasAddValue;
-            readonly TValue _addValue;
-            public TValue Value;
-            public Func<TKey, TValue> Create;
-            public KeyValueUpdate<TKey, TValue> Update;
-
-            public Add2Info(TValue addValue) : this()
-            {
-                _hasAddValue = true;
-                _addValue = addValue;
-            }
-
-            public bool CreateValue(TKey key, out TValue value)
-            {
-                if (_hasAddValue)
-                {
-                    value = Value = _addValue;
-                    return true;
-                }
-                if (Create != null)
-                {
-                    value = Value = Create(key);
-                    return true;
-                }
-                value = Value = default(TValue);
-                return false;
-            }
-
-            public bool UpdateValue(TKey key, ref TValue value)
-            {
-                if (Update == null)
-                {
-                    Value = value;
-                    return false;
-                }
-
-                value = Value = Update(key, value);
-                return true;
-            }
-        }
-
-        struct UpdateInfo : ICreateOrUpdateValue<TKey, TValue>
-        {
-            public TValue Value;
-            readonly bool _hasTestValue;
-            readonly TValue _testValue;
-
-            public UpdateInfo(TValue expected)
-            {
-                Value = default(TValue);
-                _testValue = expected;
-                _hasTestValue = true;
-            }
-
-            bool ICreateValue<TKey, TValue>.CreateValue(TKey key, out TValue value)
-            {
-                value = default(TValue);
-                return false;
-            }
-            public bool UpdateValue(TKey key, ref TValue value)
-            {
-                if (_hasTestValue && !EqualityComparer<TValue>.Default.Equals(_testValue, value))
-                    return false;
-
-                value = Value;
-                return true;
-            }
-        }
         #endregion
     }
 
     #region LurchTable Support
+
+    #region Internal Structures (de-nested)
+
+    // LUCENENET NOTE: These were originally nested within LurchTable, but
+    // using nested generic structs without explicitly defining their parameters
+    // fails on Xamarin.iOS because of incomplete generics support. Therefore,
+    // we de-nested them and moved them here. See: LUCENENET-602
+
+    struct DelInfo<TKey, TValue> : IRemoveValue<TKey, TValue>
+    {
+        public TValue Value;
+        readonly bool _hasTestValue;
+        readonly TValue _testValue;
+        public KeyValuePredicate<TKey, TValue> Condition;
+
+        public DelInfo(TValue expected)
+        {
+            Value = default(TValue);
+            _testValue = expected;
+            _hasTestValue = true;
+            Condition = null;
+        }
+
+        public bool RemoveValue(TKey key, TValue value)
+        {
+            Value = value;
+
+            if (_hasTestValue && !EqualityComparer<TValue>.Default.Equals(_testValue, value))
+                return false;
+            if (Condition != null && !Condition(key, value))
+                return false;
+
+            return true;
+        }
+    }
+
+    struct AddInfo<TKey, TValue> : ICreateOrUpdateValue<TKey, TValue>
+    {
+        public bool CanUpdate;
+        public TValue Value;
+        public bool CreateValue(TKey key, out TValue value)
+        {
+            value = Value;
+            return true;
+        }
+
+        public bool UpdateValue(TKey key, ref TValue value)
+        {
+            if (!CanUpdate)
+            {
+                Value = value;
+                return false;
+            }
+
+            value = Value;
+            return true;
+        }
+    }
+
+    struct Add2Info<TKey, TValue> : ICreateOrUpdateValue<TKey, TValue>
+    {
+        readonly bool _hasAddValue;
+        readonly TValue _addValue;
+        public TValue Value;
+        public Func<TKey, TValue> Create;
+        public KeyValueUpdate<TKey, TValue> Update;
+
+        public Add2Info(TValue addValue) : this()
+        {
+            _hasAddValue = true;
+            _addValue = addValue;
+        }
+
+        public bool CreateValue(TKey key, out TValue value)
+        {
+            if (_hasAddValue)
+            {
+                value = Value = _addValue;
+                return true;
+            }
+            if (Create != null)
+            {
+                value = Value = Create(key);
+                return true;
+            }
+            value = Value = default(TValue);
+            return false;
+        }
+
+        public bool UpdateValue(TKey key, ref TValue value)
+        {
+            if (Update == null)
+            {
+                Value = value;
+                return false;
+            }
+
+            value = Value = Update(key, value);
+            return true;
+        }
+    }
+
+    struct UpdateInfo<TKey, TValue> : ICreateOrUpdateValue<TKey, TValue>
+    {
+        public TValue Value;
+        readonly bool _hasTestValue;
+        readonly TValue _testValue;
+
+        public UpdateInfo(TValue expected)
+        {
+            Value = default(TValue);
+            _testValue = expected;
+            _hasTestValue = true;
+        }
+
+        bool ICreateValue<TKey, TValue>.CreateValue(TKey key, out TValue value)
+        {
+            value = default(TValue);
+            return false;
+        }
+        public bool UpdateValue(TKey key, ref TValue value)
+        {
+            if (_hasTestValue && !EqualityComparer<TValue>.Default.Equals(_testValue, value))
+                return false;
+
+            value = Value;
+            return true;
+        }
+    }
+
+    #endregion
 
     #region Exceptions
 
