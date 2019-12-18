@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Search
 {
@@ -206,7 +207,11 @@ namespace Lucene.Net.Search
 
             internal readonly FieldCacheImpl wrapper;
 
-            internal IDictionary<object, IDictionary<CacheKey, object>> readerCache = new WeakDictionary<object, IDictionary<CacheKey, object>>();
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+            internal ConditionalWeakTable<object, IDictionary<CacheKey, object>> readerCache = new ConditionalWeakTable<object, IDictionary<CacheKey, object>>();
+#else
+            internal WeakDictionary<object, IDictionary<CacheKey, object>> readerCache = new WeakDictionary<object, IDictionary<CacheKey, object>>();
+#endif
 
             protected abstract object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField);
 
@@ -233,7 +238,7 @@ namespace Lucene.Net.Search
                     {
                         // First time this reader is using FieldCache
                         innerCache = new Dictionary<CacheKey, object>();
-                        readerCache[readerKey] = innerCache;
+                        readerCache.AddOrUpdate(readerKey, innerCache);
                         wrapper.InitReader(reader);
                     }
                     // LUCENENET NOTE: We declare a temp variable here so we 
@@ -263,7 +268,7 @@ namespace Lucene.Net.Search
                     {
                         // First time this reader is using FieldCache
                         innerCache = new Dictionary<CacheKey, object>();
-                        readerCache[readerKey] = innerCache;
+                        readerCache.AddOrUpdate(readerKey, innerCache);
                         wrapper.InitReader(reader);
                         value = null;
                     }

@@ -19,6 +19,8 @@
  *
 */
 
+
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,6 +56,10 @@ namespace Lucene.Net.Support
                 _hm.Add(new WeakKey<TKey>(kvp.Key), kvp.Value);
             }
         }
+
+        // LUCENENET NOTE: Added AddOrUpdate method so we don't need so many conditional compilation blocks.
+        // This is just to cascade the call to this[key] = value
+        public void AddOrUpdate(TKey key, TValue value) => this[key] = value;
 
         private void Clean()
         {
@@ -181,7 +187,7 @@ namespace Lucene.Net.Support
             throw new NotSupportedException();
         }
 
-        #region KeyCollection
+#region KeyCollection
 
         private class KeyCollection : ICollection<TKey>
         {
@@ -220,7 +226,7 @@ namespace Lucene.Net.Support
                 get { return true; }
             }
 
-            #region Explicit Interface Definitions
+#region Explicit Interface Definitions
 
             bool ICollection<TKey>.Contains(TKey item)
             {
@@ -242,10 +248,10 @@ namespace Lucene.Net.Support
                 throw new NotSupportedException();
             }
 
-            #endregion Explicit Interface Definitions
+#endregion Explicit Interface Definitions
         }
 
-        #endregion KeyCollection
+#endregion KeyCollection
 
         /// <summary>
         /// A weak reference wrapper for the hashtable keys. Whenever a key\value pair
@@ -303,3 +309,4 @@ namespace Lucene.Net.Support
         }
     }
 }
+#endif

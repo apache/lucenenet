@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -478,7 +479,8 @@ namespace Lucene.Net.Index
                                 if (source.Equals("merge", StringComparison.Ordinal))
                                 {
                                     assertTrue("sub reader " + sub + " wasn't warmed: warmed=" + outerInstance.warmed + " diagnostics=" + diagnostics + " si=" + segReader.SegmentInfo,
-                                        !outerInstance.m_assertMergedSegmentsWarmed || outerInstance.warmed.ContainsKey(segReader.core));
+                                        // LUCENENET: ConditionalWeakTable doesn't have ContainsKey, so we normalize to TryGetValue
+                                        !outerInstance.m_assertMergedSegmentsWarmed || outerInstance.warmed.TryGetValue(segReader.core, out BooleanRef _));
                                 }
                             }
                             if (s.IndexReader.NumDocs > 0)
@@ -557,8 +559,12 @@ namespace Lucene.Net.Index
 
         protected bool m_assertMergedSegmentsWarmed = true;
 
-        private readonly IDictionary<SegmentCoreReaders, bool?> warmed = new WeakDictionary<SegmentCoreReaders, bool?>(); //new ConcurrentHashMapWrapper<SegmentCoreReaders, bool?>(new HashMap<SegmentCoreReaders, bool?>());
-        // Collections.synchronizedMap(new WeakHashMap<SegmentCoreReaders, bool?>());
+#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+        private readonly ConditionalWeakTable<SegmentCoreReaders, BooleanRef> warmed = new ConditionalWeakTable<SegmentCoreReaders, BooleanRef>();
+#else
+        private readonly IDictionary<SegmentCoreReaders, BooleanRef> warmed = new WeakDictionary<SegmentCoreReaders, BooleanRef>(); //new ConcurrentHashMapWrapper<SegmentCoreReaders, BooleanRef>(new HashMap<SegmentCoreReaders, BooleanRef>());
+                                                                                                                                    // Collections.synchronizedMap(new WeakHashMap<SegmentCoreReaders, BooleanRef>());
+#endif
 
         public virtual void RunTest(string testName)
         {
@@ -806,7 +812,11 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: now warm merged reader=" + reader);
                 }
+#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                outerInstance.warmed.AddOrUpdate(((SegmentReader)reader).core, true);
+#else
                 outerInstance.warmed[((SegmentReader)reader).core] = true;
+#endif
                 int maxDoc = reader.MaxDoc;
                 IBits liveDocs = reader.LiveDocs;
                 int sum = 0;
@@ -851,6 +861,48 @@ namespace Lucene.Net.Index
                     return; // ignore test points!
                 }
                 base.Message(component, message);
+            }
+        }
+
+        // LUCENENET specific reference type of bool to mimic Java's
+        // Boolean reference type.
+        private class BooleanRef : IEquatable<BooleanRef>
+        {
+            private bool value;
+
+            public BooleanRef(bool value)
+            {
+                this.value = value;
+            }
+
+            public bool Equals(BooleanRef other)
+            {
+                return this.value.Equals(other.value);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj is BooleanRef booleanRef)
+                    return Equals(booleanRef);
+                if (obj is bool boolean)
+                    return this.value.Equals(boolean);
+
+                return false;
+            }
+
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
+            }
+
+            public static implicit operator bool(BooleanRef boolean)
+            {
+                return boolean.value;
+            }
+
+            public static implicit operator BooleanRef(bool boolean)
+            {
+                return new BooleanRef(boolean);
             }
         }
 

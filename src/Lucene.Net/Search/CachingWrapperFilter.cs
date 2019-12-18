@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Search
 {
@@ -37,8 +38,12 @@ namespace Lucene.Net.Search
     {
         private readonly Filter _filter;
 
+#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+        private readonly ConditionalWeakTable<object, DocIdSet> _cache = new ConditionalWeakTable<object, DocIdSet>();
+#else
         //private readonly IDictionary<object, DocIdSet> Cache = Collections.synchronizedMap(new WeakHashMap<object, DocIdSet>());
         private readonly IDictionary<object, DocIdSet> _cache = new ConcurrentHashMapWrapper<object, DocIdSet>(new WeakDictionary<object, DocIdSet>());
+#endif
 
         /// <summary>
         /// Wraps another filter's result and caches it. </summary>
@@ -51,13 +56,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Gets the contained filter. </summary>
         /// <returns> the contained filter. </returns>
-        public virtual Filter Filter
-        {
-            get
-            {
-                return _filter;
-            }
-        }
+        public virtual Filter Filter => _filter;
 
         /// <summary>
         /// Provide the <see cref="DocIdSet"/> to be cached, using the <see cref="DocIdSet"/> provided
@@ -115,8 +114,7 @@ namespace Lucene.Net.Search
             var reader = context.AtomicReader;
             object key = reader.CoreCacheKey;
 
-            DocIdSet docIdSet = _cache[key];
-            if (docIdSet != null)
+            if (_cache.TryGetValue(key, out DocIdSet docIdSet) && docIdSet != null)
             {
                 hitCount++;
             }
@@ -125,7 +123,11 @@ namespace Lucene.Net.Search
                 missCount++;
                 docIdSet = DocIdSetToCache(_filter.GetDocIdSet(context, null), reader);
                 Debug.Assert(docIdSet.IsCacheable);
+#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                _cache.AddOrUpdate(key, docIdSet);
+#else
                 _cache[key] = docIdSet;
+#endif
             }
 
             return docIdSet == EMPTY_DOCIDSET ? null : BitsFilteredDocIdSet.Wrap(docIdSet, acceptDocs);
@@ -162,26 +164,29 @@ namespace Lucene.Net.Search
                 return DocIdSetIterator.GetEmpty();
             }
 
-            public override bool IsCacheable
-            {
-                get
-                {
-                    return true;
-                }
-            }
+            public override bool IsCacheable => true;
 
             // we explicitly provide no random access, as this filter is 100% sparse and iterator exits faster
-            public override IBits Bits
-            {
-                get { return null; }
-            }
+            public override IBits Bits => null;
         }
 
         /// <summary>
         /// Returns total byte size used by cached filters. </summary>
         public virtual long GetSizeInBytes()
-        {            
-            IList<DocIdSet> docIdSets = new List<DocIdSet>(_cache.Values);
+        {
+            // Sync only to pull the current set of values:
+            List<DocIdSet> docIdSets;
+            lock (_cache)
+            {
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+                docIdSets = new List<DocIdSet>();
+                foreach (var pair in _cache)
+                    docIdSets.Add(pair.Value);
+#else
+                docIdSets = new List<DocIdSet>(_cache.Values);
+#endif
+            }
+
             return docIdSets.Sum(dis => RamUsageEstimator.SizeOf(dis));
         }
     }

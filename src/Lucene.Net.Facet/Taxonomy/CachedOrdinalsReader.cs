@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -63,7 +64,11 @@ namespace Lucene.Net.Facet.Taxonomy
     {
         private readonly OrdinalsReader source;
 
-        private readonly IDictionary<object, CachedOrds> ordsCache = new WeakDictionary<object, CachedOrds>();
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+        private readonly ConditionalWeakTable<object, CachedOrds> ordsCache = new ConditionalWeakTable<object, CachedOrds>();
+#else
+        private readonly WeakDictionary<object, CachedOrds> ordsCache = new WeakDictionary<object, CachedOrds>();
+#endif
 
         /// <summary>
         /// Sole constructor. </summary>
@@ -80,7 +85,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 if (!ordsCache.TryGetValue(cacheKey, out CachedOrds ords) || ords == null)
                 {
                     ords = new CachedOrds(source.GetReader(context), context.Reader.MaxDoc);
-                    ordsCache[cacheKey] = ords;
+                    ordsCache.AddOrUpdate(cacheKey, ords);
                 }
 
                 return ords;
@@ -198,10 +203,13 @@ namespace Lucene.Net.Facet.Taxonomy
             lock (this)
             {
                 long bytes = 0;
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+                foreach (var pair in ordsCache)
+                    bytes += pair.Value.RamBytesUsed();
+#else
                 foreach (CachedOrds ords in ordsCache.Values)
-                {
                     bytes += ords.RamBytesUsed();
-                }
+#endif
 
                 return bytes;
             }

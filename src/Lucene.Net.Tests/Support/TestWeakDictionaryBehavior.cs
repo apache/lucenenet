@@ -1,3 +1,4 @@
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
@@ -287,3 +288,4 @@ namespace Lucene.Net.Support
         }
     }
 }
+#endif

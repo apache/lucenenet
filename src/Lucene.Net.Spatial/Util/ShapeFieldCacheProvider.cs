@@ -3,6 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Spatial.Util
 {
@@ -39,8 +40,13 @@ namespace Lucene.Net.Spatial.Util
     {
         //private Logger log = Logger.GetLogger(GetType().FullName);
 
+#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+        private readonly ConditionalWeakTable<IndexReader, ShapeFieldCache<T>> sidx =
+            new ConditionalWeakTable<IndexReader, ShapeFieldCache<T>>();
+#else
         private readonly WeakDictionary<IndexReader, ShapeFieldCache<T>> sidx =
             new WeakDictionary<IndexReader, ShapeFieldCache<T>>();
+#endif
 
         protected internal readonly int m_defaultSize;
         protected internal readonly string m_shapeField;
@@ -66,7 +72,7 @@ namespace Lucene.Net.Spatial.Util
                     return idx;
                 }
                 /*long startTime = Runtime.CurrentTimeMillis();
-				log.Fine("Building Cache [" + reader.MaxDoc() + "]");*/
+                log.Fine("Building Cache [" + reader.MaxDoc() + "]");*/
                 idx = new ShapeFieldCache<T>(reader.MaxDoc, m_defaultSize);
                 int count = 0;
                 DocsEnum docs = null;
@@ -93,7 +99,8 @@ namespace Lucene.Net.Spatial.Util
                         term = te.Next();
                     }
                 }
-                sidx[reader] = idx;
+                sidx.AddOrUpdate(reader, idx);
+
                 /*long elapsed = Runtime.CurrentTimeMillis() - startTime;
                 log.Fine("Cached: [" + count + " in " + elapsed + "ms] " + idx);*/
                 return idx;
