@@ -37,15 +37,13 @@
 .PARAMETER SharedRuntime
     This parameter is obsolete and may be removed in a future version of this script.
     The recommended alternative is '-Runtime dotnet'.
-
-    Default: false
     Installs just the shared runtime bits, not the entire SDK.
-    This is equivalent to specifying `-Runtime dotnet`.
 .PARAMETER Runtime
     Installs just a shared runtime, not the entire SDK.
     Possible values:
         - dotnet     - the Microsoft.NETCore.App shared runtime
         - aspnetcore - the Microsoft.AspNetCore.App shared runtime
+        - windowsdesktop - the Microsoft.WindowsDesktop.App shared runtime
 .PARAMETER DryRun
     If set it will not perform installation but instead display what command line to use to consistently install
     currently requested version of dotnet cli. In example if you specify version 'latest' it will display a link
@@ -76,14 +74,18 @@
     Skips installing non-versioned files if they already exist, such as dotnet.exe.
 .PARAMETER NoCdn
     Disable downloading from the Azure CDN, and use the uncached feed directly.
+.PARAMETER JSonFile
+    Determines the SDK version from a user specified global.json file
+    Note: global.json must have a value for 'SDK:Version'
 #>
 [cmdletbinding()]
 param(
    [string]$Channel="LTS",
    [string]$Version="Latest",
+   [string]$JSonFile,
    [string]$InstallDir="<auto>",
    [string]$Architecture="<auto>",
-   [ValidateSet("dotnet", "aspnetcore", IgnoreCase = $false)]
+   [ValidateSet("dotnet", "aspnetcore", "windowsdesktop", IgnoreCase = $false)]
    [string]$Runtime,
    [Obsolete("This parameter may be removed in a future version of this script. The recommended alternative is '-Runtime dotnet'.")]
    [switch]$SharedRuntime,
@@ -165,7 +167,7 @@ function Get-CLIArchitecture-From-Architecture([string]$Architecture) {
         { $_ -eq "x86" } { return "x86" }
         { $_ -eq "arm" } { return "arm" }
         { $_ -eq "arm64" } { return "arm64" }
-        default { throw "Architecture not supported. If you think this is a bug, report it at https://github.com/dotnet/cli/issues" }
+        default { throw "Architecture not supported. If you think this is a bug, report it at https://github.com/dotnet/sdk/issues" }
     }
 }
 
@@ -257,7 +259,6 @@ function GetHTTPResponse([Uri] $Uri)
     })
 }
 
-
 function Get-Latest-Version-Info([string]$AzureFeed, [string]$Channel, [bool]$Coherent) {
     Say-Invocation $MyInvocation
 
@@ -267,6 +268,10 @@ function Get-Latest-Version-Info([string]$AzureFeed, [string]$Channel, [bool]$Co
     }
     elseif ($Runtime -eq "aspnetcore") {
         $VersionFileUrl = "$UncachedFeed/aspnetcore/Runtime/$Channel/latest.version"
+    }
+    # Currently, the WindowsDesktop runtime is manufactured with the .Net core runtime
+    elseif ($Runtime -eq "windowsdesktop") {
+        $VersionFileUrl = "$UncachedFeed/Runtime/$Channel/latest.version"
     }
     elseif (-not $Runtime) {
         if ($Coherent) {
@@ -299,20 +304,59 @@ function Get-Latest-Version-Info([string]$AzureFeed, [string]$Channel, [bool]$Co
     return $VersionInfo
 }
 
-
-function Get-Specific-Version-From-Version([string]$AzureFeed, [string]$Channel, [string]$Version) {
+function Parse-Jsonfile-For-Version([string]$JSonFile) {
     Say-Invocation $MyInvocation
 
-    switch ($Version.ToLower()) {
-        { $_ -eq "latest" } {
-            $LatestVersionInfo = Get-Latest-Version-Info -AzureFeed $AzureFeed -Channel $Channel -Coherent $False
-            return $LatestVersionInfo.Version
+    If (-Not (Test-Path $JSonFile)) {
+        throw "Unable to find '$JSonFile'"
+    }
+    try {
+        $JSonContent = Get-Content($JSonFile) -Raw | ConvertFrom-Json | Select-Object -expand "sdk" -ErrorAction SilentlyContinue
+    }
+    catch {
+        throw "Json file unreadable: '$JSonFile'"
+    }
+    if ($JSonContent) {
+        try {
+            $JSonContent.PSObject.Properties | ForEach-Object {
+                $PropertyName = $_.Name
+                if ($PropertyName -eq "version") {
+                    $Version = $_.Value
+                    Say-Verbose "Version = $Version"
+                }
+            }
         }
-        { $_ -eq "coherent" } {
-            $LatestVersionInfo = Get-Latest-Version-Info -AzureFeed $AzureFeed -Channel $Channel -Coherent $True
-            return $LatestVersionInfo.Version
+        catch {
+            throw "Unable to parse the SDK node in '$JSonFile'"
         }
-        default { return $Version }
+    }
+    else {
+        throw "Unable to find the SDK node in '$JSonFile'"
+    }
+    If ($Version -eq $null) {
+        throw "Unable to find the SDK:version node in '$JSonFile'"
+    }
+    return $Version
+}
+
+function Get-Specific-Version-From-Version([string]$AzureFeed, [string]$Channel, [string]$Version, [string]$JSonFile) {
+    Say-Invocation $MyInvocation
+
+    if (-not $JSonFile) {
+        switch ($Version.ToLower()) {
+            { $_ -eq "latest" } {
+                $LatestVersionInfo = Get-Latest-Version-Info -AzureFeed $AzureFeed -Channel $Channel -Coherent $False
+                return $LatestVersionInfo.Version
+            }
+            { $_ -eq "coherent" } {
+                $LatestVersionInfo = Get-Latest-Version-Info -AzureFeed $AzureFeed -Channel $Channel -Coherent $True
+                return $LatestVersionInfo.Version
+            }
+            default { return $Version }
+        }
+    }
+    else {
+        return Parse-Jsonfile-For-Version $JSonFile
     }
 }
 
@@ -324,6 +368,9 @@ function Get-Download-Link([string]$AzureFeed, [string]$SpecificVersion, [string
     }
     elseif ($Runtime -eq "aspnetcore") {
         $PayloadURL = "$AzureFeed/aspnetcore/Runtime/$SpecificVersion/aspnetcore-runtime-$SpecificVersion-win-$CLIArchitecture.zip"
+    }
+    elseif ($Runtime -eq "windowsdesktop") {
+        $PayloadURL = "$AzureFeed/Runtime/$SpecificVersion/windowsdesktop-runtime-$SpecificVersion-win-$CLIArchitecture.zip"
     }
     elseif (-not $Runtime) {
         $PayloadURL = "$AzureFeed/Sdk/$SpecificVersion/dotnet-sdk-$SpecificVersion-win-$CLIArchitecture.zip"
@@ -374,28 +421,11 @@ function Resolve-Installation-Path([string]$InstallDir) {
     return $InstallDir
 }
 
-function Get-Version-Info-From-Version-File([string]$InstallRoot, [string]$RelativePathToVersionFile) {
-    Say-Invocation $MyInvocation
-
-    $VersionFile = Join-Path -Path $InstallRoot -ChildPath $RelativePathToVersionFile
-    Say-Verbose "Local version file: $VersionFile"
-
-    if (Test-Path $VersionFile) {
-        $VersionText = cat $VersionFile
-        Say-Verbose "Local version file text: $VersionText"
-        return Get-Version-Info-From-Version-Text $VersionText
-    }
-
-    Say-Verbose "Local version file not found."
-
-    return $null
-}
-
 function Is-Dotnet-Package-Installed([string]$InstallRoot, [string]$RelativePathToPackage, [string]$SpecificVersion) {
     Say-Invocation $MyInvocation
 
     $DotnetPackagePath = Join-Path -Path $InstallRoot -ChildPath $RelativePathToPackage | Join-Path -ChildPath $SpecificVersion
-    Say-Verbose "Is-Dotnet-Package-Installed: Path to a package: $DotnetPackagePath"
+    Say-Verbose "Is-Dotnet-Package-Installed: DotnetPackagePath=$DotnetPackagePath"
     return Test-Path $DotnetPackagePath -PathType Container
 }
 
@@ -526,7 +556,7 @@ function Prepend-Sdk-InstallRoot-To-Path([string]$InstallRoot, [string]$BinFolde
 }
 
 $CLIArchitecture = Get-CLIArchitecture-From-Architecture $Architecture
-$SpecificVersion = Get-Specific-Version-From-Version -AzureFeed $AzureFeed -Channel $Channel -Version $Version
+$SpecificVersion = Get-Specific-Version-From-Version -AzureFeed $AzureFeed -Channel $Channel -Version $Version -JSonFile $JSonFile
 $DownloadLink = Get-Download-Link -AzureFeed $AzureFeed -SpecificVersion $SpecificVersion -CLIArchitecture $CLIArchitecture
 $LegacyDownloadLink = Get-LegacyDownload-Link -AzureFeed $AzureFeed -SpecificVersion $SpecificVersion -CLIArchitecture $CLIArchitecture
 
@@ -563,6 +593,10 @@ if ($Runtime -eq "dotnet") {
 elseif ($Runtime -eq "aspnetcore") {
     $assetName = "ASP.NET Core Runtime"
     $dotnetPackageRelativePath = "shared\Microsoft.AspNetCore.App"
+}
+elseif ($Runtime -eq "windowsdesktop") {
+    $assetName = ".NET Core Windows Desktop Runtime"
+    $dotnetPackageRelativePath = "shared\Microsoft.WindowsDesktop.App"
 }
 elseif (-not $Runtime) {
     $assetName = ".NET Core SDK"
@@ -624,8 +658,22 @@ if ($DownloadFailed) {
 Say "Extracting zip from $DownloadLink"
 Extract-Dotnet-Package -ZipPath $ZipPath -OutPath $InstallRoot
 
-#  Check if the SDK version is now installed; if not, fail the installation.
-$isAssetInstalled = Is-Dotnet-Package-Installed -InstallRoot $InstallRoot -RelativePathToPackage $dotnetPackageRelativePath -SpecificVersion $SpecificVersion
+#  Check if the SDK version is installed; if not, fail the installation.
+$isAssetInstalled = $false
+
+# if the version contains "RTM" or "servicing"; check if a 'release-type' SDK version is installed.
+if ($SpecificVersion -Match "rtm" -or $SpecificVersion -Match "servicing") {
+    $ReleaseVersion = $SpecificVersion.Split("-")[0]
+    Say-Verbose "Checking installation: version = $ReleaseVersion"
+    $isAssetInstalled = Is-Dotnet-Package-Installed -InstallRoot $InstallRoot -RelativePathToPackage $dotnetPackageRelativePath -SpecificVersion $ReleaseVersion
+}
+
+#  Check if the SDK version is installed.
+if (!$isAssetInstalled) {
+    Say-Verbose "Checking installation: version = $SpecificVersion"
+    $isAssetInstalled = Is-Dotnet-Package-Installed -InstallRoot $InstallRoot -RelativePathToPackage $dotnetPackageRelativePath -SpecificVersion $SpecificVersion
+}
+
 if (!$isAssetInstalled) {
     throw "`"$assetName`" with version = $SpecificVersion failed to install with an unknown error."
 }
