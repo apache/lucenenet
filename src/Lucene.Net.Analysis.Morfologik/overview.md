@@ -1,4 +1,9 @@
-﻿
+﻿---
+uid: Lucene.Net.Analysis.Morfologik
+summary: *content
+---
+
+
 <!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -16,26 +21,8 @@
  limitations under the License.
 -->
 
+ This package provides dictionary-driven lemmatization ("accurate stemming") filter and analyzer for the Polish Language, driven by the [Morfologik library](http://morfologik.blogspot.com/) developed by Dawid Weiss and Marcin Miłkowski. 
 
+ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis> package documentation. 
 
-Analyzer for Simplified Chinese, which indexes words.
-@lucene.experimental
-<div>
-Three analyzers are provided for Chinese, each of which treats Chinese text in a different way.
-
-*   StandardAnalyzer: Index unigrams (individual Chinese characters) as a token.
-
-*   CJKAnalyzer (in the analyzers/cjk package): Index bigrams (overlapping groups of two adjacent Chinese characters) as tokens.
-
-*   SmartChineseAnalyzer (in this package): Index words (attempt to segment Chinese text into words) as tokens.
-
-
-Example phrase： "我是中国人"
-
-1.  StandardAnalyzer: 我－是－中－国－人
-
-2.  CJKAnalyzer: 我是－是中－中国－国人
-
-3.  SmartChineseAnalyzer: 我－是－中国－人
-
-</div>
+ The MorfologikFilter yields one or more terms for each token. Each of those terms is given the same position in the index. 

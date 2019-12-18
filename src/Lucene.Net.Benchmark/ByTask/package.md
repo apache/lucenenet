@@ -331,7 +331,7 @@ An additional effect of NewRound, is that numeric and boolean
      index open for later update operations.
      <font color="#FF0066">CloseIndex</font> would close it.
 
-     <font color="#FF0066">OpenReader</font>, similarly, would
+    *   <font color="#FF0066">OpenReader</font>, similarly, would
      leave an index reader open for later search operations.
      But this have further semantics.
      If a Read operation is performed, and an open reader exists,
@@ -349,13 +349,13 @@ An additional effect of NewRound, is that numeric and boolean
      Notice that each of the 3 search task types maintains
      its own queryMaker instance.
 
-	 <font color="#FF0066">CommitIndex</font> and 
+    *   <font color="#FF0066">CommitIndex</font> and 
 	 <font color="#FF0066">ForceMerge</font> can be used to commit
 	 changes to the index then merge the index segments. The integer
    parameter specifies how many segments to merge down to (default
    1).
 
-	 <font color="#FF0066">WriteLineDoc</font> prepares a 'line'
+    *   <font color="#FF0066">WriteLineDoc</font> prepares a 'line'
 	 file where each line holds a document with _title_, 
 	 _date_ and _body_ elements, separated by [TAB].
 	 A line file is useful if one wants to measure pure indexing
@@ -364,7 +364,7 @@ An additional effect of NewRound, is that numeric and boolean
 	 You can use LineDocSource as a ContentSource over a 'line'
 	 file.
 
-	 <font color="#FF0066">ConsumeContentSource</font> consumes
+    *   <font color="#FF0066">ConsumeContentSource</font> consumes
 	 a ContentSource. Useful for e.g. testing a ContentSource
 	 performance, without the overhead of preparing a Document
 	 out of it.
@@ -403,10 +403,12 @@ Example: max.buffered=buf:10:10:100:100 -
  Here is a list of currently defined properties: 
 
 1.  __Root directory for data and indexes:__
-2.  *   work.dir (default is System property "benchmark.work.dir" or "work".)
 
-3.  __Docs and queries creation:__
-4.  *   analyzer
+    *   work.dir (default is System property "benchmark.work.dir" or "work".)
+
+2.  __Docs and queries creation:__
+
+    *   analyzer
 
     *   doc.maker
 
@@ -436,7 +438,7 @@ Example: max.buffered=buf:10:10:100:100 -
 
     *   search.num.hits
 
-5.  __Logging__:
+3.  __Logging__:
 
     *   log.step
 
@@ -446,7 +448,7 @@ Example: max.buffered=buf:10:10:100:100 -
 
     *   task.max.depth.log
 
-6.  __Index writing__:
+4.  __Index writing__:
 
     *   compound
 
@@ -458,13 +460,13 @@ Example: max.buffered=buf:10:10:100:100 -
 
     *   ram.flush.mb
 
-7.  __Doc deletion__:
+5.  __Doc deletion__:
 
     *   doc.delete.step
 
-8.  __Spatial__: Numerous; see spatial.alg
+6.  __Spatial__: Numerous; see spatial.alg
 
-9.  __Task alternative packages__:
+7.  __Task alternative packages__:
 
     *   alt.tasks.packages
       - comma separated list of additional packages where tasks classes will be looked for

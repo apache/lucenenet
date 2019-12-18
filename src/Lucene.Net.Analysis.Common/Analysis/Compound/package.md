@@ -66,6 +66,7 @@ filter available:
 *   _HyphenationCompoundWordTokenFilter_: it uses a
 	hyphenation grammar based approach to find potential word parts of a
 	given word.
+
 *   _DictionaryCompoundWordTokenFilter_: it uses a
 	brute-force dictionary-only based approach to find the word parts of a given
 	word.

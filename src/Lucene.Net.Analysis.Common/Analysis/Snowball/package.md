@@ -24,7 +24,9 @@ stemmers.
  A few changes has been made to the static Snowball code and compiled stemmers: 
 
 *   Class SnowballProgram is made abstract and contains new abstract method stem() to avoid reflection in Lucene filter class SnowballFilter.
+
 *   All use of StringBuffers has been refactored to StringBuilder for speed.
+
 *   Snowball BSD license header has been added to the Java classes to avoid having RAT adding ASL headers.
 
  See the Snowball [home page](http://snowball.tartarus.org/) for more information about the algorithms. 

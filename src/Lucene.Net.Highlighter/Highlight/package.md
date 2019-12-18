@@ -64,7 +64,9 @@ http://svn.apache.org/viewcvs.cgi/jakarta/commons/proper/lang/trunk/src/java/org
 This release adds some new capabilities:
 
 1.  Faster highlighting using Term vector support
+
 2.  New formatting options to use color intensity to show informational value
+
 3.  Options for better summarization by using term IDF scores to influence fragment selection
 
  The highlighter takes a TokenStream as input. Until now these streams have typically been produced using an Analyzer but the new class TokenSources provides helper methods for obtaining TokenStreams from the new TermVector position support (see latest CVS version).

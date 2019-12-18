@@ -21,5 +21,7 @@ where adding characters to a string gives greater resolution.
 Potential Implementations include:
 
 *   http://en.wikipedia.org/wiki/Quadtree
-http://en.wikipedia.org/wiki/Geohash
-http://healpix.jpl.nasa.gov/
+
+*   http://en.wikipedia.org/wiki/Geohash
+
+*   http://healpix.jpl.nasa.gov/

@@ -36,6 +36,7 @@ The `org.apache.lucene.analysis.standard` package contains three fast grammar-ba
         When the `Version` specified in the constructor is lower than 
     3.1, the [ClassicTokenizer](xref:Lucene.Net.Analysis.Standard.ClassicTokenizer)
         implementation is invoked.
+
 *   [ClassicTokenizer](xref:Lucene.Net.Analysis.Standard.ClassicTokenizer):
         this class was formerly (prior to Lucene 3.1) named 
         `StandardTokenizer`.  (Its tokenization rules are not

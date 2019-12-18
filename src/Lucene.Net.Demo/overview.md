@@ -27,13 +27,21 @@ The demo module offers simple example code to show the features of Lucene.
 
 
 *   [About this Document](#about-this-document)
+
 *   [About the Demo](#about-the-demo)
 
+
+
 *   [Indexing Files](#indexing-files)
+
 *   [About the code](#about-the-code)
+
 *   [Location of the source](#location-of-the-source)
+
 *   [IndexFiles](xref:Lucene.Net.Demo.IndexFiles)
+
 *   [Searching Files](#searching-files)
+
 
 
 ## About this Document
@@ -86,7 +94,7 @@ In this section we walk through the sources behind the command-line Lucene demo:
 
 
 
-The files discussed here are linked into this documentation directly: * [IndexFiles](xref:Lucene.Net.Demo.IndexFiles): code to create a Lucene index. [SearchFiles](xref:Lucene.Net.Demo.SearchFiles): code to search a Lucene index. 
+The files discussed here are linked into this documentation directly: * [IndexFiles](xref:Lucene.Net.Demo.IndexFiles): code to create a Lucene index. * [SearchFiles](xref:Lucene.Net.Demo.SearchFiles): code to search a Lucene index. 
 
 
 

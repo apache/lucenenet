@@ -28,18 +28,27 @@ Lucene 4.5 file format.
 <div>
 
 *   [Introduction](#introduction)
+
 *   [Definitions](#definitions)
 
     *   [Inverted Indexing](#inverted-indexing)
+
     *   [Types of Fields](#types-of-fields)
+
     *   [Segments](#segments)
+
     *   [Document Numbers](#document-numbers)
 
 *   [Index Structure Overview](#overview)
+
 *   [File Naming](#file-naming)
+
 *   [Summary of File Extensions](#file-names)
-*   *   [Lock File](#lock-file)
+
+    *   [Lock File](#lock-file)
+
     *   [History](#history)
+
     *   [Limitations](#limitations)
 
 </div>
@@ -65,7 +74,9 @@ The fundamental concepts in Lucene are index, document, field and term.
 An index contains a sequence of documents.
 
 *   A document is a sequence of fields.
+
 *   A field is a named sequence of terms.
+
 *   A term is a sequence of bytes.
 
 The same sequence of bytes in two different fields is considered a different term. Thus terms are represented as a pair: the string naming the field, and the bytes within the field.
@@ -87,6 +98,7 @@ See the [Field](xref:Lucene.Net.Documents.Field) java docs for more information 
 Lucene indexes may be composed of multiple sub-indexes, or _segments_. Each segment is a fully independent index, which could be searched separately. Indexes evolve by:
 
 1.  Creating new segments for newly added documents.
+
 2.  Merging existing segments.
 
 Searches may involve multiple segments and/or multiple indexes, each index potentially composed of a set of segments.
@@ -303,13 +315,16 @@ pre-2.1 index for searching or adding/deleting of docs. When the new segments
 file is saved (committed), it will be written in the new file format (meaning
 no specific "upgrade" process is needed). But note that once a commit has
 occurred, pre-2.1 Lucene will not be able to read the index.
+
 *   In version 2.3, the file format was changed to allow segments to share a
 single set of doc store (vectors & stored fields) files. This allows for
 faster indexing in certain cases. The change is fully backwards compatible (in
 the same way as the lock-less commits change in 2.1).
+
 *   In version 2.4, Strings are now written as true UTF-8 byte sequence, not
 Java's modified UTF-8. See [
 LUCENE-510](http://issues.apache.org/jira/browse/LUCENE-510) for details.
+
 *   In version 2.9, an optional opaque Map<String,String> CommitUserData
 may be passed to IndexWriter's commit methods (and later retrieved), which is
 recorded in the segments_N file. See [
@@ -317,19 +332,24 @@ LUCENE-1382](http://issues.apache.org/jira/browse/LUCENE-1382) for details. Also
 diagnostics were added to each segment written recording details about why it
 was written (due to flush, merge; which OS/JRE was used; etc.). See issue
 [LUCENE-1654](http://issues.apache.org/jira/browse/LUCENE-1654) for details.
+
 *   In version 3.0, compressed fields are no longer written to the index (they
 can still be read, but on merge the new segment will write them, uncompressed).
 See issue [LUCENE-1960](http://issues.apache.org/jira/browse/LUCENE-1960) 
 for details.
+
 *   In version 3.1, segments records the code version that created them. See
 [LUCENE-2720](http://issues.apache.org/jira/browse/LUCENE-2720) for details. 
 Additionally segments track explicitly whether or not they have term vectors. 
 See [LUCENE-2811](http://issues.apache.org/jira/browse/LUCENE-2811) 
 for details.
+
 *   In version 3.2, numeric fields are written as natively to stored fields
 file, previously they were stored in text format only.
+
 *   In version 3.4, fields can omit position data while still indexing term
 frequencies.
+
 *   In version 4.0, the format of the inverted index became extensible via
 the [Codec](xref:Lucene.Net.Codecs.Codec) api. Fast per-document storage
 ({@code DocValues}) was introduced. Normalization factors need no longer be a 
@@ -337,13 +357,16 @@ single byte, they can be any [NumericDocValues](xref:Lucene.Net.Index.NumericDoc
 Terms need not be unicode strings, they can be any byte sequence. Term offsets 
 can optionally be indexed into the postings lists. Payloads can be stored in the 
 term vectors.
+
 *   In version 4.1, the format of the postings list changed to use either
 of FOR compression or variable-byte encoding, depending upon the frequency
 of the term. Terms appearing only once were changed to inline directly into
 the term dictionary. Stored fields are compressed by default. 
+
 *   In version 4.2, term vectors are compressed by default. DocValues has 
 a new multi-valued type (SortedSet), that can be used for faceting/grouping/joining
 on multi-valued fields.
+
 *   In version 4.5, DocValues were extended to explicitly represent missing values.
 
 ## Limitations

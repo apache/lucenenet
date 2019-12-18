@@ -227,6 +227,7 @@ and proximity searches (though sentence identification is not provided by Lucene
 
 1.  Inhibiting phrase and proximity matches in sentence boundaries – for this, a tokenizer that 
     identifies a new sentence can add 1 to the position increment of the first token of the new sentence.
+
 2.  Injecting synonyms – here, synonyms of a token should be added after that token, 
     and their position increment should be set to 0.
     As result, all synonyms of a token would be considered to appear in exactly the 
@@ -265,12 +266,17 @@ and proximity searches (though sentence identification is not provided by Lucene
  There are a few rules to observe when writing custom Tokenizers and TokenFilters: 
 
 *   The first position increment must be > 0.
+
 *   Positions must not go backward.
+
 *   Tokens that have the same start position must have the same start offset.
+
 *   Tokens that have the same end position (taking into account the
   position length) must have the same end offset.
+
 *   Tokenizers must call [#clearAttributes()](xref:Lucene.Net.Util.AttributeSource) in
   incrementToken().
+
 *   Tokenizers must override [#end()](xref:Lucene.Net.Analysis.TokenStream), and pass the final
   offset (the total number of input characters processed) to both
   parameters of [Int)](xref:Lucene.Net.Analysis.TokenAttributes.OffsetAttribute#methods).
@@ -278,9 +284,13 @@ and proximity searches (though sentence identification is not provided by Lucene
  Although these rules might seem easy to follow, problems can quickly happen when chaining badly implemented filters that play with positions and offsets, such as synonym or n-grams filters. Here are good practices for writing correct filters: 
 
 *   Token filters should not modify offsets. If you feel that your filter would need to modify offsets, then it should probably be implemented as a tokenizer.
+
 *   Token filters should not insert positions. If a filter needs to add tokens, then they should all have a position increment of 0.
+
 *   When they add tokens, token filters should call [#clearAttributes()](xref:Lucene.Net.Util.AttributeSource) first.
+
 *   When they remove tokens, token filters should increment the position increment of the following token.
+
 *   Token filters should preserve position lengths.
 
 ## TokenStream API
@@ -415,23 +425,17 @@ to walk through the example below first and come back to this section afterwards
 a chain of a TokenStream and multiple TokenFilters is used, then all TokenFilters in that chain share the Attributes
 with the TokenStream.
 
-2.    
-
-Attribute instances are reused for all tokens of a document. Thus, a TokenStream/-Filter needs to update
+2.  Attribute instances are reused for all tokens of a document. Thus, a TokenStream/-Filter needs to update
 the appropriate Attribute(s) in incrementToken(). The consumer, commonly the Lucene indexer, consumes the data in the
 Attributes and then calls incrementToken() again until it returns false, which indicates that the end of the stream
 was reached. This means that in each call of incrementToken() a TokenStream/-Filter can safely overwrite the data in
 the Attribute instances.
 
-3.    
-
-For performance reasons a TokenStream/-Filter should add/get Attributes during instantiation; i.e., create an attribute in the
+3.  For performance reasons a TokenStream/-Filter should add/get Attributes during instantiation; i.e., create an attribute in the
 constructor and store references to it in an instance variable.  Using an instance variable instead of calling addAttribute()/getAttribute() 
 in incrementToken() will avoid attribute lookups for every token in the document.
 
-4.    
-
-All methods in AttributeSource are idempotent, which means calling them multiple times always yields the same
+4.  All methods in AttributeSource are idempotent, which means calling them multiple times always yields the same
 result. This is especially important to know for addAttribute(). The method takes the __type__ (`Class`)
 of an Attribute as an argument and returns an __instance__. If an Attribute of the same type was previously added, then
 the already existing instance is returned, otherwise a new instance is created and returned. Therefore TokenStreams/-Filters

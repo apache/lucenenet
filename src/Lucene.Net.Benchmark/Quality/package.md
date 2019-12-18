@@ -23,8 +23,11 @@ This package allows to benchmark search quality of a Lucene application.
 In order to use this package you should provide:
 
 *   A [IndexSearcher]({@docRoot}/../core/org/apache/lucene/search/IndexSearcher.html).
+
 *   [Quality queries](QualityQuery.html).
+
 *   [Judging object](Judge.html).
+
 *   [Reporting object](utils/SubmissionReport.html).
 
 For benchmarking TREC collections with TREC QRels, take a look at the 
@@ -69,5 +72,6 @@ Some immediate ways to modify this program to your needs are:
 *   To run on different formats of queries and judgements provide your own 
       [Judge](Judge.html) and 
       [Quality queries](QualityQuery.html).
+
 *   Create sophisticated Lucene queries by supplying a different 
   [Quality query parser](QualityQueryParser.html).

@@ -54,6 +54,7 @@ Lemmatization is a process of finding the base, non-inflected form of a word. Th
 
 *   dictionary-based: where the stemmer uses an extensive dictionary
 of morphological forms in order to find the corresponding stem or lemma
+
 *   algorithmic: where the stemmer uses an algorithm, based on
 general morphological properties of a given language plus a set of
 heuristic rules  
@@ -153,10 +154,13 @@ The following Polish corpora have been used:
 *   [Polish
 dictionary
 from ispell distribution](http://sourceforge.net/project/showfiles.php?group_id=49316&package_id=65354)
+
 *   [Wzbogacony korpus
 sÅ‚ownika frekwencyjnego](http://www.mimuw.edu.pl/polszczyzna/)
+
 *   The
 Bible (so called "TysiÄ…clecia") - unauthorized electronic version
+
 *   [Analizator
 morfologiczny SAM v. 3.4](http://www.mimuw.edu.pl/polszczyzna/Debian/sam34_3.4a.02-1_i386.deb) - this was used to recover lemmas
 missing from other texts
@@ -175,12 +179,15 @@ The testing procedure was as follows:
 
 *   the whole corpus of ~69,000 unique sets was shuffled, so that the
 input sets were in random order.
+
 *   the corpus was split into two parts - one with 30,000 sets (Part
 1), the other with ~39,000 sets (Part 2).
+
 *   Training samples were drawn in sequential order from the Part 1.
 Since the sets were already randomized, the training samples were also
 randomized, but this procedure ensured that each larger training sample
 contained all smaller samples.
+
 *   Part 2 was used for testing. Note: this means that the testing
 run used _only_ words previously unseen during the training
 phase. This is the worst scenario, because it means that stemmer must
@@ -196,21 +203,29 @@ The following table summarizes test results for varying sizes of training sample
 *   __training sets:__ the number of training sets. One set
 consists of one lemma and at least 4 and up to ~80 inflected forms
 (including pre- and suffixed forms).
+
 *   __testing forms:__ the number of testing forms. Only inflected
 forms were used in testing.
+
 *   __stem OK:__ the number of cases when produced output was a
 correct (unique) stem. Note: quite often correct stems were also
 correct lemmas.
+
 *   __lemma OK:__ the number of cases when produced output was a
 correct lemma.
+
 *   __missing:__ the number of cases when stemmer was unable to
 provide any output.
+
 *   __stem bad:__ the number of cases when produced output was a
 stem, but already in use identifying a different set.
+
 *   __lemma bad:__ the number of cases when produced output was an
 incorrect lemma. Note: quite often in such case the output was a
 correct stem.
+
 *   __table size:__ the size in bytes of the stemmer table.
+
 <div align="center">
 <table border="1" cellpadding="2" cellspacing="0">
   <tbody>
@@ -390,9 +405,11 @@ Both the author of the implementation (Leo Galambos, <leo.galambos AT egothor DO
 Thesis,
 Faculty of Mathematics and Physics, Charles University in Prague, in
 press.
+
 2.  Galambos, L.: Semi-automatic Stemmer Evaluation. International
 Intelligent Information Processing and Web Mining Conference, 2004,
 Zakopane, Poland.
+
 3.  Galambos, L.: Lemmatizer for Document Information Retrieval
 Systems in JAVA.<span style="text-decoration: underline;"> </span>[<http://www.informatik.uni-trier.de/%7Eley/db/conf/sofsem/sofsem2001.html#Galambos01>](http://www.informatik.uni-trier.de/%7Eley/db/conf/sofsem/sofsem2001.html#Galambos01)
 SOFSEM 2001, Piestany, Slovakia.   

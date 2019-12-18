@@ -23,6 +23,7 @@
 *   Author
 
     *   Mark Twain
+
     *   J. K. Rowling
 
 *   Date
@@ -30,6 +31,7 @@
     *   2010
 
     *   March
+
     *   April
 
     *   2009
