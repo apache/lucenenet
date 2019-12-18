@@ -31,7 +31,7 @@ namespace Lucene.Net.Support
     {
         public static IList<T> EmptyList<T>()
         {
-            return (IList<T>)Enumerable.Empty<T>();
+            return new List<T>(); // LUCENENET NOTE: Enumerable.Empty<T>() fails to cast to IList<T> on .NET Core 3.x, so we just create a new list
         }
 
         public static IDictionary<TKey, TValue> EmptyMap<TKey, TValue>()
