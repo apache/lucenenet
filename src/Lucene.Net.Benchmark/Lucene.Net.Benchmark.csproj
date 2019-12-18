@@ -61,10 +61,6 @@
     <PackageReference Include="SharpZipLib" Version="$(SharpZipLibPackageVersion)" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <PackageReference Include="SharpZipLib.NETStandard" Version="$(SharpZipLibNETStandardPackageVersion)" />
     <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
@@ -77,12 +73,6 @@
         We would just drop support for .NET Standard 1.6 for this library if
         it didn't mean adding a special case to the build/tests. -->
     <NoWarn>$(NoWarn);8002</NoWarn>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
-    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
