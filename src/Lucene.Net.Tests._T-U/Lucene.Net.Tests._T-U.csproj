@@ -51,6 +51,10 @@
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);FEATURE_UTIL_TESTS</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
+    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)"/>
+  </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System" />

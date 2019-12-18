@@ -52,6 +52,12 @@ steps:
     EnsureNotNullOrEmpty('${{ parameters.maximumAllowedFailures }}', 'maximumAllowedFailures')
   displayName: 'Validate Template Parameters'
 
+- task: DotNetCoreInstaller@0
+  displayName: 'Use .NET Core sdk 3.0.101'
+  inputs:
+    version: 3.0.101
+  condition: and(succeeded(), contains('${{ parameters.testTargetFrameworks }}', 'netcoreapp3.'))
+
 - task: DownloadBuildArtifacts@0
   displayName: 'Download Build Artifacts: ${{ parameters.binaryArtifactName }}'
   inputs:
