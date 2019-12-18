@@ -262,14 +262,6 @@ stages:
           osName: 'Windows'
           imageName: 'vs2017-win2016'
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-        Linux:
-          osName: 'Linux'
-          imageName: 'ubuntu-16.04'
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-        macOS:
-          osName: 'macOS'
-          imageName: 'macOS-10.14'
-          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp1.1 on'
     pool:
       vmImage: $(imageName)
