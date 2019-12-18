@@ -30,8 +30,8 @@ Lucene, an indexing and search library, accepts only plain text input.
 ## Parsing
 
 Applications that build their search capabilities upon Lucene may support documents in various formats – HTML, XML, PDF, Word – just to name a few.
-Lucene does not care about the *Parsing* of these and other document formats, and it is the responsibility of the 
-application using Lucene to use an appropriate *Parser* to convert the original format into plain text before passing that plain text to Lucene.
+Lucene does not care about the _Parsing_ of these and other document formats, and it is the responsibility of the 
+application using Lucene to use an appropriate _Parser_ to convert the original format into plain text before passing that plain text to Lucene.
 
 ## Tokenization
 
@@ -41,7 +41,7 @@ The way input text is broken into tokens heavily influences how people will then
 For instance, sentences beginnings and endings can be identified to provide for more accurate phrase 
 and proximity searches (though sentence identification is not provided by Lucene).
 
- In some cases simply breaking the input text into tokens is not enough – a deeper *Analysis* may be needed. Lucene includes both pre- and post-tokenization analysis facilities. 
+ In some cases simply breaking the input text into tokens is not enough – a deeper _Analysis_ may be needed. Lucene includes both pre- and post-tokenization analysis facilities. 
 
  Pre-tokenization analysis can include (but is not limited to) stripping HTML markup, and transforming or removing text matching arbitrary patterns or sets of fixed strings. 
 
@@ -166,7 +166,7 @@ and proximity searches (though sentence identification is not provided by Lucene
 
 ## Implementing your own Analyzer
 
- Creating your own Analyzer is straightforward. Your Analyzer can wrap existing analysis components — CharFilter(s) *(optional)*, a Tokenizer, and TokenFilter(s) *(optional)* — or components you create, or a combination of existing and newly created components. Before pursuing this approach, you may find it worthwhile to explore the [analyzers-common]({@docRoot}/../analyzers-common/overview-summary.html) library and/or ask on the [java-user@lucene.apache.org mailing list](http://lucene.apache.org/core/discussion.html) first to see if what you need already exists. If you are still committed to creating your own Analyzer, have a look at the source code of any one of the many samples located in this package. 
+ Creating your own Analyzer is straightforward. Your Analyzer can wrap existing analysis components — CharFilter(s) _(optional)_, a Tokenizer, and TokenFilter(s) _(optional)_ — or components you create, or a combination of existing and newly created components. Before pursuing this approach, you may find it worthwhile to explore the [analyzers-common]({@docRoot}/../analyzers-common/overview-summary.html) library and/or ask on the [java-user@lucene.apache.org mailing list](http://lucene.apache.org/core/discussion.html) first to see if what you need already exists. If you are still committed to creating your own Analyzer, have a look at the source code of any one of the many samples located in this package. 
 
  The following sections discuss some aspects of implementing your own analyzer. 
 
@@ -227,6 +227,7 @@ and proximity searches (though sentence identification is not provided by Lucene
 
 1.  Inhibiting phrase and proximity matches in sentence boundaries – for this, a tokenizer that 
     identifies a new sentence can add 1 to the position increment of the first token of the new sentence.
+
 2.  Injecting synonyms – here, synonyms of a token should be added after that token, 
     and their position increment should be set to 0.
     As result, all synonyms of a token would be considered to appear in exactly the 
@@ -265,12 +266,17 @@ and proximity searches (though sentence identification is not provided by Lucene
  There are a few rules to observe when writing custom Tokenizers and TokenFilters: 
 
 *   The first position increment must be > 0.
+
 *   Positions must not go backward.
+
 *   Tokens that have the same start position must have the same start offset.
+
 *   Tokens that have the same end position (taking into account the
   position length) must have the same end offset.
+
 *   Tokenizers must call [#clearAttributes()](xref:Lucene.Net.Util.AttributeSource) in
   incrementToken().
+
 *   Tokenizers must override [#end()](xref:Lucene.Net.Analysis.TokenStream), and pass the final
   offset (the total number of input characters processed) to both
   parameters of [Int)](xref:Lucene.Net.Analysis.TokenAttributes.OffsetAttribute#methods).
@@ -278,9 +284,13 @@ and proximity searches (though sentence identification is not provided by Lucene
  Although these rules might seem easy to follow, problems can quickly happen when chaining badly implemented filters that play with positions and offsets, such as synonym or n-grams filters. Here are good practices for writing correct filters: 
 
 *   Token filters should not modify offsets. If you feel that your filter would need to modify offsets, then it should probably be implemented as a tokenizer.
+
 *   Token filters should not insert positions. If a filter needs to add tokens, then they should all have a position increment of 0.
+
 *   When they add tokens, token filters should call [#clearAttributes()](xref:Lucene.Net.Util.AttributeSource) first.
+
 *   When they remove tokens, token filters should increment the position increment of the following token.
+
 *   Token filters should preserve position lengths.
 
 ## TokenStream API
@@ -358,7 +368,7 @@ as described below.
 
 *   You should create your tokenizer class by extending <xref:Lucene.Net.Analysis.Tokenizer>.
 
-*   Your tokenizer must **never** make direct use of the
+*   Your tokenizer must __never__ make direct use of the
   {@link java.io.Reader} supplied to its constructor(s). (A future
   release of Apache Lucene may remove the reader parameters from the
   Tokenizer constructors.)
@@ -367,15 +377,15 @@ as described below.
   should only reference the input via the protected 'input' field
   of Tokenizer.
 
-*   Your tokenizer **must** override [#end()](xref:Lucene.Net.Analysis.TokenStream).
-  Your implementation **must** call
+*   Your tokenizer __must__ override [#end()](xref:Lucene.Net.Analysis.TokenStream).
+  Your implementation __must__ call
   `super.end()`. It must set a correct final offset into
   the offset attribute, and finish up and other attributes to reflect
   the end of the stream.
 
 *   If your tokenizer overrides [#reset()](xref:Lucene.Net.Analysis.TokenStream)
   or [#close()](xref:Lucene.Net.Analysis.TokenStream), it
-    **must** call the corresponding superclass method.
+  __must__ call the corresponding superclass method.
 
 #### Token Filter
 
@@ -383,7 +393,7 @@ as described below.
   If your token filter overrides [#reset()](xref:Lucene.Net.Analysis.TokenStream),
   [#end()](xref:Lucene.Net.Analysis.TokenStream)
   or [#close()](xref:Lucene.Net.Analysis.TokenStream), it
-  **must** call the corresponding superclass method.
+  __must__ call the corresponding superclass method.
 
 #### Creating delegates
 
@@ -415,25 +425,19 @@ to walk through the example below first and come back to this section afterwards
 a chain of a TokenStream and multiple TokenFilters is used, then all TokenFilters in that chain share the Attributes
 with the TokenStream.
 
-2.    
-
-Attribute instances are reused for all tokens of a document. Thus, a TokenStream/-Filter needs to update
+2.  Attribute instances are reused for all tokens of a document. Thus, a TokenStream/-Filter needs to update
 the appropriate Attribute(s) in incrementToken(). The consumer, commonly the Lucene indexer, consumes the data in the
 Attributes and then calls incrementToken() again until it returns false, which indicates that the end of the stream
 was reached. This means that in each call of incrementToken() a TokenStream/-Filter can safely overwrite the data in
 the Attribute instances.
 
-3.    
-
-For performance reasons a TokenStream/-Filter should add/get Attributes during instantiation; i.e., create an attribute in the
+3.  For performance reasons a TokenStream/-Filter should add/get Attributes during instantiation; i.e., create an attribute in the
 constructor and store references to it in an instance variable.  Using an instance variable instead of calling addAttribute()/getAttribute() 
 in incrementToken() will avoid attribute lookups for every token in the document.
 
-4.    
-
-All methods in AttributeSource are idempotent, which means calling them multiple times always yields the same
-result. This is especially important to know for addAttribute(). The method takes the **type** (`Class`)
-of an Attribute as an argument and returns an **instance**. If an Attribute of the same type was previously added, then
+4.  All methods in AttributeSource are idempotent, which means calling them multiple times always yields the same
+result. This is especially important to know for addAttribute(). The method takes the __type__ (`Class`)
+of an Attribute as an argument and returns an __instance__. If an Attribute of the same type was previously added, then
 the already existing instance is returned, otherwise a new instance is created and returned. Therefore TokenStreams/-Filters
 can safely call addAttribute() with the same Attribute type multiple times. Even consumers of TokenStreams should
 normally call addAttribute() instead of getAttribute(), because it would not fail if the TokenStream does not have this

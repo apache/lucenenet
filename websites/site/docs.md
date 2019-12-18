@@ -2,7 +2,7 @@
 _disableBreadcrumb: true
 ---
 
-Lucene.Net Documenttaion
+Lucene.Net Documentation
 ===============
 
 ---------------

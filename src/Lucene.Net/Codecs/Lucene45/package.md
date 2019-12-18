@@ -28,18 +28,27 @@ Lucene 4.5 file format.
 <div>
 
 *   [Introduction](#introduction)
+
 *   [Definitions](#definitions)
 
     *   [Inverted Indexing](#inverted-indexing)
+
     *   [Types of Fields](#types-of-fields)
+
     *   [Segments](#segments)
+
     *   [Document Numbers](#document-numbers)
 
 *   [Index Structure Overview](#overview)
+
 *   [File Naming](#file-naming)
+
 *   [Summary of File Extensions](#file-names)
-*   *   [Lock File](#lock-file)
+
+    *   [Lock File](#lock-file)
+
     *   [History](#history)
+
     *   [Limitations](#limitations)
 
 </div>
@@ -65,41 +74,44 @@ The fundamental concepts in Lucene are index, document, field and term.
 An index contains a sequence of documents.
 
 *   A document is a sequence of fields.
+
 *   A field is a named sequence of terms.
+
 *   A term is a sequence of bytes.
 
 The same sequence of bytes in two different fields is considered a different term. Thus terms are represented as a pair: the string naming the field, and the bytes within the field.
 
 ### Inverted Indexing
 
-The index stores statistics about terms in order to make term-based search more efficient. Lucene's index falls into the family of indexes known as an *inverted index.* This is because it can list, for a term, the documents that contain it. This is the inverse of the natural relationship, in which documents list terms.
+The index stores statistics about terms in order to make term-based search more efficient. Lucene's index falls into the family of indexes known as an _inverted index._ This is because it can list, for a term, the documents that contain it. This is the inverse of the natural relationship, in which documents list terms.
 
 ### Types of Fields
 
-In Lucene, fields may be *stored*, in which case their text is stored in the index literally, in a non-inverted manner. Fields that are inverted are called *indexed*. A field may be both stored and indexed.
+In Lucene, fields may be _stored_, in which case their text is stored in the index literally, in a non-inverted manner. Fields that are inverted are called _indexed_. A field may be both stored and indexed.
 
-The text of a field may be *tokenized* into terms to be indexed, or the text of a field may be used literally as a term to be indexed. Most fields are tokenized, but sometimes it is useful for certain identifier fields to be indexed literally.
+The text of a field may be _tokenized_ into terms to be indexed, or the text of a field may be used literally as a term to be indexed. Most fields are tokenized, but sometimes it is useful for certain identifier fields to be indexed literally.
 
 See the [Field](xref:Lucene.Net.Documents.Field) java docs for more information on Fields.
 
 ### Segments
 
-Lucene indexes may be composed of multiple sub-indexes, or *segments*. Each segment is a fully independent index, which could be searched separately. Indexes evolve by:
+Lucene indexes may be composed of multiple sub-indexes, or _segments_. Each segment is a fully independent index, which could be searched separately. Indexes evolve by:
 
 1.  Creating new segments for newly added documents.
+
 2.  Merging existing segments.
 
 Searches may involve multiple segments and/or multiple indexes, each index potentially composed of a set of segments.
 
 ### Document Numbers
 
-Internally, Lucene refers to documents by an integer *document number*. The first document added to an index is numbered zero, and each subsequent document added gets a number one greater than the previous.
+Internally, Lucene refers to documents by an integer _document number_. The first document added to an index is numbered zero, and each subsequent document added gets a number one greater than the previous.
 
 Note that a document's number may change, so caution should be taken when storing these numbers outside of Lucene. In particular, numbers may change in the following situations:
 
 *   
 
-The numbers stored in each segment are unique only within the segment, and must be converted before they can be used in a larger context. The standard technique is to allocate each segment a range of values, based on the range of numbers used in that segment. To convert a document number from a segment to an external value, the segment's *base* document number is added. To convert an external value back to a segment-specific value, the segment is identified by the range that the external value is in, and the segment's base value is subtracted. For example two five document segments might be combined, so that the first segment has a base value of zero, and the second of five. Document three from the second segment would have an external value of eight.
+The numbers stored in each segment are unique only within the segment, and must be converted before they can be used in a larger context. The standard technique is to allocate each segment a range of values, based on the range of numbers used in that segment. To convert a document number from a segment to an external value, the segment's _base_ document number is added. To convert an external value back to a segment-specific value, the segment is identified by the range that the external value is in, and the segment's base value is subtracted. For example two five document segments might be combined, so that the first segment has a base value of zero, and the second of five. Document three from the second segment would have an external value of eight.
 
 *   
 
@@ -303,13 +315,16 @@ pre-2.1 index for searching or adding/deleting of docs. When the new segments
 file is saved (committed), it will be written in the new file format (meaning
 no specific "upgrade" process is needed). But note that once a commit has
 occurred, pre-2.1 Lucene will not be able to read the index.
+
 *   In version 2.3, the file format was changed to allow segments to share a
 single set of doc store (vectors & stored fields) files. This allows for
 faster indexing in certain cases. The change is fully backwards compatible (in
 the same way as the lock-less commits change in 2.1).
+
 *   In version 2.4, Strings are now written as true UTF-8 byte sequence, not
 Java's modified UTF-8. See [
 LUCENE-510](http://issues.apache.org/jira/browse/LUCENE-510) for details.
+
 *   In version 2.9, an optional opaque Map<String,String> CommitUserData
 may be passed to IndexWriter's commit methods (and later retrieved), which is
 recorded in the segments_N file. See [
@@ -317,19 +332,24 @@ LUCENE-1382](http://issues.apache.org/jira/browse/LUCENE-1382) for details. Also
 diagnostics were added to each segment written recording details about why it
 was written (due to flush, merge; which OS/JRE was used; etc.). See issue
 [LUCENE-1654](http://issues.apache.org/jira/browse/LUCENE-1654) for details.
+
 *   In version 3.0, compressed fields are no longer written to the index (they
 can still be read, but on merge the new segment will write them, uncompressed).
 See issue [LUCENE-1960](http://issues.apache.org/jira/browse/LUCENE-1960) 
 for details.
+
 *   In version 3.1, segments records the code version that created them. See
 [LUCENE-2720](http://issues.apache.org/jira/browse/LUCENE-2720) for details. 
 Additionally segments track explicitly whether or not they have term vectors. 
 See [LUCENE-2811](http://issues.apache.org/jira/browse/LUCENE-2811) 
 for details.
+
 *   In version 3.2, numeric fields are written as natively to stored fields
 file, previously they were stored in text format only.
+
 *   In version 3.4, fields can omit position data while still indexing term
 frequencies.
+
 *   In version 4.0, the format of the inverted index became extensible via
 the [Codec](xref:Lucene.Net.Codecs.Codec) api. Fast per-document storage
 ({@code DocValues}) was introduced. Normalization factors need no longer be a 
@@ -337,13 +357,16 @@ single byte, they can be any [NumericDocValues](xref:Lucene.Net.Index.NumericDoc
 Terms need not be unicode strings, they can be any byte sequence. Term offsets 
 can optionally be indexed into the postings lists. Payloads can be stored in the 
 term vectors.
+
 *   In version 4.1, the format of the postings list changed to use either
 of FOR compression or variable-byte encoding, depending upon the frequency
 of the term. Terms appearing only once were changed to inline directly into
 the term dictionary. Stored fields are compressed by default. 
+
 *   In version 4.2, term vectors are compressed by default. DocValues has 
 a new multi-valued type (SortedSet), that can be used for faceting/grouping/joining
 on multi-valued fields.
+
 *   In version 4.5, DocValues were extended to explicitly represent missing values.
 
 ## Limitations

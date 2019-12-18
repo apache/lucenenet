@@ -21,14 +21,23 @@ This is an another highlighter implementation.
 ## Features
 
 *   fast for large docs
+
 *   support N-gram fields
+
 *   support phrase-unit highlighting with slops
+
 *   support multi-term (includes wildcard, range, regexp, etc) queries
+
 *   need Java 1.5
+
 *   highlight fields need to be stored with Positions and Offsets
+
 *   take into account query boost and/or IDF-weight to score fragments
+
 *   support colored highlight tags
+
 *   pluggable FragListBuilder / FieldFragList
+
 *   pluggable FragmentsBuilder
 
 ## Algorithm
@@ -38,11 +47,11 @@ To explain the algorithm, let's use the following sample text (to be highlighted
 
 <table border="1">
 <tr>
-<td>**Sample Text**</td>
+<td>__Sample Text__</td>
 <td>Lucene is a search engine library.</td>
 </tr>
 <tr>
-<td>**User Query**</td>
+<td>__User Query__</td>
 <td>Lucene^2 OR "search library"~1</td>
 </tr>
 </table>
@@ -143,8 +152,9 @@ The used implementation of `FieldFragList` is noted in `BaseFragListBuilder.crea
 
  Currently there are basically to approaches available: 
 
-*   `SimpleFragListBuilder using SimpleFieldFragList`: *sum-of-boosts*-approach. The totalBoost is calculated by summarizing the query-boosts per term. Per default a term is boosted by 1.0
-*   `WeightedFragListBuilder using WeightedFieldFragList`: *sum-of-distinct-weights*-approach. The totalBoost is calculated by summarizing the IDF-weights of distinct terms. 
+*   `SimpleFragListBuilder using SimpleFieldFragList`: _sum-of-boosts_-approach. The totalBoost is calculated by summarizing the query-boosts per term. Per default a term is boosted by 1.0
+
+*   `WeightedFragListBuilder using WeightedFieldFragList`: _sum-of-distinct-weights_-approach. The totalBoost is calculated by summarizing the IDF-weights of distinct terms.
 
 Comparison of the two approaches:
 

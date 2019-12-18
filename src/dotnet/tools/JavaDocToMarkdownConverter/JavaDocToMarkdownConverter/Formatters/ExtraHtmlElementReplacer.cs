@@ -18,9 +18,6 @@
  */
 
 using Html2Markdown.Replacement;
-using HtmlAgilityPack;
-using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace JavaDocToMarkdownConverter.Formatters

@@ -52,7 +52,7 @@ $DocFxExe = "$ToolsFolder\docfx\docfx.exe"
 if (-not (test-path $DocFxExe)) {
     Write-Host "Retrieving docfx..."
     $DocFxZip = "$ToolsFolder\tmp\docfx.zip"	
-    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.38.1/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
+    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.47/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
 	
     #unzip
     Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
@@ -119,8 +119,8 @@ New-Item $PluginsFolder -type directory -force
 # UPDATE: Interestingly it now works by passing in the most recent msbuild target...
 # TODO: Need to upgrade to latest docfx and figure out why there are issues.
 
-[Environment]::SetEnvironmentVariable("VSINSTALLDIR", $msbuild)
-[Environment]::SetEnvironmentVariable("VisualStudioVersion", "15.0")
+# [Environment]::SetEnvironmentVariable("VSINSTALLDIR", $msbuild)
+# [Environment]::SetEnvironmentVariable("VisualStudioVersion", "15.0")
 
 $DocFxJson = Join-Path -Path $ApiDocsFolder "docfx.json"
 $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\docfx.log"
@@ -143,6 +143,6 @@ if ($?) {
     else {
         # build + serve (for testing)
         Write-Host "starting website..."
-        & $DocFxExe $DocFxJson --serve
+        & $DocFxExe $DocFxJson --serve -l "$DocFxLog" --loglevel $LogLevel
     }
 }

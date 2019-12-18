@@ -27,12 +27,18 @@ summary: *content
   This module provides a number of queryparsers:
 
 *   [Classic](#classic)
-     [Analyzing](#analyzing)
-     [Complex Phrase](#complexphrase)
-     [Extendable](#extendable)
-     [Flexible](#flexible)
-     [Surround](#surround)
-     [XML](#xml)
+
+*   [Analyzing](#analyzing)
+
+*   [Complex Phrase](#complexphrase)
+
+*   [Extendable](#extendable)
+
+*   [Flexible](#flexible)
+
+*   [Surround](#surround)
+
+*   [XML](#xml)
 
 * * *
 
@@ -61,17 +67,23 @@ summary: *content
 ### Features
 
 1.  Full support for boolean logic (not enabled)
+
 2.  QueryNode Trees - support for several syntaxes, 
             that can be converted into similar syntax QueryNode trees.
+
 3.  QueryNode Processors - Optimize, validate, rewrite the 
             QueryNode trees
+
 4.  Processors Pipelines - Select your favorite Processor
 		    and build a processor pipeline, to implement the features you need
+
 5.  Config Interfaces - Allow the consumer of the Query Parser to implement
             a diff Config Handler Objects to suite their needs.
+
 6.  Standard Builders - convert QueryNode's into several lucene 
             representations. Supported conversion is using a 2.4 compatible logic
-7.  QueryNode tree's can be converted to a lucene 2.4 syntax string, using toQueryString
+
+7.  QueryNode tree's can be converted to a lucene 2.4 syntax string, using toQueryString                          
 
 ### Design
 

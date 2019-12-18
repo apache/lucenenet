@@ -51,7 +51,7 @@ Apache Lucene is a high-performance, full-featured text search engine library. H
 
 The Lucene API is divided into several packages:
 
-*   **<xref:Lucene.Net.Analysis>**
+*   __<xref:Lucene.Net.Analysis>__
 defines an abstract [Analyzer](xref:Lucene.Net.Analysis.Analyzer)
 API for converting text from a {@link java.io.Reader}
 into a [TokenStream](xref:Lucene.Net.Analysis.TokenStream),
@@ -61,20 +61,23 @@ to the output of a [Tokenizer](xref:Lucene.Net.Analysis.Tokenizer). 
 Tokenizers and TokenFilters are strung together and applied with an [Analyzer](xref:Lucene.Net.Analysis.Analyzer). 
 [analyzers-common](../analyzers-common/overview-summary.html) provides a number of Analyzer implementations, including 
 [StopAnalyzer](../analyzers-common/org/apache/lucene/analysis/core/StopAnalyzer.html)
-and the grammar-based [StandardAnalyzer](../analyzers-common/org/apache/lucene/analysis/standard/StandardAnalyzer.html).
-*   **<xref:Lucene.Net.Codecs>**
+and the grammar-based [StandardAnalyzer](../analyzers-common/org/apache/lucene/analysis/standard/StandardAnalyzer.html).
+
+*   __<xref:Lucene.Net.Codecs>__
 provides an abstraction over the encoding and decoding of the inverted index structure,
 as well as different implementations that can be chosen depending upon application needs.
 
-    **<xref:Lucene.Net.Documents>**
+*   __<xref:Lucene.Net.Documents>__
 provides a simple [Document](xref:Lucene.Net.Documents.Document)
 class.  A Document is simply a set of named [Field](xref:Lucene.Net.Documents.Field)s,
-whose values may be strings or instances of {@link java.io.Reader}.
-*   **<xref:Lucene.Net.Index>**
+whose values may be strings or instances of {@link java.io.Reader}.
+
+*   __<xref:Lucene.Net.Index>__
 provides two primary classes: [IndexWriter](xref:Lucene.Net.Index.IndexWriter),
 which creates and adds documents to indices; and <xref:Lucene.Net.Index.IndexReader>,
-which accesses the data in the index.
-*   **<xref:Lucene.Net.Search>**
+which accesses the data in the index.
+
+*   __<xref:Lucene.Net.Search>__
 provides data structures to represent queries (ie [TermQuery](xref:Lucene.Net.Search.TermQuery)
 for individual words, [PhraseQuery](xref:Lucene.Net.Search.PhraseQuery) 
 for phrases, and [BooleanQuery](xref:Lucene.Net.Search.BooleanQuery) 
@@ -83,31 +86,39 @@ which turns queries into [TopDocs](xref:Lucene.Net.Search.TopDocs).
 A number of [QueryParser](../queryparser/overview-summary.html)s are provided for producing
 query structures from strings or xml.
 
-    **<xref:Lucene.Net.Store>**
+*   __<xref:Lucene.Net.Store>__
 defines an abstract class for storing persistent data, the [Directory](xref:Lucene.Net.Store.Directory),
 which is a collection of named files written by an [IndexOutput](xref:Lucene.Net.Store.IndexOutput)
 and read by an [IndexInput](xref:Lucene.Net.Store.IndexInput). 
 Multiple implementations are provided, including [FSDirectory](xref:Lucene.Net.Store.FSDirectory),
 which uses a file system directory to store files, and [RAMDirectory](xref:Lucene.Net.Store.RAMDirectory)
-which implements files as memory-resident data structures.
-*   **<xref:Lucene.Net.Util>**
+which implements files as memory-resident data structures.
+
+*   __<xref:Lucene.Net.Util>__
 contains a few handy data structures and util classes, ie [OpenBitSet](xref:Lucene.Net.Util.OpenBitSet)
 and [PriorityQueue](xref:Lucene.Net.Util.PriorityQueue).
+
 To use Lucene, an application should:
 
 1.  Create [Document](xref:Lucene.Net.Documents.Document)s by
 adding
-[Field](xref:Lucene.Net.Documents.Field)s;
+[Field](xref:Lucene.Net.Documents.Field)s;
+
 2.  Create an [IndexWriter](xref:Lucene.Net.Index.IndexWriter)
-and add documents to it with [AddDocument](xref:Lucene.Net.Index.IndexWriter#methods);
+and add documents to it with [AddDocument](xref:Lucene.Net.Index.IndexWriter#methods);
+
 3.  Call [QueryParser.parse()](../queryparser/org/apache/lucene/queryparser/classic/QueryParserBase.html#parse(java.lang.String))
-to build a query from a string; and
+to build a query from a string; and
+
 4.  Create an [IndexSearcher](xref:Lucene.Net.Search.IndexSearcher)
 and pass the query to its [Search](xref:Lucene.Net.Search.IndexSearcher#methods)
 method.
+
 Some simple examples of code which does this are:
 
 *    [IndexFiles.java](../demo/src-html/org/apache/lucene/demo/IndexFiles.html) creates an
-index for all the files contained in a directory.
+index for all the files contained in a directory.
+
 *    [SearchFiles.java](../demo/src-html/org/apache/lucene/demo/SearchFiles.html) prompts for
 queries and searches an index.
+

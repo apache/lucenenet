@@ -342,9 +342,12 @@
     },
     "overwrite": [
       {
-        "files": ["**/package.md","**/overview.md", "apiSpec/**/*.md"],
+        "files": ["**/package.md","**/overview.md"],
         "src": "../../src",
         "exclude": ["Lucene.Net/overview.md"]
+      },
+      {
+        "files": ["apiSpec/**/*.md"]
       }
     ],
     "dest": "_site",

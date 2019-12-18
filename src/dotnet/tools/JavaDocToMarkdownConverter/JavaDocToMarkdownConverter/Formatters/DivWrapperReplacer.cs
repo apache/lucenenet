@@ -17,6 +17,7 @@
  * under the License.
  */
 
+using Html2Markdown.Replacement;
 using System.Text.RegularExpressions;
 
 namespace JavaDocToMarkdownConverter.Formatters

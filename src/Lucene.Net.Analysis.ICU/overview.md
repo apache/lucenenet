@@ -36,14 +36,19 @@ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis>
 
 *   [Text Segmentation](#segmentation): Tokenizes text based on 
   properties and rules defined in Unicode.
+
 *   [Collation](#collation): Compare strings according to the 
   conventions and standards of a particular language, region or country.
+
 *   [Normalization](#normalization): Converts text to a unique,
   equivalent form.
+
 *   [Case Folding](#casefolding): Removes case distinctions with
   Unicode's Default Caseless Matching algorithm.
+
 *   [Search Term Folding](#searchfolding): Removes distinctions
   (such as accent marks) between similar characters for a loose or fuzzy search.
+
 *   [Text Transformation](#transform): Transforms Unicode text in
   a context-sensitive fashion: e.g. mapping Traditional to Simplified Chinese
 
@@ -148,10 +153,12 @@ For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis>
 
 ## Caveats and Comparisons
 
- **WARNING:** Make sure you use exactly the same `Collator` at index and query time -- `CollationKey`s are only comparable when produced by the same `Collator`. Since {@link java.text.RuleBasedCollator}s are not independently versioned, it is unsafe to search against stored `CollationKey`s unless the following are exactly the same (best practice is to store this information with the index and check that they remain the same at query time): 
+ __WARNING:__ Make sure you use exactly the same `Collator` at index and query time -- `CollationKey`s are only comparable when produced by the same `Collator`. Since {@link java.text.RuleBasedCollator}s are not independently versioned, it is unsafe to search against stored `CollationKey`s unless the following are exactly the same (best practice is to store this information with the index and check that they remain the same at query time): 
 
 1.  JVM vendor
+
 2.  JVM version, including patch version
+
 3.  The language (and country and variant, if specified) of the Locale
     used when constructing the collator via
     {@link java.text.Collator#getInstance(java.util.Locale)}.
