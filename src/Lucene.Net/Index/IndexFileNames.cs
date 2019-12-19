@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N;
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
                 // to the gen length as string (hopefully an upper limit so SB won't
                 // expand in the middle.
                 StringBuilder res = (new StringBuilder(@base.Length + 6 + ext.Length))
-                    .Append(@base).Append('_').Append(Number.ToString(gen, Character.MAX_RADIX));
+                    .Append(@base).Append('_').Append(gen.ToString(Character.MaxRadix));
                 if (ext.Length > 0)
                 {
                     res.Append('.').Append(ext);

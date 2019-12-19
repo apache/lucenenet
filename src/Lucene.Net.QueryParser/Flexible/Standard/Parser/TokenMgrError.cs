@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N;
 using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
@@ -104,7 +104,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     default:
                         if ((ch = str[i]) < 0x20 || ch > 0x7e)
                         {
-                            string s = "0000" + Number.ToString(ch, 16);
+                            string s = "0000" + ((int)ch).ToString(16);
                             retval.Append("\\u" + s.Substring(s.Length - 4, /*s.Length - (s.Length - 4)*/ 4));
                         }
                         else

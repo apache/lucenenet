@@ -1,3 +1,4 @@
+using J2N;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
@@ -2028,7 +2029,7 @@ namespace Lucene.Net.Index
                 // problems at least with ConcurrentMergeScheduler.
                 changeCount++;
                 segmentInfos.Changed();
-                return "_" + Number.ToString(segmentInfos.Counter++, Character.MAX_RADIX);
+                return "_" + (segmentInfos.Counter++).ToString(J2N.Character.MaxRadix);
             }
         }
 
