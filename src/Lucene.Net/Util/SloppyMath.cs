@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N;
 using System;
 
 namespace Lucene.Net.Util
