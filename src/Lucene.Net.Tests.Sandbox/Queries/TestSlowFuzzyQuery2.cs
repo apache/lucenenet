@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -148,7 +149,7 @@ namespace Lucene.Net.Sandbox.Queries
         private static String MapInt(int[] codePointTable, int i)
         {
             StringBuilder sb = new StringBuilder();
-            String binary = Number.ToBinaryString(i);
+            String binary = i.ToBinaryString();
             for (int j = 0; j < binary.Length; j++)
                 sb.AppendCodePoint(codePointTable[binary[j] - '0']);
             return sb.toString();

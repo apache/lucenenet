@@ -1,3 +1,4 @@
+using J2N;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -141,7 +142,7 @@ namespace Lucene.Net.Util.Automaton
                     {
                         b.Append(' ');
                     }
-                    b.Append(Number.ToBinaryString(bytes[i].Value));
+                    b.Append(bytes[i].Value.ToBinaryString());
                 }
                 return b.ToString();
             }
