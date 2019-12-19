@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N.Numerics;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -994,7 +995,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 if (codePointMultiplier > 0)
                 {
                     codePoint += HexToInt32(curChar) * codePointMultiplier;
-                    codePointMultiplier = Number.URShift(codePointMultiplier, 4);
+                    codePointMultiplier = codePointMultiplier.TripleShift(4);
                     if (codePointMultiplier == 0)
                     {
                         output[length++] = (char)codePoint;

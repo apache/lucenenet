@@ -1,3 +1,4 @@
+using J2N.Numerics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -324,9 +325,9 @@ namespace Lucene.Net.Util
             buffer[newUpto + 2] = slice[upto - 1];
 
             // Write forwarding address at end of last slice:
-            slice[upto - 3] = (byte)Number.URShift(offset, 24);
-            slice[upto - 2] = (byte)Number.URShift(offset, 16);
-            slice[upto - 1] = (byte)Number.URShift(offset, 8);
+            slice[upto - 3] = (byte)offset.TripleShift(24);
+            slice[upto - 2] = (byte)offset.TripleShift(16);
+            slice[upto - 1] = (byte)offset.TripleShift(8);
             slice[upto] = (byte)offset;
 
             // Write new level:

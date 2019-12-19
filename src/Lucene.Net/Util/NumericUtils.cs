@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Numerics;
 using System;
 
 namespace Lucene.Net.Util
@@ -198,13 +198,13 @@ namespace Lucene.Net.Util
             }
             bytes.Bytes[0] = (byte)(SHIFT_START_INT32 + shift);
             int sortableBits = val ^ unchecked((int)0x80000000);
-            sortableBits = Number.URShift(sortableBits, shift);
+            sortableBits = sortableBits.TripleShift(shift);
             while (nChars > 0)
             {
                 // Store 7 bits per byte for compatibility
                 // with UTF-8 encoding of terms
                 bytes.Bytes[nChars--] = (byte)(sortableBits & 0x7f);
-                sortableBits = (int)((uint)sortableBits >> 7);
+                sortableBits = sortableBits.TripleShift(7);
             }
         }
 
@@ -265,7 +265,7 @@ namespace Lucene.Net.Util
                 }
                 sortableBits |= (byte)b;
             }
-            return (long)((ulong)(sortableBits << GetPrefixCodedInt64Shift(val)) ^ 0x8000000000000000L);
+            return (long)((ulong)(sortableBits << GetPrefixCodedInt64Shift(val)) ^ 0x8000000000000000L); // LUCENENET TODO: Is the casting here necessary?
         }
 
         /// <summary>

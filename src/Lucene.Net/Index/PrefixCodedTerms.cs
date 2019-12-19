@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Numerics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
                         {
                             field = input.ReadString();
                         }
-                        int prefix = Number.URShift(code, 1);
+                        int prefix = code.TripleShift(1);
                         int suffix = input.ReadVInt32();
                         bytes.Grow(prefix + suffix);
                         input.ReadBytes(bytes.Bytes, prefix, suffix);

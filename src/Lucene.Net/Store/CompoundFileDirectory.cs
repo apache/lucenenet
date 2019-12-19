@@ -1,3 +1,4 @@
+using J2N.Numerics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -128,9 +129,9 @@ namespace Lucene.Net.Store
         }
 
         // LUCENENET NOTE: These MUST be sbyte because they can be negative
-        private static readonly sbyte CODEC_MAGIC_BYTE1 = (sbyte)Number.URShift(CodecUtil.CODEC_MAGIC, 24);
-        private static readonly sbyte CODEC_MAGIC_BYTE2 = (sbyte)Number.URShift(CodecUtil.CODEC_MAGIC, 16);
-        private static readonly sbyte CODEC_MAGIC_BYTE3 = (sbyte)Number.URShift(CodecUtil.CODEC_MAGIC, 8);
+        private static readonly sbyte CODEC_MAGIC_BYTE1 = (sbyte)CodecUtil.CODEC_MAGIC.TripleShift(24);
+        private static readonly sbyte CODEC_MAGIC_BYTE2 = (sbyte)CodecUtil.CODEC_MAGIC.TripleShift(16);
+        private static readonly sbyte CODEC_MAGIC_BYTE3 = (sbyte)CodecUtil.CODEC_MAGIC.TripleShift(8);
         private static readonly sbyte CODEC_MAGIC_BYTE4 = (sbyte)CodecUtil.CODEC_MAGIC;
 
         /// <summary>
