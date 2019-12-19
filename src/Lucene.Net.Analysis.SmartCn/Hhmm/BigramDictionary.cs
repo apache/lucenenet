@@ -1,4 +1,5 @@
 ﻿// lucene version compatibility level: 4.8.1
+using J2N.IO;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
@@ -309,7 +310,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
                     dctFile.Read(intBuffer, 0, intBuffer.Length);
                     // the dictionary was developed for C, and byte order must be converted to work with Java
-                    cnt = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LITTLE_ENDIAN).GetInt32();
+                    cnt = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian).GetInt32();
                     if (cnt <= 0)
                     {
                         continue;
@@ -319,10 +320,10 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     while (j < cnt)
                     {
                         dctFile.Read(intBuffer, 0, intBuffer.Length);
-                        buffer[0] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LITTLE_ENDIAN)
+                        buffer[0] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
                             .GetInt32();// frequency
                         dctFile.Read(intBuffer, 0, intBuffer.Length);
-                        buffer[1] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LITTLE_ENDIAN)
+                        buffer[1] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
                             .GetInt32();// length
                         dctFile.Read(intBuffer, 0, intBuffer.Length);
                         // buffer[2] = ByteBuffer.wrap(intBuffer).order(

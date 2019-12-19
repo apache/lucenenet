@@ -1,4 +1,4 @@
-using Lucene.Net.Support.IO;
+using J2N.IO;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
@@ -306,7 +306,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns a sliced view from a set of already-existing buffers:
-        /// the last buffer's <see cref="Support.IO.Buffer.Limit"/> will be correct, but
+        /// the last buffer's <see cref="J2N.IO.Buffer.Limit"/> will be correct, but
         /// you must deal with <paramref name="offset"/> separately (the first buffer will not be adjusted)
         /// </summary>
         private ByteBuffer[] BuildSlice(ByteBuffer[] buffers, long offset, long length)

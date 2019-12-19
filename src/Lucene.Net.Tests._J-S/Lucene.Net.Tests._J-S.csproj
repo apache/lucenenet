@@ -39,7 +39,6 @@
     <Compile Include="..\Lucene.Net.Tests\Support\**\*.cs" LinkBase="Support" />
     <Compile Include="..\Lucene.Net.Tests\Util\TestNumericUtils.cs" Link="Util\TestNumericUtils.cs" />
     <EmbeddedResource Include="..\Lucene.Net.Tests\Store\LUCENENET521.zip" Link="Store\LUCENENET521.zip" />
-    <EmbeddedResource Include="..\Lucene.Net.Tests\Support\IO\ReadFully.txt" Link="Support\IO\ReadFully.txt" />
     <EmbeddedResource Include="..\Lucene.Net.Tests\Support\hyts_PropertiesTest.properties" Link="Support\hyts_PropertiesTest.properties" />
   </ItemGroup>
   

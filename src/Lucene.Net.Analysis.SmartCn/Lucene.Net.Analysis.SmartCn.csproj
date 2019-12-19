@@ -50,6 +50,7 @@
 
   <ItemGroup>
     <PackageReference Include="ICU4N" Version="$(ICU4NPackageVersion)" />
+    <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">

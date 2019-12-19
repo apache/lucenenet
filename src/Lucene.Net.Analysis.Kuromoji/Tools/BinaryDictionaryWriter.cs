@@ -1,7 +1,7 @@
-﻿using Lucene.Net.Analysis.Ja.Dict;
+﻿using J2N.IO;
+using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Codecs;
 using Lucene.Net.Store;
-using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;

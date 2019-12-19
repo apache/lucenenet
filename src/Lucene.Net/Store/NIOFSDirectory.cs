@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.IO;
 using Lucene.Net.Support.IO;
 using System;
 using System.Diagnostics;

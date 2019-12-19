@@ -38,6 +38,10 @@
     <Compile Include="..\CommonAssemblyKeys.cs" Link="Properties\CommonAssemblyKeys.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
+  </ItemGroup>
+    
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
     <PackageReference Include="Microsoft.CSharp" Version="$(MicrosoftCSharpPackageVersion)" />
   </ItemGroup>
