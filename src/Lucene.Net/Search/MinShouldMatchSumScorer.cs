@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
 
             public virtual int Compare(Scorer o1, Scorer o2)
             {
-                return Number.Signum(o2.GetCost() - o1.GetCost());
+                return (o2.GetCost() - o1.GetCost()).Signum();
             }
         }
 

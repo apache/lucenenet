@@ -1,5 +1,6 @@
 ﻿using ICU4N.Text;
 using ICU4N.Util;
+using J2N;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -268,7 +269,7 @@ namespace Lucene.Net.Collation
             stream2.Reset();
             assertTrue(stream1.IncrementToken());
             assertTrue(stream2.IncrementToken());
-            assertEquals(Number.Signum(comparison), Number.Signum(term1.toString().CompareToOrdinal(term2.toString())));
+            assertEquals((comparison).Signum(), (term1.toString().CompareToOrdinal(term2.toString())).Signum());
             assertFalse(stream1.IncrementToken());
             assertFalse(stream2.IncrementToken());
             stream1.End();
