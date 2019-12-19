@@ -42,7 +42,7 @@ namespace Lucene.Net.Codecs.Lucene45
     {
         internal static readonly int BLOCK_SIZE = 16384;
         internal static readonly int ADDRESS_INTERVAL = 16;
-        internal static readonly long MISSING_ORD = BitConverter.DoubleToInt64Bits(-1);
+        internal static readonly long MISSING_ORD = -1L;
 
         /// <summary>
         /// Compressed using packed blocks of <see cref="int"/>s. </summary>
