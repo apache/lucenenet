@@ -106,7 +106,7 @@
 //                @in.Reset(buffer, 0, @out.Position);
 //                float g = CompressingStoredFieldsReader.readZFloat(@in);
 //                assertTrue(@in.Eof);
-//                assertEquals(Number.SingleToInt32Bits(f), Number.SingleToInt32Bits(g));
+//                assertEquals(J2N.BitConversion.SingleToInt32Bits(f), J2N.BitConversion.SingleToInt32Bits(g));
 
 //                // check that compression actually works
 //                if (i >= -1 && i <= 123)
@@ -133,7 +133,7 @@
 //                @in.Reset(buffer, 0, @out.Position);
 //                float g = CompressingStoredFieldsReader.readZFloat(in);
 //                assertTrue(@in.Eof);
-//                assertEquals(Number.SingleToInt32Bits(f), Number.SingleToInt32Bits(g));
+//                assertEquals(J2N.BitConversion.SingleToInt32Bits(f), J2N.BitConversion.SingleToInt32Bits(g));
 //                @out.Reset(buffer);
 //            }
 
@@ -143,11 +143,11 @@
 //            {
 //                float f = r.nextFloat() * (Random.nextInt(100) - 50);
 //                CompressingStoredFieldsWriter.writeZFloat(@out, f);
-//                assertTrue("length=" + @out.Position + ", f=" + f, @out.Position <= ((Number.SingleToInt32Bits(f) >>> 31) == 1 ? 5 : 4));
+//                assertTrue("length=" + @out.Position + ", f=" + f, @out.Position <= ((J2N.BitConversion.SingleToInt32Bits(f) >>> 31) == 1 ? 5 : 4));
 //                @in.Reset(buffer, 0, @out.Position);
 //                float g = CompressingStoredFieldsReader.readZFloat(@in);
 //                assertTrue(@in.Eof);
-//                assertEquals(Number.SingleToInt32Bits(f), Number.SingleToInt32Bits(g));
+//                assertEquals(J2N.BitConversion.SingleToInt32Bits(f), J2N.BitConversion.SingleToInt32Bits(g));
 //                @out.Reset(buffer);
 //            }
 //        }
@@ -166,7 +166,7 @@
 //                @in.Reset(buffer, 0, @out.Position);
 //                double y = CompressingStoredFieldsReader.ReadZDouble(@in);
 //                assertTrue(@in.Eof);
-//                assertEquals(Number.DoubleToInt64Bits(x), Number.DoubleToInt64Bits(y));
+//                assertEquals(J2N.BitConversion.DoubleToInt64Bits(x), J2N.BitConversion.DoubleToInt64Bits(y));
 
 //                // check that compression actually works
 //                if (i >= -1 && i <= 124)
@@ -193,7 +193,7 @@
 //                @in.Reset(buffer, 0, @out.Position);
 //                double y = CompressingStoredFieldsReader.readZDouble(@in);
 //                assertTrue(@in.Eof);
-//                assertEquals(Number.DoubleToInt64Bits(x), Number.DoubleToInt64Bits(y));
+//                assertEquals(J2N.BitConversion.DoubleToInt64Bits(x), J2N.BitConversion.DoubleToInt64Bits(y));
 //                @out.reset(buffer);
 //            }
 
@@ -207,7 +207,7 @@
 //                @in.Reset(buffer, 0, @out.Position);
 //                double y = CompressingStoredFieldsReader.readZDouble(@in);
 //                assertTrue(@in.Eof);
-//                assertEquals(Number.DoubleToInt64Bits(x), Number.DoubleToInt64Bits(y));
+//                assertEquals(J2N.BitConversion.DoubleToInt64Bits(x), J2N.BitConversion.DoubleToInt64Bits(y));
 //                @out.Reset(buffer);
 //            }
 
@@ -220,7 +220,7 @@
 //                @in.Reset(buffer, 0, @out.Position);
 //                double y = CompressingStoredFieldsReader.readZDouble(@in);
 //                assertTrue(@in.Eof);
-//                assertEquals(Number.DoubleToInt64Bits(x), Number.DoubleToInt64Bits(y));
+//                assertEquals(J2N.BitConversion.DoubleToInt64Bits(x), J2N.BitConversion.DoubleToInt64Bits(y));
 //                @out.Reset(buffer);
 //            }
 //        }

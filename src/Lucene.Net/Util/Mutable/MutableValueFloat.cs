@@ -1,5 +1,3 @@
-using Lucene.Net.Support;
-
 namespace Lucene.Net.Util.Mutable
 {
     /*
@@ -71,7 +69,7 @@ namespace Lucene.Net.Util.Mutable
 
         public override int GetHashCode()
         {
-            return Number.SingleToInt32Bits(Value);
+            return J2N.BitConversion.SingleToInt32Bits(Value);
         }
     }
 }

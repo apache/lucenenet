@@ -401,13 +401,13 @@ namespace Lucene.Net.Queries
             const int prime = 31;
             int result = base.GetHashCode();
             result = prime * result + (m_disableCoord ? 1231 : 1237);
-            result = prime * result + Number.SingleToInt32Bits(m_highFreqBoost);
+            result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_highFreqBoost);
             result = prime * result + /*((highFreqOccur == null) ? 0 :*/ m_highFreqOccur.GetHashCode()/*)*/;
-            result = prime * result + Number.SingleToInt32Bits(m_lowFreqBoost);
+            result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_lowFreqBoost);
             result = prime * result + /*((lowFreqOccur == null) ? 0 :*/ m_lowFreqOccur.GetHashCode()/*)*/;
-            result = prime * result + Number.SingleToInt32Bits(m_maxTermFrequency);
-            result = prime * result + Number.SingleToInt32Bits(m_lowFreqMinNrShouldMatch);
-            result = prime * result + Number.SingleToInt32Bits(m_highFreqMinNrShouldMatch);
+            result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_maxTermFrequency);
+            result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_lowFreqMinNrShouldMatch);
+            result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_highFreqMinNrShouldMatch);
             // LUCENENET specific: wrap the m_terms to ensure the collection values are
             // compared for equalitly
             result = prime * result + ((m_terms == null) ? 0 : Equatable.Wrap(m_terms).GetHashCode());
@@ -433,7 +433,7 @@ namespace Lucene.Net.Queries
             {
                 return false;
             }
-            if (Number.SingleToInt32Bits(m_highFreqBoost) != Number.SingleToInt32Bits(other.m_highFreqBoost))
+            if (J2N.BitConversion.SingleToInt32Bits(m_highFreqBoost) != J2N.BitConversion.SingleToInt32Bits(other.m_highFreqBoost))
             {
                 return false;
             }
@@ -441,7 +441,7 @@ namespace Lucene.Net.Queries
             {
                 return false;
             }
-            if (Number.SingleToInt32Bits(m_lowFreqBoost) != Number.SingleToInt32Bits(other.m_lowFreqBoost))
+            if (J2N.BitConversion.SingleToInt32Bits(m_lowFreqBoost) != J2N.BitConversion.SingleToInt32Bits(other.m_lowFreqBoost))
             {
                 return false;
             }
@@ -449,7 +449,7 @@ namespace Lucene.Net.Queries
             {
                 return false;
             }
-            if (Number.SingleToInt32Bits(m_maxTermFrequency) != Number.SingleToInt32Bits(other.m_maxTermFrequency))
+            if (J2N.BitConversion.SingleToInt32Bits(m_maxTermFrequency) != J2N.BitConversion.SingleToInt32Bits(other.m_maxTermFrequency))
             {
                 return false;
             }

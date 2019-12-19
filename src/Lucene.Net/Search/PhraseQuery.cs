@@ -29,9 +29,8 @@ namespace Lucene.Net.Search
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IBits = Lucene.Net.Util.IBits;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-    using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
@@ -524,7 +523,7 @@ namespace Lucene.Net.Search
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return Number.SingleToInt32Bits(Boost) 
+            return J2N.BitConversion.SingleToInt32Bits(Boost) 
                 ^ slop 
                 ^ terms.GetHashCode() 
                 ^ positions.GetHashCode();

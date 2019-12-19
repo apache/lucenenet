@@ -1,5 +1,4 @@
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
@@ -50,7 +49,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < numBlocks; ++i)
             {
                 minValues[i] = @in.ReadVInt64();
-                averages[i] = Number.Int32BitsToSingle(@in.ReadInt32());
+                averages[i] = J2N.BitConversion.Int32BitsToSingle(@in.ReadInt32());
                 int bitsPerValue = @in.ReadVInt32();
                 if (bitsPerValue > 64)
                 {

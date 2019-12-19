@@ -136,7 +136,7 @@ namespace Lucene.Net.Sandbox.Queries
                 int result = 1;
                 result = prime * result
                     + ((fieldName == null) ? 0 : fieldName.GetHashCode());
-                result = prime * result + Number.SingleToInt32Bits(minSimilarity);
+                result = prime * result + J2N.BitConversion.SingleToInt32Bits(minSimilarity);
                 result = prime * result + prefixLength;
                 result = prime * result
                     + ((queryString == null) ? 0 : queryString.GetHashCode());
@@ -159,7 +159,7 @@ namespace Lucene.Net.Sandbox.Queries
                 }
                 else if (!fieldName.Equals(other.fieldName, StringComparison.Ordinal))
                     return false;
-                if (Number.SingleToInt32Bits(minSimilarity) != Number
+                if (J2N.BitConversion.SingleToInt32Bits(minSimilarity) != J2N.BitConversion
                     .SingleToInt32Bits(other.minSimilarity))
                     return false;
                 if (prefixLength != other.prefixLength)

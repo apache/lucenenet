@@ -194,10 +194,10 @@ namespace Lucene.Net.Util
 
         public static readonly double[] DOUBLE_NANs = new double[] {
             double.NaN,
-            BitConverter.Int64BitsToDouble(0x7ff0000000000001L),
-            BitConverter.Int64BitsToDouble(0x7fffffffffffffffL),
-            BitConverter.Int64BitsToDouble(unchecked((long)0xfff0000000000001L)),
-            BitConverter.Int64BitsToDouble(unchecked((long)0xffffffffffffffffL))
+            J2N.BitConversion.Int64BitsToDouble(0x7ff0000000000001L),
+            J2N.BitConversion.Int64BitsToDouble(0x7fffffffffffffffL),
+            J2N.BitConversion.Int64BitsToDouble(unchecked((long)0xfff0000000000001L)),
+            J2N.BitConversion.Int64BitsToDouble(unchecked((long)0xffffffffffffffffL))
         };
 
 #if FEATURE_UTIL_TESTS
@@ -237,10 +237,10 @@ namespace Lucene.Net.Util
 
         public static readonly float[] FLOAT_NANs = new float[] {
             float.NaN,
-            Number.Int32BitsToSingle(0x7f800001),
-            Number.Int32BitsToSingle(0x7fffffff),
-            Number.Int32BitsToSingle(unchecked((int)0xff800001)),
-            Number.Int32BitsToSingle(unchecked((int)0xffffffff))
+            J2N.BitConversion.Int32BitsToSingle(0x7f800001),
+            J2N.BitConversion.Int32BitsToSingle(0x7fffffff),
+            J2N.BitConversion.Int32BitsToSingle(unchecked((int)0xff800001)),
+            J2N.BitConversion.Int32BitsToSingle(unchecked((int)0xffffffff))
         };
 
 #if FEATURE_UTIL_TESTS

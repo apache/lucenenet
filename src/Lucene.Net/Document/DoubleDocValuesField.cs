@@ -21,7 +21,7 @@ namespace Lucene.Net.Documents
 
     /// <summary>
     /// Syntactic sugar for encoding doubles as <see cref="Index.NumericDocValues"/>
-    /// via <see cref="Support.Number.DoubleToRawInt64Bits(double)"/>.
+    /// via <see cref="J2N.BitConversion.DoubleToRawInt64Bits(double)"/>.
     /// <para/>
     /// Per-document double values can be retrieved via
     /// <see cref="Search.IFieldCache.GetDoubles(Lucene.Net.Index.AtomicReader, string, bool)"/>.
@@ -38,13 +38,13 @@ namespace Lucene.Net.Documents
         /// <param name="value"> 64-bit double value </param>
         /// <exception cref="ArgumentNullException"> if the field name is <c>null</c> </exception>
         public DoubleDocValuesField(string name, double value)
-            : base(name, BitConverter.DoubleToInt64Bits(value))
+            : base(name, J2N.BitConversion.DoubleToRawInt64Bits(value))
         {
         }
 
         public override void SetDoubleValue(double value)
         {
-            base.SetInt64Value(BitConverter.DoubleToInt64Bits(value));
+            base.SetInt64Value(J2N.BitConversion.DoubleToRawInt64Bits(value));
         }
 
         public override void SetInt64Value(long value)

@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -106,9 +105,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             int h = m_source.GetHashCode();
             h ^= (h << 10) | ((int)((uint)h >> 23));
-            h += Number.SingleToInt32Bits(m_min);
+            h += J2N.BitConversion.SingleToInt32Bits(m_min);
             h ^= (h << 14) | ((int)((uint)h >> 19));
-            h += Number.SingleToInt32Bits(m_max);
+            h += J2N.BitConversion.SingleToInt32Bits(m_max);
             h += m_target.GetHashCode();
             if (m_defaultVal != null)
             {

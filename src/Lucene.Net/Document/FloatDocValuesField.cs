@@ -1,3 +1,5 @@
+using J2N;
+
 namespace Lucene.Net.Documents
 {
     /*
@@ -19,7 +21,7 @@ namespace Lucene.Net.Documents
 
     /// <summary>
     /// Syntactic sugar for encoding floats as <see cref="Index.NumericDocValues"/>
-    /// via <see cref="Support.Number.SingleToRawInt32Bits(float)"/>.
+    /// via <see cref="J2N.BitConversion.SingleToRawInt32Bits(float)"/>.
     /// <para>
     /// Per-document floating point values can be retrieved via
     /// <seealso cref="Search.IFieldCache.GetSingles(Lucene.Net.Index.AtomicReader, string, bool)"/>.</para>
@@ -40,13 +42,13 @@ namespace Lucene.Net.Documents
         /// <param name="value"> 32-bit <see cref="float"/> value </param>
         /// <exception cref="System.ArgumentNullException"> if the field name is <c>null</c> </exception>
         public SingleDocValuesField(string name, float value)
-            : base(name, Support.Number.SingleToInt32Bits(value))
+            : base(name, BitConversion.SingleToInt32Bits(value))
         {
         }
 
         public override void SetSingleValue(float value)
         {
-            base.SetInt64Value(Support.Number.SingleToInt32Bits(value));
+            base.SetInt64Value(BitConversion.SingleToInt32Bits(value));
         }
 
         public override void SetInt64Value(long value)

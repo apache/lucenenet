@@ -19,7 +19,6 @@
  *
 */
 
-using System;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -31,6 +30,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Tests.Queries.Function
 {
@@ -159,7 +159,7 @@ namespace Lucene.Net.Tests.Queries.Function
         /// <seealso cref= org.apache.lucene.util.SmallFloat </seealso>
         public override long EncodeNormValue(float f)
         {
-            return BitConverter.DoubleToInt64Bits(f);
+            return J2N.BitConversion.SingleToInt32Bits(f);
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace Lucene.Net.Tests.Queries.Function
         /// <seealso cref= #encodeNormValue(float) </seealso>
         public override float DecodeNormValue(long norm)
         {
-            return (float) BitConverter.Int64BitsToDouble(norm);
+            return J2N.BitConversion.Int32BitsToSingle((int)norm);
         }
 
         /// <summary>

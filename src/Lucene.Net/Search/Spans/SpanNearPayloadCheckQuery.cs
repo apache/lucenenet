@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Spans
             h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
             //TODO: is this right?
             h ^= Collections.GetHashCode(m_payloadToMatch); // LUCENENET NOTE: Need to call Collections.GetHashCode() to combine the hash codes of all contained values
-            h ^= Number.SingleToRawInt32Bits(Boost);
+            h ^= J2N.BitConversion.SingleToRawInt32Bits(Boost);
             return h;
         }
     }

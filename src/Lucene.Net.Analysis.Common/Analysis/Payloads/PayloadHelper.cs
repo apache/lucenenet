@@ -1,6 +1,4 @@
-﻿using Lucene.Net.Support;
-
-namespace Lucene.Net.Analysis.Payloads
+﻿namespace Lucene.Net.Analysis.Payloads
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -37,7 +35,7 @@ namespace Lucene.Net.Analysis.Payloads
         /// </summary>
         public static byte[] EncodeSingle(float payload, byte[] data, int offset)
         {
-            return EncodeInt32(Number.SingleToInt32Bits(payload), data, offset);
+            return EncodeInt32(J2N.BitConversion.SingleToInt32Bits(payload), data, offset);
         }
 
         /// <summary>
@@ -85,7 +83,7 @@ namespace Lucene.Net.Analysis.Payloads
         public static float DecodeSingle(byte[] bytes, int offset)
         {
 
-            return Number.Int32BitsToSingle(DecodeInt32(bytes, offset));
+            return J2N.BitConversion.Int32BitsToSingle(DecodeInt32(bytes, offset));
         }
 
         /// <summary>

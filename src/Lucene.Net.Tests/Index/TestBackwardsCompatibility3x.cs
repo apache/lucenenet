@@ -1,6 +1,4 @@
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
-using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -30,38 +28,37 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using FileInfo = System.IO.FileInfo;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BinaryDocValuesField = Lucene.Net.Documents.BinaryDocValuesField;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Constants = Lucene.Net.Util.Constants;
+    using Directory = Lucene.Net.Store.Directory;
+    //using IndexOptions = Lucene.Net.Index.IndexOptions;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Lucene.Net.Documents.Document;
     using DoubleDocValuesField = Lucene.Net.Documents.DoubleDocValuesField;
     using Field = Lucene.Net.Documents.Field;
+    using FieldCache = Lucene.Net.Search.FieldCache;
     using FieldType = Lucene.Net.Documents.FieldType;
-    using SingleDocValuesField = Lucene.Net.Documents.SingleDocValuesField;
+    using IBits = Lucene.Net.Util.IBits;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Int32Field = Lucene.Net.Documents.Int32Field;
     using Int64Field = Lucene.Net.Documents.Int64Field;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NumericDocValuesField = Lucene.Net.Documents.NumericDocValuesField;
-    using SortedDocValuesField = Lucene.Net.Documents.SortedDocValuesField;
-    using StringField = Lucene.Net.Documents.StringField;
-    using TextField = Lucene.Net.Documents.TextField;
-    //using IndexOptions = Lucene.Net.Index.IndexOptions;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using FieldCache = Lucene.Net.Search.FieldCache;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
-    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using Directory = Lucene.Net.Store.Directory;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using IBits = Lucene.Net.Util.IBits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Constants = Lucene.Net.Util.Constants;
+    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+    using SingleDocValuesField = Lucene.Net.Documents.SingleDocValuesField;
+    using SortedDocValuesField = Lucene.Net.Documents.SortedDocValuesField;
+    using StringField = Lucene.Net.Documents.StringField;
     using StringHelper = Lucene.Net.Util.StringHelper;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
+    using TextField = Lucene.Net.Documents.TextField;
+    using TopDocs = Lucene.Net.Search.TopDocs;
 
     /*
       Verify we can read the pre-4.0 file format, do searches
@@ -492,8 +489,8 @@ namespace Lucene.Net.Index
                     dvBytesStraightVar.Get(i, scratch);
                     Assert.AreEqual(expectedRef, scratch);
 
-                    Assert.AreEqual((double)id, BitConverter.Int64BitsToDouble(dvDouble.Get(i)), 0D);
-                    Assert.AreEqual((float)id, Number.Int32BitsToSingle((int)dvFloat.Get(i)), 0F);
+                    Assert.AreEqual((double)id, J2N.BitConversion.Int64BitsToDouble(dvDouble.Get(i)), 0D);
+                    Assert.AreEqual((float)id, J2N.BitConversion.Int32BitsToSingle((int)dvFloat.Get(i)), 0F);
                     Assert.AreEqual(id, dvInt.Get(i));
                     Assert.AreEqual(id, dvLong.Get(i));
                     Assert.AreEqual(id, dvPacked.Get(i));

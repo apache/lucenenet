@@ -210,7 +210,7 @@ namespace Lucene.Net.Codecs.Compressing
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_SINGLE:
-                    visitor.SingleField(info, Number.Int32BitsToSingle(@in.ReadInt32()));
+                    visitor.SingleField(info, J2N.BitConversion.Int32BitsToSingle(@in.ReadInt32()));
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_INT64:
@@ -218,7 +218,7 @@ namespace Lucene.Net.Codecs.Compressing
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_DOUBLE:
-                    visitor.DoubleField(info, BitConverter.Int64BitsToDouble(@in.ReadInt64()));
+                    visitor.DoubleField(info, J2N.BitConversion.Int64BitsToDouble(@in.ReadInt64()));
                     break;
 
                 default:

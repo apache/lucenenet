@@ -2,7 +2,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
-using Lucene.Net.TestFramework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -180,7 +179,7 @@ namespace Lucene.Net.Index
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
                         Debug.Assert(ireader.Leaves.Count == 1);
                         NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv");
-                        Assert.AreEqual((long)Number.SingleToInt32Bits(5.7f), dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - cast required because types don't match (xUnit checks this)
+                        Assert.AreEqual((long)J2N.BitConversion.SingleToInt32Bits(5.7f), dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - cast required because types don't match (xUnit checks this)
                     }
                 } // ireader.Dispose();
             } // directory.Dispose();

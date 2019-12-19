@@ -140,9 +140,9 @@ namespace Lucene.Net.Util
             // acosh(NaN) == NaN
             Assert.IsTrue(double.IsNaN(MathUtil.Acosh(double.NaN)));
             // acosh(1) == +0
-            Assert.AreEqual(0, BitConverter.DoubleToInt64Bits(MathUtil.Acosh(1D)));
+            Assert.AreEqual(0, J2N.BitConversion.DoubleToInt64Bits(MathUtil.Acosh(1D)));
             // acosh(POSITIVE_INFINITY) == POSITIVE_INFINITY
-            Assert.AreEqual(BitConverter.DoubleToInt64Bits(double.PositiveInfinity), BitConverter.DoubleToInt64Bits(MathUtil.Acosh(double.PositiveInfinity)));
+            Assert.AreEqual(J2N.BitConversion.DoubleToInt64Bits(double.PositiveInfinity), J2N.BitConversion.DoubleToInt64Bits(MathUtil.Acosh(double.PositiveInfinity)));
             // acosh(x) : x < 1 == NaN
             Assert.IsTrue(double.IsNaN(MathUtil.Acosh(0.9D))); // x < 1
             Assert.IsTrue(double.IsNaN(MathUtil.Acosh(0D))); // x == 0
@@ -165,13 +165,13 @@ namespace Lucene.Net.Util
             // asinh(NaN) == NaN
             Assert.IsTrue(double.IsNaN(MathUtil.Asinh(double.NaN)));
             // asinh(+0) == +0
-            Assert.AreEqual(0, BitConverter.DoubleToInt64Bits(MathUtil.Asinh(0D)));
+            Assert.AreEqual(0, J2N.BitConversion.DoubleToInt64Bits(MathUtil.Asinh(0D)));
             // asinh(-0) == -0
-            Assert.AreEqual(BitConverter.DoubleToInt64Bits(-0D), BitConverter.DoubleToInt64Bits(MathUtil.Asinh(-0D)));
+            Assert.AreEqual(J2N.BitConversion.DoubleToInt64Bits(-0D), J2N.BitConversion.DoubleToInt64Bits(MathUtil.Asinh(-0D)));
             // asinh(POSITIVE_INFINITY) == POSITIVE_INFINITY
-            Assert.AreEqual(BitConverter.DoubleToInt64Bits(double.PositiveInfinity), BitConverter.DoubleToInt64Bits(MathUtil.Asinh(double.PositiveInfinity)));
+            Assert.AreEqual(J2N.BitConversion.DoubleToInt64Bits(double.PositiveInfinity), J2N.BitConversion.DoubleToInt64Bits(MathUtil.Asinh(double.PositiveInfinity)));
             // asinh(NEGATIVE_INFINITY) == NEGATIVE_INFINITY
-            Assert.AreEqual(BitConverter.DoubleToInt64Bits(double.NegativeInfinity), BitConverter.DoubleToInt64Bits(MathUtil.Asinh(double.NegativeInfinity)));
+            Assert.AreEqual(J2N.BitConversion.DoubleToInt64Bits(double.NegativeInfinity), J2N.BitConversion.DoubleToInt64Bits(MathUtil.Asinh(double.NegativeInfinity)));
 
             double epsilon = 0.000001;
             Assert.AreEqual(-14.719378760740035, MathUtil.Asinh(-1234567.89), epsilon);
@@ -189,13 +189,13 @@ namespace Lucene.Net.Util
             // atanh(NaN) == NaN
             Assert.IsTrue(double.IsNaN(MathUtil.Atanh(double.NaN)));
             // atanh(+0) == +0
-            Assert.AreEqual(0, BitConverter.DoubleToInt64Bits(MathUtil.Atanh(0D)));
+            Assert.AreEqual(0, J2N.BitConversion.DoubleToInt64Bits(MathUtil.Atanh(0D)));
             // atanh(-0) == -0
-            Assert.AreEqual(BitConverter.DoubleToInt64Bits(-0D), BitConverter.DoubleToInt64Bits(MathUtil.Atanh(-0D)));
+            Assert.AreEqual(J2N.BitConversion.DoubleToInt64Bits(-0D), J2N.BitConversion.DoubleToInt64Bits(MathUtil.Atanh(-0D)));
             // atanh(1) == POSITIVE_INFINITY
-            Assert.AreEqual(BitConverter.DoubleToInt64Bits(double.PositiveInfinity), BitConverter.DoubleToInt64Bits(MathUtil.Atanh(1D)));
+            Assert.AreEqual(J2N.BitConversion.DoubleToInt64Bits(double.PositiveInfinity), J2N.BitConversion.DoubleToInt64Bits(MathUtil.Atanh(1D)));
             // atanh(-1) == NEGATIVE_INFINITY
-            Assert.AreEqual(BitConverter.DoubleToInt64Bits(double.NegativeInfinity), BitConverter.DoubleToInt64Bits(MathUtil.Atanh(-1D)));
+            Assert.AreEqual(J2N.BitConversion.DoubleToInt64Bits(double.NegativeInfinity), J2N.BitConversion.DoubleToInt64Bits(MathUtil.Atanh(-1D)));
             // atanh(x) : Math.abs(x) > 1 == NaN
             Assert.IsTrue(double.IsNaN(MathUtil.Atanh(1.1D))); // x > 1
             Assert.IsTrue(double.IsNaN(MathUtil.Atanh(double.PositiveInfinity))); // x == Inf

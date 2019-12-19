@@ -242,7 +242,7 @@ namespace Lucene.Net.Search.Spans
             // last element of clauses.  this particular mix also serves to
             // differentiate SpanNearQuery hashcodes from others.
             result ^= (result << 14) | ((int)((uint)result >> 19)); // reversible
-            result += Number.SingleToRawInt32Bits(Boost);
+            result += J2N.BitConversion.SingleToRawInt32Bits(Boost);
             result += m_slop;
             result ^= (m_inOrder ? unchecked((int)0x99AFD3BD) : 0);
             return result;

@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -75,7 +74,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 {
 
                     float val = vals.SingleVal(i);
-                    if ((Number.SingleToRawInt32Bits(val) & (0xff << 23)) == 0xff << 23)
+                    if ((J2N.BitConversion.SingleToRawInt32Bits(val) & (0xff << 23)) == 0xff << 23)
                     {
                         // if the exponent in the float is all ones, then this is +Inf, -Inf or NaN
                         // which don't make sense to factor into the scale function
@@ -159,9 +158,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            int h = Number.SingleToInt32Bits(m_min);
+            int h = J2N.BitConversion.SingleToInt32Bits(m_min);
             h = h * 29;
-            h += Number.SingleToInt32Bits(m_max);
+            h += J2N.BitConversion.SingleToInt32Bits(m_max);
             h = h * 29;
             h += m_source.GetHashCode();
             return h;

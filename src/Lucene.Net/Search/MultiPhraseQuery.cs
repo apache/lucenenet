@@ -466,7 +466,7 @@ namespace Lucene.Net.Search
         public override int GetHashCode()
         {
             //If this doesn't work hash all elements of positions. This was used to reduce time overhead
-            return Number.SingleToInt32Bits(Boost) 
+            return J2N.BitConversion.SingleToInt32Bits(Boost) 
                 ^ slop 
                 ^ TermArraysHashCode() 
                 ^ ((positions.Count == 0) ? 0 : positions.GetHashCode() 

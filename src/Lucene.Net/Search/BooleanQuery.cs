@@ -1,3 +1,4 @@
+using J2N;
 using Lucene.Net.Support;
 using System;
 using System.Collections;
@@ -719,7 +720,7 @@ namespace Lucene.Net.Search
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return Number.SingleToInt32Bits(Boost) ^ clauses.GetHashCode()
+            return BitConversion.SingleToInt32Bits(Boost) ^ clauses.GetHashCode()
                 + MinimumNumberShouldMatch + (disableCoord ? 17 : 0);
         }
     }

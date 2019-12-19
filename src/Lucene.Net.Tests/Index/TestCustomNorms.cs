@@ -1,6 +1,6 @@
-using NUnit.Framework;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Globalization;
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
             {
                 Document document = open.Document(i);
                 float expected = Convert.ToSingle(document.Get(floatTestField), CultureInfo.InvariantCulture);
-                Assert.AreEqual(expected, Number.Int32BitsToSingle((int)norms.Get(i)), 0.0f);
+                Assert.AreEqual(expected, J2N.BitConversion.Int32BitsToSingle((int)norms.Get(i)), 0.0f);
             }
             open.Dispose();
             dir.Dispose();
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
         {
             public override long ComputeNorm(FieldInvertState state)
             {
-                return Number.SingleToInt32Bits(state.Boost);
+                return J2N.BitConversion.SingleToInt32Bits(state.Boost);
             }
 
             public override SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)

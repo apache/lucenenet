@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -87,9 +86,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            int h = Number.SingleToInt32Bits(m_slope);
+            int h = J2N.BitConversion.SingleToInt32Bits(m_slope);
             h = ((int)((uint)h >> 2)) | (h << 30);
-            h += Number.SingleToInt32Bits(m_intercept);
+            h += J2N.BitConversion.SingleToInt32Bits(m_intercept);
             h ^= (h << 14) | ((int)((uint)h >> 19));
             return h + m_source.GetHashCode();
         }

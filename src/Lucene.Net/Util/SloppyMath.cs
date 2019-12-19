@@ -175,8 +175,8 @@ namespace Lucene.Net.Util
         private const double ONE_DIV_F3 = 1 / 6.0;
         private const double ONE_DIV_F4 = 1 / 24.0;
 
-        private static readonly double PIO2_HI = BitConverter.Int64BitsToDouble(0x3FF921FB54400000L); // 1.57079632673412561417e+00 first 33 bits of pi/2
-        private static readonly double PIO2_LO = BitConverter.Int64BitsToDouble(0x3DD0B4611A626331L); // 6.07710050650619224932e-11 pi/2 - PIO2_HI
+        private static readonly double PIO2_HI = J2N.BitConversion.Int64BitsToDouble(0x3FF921FB54400000L); // 1.57079632673412561417e+00 first 33 bits of pi/2
+        private static readonly double PIO2_LO = J2N.BitConversion.Int64BitsToDouble(0x3DD0B4611A626331L); // 6.07710050650619224932e-11 pi/2 - PIO2_HI
         private static readonly double TWOPI_HI = 4 * PIO2_HI;
         private static readonly double TWOPI_LO = 4 * PIO2_LO;
         private static readonly int SIN_COS_TABS_SIZE = (1 << 11) + 1;
@@ -205,18 +205,18 @@ namespace Lucene.Net.Util
         private static readonly double[] asinDer3DivF3Tab = new double[ASIN_TABS_SIZE];
         private static readonly double[] asinDer4DivF4Tab = new double[ASIN_TABS_SIZE];
 
-        private static readonly double ASIN_PIO2_HI = BitConverter.Int64BitsToDouble(0x3FF921FB54442D18L); // 1.57079632679489655800e+00
-        private static readonly double ASIN_PIO2_LO = BitConverter.Int64BitsToDouble(0x3C91A62633145C07L); // 6.12323399573676603587e-17
-        private static readonly double ASIN_PS0 = BitConverter.Int64BitsToDouble(0x3fc5555555555555L); //  1.66666666666666657415e-01
-        private static readonly double ASIN_PS1 = BitConverter.Int64BitsToDouble(unchecked((long)0xbfd4d61203eb6f7dL)); // -3.25565818622400915405e-01
-        private static readonly double ASIN_PS2 = BitConverter.Int64BitsToDouble(0x3fc9c1550e884455L); //  2.01212532134862925881e-01
-        private static readonly double ASIN_PS3 = BitConverter.Int64BitsToDouble(unchecked((long)0xbfa48228b5688f3bL)); // -4.00555345006794114027e-02
-        private static readonly double ASIN_PS4 = BitConverter.Int64BitsToDouble(0x3f49efe07501b288L); //  7.91534994289814532176e-04
-        private static readonly double ASIN_PS5 = BitConverter.Int64BitsToDouble(0x3f023de10dfdf709L); //  3.47933107596021167570e-05
-        private static readonly double ASIN_QS1 = BitConverter.Int64BitsToDouble(unchecked((long)0xc0033a271c8a2d4bL)); // -2.40339491173441421878e+00
-        private static readonly double ASIN_QS2 = BitConverter.Int64BitsToDouble(0x40002ae59c598ac8L); //  2.02094576023350569471e+00
-        private static readonly double ASIN_QS3 = BitConverter.Int64BitsToDouble(unchecked((long)0xbfe6066c1b8d0159L)); // -6.88283971605453293030e-01
-        private static readonly double ASIN_QS4 = BitConverter.Int64BitsToDouble(0x3fb3b8c5b12e9282L); //  7.70381505559019352791e-02
+        private static readonly double ASIN_PIO2_HI = J2N.BitConversion.Int64BitsToDouble(0x3FF921FB54442D18L); // 1.57079632679489655800e+00
+        private static readonly double ASIN_PIO2_LO = J2N.BitConversion.Int64BitsToDouble(0x3C91A62633145C07L); // 6.12323399573676603587e-17
+        private static readonly double ASIN_PS0 = J2N.BitConversion.Int64BitsToDouble(0x3fc5555555555555L); //  1.66666666666666657415e-01
+        private static readonly double ASIN_PS1 = J2N.BitConversion.Int64BitsToDouble(unchecked((long)0xbfd4d61203eb6f7dL)); // -3.25565818622400915405e-01
+        private static readonly double ASIN_PS2 = J2N.BitConversion.Int64BitsToDouble(0x3fc9c1550e884455L); //  2.01212532134862925881e-01
+        private static readonly double ASIN_PS3 = J2N.BitConversion.Int64BitsToDouble(unchecked((long)0xbfa48228b5688f3bL)); // -4.00555345006794114027e-02
+        private static readonly double ASIN_PS4 = J2N.BitConversion.Int64BitsToDouble(0x3f49efe07501b288L); //  7.91534994289814532176e-04
+        private static readonly double ASIN_PS5 = J2N.BitConversion.Int64BitsToDouble(0x3f023de10dfdf709L); //  3.47933107596021167570e-05
+        private static readonly double ASIN_QS1 = J2N.BitConversion.Int64BitsToDouble(unchecked((long)0xc0033a271c8a2d4bL)); // -2.40339491173441421878e+00
+        private static readonly double ASIN_QS2 = J2N.BitConversion.Int64BitsToDouble(0x40002ae59c598ac8L); //  2.02094576023350569471e+00
+        private static readonly double ASIN_QS3 = J2N.BitConversion.Int64BitsToDouble(unchecked((long)0xbfe6066c1b8d0159L)); // -6.88283971605453293030e-01
+        private static readonly double ASIN_QS4 = J2N.BitConversion.Int64BitsToDouble(0x3fb3b8c5b12e9282L); //  7.70381505559019352791e-02
 
         private static readonly int RADIUS_TABS_SIZE = (1 << 10) + 1;
         private static readonly double RADIUS_DELTA = (Math.PI / 2d) / (RADIUS_TABS_SIZE - 1);

@@ -1,4 +1,3 @@
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 
@@ -132,7 +131,7 @@ namespace Lucene.Net.Search
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result + Number.SingleToInt32Bits(Boost);
+            result = prime * result + J2N.BitConversion.SingleToInt32Bits(Boost);
             return result;
         }
 
@@ -155,7 +154,7 @@ namespace Lucene.Net.Search
 
             var other = obj as Query;
 
-            if (Number.SingleToInt32Bits(Boost) != Number.SingleToInt32Bits(other.Boost))
+            if (J2N.BitConversion.SingleToInt32Bits(Boost) != J2N.BitConversion.SingleToInt32Bits(other.Boost))
             {
                 return false;
             }

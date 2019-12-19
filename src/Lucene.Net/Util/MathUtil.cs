@@ -117,7 +117,7 @@ namespace Lucene.Net.Util
         {
             double sign;
             // check the sign bit of the raw representation to handle -0
-            if (BitConverter.DoubleToInt64Bits(a) < 0)
+            if (J2N.BitConversion.DoubleToRawInt64Bits(a) < 0)
             {
                 a = Math.Abs(a);
                 sign = -1.0d;
@@ -162,7 +162,7 @@ namespace Lucene.Net.Util
         {
             double mult;
             // check the sign bit of the raw representation to handle -0
-            if (BitConverter.DoubleToInt64Bits(a) < 0)
+            if (J2N.BitConversion.DoubleToRawInt64Bits(a) < 0)
             {
                 a = Math.Abs(a);
                 mult = -0.5d;

@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             result = prime * result + From;
             result = prime * result + To;
             long temp;
-            temp = Number.DoubleToInt64Bits(Weight);
+            temp = J2N.BitConversion.DoubleToInt64Bits(Weight);
             result = prime * result + (int)(temp ^ (int)((uint)temp >> 32));
             return result;
         }
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 return false;
             if (To != other.To)
                 return false;
-            if (Number.DoubleToInt64Bits(Weight) != Number
+            if (J2N.BitConversion.DoubleToInt64Bits(Weight) != J2N.BitConversion
                 .DoubleToInt64Bits(other.Weight))
                 return false;
             return true;

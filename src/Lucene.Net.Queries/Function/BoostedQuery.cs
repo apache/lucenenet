@@ -243,7 +243,7 @@ namespace Lucene.Net.Queries.Function
             h ^= (h << 17) | ((int)((uint)h >> 16));
             h += boostVal.GetHashCode();
             h ^= (h << 8) | ((int)((uint)h >> 25));
-            h += Number.SingleToInt32Bits(Boost);
+            h += J2N.BitConversion.SingleToInt32Bits(Boost);
             return h;
         }
     }

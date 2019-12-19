@@ -162,7 +162,7 @@ namespace Lucene.Net.Util
                 bytes.Bytes = new byte[NumericUtils.BUF_SIZE_INT64]; // use the max
             }
             bytes.Bytes[0] = (byte)(SHIFT_START_INT64 + shift);
-            ulong sortableBits = BitConverter.ToUInt64(BitConverter.GetBytes(val), 0) ^ 0x8000000000000000L;
+            ulong sortableBits = BitConverter.ToUInt64(BitConverter.GetBytes(val), 0) ^ 0x8000000000000000L; // LUCENENET TODO: Performance - Benchmark this
             sortableBits = sortableBits >> shift;
             while (nChars > 0)
             {
@@ -307,7 +307,7 @@ namespace Lucene.Net.Util
         /// <seealso cref="SortableInt64ToDouble(long)"/>
         public static long DoubleToSortableInt64(double val)
         {
-            long f = Number.DoubleToInt64Bits(val);
+            long f = J2N.BitConversion.DoubleToInt64Bits(val);
             if (f < 0)
             {
                 f ^= 0x7fffffffffffffffL;
@@ -327,7 +327,7 @@ namespace Lucene.Net.Util
             {
                 val ^= 0x7fffffffffffffffL;
             }
-            return BitConverter.Int64BitsToDouble(val);
+            return J2N.BitConversion.Int64BitsToDouble(val);
         }
 
         /// <summary>
@@ -343,7 +343,7 @@ namespace Lucene.Net.Util
         /// <seealso cref="SortableInt32ToSingle(int)"/>
         public static int SingleToSortableInt32(float val)
         {
-            int f = Number.SingleToInt32Bits(val);
+            int f = J2N.BitConversion.SingleToInt32Bits(val);
             if (f < 0)
             {
                 f ^= 0x7fffffff;
@@ -363,7 +363,7 @@ namespace Lucene.Net.Util
             {
                 val ^= 0x7fffffff;
             }
-            return Number.Int32BitsToSingle(val);
+            return J2N.BitConversion.Int32BitsToSingle(val);
         }
 
         /// <summary>

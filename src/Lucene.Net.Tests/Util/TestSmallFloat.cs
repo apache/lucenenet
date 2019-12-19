@@ -33,7 +33,7 @@ namespace Lucene.Net.Util
             int mantissa = b & 7;
             int exponent = (b >> 3) & 31;
             int bits = ((exponent + (63 - 15)) << 24) | (mantissa << 21);
-            return Number.Int32BitsToSingle(bits);
+            return J2N.BitConversion.Int32BitsToSingle(bits);
         }
 
         // original lucene floatToByte (since lucene 1.3)
@@ -49,7 +49,7 @@ namespace Lucene.Net.Util
                 return 0;
             }
 
-            int bits = Number.SingleToInt32Bits(f); // parse float into parts
+            int bits = J2N.BitConversion.SingleToInt32Bits(f); // parse float into parts
             int mantissa = (bits & 0xffffff) >> 21;
             int exponent = (((bits >> 24) & 0x7f) - 63) + 15;
 
@@ -82,7 +82,7 @@ namespace Lucene.Net.Util
                 return 0;
             }
 
-            int bits = Number.SingleToInt32Bits(f); // parse float into parts
+            int bits = J2N.BitConversion.SingleToInt32Bits(f); // parse float into parts
             int mantissa = (bits & 0xffffff) >> 21;
             int exponent = (((bits >> 24) & 0x7f) - 63) + 15;
 
@@ -141,7 +141,7 @@ namespace Lucene.Net.Util
             int num = AtLeast(100000);
             for (int i = 0; i < num; i++)
             {
-                float f = Number.Int32BitsToSingle(Random.Next());
+                float f = J2N.BitConversion.Int32BitsToSingle(Random.Next());
                 if (float.IsNaN(f)) // skip NaN
                 {
                     continue;

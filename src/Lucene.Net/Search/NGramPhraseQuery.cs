@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return Number.SingleToInt32Bits(Boost) 
+            return J2N.BitConversion.SingleToInt32Bits(Boost) 
                 ^ Slop 
                 ^ Equatable.Wrap(GetTerms()).GetHashCode() 
                 ^ Equatable.Wrap(GetPositions()).GetHashCode() 

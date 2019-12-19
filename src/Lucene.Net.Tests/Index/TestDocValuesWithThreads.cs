@@ -1,5 +1,4 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
@@ -159,11 +158,11 @@ namespace Lucene.Net.Index
                                 break;
 
                             case 4:
-                                Assert.AreEqual(Number.Int32BitsToSingle((int)Numbers[docID]), FieldCache.DEFAULT.GetSingles(Ar, "number", false).Get(docID), 0.0f);
+                                Assert.AreEqual(J2N.BitConversion.Int32BitsToSingle((int)Numbers[docID]), FieldCache.DEFAULT.GetSingles(Ar, "number", false).Get(docID), 0.0f);
                                 break;
 
                             case 5:
-                                Assert.AreEqual(BitConverter.Int64BitsToDouble((long)Numbers[docID]), FieldCache.DEFAULT.GetDoubles(Ar, "number", false).Get(docID), 0.0);
+                                Assert.AreEqual(J2N.BitConversion.Int64BitsToDouble((long)Numbers[docID]), FieldCache.DEFAULT.GetDoubles(Ar, "number", false).Get(docID), 0.0);
                                 break;
                         }
                         bdv.Get(docID, scratch);

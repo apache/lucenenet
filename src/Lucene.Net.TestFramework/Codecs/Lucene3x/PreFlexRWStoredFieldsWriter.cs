@@ -190,10 +190,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                         fieldsStream.WriteInt64(field.GetInt64Value().Value);
                         break;
                     case NumericFieldType.SINGLE:
-                        fieldsStream.WriteInt32(Number.SingleToInt32Bits(field.GetSingleValue().Value));
+                        fieldsStream.WriteInt32(J2N.BitConversion.SingleToInt32Bits(field.GetSingleValue().Value));
                         break;
                     case NumericFieldType.DOUBLE:
-                        fieldsStream.WriteInt64(BitConverter.DoubleToInt64Bits(field.GetDoubleValue().Value));
+                        fieldsStream.WriteInt64(J2N.BitConversion.DoubleToInt64Bits(field.GetDoubleValue().Value));
                         break;
                     default:
                         Debug.Assert(false);

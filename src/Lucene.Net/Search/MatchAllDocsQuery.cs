@@ -1,4 +1,3 @@
-using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Text;
 
@@ -176,7 +175,7 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            return Number.SingleToInt32Bits(Boost) ^ 0x1AA71190;
+            return J2N.BitConversion.SingleToInt32Bits(Boost) ^ 0x1AA71190;
         }
     }
 }

@@ -1184,7 +1184,7 @@ namespace Lucene.Net.Search
 
             public override float Get(int docID)
             {
-                return Number.Int32BitsToSingle((int)valuesIn.Get(docID));
+                return J2N.BitConversion.Int32BitsToSingle((int)valuesIn.Get(docID));
             }
         }
 
@@ -1538,7 +1538,7 @@ namespace Lucene.Net.Search
 
             public override double Get(int docID)
             {
-                return BitConverter.Int64BitsToDouble(valuesIn.Get(docID));
+                return J2N.BitConversion.Int64BitsToDouble(valuesIn.Get(docID));
             }
         }
 

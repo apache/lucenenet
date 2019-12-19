@@ -1,15 +1,14 @@
-using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
-using Lucene.Net.Attributes;
 
 namespace Lucene.Net.Index
 {
@@ -30,40 +29,37 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using FileInfo = System.IO.FileInfo;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BinaryDocValuesField = Lucene.Net.Documents.BinaryDocValuesField;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Constants = Lucene.Net.Util.Constants;
+    using Directory = Lucene.Net.Store.Directory;
+    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Lucene.Net.Documents.Document;
     using DoubleDocValuesField = Lucene.Net.Documents.DoubleDocValuesField;
     using Field = Lucene.Net.Documents.Field;
+    using FieldCache = Lucene.Net.Search.FieldCache;
     using FieldType = Lucene.Net.Documents.FieldType;
-    using SingleDocValuesField = Lucene.Net.Documents.SingleDocValuesField;
+    using IBits = Lucene.Net.Util.IBits;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Int32Field = Lucene.Net.Documents.Int32Field;
     using Int64Field = Lucene.Net.Documents.Int64Field;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using NIOFSDirectory = Lucene.Net.Store.NIOFSDirectory;
     using NumericDocValuesField = Lucene.Net.Documents.NumericDocValuesField;
+    using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
+    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+    using SimpleFSDirectory = Lucene.Net.Store.SimpleFSDirectory;
+    using SingleDocValuesField = Lucene.Net.Documents.SingleDocValuesField;
     using SortedDocValuesField = Lucene.Net.Documents.SortedDocValuesField;
     using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
     using StringField = Lucene.Net.Documents.StringField;
-    using TextField = Lucene.Net.Documents.TextField;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using FieldCache = Lucene.Net.Search.FieldCache;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
-    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using Directory = Lucene.Net.Store.Directory;
-    using FSDirectory = Lucene.Net.Store.FSDirectory;
-    using NIOFSDirectory = Lucene.Net.Store.NIOFSDirectory;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using SimpleFSDirectory = Lucene.Net.Store.SimpleFSDirectory;
-    using IBits = Lucene.Net.Util.IBits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Constants = Lucene.Net.Util.Constants;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using StringHelper = Lucene.Net.Util.StringHelper;
+    using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
+    using TextField = Lucene.Net.Documents.TextField;
 
     /*
       Verify we can read the pre-5.0 file format, do searches
@@ -524,8 +520,8 @@ namespace Lucene.Net.Index
                     dvBytesStraightVar.Get(i, scratch);
                     Assert.AreEqual(expectedRef, scratch);
 
-                    Assert.AreEqual((double)id, BitConverter.Int64BitsToDouble(dvDouble.Get(i)), 0D);
-                    Assert.AreEqual((float)id, Number.Int32BitsToSingle((int)dvFloat.Get(i)), 0F);
+                    Assert.AreEqual((double)id, J2N.BitConversion.Int64BitsToDouble(dvDouble.Get(i)), 0D);
+                    Assert.AreEqual((float)id, J2N.BitConversion.Int32BitsToSingle((int)dvFloat.Get(i)), 0F);
                     Assert.AreEqual(id, dvInt.Get(i));
                     Assert.AreEqual(id, dvLong.Get(i));
                     Assert.AreEqual(id, dvPacked.Get(i));

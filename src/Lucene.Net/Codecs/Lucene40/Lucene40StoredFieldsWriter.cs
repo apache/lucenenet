@@ -1,5 +1,5 @@
+using J2N;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -234,10 +234,10 @@ namespace Lucene.Net.Codecs.Lucene40
                         fieldsStream.WriteInt64(field.GetInt64Value().Value);
                         break;
                     case NumericFieldType.SINGLE:
-                        fieldsStream.WriteInt32(Number.SingleToInt32Bits(field.GetSingleValue().Value));
+                        fieldsStream.WriteInt32(BitConversion.SingleToInt32Bits(field.GetSingleValue().Value));
                         break;
                     case NumericFieldType.DOUBLE:
-                        fieldsStream.WriteInt64(BitConverter.DoubleToInt64Bits(field.GetDoubleValue().Value));
+                        fieldsStream.WriteInt64(BitConversion.DoubleToInt64Bits(field.GetDoubleValue().Value));
                         break;
                     default:
                         throw new InvalidOperationException("Cannot get here");

@@ -82,9 +82,9 @@ namespace Lucene.Net.Codecs.Lucene40
     ///    <item><description>MaxAddress, MinValue, DefaultValue --&gt; Int64 (<see cref="Store.DataOutput.WriteInt64(long)"/>) </description></item>
     ///    <item><description>PackedStream, Addresses, Ordinals --&gt; <see cref="Util.Packed.PackedInt32s"/></description></item>
     ///    <item><description>ValueSize, NumValues --&gt; Int32 (<see cref="Store.DataOutput.WriteInt32(int)"/>) </description></item>
-    ///    <item><description>Float32 --&gt; 32-bit float encoded with <see cref="Support.Number.SingleToRawInt32Bits(float)"/>
+    ///    <item><description>Float32 --&gt; 32-bit float encoded with <see cref="J2N.BitConversion.SingleToRawInt32Bits(float)"/>
     ///                       then written as Int32 (<see cref="Store.DataOutput.WriteInt32(int)"/>) </description></item>
-    ///    <item><description>Float64 --&gt; 64-bit float encoded with <see cref="Support.Number.DoubleToRawInt64Bits(double)"/>
+    ///    <item><description>Float64 --&gt; 64-bit float encoded with <see cref="J2N.BitConversion.DoubleToRawInt64Bits(double)"/>
     ///                       then written as Int64 (<see cref="Store.DataOutput.WriteInt64(long)"/>) </description></item>
     ///    <item><description>TotalBytes --&gt; VLong (<see cref="Store.DataOutput.WriteVInt64(long)"/>) </description></item>
     ///    <item><description>TotalVarBytes --&gt; Int64 (<see cref="Store.DataOutput.WriteInt64(long)"/>) </description></item>

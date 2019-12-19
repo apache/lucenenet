@@ -1,4 +1,3 @@
-using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -41,7 +40,7 @@ namespace Lucene.Net.Util.Packed
     /// <item><description>B: the B from f: x &#8594; A &#215; x + B using a
     ///     variable-length <see cref="long"/> (<see cref="DataOutput.WriteVInt64(long)"/>)</description></item>
     /// <item><description>A: the A from f: x &#8594; A &#215; x + B encoded using
-    ///     <see cref="Support.Number.SingleToInt32Bits(float)"/> on
+    ///     <see cref="J2N.BitConversion.SingleToInt32Bits(float)"/> on
     ///     4 bytes (<see cref="DataOutput.WriteVInt32(int)"/>)</description></item>
     /// <item><description>BitsPerValue: a variable-length <see cref="int"/> (<see cref="DataOutput.WriteVInt32(int)"/>)</description></item>
     /// <item><description>Ints: if BitsPerValue is <c>0</c>, then there is nothing to read and
@@ -89,7 +88,7 @@ namespace Lucene.Net.Util.Packed
             }
 
             m_out.WriteVInt64(min);
-            m_out.WriteInt32(Number.SingleToInt32Bits(avg));
+            m_out.WriteInt32(J2N.BitConversion.SingleToInt32Bits(avg));
             if (maxZigZagDelta == 0)
             {
                 m_out.WriteVInt32(0);

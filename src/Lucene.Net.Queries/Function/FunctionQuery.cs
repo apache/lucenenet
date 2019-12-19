@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,7 +22,7 @@ namespace Lucene.Net.Queries.Function
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// Returns a score for each document based on a <see cref="Function.ValueSource"/>,
     /// often some function of the value of a field.
@@ -231,7 +230,7 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public override int GetHashCode()
         {
-            return func.GetHashCode() * 31 + Number.SingleToInt32Bits(Boost);
+            return func.GetHashCode() * 31 + J2N.BitConversion.SingleToInt32Bits(Boost);
         }
     }
 }

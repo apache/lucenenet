@@ -74,7 +74,7 @@ namespace Lucene.Net.Documents
         /// Adds a new <see cref="DoubleDocValuesField"/> field with the specified 64-bit double value </summary>
         /// <remarks>
         /// Syntactic sugar for encoding doubles as <see cref="Index.NumericDocValues"/>
-        /// via <see cref="Support.Number.DoubleToRawInt64Bits(double)"/>.
+        /// via <see cref="J2N.BitConversion.DoubleToRawInt64Bits(double)"/>.
         /// <para/>
         /// Per-document double values can be retrieved via
         /// <see cref="Search.IFieldCache.GetDoubles(Lucene.Net.Index.AtomicReader, string, bool)"/>.

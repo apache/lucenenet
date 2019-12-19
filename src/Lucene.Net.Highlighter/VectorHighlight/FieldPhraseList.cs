@@ -447,7 +447,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 int result = 1;
                 result = prime * result + StartOffset;
                 result = prime * result + EndOffset;
-                long b = Number.DoubleToInt64Bits(Boost);
+                long b = J2N.BitConversion.DoubleToInt64Bits(Boost);
                 result = prime * result + (int)(b ^ TripleShift(b, 32));
                 return result;
             }

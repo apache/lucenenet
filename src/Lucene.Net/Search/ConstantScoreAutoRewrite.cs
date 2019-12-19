@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
         public override int GetHashCode()
         {
             const int prime = 1279;
-            return (int)(prime * termCountCutoff + BitConverter.DoubleToInt64Bits(docCountPercent));
+            return (int)(prime * termCountCutoff + J2N.BitConversion.DoubleToInt64Bits(docCountPercent));
         }
 
         public override bool Equals(object obj)
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search
                 return false;
             }
 
-            if (BitConverter.DoubleToInt64Bits(other.docCountPercent) != BitConverter.DoubleToInt64Bits(docCountPercent))
+            if (J2N.BitConversion.DoubleToInt64Bits(other.docCountPercent) != J2N.BitConversion.DoubleToInt64Bits(docCountPercent))
             {
                 return false;
             }

@@ -441,7 +441,7 @@ namespace Lucene.Net.Codecs.Compressing
                 float[] charsPerTerm = new float[fieldNums.Length];
                 for (int i = 0; i < charsPerTerm.Length; ++i)
                 {
-                    charsPerTerm[i] = Number.Int32BitsToSingle(vectorsStream.ReadInt32());
+                    charsPerTerm[i] = J2N.BitConversion.Int32BitsToSingle(vectorsStream.ReadInt32());
                 }
                 startOffsets = ReadPositions(skip, numFields, flags, numTerms, termFreqs, CompressingTermVectorsWriter.OFFSETS, totalOffsets, positionIndex);
                 lengths = ReadPositions(skip, numFields, flags, numTerms, termFreqs, CompressingTermVectorsWriter.OFFSETS, totalOffsets, positionIndex);

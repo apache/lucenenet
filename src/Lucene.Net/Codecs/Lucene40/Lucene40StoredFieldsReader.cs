@@ -211,11 +211,11 @@ namespace Lucene.Net.Codecs.Lucene40
                         return;
 
                     case Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_FLOAT:
-                        visitor.SingleField(info, Number.Int32BitsToSingle(fieldsStream.ReadInt32()));
+                        visitor.SingleField(info, J2N.BitConversion.Int32BitsToSingle(fieldsStream.ReadInt32()));
                         return;
 
                     case Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_DOUBLE:
-                        visitor.DoubleField(info, BitConverter.Int64BitsToDouble(fieldsStream.ReadInt64()));
+                        visitor.DoubleField(info, J2N.BitConversion.Int64BitsToDouble(fieldsStream.ReadInt64()));
                         return;
 
                     default:

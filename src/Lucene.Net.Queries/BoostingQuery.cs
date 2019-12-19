@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Queries
 {
@@ -107,7 +106,7 @@ namespace Lucene.Net.Queries
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + Number.SingleToInt32Bits(boost);
+            result = prime * result + J2N.BitConversion.SingleToInt32Bits(boost);
             result = prime * result + ((context == null) ? 0 : context.GetHashCode());
             result = prime * result + ((match == null) ? 0 : match.GetHashCode());
             return result;
@@ -134,7 +133,7 @@ namespace Lucene.Net.Queries
             }
 
             var other = (BoostingQuery)obj;
-            if (Number.SingleToInt32Bits(boost) != Number.SingleToInt32Bits(other.boost))
+            if (J2N.BitConversion.SingleToInt32Bits(boost) != J2N.BitConversion.SingleToInt32Bits(other.boost))
             {
                 return false;
             }

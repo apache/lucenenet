@@ -1,19 +1,16 @@
+using Lucene.Net.Documents;
 using System;
 using System.Text;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using NUnit.Framework;
     using System.Collections.Generic;
     using System.IO;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IBits = Lucene.Net.Util.IBits;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -33,6 +30,7 @@ namespace Lucene.Net.Search
 
     using Document = Documents.Document;
     using Field = Field;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NumericDocValuesField = NumericDocValuesField;
@@ -606,7 +604,7 @@ namespace Lucene.Net.Search
                     return false;
                 }
                 FixedScoreQuery other = (FixedScoreQuery)o;
-                return Number.SingleToInt32Bits(Boost) == Number.SingleToInt32Bits(other.Boost) && Reverse == other.Reverse && Arrays.Equals(IdToNum, other.IdToNum);
+                return J2N.BitConversion.SingleToInt32Bits(Boost) == J2N.BitConversion.SingleToInt32Bits(other.Boost) && Reverse == other.Reverse && Arrays.Equals(IdToNum, other.IdToNum);
             }
 
             public override object Clone()

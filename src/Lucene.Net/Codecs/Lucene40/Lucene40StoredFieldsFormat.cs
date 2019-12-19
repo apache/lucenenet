@@ -60,8 +60,8 @@ namespace Lucene.Net.Codecs.Lucene40
     ///                             <item><description>all bits in mask are cleared if no numeric field at all</description></item>
     ///                             <item><description>1&lt;&lt;3: Value is Int</description></item>
     ///                             <item><description>2&lt;&lt;3: Value is Long</description></item>
-    ///                             <item><description>3&lt;&lt;3: Value is Int as Float (as of <see cref="Support.Number.Int32BitsToSingle(int)"/></description></item>
-    ///                             <item><description>4&lt;&lt;3: Value is Long as Double (as of <see cref="System.BitConverter.Int64BitsToDouble(long)"/></description></item>
+    ///                             <item><description>3&lt;&lt;3: Value is Int as Float (as of <see cref="J2N.BitConversion.Int32BitsToSingle(int)"/></description></item>
+    ///                             <item><description>4&lt;&lt;3: Value is Long as Double (as of <see cref="J2N.BitConversion.Int64BitsToDouble(long)"/></description></item>
     ///                         </list>
     ///                     </description></item>
     ///                 </list>

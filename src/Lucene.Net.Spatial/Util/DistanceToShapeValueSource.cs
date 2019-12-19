@@ -2,7 +2,6 @@
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;
@@ -122,7 +121,7 @@ namespace Lucene.Net.Spatial.Util
             long temp;
             result = shapeValueSource.GetHashCode();
             result = 31 * result + queryPoint.GetHashCode();
-            temp = Number.DoubleToInt64Bits(multiplier);
+            temp = J2N.BitConversion.DoubleToInt64Bits(multiplier);
             result = 31 * result + (int)(temp ^ ((long)((ulong)temp) >> 32));
             return result;
         }

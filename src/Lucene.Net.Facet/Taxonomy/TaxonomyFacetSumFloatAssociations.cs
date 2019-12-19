@@ -1,5 +1,4 @@
-﻿using Lucene.Net.Support;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -87,7 +86,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         int value = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | 
                             ((bytes[offset + 2] & 0xFF) << 8) | (bytes[offset + 3] & 0xFF);
                         offset += 4;
-                        m_values[ord] += Number.Int32BitsToSingle(value);
+                        m_values[ord] += J2N.BitConversion.Int32BitsToSingle(value);
                     }
                 }
             }

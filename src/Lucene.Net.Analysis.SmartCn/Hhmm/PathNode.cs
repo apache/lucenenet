@@ -1,5 +1,4 @@
 ﻿// lucene version compatibility level: 4.8.1
-using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
@@ -53,7 +52,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             int result = 1;
             result = prime * result + PreNode;
             long temp;
-            temp = Number.DoubleToInt64Bits(Weight);
+            temp = J2N.BitConversion.DoubleToInt64Bits(Weight);
             result = prime * result + (int)(temp ^ (int)((uint)temp >> 32));
             return result;
         }
@@ -72,7 +71,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             PathNode other = (PathNode)obj;
             if (PreNode != other.PreNode)
                 return false;
-            if (Number.DoubleToInt64Bits(Weight) != Number
+            if (J2N.BitConversion.DoubleToInt64Bits(Weight) != J2N.BitConversion
                 .DoubleToInt64Bits(other.Weight))
                 return false;
             return true;
