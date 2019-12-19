@@ -271,11 +271,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             Cell cell = GetCell(p, detailLevel);
             if (!inclParents)
             {
-#if !NET35
                 return new ReadOnlyCollection<Cell>(new[] { cell });
-#else
-                return new List<Cell>(new[] { cell }).AsReadOnly();
-#endif
             }
             string endToken = cell.TokenString;
             Debug.Assert(endToken.Length == detailLevel);

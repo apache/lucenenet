@@ -1,8 +1,4 @@
-#if !NET35
 using System.Collections.Concurrent;
-#else
-using Lucene.Net.Support.Compatibility;
-#endif
 using System.Collections.Generic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;

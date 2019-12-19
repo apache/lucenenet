@@ -264,7 +264,7 @@ namespace Lucene.Net.Search.Highlight
 
             IDictionary<string, SpanQuery> queries = new HashMap<string, SpanQuery>();
 
-            var nonWeightedTerms = Support.Compatibility.SetFactory.CreateHashSet<Term>();
+            var nonWeightedTerms = new HashSet<Term>();
             bool mustRewriteQuery = MustRewriteQuery(spanQuery);
             if (mustRewriteQuery)
             {
@@ -343,7 +343,7 @@ namespace Lucene.Net.Search.Highlight
         /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
         protected virtual void ExtractWeightedTerms(IDictionary<string, WeightedSpanTerm> terms, Query query)
         {
-            var nonWeightedTerms = Support.Compatibility.SetFactory.CreateHashSet<Term>();
+            var nonWeightedTerms = new HashSet<Term>();
             query.ExtractTerms(nonWeightedTerms);
 
             foreach (Term queryTerm in nonWeightedTerms)

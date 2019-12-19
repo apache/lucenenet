@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using Lucene.Net.Support.Compatibility;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

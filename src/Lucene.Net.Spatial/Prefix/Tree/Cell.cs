@@ -209,11 +209,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 Cell subCell = GetSubCell((IPoint)shapeFilter);
                 subCell.m_shapeRel = SpatialRelation.CONTAINS;
-#if !NET35
                 return new ReadOnlyCollection<Cell>(new[] { subCell });
-#else
-                return new List<Cell>(new[] { subCell }).AsReadOnly();
-#endif
             }
 
             ICollection<Cell> cells = GetSubCells();
