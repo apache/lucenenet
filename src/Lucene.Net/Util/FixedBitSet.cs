@@ -1,3 +1,4 @@
+using J2N.Numerics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -72,7 +73,7 @@ namespace Lucene.Net.Util
 
                 if (word != 0)
                 {
-                    return doc = doc + Number.NumberOfTrailingZeros(word);
+                    return doc = doc + word.TrailingZeroCount();
                 }
 
                 while (++i < numWords)
@@ -80,7 +81,7 @@ namespace Lucene.Net.Util
                     word = bits[i];
                     if (word != 0)
                     {
-                        return doc = (i << 6) + Number.NumberOfTrailingZeros(word);
+                        return doc = (i << 6) + word.TrailingZeroCount();
                     }
                 }
 
@@ -109,7 +110,7 @@ namespace Lucene.Net.Util
 
                 if (word != 0)
                 {
-                    return doc = target + Number.NumberOfTrailingZeros(word);
+                    return doc = target + word.TrailingZeroCount();
                 }
 
                 while (++i < numWords)
@@ -117,7 +118,7 @@ namespace Lucene.Net.Util
                     word = bits[i];
                     if (word != 0)
                     {
-                        return doc = (i << 6) + Number.NumberOfTrailingZeros(word);
+                        return doc = (i << 6) + word.TrailingZeroCount();
                     }
                 }
 
@@ -335,7 +336,7 @@ namespace Lucene.Net.Util
 
             if (word != 0)
             {
-                return index + Number.NumberOfTrailingZeros(word);
+                return index + word.TrailingZeroCount();
             }
 
             while (++i < numWords)
@@ -343,7 +344,7 @@ namespace Lucene.Net.Util
                 word = bits[i];
                 if (word != 0)
                 {
-                    return (i << 6) + Number.NumberOfTrailingZeros(word);
+                    return (i << 6) + word.TrailingZeroCount();
                 }
             }
 
@@ -363,7 +364,7 @@ namespace Lucene.Net.Util
 
             if (word != 0)
             {
-                return (i << 6) + subIndex - Number.NumberOfLeadingZeros(word); // See LUCENE-3197
+                return (i << 6) + subIndex - word.LeadingZeroCount(); // See LUCENE-3197
             }
 
             while (--i >= 0)
@@ -371,7 +372,7 @@ namespace Lucene.Net.Util
                 word = bits[i];
                 if (word != 0)
                 {
-                    return (i << 6) + 63 - Number.NumberOfLeadingZeros(word);
+                    return (i << 6) + 63 - word.LeadingZeroCount();
                 }
             }
 

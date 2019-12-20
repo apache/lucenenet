@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Numerics;
 using System;
 
 namespace Lucene.Net.Util
@@ -79,11 +79,11 @@ namespace Lucene.Net.Util
             {
                 return a;
             }
-            int commonTrailingZeros = Number.NumberOfTrailingZeros(a | b);
-            a = (long)((ulong)a >> Number.NumberOfTrailingZeros(a));
+            int commonTrailingZeros = (a | b).TrailingZeroCount();
+            a = (long)((ulong)a >> a.TrailingZeroCount());
             while (true)
             {
-                b = (long)((ulong)b >> Number.NumberOfTrailingZeros(b));
+                b = (long)((ulong)b >> b.TrailingZeroCount());
                 if (a == b)
                 {
                     break;

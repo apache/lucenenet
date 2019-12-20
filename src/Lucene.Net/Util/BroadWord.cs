@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Numerics;
 using System.Diagnostics;
 
 namespace Lucene.Net.Util
@@ -43,7 +43,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Bit count of a <see cref="long"/>.
         /// Only here to compare the implementation with <see cref="Select(long, int)"/>,
-        /// normally <see cref="Number.BitCount(long)"/> is preferable. </summary>
+        /// normally <see cref="J2N.Numerics.BitOperationExtensions.PopCount(long)"/> is preferable. </summary>
         /// <returns> The total number of 1 bits in x. </returns>
         internal static int BitCount(long x)
         {
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util
         public static readonly long H16_L = L16_L << 15;
 
         /// <summary>
-        /// Naive implementation of <see cref="Select(long, int)"/>, using <see cref="Number.NumberOfLeadingZeros(long)"/> repetitively.
+        /// Naive implementation of <see cref="Select(long, int)"/>, using <see cref="J2N.Numerics.BitOperationExtensions.TrailingZeroCount(long)"/> repetitively.
         /// Works relatively fast for low ranks. </summary>
         /// <returns> The index of the r-th 1 bit in x, or if no such bit exists, 72. </returns>
         public static int SelectNaive(long x, int r)
@@ -156,7 +156,7 @@ namespace Lucene.Net.Util
             int s = -1;
             while ((x != 0L) && (r > 0))
             {
-                int ntz = Number.NumberOfTrailingZeros(x);
+                int ntz = x.TrailingZeroCount();
                 x = (long)((ulong)x >> (ntz + 1));
                 s += (ntz + 1);
                 r -= 1;

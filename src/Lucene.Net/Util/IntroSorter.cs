@@ -1,3 +1,4 @@
+using J2N.Numerics;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
@@ -34,7 +35,7 @@ namespace Lucene.Net.Util
         internal static int CeilLog2(int n)
         {
             //8bits in a byte
-            return sizeof(int) * 8 - Number.NumberOfLeadingZeros(n - 1);
+            return sizeof(int) * 8 - (n - 1).LeadingZeroCount();
         }
 
         /// <summary>

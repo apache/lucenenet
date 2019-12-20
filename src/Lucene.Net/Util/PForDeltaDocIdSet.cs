@@ -1,3 +1,4 @@
+using J2N.Numerics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -146,7 +147,7 @@ namespace Lucene.Net.Util
                 Arrays.Fill(freqs, 0);
                 for (int i = 0; i < bufferSize; ++i)
                 {
-                    ++freqs[32 - Number.NumberOfLeadingZeros(buffer[i])];
+                    ++freqs[32 - buffer[i].LeadingZeroCount()];
                 }
             }
 

@@ -1,3 +1,4 @@
+using J2N.Numerics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -1379,7 +1380,7 @@ namespace Lucene.Net.Util.Packed
             {
                 throw new System.ArgumentException("maxValue must be non-negative (got: " + maxValue + ")");
             }
-            return Math.Max(1, 64 - Number.NumberOfLeadingZeros(maxValue));
+            return Math.Max(1, 64 - maxValue.LeadingZeroCount());
         }
 
         /// <summary>
@@ -1503,7 +1504,7 @@ namespace Lucene.Net.Util.Packed
             {
                 throw new System.ArgumentException("blockSize must be a power of two, got " + blockSize);
             }
-            return Number.NumberOfTrailingZeros(blockSize);
+            return blockSize.TrailingZeroCount();
         }
 
         /// <summary>

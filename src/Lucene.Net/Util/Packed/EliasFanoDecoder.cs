@@ -32,7 +32,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// NOTE: This was LOG2_LONG_SIZE in Lucene.
         /// </summary>
-        private static readonly int LOG2_INT64_SIZE = Number.NumberOfTrailingZeros((sizeof(long) * 8));
+        private static readonly int LOG2_INT64_SIZE = (sizeof(long) * 8).TrailingZeroCount();
 
         private readonly EliasFanoEncoder efEncoder;
         private readonly long numEncoded;
@@ -222,7 +222,7 @@ namespace Lucene.Net.Util.Packed
             {
                 ToNextHighInt64(); // inlining and unrolling would simplify somewhat
             }
-            setBitForIndex += Number.NumberOfTrailingZeros(curHighLong);
+            setBitForIndex += curHighLong.TrailingZeroCount();
         }
 
         /// <summary>
@@ -402,7 +402,7 @@ namespace Lucene.Net.Util.Packed
                     curHighLong = upperLong;
                 }
             }
-            setBitForIndex += Number.NumberOfTrailingZeros(curHighLong);
+            setBitForIndex += curHighLong.TrailingZeroCount();
             Debug.Assert((setBitForIndex - efIndex) >= highTarget); // highTarget reached
 
             // Linear search also with low values
@@ -480,7 +480,7 @@ namespace Lucene.Net.Util.Packed
             {
                 ToPreviousHighInt64(); // inlining and unrolling would simplify somewhat
             }
-            setBitForIndex -= Number.NumberOfLeadingZeros(curHighLong);
+            setBitForIndex -= curHighLong.LeadingZeroCount();
             return CurrentHighValue();
         }
 

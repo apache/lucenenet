@@ -1,3 +1,4 @@
+using J2N.Numerics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -96,7 +97,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// NOTE: This was LOG2_LONG_SIZE in Lucene.
         /// </summary>
-        private static readonly int LOG2_INT64_SIZE = Number.NumberOfTrailingZeros(sizeof(long) * 8);
+        private static readonly int LOG2_INT64_SIZE = (sizeof(long) * 8).TrailingZeroCount();
 
         internal long numEncoded = 0L;
         internal long lastEncoded = 0L;
@@ -162,7 +163,7 @@ namespace Lucene.Net.Util.Packed
                 long lowBitsFac = this.upperBound / this.numValues;
                 if (lowBitsFac > 0)
                 {
-                    nLowBits = 63 - Number.NumberOfLeadingZeros(lowBitsFac); // see Long.numberOfLeadingZeros javadocs
+                    nLowBits = 63 - lowBitsFac.LeadingZeroCount(); // see Long.numberOfLeadingZeros javadocs
                 }
             }
             this.numLowBits = nLowBits;
@@ -194,7 +195,7 @@ namespace Lucene.Net.Util.Packed
             long nIndexEntries = maxHighValue / indexInterval; // no zero value index entry
             this.numIndexEntries = (nIndexEntries >= 0) ? nIndexEntries : 0;
             long maxIndexEntry = maxHighValue + numValues - 1; // clear upper bits, set upper bits, start at zero
-            this.nIndexEntryBits = (maxIndexEntry <= 0) ? 0 : (64 - Number.NumberOfLeadingZeros(maxIndexEntry));
+            this.nIndexEntryBits = (maxIndexEntry <= 0) ? 0 : (64 - maxIndexEntry.LeadingZeroCount());
             long numLongsForIndexBits = NumInt64sForBits(numIndexEntries * nIndexEntryBits);
             if (numLongsForIndexBits > int.MaxValue)
             {
@@ -384,19 +385,19 @@ namespace Lucene.Net.Util.Packed
             }
             EliasFanoEncoder oefs = (EliasFanoEncoder)other;
             // no equality needed for upperBound
-            return (this.numValues == oefs.numValues) 
-                && (this.numEncoded == oefs.numEncoded) 
-                && (this.numLowBits == oefs.numLowBits) 
-                && (this.numIndexEntries == oefs.numIndexEntries) 
-                && (this.indexInterval == oefs.indexInterval) 
-                && Arrays.Equals(this.upperLongs, oefs.upperLongs) 
+            return (this.numValues == oefs.numValues)
+                && (this.numEncoded == oefs.numEncoded)
+                && (this.numLowBits == oefs.numLowBits)
+                && (this.numIndexEntries == oefs.numIndexEntries)
+                && (this.indexInterval == oefs.indexInterval)
+                && Arrays.Equals(this.upperLongs, oefs.upperLongs)
                 && Arrays.Equals(this.lowerLongs, oefs.lowerLongs); // no need to check index content
         }
 
         public override int GetHashCode()
         {
-            int h = ((int)(31 * (numValues + 7 * (numEncoded + 5 * (numLowBits + 3 * (numIndexEntries + 11 * indexInterval)))))) 
-                ^ Arrays.GetHashCode(upperLongs) 
+            int h = ((int)(31 * (numValues + 7 * (numEncoded + 5 * (numLowBits + 3 * (numIndexEntries + 11 * indexInterval))))))
+                ^ Arrays.GetHashCode(upperLongs)
                 ^ Arrays.GetHashCode(lowerLongs);
             return h;
         }
