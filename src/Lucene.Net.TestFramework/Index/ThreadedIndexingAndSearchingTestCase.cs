@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
@@ -184,7 +185,7 @@ namespace Lucene.Net.Index
                 // TODO: would be better if this were cross thread, so that we make sure one thread deleting anothers added docs works:
                 IList<string> toDeleteIDs = new List<string>();
                 IList<SubDocs> toDeleteSubDocs = new List<SubDocs>();
-                while (Environment.TickCount < stopTime && !outerInstance.m_failed.Get())
+                while (Environment.TickCount < stopTime && !outerInstance.m_failed)
                 {
                     try
                     {
@@ -395,7 +396,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine(Thread.CurrentThread.Name + ": hit exc");
                         Console.WriteLine(t.ToString());
                         Console.Write(t.StackTrace);
-                        outerInstance.m_failed.Set(true);
+                        outerInstance.m_failed.Value = (true);
                         throw new Exception(t.ToString(), t);
                     }
                 }
@@ -541,7 +542,7 @@ namespace Lucene.Net.Index
                     catch (Exception t)
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": hit exc");
-                        outerInstance.m_failed.Set(true);
+                        outerInstance.m_failed.Value = (true);
                         Console.WriteLine(t.ToString());
                         throw new Exception(t.ToString(), t);
                     }
@@ -568,7 +569,7 @@ namespace Lucene.Net.Index
 
         public virtual void RunTest(string testName)
         {
-            m_failed.Set(false);
+            m_failed.Value = (false);
             m_addCount.Set(0);
             m_delCount.Set(0);
             m_packCount.Set(0);
@@ -663,7 +664,7 @@ namespace Lucene.Net.Index
                 Console.WriteLine("TEST: finalSearcher=" + s);
             }
 
-            assertFalse(m_failed.Get());
+            assertFalse(m_failed);
 
             bool doFail = false;
 

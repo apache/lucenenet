@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -128,7 +129,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
                 finally
                 {
-                    stop.Set(true);
+                    stop.Value = true;
                 }
             }
 
@@ -171,7 +172,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             try
             {
-                while (!stop.Get())
+                while (!stop)
                 {
                     SearcherAndTaxonomy pair = mgr.Acquire();
                     try
@@ -228,7 +229,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             public override void Run()
             {
-                while (!stop.Get())
+                while (!stop)
                 {
                     try
                     {
@@ -279,7 +280,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             try
             {
-                while (!stop.Get())
+                while (!stop)
                 {
                     SearcherAndTaxonomy pair = mgr.Acquire();
                     try

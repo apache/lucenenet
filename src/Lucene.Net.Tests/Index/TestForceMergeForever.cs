@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -99,7 +100,7 @@ namespace Lucene.Net.Index
             ThreadClass t = new ThreadAnonymousInnerClassHelper(this, w, numStartDocs, docs, doStop);
             t.Start();
             w.ForceMerge(1);
-            doStop.Set(true);
+            doStop.Value = true;
             t.Join();
             Assert.IsTrue(w.MergeCount.Get() <= 1, "merge count is " + w.MergeCount.Get());
             w.Dispose();
@@ -129,7 +130,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    while (!DoStop.Get())
+                    while (!DoStop)
                     {
                         w.UpdateDocument(new Term("docid", "" + Random.Next(NumStartDocs)), Docs.NextDoc());
                         // Force deletes to apply

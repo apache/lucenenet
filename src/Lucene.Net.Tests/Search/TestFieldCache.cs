@@ -1,4 +1,3 @@
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
@@ -9,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -495,7 +495,7 @@ namespace Lucene.Net.Search
             {
                 threads[threadIDX].Join();
             }
-            Assert.IsFalse(failed.Get());
+            Assert.IsFalse(failed);
         }
 
         private class RunnableAnonymousInnerClassHelper : IThreadRunnable
@@ -544,7 +544,7 @@ namespace Lucene.Net.Search
 
                 try
                 {
-                    while (!Failed.Get())
+                    while (!Failed)
                     {
                         int op = Random.Next(3);
                         if (op == 0)
@@ -586,7 +586,7 @@ namespace Lucene.Net.Search
                 }
                 catch (Exception t)
                 {
-                    Failed.Set(true);
+                    Failed.Value = true;
                     throw new Exception(t.Message, t);
                 }
             }

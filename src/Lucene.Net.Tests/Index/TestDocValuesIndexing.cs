@@ -5,6 +5,7 @@ using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Threading;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 
 namespace Lucene.Net.Index
 {
@@ -588,7 +589,7 @@ namespace Lucene.Net.Index
             {
                 t.Join();
             }
-            Assert.IsTrue(hitExc.Get());
+            Assert.IsTrue(hitExc);
             w.Dispose();
             dir.Dispose();
         }
@@ -623,7 +624,7 @@ namespace Lucene.Net.Index
 #pragma warning restore 168
                 {
                     // expected
-                    HitExc.Set(true);
+                    HitExc.Value = (true);
                 }
                 catch (Exception e)
                 {

@@ -6,6 +6,7 @@ using Lucene.Net.Facet.Range;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Facet.Range
@@ -1091,7 +1092,7 @@ namespace Lucene.Net.Facet.Range
             Facets facets = new DoubleRangeFacetCounts("field", vs, fc, fastMatchFilter, ranges);
 
             Assert.AreEqual("dim=field path=[] value=3 childCount=6\n  < 1 (0)\n  < 2 (1)\n  < 5 (3)\n  < 10 (3)\n  < 20 (3)\n  < 50 (3)\n", facets.GetTopChildren(10, "field").ToString());
-            Assert.True(fastMatchFilter == null || filterWasUsed.Get());
+            Assert.True(fastMatchFilter == null || filterWasUsed);
 
             DrillDownQuery ddq = new DrillDownQuery(config);
             ddq.Add("field", ranges[1].GetFilter(fastMatchFilter, vs));
@@ -1176,7 +1177,7 @@ namespace Lucene.Net.Facet.Range
             protected override DocIdSet CacheImpl(DocIdSetIterator iterator, AtomicReader reader)
             {
                 var cached = new FixedBitSet(reader.MaxDoc);
-                filterWasUsed.Set(true);
+                filterWasUsed.Value = true;
                 cached.Or(iterator);
                 return cached;
             }

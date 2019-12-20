@@ -1,6 +1,5 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
@@ -11,6 +10,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -1187,7 +1187,7 @@ namespace Lucene.Net.Index
             w.WaitForMerges();
             w.Dispose();
             dir.Dispose();
-            Assert.IsTrue(didWarm.Get());
+            Assert.IsTrue(didWarm);
         }
 
         private class IndexReaderWarmerAnonymousInnerClassHelper : IndexWriter.IndexReaderWarmer
@@ -1211,7 +1211,7 @@ namespace Lucene.Net.Index
                     r);
                 TopDocs hits = s.Search(new TermQuery(new Term("foo", "bar")), 10);
                 Assert.AreEqual(20, hits.TotalHits);
-                DidWarm.Set(true);
+                DidWarm.Value = (true);
             }
         }
 
@@ -1232,7 +1232,7 @@ namespace Lucene.Net.Index
             w.WaitForMerges();
             w.Dispose();
             dir.Dispose();
-            Assert.IsTrue(didWarm.Get());
+            Assert.IsTrue(didWarm);
         }
 
         private class InfoStreamAnonymousInnerClassHelper : InfoStream
@@ -1255,7 +1255,7 @@ namespace Lucene.Net.Index
             {
                 if ("SMSW".Equals(component, StringComparison.Ordinal))
                 {
-                    DidWarm.Set(true);
+                    DidWarm.Value = (true);
                 }
             }
 
@@ -1372,7 +1372,7 @@ namespace Lucene.Net.Index
             // other NRT reader, since it is already marked closed!
             for (int i = 0; i < 2; i++)
             {
-                shouldFail.Set(true);
+                shouldFail.Value = (true);
                 try
                 {
                     writer.GetReader().Dispose();
@@ -1406,14 +1406,14 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                if (ShouldFail.Get() && StackTraceHelper.DoesStackTraceContainMethod("GetReadOnlyClone"))
+                if (ShouldFail && StackTraceHelper.DoesStackTraceContainMethod("GetReadOnlyClone"))
                 {
                     if (VERBOSE)
                     {
                         Console.WriteLine("TEST: now fail; exc:");
                         Console.WriteLine((new Exception()).StackTrace);
                     }
-                    ShouldFail.Set(false);
+                    ShouldFail.Value = (false);
                     throw new FakeIOException();
                 }
             }

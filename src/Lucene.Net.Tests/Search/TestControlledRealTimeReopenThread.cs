@@ -1,5 +1,4 @@
 using Lucene.Net.Attributes;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
@@ -9,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -419,7 +419,7 @@ namespace Lucene.Net.Search
             waiter.Start();
             manager.MaybeRefresh();
             waiter.Join(1000);
-            if (!finished.Get())
+            if (!finished)
             {
                 waiter.Interrupt();
                 fail("thread deadlocked on waitForGeneration");
@@ -499,7 +499,7 @@ namespace Lucene.Net.Search
                     throw new Exception(ie.Message, ie);
                 }
 #endif
-                finished.Set(true);
+                finished.Value = true;
             }
         }
 
@@ -603,9 +603,9 @@ namespace Lucene.Net.Search
             sm.AddListener(new RefreshListenerAnonymousInnerClassHelper(this, afterRefreshCalled));
             iw.AddDocument(new Document());
             iw.Commit();
-            assertFalse(afterRefreshCalled.Get());
+            assertFalse(afterRefreshCalled);
             sm.MaybeRefreshBlocking();
-            assertTrue(afterRefreshCalled.Get());
+            assertTrue(afterRefreshCalled);
             sm.Dispose();
             iw.Dispose();
             dir.Dispose();
@@ -630,7 +630,7 @@ namespace Lucene.Net.Search
             {
                 if (didRefresh)
                 {
-                    afterRefreshCalled.Set(true);
+                    afterRefreshCalled.Value = true;
                 }
             }
         }

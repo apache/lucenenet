@@ -1,12 +1,12 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -380,7 +380,7 @@ namespace Lucene.Net.Index
             {
                 threads[i].Join();
             }
-            Assert.IsFalse(failed.Get());
+            Assert.IsFalse(failed);
             w.Dispose();
             dir.Dispose();
         }
@@ -420,7 +420,7 @@ namespace Lucene.Net.Index
                     int count = 0;
                     do
                     {
-                        if (Failed.Get())
+                        if (Failed)
                         {
                             break;
                         }
@@ -442,7 +442,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception t)
                 {
-                    Failed.Set(true);
+                    Failed.Value = (true);
                     throw new Exception(t.Message, t);
                 }
             }

@@ -1,7 +1,6 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
@@ -14,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -1353,8 +1353,8 @@ namespace Lucene.Net.Index
                 }
                 id++;
             }
-            closing.Set(true);
-            Assert.IsTrue(sawAfterFlush.Get());
+            closing.Value = (true);
+            Assert.IsTrue(sawAfterFlush);
             w.Dispose();
             dir.Dispose();
         }
@@ -1378,9 +1378,9 @@ namespace Lucene.Net.Index
 
             protected override void DoAfterFlush()
             {
-                Assert.IsTrue(Closing.Get() || DocsInSegment.Get() >= 7, "only " + DocsInSegment.Get() + " in segment");
+                Assert.IsTrue(Closing || DocsInSegment.Get() >= 7, "only " + DocsInSegment.Get() + " in segment");
                 DocsInSegment.Set(0);
-                SawAfterFlush.Set(true);
+                SawAfterFlush.Value = (true);
             }
         }
 

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -833,7 +834,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 newTaxoReader.Dispose();
             }
 
-            stop.Set(true);
+            stop.Value = true;
             thread.Join();
             Assert.Null(error[0], "Unexpcted exception at retry " + retry + " retrieval " + retrieval[0] + ": \n" + stackTraceStr(error[0]));
 
@@ -876,7 +877,7 @@ namespace Lucene.Net.Facet.Taxonomy
 #endif 
                 try
                 {
-                    while (!stop.Get())
+                    while (!stop)
                     {
                         int lastOrd = tr.ParallelTaxonomyArrays.Parents.Length - 1;
                         Assert.NotNull(tr.GetPath(lastOrd), "path of last-ord " + lastOrd + " is not found!");
@@ -887,7 +888,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 catch (Exception e)
                 {
                     error[0] = e;
-                    stop.Set(true);
+                    stop.Value = true;
                 }
             }
 

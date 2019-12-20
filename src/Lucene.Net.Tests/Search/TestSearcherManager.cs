@@ -1,13 +1,13 @@
 using NUnit.Framework;
 using Lucene.Net.Attributes;
 using Lucene.Net.Index;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
                         Console.WriteLine("TEST: reopen thread hit exc");
                         Console.Out.Write(t.StackTrace);
                     }
-                    outerInstance.m_failed.Set(true);
+                    outerInstance.m_failed.Value = (true);
                     throw new Exception(t.ToString(), t);
                 }
             }
@@ -315,8 +315,8 @@ namespace Lucene.Net.Search
             {
                 // expected
             }
-            assertFalse(success.Get());
-            assertTrue(triedReopen.Get());
+            assertFalse(success);
+            assertTrue(triedReopen);
             assertNull("" + exc[0], exc[0]);
             writer.Dispose();
             dir.Dispose();
@@ -351,7 +351,7 @@ namespace Lucene.Net.Search
                 try
                 {
 #endif
-                    if (triedReopen.Get())
+                    if (triedReopen)
                     {
                         awaitEnterWarm.Signal();
                         awaitClose.Wait();
@@ -391,13 +391,13 @@ namespace Lucene.Net.Search
             {
                 try
                 {
-                    triedReopen.Set(true);
+                    triedReopen.Value = (true);
                     if (VERBOSE)
                     {
                         Console.WriteLine("NOW call maybeReopen");
                     }
                     searcherManager.MaybeRefresh();
-                    success.Set(true);
+                    success.Value = (true);
                 }
                 catch (ObjectDisposedException)
                 {
@@ -412,7 +412,7 @@ namespace Lucene.Net.Search
                     }
                     exc[0] = e;
                     // use success as the barrier here to make sure we see the write
-                    success.Set(false);
+                    success.Value = (false);
                 }
             }
         }
@@ -505,9 +505,9 @@ namespace Lucene.Net.Search
             sm.AddListener(new RefreshListenerAnonymousInnerClassHelper(this, afterRefreshCalled));
             iw.AddDocument(new Document());
             iw.Commit();
-            assertFalse(afterRefreshCalled.Get());
+            assertFalse(afterRefreshCalled);
             sm.MaybeRefreshBlocking();
-            assertTrue(afterRefreshCalled.Get());
+            assertTrue(afterRefreshCalled);
             sm.Dispose();
             iw.Dispose();
             dir.Dispose();
@@ -533,7 +533,7 @@ namespace Lucene.Net.Search
             {
                 if (didRefresh)
                 {
-                    afterRefreshCalled.Set(true);
+                    afterRefreshCalled.Value = (true);
                 }
             }
         }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 
 namespace Lucene.Net.Index
 {
@@ -591,7 +592,7 @@ namespace Lucene.Net.Index
 
         public void SetApplyAllDeletes()
         {
-            flushDeletes.Set(true);
+            flushDeletes.Value = true;
         }
 
         internal int NumActiveDWPT

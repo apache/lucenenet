@@ -1,7 +1,6 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
@@ -12,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -2283,7 +2283,7 @@ namespace Lucene.Net.Index
                 // TODO: we could also install an infoStream and try
                 // to fail in "more evil" places inside BDS
 
-                shouldFail.Set(true);
+                shouldFail.Value = (true);
                 bool doClose = false;
 
                 try
@@ -2371,7 +2371,7 @@ namespace Lucene.Net.Index
                         throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                     }
                 }
-                shouldFail.Set(false);
+                shouldFail.Value = (false);
 
                 IndexReader ir;
 
@@ -2470,7 +2470,7 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (ShouldFail.Get() == false)
+                if (ShouldFail == false)
                 {
                     return;
                 }
@@ -2493,7 +2493,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: now fail; thread=" + Thread.CurrentThread.Name + " exc:");
                         Console.WriteLine((new Exception()).StackTrace);
                     }
-                    ShouldFail.Set(false);
+                    ShouldFail.Value = (false);
                     throw new FakeIOException();
                 }
             }

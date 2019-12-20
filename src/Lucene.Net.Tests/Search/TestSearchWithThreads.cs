@@ -1,10 +1,10 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Text;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
                     long totHits = 0;
                     long totSearch = 0;
                     long stopAt = Environment.TickCount + OuterInstance.RUN_TIME_MSEC;
-                    while (Environment.TickCount < stopAt && !Failed.Get())
+                    while (Environment.TickCount < stopAt && !Failed)
                     {
                         s.Search(new TermQuery(new Term("body", "aaa")), col);
                         totHits += col.TotalHits;
@@ -160,7 +160,7 @@ namespace Lucene.Net.Search
                 }
                 catch (Exception exc)
                 {
-                    Failed.Set(true);
+                    Failed.Value = (true);
                     throw new Exception(exc.Message, exc);
                 }
             }

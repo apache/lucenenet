@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -499,7 +500,7 @@ namespace Lucene.Net.Search.Spell
                 }
 
                 spellChecker.Dispose();
-                stop.Set(true);
+                stop.Value = true;
 
                 // wait for 60 seconds - usually this is very fast but coverage runs could take quite long
                 //executor.awaitTermination(60L, TimeUnit.SECONDS);
@@ -593,7 +594,7 @@ namespace Lucene.Net.Search.Spell
 #endif
                 try
                 {
-                    while (!stop.Get())
+                    while (!stop)
                     {
                         try
                         {

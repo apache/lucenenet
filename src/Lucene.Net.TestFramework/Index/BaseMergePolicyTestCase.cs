@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using Lucene.Net.TestFramework;
 using System;
+using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -78,7 +79,7 @@ namespace Lucene.Net.Index
                     {
                         int segmentCount = writer.SegmentCount;
                         int maxNumSegments = i == 0 ? 1 : TestUtil.NextInt32(Random, 1, 10);
-                        mayMerge.Set(segmentCount > maxNumSegments);
+                        mayMerge.Value = (segmentCount > maxNumSegments);
                         writer.ForceMerge(maxNumSegments);
                     }
                 } // writer.Dispose();
@@ -101,7 +102,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    if (!mayMerge.Get() && writer.NextMerge() != null)
+                    if (!mayMerge.Value && writer.NextMerge() != null)
                     {
                         throw new InvalidOperationException();
                     }
