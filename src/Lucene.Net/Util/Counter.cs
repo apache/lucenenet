@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Threading.Atomic;
 
 namespace Lucene.Net.Util
 {
@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
         /// Returns the counters current value.
         /// </summary>
         /// <returns> The counters current value. </returns>
-        public abstract long Get();
+        public abstract long Get(); // LUCENENET TODO: API: Change to Value property and add implicit operator to get
 
         /// <summary>
         /// Returns a new counter. The returned counter is not thread-safe.
@@ -85,10 +85,7 @@ namespace Lucene.Net.Util
                 return count.AddAndGet(delta);
             }
 
-            public override long Get()
-            {
-                return count.Get();
-            }
+            public override long Get() => count;
         }
     }
 }

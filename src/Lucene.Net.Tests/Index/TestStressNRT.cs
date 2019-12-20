@@ -1,6 +1,5 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
+using AtomicInt64 = J2N.Threading.Atomic.AtomicInt64;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    while (Operations.Get() > 0)
+                    while (Operations > 0)
                     {
                         int oper = rand.Next(100);
 
@@ -527,7 +527,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e)
                 {
-                    Operations.Set((int)-1L);
+                    Operations.Value = ((int)-1L);
                     Console.WriteLine(Thread.CurrentThread.Name + ": FAILED: unexpected exception");
                     Console.WriteLine(e.StackTrace);
                     throw new Exception(e.Message, e);

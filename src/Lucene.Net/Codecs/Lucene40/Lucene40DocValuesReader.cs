@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Threading.Atomic;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -906,13 +906,8 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        public override long RamBytesUsed()
-        {
-            return ramBytesUsed.Get();
-        }
+        public override long RamBytesUsed() => ramBytesUsed;
 
-        public override void CheckIntegrity()
-        {
-        }
+        public override void CheckIntegrity() { }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
+using AtomicInt64 = J2N.Threading.Atomic.AtomicInt64;
 
 namespace Lucene.Net.Index
 {
@@ -95,7 +96,7 @@ namespace Lucene.Net.Index
                 bytesUsed.AddAndGet(packet.bytesUsed);
                 if (infoStream.IsEnabled("BD"))
                 {
-                    infoStream.Message("BD", "push deletes " + packet + " delGen=" + packet.DelGen + " packetCount=" + updates.Count + " totBytesUsed=" + bytesUsed.Get());
+                    infoStream.Message("BD", "push deletes " + packet + " delGen=" + packet.DelGen + " packetCount=" + updates.Count + " totBytesUsed=" + bytesUsed);
                 }
                 Debug.Assert(CheckDeleteStats());
                 return packet.DelGen;
@@ -109,18 +110,15 @@ namespace Lucene.Net.Index
                 updates.Clear();
                 nextGen = 1;
                 numTerms.Value = 0;
-                bytesUsed.Set(0);
+                bytesUsed.Value = 0;
             }
         }
 
-        public virtual bool Any()
-        {
-            return bytesUsed.Get() != 0;
-        }
+        public virtual bool Any() => bytesUsed != 0;
 
         public virtual int NumTerms => numTerms;
 
-        public virtual long BytesUsed => bytesUsed.Get();
+        public virtual long BytesUsed => bytesUsed;
 
         public class ApplyDeletesResult
         {
@@ -444,7 +442,7 @@ namespace Lucene.Net.Index
                         numTerms.AddAndGet(-packet.numTermDeletes);
                         Debug.Assert(numTerms >= 0);
                         bytesUsed.AddAndGet(-packet.bytesUsed);
-                        Debug.Assert(bytesUsed.Get() >= 0);
+                        Debug.Assert(bytesUsed >= 0);
                     }
                     updates.SubList(0, count).Clear();
                 }
@@ -710,7 +708,7 @@ namespace Lucene.Net.Index
                 bytesUsed2 += packet.bytesUsed;
             }
             Debug.Assert(numTerms2 == numTerms, "numTerms2=" + numTerms2 + " vs " + numTerms);
-            Debug.Assert(bytesUsed2 == bytesUsed.Get(), "bytesUsed2=" + bytesUsed2 + " vs " + bytesUsed);
+            Debug.Assert(bytesUsed2 == bytesUsed, "bytesUsed2=" + bytesUsed2 + " vs " + bytesUsed);
             return true;
         }
     }

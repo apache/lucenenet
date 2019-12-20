@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Threading.Atomic;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -155,7 +155,7 @@ namespace Lucene.Net.Store
         public long GetSizeInBytes()
         {
             EnsureOpen();
-            return m_sizeInBytes.Get();
+            return m_sizeInBytes;
         }
 
         /// <summary>

@@ -697,10 +697,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public virtual long BytesUsed
-        {
-            get { return bytesUsed.Get() + pendingUpdates.bytesUsed.Get(); }
-        }
+        public virtual long BytesUsed => bytesUsed.Get() + pendingUpdates.bytesUsed;
 
         /// <summary>
         /// Initial chunks size of the shared byte[] blocks used to

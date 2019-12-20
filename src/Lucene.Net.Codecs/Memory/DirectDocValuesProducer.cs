@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Index;
+﻿using J2N.Threading.Atomic;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -198,10 +198,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        public override long RamBytesUsed()
-        {
-            return ramBytesUsed.Get();
-        }
+        public override long RamBytesUsed() => ramBytesUsed;
 
         public override void CheckIntegrity()
         {

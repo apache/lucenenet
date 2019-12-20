@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
+using AtomicInt64 = J2N.Threading.Atomic.AtomicInt64;
 
 namespace Lucene.Net.Index
 {
@@ -188,15 +189,15 @@ namespace Lucene.Net.Index
                 }
                 if (numNumericUpdates != 0)
                 {
-                    s += " " + numNumericUpdates.Value + " numeric updates (unique count=" + numericUpdates.Count + ")";
+                    s += " " + numNumericUpdates + " numeric updates (unique count=" + numericUpdates.Count + ")";
                 }
                 if (numBinaryUpdates != 0)
                 {
-                    s += " " + numBinaryUpdates.Value + " binary updates (unique count=" + binaryUpdates.Count + ")";
+                    s += " " + numBinaryUpdates + " binary updates (unique count=" + binaryUpdates.Count + ")";
                 }
-                if (bytesUsed.Get() != 0)
+                if (bytesUsed != 0)
                 {
-                    s += " bytesUsed=" + bytesUsed.Get();
+                    s += " bytesUsed=" + bytesUsed;
                 }
 
                 return s;
@@ -328,7 +329,7 @@ namespace Lucene.Net.Index
             numTermDeletes.Value = 0;
             numNumericUpdates.Value = 0;
             numBinaryUpdates.Value = 0;
-            bytesUsed.Set(0);
+            bytesUsed.Value = 0;
         }
 
         internal virtual bool Any()

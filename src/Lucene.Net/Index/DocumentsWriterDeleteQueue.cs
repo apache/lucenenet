@@ -521,10 +521,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public long BytesUsed
-        {
-            get { return globalBufferedUpdates.bytesUsed.Get(); }
-        }
+        public long BytesUsed => globalBufferedUpdates.bytesUsed;
 
         public override string ToString()
         {

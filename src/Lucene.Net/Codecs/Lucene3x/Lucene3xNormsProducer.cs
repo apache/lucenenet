@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Lucene.Net.Support;
+using AtomicInt64 = J2N.Threading.Atomic.AtomicInt64;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -280,13 +281,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             throw new InvalidOperationException();
         }
 
-        public override long RamBytesUsed()
-        {
-            return ramBytesUsed.Get();
-        }
+        public override long RamBytesUsed() => ramBytesUsed;
 
-        public override void CheckIntegrity()
-        {
-        }
+        public override void CheckIntegrity() { }
     }
 }

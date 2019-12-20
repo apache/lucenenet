@@ -1,10 +1,9 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Text;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -114,7 +113,7 @@ namespace Lucene.Net.Search
 
             if (VERBOSE)
             {
-                Console.WriteLine(NUM_SEARCH_THREADS + " threads did " + netSearch.Get() + " searches");
+                Console.WriteLine(NUM_SEARCH_THREADS + " threads did " + netSearch + " searches");
             }
 
             r.Dispose();

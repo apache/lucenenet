@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Threading.Atomic;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
         {
             writer.UpdateDocument(t, d, a);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
         {
             writer.UpdateDocument(t, d);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
         {
             writer.UpdateDocuments(t, docs, a);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
         {
             writer.UpdateDocuments(t, docs);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
         {
             writer.DeleteDocuments(t);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
         {
             writer.DeleteDocuments(terms);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
         {
             writer.DeleteDocuments(q);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
         {
             writer.DeleteDocuments(queries);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
         {
             writer.DeleteAll();
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
         {
             writer.AddDocument(d, a);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
         {
             writer.AddDocuments(docs, a);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
         {
             writer.AddDocument(d);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
         {
             writer.AddDocuments(docs);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace Lucene.Net.Index
         {
             writer.AddIndexes(dirs);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
@@ -220,28 +220,16 @@ namespace Lucene.Net.Index
         {
             writer.AddIndexes(readers);
             // Return gen as of when indexing finished:
-            return indexingGen.Get();
+            return indexingGen;
         }
 
         /// <summary>
         /// Return the current generation being indexed. </summary>
-        public virtual long Generation
-        {
-            get
-            {
-                return indexingGen.Get();
-            }
-        }
+        public virtual long Generation => indexingGen;
 
         /// <summary>
         /// Return the wrapped <see cref="Index.IndexWriter"/>. </summary>
-        public virtual IndexWriter IndexWriter
-        {
-            get
-            {
-                return writer;
-            }
-        }
+        public virtual IndexWriter IndexWriter => writer;
 
         /// <summary>
         /// Return and increment current gen.
@@ -262,7 +250,7 @@ namespace Lucene.Net.Index
         {
             if (writer.TryDeleteDocument(reader, docID))
             {
-                return indexingGen.Get();
+                return indexingGen;
             }
             else
             {
