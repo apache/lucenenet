@@ -1,3 +1,4 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Concurrent;
@@ -7,7 +8,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 #if FEATURE_SERIALIZABLE_EXCEPTIONS

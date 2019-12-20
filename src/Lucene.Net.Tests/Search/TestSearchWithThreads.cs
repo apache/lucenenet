@@ -1,6 +1,6 @@
+using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Text;
@@ -94,19 +94,19 @@ namespace Lucene.Net.Search
             AtomicBoolean failed = new AtomicBoolean();
             AtomicInt64 netSearch = new AtomicInt64();
 
-            ThreadClass[] threads = new ThreadClass[NUM_SEARCH_THREADS];
+            ThreadJob[] threads = new ThreadJob[NUM_SEARCH_THREADS];
             for (int threadID = 0; threadID < NUM_SEARCH_THREADS; threadID++)
             {
                 threads[threadID] = new ThreadAnonymousInnerClassHelper(this, s, failed, netSearch);
-                threads[threadID].SetDaemon(true);
+                threads[threadID].IsBackground = (true);
             }
 
-            foreach (ThreadClass t in threads)
+            foreach (ThreadJob t in threads)
             {
                 t.Start();
             }
 
-            foreach (ThreadClass t in threads)
+            foreach (ThreadJob t in threads)
             {
                 t.Join();
             }
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestSearchWithThreads OuterInstance;
 

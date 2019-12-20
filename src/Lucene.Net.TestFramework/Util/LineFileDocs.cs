@@ -1,12 +1,11 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
 using System;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util

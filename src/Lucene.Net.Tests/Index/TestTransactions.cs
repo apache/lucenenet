@@ -1,7 +1,7 @@
+using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private abstract class TimedThread : ThreadClass
+        private abstract class TimedThread : ThreadJob
         {
             internal volatile bool Failed;
             internal static float RUN_TIME_MSEC = AtLeast(500);

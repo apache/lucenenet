@@ -1,5 +1,5 @@
 #if FEATURE_CONCURRENTMERGESCHEDULER
-using Lucene.Net.Support.Threading;
+using J2N.Threading;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -324,7 +324,7 @@ namespace Lucene.Net.Index
                 {
                     // Default to slightly higher priority than our
                     // calling thread
-                    mergeThreadPriority = 1 + (int)ThreadClass.Current().Priority;
+                    mergeThreadPriority = 1 + (int)ThreadJob.CurrentThread.Priority;
                     if (mergeThreadPriority > (int)ThreadPriority.Highest)
                     {
                         mergeThreadPriority = (int)ThreadPriority.Highest;
@@ -550,7 +550,7 @@ namespace Lucene.Net.Index
         /// Runs a merge thread, which may run one or more merges
         /// in sequence.
         /// </summary>
-        protected internal class MergeThread : ThreadClass//System.Threading.Thread
+        protected internal class MergeThread : ThreadJob
         {
             private readonly ConcurrentMergeScheduler outerInstance;
 

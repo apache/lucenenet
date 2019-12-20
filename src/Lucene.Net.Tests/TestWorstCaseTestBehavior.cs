@@ -1,5 +1,5 @@
+using J2N.Threading;
 using Lucene.Net.Attributes;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -32,7 +32,7 @@ namespace Lucene.Net
         [Test]
         public virtual void TestThreadLeak()
         {
-            ThreadClass t = new ThreadAnonymousInnerClassHelper(this);
+            ThreadJob t = new ThreadAnonymousInnerClassHelper(this);
             t.Start();
 
             while (!t.IsAlive)
@@ -44,7 +44,7 @@ namespace Lucene.Net
         }
 #endif
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestWorstCaseTestBehavior OuterInstance;
 
@@ -109,12 +109,12 @@ namespace Lucene.Net
         [Test]
         public virtual void TestUncaughtException()
         {
-            ThreadClass t = new ThreadAnonymousInnerClassHelper2(this);
+            ThreadJob t = new ThreadAnonymousInnerClassHelper2(this);
             t.Start();
             t.Join();
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
+        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
             private readonly TestWorstCaseTestBehavior OuterInstance;
 

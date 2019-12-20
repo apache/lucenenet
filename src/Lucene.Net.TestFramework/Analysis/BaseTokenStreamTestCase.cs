@@ -1,9 +1,10 @@
+using J2N.Threading;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.TestFramework;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,7 +16,6 @@ using AttributeFactory = Lucene.Net.Util.AttributeSource.AttributeFactory;
 using Assert = Lucene.Net.TestFramework.Assert;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Console = Lucene.Net.Support.SystemConsole;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis
 {
@@ -678,7 +678,7 @@ namespace Lucene.Net.Analysis
         }
 #endif
 
-        internal class AnalysisThread : ThreadClass
+        internal class AnalysisThread : ThreadJob
         {
             internal readonly int iterations;
             internal readonly int maxWordLength;

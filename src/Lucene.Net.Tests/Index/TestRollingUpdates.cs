@@ -1,9 +1,8 @@
+using J2N.Threading;
 using Lucene.Net.Codecs.Memory;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -224,7 +223,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        internal class IndexingThread : ThreadClass
+        internal class IndexingThread : ThreadJob
         {
             internal readonly LineFileDocs Docs;
             internal readonly IndexWriter Writer;

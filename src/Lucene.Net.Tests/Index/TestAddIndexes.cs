@@ -1,7 +1,7 @@
+using J2N.Threading;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -642,7 +642,7 @@ namespace Lucene.Net.Index
             internal readonly IndexReader[] Readers;
             internal readonly int NUM_COPY;
             internal const int NUM_THREADS = 5;
-            internal readonly ThreadClass[] Threads = new ThreadClass[NUM_THREADS];
+            internal readonly ThreadJob[] Threads = new ThreadJob[NUM_THREADS];
 
             public RunAddIndexesThreads(TestAddIndexes outerInstance, int numCopy)
             {
@@ -680,7 +680,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            private class ThreadAnonymousInnerClassHelper : ThreadClass
+            private class ThreadAnonymousInnerClassHelper : ThreadJob
             {
                 private readonly RunAddIndexesThreads OuterInstance;
 

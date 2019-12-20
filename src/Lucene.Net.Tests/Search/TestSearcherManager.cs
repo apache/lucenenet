@@ -1,14 +1,15 @@
-using NUnit.Framework;
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
+
 
 namespace Lucene.Net.Search
 {
@@ -119,8 +120,8 @@ namespace Lucene.Net.Search
 
         protected override void DoSearching(TaskScheduler es, long stopTime)
         {
-            ThreadClass reopenThread = new ThreadAnonymousInnerClassHelper(this, stopTime);
-            reopenThread.SetDaemon(true);
+            ThreadJob reopenThread = new ThreadAnonymousInnerClassHelper(this, stopTime);
+            reopenThread.IsBackground = (true);
             reopenThread.Start();
 
             RunSearchThreads(stopTime);
@@ -128,7 +129,7 @@ namespace Lucene.Net.Search
             reopenThread.Join();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestSearcherManager outerInstance;
 
@@ -290,7 +291,7 @@ namespace Lucene.Net.Search
             writer.Commit();
             AtomicBoolean success = new AtomicBoolean(false);
             Exception[] exc = new Exception[1];
-            ThreadClass thread = new ThreadClass(() => new RunnableAnonymousInnerClassHelper(this, triedReopen, searcherManager, success, exc).Run());
+            ThreadJob thread = new ThreadJob(() => new RunnableAnonymousInnerClassHelper(this, triedReopen, searcherManager, success, exc).Run());
             thread.Start();
             if (VERBOSE)
             {
@@ -369,7 +370,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class RunnableAnonymousInnerClassHelper : IThreadRunnable
+        private class RunnableAnonymousInnerClassHelper //: IThreadRunnable
         {
             private readonly TestSearcherManager outerInstance;
 
@@ -616,7 +617,7 @@ namespace Lucene.Net.Search
 
             SearcherManager sm = new SearcherManager(dir, null);
 
-            ThreadClass t = new ThreadAnonymousInnerClassHelper2(this, sm);
+            ThreadJob t = new ThreadAnonymousInnerClassHelper2(this, sm);
             t.Start();
             t.Join();
 
@@ -627,7 +628,7 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
+        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
             private readonly TestSearcherManager outerInstance;
 

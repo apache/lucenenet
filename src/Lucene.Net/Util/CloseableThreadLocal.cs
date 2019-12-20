@@ -1,8 +1,8 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Util
 {

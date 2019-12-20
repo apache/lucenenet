@@ -1,18 +1,16 @@
-﻿using Lucene.Net.Attributes;
+﻿using J2N.Threading;
+using J2N.Threading.Atomic;
+using Lucene.Net.Attributes;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
-
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
@@ -841,7 +839,7 @@ namespace Lucene.Net.Facet.Taxonomy
             tr.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestTaxonomyCombined outerInstance;
 

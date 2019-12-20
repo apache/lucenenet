@@ -83,7 +83,7 @@ namespace Lucene.Net
             {
                 MergeThread thread = new MyMergeThread(this, writer, merge);
                 thread.SetThreadPriority((ThreadPriority)MergeThreadPriority);
-                thread.SetDaemon(true);
+                thread.IsBackground = (true);
                 thread.Name = "MyMergeThread";
                 return thread;
             }

@@ -1,6 +1,5 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.TestFramework;
 using System;
 using System.Collections.Generic;
@@ -9,6 +8,7 @@ using System.Linq;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
+using J2N.Threading;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -1124,7 +1124,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class TestThread : ThreadClass
+        private class TestThread : ThreadJob
         {
             private Fields fieldsSource;
             private ISet<Option> options;
@@ -1172,7 +1172,7 @@ namespace Lucene.Net.Index
             if (options.Contains(Option.THREADS))
             {
                 int numThreads = TestUtil.NextInt32(Random, 2, 5);
-                ThreadClass[] threads = new ThreadClass[numThreads];
+                ThreadJob[] threads = new ThreadJob[numThreads];
                 for (int threadUpto = 0; threadUpto < numThreads; threadUpto++)
                 {
                     threads[threadUpto] = new TestThread(this, fieldsSource, options, maxTestOptions, maxIndexOptions, alwaysTestMax);

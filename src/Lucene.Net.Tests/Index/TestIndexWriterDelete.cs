@@ -1,10 +1,11 @@
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -13,8 +14,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -344,7 +343,7 @@ namespace Lucene.Net.Index
 #endif
                 Random, dir);
             int numThreads = AtLeast(2);
-            ThreadClass[] threads = new ThreadClass[numThreads];
+            ThreadJob[] threads = new ThreadJob[numThreads];
             CountdownEvent latch = new CountdownEvent(1);
             CountdownEvent doneLatch = new CountdownEvent(numThreads);
             for (int i = 0; i < numThreads; i++)
@@ -365,7 +364,7 @@ namespace Lucene.Net.Index
             }
 
             modifier.DeleteAll();
-            foreach (ThreadClass thread in threads)
+            foreach (ThreadJob thread in threads)
             {
                 thread.Join();
             }
@@ -380,7 +379,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestIndexWriterDelete OuterInstance;
 

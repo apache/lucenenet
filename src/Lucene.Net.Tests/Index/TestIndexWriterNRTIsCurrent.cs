@@ -1,7 +1,5 @@
+using J2N.Threading;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -84,7 +82,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        public class WriterThread : ThreadClass
+        public class WriterThread : ThreadJob
         {
             internal readonly ReaderHolder Holder;
             internal readonly IndexWriter Writer;
@@ -186,7 +184,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public sealed class ReaderThread : ThreadClass
+        public sealed class ReaderThread : ThreadJob
         {
             internal readonly ReaderHolder Holder;
             internal readonly CountdownEvent Latch;

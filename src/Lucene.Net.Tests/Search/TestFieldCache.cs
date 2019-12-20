@@ -1,5 +1,6 @@
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -7,10 +8,10 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
+
 
 namespace Lucene.Net.Search
 {
@@ -66,7 +67,7 @@ namespace Lucene.Net.Search
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using System.Text;
+    
 
     [TestFixture]
     public class TestFieldCache : LuceneTestCase
@@ -481,7 +482,7 @@ namespace Lucene.Net.Search
             cache.PurgeAllCaches();
 
             int NUM_THREADS = 3;
-            ThreadClass[] threads = new ThreadClass[NUM_THREADS];
+            ThreadJob[] threads = new ThreadJob[NUM_THREADS];
             AtomicBoolean failed = new AtomicBoolean();
             AtomicInt32 iters = new AtomicInt32();
             int NUM_ITER = 200 * RANDOM_MULTIPLIER;
@@ -499,7 +500,7 @@ namespace Lucene.Net.Search
             Assert.IsFalse(failed);
         }
 
-        private class RunnableAnonymousInnerClassHelper : IThreadRunnable
+        private class RunnableAnonymousInnerClassHelper //: IThreadRunnable
         {
             private readonly TestFieldCache OuterInstance;
 
@@ -520,7 +521,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestFieldCache OuterInstance;
 

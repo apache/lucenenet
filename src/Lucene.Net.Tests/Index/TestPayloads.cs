@@ -1,8 +1,8 @@
+using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -482,7 +482,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             const string field = "test";
 
-            ThreadClass[] ingesters = new ThreadClass[numThreads];
+            ThreadJob[] ingesters = new ThreadJob[numThreads];
             for (int i = 0; i < numThreads; i++)
             {
                 ingesters[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, pool, writer, field);
@@ -518,7 +518,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(pool.Count, numThreads);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestPayloads OuterInstance;
 

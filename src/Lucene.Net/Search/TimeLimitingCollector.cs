@@ -1,4 +1,4 @@
-using Lucene.Net.Support.Threading;
+using J2N.Threading;
 using System;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
@@ -302,7 +302,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public sealed class TimerThread : ThreadClass
+        public sealed class TimerThread : ThreadJob
         {
             public const string THREAD_NAME = "TimeLimitedCollector timer thread";
             public const int DEFAULT_RESOLUTION = 20;
@@ -328,7 +328,7 @@ namespace Lucene.Net.Search
             {
                 this.resolution = resolution;
                 this.counter = counter;
-                this.SetDaemon(true);
+                this.IsBackground = (true);
             }
 
             public TimerThread(Counter counter)

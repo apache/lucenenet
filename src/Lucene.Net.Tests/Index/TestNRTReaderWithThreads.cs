@@ -1,10 +1,10 @@
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using NUnit.Framework;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using System;
 using System.Threading;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
             mainDir.Dispose();
         }
 
-        public class RunThread : ThreadClass
+        public class RunThread : ThreadJob
         {
             private readonly TestNRTReaderWithThreads OuterInstance;
 

@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using Lucene.Net.Support.Threading;
+﻿using J2N.Threading;
 using NUnit.Framework;
+using System;
+using System.IO;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -57,14 +56,14 @@ namespace Lucene.Net.Facet.Taxonomy
 
             var reader = DirectoryReader.Open(writer, true);
             CachedOrdinalsReader ordsReader = new CachedOrdinalsReader(new DocValuesOrdinalsReader(FacetsConfig.DEFAULT_INDEX_FIELD_NAME));
-            ThreadClass[] threads = new ThreadClass[3];
+            ThreadJob[] threads = new ThreadJob[3];
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousInnerClassHelper(this, "CachedOrdsThread-" + i, reader, ordsReader);
             }
 
             long ramBytesUsed = 0;
-            foreach (ThreadClass t in threads)
+            foreach (ThreadJob t in threads)
             {
                 t.Start();
                 t.Join();
@@ -81,7 +80,7 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(writer, taxoWriter, reader, indexDir, taxoDir);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestCachedOrdinalsReader outerInstance;
 

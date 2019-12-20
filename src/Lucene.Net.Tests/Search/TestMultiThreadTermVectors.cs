@@ -1,17 +1,16 @@
+using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Threading;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {
-    
-    using NUnit.Framework;
-    using System.IO;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using English = Lucene.Net.Util.English;
@@ -150,10 +149,10 @@ namespace Lucene.Net.Search
         }
     }
 
-    internal class MultiThreadTermVectorsReader : IThreadRunnable
+    internal class MultiThreadTermVectorsReader //: IThreadRunnable
     {
         private IndexReader Reader = null;
-        private ThreadClass t = null;
+        private ThreadJob t = null;
 
         private readonly int RunsToDo = 100;
         internal long TimeElapsed = 0;
@@ -162,7 +161,7 @@ namespace Lucene.Net.Search
         {
             this.Reader = reader;
             TimeElapsed = 0;
-            t = new ThreadClass(new System.Threading.ThreadStart(this.Run));
+            t = new ThreadJob(new System.Threading.ThreadStart(this.Run));
             t.Start();
         }
 

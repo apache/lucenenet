@@ -1,7 +1,7 @@
+using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
@@ -10,7 +10,6 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -59,7 +58,7 @@ namespace Lucene.Net.Index
     public class TestIndexWriterWithThreads : LuceneTestCase
     {
         // Used by test cases below
-        private class IndexerThread : ThreadClass
+        private class IndexerThread : ThreadJob
         {
             private readonly Func<string, string, FieldType, Field> NewField;
 
@@ -605,7 +604,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal class DelayedIndexAndCloseRunnable : ThreadClass
+        internal class DelayedIndexAndCloseRunnable : ThreadJob
         {
             internal readonly Directory Dir;
             internal bool Failed = false;
@@ -680,9 +679,9 @@ namespace Lucene.Net.Index
                 new AtomicReference<IndexWriter>(new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)));
 
             LineFileDocs docs = new LineFileDocs(Random);
-            ThreadClass[] threads = new ThreadClass[threadCount];
+            ThreadJob[] threads = new ThreadJob[threadCount];
             int iters = AtLeast(100);
-            AtomicBoolean failed = new J2N.Threading.Atomic.AtomicBoolean();
+            AtomicBoolean failed = new AtomicBoolean();
             ReentrantLock rollbackLock = new ReentrantLock();
             ReentrantLock commitLock = new ReentrantLock();
             for (int threadID = 0; threadID < threadCount; threadID++)
@@ -708,7 +707,7 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestIndexWriterWithThreads OuterInstance;
 

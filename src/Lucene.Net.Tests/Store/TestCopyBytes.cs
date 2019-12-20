@@ -1,6 +1,5 @@
+using J2N.Threading;
 using Lucene.Net.Attributes;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -174,7 +173,7 @@ namespace Lucene.Net.Store
             d.Dispose();
         }
 
-        internal class CopyThread : ThreadClass
+        internal class CopyThread : ThreadJob
         {
             internal readonly IndexInput Src;
             internal readonly IndexOutput Dst;

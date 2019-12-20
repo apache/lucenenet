@@ -1,6 +1,6 @@
+using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -279,7 +279,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private class RunnableAnonymousInnerClassHelper : ThreadClass
+        private class RunnableAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestWeakIdentityMap outerInstance;
 

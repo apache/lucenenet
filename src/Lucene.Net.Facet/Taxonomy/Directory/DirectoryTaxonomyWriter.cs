@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using J2N.Threading.Atomic;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -9,7 +10,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Reflection;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {

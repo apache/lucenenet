@@ -1,8 +1,8 @@
 ﻿// Lucene version compatibility level < 7.1.0
 using ICU4N.Globalization;
+using J2N.Threading;
 using Lucene.Net.Analysis.Icu.TokenAttributes;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -352,7 +352,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             }
         }
 
-        private class ThreadAnonymousHelper : ThreadClass
+        private class ThreadAnonymousHelper : ThreadJob
         {
             private readonly CountdownEvent startingGun;
 

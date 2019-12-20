@@ -1,15 +1,14 @@
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
-using AtomicInt64 = J2N.Threading.Atomic.AtomicInt64;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -114,7 +113,7 @@ namespace Lucene.Net.Index
 
             AtomicInt32 numCommitting = new AtomicInt32();
 
-            IList<ThreadClass> threads = new List<ThreadClass>();
+            IList<ThreadJob> threads = new List<ThreadJob>();
 
             Directory dir = NewDirectory();
 
@@ -125,24 +124,24 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < nWriteThreads; i++)
             {
-                ThreadClass thread = new ThreadAnonymousInnerClassHelper(this, "WRITER" + i, commitPercent, softCommitPercent, deletePercent, deleteByQueryPercent, ndocs, maxConcurrentCommits, tombstones, operations, storedOnlyType, numCommitting, writer);
+                ThreadJob thread = new ThreadAnonymousInnerClassHelper(this, "WRITER" + i, commitPercent, softCommitPercent, deletePercent, deleteByQueryPercent, ndocs, maxConcurrentCommits, tombstones, operations, storedOnlyType, numCommitting, writer);
 
                 threads.Add(thread);
             }
 
             for (int i = 0; i < nReadThreads; i++)
             {
-                ThreadClass thread = new ThreadAnonymousInnerClassHelper2(this, "READER" + i, ndocs, tombstones, operations);
+                ThreadJob thread = new ThreadAnonymousInnerClassHelper2(this, "READER" + i, ndocs, tombstones, operations);
 
                 threads.Add(thread);
             }
 
-            foreach (ThreadClass thread in threads)
+            foreach (ThreadJob thread in threads)
             {
                 thread.Start();
             }
 
-            foreach (ThreadClass thread in threads)
+            foreach (ThreadJob thread in threads)
             {
                 thread.Join();
             }
@@ -156,7 +155,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestStressNRT OuterInstance;
 
@@ -409,7 +408,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
+        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
             private readonly TestStressNRT OuterInstance;
 

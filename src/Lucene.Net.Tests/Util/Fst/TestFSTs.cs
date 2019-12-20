@@ -1,3 +1,4 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
@@ -9,7 +10,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util.Fst

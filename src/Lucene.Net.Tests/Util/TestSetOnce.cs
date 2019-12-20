@@ -1,4 +1,4 @@
-using Lucene.Net.Support.Threading;
+using J2N.Threading;
 using NUnit.Framework;
 using System;
 using System.Globalization;
@@ -36,7 +36,7 @@ namespace Lucene.Net.Util
             internal int value;
         }
 
-        private sealed class SetOnceThread : ThreadClass
+        private sealed class SetOnceThread : ThreadJob
         {
             internal SetOnce<Integer> set;
             internal bool success = false;
@@ -107,12 +107,12 @@ namespace Lucene.Net.Util
                 threads[i].set = set;
             }
 
-            foreach (ThreadClass t in threads)
+            foreach (ThreadJob t in threads)
             {
                 t.Start();
             }
 
-            foreach (ThreadClass t in threads)
+            foreach (ThreadJob t in threads)
             {
                 t.Join();
             }

@@ -1,7 +1,7 @@
+using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -3556,7 +3556,7 @@ namespace Lucene.Net.Index
                 using (DirectoryReader ir = DirectoryReader.Open(dir))
                 {
                     int numThreads = TestUtil.NextInt32(Random, 2, 7);
-                    ThreadClass[] threads = new ThreadClass[numThreads];
+                    ThreadJob[] threads = new ThreadJob[numThreads];
                     using (CountdownEvent startingGun = new CountdownEvent(1))
                     {
 
@@ -3566,7 +3566,7 @@ namespace Lucene.Net.Index
                             threads[i].Start();
                         }
                         startingGun.Signal();
-                        foreach (ThreadClass t in threads)
+                        foreach (ThreadJob t in threads)
                         {
                             t.Join();
                         }
@@ -3575,7 +3575,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly BaseDocValuesFormatTestCase outerInstance;
 
@@ -3701,7 +3701,7 @@ namespace Lucene.Net.Index
                 using (DirectoryReader ir = DirectoryReader.Open(dir))
                 {
                     int numThreads = TestUtil.NextInt32(Random, 2, 7);
-                    ThreadClass[] threads = new ThreadClass[numThreads];
+                    ThreadJob[] threads = new ThreadJob[numThreads];
                     using (CountdownEvent startingGun = new CountdownEvent(1))
                     {
 
@@ -3711,7 +3711,7 @@ namespace Lucene.Net.Index
                             threads[i].Start();
                         }
                         startingGun.Signal();
-                        foreach (ThreadClass t in threads)
+                        foreach (ThreadJob t in threads)
                         {
                             t.Join();
                         }
@@ -3720,7 +3720,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
+        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
             private readonly BaseDocValuesFormatTestCase outerInstance;
 

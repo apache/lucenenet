@@ -1,10 +1,10 @@
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -311,7 +311,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(bytesUsed, flushControl.ActiveBytes);
         }
 
-        public class IndexThread : ThreadClass
+        public class IndexThread : ThreadJob
         {
             private readonly TestFlushByRamOrCountsPolicy OuterInstance;
 

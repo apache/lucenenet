@@ -1,9 +1,9 @@
 ﻿using ICSharpCode.SharpZipLib.BZip2;
+using J2N.Threading;
 using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -367,7 +367,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 br.Dispose();
             }
         }
-        private class ThreadAnonymousHelper : ThreadClass
+        private class ThreadAnonymousHelper : ThreadJob
         {
             private readonly WriteLineDocTask wldt;
             public ThreadAnonymousHelper(string name, WriteLineDocTask wldt)
@@ -395,7 +395,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             FileInfo file = new FileInfo(Path.Combine(getWorkDir().FullName, "one-line"));
             PerfRunData runData = createPerfRunData(file, false, typeof(ThreadingDocMaker).AssemblyQualifiedName);
-            ThreadClass[] threads = new ThreadClass[10];
+            ThreadJob[] threads = new ThreadJob[10];
             using (WriteLineDocTask wldt = new WriteLineDocTask(runData))
             {
                 for (int i = 0; i < threads.Length; i++)
@@ -403,8 +403,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     threads[i] = new ThreadAnonymousHelper("t" + i, wldt);
                 }
 
-                foreach (ThreadClass t in threads) t.Start();
-                foreach (ThreadClass t in threads) t.Join();
+                foreach (ThreadJob t in threads) t.Start();
+                foreach (ThreadJob t in threads) t.Join();
 
             } // wldt.Dispose();
 

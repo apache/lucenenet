@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Feeds;
+﻿using J2N.Threading;
+using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Stats;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             return (parallel ? DoParallelTasks() : DoSerialTasks());
         }
 
-        private class RunBackgroundTask : ThreadClass
+        private class RunBackgroundTask : ThreadJob
         {
             private readonly PerfTask task;
             private readonly bool letChildReport;
@@ -363,7 +363,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
         }
 
-        private class ParallelTask : ThreadClass
+        private class ParallelTask : ThreadJob
         {
             private int count;
             private readonly PerfTask task;

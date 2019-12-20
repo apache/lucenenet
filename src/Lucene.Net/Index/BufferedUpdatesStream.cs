@@ -1,10 +1,9 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
-using AtomicInt64 = J2N.Threading.Atomic.AtomicInt64;
 
 namespace Lucene.Net.Index
 {

@@ -1,5 +1,5 @@
+using J2N.Threading;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         private volatile bool stalled;
         private int numWaiting; // only with assert
         private bool wasStalled; // only with assert
-        private readonly IDictionary<ThreadClass, bool?> waiting = new IdentityHashMap<ThreadClass, bool?>(); // only with assert
+        private readonly IDictionary<ThreadJob, bool?> waiting = new IdentityHashMap<ThreadJob, bool?>(); // only with assert
 
         /// <summary>
         /// Update the stalled flag status. this method will set the stalled flag to
@@ -111,9 +111,9 @@ namespace Lucene.Net.Index
         private bool IncWaiters()
         {
             numWaiting++;
-            bool existed = waiting.ContainsKey(ThreadClass.Current());
+            bool existed = waiting.ContainsKey(ThreadJob.CurrentThread);
             Debug.Assert(!existed);
-            waiting[ThreadClass.Current()] = true;
+            waiting[ThreadJob.CurrentThread] = true;
 
             return numWaiting > 0;
         }
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
         private bool DecrWaiters()
         {
             numWaiting--;
-            bool removed = waiting.Remove(ThreadClass.Current());
+            bool removed = waiting.Remove(ThreadJob.CurrentThread);
             Debug.Assert(removed);
 
             return numWaiting >= 0;
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal bool IsThreadQueued(ThreadClass t) // for tests
+        internal bool IsThreadQueued(ThreadJob t) // for tests
         {
             lock (this)
             {

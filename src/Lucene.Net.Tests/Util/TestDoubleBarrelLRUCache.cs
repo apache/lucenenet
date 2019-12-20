@@ -1,4 +1,4 @@
-using Lucene.Net.Support.Threading;
+using J2N.Threading;
 using NUnit.Framework;
 using System;
 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Util
             TestCache(new DoubleBarrelLRUCache<CloneableInteger, object>(n), n);
         }
 
-        private class CacheThread : ThreadClass
+        private class CacheThread : ThreadJob
         {
             private readonly TestDoubleBarrelLRUCache OuterInstance;
 

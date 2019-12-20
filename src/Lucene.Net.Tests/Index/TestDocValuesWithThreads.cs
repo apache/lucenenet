@@ -1,7 +1,7 @@
+using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -76,19 +76,19 @@ namespace Lucene.Net.Index
             AtomicReader ar = (AtomicReader)r.Leaves[0].Reader;
 
             int numThreads = TestUtil.NextInt32(Random, 2, 5);
-            IList<ThreadClass> threads = new List<ThreadClass>();
+            IList<ThreadJob> threads = new List<ThreadJob>();
             CountdownEvent startingGun = new CountdownEvent(1);
             for (int t = 0; t < numThreads; t++)
             {
                 Random threadRandom = new Random(Random.Next());
-                ThreadClass thread = new ThreadAnonymousInnerClassHelper(this, numbers, binary, sorted, numDocs, ar, startingGun, threadRandom);
+                ThreadJob thread = new ThreadAnonymousInnerClassHelper(this, numbers, binary, sorted, numDocs, ar, startingGun, threadRandom);
                 thread.Start();
                 threads.Add(thread);
             }
 
             startingGun.Signal();
 
-            foreach (ThreadClass thread in threads)
+            foreach (ThreadJob thread in threads)
             {
                 thread.Join();
             }
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestDocValuesWithThreads OuterInstance;
 
@@ -250,14 +250,14 @@ namespace Lucene.Net.Index
             long END_TIME = Environment.TickCount + (TEST_NIGHTLY ? 30 : 1);
 
             int NUM_THREADS = TestUtil.NextInt32(LuceneTestCase.Random, 1, 10);
-            ThreadClass[] threads = new ThreadClass[NUM_THREADS];
+            ThreadJob[] threads = new ThreadJob[NUM_THREADS];
             for (int thread = 0; thread < NUM_THREADS; thread++)
             {
                 threads[thread] = new ThreadAnonymousInnerClassHelper2(random, docValues, sr, END_TIME);
                 threads[thread].Start();
             }
 
-            foreach (ThreadClass thread in threads)
+            foreach (ThreadJob thread in threads)
             {
                 thread.Join();
             }
@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
+        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
             private Random Random;
             private IList<BytesRef> DocValues;

@@ -1,6 +1,7 @@
 using J2N;
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,7 +13,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Index
 {
@@ -1184,7 +1184,7 @@ namespace Lucene.Net.Index
                     try
                     {
                         // clean up merge scheduler in all cases, although flushing may have failed:
-                        interrupted = ThreadClass.Interrupted();
+                        interrupted = ThreadJob.Interrupted();
 
                         if (waitForMerges)
                         {

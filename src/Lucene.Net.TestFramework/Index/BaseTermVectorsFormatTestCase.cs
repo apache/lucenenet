@@ -1,10 +1,10 @@
+using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.TestFramework;
 using System;
 using System.Collections.Generic;
@@ -949,16 +949,16 @@ namespace Lucene.Net.Index
                             AssertEquals(docs[i], reader.GetTermVectors(docID));
                         }
 
-                        ThreadClass[] threads = new ThreadClass[2];
+                        ThreadJob[] threads = new ThreadJob[2];
                         for (int i = 0; i < threads.Length; ++i)
                         {
                             threads[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, docs, reader, exception, i);
                         }
-                        foreach (ThreadClass thread in threads)
+                        foreach (ThreadJob thread in threads)
                         {
                             thread.Start();
                         }
-                        foreach (ThreadClass thread in threads)
+                        foreach (ThreadJob thread in threads)
                         {
                             thread.Join();
                         }
@@ -968,7 +968,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly BaseTermVectorsFormatTestCase outerInstance;
 

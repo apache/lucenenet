@@ -1,9 +1,19 @@
+using J2N.Threading;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Attributes;
+using Lucene.Net.Codecs;
+using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
-using Lucene.Net.Support.Threading;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Threading;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -11,33 +21,23 @@ using Console = Lucene.Net.Support.SystemConsole;
 namespace Lucene.Net.Index
 {
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+    * Licensed to the Apache Software Foundation (ASF) under one or more
+    * contributor license agreements.  See the NOTICE file distributed with
+    * this work for additional information regarding copyright ownership.
+    * The ASF licenses this file to You under the Apache License, Version 2.0
+    * (the "License"); you may not use this file except in compliance with
+    * the License.  You may obtain a copy of the License at
+    *
+    *     http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+    */
 
-    using Lucene.Net.Analysis;
-    using Lucene.Net.Attributes;
-    using Lucene.Net.Codecs;
-    using Lucene.Net.Codecs.SimpleText;
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using Lucene.Net.Util;
-    using NUnit.Framework;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.IO;
+    
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
@@ -787,7 +787,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestMaxThreadPriority()
         {
-            ThreadPriority pri = ThreadClass.Current().Priority;
+            ThreadPriority pri = ThreadJob.CurrentThread.Priority;
             try
             {
                 Directory dir = NewDirectory();
@@ -1141,7 +1141,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class IndexerThreadInterrupt : ThreadClass
+        private class IndexerThreadInterrupt : ThreadJob
         {
             private readonly TestIndexWriter outerInstance;
 
@@ -1364,7 +1364,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: now rollback");
                     }
                     // clear interrupt state:
-                    ThreadClass.Interrupted();
+                    ThreadJob.Interrupted();
                     if (w != null)
                     {
                         try
@@ -1433,7 +1433,7 @@ namespace Lucene.Net.Index
         public virtual void TestThreadInterruptDeadlock()
         {
             IndexerThreadInterrupt t = new IndexerThreadInterrupt(this);
-            t.SetDaemon(true);
+            t.IsBackground = (true);
             t.Start();
 
             // Force class loader to load ThreadInterruptedException
@@ -1472,11 +1472,11 @@ namespace Lucene.Net.Index
         public virtual void TestTwoThreadsInterruptDeadlock()
         {
             IndexerThreadInterrupt t1 = new IndexerThreadInterrupt(this);
-            t1.SetDaemon(true);
+            t1.IsBackground = (true);
             t1.Start();
 
             IndexerThreadInterrupt t2 = new IndexerThreadInterrupt(this);
-            t2.SetDaemon(true);
+            t2.IsBackground = (true);
             t2.Start();
 
             // Force class loader to load ThreadInterruptedException

@@ -1,8 +1,8 @@
+using J2N.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -1219,7 +1219,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        internal class IncThread : ThreadClass
+        internal class IncThread : ThreadJob
         {
             internal readonly IndexReader ToInc;
             internal readonly Random Random;

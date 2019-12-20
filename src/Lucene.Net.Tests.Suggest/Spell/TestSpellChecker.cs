@@ -1,9 +1,10 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N.Threading;
+using J2N.Threading.Atomic;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -12,7 +13,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -566,7 +566,7 @@ namespace Lucene.Net.Search.Spell
         //    System.out.println(count);
         //  }
 
-        private class SpellCheckWorker : ThreadClass
+        private class SpellCheckWorker : ThreadJob
         {
             private readonly TestSpellChecker outerInstance;
 

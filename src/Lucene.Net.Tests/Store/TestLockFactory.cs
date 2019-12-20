@@ -1,7 +1,7 @@
+using J2N.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,6 @@ using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Store
 {
-    using System.Reflection;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
     using Field = Field;
@@ -289,7 +288,7 @@ namespace Lucene.Net.Store
             System.IO.Directory.Delete(dirName.FullName, true);
         }
 
-        private class WriterThread : ThreadClass
+        private class WriterThread : ThreadJob
         {
             private readonly TestLockFactory OuterInstance;
 
@@ -368,7 +367,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        private class SearcherThread : ThreadClass
+        private class SearcherThread : ThreadJob
         {
             private readonly TestLockFactory OuterInstance;
 

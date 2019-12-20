@@ -1,6 +1,6 @@
+using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Store
 
             Assert.AreEqual(ramDir.GetSizeInBytes(), ramDir.GetRecomputedSizeInBytes());
 
-            ThreadClass[] threads = new ThreadClass[NumThreads];
+            ThreadJob[] threads = new ThreadJob[NumThreads];
             for (int i = 0; i < NumThreads; i++)
             {
                 int num = i;
@@ -141,7 +141,7 @@ namespace Lucene.Net.Store
             writer.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestRAMDirectory OuterInstance;
 

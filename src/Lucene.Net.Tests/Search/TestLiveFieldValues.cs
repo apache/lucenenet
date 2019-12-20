@@ -1,6 +1,6 @@
+using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
             }
 
             CountdownEvent startingGun = new CountdownEvent(1);
-            IList<ThreadClass> threads = new List<ThreadClass>();
+            IList<ThreadJob> threads = new List<ThreadJob>();
 
             int iters = AtLeast(1000);
             int idCount = TestUtil.NextInt32(Random, 100, 10000);
@@ -78,14 +78,14 @@ namespace Lucene.Net.Search
             {
                 int threadID = t;
                 Random threadRandom = new Random(Random.Next());
-                ThreadClass thread = new ThreadAnonymousInnerClassHelper(w, mgr, missing, rt, startingGun, iters, idCount, reopenChance, deleteChance, addChance, t, threadID, threadRandom);
+                ThreadJob thread = new ThreadAnonymousInnerClassHelper(w, mgr, missing, rt, startingGun, iters, idCount, reopenChance, deleteChance, addChance, t, threadID, threadRandom);
                 threads.Add(thread);
                 thread.Start();
             }
 
             startingGun.Signal();
 
-            foreach (ThreadClass thread in threads)
+            foreach (ThreadJob thread in threads)
             {
                 thread.Join();
             }
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private IndexWriter w;
             private SearcherManager Mgr;

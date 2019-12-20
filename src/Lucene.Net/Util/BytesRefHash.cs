@@ -610,7 +610,7 @@ namespace Lucene.Net.Util
             /// <see cref="BytesStartArray"/>. The <see cref="BytesRefHash"/> uses this reference to
             /// track it memory usage.
             /// </summary>
-            /// <returns> a <see cref="AtomicInt64"/> reference holding the number of bytes used
+            /// <returns> a <see cref="J2N.Threading.Atomic.AtomicInt64"/> reference holding the number of bytes used
             ///         by this <see cref="BytesStartArray"/>. </returns>
             public abstract Counter BytesUsed();
         }

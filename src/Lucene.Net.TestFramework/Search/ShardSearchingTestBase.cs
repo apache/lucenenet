@@ -1,5 +1,5 @@
+using J2N.Threading;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.TestFramework;
 using System;
 using System.Collections.Concurrent;
@@ -693,7 +693,7 @@ namespace Lucene.Net.Search
         // TODO: make this more realistic, ie, each node should
         // have its own thread, so we have true node to node
         // concurrency
-        private sealed class ChangeIndices : ThreadClass
+        private sealed class ChangeIndices : ThreadJob
         {
             private readonly ShardSearchingTestBase outerInstance;
 
@@ -751,7 +751,7 @@ namespace Lucene.Net.Search
         protected NodeState[] m_nodes;
         internal int maxSearcherAgeSeconds;
         internal long endTimeNanos;
-        private ThreadClass changeIndicesThread;
+        private ThreadJob changeIndicesThread;
 
         protected virtual void Start(int numNodes, double runTimeSec, int maxSearcherAgeSeconds)
         {

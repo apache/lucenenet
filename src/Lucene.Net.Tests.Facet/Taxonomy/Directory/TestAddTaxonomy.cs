@@ -1,5 +1,5 @@
-﻿using J2N.Threading.Atomic;
-using Lucene.Net.Support.Threading;
+﻿using J2N.Threading;
+using J2N.Threading.Atomic;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -41,17 +41,17 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 dirs[i] = NewDirectory();
                 var tw = new DirectoryTaxonomyWriter(dirs[i]);
-                ThreadClass[] addThreads = new ThreadClass[4];
+                ThreadJob[] addThreads = new ThreadJob[4];
                 for (int j = 0; j < addThreads.Length; j++)
                 {
                     addThreads[j] = new ThreadAnonymousInnerClassHelper(this, range, numCats, tw);
                 }
 
-                foreach (ThreadClass t in addThreads)
+                foreach (ThreadJob t in addThreads)
                 {
                     t.Start();
                 }
-                foreach (ThreadClass t in addThreads)
+                foreach (ThreadJob t in addThreads)
                 {
                     t.Join();
                 }
@@ -69,7 +69,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             IOUtils.Dispose(dirs);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestAddTaxonomy outerInstance;
 
@@ -249,7 +249,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // again, in parallel -- in the end, no duplicate categories should exist.
             Directory dest = NewDirectory();
             var destTw = new DirectoryTaxonomyWriter(dest);
-            ThreadClass t = new ThreadAnonymousInnerClassHelper2(this, numCategories, destTw);
+            var t = new ThreadAnonymousInnerClassHelper2(this, numCategories, destTw);
             t.Start();
 
             IOrdinalMap map = new MemoryOrdinalMap();
@@ -273,7 +273,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             IOUtils.Dispose(src, dest);
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
+        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
             private readonly TestAddTaxonomy outerInstance;
 

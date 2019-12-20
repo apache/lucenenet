@@ -1,8 +1,8 @@
+using J2N.Threading;
 using Lucene.Net.Codecs.MockSep;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -468,7 +468,7 @@ namespace Lucene.Net.Index
                     for (int i = 0; i < NUM_TEST_THREADS - 1; i++)
                     {
                         threads[i] = new Verify(this, si, fields, terms);
-                        threads[i].SetDaemon(true);
+                        threads[i].IsBackground = (true);
                         threads[i].Start();
                     }
 
@@ -549,7 +549,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class Verify : ThreadClass
+        private class Verify : ThreadJob
         {
             private readonly TestCodecs OuterInstance;
 

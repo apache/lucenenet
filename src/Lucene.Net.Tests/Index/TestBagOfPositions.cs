@@ -1,7 +1,6 @@
+using J2N.Threading;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
@@ -112,7 +111,7 @@ namespace Lucene.Net.Index
             }
             // else just positions
 
-            ThreadClass[] threads = new ThreadClass[threadCount];
+            ThreadJob[] threads = new ThreadJob[threadCount];
             CountdownEvent startingGun = new CountdownEvent(1);
 
             for (int threadID = 0; threadID < threadCount; threadID++)
@@ -125,7 +124,7 @@ namespace Lucene.Net.Index
                 threads[threadID].Start();
             }
             startingGun.Signal();
-            foreach (ThreadClass t in threads)
+            foreach (ThreadJob t in threads)
             {
                 t.Join();
             }
@@ -152,7 +151,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestBagOfPositions OuterInstance;
 

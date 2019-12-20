@@ -1,6 +1,6 @@
+using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
             w.IndexWriter.Config.SetMaxBufferedDocs(TestUtil.NextInt32(Random, 5, 30));
 
             w.Commit();
-            ThreadClass[] indexThreads = new ThreadClass[Random.Next(4)];
+            ThreadJob[] indexThreads = new ThreadJob[Random.Next(4)];
             long stopTime = Environment.TickCount + AtLeast(1000);
             for (int x = 0; x < indexThreads.Length; x++)
             {
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
             }
             r.Dispose();
 
-            foreach (ThreadClass t in indexThreads)
+            foreach (ThreadJob t in indexThreads)
             {
                 t.Join();
             }
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
             System.IO.Directory.Delete(tmpDir.FullName, true);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly Func<string, string, Field.Store, Field> NewStringField;
             private readonly Func<string, string, Field.Store, Field> NewTextField;

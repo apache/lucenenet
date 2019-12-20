@@ -1,8 +1,6 @@
+using J2N.Threading;
 using Lucene.Net.Attributes;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -86,7 +84,7 @@ namespace Lucene.Net.Store
             dir.Dispose();
         }
 
-        private class TheThread : ThreadClass
+        private class TheThread : ThreadJob
         {
             private readonly string name;
             private readonly BaseDirectoryWrapper outerBDWrapper;
@@ -116,7 +114,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        private class TheThread2 : ThreadClass
+        private class TheThread2 : ThreadJob
         {
             private string _name;
             private readonly BaseDirectoryWrapper outerBDWrapper;

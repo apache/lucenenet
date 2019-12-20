@@ -1,4 +1,5 @@
 #if FEATURE_CONCURRENTMERGESCHEDULER
+using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
@@ -8,8 +9,6 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index

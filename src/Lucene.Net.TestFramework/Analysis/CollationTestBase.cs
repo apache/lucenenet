@@ -1,8 +1,8 @@
+using J2N.Threading;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using System;
@@ -302,7 +302,7 @@ namespace Lucene.Net.Analysis
                 }
             }
 
-            ThreadClass[] threads = new ThreadClass[numThreads];
+            ThreadJob[] threads = new ThreadJob[numThreads];
             for (int i = 0; i < numThreads; i++)
             {
                 threads[i] = new ThreadAnonymousInnerClassHelper(this, analyzer, map);
@@ -317,7 +317,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly CollationTestBase outerInstance;
 

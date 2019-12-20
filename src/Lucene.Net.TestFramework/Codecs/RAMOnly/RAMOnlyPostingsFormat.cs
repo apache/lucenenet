@@ -1,9 +1,9 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AtomicInt64 = J2N.Threading.Atomic.AtomicInt64;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.RAMOnly

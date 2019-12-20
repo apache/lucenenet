@@ -1,6 +1,6 @@
+using J2N.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Threading;
@@ -238,21 +238,21 @@ namespace Lucene.Net.Search
             }
             CountdownEvent startingGun = new CountdownEvent(1);
             int numThreads = TestUtil.NextInt32(Random, 2, 5);
-            ThreadClass[] threads = new ThreadClass[numThreads];
+            ThreadJob[] threads = new ThreadJob[numThreads];
             for (int threadID = 0; threadID < numThreads; threadID++)
             {
-                ThreadClass thread = new ThreadAnonymousInnerClassHelper(this, queries, startingGun);
+                ThreadJob thread = new ThreadAnonymousInnerClassHelper(this, queries, startingGun);
                 threads[threadID] = thread;
                 thread.Start();
             }
             startingGun.Signal();
-            foreach (ThreadClass thread in threads)
+            foreach (ThreadJob thread in threads)
             {
                 thread.Join();
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestAutomatonQuery OuterInstance;
 

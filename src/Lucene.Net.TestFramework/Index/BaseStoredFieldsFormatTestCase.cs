@@ -1,10 +1,11 @@
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,7 +14,6 @@ using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Lucene.Net.TestFramework;
-using J2N.Threading.Atomic;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -540,17 +540,17 @@ namespace Lucene.Net.Index
                         IndexSearcher searcher = new IndexSearcher(rd);
                         int concurrentReads = AtLeast(5);
                         int readsPerThread = AtLeast(50);
-                        IList<ThreadClass> readThreads = new List<ThreadClass>();
+                        IList<ThreadJob> readThreads = new List<ThreadJob>();
                         
                         for (int i = 0; i < concurrentReads; ++i)
                         {
                             readThreads.Add(new ThreadAnonymousInnerClassHelper(numDocs, rd, searcher, readsPerThread, ex, i));
                         }
-                        foreach (ThreadClass thread in readThreads)
+                        foreach (ThreadJob thread in readThreads)
                         {
                             thread.Start();
                         }
-                        foreach (ThreadClass thread in readThreads)
+                        foreach (ThreadJob thread in readThreads)
                         {
                             thread.Join();
                         }
@@ -564,7 +564,7 @@ namespace Lucene.Net.Index
             } // dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private int numDocs;
             private readonly DirectoryReader rd;

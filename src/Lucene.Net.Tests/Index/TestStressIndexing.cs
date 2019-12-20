@@ -1,9 +1,9 @@
+using J2N.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestStressIndexing : LuceneTestCase
     {
-        private abstract class TimedThread : ThreadClass
+        private abstract class TimedThread : ThreadJob
         {
             internal volatile bool Failed;
             internal int Count;

@@ -1,12 +1,9 @@
-﻿using System;
+﻿using J2N.Threading.Atomic;
+using System;
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
-using Lucene.Net.Facet.Range;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
 using NUnit.Framework;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Facet.Range

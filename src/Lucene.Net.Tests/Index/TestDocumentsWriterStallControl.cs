@@ -1,11 +1,9 @@
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -41,7 +39,7 @@ namespace Lucene.Net.Index
             DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
 
             ctrl.UpdateStalled(false);
-            ThreadClass[] waitThreads = WaitThreads(AtLeast(1), ctrl);
+            ThreadJob[] waitThreads = WaitThreads(AtLeast(1), ctrl);
             Start(waitThreads);
             Assert.IsFalse(ctrl.HasBlocked);
             Assert.IsFalse(ctrl.AnyStalledThreads());
@@ -65,7 +63,7 @@ namespace Lucene.Net.Index
             DocumentsWriterStallControl ctrl = new DocumentsWriterStallControl();
             ctrl.UpdateStalled(false);
 
-            ThreadClass[] stallThreads = new ThreadClass[AtLeast(3)];
+            ThreadJob[] stallThreads = new ThreadJob[AtLeast(3)];
             for (int i = 0; i < stallThreads.Length; i++)
             {
                 int stallProbability = 1 + Random.Next(10);
@@ -92,7 +90,7 @@ namespace Lucene.Net.Index
             Join(stallThreads);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private DocumentsWriterStallControl Ctrl;
             private int StallProbability;
@@ -129,7 +127,7 @@ namespace Lucene.Net.Index
             int numReleasers = AtLeast(1);
             int numWaiters = AtLeast(1);
             var sync = new Synchronizer(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
-            var threads = new ThreadClass[numReleasers + numStallers + numWaiters];
+            var threads = new ThreadJob[numReleasers + numStallers + numWaiters];
             IList<Exception> exceptions = new SynchronizedList<Exception>();
             for (int i = 0; i < numReleasers; i++)
             {
@@ -206,7 +204,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void AssertState(int numReleasers, int numStallers, int numWaiters, ThreadClass[] threads, DocumentsWriterStallControl ctrl)
+        private void AssertState(int numReleasers, int numStallers, int numWaiters, ThreadJob[] threads, DocumentsWriterStallControl ctrl)
         {
             int millisToSleep = 100;
             while (true)
@@ -238,7 +236,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal class Waiter : ThreadClass
+        internal class Waiter : ThreadJob
         {
             internal Synchronizer Sync;
             internal DocumentsWriterStallControl Ctrl;
@@ -291,7 +289,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal class Updater : ThreadClass
+        internal class Updater : ThreadJob
         {
             internal Synchronizer Sync;
             internal DocumentsWriterStallControl Ctrl;
@@ -365,9 +363,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        public static bool Terminated(ThreadClass[] threads)
+        public static bool Terminated(ThreadJob[] threads)
         {
-            foreach (ThreadClass thread in threads)
+            foreach (ThreadJob thread in threads)
             {
                 if (ThreadState.Stopped != thread.State)
                 {
@@ -377,26 +375,26 @@ namespace Lucene.Net.Index
             return true;
         }
 
-        public static void Start(ThreadClass[] tostart)
+        public static void Start(ThreadJob[] tostart)
         {
-            foreach (ThreadClass thread in tostart)
+            foreach (ThreadJob thread in tostart)
             {
                 thread.Start();
             }
             Thread.Sleep(1); // let them start
         }
 
-        public static void Join(ThreadClass[] toJoin)
+        public static void Join(ThreadJob[] toJoin)
         {
-            foreach (ThreadClass thread in toJoin)
+            foreach (ThreadJob thread in toJoin)
             {
                 thread.Join();
             }
         }
 
-        internal static ThreadClass[] WaitThreads(int num, DocumentsWriterStallControl ctrl)
+        internal static ThreadJob[] WaitThreads(int num, DocumentsWriterStallControl ctrl)
         {
-            ThreadClass[] array = new ThreadClass[num];
+            ThreadJob[] array = new ThreadJob[num];
             for (int i = 0; i < array.Length; i++)
             {
                 array[i] = new ThreadAnonymousInnerClassHelper2(ctrl);
@@ -404,7 +402,7 @@ namespace Lucene.Net.Index
             return array;
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
+        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
             private DocumentsWriterStallControl Ctrl;
 
@@ -423,12 +421,12 @@ namespace Lucene.Net.Index
         /// Waits for all incoming threads to be in wait()
         ///  methods.
         /// </summary>
-        public static void AwaitState(ThreadState state, params ThreadClass[] threads)
+        public static void AwaitState(ThreadState state, params ThreadJob[] threads)
         {
             while (true)
             {
                 bool done = true;
-                foreach (ThreadClass thread in threads)
+                foreach (ThreadJob thread in threads)
                 {
                     if (thread.State != state)
                     {

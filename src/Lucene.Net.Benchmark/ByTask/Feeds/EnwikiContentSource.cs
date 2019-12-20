@@ -1,7 +1,7 @@
 ﻿// LUCENENET TODO: Use HTML Agility pack instead of SAX ?
 
+using J2N.Threading;
 using Lucene.Net.Benchmarks.ByTask.Utils;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using Sax;
 using Sax.Helpers;
@@ -45,7 +45,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     {
         private class Parser : DefaultHandler//, IRunnable
         {
-            private ThreadClass t;
+            private ThreadJob t;
             private bool threadDone;
             private bool stopped = false;
             private string[] tuple;
@@ -68,8 +68,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 if (t == null)
                 {
                     threadDone = false;
-                    t = new ThreadClass(Run);
-                    t.SetDaemon(true);
+                    t = new ThreadJob(Run);
+                    t.IsBackground = true;
                     t.Start();
                 }
                 string[] result;

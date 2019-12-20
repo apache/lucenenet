@@ -1,14 +1,14 @@
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Index
 {
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
             AtomicInt32 numUpdates = new AtomicInt32(AtLeast(100));
 
             // same thread updates a field as well as reopens
-            ThreadClass[] threads = new ThreadClass[numThreads];
+            ThreadJob[] threads = new ThreadJob[numThreads];
             for (int i = 0; i < threads.Length; i++)
             {
                 string f = "f" + i;
@@ -279,7 +279,7 @@ namespace Lucene.Net.Index
                 threads[i] = new ThreadAnonymousInnerClassHelper(this, "UpdateThread-" + i, writer, numDocs, done, numUpdates, f, cf);
             }
 
-            foreach (ThreadClass t in threads)
+            foreach (ThreadJob t in threads)
             {
                 t.Start();
             }
@@ -321,7 +321,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestMixedDocValuesUpdates OuterInstance;
 

@@ -1,3 +1,4 @@
+using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Search;
 using Lucene.Net.Support.Threading;
@@ -176,7 +177,7 @@ namespace Lucene.Net.Index
                 BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.Instance);
             ReentrantLock @lock = (ReentrantLock)field.GetValue(queue);
             @lock.Lock();
-            ThreadClass t = new ThreadAnonymousInnerClassHelper(this, queue);
+            var t = new ThreadAnonymousInnerClassHelper(this, queue);
             t.Start();
             t.Join();
             @lock.Unlock();
@@ -189,7 +190,7 @@ namespace Lucene.Net.Index
             Assert.IsFalse(queue.AnyChanges(), "all changes applied");
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestDocumentsWriterDeleteQueue OuterInstance;
 
@@ -255,7 +256,7 @@ namespace Lucene.Net.Index
             assertEquals(uniqueValues, frozenSet);
         }
 
-        private class UpdateThread : ThreadClass
+        private class UpdateThread : ThreadJob
         {
             internal readonly DocumentsWriterDeleteQueue Queue;
             internal readonly AtomicInt32 Index;

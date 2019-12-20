@@ -1,9 +1,10 @@
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -11,7 +12,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class IndexerThread : ThreadClass
+        private class IndexerThread : ThreadJob
         {
             private DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -927,7 +927,7 @@ namespace Lucene.Net.Index
                     // don't use a merge policy here they depend on the DWPThreadPool and its max thread states etc.
                     int finalI = i;
 
-                    ThreadClass[] threads = new ThreadClass[NUM_THREAD];
+                    ThreadJob[] threads = new ThreadJob[NUM_THREAD];
                     for (int t = 0; t < NUM_THREAD; t++)
                     {
                         threads[t] = new ThreadAnonymousInnerClassHelper(this, NUM_ITER, writer, finalI, t);
@@ -1009,7 +1009,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestIndexWriterExceptions OuterInstance;
 

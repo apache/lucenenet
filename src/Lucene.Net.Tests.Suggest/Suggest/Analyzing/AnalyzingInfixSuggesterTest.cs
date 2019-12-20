@@ -1,10 +1,11 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N.Threading;
+using J2N.Threading.Atomic;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -15,8 +16,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
@@ -561,7 +560,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             internal int index;
         }
 
-        private class LookupThread : ThreadClass
+        private class LookupThread : ThreadJob
         {
             private readonly AnalyzingInfixSuggesterTest outerInstance;
 

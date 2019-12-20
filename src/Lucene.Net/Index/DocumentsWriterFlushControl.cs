@@ -1,9 +1,9 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 
 namespace Lucene.Net.Index
 {

@@ -1,9 +1,8 @@
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -98,7 +97,7 @@ namespace Lucene.Net.Index
 
             AtomicBoolean doStop = new AtomicBoolean();
             w.Config.SetMaxBufferedDocs(2);
-            ThreadClass t = new ThreadAnonymousInnerClassHelper(this, w, numStartDocs, docs, doStop);
+            ThreadJob t = new ThreadAnonymousInnerClassHelper(this, w, numStartDocs, docs, doStop);
             t.Start();
             w.ForceMerge(1);
             doStop.Value = true;
@@ -109,7 +108,7 @@ namespace Lucene.Net.Index
             docs.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestForceMergeForever OuterInstance;
 

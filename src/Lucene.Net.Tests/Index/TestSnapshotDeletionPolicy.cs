@@ -1,6 +1,6 @@
+using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
             dp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
             writer.Commit();
 
-            ThreadClass t = new ThreadAnonymousInnerClassHelper(stopTime, writer, NewField);
+            ThreadJob t = new ThreadAnonymousInnerClassHelper(stopTime, writer, NewField);
 
             t.Start();
 
@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
             TestIndexWriter.AssertNoUnreferencedFiles(dir, "some files were not deleted but should have been");
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private long StopTime;
             private IndexWriter Writer;
@@ -361,7 +361,7 @@ namespace Lucene.Net.Index
             IndexWriter writer = new IndexWriter(dir, GetConfig(Random, DeletionPolicy));
             SnapshotDeletionPolicy sdp = (SnapshotDeletionPolicy)writer.Config.IndexDeletionPolicy;
 
-            ThreadClass[] threads = new ThreadClass[10];
+            ThreadJob[] threads = new ThreadJob[10];
             IndexCommit[] snapshots = new IndexCommit[threads.Length];
             for (int i = 0; i < threads.Length; i++)
             {
@@ -370,12 +370,12 @@ namespace Lucene.Net.Index
                 threads[i].Name = "t" + i;
             }
 
-            foreach (ThreadClass t in threads)
+            foreach (ThreadJob t in threads)
             {
                 t.Start();
             }
 
-            foreach (ThreadClass t in threads)
+            foreach (ThreadJob t in threads)
             {
                 t.Join();
             }
@@ -394,7 +394,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
+        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
             private readonly TestSnapshotDeletionPolicy OuterInstance;
 

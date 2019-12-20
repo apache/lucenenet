@@ -1,7 +1,7 @@
+using J2N.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -403,7 +403,7 @@ namespace Lucene.Net.Index
 
                     IndexWriter finalWriter = writer;
                     List<Exception> failure = new List<Exception>();
-                    ThreadClass t1 = new ThreadAnonymousInnerClassHelper(this, doc, finalWriter, failure);
+                    ThreadJob t1 = new ThreadAnonymousInnerClassHelper(this, doc, finalWriter, failure);
 
                     if (failure.Count > 0)
                     {
@@ -428,7 +428,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestIndexWriterMerging OuterInstance;
 

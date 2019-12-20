@@ -1,10 +1,10 @@
+using J2N.Threading.Atomic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Lucene.Net.Support;
-using AtomicInt64 = J2N.Threading.Atomic.AtomicInt64;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {

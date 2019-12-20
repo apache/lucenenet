@@ -1,5 +1,5 @@
+using J2N.Threading;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using System;
 using System.Globalization;
 using System.IO;
@@ -72,7 +72,7 @@ namespace Lucene.Net.Store
                 int[] lockedID = new int[1];
                 lockedID[0] = -1;
                 CountdownEvent startingGun = new CountdownEvent(1);
-                ThreadClass[] threads = new ThreadClass[maxClients];
+                ThreadJob[] threads = new ThreadJob[maxClients];
 
                 for (int count = 0; count < maxClients; count++)
                 {
@@ -86,7 +86,7 @@ namespace Lucene.Net.Store
                 startingGun.Signal();
 
                 // wait for all threads to finish
-                foreach (ThreadClass t in threads)
+                foreach (ThreadJob t in threads)
                 {
                     t.Join();
                 }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private object localLock;
             private int[] lockedID;

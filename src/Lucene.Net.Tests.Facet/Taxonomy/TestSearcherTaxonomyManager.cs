@@ -1,13 +1,13 @@
-﻿using Lucene.Net.Attributes;
+﻿using J2N.Threading;
+using J2N.Threading.Atomic;
+using Lucene.Net.Attributes;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -29,8 +29,6 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
-    
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
     using Document = Lucene.Net.Documents.Document;
@@ -42,11 +40,12 @@ namespace Lucene.Net.Facet.Taxonomy
     using SearcherAndTaxonomy = Lucene.Net.Facet.Taxonomy.SearcherTaxonomyManager.SearcherAndTaxonomy;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
+
     [TestFixture]
     public class TestSearcherTaxonomyManager : FacetTestCase
     {
 
-        private class IndexerThread : ThreadClass
+        private class IndexerThread : ThreadJob
         {
 
             internal IndexWriter w;
@@ -213,7 +212,7 @@ namespace Lucene.Net.Facet.Taxonomy
             IOUtils.Dispose(mgr, tw, w, taxoDir, dir);
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestSearcherTaxonomyManager outerInstance;
 

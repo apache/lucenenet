@@ -1,7 +1,7 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Support;
 using Lucene.Net.TestFramework;
 using System;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;

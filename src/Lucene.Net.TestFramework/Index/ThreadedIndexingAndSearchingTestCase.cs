@@ -1,7 +1,8 @@
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.TestFramework;
 using System;
 using System.Collections.Concurrent;
@@ -12,8 +13,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
@@ -143,25 +142,25 @@ namespace Lucene.Net.Index
         {
         }
 
-        private ThreadClass[] LaunchIndexingThreads(LineFileDocs docs, 
+        private ThreadJob[] LaunchIndexingThreads(LineFileDocs docs, 
                                                     int numThreads, 
                                                     long stopTime, 
                                                     ISet<string> delIDs, 
                                                     ISet<string> delPackIDs, 
                                                     IList<SubDocs> allSubDocs)
         {
-            ThreadClass[] threads = new ThreadClass[numThreads];
+            ThreadJob[] threads = new ThreadJob[numThreads];
             for (int thread = 0; thread < numThreads; thread++)
             {
                 threads[thread] = new ThreadAnonymousInnerClassHelper(this, docs, stopTime, delIDs, delPackIDs, allSubDocs);
-                threads[thread].SetDaemon(true);
+                threads[thread].IsBackground = (true);
                 threads[thread].Start();
             }
 
             return threads;
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
@@ -413,7 +412,7 @@ namespace Lucene.Net.Index
         protected virtual void RunSearchThreads(long stopTime)
         {
             int numThreads = TestUtil.NextInt32(Random, 1, 5);
-            ThreadClass[] searchThreads = new ThreadClass[numThreads];
+            ThreadJob[] searchThreads = new ThreadJob[numThreads];
             AtomicInt32 totHits = new AtomicInt32();
 
             // silly starting guess:
@@ -423,7 +422,7 @@ namespace Lucene.Net.Index
             for (int thread = 0; thread < searchThreads.Length; thread++)
             {
                 searchThreads[thread] = new ThreadAnonymousInnerClassHelper2(this, stopTime, totHits, totTermCount);
-                searchThreads[thread].SetDaemon(true);
+                searchThreads[thread].IsBackground = (true);
                 searchThreads[thread].Start();
             }
 
@@ -438,7 +437,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
+        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
             private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
@@ -632,7 +631,7 @@ namespace Lucene.Net.Index
 
             long stopTime = Environment.TickCount + (RUN_TIME_SEC * 1000);
 
-            ThreadClass[] indexThreads = LaunchIndexingThreads(docs, NUM_INDEX_THREADS, stopTime, delIDs, delPackIDs, allSubDocs.ToList());
+            ThreadJob[] indexThreads = LaunchIndexingThreads(docs, NUM_INDEX_THREADS, stopTime, delIDs, delPackIDs, allSubDocs.ToList());
 
             if (VERBOSE)
             {

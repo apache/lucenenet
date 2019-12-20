@@ -1,17 +1,14 @@
+using J2N.Threading;
+using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
-using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -466,7 +463,7 @@ namespace Lucene.Net.Index
         {
             internal virtual void InitializeInstanceFields()
             {
-                Threads = new ThreadClass[OuterInstance.NumThreads];
+                Threads = new ThreadJob[OuterInstance.NumThreads];
             }
 
             private readonly TestIndexWriterReader OuterInstance;
@@ -474,7 +471,7 @@ namespace Lucene.Net.Index
             internal Directory AddDir;
             internal const int NUM_INIT_DOCS = 100;
             internal int NumDirs;
-            internal ThreadClass[] Threads;
+            internal ThreadJob[] Threads;
             internal IndexWriter MainWriter;
             internal readonly IList<Exception> Failures = new List<Exception>();
             internal IndexReader[] Readers;
@@ -570,7 +567,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            private class ThreadAnonymousInnerClassHelper : ThreadClass
+            private class ThreadAnonymousInnerClassHelper : ThreadJob
             {
                 private readonly AddDirectoriesThreads OuterInstance;
 
@@ -897,11 +894,11 @@ namespace Lucene.Net.Index
 
             // Only one thread can addIndexes at a time, because
             // IndexWriter acquires a write lock in each directory:
-            var threads = new ThreadClass[1];
+            var threads = new ThreadJob[1];
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new ThreadAnonymousInnerClassHelper(writer, dirs, endTime, excs);
-                threads[i].SetDaemon(true);
+                threads[i].IsBackground = (true);
                 threads[i].Start();
             }
 
@@ -950,7 +947,7 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private IndexWriter Writer;
             private Directory[] Dirs;
@@ -1010,11 +1007,11 @@ namespace Lucene.Net.Index
             long endTime = (long)(Environment.TickCount + 1000.0 * SECONDS);
             ConcurrentQueue<Exception> excs = new ConcurrentQueue<Exception>();
 
-            var threads = new ThreadClass[NumThreads];
+            var threads = new ThreadJob[NumThreads];
             for (int i = 0; i < NumThreads; i++)
             {
                 threads[i] = new ThreadAnonymousInnerClassHelper2(writer, r, endTime, excs);
-                threads[i].SetDaemon(true);
+                threads[i].IsBackground = (true);
                 threads[i].Start();
             }
 
@@ -1055,7 +1052,7 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper2 : ThreadClass
+        private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
             private IndexWriter Writer;
             private DirectoryReader r;

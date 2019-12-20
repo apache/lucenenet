@@ -1,6 +1,6 @@
+using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
-using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Threading;
@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
 
                 ((LogMergePolicy)writer.Config.MergePolicy).MergeFactor = 4;
 
-                ThreadClass[] threads = new ThreadClass[NUM_THREADS];
+                ThreadJob[] threads = new ThreadJob[NUM_THREADS];
 
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
         }
 
-        private class ThreadAnonymousInnerClassHelper : ThreadClass
+        private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
             private readonly TestThreadedForceMerge OuterInstance;
 
