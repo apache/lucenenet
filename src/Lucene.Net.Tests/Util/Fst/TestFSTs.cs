@@ -1,5 +1,4 @@
 using Lucene.Net.Attributes;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
@@ -10,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util.Fst
@@ -1516,18 +1516,18 @@ namespace Lucene.Net.Util.Fst
 
             searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new Int32sRef());
             Util.TopResults<long?> res = searcher.Search();
-            Assert.AreEqual(rejectCount.Get(), 4);
+            Assert.AreEqual(rejectCount, 4);
             Assert.IsTrue(res.IsComplete); // rejected(4) + topN(2) <= maxQueueSize(6)
 
             Assert.AreEqual(1, res.TopN.Count);
             Assert.AreEqual(Util.ToInt32sRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
             Assert.AreEqual(7L, res.TopN[0].Output);
-            rejectCount.Set(0);
+            rejectCount.Value = (0);
             searcher = new TopNSearcherAnonymousInnerClassHelper2(this, fst, minLongComparer, rejectCount);
 
             searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new Int32sRef());
             res = searcher.Search();
-            Assert.AreEqual(rejectCount.Get(), 4);
+            Assert.AreEqual(rejectCount, 4);
             Assert.IsFalse(res.IsComplete); // rejected(4) + topN(2) > maxQueueSize(5)
         }
 

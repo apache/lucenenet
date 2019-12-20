@@ -4,6 +4,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Threading;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -123,7 +124,7 @@ namespace Lucene.Net.Index
                             // we may or may not delete because the term may not exist,
                             // however we're opening and closing the reader rapidly
                             IndexReader reader = Writer.GetReader();
-                            int id = r.Next(OuterInstance.Seq.Get());
+                            int id = r.Next(OuterInstance.Seq);
                             Term term = new Term("id", Convert.ToString(id));
                             int count = TestIndexWriterReader.Count(term, reader);
                             Writer.DeleteDocuments(term);

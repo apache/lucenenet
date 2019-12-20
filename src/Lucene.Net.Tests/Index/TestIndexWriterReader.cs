@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -443,7 +444,7 @@ namespace Lucene.Net.Index
 
             //Assert.AreEqual(100 + numDirs * (3 * numIter / 4) * addDirThreads.numThreads
             //    * addDirThreads.NUM_INIT_DOCS, addDirThreads.mainWriter.NumDocs);
-            Assert.AreEqual(addDirThreads.Count.Get(), addDirThreads.MainWriter.NumDocs);
+            Assert.AreEqual(addDirThreads.Count, addDirThreads.MainWriter.NumDocs);
 
             addDirThreads.Close(true);
 
@@ -452,7 +453,7 @@ namespace Lucene.Net.Index
             TestUtil.CheckIndex(mainDir);
 
             IndexReader reader = DirectoryReader.Open(mainDir);
-            Assert.AreEqual(addDirThreads.Count.Get(), reader.NumDocs);
+            Assert.AreEqual(addDirThreads.Count, reader.NumDocs);
             //Assert.AreEqual(100 + numDirs * (3 * numIter / 4) * addDirThreads.numThreads
             //    * addDirThreads.NUM_INIT_DOCS, reader.NumDocs);
             reader.Dispose();

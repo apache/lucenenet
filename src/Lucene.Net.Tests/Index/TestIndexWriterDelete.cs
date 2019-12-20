@@ -14,6 +14,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -1378,8 +1379,8 @@ namespace Lucene.Net.Index
 
             protected override void DoAfterFlush()
             {
-                Assert.IsTrue(Closing || DocsInSegment.Get() >= 7, "only " + DocsInSegment.Get() + " in segment");
-                DocsInSegment.Set(0);
+                Assert.IsTrue(Closing || DocsInSegment >= 7, "only " + DocsInSegment + " in segment");
+                DocsInSegment.Value = 0;
                 SawAfterFlush.Value = (true);
             }
         }

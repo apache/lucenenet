@@ -3,6 +3,7 @@ using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -102,7 +103,7 @@ namespace Lucene.Net.Index
             w.ForceMerge(1);
             doStop.Value = true;
             t.Join();
-            Assert.IsTrue(w.MergeCount.Get() <= 1, "merge count is " + w.MergeCount.Get());
+            Assert.IsTrue(w.MergeCount <= 1, "merge count is " + w.MergeCount);
             w.Dispose();
             d.Dispose();
             docs.Dispose();

@@ -1,17 +1,12 @@
-﻿using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
-
-
     using Directory = Lucene.Net.Store.Directory;
     using DiskOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.DiskOrdinalMap;
     using IOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.IOrdinalMap;

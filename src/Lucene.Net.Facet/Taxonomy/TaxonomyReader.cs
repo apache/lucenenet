@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Threading.Atomic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -275,13 +275,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Returns the current refCount for this taxonomy reader.
         /// </summary>
-        public int RefCount
-        {
-            get
-            {
-                return refCount.Get();
-            }
-        }
+        public int RefCount => refCount;
 
         /// <summary>
         /// Returns the number of categories in the taxonomy. Note that the number of
@@ -313,7 +307,7 @@ namespace Lucene.Net.Facet.Taxonomy
         public bool TryIncRef()
         {
             int count;
-            while ((count = refCount.Get()) > 0)
+            while ((count = refCount) > 0)
             {
                 if (refCount.CompareAndSet(count, count + 1))
                 {

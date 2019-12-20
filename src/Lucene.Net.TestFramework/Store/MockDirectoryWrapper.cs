@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -170,24 +171,12 @@ namespace Lucene.Net.Store
             Init();
         }
 
-        public virtual int InputCloneCount
-        {
-            get
-            {
-                return inputCloneCount.Get();
-            }
-        }
+        public virtual int InputCloneCount => inputCloneCount;
 
         public virtual bool TrackDiskUsage
         {
-            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
-            {
-                return trackDiskUsage;
-            }
-            set
-            {
-                trackDiskUsage = value;
-            }
+            get => trackDiskUsage; // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            set => trackDiskUsage = value;
         }
 
         /// <summary>

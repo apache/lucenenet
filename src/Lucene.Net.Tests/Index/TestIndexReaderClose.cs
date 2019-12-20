@@ -1,11 +1,10 @@
+using J2N.Threading.Atomic;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System;
     using Directory = Lucene.Net.Store.Directory;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -99,7 +98,7 @@ namespace Lucene.Net.Index
                 {
                     reader.Dispose(); // call it again
                 }
-                Assert.AreEqual(0, count.Get());
+                Assert.AreEqual(0, count);
                 wrap.Dispose();
                 dir.Dispose();
             }

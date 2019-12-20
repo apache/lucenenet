@@ -1,5 +1,5 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
 
         public virtual int RefCount()
         {
-            int rc = refCount.Get();
+            int rc = refCount;
             Debug.Assert(rc >= 0);
             return rc;
         }

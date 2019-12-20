@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Reflection;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
@@ -775,7 +776,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             lock (this)
             {
-                if (cacheMisses.Get() < cacheMissesUntilFill)
+                if (cacheMisses < cacheMissesUntilFill)
                 {
                     return;
                 }
@@ -1136,7 +1137,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 cache.Clear();
                 cacheIsComplete = false;
                 shouldFillCache = true;
-                cacheMisses.Set(0);
+                cacheMisses.Value = 0;
 
                 // update indexEpoch as a taxonomy replace is just like it has be recreated
                 ++indexEpoch;

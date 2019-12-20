@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Index
 {
@@ -107,7 +108,7 @@ namespace Lucene.Net.Index
             {
                 updates.Clear();
                 nextGen = 1;
-                numTerms.Set(0);
+                numTerms.Value = 0;
                 bytesUsed.Set(0);
             }
         }
@@ -117,15 +118,9 @@ namespace Lucene.Net.Index
             return bytesUsed.Get() != 0;
         }
 
-        public virtual int NumTerms
-        {
-            get { return numTerms.Get(); }
-        }
+        public virtual int NumTerms => numTerms;
 
-        public virtual long BytesUsed
-        {
-            get { return bytesUsed.Get(); }
-        }
+        public virtual long BytesUsed => bytesUsed.Get();
 
         public class ApplyDeletesResult
         {
@@ -447,7 +442,7 @@ namespace Lucene.Net.Index
                     {
                         FrozenBufferedUpdates packet = updates[delIDX];
                         numTerms.AddAndGet(-packet.numTermDeletes);
-                        Debug.Assert(numTerms.Get() >= 0);
+                        Debug.Assert(numTerms >= 0);
                         bytesUsed.AddAndGet(-packet.bytesUsed);
                         Debug.Assert(bytesUsed.Get() >= 0);
                     }
@@ -714,7 +709,7 @@ namespace Lucene.Net.Index
                 numTerms2 += packet.numTermDeletes;
                 bytesUsed2 += packet.bytesUsed;
             }
-            Debug.Assert(numTerms2 == numTerms.Get(), "numTerms2=" + numTerms2 + " vs " + numTerms.Get());
+            Debug.Assert(numTerms2 == numTerms, "numTerms2=" + numTerms2 + " vs " + numTerms);
             Debug.Assert(bytesUsed2 == bytesUsed.Get(), "bytesUsed2=" + bytesUsed2 + " vs " + bytesUsed);
             return true;
         }

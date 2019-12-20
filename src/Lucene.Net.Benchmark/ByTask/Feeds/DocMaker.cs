@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -452,7 +453,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // re-initiate since properties by round may have changed.
             SetConfig(m_config, m_source);
             m_source.ResetInputs();
-            numDocsCreated.Set(0);
+            numDocsCreated.Value = 0;
             ResetLeftovers();
         }
 

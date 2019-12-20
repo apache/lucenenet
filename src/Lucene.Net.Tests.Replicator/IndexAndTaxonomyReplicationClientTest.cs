@@ -1,11 +1,11 @@
-﻿using Lucene.Net.Documents;
+﻿using J2N.Threading.Atomic;
+using Lucene.Net.Documents;
 using Lucene.Net.Facet;
 using Lucene.Net.Facet.Taxonomy;
 using Lucene.Net.Facet.Taxonomy.Directory;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -314,7 +314,7 @@ namespace Lucene.Net.Replicator
             sourceDirFactory = new SourceDirectoryFactoryAnonymousInnerClass(this, @in, failures);
             handler = new IndexAndTaxonomyReplicationHandler(handlerIndexDir, handlerTaxoDir, () =>
             {
-                if (Random.NextDouble() < 0.2 && failures.Get() > 0)
+                if (Random.NextDouble() < 0.2 && failures > 0)
                     throw new Exception("random exception from callback");
                 return null;
             });
@@ -363,7 +363,7 @@ namespace Lucene.Net.Replicator
             public Directory GetDirectory(string sessionId, string source)
             {
                 Directory dir = @in.GetDirectory(sessionId, source);
-                if (Random.nextBoolean() && failures.Get() > 0)
+                if (Random.nextBoolean() && failures > 0)
                 { // client should fail, return wrapped dir
                     MockDirectoryWrapper mdw = new MockDirectoryWrapper(Random, dir);
                     mdw.RandomIOExceptionRateOnOpen = clientExRate;
@@ -375,7 +375,7 @@ namespace Lucene.Net.Replicator
                     return mdw;
                 }
 
-                if (failures.Get() > 0 && Random.nextBoolean())
+                if (failures > 0 && Random.nextBoolean())
                 { // handler should fail
                     if (Random.nextBoolean())
                     { // index dir fail
@@ -457,16 +457,16 @@ namespace Lucene.Net.Replicator
                     {
                         // count-down number of failures
                         failures.DecrementAndGet();
-                        Debug.Assert(failures.Get() >= 0, "handler failed too many times: " + failures.Get());
+                        Debug.Assert(failures >= 0, "handler failed too many times: " + failures);
                         if (VERBOSE)
                         {
-                            if (failures.Get() == 0)
+                            if (failures == 0)
                             {
                                 Console.WriteLine("no more failures expected");
                             }
                             else
                             {
-                                Console.WriteLine("num failures left: " + failures.Get());
+                                Console.WriteLine("num failures left: " + failures);
                             }
                         }
                     }

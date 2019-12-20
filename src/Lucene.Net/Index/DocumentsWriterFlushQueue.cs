@@ -1,6 +1,5 @@
-using Lucene.Net.Support;
+using J2N.Threading.Atomic;
 using Lucene.Net.Support.Threading;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -121,8 +120,8 @@ namespace Lucene.Net.Index
         {
             get
             {
-                Debug.Assert(ticketCount.Get() >= 0, "ticketCount should be >= 0 but was: " + ticketCount.Get());
-                return ticketCount.Get() != 0;
+                Debug.Assert(ticketCount >= 0, "ticketCount should be >= 0 but was: " + ticketCount);
+                return ticketCount != 0;
             }
         }
 
@@ -205,20 +204,14 @@ namespace Lucene.Net.Index
             return 0;
         }
 
-        public virtual int TicketCount
-        {
-            get
-            {
-                return ticketCount.Get();
-            }
-        }
+        public virtual int TicketCount => ticketCount;
 
         internal virtual void Clear()
         {
             lock (this)
             {
                 queue.Clear();
-                ticketCount.Set(0);
+                ticketCount.Value = 0;
             }
         }
 

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Index
 {
@@ -190,7 +191,7 @@ namespace Lucene.Net.Index
             {
                 // NOTE: don't ensureOpen, so that callers can see
                 // refCount is 0 (reader is closed)
-                return refCount.Get();
+                return refCount;
             }
         }
 
@@ -241,7 +242,7 @@ namespace Lucene.Net.Index
         public bool TryIncRef()
         {
             int count;
-            while ((count = refCount.Get()) > 0)
+            while ((count = refCount) > 0)
             {
                 if (refCount.CompareAndSet(count, count + 1))
                 {
@@ -264,7 +265,7 @@ namespace Lucene.Net.Index
         {
             // only check refcount here (don't call ensureOpen()), so we can
             // still close the reader if it was made invalid by a child:
-            if (refCount.Get() <= 0)
+            if (refCount <= 0)
             {
                 throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this IndexReader is closed");
             }
@@ -306,7 +307,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected internal void EnsureOpen()
         {
-            if (refCount.Get() <= 0)
+            if (refCount <= 0)
             {
                 throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this IndexReader is closed");
             }

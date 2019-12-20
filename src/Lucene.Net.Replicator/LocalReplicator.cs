@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Threading.Atomic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -57,7 +57,7 @@ namespace Lucene.Net.Replicator
             /// <exception cref="InvalidOperationException"></exception>
             public virtual void DecRef()
             {
-                if (refCount.Get() <= 0)
+                if (refCount <= 0)
                 {
                     throw new InvalidOperationException("this revision is already released");
                 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Index
 {
@@ -185,18 +186,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal int RefCount
-        {
-            get
-            {
-                return @ref.Get();
-            }
-        }
+        internal int RefCount => @ref;
 
         internal void IncRef()
         {
             int count;
-            while ((count = @ref.Get()) > 0)
+            while ((count = @ref) > 0)
             {
                 if (@ref.CompareAndSet(count, count + 1))
                 {

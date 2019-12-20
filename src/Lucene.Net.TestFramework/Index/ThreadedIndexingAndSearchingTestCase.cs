@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
@@ -501,14 +502,14 @@ namespace Lucene.Net.Index
                                 int seenTermCount = 0;
                                 int shift;
                                 int trigger;
-                                if (totTermCount.Get() < 30)
+                                if (totTermCount < 30)
                                 {
                                     shift = 0;
                                     trigger = 1;
                                 }
                                 else
                                 {
-                                    trigger = totTermCount.Get() / 30;
+                                    trigger = totTermCount / 30;
                                     shift = Random.Next(trigger);
                                 }
                                 while (Environment.TickCount < stopTimeMS)
@@ -516,7 +517,7 @@ namespace Lucene.Net.Index
                                     BytesRef term = termsEnum.Next();
                                     if (term == null)
                                     {
-                                        totTermCount.Set(seenTermCount);
+                                        totTermCount.Value = seenTermCount;
                                         break;
                                     }
                                     seenTermCount++;
@@ -570,9 +571,9 @@ namespace Lucene.Net.Index
         public virtual void RunTest(string testName)
         {
             m_failed.Value = (false);
-            m_addCount.Set(0);
-            m_delCount.Set(0);
-            m_packCount.Set(0);
+            m_addCount.Value = 0;
+            m_delCount.Value = 0;
+            m_packCount.Value = 0;
 
             long t0 = Environment.TickCount;
 
@@ -768,12 +769,12 @@ namespace Lucene.Net.Index
             }
             assertFalse(doFail);
 
-            assertEquals("index=" + m_writer.SegString() + " addCount=" + m_addCount + " delCount=" + m_delCount, m_addCount.Get() - m_delCount.Get(), s.IndexReader.NumDocs);
+            assertEquals("index=" + m_writer.SegString() + " addCount=" + m_addCount + " delCount=" + m_delCount, m_addCount - m_delCount, s.IndexReader.NumDocs);
             ReleaseSearcher(s);
 
             m_writer.Commit();
 
-            assertEquals("index=" + m_writer.SegString() + " addCount=" + m_addCount + " delCount=" + m_delCount, m_addCount.Get() - m_delCount.Get(), m_writer.NumDocs);
+            assertEquals("index=" + m_writer.SegString() + " addCount=" + m_addCount + " delCount=" + m_delCount, m_addCount - m_delCount, m_writer.NumDocs);
 
             DoClose();
             m_writer.Dispose(false);

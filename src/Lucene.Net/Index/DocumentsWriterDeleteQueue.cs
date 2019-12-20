@@ -351,10 +351,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public int NumGlobalTermDeletes
-        {
-            get { return globalBufferedUpdates.numTermDeletes.Get(); }
-        }
+        public int NumGlobalTermDeletes => globalBufferedUpdates.numTermDeletes;
 
         internal void Clear()
         {

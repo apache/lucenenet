@@ -477,7 +477,7 @@ namespace Lucene.Net.Index
             get
             {
                 // public for FlushPolicy
-                return pendingUpdates.numTermDeletes.Get();
+                return pendingUpdates.numTermDeletes;
             }
         }
 

@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using AtomicBoolean = J2N.Threading.Atomic.AtomicBoolean;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -552,7 +553,7 @@ namespace Lucene.Net.Search
                             // Purge all caches & resume, once all
                             // threads get here:
                             Restart.SignalAndWait();
-                            if (Iters.Get() >= NUM_ITER)
+                            if (Iters >= NUM_ITER)
                             {
                                 break;
                             }

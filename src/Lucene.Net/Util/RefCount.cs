@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Threading.Atomic;
 using System;
 
 namespace Lucene.Net.Util
@@ -83,7 +83,7 @@ namespace Lucene.Net.Util
         /// Returns the current reference count. </summary>
         public int GetRefCount() // LUCENENET NOTE: although this would be a good candidate for a property, doing so would cause a naming conflict
         {
-            return refCount.Get();
+            return refCount;
         }
 
         /// <summary>

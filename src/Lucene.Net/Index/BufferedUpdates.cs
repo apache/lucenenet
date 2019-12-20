@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Index
 {
@@ -173,9 +174,9 @@ namespace Lucene.Net.Index
             else
             {
                 string s = "gen=" + gen;
-                if (numTermDeletes.Get() != 0)
+                if (numTermDeletes != 0)
                 {
-                    s += " " + numTermDeletes.Get() + " deleted terms (unique count=" + terms.Count + ")";
+                    s += " " + numTermDeletes.Value + " deleted terms (unique count=" + terms.Count + ")";
                 }
                 if (queries.Count != 0)
                 {
@@ -185,13 +186,13 @@ namespace Lucene.Net.Index
                 {
                     s += " " + docIDs.Count + " deleted docIDs";
                 }
-                if (numNumericUpdates.Get() != 0)
+                if (numNumericUpdates != 0)
                 {
-                    s += " " + numNumericUpdates.Get() + " numeric updates (unique count=" + numericUpdates.Count + ")";
+                    s += " " + numNumericUpdates.Value + " numeric updates (unique count=" + numericUpdates.Count + ")";
                 }
-                if (numBinaryUpdates.Get() != 0)
+                if (numBinaryUpdates != 0)
                 {
-                    s += " " + numBinaryUpdates.Get() + " binary updates (unique count=" + binaryUpdates.Count + ")";
+                    s += " " + numBinaryUpdates.Value + " binary updates (unique count=" + binaryUpdates.Count + ")";
                 }
                 if (bytesUsed.Get() != 0)
                 {
@@ -324,9 +325,9 @@ namespace Lucene.Net.Index
             docIDs.Clear();
             numericUpdates.Clear();
             binaryUpdates.Clear();
-            numTermDeletes.Set(0);
-            numNumericUpdates.Set(0);
-            numBinaryUpdates.Set(0);
+            numTermDeletes.Value = 0;
+            numNumericUpdates.Value = 0;
+            numBinaryUpdates.Value = 0;
             bytesUsed.Set(0);
         }
 

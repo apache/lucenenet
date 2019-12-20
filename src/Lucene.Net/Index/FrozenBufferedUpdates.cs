@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
 
             bytesUsed = (int)terms.GetSizeInBytes() + queries.Length * BYTES_PER_DEL_QUERY + numericUpdatesSize + numericDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF + binaryUpdatesSize + binaryDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF;
 
-            numTermDeletes = deletes.numTermDeletes.Get();
+            numTermDeletes = deletes.numTermDeletes;
         }
 
         public virtual long DelGen

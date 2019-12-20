@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Threading.Atomic;
 using Lucene.Net.Support.IO;
 using System;
 using System.IO;

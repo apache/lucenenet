@@ -1,5 +1,4 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using System;
 using System.Globalization;
@@ -7,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util
@@ -213,7 +213,7 @@ namespace Lucene.Net.Util
             {
                 Dispose();
                 Open(random);
-                id.Set(0);
+                id.Value = 0;
             }
         }
 

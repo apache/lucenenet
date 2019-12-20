@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Util
 {
@@ -121,7 +122,7 @@ namespace Lucene.Net.Util
                 swapped = !swapped;
 
                 // Third, reset countdown
-                countdown.Set(maxSize);
+                countdown.Value = maxSize;
             }
         }
     }

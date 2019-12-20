@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Index
 {
@@ -226,13 +227,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns how many docs are currently buffered in RAM. </summary>
-        internal int NumDocs
-        {
-            get
-            {
-                return numDocsInRAM.Get();
-            }
-        }
+        internal int NumDocs => numDocsInRAM;
 
         private void EnsureOpen()
         {
@@ -399,7 +394,7 @@ namespace Lucene.Net.Index
         {
             if (infoStream.IsEnabled("DW"))
             {
-                infoStream.Message("DW", "anyChanges? numDocsInRam=" + numDocsInRAM.Get() + " deletes=" + AnyDeletions() + " hasTickets:" + ticketQueue.HasTickets + " pendingChangesInFullFlush: " + pendingChangesInCurrentFullFlush);
+                infoStream.Message("DW", "anyChanges? numDocsInRam=" + numDocsInRAM + " deletes=" + AnyDeletions() + " hasTickets:" + ticketQueue.HasTickets + " pendingChangesInFullFlush: " + pendingChangesInCurrentFullFlush);
             }
             /*
              * changes are either in a DWPT or in the deleteQueue.
@@ -408,7 +403,7 @@ namespace Lucene.Net.Index
              * before they are published to the IW. ie we need to check if the
              * ticket queue has any tickets.
              */
-            return numDocsInRAM.Get() != 0 || AnyDeletions() || ticketQueue.HasTickets || pendingChangesInCurrentFullFlush;
+            return numDocsInRAM != 0 || AnyDeletions() || ticketQueue.HasTickets || pendingChangesInCurrentFullFlush;
         }
 
         public int BufferedDeleteTermsSize
@@ -714,10 +709,10 @@ namespace Lucene.Net.Index
 
         internal void SubtractFlushedNumDocs(int numFlushed)
         {
-            int oldValue = numDocsInRAM.Get();
+            int oldValue = numDocsInRAM;
             while (!numDocsInRAM.CompareAndSet(oldValue, oldValue - numFlushed))
             {
-                oldValue = numDocsInRAM.Get();
+                oldValue = numDocsInRAM;
             }
         }
 

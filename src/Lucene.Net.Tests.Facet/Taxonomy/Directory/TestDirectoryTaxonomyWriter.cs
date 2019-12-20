@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Threading.Atomic;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
@@ -10,8 +10,6 @@ using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
-
-
     using Cl2oTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.Cl2oTaxonomyWriterCache;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;

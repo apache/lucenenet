@@ -1,9 +1,9 @@
+using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -210,11 +210,11 @@ namespace Lucene.Net.Search
             AtomicInt32 end = new AtomicInt32();
             ICollector c = new CollectorAnonymousInnerClassHelper(this, scorer, hits, end);
 
-            while (end.Get() < docCount)
+            while (end < docCount)
             {
                 int inc = TestUtil.NextInt32(Random, 1, 1000);
                 end.AddAndGet(inc);
-                scorer.Score(c, end.Get());
+                scorer.Score(c, end);
             }
 
             Assert.AreEqual(docCount, hits.Cardinality());
@@ -244,7 +244,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                Assert.IsTrue(doc < End.Get(), "collected doc=" + doc + " beyond max=" + End);
+                Assert.IsTrue(doc < End, "collected doc=" + doc + " beyond max=" + End);
                 Hits.Set(doc);
             }
 

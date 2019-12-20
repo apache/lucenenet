@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using AtomicInt32 = J2N.Threading.Atomic.AtomicInt32;
 
 namespace Lucene.Net.Index
 {
@@ -1999,22 +2000,10 @@ namespace Lucene.Net.Index
         }
 
         // for test purpose
-        internal int FlushCount
-        {
-            get
-            {
-                return flushCount.Get();
-            }
-        }
+        internal int FlushCount => flushCount;
 
         // for test purpose
-        internal int FlushDeletesCount
-        {
-            get
-            {
-                return flushDeletesCount.Get();
-            }
-        }
+        internal int FlushDeletesCount => flushDeletesCount;
 
         internal string NewSegmentName()
         {
