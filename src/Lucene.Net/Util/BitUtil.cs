@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Numerics;
 
 namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 {
@@ -135,7 +135,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
             long popCount = 0;
             for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
             {
-                popCount += Number.BitCount(arr[i]);
+                popCount += arr[i].PopCount();
             }
             return popCount;
         }
@@ -149,7 +149,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
             long popCount = 0;
             for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
             {
-                popCount += Number.BitCount(arr1[i] & arr2[i]);
+                popCount += (arr1[i] & arr2[i]).PopCount();
             }
             return popCount;
         }
@@ -163,7 +163,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
             long popCount = 0;
             for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
             {
-                popCount += Number.BitCount(arr1[i] | arr2[i]);
+                popCount += (arr1[i] | arr2[i]).PopCount();
             }
             return popCount;
         }
@@ -177,7 +177,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
             long popCount = 0;
             for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
             {
-                popCount += Number.BitCount(arr1[i] & ~arr2[i]);
+                popCount += (arr1[i] & ~arr2[i]).PopCount();
             }
             return popCount;
         }
@@ -191,7 +191,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
             long popCount = 0;
             for (int i = wordOffset, end = wordOffset + numWords; i < end; ++i)
             {
-                popCount += Number.BitCount(arr1[i] ^ arr2[i]);
+                popCount += (arr1[i] ^ arr2[i]).PopCount();
             }
             return popCount;
         }

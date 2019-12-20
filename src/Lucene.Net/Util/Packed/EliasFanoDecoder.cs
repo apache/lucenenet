@@ -1,3 +1,4 @@
+using J2N.Numerics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -268,12 +269,12 @@ namespace Lucene.Net.Util.Packed
                 Debug.Assert(false);
             }
             /* CHECKME: Add a (binary) search in the upperZeroBitPositions here. */
-            int curSetBits = Number.BitCount(curHighLong);
+            int curSetBits = curHighLong.PopCount();
             while ((efIndex + curSetBits) < index) // curHighLong has not enough set bits to reach index
             {
                 efIndex += curSetBits;
                 ToNextHighInt64();
-                curSetBits = Number.BitCount(curHighLong);
+                curSetBits = curHighLong.PopCount();
             }
             // curHighLong has enough set bits to reach index
             while (efIndex < index)
@@ -332,7 +333,7 @@ namespace Lucene.Net.Util.Packed
                 Debug.Assert(efIndex < numEncoded); // there is a high value to be found.
             }
 
-            int curSetBits = Number.BitCount(curHighLong); // shifted right.
+            int curSetBits = curHighLong.PopCount(); // shifted right.
             int curClearBits = (sizeof(long) * 8) - curSetBits - ((int)(setBitForIndex & ((sizeof(long) * 8) - 1))); // subtract right shift, may be more than encoded
 
             while (((setBitForIndex - efIndex) + curClearBits) < highTarget)
@@ -349,7 +350,7 @@ namespace Lucene.Net.Util.Packed
                 highIndex += 1;
                 upperLong = efEncoder.upperLongs[highIndex];
                 curHighLong = upperLong;
-                curSetBits = Number.BitCount(curHighLong);
+                curSetBits = curHighLong.PopCount();
                 curClearBits = (sizeof(long) * 8) - curSetBits;
             }
             // curHighLong has enough clear bits to reach highTarget, and may not have enough set bits.
@@ -508,7 +509,7 @@ namespace Lucene.Net.Util.Packed
         private long BackToHighValue(long highTarget)
         {
             /* CHECKME: Add using the index as in advanceToHighValue */
-            int curSetBits = Number.BitCount(curHighLong); // is shifted by getCurrentLeftShift()
+            int curSetBits = curHighLong.PopCount(); // is shifted by getCurrentLeftShift()
             int curClearBits = (sizeof(long) * 8) - curSetBits - CurrentLeftShift;
             while ((CurrentHighValue() - curClearBits) > highTarget)
             {
@@ -520,7 +521,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 ToPreviousHighInt64();
                 //assert getCurrentLeftShift() == 0;
-                curSetBits = Number.BitCount(curHighLong);
+                curSetBits = curHighLong.PopCount();
                 curClearBits = (sizeof(long) * 8) - curSetBits;
             }
             // curHighLong has enough clear bits to reach highTarget, but may not have enough set bits.

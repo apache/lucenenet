@@ -1,3 +1,4 @@
+using J2N.Numerics;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -26,7 +27,7 @@ namespace Lucene.Net.Util
     {
         private void TstRank(long x)
         {
-            Assert.AreEqual(Number.BitCount(x), BroadWord.BitCount(x), "rank(" + x + ")");
+            Assert.AreEqual(x.PopCount(), BroadWord.BitCount(x), "rank(" + x + ")");
         }
 
         [Test]
