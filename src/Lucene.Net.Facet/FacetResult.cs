@@ -103,7 +103,7 @@ namespace Lucene.Net.Facet
             sb.Append("dim=");
             sb.Append(Dim);
             sb.Append(" path=");
-            sb.Append("[" + Arrays.ToString(Path) + "]");
+            sb.Append(Arrays.ToString(Path));
             sb.Append(" value=");
             if (TypeOfValue == typeof(int))
             {

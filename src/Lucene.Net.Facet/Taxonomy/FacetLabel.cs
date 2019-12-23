@@ -224,7 +224,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             string[] parts = new string[Length];
             Array.Copy(Components, 0, parts, 0, Length);
-            return "FacetLabel: [" + Arrays.ToString(parts) + "]";
+            return "FacetLabel: " + Arrays.ToString(parts);
         }
     }
 }

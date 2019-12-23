@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace Lucene.Net.Support
 {
@@ -137,20 +138,31 @@ namespace Lucene.Net.Support
             return newArray;
         }
 
-        public static string ToString(IEnumerable<string> values)
+        /// <summary>
+        /// Creates a <see cref="string"/> representation of the array passed.
+        /// The result is surrounded by brackets <c>"[]"</c>, each
+        /// element is converted to a <see cref="string"/> via the
+        /// <see cref="J2N.Text.StringFormatter.InvariantCulture"/> and separated by <c>", "</c>. If
+        /// the array is <c>null</c>, then <c>"null"</c> is returned.
+        /// </summary>
+        /// <typeparam name="T">The type of array element.</typeparam>
+        /// <param name="array"></param>
+        public static string ToString<T>(T[] array)
         {
-            if (values == null)
-                return string.Empty;
-
-            return string.Join(", ", values);
-        }
-
-        public static string ToString<T>(IEnumerable<T> values)
-        {
-            if (values == null)
-                return string.Empty;
-
-            return string.Join(", ", values);
+            if (array == null)
+                return "null"; //$NON-NLS-1$
+            if (array.Length == 0)
+                return "[]"; //$NON-NLS-1$
+            StringBuilder sb = new StringBuilder(2 + array.Length * 4);
+            sb.Append('[');
+            sb.AppendFormat(J2N.Text.StringFormatter.InvariantCulture, "{0}", array[0]);
+            for (int i = 1; i < array.Length; i++)
+            {
+                sb.Append(", "); //$NON-NLS-1$
+                sb.AppendFormat(J2N.Text.StringFormatter.InvariantCulture, "{0}", array[i]);
+            }
+            sb.Append(']');
+            return sb.ToString();
         }
 
         public static List<T> AsList<T>(params T[] objects)
