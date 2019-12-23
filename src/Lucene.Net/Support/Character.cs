@@ -31,10 +31,6 @@ namespace Lucene.Net.Support
     /// </summary>
     public class Character
     {
-        private const char charNull = '\0';
-        private const char charZero = '0';
-        private const char charA = 'a';
-
         public const int MAX_RADIX = 36;
         public const int MIN_RADIX = 2;
 
@@ -52,109 +48,6 @@ namespace Lucene.Net.Support
 
         public const int MIN_SUPPLEMENTARY_CODE_POINT = 0x010000;
 
-        private static readonly string digitKeys = "0Aa\u0660\u06f0\u0966\u09e6\u0a66\u0ae6\u0b66\u0be7\u0c66\u0ce6\u0d66\u0e50\u0ed0\u0f20\u1040\u1369\u17e0\u1810\uff10\uff21\uff41";
-
-        private static readonly char[] digitValues = "90Z7zW\u0669\u0660\u06f9\u06f0\u096f\u0966\u09ef\u09e6\u0a6f\u0a66\u0aef\u0ae6\u0b6f\u0b66\u0bef\u0be6\u0c6f\u0c66\u0cef\u0ce6\u0d6f\u0d66\u0e59\u0e50\u0ed9\u0ed0\u0f29\u0f20\u1049\u1040\u1371\u1368\u17e9\u17e0\u1819\u1810\uff19\uff10\uff3a\uff17\uff5a\uff37"
-            .ToCharArray();
-
-        /// <summary>
-        /// Convenience method to determine the value of the specified character
-        /// <paramref name="c"/> in the supplied radix. The value of <paramref name="radix"/> must be
-        /// between <see cref="MIN_RADIX"/> and <see cref="MAX_RADIX"/>.
-        /// </summary>
-        /// <param name="c">The character to determine the value of.</param>
-        /// <param name="radix">The radix.</param>
-        /// <returns>
-        /// The value of <paramref name="c"/> in <paramref name="radix"/> if <paramref name="radix"/> lies
-        /// between <see cref="MIN_RADIX"/> and <see cref="MAX_RADIX"/>; -1 otherwise.
-        /// </returns>
-        public static int Digit(char c, int radix)
-        {
-            int result = -1;
-            if (radix >= MIN_RADIX && radix <= MAX_RADIX)
-            {
-                if (c < 128)
-                {
-                    // Optimized for ASCII
-                    if ('0' <= c && c <= '9')
-                    {
-                        result = c - '0';
-                    }
-                    else if ('a' <= c && c <= 'z')
-                    {
-                        result = c - ('a' - 10);
-                    }
-                    else if ('A' <= c && c <= 'Z')
-                    {
-                        result = c - ('A' - 10);
-                    }
-                    return result < radix ? result : -1;
-                }
-                result = BinarySearchRange(digitKeys, c);
-                if (result >= 0 && c <= digitValues[result * 2])
-                {
-                    int value = (char)(c - digitValues[result * 2 + 1]);
-                    if (value >= radix)
-                    {
-                        return -1;
-                    }
-                    return value;
-                }
-            }
-            return -1;
-        }
-
-        /// <summary>
-        /// Search the sorted characters in the string and return the nearest index.
-        /// </summary>
-        /// <param name="data">The String to search.</param>
-        /// <param name="c">The character to search for.</param>
-        /// <returns>The nearest index.</returns>
-        private static int BinarySearchRange(string data, char c)
-        {
-            char value = (char)0;
-            int low = 0, mid = -1, high = data.Length - 1;
-            while (low <= high)
-            {
-                mid = (low + high) >> 1;
-                value = data[mid];
-                if (c > value)
-                    low = mid + 1;
-                else if (c == value)
-                    return mid;
-                else
-                    high = mid - 1;
-            }
-            return mid - (c < value ? 1 : 0);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="digit"></param>
-        /// <param name="radix"></param>
-        /// <returns></returns>
-        public static char ForDigit(int digit, int radix)
-        {
-            // if radix or digit is out of range,
-            // return the null character.
-            if (radix < Character.MIN_RADIX)
-                return charNull;
-            if (radix > Character.MAX_RADIX)
-                return charNull;
-            if (digit < 0)
-                return charNull;
-            if (digit >= radix)
-                return charNull;
-
-            // if digit is less than 10,
-            // return '0' plus digit
-            if (digit < 10)
-                return (char)((int)charZero + digit);
-
-            // otherwise, return 'a' plus digit.
-            return (char)((int)charA + digit - 10);
-        }
 
         public static int ToChars(int codePoint, char[] dst, int dstIndex)
         {

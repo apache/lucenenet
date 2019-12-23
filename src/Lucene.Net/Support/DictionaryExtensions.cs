@@ -136,7 +136,7 @@ namespace Lucene.Net.Support
                     }
                     if (mode == UNICODE)
                     {
-                        int digit = Character.Digit(nextChar, 16);
+                        int digit = J2N.Character.Digit(nextChar, 16);
                         if (digit >= 0)
                         {
                             unicode = (unicode << 4) + digit;
