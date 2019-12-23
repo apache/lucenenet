@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Shapes;
@@ -155,9 +155,9 @@ namespace Lucene.Net.Spatial.Queries
             var map = new Dictionary<string, string>();
             StringTokenizer st = new StringTokenizer(body, " \n\t");
 
-            while (st.HasMoreTokens())
+            while (st.MoveNext())
             {
-                string a = st.NextToken();
+                string a = st.Current;
                 int idx = a.IndexOf('=');
                 if (idx > 0)
                 {

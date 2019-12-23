@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -132,11 +133,12 @@ namespace Egothor.Stemmer
                         {
                             line = line.ToLowerInvariant();
                             StringTokenizer st = new StringTokenizer(line);
-                            string stem = st.NextToken();
+                            st.MoveNext();
+                            string stem = st.Current;
                             Console.WriteLine(stem + " -a");
-                            while (st.HasMoreTokens())
+                            while (st.MoveNext())
                             {
-                                string token = st.NextToken();
+                                string token = st.Current;
                                 if (token.Equals(stem, StringComparison.Ordinal) == false)
                                 {
                                     Console.WriteLine(stem + " " + diff.Exec(token, stem));

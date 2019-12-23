@@ -1,10 +1,10 @@
 ﻿#if !NETSTANDARD1_6
+using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -122,12 +122,12 @@ namespace Lucene.Net.QueryParsers.Xml
         {
             IDictionary<string, string> result = new Dictionary<string, string>();
             StringTokenizer st = new StringTokenizer(nameValuePairs, "\t=");
-            while (st.HasMoreTokens())
+            while (st.MoveNext())
             {
-                String name = st.NextToken().Trim();
-                if (st.HasMoreTokens())
+                String name = st.Current.Trim();
+                if (st.MoveNext())
                 {
-                    String value = st.NextToken().Trim();
+                    String value = st.Current.Trim();
                     result[name] = value;
                 }
             }
@@ -139,12 +139,12 @@ namespace Lucene.Net.QueryParsers.Xml
         {
             Document result = new Document();
             StringTokenizer st = new StringTokenizer(nameValuePairs, "\t=");
-            while (st.HasMoreTokens())
+            while (st.MoveNext())
             {
-                String name = st.NextToken().Trim();
-                if (st.HasMoreTokens())
+                String name = st.Current.Trim();
+                if (st.MoveNext())
                 {
-                    String value = st.NextToken().Trim();
+                    String value = st.Current.Trim();
                     result.Add(NewTextField(name, value, Field.Store.YES));
                 }
             }

@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Spatial.Queries;
-using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Spatial.Queries;
 using Spatial4n.Core.Context;
 using System;
 using System.Collections.Generic;
@@ -72,9 +72,9 @@ namespace Lucene.Net.Spatial
 
                         int idx = line.IndexOf('@');
                         StringTokenizer st = new StringTokenizer(line.Substring(0, idx - 0));
-                        while (st.HasMoreTokens())
+                        while (st.MoveNext())
                         {
-                            test.ids.Add(st.NextToken().Trim());
+                            test.ids.Add(st.Current.Trim());
                         }
                         test.args = parser.Parse(line.Substring(idx + 1).Trim(), ctx);
                         results.Add(test);

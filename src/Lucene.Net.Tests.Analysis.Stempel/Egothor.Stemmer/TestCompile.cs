@@ -20,8 +20,8 @@
 */
 
 using J2N.IO;
+using J2N.Text;
 using Lucene.Net;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -180,7 +180,8 @@ namespace Egothor.Stemmer
                     {
                         line = line.ToLowerInvariant();
                         StringTokenizer st = new StringTokenizer(line);
-                        string stem = st.NextToken();
+                        st.MoveNext();
+                        string stem = st.Current;
                         if (storeorig)
                         {
                             string cmd = (usefull) ? trie.GetFully(stem) : trie
@@ -189,9 +190,9 @@ namespace Egothor.Stemmer
                             Diff.Apply(stm, cmd);
                             assertEquals(stem.ToLowerInvariant(), stm.ToString().ToLowerInvariant());
                         }
-                        while (st.HasMoreTokens())
+                        while (st.MoveNext())
                         {
-                            string token = st.NextToken();
+                            string token = st.Current;
                             if (token.Equals(stem, StringComparison.Ordinal))
                             {
                                 continue;

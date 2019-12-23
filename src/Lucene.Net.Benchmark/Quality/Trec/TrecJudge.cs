@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -63,12 +64,15 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
                         continue;
                     }
                     StringTokenizer st = new StringTokenizer(line);
-                    string queryID = st.NextToken();
-                    st.NextToken();
-                    string docName = st.NextToken();
-                    bool relevant = !zero.Equals(st.NextToken(), StringComparison.Ordinal);
+                    st.MoveNext();
+                    string queryID = st.Current;
+                    st.MoveNext();
+                    st.MoveNext();
+                    string docName = st.Current;
+                    st.MoveNext();
+                    bool relevant = !zero.Equals(st.Current, StringComparison.Ordinal);
                     // LUCENENET: don't call st.NextToken() unless the condition fails.
-                    Debug.Assert(!st.HasMoreTokens(), "wrong format: " + line + "  next: " + (st.HasMoreTokens() ? st.NextToken() : ""));
+                    Debug.Assert(st.RemainingTokens != 0, "wrong format: " + line + "  next: " + (st.MoveNext() ? st.Current : ""));
                     if (relevant)
                     { // only keep relevant docs
                         if (curr == null || !curr.queryID.Equals(queryID, StringComparison.Ordinal))

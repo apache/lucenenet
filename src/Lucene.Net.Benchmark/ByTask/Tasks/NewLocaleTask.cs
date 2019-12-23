@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
 using System;
 using System.Globalization;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -81,13 +81,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             culture = "";
             string ignore;
             StringTokenizer st = new StringTokenizer(@params, ",");
-            if (st.HasMoreTokens())
+            if (st.MoveNext())
                 //language = st.nextToken();
-                culture = st.NextToken();
-            if (st.HasMoreTokens())
-                culture += "-" + st.NextToken();
-            if (st.HasMoreTokens())
-                ignore = st.NextToken();
+                culture = st.Current;
+            if (st.MoveNext())
+                culture += "-" + st.Current;
+            if (st.MoveNext())
+                ignore = st.Current;
         }
 
         public override bool SupportsParams

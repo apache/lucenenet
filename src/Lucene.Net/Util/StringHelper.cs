@@ -1,3 +1,4 @@
+using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -114,12 +115,12 @@ namespace Lucene.Net.Util
                 var aTokens = new StringTokenizer(a, ".");
                 var bTokens = new StringTokenizer(b, ".");
 
-                while (aTokens.HasMoreTokens())
+                while (aTokens.MoveNext())
                 {
-                    int aToken = Convert.ToInt32(aTokens.NextToken(), CultureInfo.InvariantCulture);
-                    if (bTokens.HasMoreTokens())
+                    int aToken = Convert.ToInt32(aTokens.Current, CultureInfo.InvariantCulture);
+                    if (bTokens.MoveNext())
                     {
-                        int bToken = Convert.ToInt32(bTokens.NextToken(), CultureInfo.InvariantCulture);
+                        int bToken = Convert.ToInt32(bTokens.Current, CultureInfo.InvariantCulture);
                         if (aToken != bToken)
                         {
                             return aToken < bToken ? -1 : 1;
@@ -136,9 +137,9 @@ namespace Lucene.Net.Util
                 }
 
                 // b has some extra trailing tokens. if these are all zeroes, thats ok.
-                while (bTokens.HasMoreTokens())
+                while (bTokens.MoveNext())
                 {
-                    if (Convert.ToInt32(bTokens.NextToken(), CultureInfo.InvariantCulture) != 0)
+                    if (Convert.ToInt32(bTokens.Current, CultureInfo.InvariantCulture) != 0)
                     {
                         return -1;
                     }

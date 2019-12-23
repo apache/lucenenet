@@ -1,6 +1,6 @@
 ﻿using ICU4N.Text;
+using J2N.Text;
 using Lucene.Net.Analysis;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Globalization;
@@ -89,7 +89,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             // LUCENENET TODO: The .NET equivalent to create a collator like the one in the JDK is:
             //CompareInfo.GetCompareInfo(locale.Name);
 
-            Type clazz = impl.GetAnalyzerType(); 
+            Type clazz = impl.GetAnalyzerType();
             return (Analyzer)Activator.CreateInstance(clazz,
 #pragma warning disable 612, 618
                 LuceneVersion.LUCENE_CURRENT,
@@ -121,12 +121,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             base.SetParams(@params);
 
             StringTokenizer st = new StringTokenizer(@params, ",");
-            while (st.HasMoreTokens())
+            while (st.MoveNext())
             {
-                string param = st.NextToken();
+                string param = st.Current;
                 StringTokenizer expr = new StringTokenizer(param, ":");
-                string key = expr.NextToken();
-                string value = expr.NextToken();
+                string key = expr.MoveNext() ? expr.Current : string.Empty;
+                string value = expr.MoveNext() ? expr.Current : string.Empty;
                 // for now we only support the "impl" parameter.
                 // TODO: add strength, decomposition, etc
                 if (key.Equals("impl", StringComparison.Ordinal))
@@ -145,9 +145,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
         }
 
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
     }
 }

@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Index;
+﻿using J2N.Text;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -35,9 +35,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             string[] words;
             List<string> w = new List<string>();
             StringTokenizer st = new StringTokenizer(SingleDocSource.DOC_TEXT);
-            while (st.HasMoreTokens() && w.Count < 100)
+            while (st.MoveNext() && w.Count < 100)
             {
-                w.Add(st.NextToken());
+                w.Add(st.Current);
             }
             words = w.ToArray();
 

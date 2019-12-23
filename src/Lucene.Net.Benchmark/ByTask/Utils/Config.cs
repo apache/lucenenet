@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -393,9 +394,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
             List<string> a = new List<string>();
             StringTokenizer st = new StringTokenizer(s, ":");
-            while (st.HasMoreTokens())
+            while (st.MoveNext())
             {
-                string t = st.NextToken();
+                string t = st.Current;
                 a.Add(t);
             }
             return a.ToArray();
@@ -411,9 +412,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
             List<int> a = new List<int>();
             StringTokenizer st = new StringTokenizer(s, ":");
-            while (st.HasMoreTokens())
+            while (st.MoveNext())
             {
-                string t = st.NextToken();
+                string t = st.Current;
                 a.Add(int.Parse(t, CultureInfo.InvariantCulture));
             }
             int[] res = new int[a.Count];
@@ -434,9 +435,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
             List<double> a = new List<double>();
             StringTokenizer st = new StringTokenizer(s, ":");
-            while (st.HasMoreTokens())
+            while (st.MoveNext())
             {
-                string t = st.NextToken();
+                string t = st.Current;
                 a.Add(double.Parse(t, CultureInfo.InvariantCulture));
             }
             double[] res = new double[a.Count];
@@ -457,9 +458,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
             List<bool> a = new List<bool>();
             StringTokenizer st = new StringTokenizer(s, ":");
-            while (st.HasMoreTokens())
+            while (st.MoveNext())
             {
-                string t = st.NextToken();
+                string t = st.Current;
                 a.Add(bool.Parse(t));
             }
             bool[] res = new bool[a.Count];

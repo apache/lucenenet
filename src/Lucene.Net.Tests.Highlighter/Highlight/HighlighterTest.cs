@@ -2080,7 +2080,7 @@ namespace Lucene.Net.Search.Highlight
         private readonly TokenStream realStream;
         private Token currentRealToken = null;
         private readonly IDictionary<String, String> synonyms;
-        private StringTokenizer st = null;
+        private J2N.Text.StringTokenizer st = null;
         private readonly ICharTermAttribute realTermAtt;
         private readonly IPositionIncrementAttribute realPosIncrAtt;
         private readonly IOffsetAttribute realOffsetAtt;
@@ -2120,13 +2120,12 @@ namespace Lucene.Net.Search.Highlight
 
                 //String expansions = synonyms.Get(realTermAtt.toString());
                 //if (expansions == null)
-                String expansions;
-                if (!synonyms.TryGetValue(realTermAtt.toString(), out expansions) || expansions == null)
+                if (!synonyms.TryGetValue(realTermAtt.ToString(), out string expansions) || expansions == null)
                 {
                     return true;
                 }
-                st = new StringTokenizer(expansions, ",");
-                if (st.HasMoreTokens())
+                st = new J2N.Text.StringTokenizer(expansions, ",");
+                if (st.MoveNext())
                 {
                     currentRealToken = new Token(realOffsetAtt.StartOffset, realOffsetAtt.EndOffset);
                     currentRealToken.CopyBuffer(realTermAtt.Buffer, 0, realTermAtt.Length);
@@ -2136,12 +2135,13 @@ namespace Lucene.Net.Search.Highlight
             }
             else
             {
-                String tok = st.NextToken();
+                st.MoveNext();
+                String tok = st.Current;
                 ClearAttributes();
                 termAtt.SetEmpty().Append(tok);
                 offsetAtt.SetOffset(currentRealToken.StartOffset, currentRealToken.EndOffset);
                 posIncrAtt.PositionIncrement = (0);
-                if (!st.HasMoreTokens())
+                if (!st.MoveNext())
                 {
                     currentRealToken = null;
                     st = null;
