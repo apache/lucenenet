@@ -281,7 +281,7 @@ namespace Lucene.Net.Index
                 {
                     if (infoStream.IsEnabled("DW"))
                     {
-                        infoStream.Message("DW", "done abort; abortedFiles=" + Arrays.ToString(newFilesSet) + " success=" + success);
+                        infoStream.Message("DW", "done abort; abortedFiles=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", newFilesSet) + " success=" + success);
                     }
                 }
             }

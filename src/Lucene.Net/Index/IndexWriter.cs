@@ -3453,7 +3453,7 @@ namespace Lucene.Net.Index
                         continue;
                     }
 
-                    Debug.Assert(!SlowFileExists(directory, newFileName), "file \"" + newFileName + "\" already exists; siFiles=" + Arrays.ToString(siFiles));
+                    Debug.Assert(!SlowFileExists(directory, newFileName), "file \"" + newFileName + "\" already exists; siFiles=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", siFiles));
                     Debug.Assert(!copiedFiles.Contains(file), "file \"" + file + "\" is being copied more than once");
                     copiedFiles.Add(file);
                     info.Info.Dir.Copy(directory, file, newFileName, context);
@@ -5536,7 +5536,7 @@ namespace Lucene.Net.Index
 
                     if (infoStream.IsEnabled("IW"))
                     {
-                        infoStream.Message("IW", "done all syncs: " + Arrays.ToString(filesToSync));
+                        infoStream.Message("IW", "done all syncs: " + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", filesToSync));
                     }
 
                     tpResult = TestPoint("midStartCommitSuccess");

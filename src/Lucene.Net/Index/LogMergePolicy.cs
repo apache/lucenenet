@@ -390,7 +390,8 @@ namespace Lucene.Net.Index
             Debug.Assert(maxNumSegments > 0);
             if (IsVerbose)
             {
-                Message("findForcedMerges: maxNumSegs=" + maxNumSegments + " segsToMerge=" + Arrays.ToString(segmentsToMerge));
+                Message("findForcedMerges: maxNumSegs=" + maxNumSegments + " segsToMerge=" + 
+                    string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", segmentsToMerge));
             }
 
             // If the segments are already merged (e.g. there's only 1 segment), or

@@ -135,7 +135,8 @@ namespace Lucene.Net.Index
 
             public override string ToString()
             {
-                return "numericDVUpdates=" + Arrays.ToString(numericDVUpdates) + " binaryDVUpdates=" + Arrays.ToString(binaryDVUpdates);
+                return "numericDVUpdates=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", numericDVUpdates) + 
+                    " binaryDVUpdates=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", binaryDVUpdates);
             }
         }
 

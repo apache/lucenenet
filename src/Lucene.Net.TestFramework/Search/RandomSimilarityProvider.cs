@@ -189,7 +189,8 @@ namespace Lucene.Net.Search
                 {
                     coordMethod = "crazy";
                 }
-                return "RandomSimilarityProvider(queryNorm=" + shouldQueryNorm + ",coord=" + coordMethod + "): " + Arrays.ToString(previousMappings);
+                return "RandomSimilarityProvider(queryNorm=" + shouldQueryNorm + ",coord=" + coordMethod + "): " + 
+                    string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", previousMappings);
             }
         }
     }

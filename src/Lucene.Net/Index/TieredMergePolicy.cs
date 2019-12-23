@@ -603,7 +603,9 @@ namespace Lucene.Net.Index
         {
             if (Verbose())
             {
-                Message("FindForcedMerges maxSegmentCount=" + maxSegmentCount + " infos=" + m_writer.Get().SegString(infos.Segments) + " segmentsToMerge=" + Arrays.ToString(segmentsToMerge));
+                Message("FindForcedMerges maxSegmentCount=" + maxSegmentCount + 
+                    " infos=" + m_writer.Get().SegString(infos.Segments) + 
+                    " segmentsToMerge=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", segmentsToMerge));
             }
 
             List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();
@@ -645,7 +647,7 @@ namespace Lucene.Net.Index
 
             if (Verbose())
             {
-                Message("eligible=" + Arrays.ToString(eligible));
+                Message("eligible=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", eligible));
                 Message("forceMergeRunning=" + forceMergeRunning);
             }
 
@@ -711,7 +713,7 @@ namespace Lucene.Net.Index
 
             if (Verbose())
             {
-                Message("eligible=" + Arrays.ToString(eligible));
+                Message("eligible=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", eligible));
             }
 
             int start = 0;

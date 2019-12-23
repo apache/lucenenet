@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new System.ArgumentException("A SPI class of type " + clazz.Name + " with name '" + name + "' does not exist. " +
                     "You need to add the corresponding reference supporting this SPI to your project or AppDomain. " +
-                    "The current classpath supports the following names: " + Arrays.ToString(AvailableServices));
+                    "The current classpath supports the following names: " + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", AvailableServices));
             }
         }
 

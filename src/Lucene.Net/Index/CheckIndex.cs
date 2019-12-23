@@ -735,7 +735,7 @@ namespace Lucene.Net.Index
                     segInfoStat.Diagnostics = diagnostics;
                     if (diagnostics.Count > 0)
                     {
-                        Msg(infoStream, "    diagnostics = " + Arrays.ToString(diagnostics));
+                        Msg(infoStream, "    diagnostics = " + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", diagnostics));
                     }
 
                     if (!info.HasDeletions)

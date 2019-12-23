@@ -325,10 +325,11 @@ namespace Lucene.Net.Store
                 EnsureOpen();
                 Debug.Assert(!openForWrite);
                 string id = IndexFileNames.StripSegmentName(name);
-                FileEntry entry;
-                if (!entries.TryGetValue(id, out entry) || entry == null)
+                if (!entries.TryGetValue(id, out FileEntry entry) || entry == null)
                 {
-                    throw new FileNotFoundException("No sub-file with id " + id + " found (fileName=" + name + " files: " + Arrays.ToString(entries.Keys) + ")");
+                    throw new FileNotFoundException("No sub-file with id " + id +
+                        " found (fileName=" + name + " files: " +
+                        string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", entries.Keys) + ")");
                 }
                 return handle.OpenSlice(name, entry.Offset, entry.Length);
             }
@@ -428,10 +429,11 @@ namespace Lucene.Net.Store
             EnsureOpen();
             Debug.Assert(!openForWrite);
             string id = IndexFileNames.StripSegmentName(name);
-            FileEntry entry = entries[id];
-            if (entry == null)
+            if (!entries.TryGetValue(id, out FileEntry entry) || entry == null)
             {
-                throw new FileNotFoundException("No sub-file with id " + id + " found (fileName=" + name + " files: " + Arrays.ToString(entries.Keys) + ")");
+                throw new FileNotFoundException("No sub-file with id " + id + 
+                    " found (fileName=" + name + " files: " + 
+                    string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", entries.Keys) + ")");
             }
             return new IndexInputSlicerAnonymousInnerClassHelper(this, entry);
         }
