@@ -22,7 +22,6 @@
 using System;
 using System.Globalization;
 using System.Text;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Support
 {
@@ -97,20 +96,12 @@ namespace Lucene.Net.Support
 
         public static int ToLower(int codePoint)
         {
-            var str = UnicodeUtil.NewString(new[] {codePoint}, 0, 1);
-
-            str = str.ToLowerInvariant();
-
-            return CodePointAt(str, 0);
+            return J2N.Character.ToLower(codePoint, CultureInfo.InvariantCulture);
         }
 
         public static int ToUpper(int codePoint)
         {
-            var str = UnicodeUtil.NewString(new[] { codePoint }, 0, 1);
-
-            str = str.ToUpperInvariant();
-
-            return CodePointAt(str, 0);
+            return J2N.Character.ToUpper(codePoint, CultureInfo.InvariantCulture);
         }
 
         public static int CharCount(int codePoint)
