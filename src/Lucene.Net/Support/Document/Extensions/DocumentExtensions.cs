@@ -4,7 +4,7 @@ using Lucene.Net.Util;
 using System.IO;
 using System.Linq;
 
-namespace Lucene.Net.Documents
+namespace Lucene.Net.Documents.Extensions
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Index;
 
-namespace Lucene.Net.Documents
+namespace Lucene.Net.Documents.Extensions
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

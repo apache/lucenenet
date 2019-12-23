@@ -1,4 +1,5 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Documents.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
