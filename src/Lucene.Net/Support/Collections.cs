@@ -1,4 +1,5 @@
-﻿using System;
+﻿using J2N.Globalization;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -524,7 +525,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public static string ToString<T>(ICollection<T> collection, CultureInfo culture)
         {
-            using (var context = new Support.CultureContext(culture))
+            using (var context = new CultureContext(culture))
             {
                 return ToString(collection);
             }
@@ -573,7 +574,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public static string ToString<TKey, TValue>(IDictionary<TKey, TValue> dictionary, CultureInfo culture)
         {
-            using (var context = new Support.CultureContext(culture))
+            using (var context = new CultureContext(culture))
             {
                 return ToString(dictionary);
             }
@@ -605,7 +606,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public static string ToString(object obj, CultureInfo culture)
         {
-            using (var context = new Support.CultureContext(culture))
+            using (var context = new CultureContext(culture))
             {
                 return ToString(obj);
             }

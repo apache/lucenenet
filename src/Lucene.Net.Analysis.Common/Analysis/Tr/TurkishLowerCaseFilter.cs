@@ -1,8 +1,8 @@
-﻿using Lucene.Net.Analysis.TokenAttributes;
+﻿using J2N.Globalization;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using System;
 using System.Globalization;
-using System.Threading;
 
 namespace Lucene.Net.Analysis.Tr
 {
