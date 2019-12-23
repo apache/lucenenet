@@ -1,4 +1,5 @@
-﻿using System;
+﻿using J2N.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -24,23 +25,41 @@ namespace Lucene.Net.Support
 
     public static class Arrays
     {
-        public static int GetHashCode<T>(T[] a)
+        /// <summary>
+        /// Compares the entire members of one array whith the other one.
+        /// </summary>
+        /// <param name="a">The array to be compared.</param>
+        /// <param name="b">The array to be compared with.</param>
+        /// <returns>Returns true if the two specified arrays of Objects are equal
+        /// to one another. The two arrays are considered equal if both arrays
+        /// contain the same number of elements, and all corresponding pairs of
+        /// elements in the two arrays are equal. Two objects e1 and e2 are
+        /// considered equal if (e1==null ? e2==null : e1.Equals(e2)). In other
+        /// words, the two arrays are equal if they contain the same elements in
+        /// the same order. Also, two array references are considered equal if
+        /// both are null.
+        /// <para/>
+        /// Note that if the type of <typeparam name="T"/> is a <see cref="IDictionary{TKey, TValue}"/>,
+        /// <see cref="IList{T}"/>, or <see cref="ISet{T}"/>, its values and any nested collection values
+        /// will be compared for equality as well.
+        /// </returns>
+        public static bool Equals<T>(T[] a, T[] b)
         {
-            if (a == null)
-                return 0;
+            return ArrayEqualityComparer<T>.OneDimensional.Equals(a, b);
+        }
 
-            int result = 1;
-            bool isValueType = typeof(T).GetTypeInfo().IsValueType;
-
-            foreach (var item in a)
-            {
-                result = 31 * result + (item == null ? 0 : 
-                    // LUCENENET specific: if this is a reference type, pass to
-                    // Collections.GetHashCode() in case we have an array of collections
-                    (isValueType ? item.GetHashCode() : Collections.GetHashCode(item)));
-            }
-
-            return result;
+        /// <summary>
+        /// Returns a hash code based on the contents of the given array. For any two
+        /// <typeparamref name="T"/> arrays <c>a</c> and <c>b</c>, if
+        /// <c>Arrays.Equals(b)</c> returns <c>true</c>, it means
+        /// that the return value of <c>Arrays.GetHashCode(a)</c> equals <c>Arrays.GetHashCode(b)</c>.
+        /// </summary>
+        /// <typeparam name="T">The array element type.</typeparam>
+        /// <param name="array">The array whose hash code to compute.</param>
+        /// <returns>The hash code for <paramref name="array"/>.</returns>
+        public static int GetHashCode<T>(T[] array)
+        {
+            return ArrayEqualityComparer<T>.OneDimensional.GetHashCode(array);
         }
 
         /// <summary>
@@ -91,56 +110,6 @@ namespace Lucene.Net.Support
             {
                 a[i] = val;
             }
-        }
-
-        /// <summary>
-        /// Compares the entire members of one array whith the other one.
-        /// </summary>
-        /// <param name="a">The array to be compared.</param>
-        /// <param name="b">The array to be compared with.</param>
-        /// <returns>Returns true if the two specified arrays of Objects are equal
-        /// to one another. The two arrays are considered equal if both arrays
-        /// contain the same number of elements, and all corresponding pairs of
-        /// elements in the two arrays are equal. Two objects e1 and e2 are
-        /// considered equal if (e1==null ? e2==null : e1.Equals(e2)). In other
-        /// words, the two arrays are equal if they contain the same elements in
-        /// the same order. Also, two array references are considered equal if
-        /// both are null.
-        /// <para/>
-        /// Note that if the type of <typeparam name="T"/> is a <see cref="IDictionary{TKey, TValue}"/>,
-        /// <see cref="IList{T}"/>, or <see cref="ISet{T}"/>, its values and any nested collection values
-        /// will be compared for equality as well.
-        /// </returns>
-        public static bool Equals<T>(T[] a, T[] b)
-        {
-            if (object.ReferenceEquals(a, b))
-            {
-                return true;
-            }
-            bool isValueType = typeof(T).GetTypeInfo().IsValueType;
-            if (!isValueType && a == null)
-            {
-                return b == null;
-            }
-
-            int length = a.Length;
-
-            if (b.Length != length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < length; i++)
-            {
-                T o1 = a[i];
-                T o2 = b[i];
-                if (!(isValueType ? o1.Equals(o2) : (o1 == null ? o2 == null : Collections.Equals(o1, o2))))
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         public static T[] CopyOf<T>(T[] original, int newLength)
