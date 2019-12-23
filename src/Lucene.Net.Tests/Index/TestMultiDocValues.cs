@@ -1,6 +1,5 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index

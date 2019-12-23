@@ -1,9 +1,9 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
-using Lucene.Net.QueryParsers.Flexible.Standard.Parser;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;

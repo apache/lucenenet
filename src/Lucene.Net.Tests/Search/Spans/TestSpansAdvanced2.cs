@@ -1,5 +1,4 @@
-using Lucene.Net.Search;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 
 namespace Lucene.Net.Search.Spans

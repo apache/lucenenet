@@ -1,18 +1,17 @@
-using System;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Codecs.Lucene46;
 using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Codecs.Pulsing;
 using Lucene.Net.Codecs.MockSep;
-using Lucene.Net.Util;
 using Lucene.Net.Index;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
-using Lucene.Net.Analysis;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
-using NUnit.Framework;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Codecs.PerField

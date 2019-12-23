@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using Console = Lucene.Net.Support.SystemConsole;
 

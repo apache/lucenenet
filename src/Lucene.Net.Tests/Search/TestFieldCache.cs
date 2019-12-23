@@ -1,5 +1,6 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;

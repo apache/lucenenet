@@ -2,6 +2,7 @@ using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;

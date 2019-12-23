@@ -1,6 +1,9 @@
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
+using System.IO;
 
 namespace Lucene.Net.Search
 {
@@ -20,11 +23,7 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Lucene.Net.Analysis;
-    using NUnit.Framework;
-    using System.Collections.Generic;
-    using System.IO;
+    
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;

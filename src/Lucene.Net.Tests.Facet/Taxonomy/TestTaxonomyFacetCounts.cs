@@ -1,5 +1,4 @@
-﻿using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support.IO;
 using NUnit.Framework;
 using System;

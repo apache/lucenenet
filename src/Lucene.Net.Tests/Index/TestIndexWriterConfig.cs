@@ -1,5 +1,5 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;

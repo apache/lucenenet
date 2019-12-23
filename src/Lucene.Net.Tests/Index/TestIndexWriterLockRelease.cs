@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System.IO;
 

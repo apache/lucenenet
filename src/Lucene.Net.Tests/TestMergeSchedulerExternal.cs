@@ -1,11 +1,11 @@
+using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Lucene.Net.Documents;
-using Lucene.Net.Store;
-using Lucene.Net.Support;
-using NUnit.Framework;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net
@@ -44,7 +44,6 @@ namespace Lucene.Net
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using Util;
 
     /// <summary>
     /// Holds tests cases to verify external APIs are accessible

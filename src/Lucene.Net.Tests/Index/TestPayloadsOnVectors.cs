@@ -1,13 +1,12 @@
 using Lucene.Net.Analysis.TokenAttributes;
-using System.Diagnostics;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
+using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using System.IO;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*

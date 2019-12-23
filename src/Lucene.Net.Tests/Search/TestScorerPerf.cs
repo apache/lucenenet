@@ -1,5 +1,6 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using System;
 using System.Collections;

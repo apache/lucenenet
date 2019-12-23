@@ -1,5 +1,6 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -7,7 +8,6 @@ using System.Text;
 
 namespace Lucene.Net.Store
 {
-    using Attributes;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Document = Documents.Document;
     using Field = Field;

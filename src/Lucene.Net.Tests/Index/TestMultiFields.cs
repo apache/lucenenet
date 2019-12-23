@@ -1,8 +1,7 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;

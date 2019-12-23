@@ -1,12 +1,12 @@
 using Lucene.Net.Index;
+using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IBits = Lucene.Net.Util.IBits;

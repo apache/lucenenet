@@ -1,5 +1,5 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System.IO;
 using System.Text;

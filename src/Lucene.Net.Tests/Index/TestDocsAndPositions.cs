@@ -1,13 +1,12 @@
+using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Lucene.Net.Documents;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;

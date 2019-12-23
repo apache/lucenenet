@@ -1,7 +1,10 @@
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
-using System;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
+using System;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
@@ -22,9 +25,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Lucene.Net.Analysis;
-    using NUnit.Framework;
-    using System.IO;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;

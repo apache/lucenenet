@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using J2N.Threading.Atomic;
 using Lucene.Net.Support;

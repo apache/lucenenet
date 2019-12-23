@@ -1,8 +1,8 @@
 using J2N.Threading;
 using Lucene.Net.Codecs.Memory;
 using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;

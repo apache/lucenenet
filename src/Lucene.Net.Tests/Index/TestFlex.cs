@@ -1,6 +1,9 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
@@ -21,9 +24,6 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using Lucene.Net.Store;
-    using Lucene.Net.Util;
-    using NUnit.Framework;
     using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
 
     [TestFixture]

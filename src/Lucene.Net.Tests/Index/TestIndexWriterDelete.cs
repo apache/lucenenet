@@ -3,6 +3,7 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;

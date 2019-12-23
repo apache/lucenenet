@@ -2,17 +2,13 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.Search;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using IndexOptions = Lucene.Net.Index.IndexOptions;
 
 namespace Lucene.Net.Search.PostingsHighlight

@@ -1,10 +1,10 @@
-using Lucene.Net.Support;
-using System.Text;
 using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
+using System.Text;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Document = Documents.Document;
     using Field = Field;

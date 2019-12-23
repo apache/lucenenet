@@ -1,10 +1,10 @@
 using System;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CollectionStatistics = Lucene.Net.Search.CollectionStatistics;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;

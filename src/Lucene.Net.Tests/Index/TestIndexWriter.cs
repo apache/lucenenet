@@ -5,6 +5,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;

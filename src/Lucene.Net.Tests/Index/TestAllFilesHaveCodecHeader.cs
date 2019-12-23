@@ -1,10 +1,10 @@
-using System;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
     using CodecUtil = Lucene.Net.Codecs.CodecUtil;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using Directory = Lucene.Net.Store.Directory;

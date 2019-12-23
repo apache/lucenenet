@@ -1,3 +1,4 @@
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.TestFramework;
 using System.Collections.Generic;

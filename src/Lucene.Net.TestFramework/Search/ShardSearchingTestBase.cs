@@ -1,4 +1,5 @@
 using J2N.Threading;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.TestFramework;
 using System;

@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {

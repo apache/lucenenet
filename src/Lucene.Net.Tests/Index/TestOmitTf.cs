@@ -1,12 +1,11 @@
+using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
 using System;
 using System.Text;
-using Lucene.Net.Documents;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with

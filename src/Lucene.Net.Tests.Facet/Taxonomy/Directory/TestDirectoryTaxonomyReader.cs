@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Lucene.Net.Randomized.Generators;
+﻿using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
-
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using ChildrenIterator = Lucene.Net.Facet.Taxonomy.TaxonomyReader.ChildrenIterator;
     using IndexWriter = Lucene.Net.Index.IndexWriter;

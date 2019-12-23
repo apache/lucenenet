@@ -1,13 +1,12 @@
-using System;
-using System.Globalization;
-using System.Text;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
+using System;
+using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;

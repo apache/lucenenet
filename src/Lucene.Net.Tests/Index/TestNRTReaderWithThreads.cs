@@ -2,7 +2,7 @@ using J2N.Threading;
 using J2N.Threading.Atomic;
 using NUnit.Framework;
 using Lucene.Net.Attributes;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
 using System;
 using System.Threading;
 using Console = Lucene.Net.Support.SystemConsole;

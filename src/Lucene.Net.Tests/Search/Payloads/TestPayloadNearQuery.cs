@@ -1,8 +1,12 @@
-using System.Text.RegularExpressions;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
-using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
+using NUnit.Framework;
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search.Payloads
@@ -24,9 +28,9 @@ namespace Lucene.Net.Search.Payloads
      * limitations under the License.
      */
 
-    using Lucene.Net.Analysis;
-    using NUnit.Framework;
-    using System.IO;
+    
+    
+    
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;

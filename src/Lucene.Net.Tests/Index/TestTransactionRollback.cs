@@ -1,8 +1,9 @@
+using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {

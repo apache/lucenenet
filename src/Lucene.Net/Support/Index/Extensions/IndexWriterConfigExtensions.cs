@@ -1,8 +1,7 @@
 ﻿using Lucene.Net.Codecs;
-using Lucene.Net.Index;
 using Lucene.Net.Search.Similarities;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Index.Extensions
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more

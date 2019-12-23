@@ -1,9 +1,8 @@
-using System;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Index
 {

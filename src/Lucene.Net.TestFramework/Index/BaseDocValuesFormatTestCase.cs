@@ -1,5 +1,6 @@
 using J2N.Threading;
 using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using System;

@@ -1,13 +1,13 @@
-using System.Collections.Generic;
 using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support;
+using Lucene.Net.Util.Automaton;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using Lucene.Net.Util.Automaton;
-    using NUnit.Framework;
-    using System;
     using AutomatonQuery = Lucene.Net.Search.AutomatonQuery;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CheckHits = Lucene.Net.Search.CheckHits;

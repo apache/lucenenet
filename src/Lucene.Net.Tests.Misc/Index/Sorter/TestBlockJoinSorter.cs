@@ -19,17 +19,14 @@
  *
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
 using Lucene.Net.Analysis;
 using Lucene.Net.Util;
 using Lucene.Net.Search;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Index.Sorter
 {

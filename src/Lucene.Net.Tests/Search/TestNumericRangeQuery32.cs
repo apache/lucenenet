@@ -1,8 +1,8 @@
+using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
 using System;
 using System.Diagnostics;
-using Lucene.Net.Documents;
-using Lucene.Net.Support;
-using NUnit.Framework;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search

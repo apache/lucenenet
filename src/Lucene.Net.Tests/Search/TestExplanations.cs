@@ -1,6 +1,5 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
+using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 
 namespace Lucene.Net.Search

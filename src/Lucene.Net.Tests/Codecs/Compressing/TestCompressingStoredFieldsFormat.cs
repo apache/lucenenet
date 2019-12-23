@@ -1,12 +1,12 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
+using Lucene.Net.Randomized.Generators;
+using NUnit.Framework;
+using System;
 using Field = Lucene.Net.Documents.Field;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using System;
     using BaseStoredFieldsFormatTestCase = Lucene.Net.Index.BaseStoredFieldsFormatTestCase;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -34,7 +34,6 @@ namespace Lucene.Net.Codecs.Compressing
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Attributes;
 
     [TestFixture]
     public class TestCompressingStoredFieldsFormat : BaseStoredFieldsFormatTestCase

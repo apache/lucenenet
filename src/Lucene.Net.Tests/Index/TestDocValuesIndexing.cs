@@ -1,8 +1,8 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Threading;

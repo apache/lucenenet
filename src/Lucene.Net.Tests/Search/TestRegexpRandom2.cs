@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
 using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
+using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
