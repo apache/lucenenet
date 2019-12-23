@@ -51,16 +51,12 @@ namespace Lucene.Net.Support
 
         public static int ToChars(int codePoint, char[] dst, int dstIndex)
         {
-            var converted = UnicodeUtil.ToCharArray(new[] {codePoint}, 0, 1);
-
-            Array.Copy(converted, 0, dst, dstIndex, converted.Length);
-
-            return converted.Length;
+            return J2N.Character.ToChars(codePoint, dst, dstIndex);
         }
 
         public static char[] ToChars(int codePoint)
         {
-            return UnicodeUtil.ToCharArray(new[] {codePoint}, 0, 1);
+            return J2N.Character.ToChars(codePoint);
         }
 
         public static int ToCodePoint(char high, char low)
