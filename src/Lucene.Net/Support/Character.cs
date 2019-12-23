@@ -509,10 +509,7 @@ namespace Lucene.Net.Support
         /// <returns> A <see cref="UnicodeCategory"/> representing the <paramref name="codePoint"/>. </returns>
         public static UnicodeCategory GetType(int codePoint)
         {
-            if ((codePoint >= 0x00d800) && (codePoint <= 0x00dfff))
-                return CharUnicodeInfo.GetUnicodeCategory((char)codePoint);
-            else
-                return CharUnicodeInfo.GetUnicodeCategory(char.ConvertFromUtf32(codePoint), 0);
+            return J2N.Character.GetType(codePoint);
         }
     }
 }
