@@ -1,3 +1,4 @@
+using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Collections.Generic;
 
@@ -20,11 +21,6 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
-    using OffsetAttribute = Lucene.Net.Analysis.TokenAttributes.OffsetAttribute;
-    using PositionIncrementAttribute = Lucene.Net.Analysis.TokenAttributes.PositionIncrementAttribute;
-    using PositionLengthAttribute = Lucene.Net.Analysis.TokenAttributes.PositionLengthAttribute;
-
     // TODO: rename to OffsetsXXXTF?  ie we only validate
     // offsets (now anyway...)
 
@@ -40,14 +36,6 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class ValidatingTokenFilter : TokenFilter
     {
-        private void InitializeInstanceFields() // LUCENENT TODO: API - move these into constructor and make these members readonly
-        {
-            posIncAtt = GetAttrIfExists<PositionIncrementAttribute>();
-            posLenAtt = GetAttrIfExists<PositionLengthAttribute>();
-            offsetAtt = GetAttrIfExists<OffsetAttribute>();
-            termAtt = GetAttrIfExists<CharTermAttribute>();
-        }
-
         private int pos;
         private int lastStartOffset;
 
@@ -73,7 +61,7 @@ namespace Lucene.Net.Analysis
             }
             else
             {
-                return default(A);
+                return default;
             }
         }
 
@@ -85,7 +73,10 @@ namespace Lucene.Net.Analysis
         public ValidatingTokenFilter(TokenStream @in, string name, bool offsetsAreCorrect)
             : base(@in)
         {
-            InitializeInstanceFields();
+            posIncAtt = GetAttrIfExists<PositionIncrementAttribute>();
+            posLenAtt = GetAttrIfExists<PositionLengthAttribute>();
+            offsetAtt = GetAttrIfExists<OffsetAttribute>();
+            termAtt = GetAttrIfExists<CharTermAttribute>();
             this.name = name;
             this.offsetsAreCorrect = offsetsAreCorrect;
         }

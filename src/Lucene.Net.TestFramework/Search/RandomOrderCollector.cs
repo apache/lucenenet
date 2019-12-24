@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using System;
 
 namespace Lucene.Net.Search
@@ -18,8 +19,6 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
     /// Randomize collection order. Don't forget to call <see cref="Flush()"/> when
@@ -101,7 +100,7 @@ namespace Lucene.Net.Search
             {
                 freqs[buffered] = scorer.Freq;
             }
-            catch (System.NotSupportedException)
+            catch (NotSupportedException)
             {
                 freqs[buffered] = -1;
             }
@@ -112,13 +111,9 @@ namespace Lucene.Net.Search
         }
 
         public bool AcceptsDocsOutOfOrder
-        {
-            get { return @in.AcceptsDocsOutOfOrder; }
-        }
+            => @in.AcceptsDocsOutOfOrder;
 
         public void SetNextReader(AtomicReaderContext context)
-        {
-            throw new System.NotSupportedException();
-        }
+            => throw new NotSupportedException();
     }
 }

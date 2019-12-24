@@ -38,9 +38,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
         
         public MockVariableInt32BlockPostingsFormat()
             : this(1)
-        {
-
-        }
+        { }
 
         public MockVariableInt32BlockPostingsFormat(int baseBlockSize)
             : base()

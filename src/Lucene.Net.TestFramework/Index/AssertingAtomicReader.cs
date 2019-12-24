@@ -1,13 +1,11 @@
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Automaton;
 using System.Collections.Generic;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Index
 {
-    using IBits = Lucene.Net.Util.IBits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -32,8 +30,7 @@ namespace Lucene.Net.Index
     {
         public AssertingFields(Fields input)
             : base(input)
-        {
-        }
+        { }
 
         public override IEnumerator<string> GetEnumerator()
         {
@@ -56,8 +53,7 @@ namespace Lucene.Net.Index
     {
         public AssertingTerms(Terms input)
             : base(input)
-        {
-        }
+        { }
 
         public override TermsEnum Intersect(CompiledAutomaton automaton, BytesRef bytes)
         {
@@ -97,8 +93,7 @@ namespace Lucene.Net.Index
 
         public AssertingDocsEnum(DocsEnum @in)
             : this(@in, true)
-        {
-        }
+        { }
 
         public AssertingDocsEnum(DocsEnum @in, bool failOnUnsupportedDocID)
             : base(@in)
@@ -122,7 +117,7 @@ namespace Lucene.Net.Index
         {
             Debug.Assert(state != DocsEnumState.FINISHED, "NextDoc() called after NO_MORE_DOCS");
             int nextDoc = base.NextDoc();
-            Debug.Assert(nextDoc > doc, "backwards nextDoc from " + doc + " to " + nextDoc + " " + m_input);
+            Debug.Assert(nextDoc > doc, "backwards NextDoc from " + doc + " to " + nextDoc + " " + m_input);
             if (nextDoc == DocIdSetIterator.NO_MORE_DOCS)
             {
                 state = DocsEnumState.FINISHED;
@@ -356,10 +351,7 @@ namespace Lucene.Net.Index
             return @in.Get(index);
         }
 
-        public virtual int Length
-        {
-            get { return @in.Length; }
-        }
+        public virtual int Length => @in.Length;
     }
 
     /// <summary>
@@ -412,8 +404,7 @@ namespace Lucene.Net.Index
 
             public AssertingTermsEnum(TermsEnum @in)
                 : base(@in)
-            {
-            }
+            { }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
@@ -808,21 +799,10 @@ namespace Lucene.Net.Index
         }
 
         // this is the same hack as FCInvisible
-        public override object CoreCacheKey
-        {
-            get
-            {
-                return cacheKey;
-            }
-        }
+        public override object CoreCacheKey => cacheKey;
 
-        public override object CombinedCoreAndDeletesKey
-        {
-            get
-            {
-                return cacheKey;
-            }
-        }
+        public override object CombinedCoreAndDeletesKey => cacheKey;
+
 
         private readonly object cacheKey = new object();
     }

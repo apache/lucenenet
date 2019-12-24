@@ -1,10 +1,10 @@
+using Lucene.Net.Util;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Codecs
 {
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs
                 return new IteratorAnonymousInnerClassHelper(this);
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
             }
@@ -87,25 +87,15 @@ namespace Lucene.Net.Codecs
                     return false;
                 }
 
-                public BytesRef Current
-                {
-                    get { return current; }
-                }
+                public BytesRef Current => current;
 
-                object System.Collections.IEnumerator.Current
-                {
-                    get { return Current; }
-                }
+                object IEnumerator.Current => Current;
 
                 public void Reset()
-                {
-                    throw new NotImplementedException();
-                }
+                    => throw new NotSupportedException();
 
                 public void Dispose()
-                {
-                    @in.Dispose();
-                }
+                     => @in.Dispose();
             }
         }
 
@@ -130,10 +120,8 @@ namespace Lucene.Net.Codecs
                 return new IteratorAnonymousInnerClassHelper2(this);
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
+            IEnumerator IEnumerable.GetEnumerator()
+                => GetEnumerator();
 
             private class IteratorAnonymousInnerClassHelper2 : IEnumerator<long?>
             {
@@ -162,25 +150,15 @@ namespace Lucene.Net.Codecs
                     return true;
                 }
 
-                public long? Current
-                {
-                    get { return current; }
-                }
+                public long? Current => current;
 
-                object System.Collections.IEnumerator.Current
-                {
-                    get { return Current; }
-                }
+                object IEnumerator.Current => Current;
 
                 public void Reset()
-                {
-                    throw new NotImplementedException();
-                }
+                    => throw new NotSupportedException();
 
                 public void Dispose()
-                {
-                    @in.Dispose();
-                }
+                    => @in.Dispose();
             }
         }
 
@@ -205,10 +183,8 @@ namespace Lucene.Net.Codecs
                 return new IteratorAnonymousInnerClassHelper3(this);
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
+            IEnumerator IEnumerable.GetEnumerator()
+                => GetEnumerator();
 
             private class IteratorAnonymousInnerClassHelper3 : IEnumerator<long?>
             {
@@ -236,25 +212,15 @@ namespace Lucene.Net.Codecs
                     return true;
                 }
 
-                public long? Current
-                {
-                    get { return current; }
-                }
+                public long? Current => current;
 
-                object System.Collections.IEnumerator.Current
-                {
-                    get { return Current; }
-                }
+                object IEnumerator.Current => Current;
 
                 public void Reset()
-                {
-                    throw new NotImplementedException();
-                }
+                    => throw new NotSupportedException();
 
                 public void Dispose()
-                {
-                    @in.Dispose();
-                }
+                    => @in.Dispose();
             }
         }
     }

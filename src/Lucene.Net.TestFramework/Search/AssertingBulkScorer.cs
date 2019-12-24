@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
@@ -20,8 +21,6 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using DocsEnum = Lucene.Net.Index.DocsEnum;
 
     /// <summary>
     /// Wraps a <see cref="Scorer"/> with additional checks. </summary>
@@ -53,13 +52,7 @@ namespace Lucene.Net.Search
             this.@in = @in;
         }
 
-        public virtual BulkScorer In
-        {
-            get
-            {
-                return @in;
-            }
-        }
+        public virtual BulkScorer In => @in;
 
         public override void Score(ICollector collector)
         {
@@ -71,7 +64,7 @@ namespace Lucene.Net.Search
                     Debug.Assert(!remaining);
                 }
 #pragma warning disable 168
-                catch (System.NotSupportedException e)
+                catch (NotSupportedException e)
 #pragma warning restore 168
                 {
                     @in.Score(collector);

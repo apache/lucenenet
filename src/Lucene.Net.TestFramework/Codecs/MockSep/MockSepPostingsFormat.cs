@@ -33,8 +33,7 @@ namespace Lucene.Net.Codecs.MockSep
     {
         public MockSepPostingsFormat()
             : base()
-        {
-        }
+        { }
 
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
         {

@@ -1,20 +1,4 @@
-﻿/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -22,12 +6,10 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Randomized;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
-using Lucene.Net.Search.Similarities;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Support.Threading;
-using Lucene.Net.TestFramework;
 using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections;
@@ -37,15 +19,18 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
-using System.Linq;
+using Directory = Lucene.Net.Store.Directory;
+using FieldInfo = Lucene.Net.Index.FieldInfo;
+using static Lucene.Net.Search.FieldCache;
+using static Lucene.Net.Util.FieldCacheSanityChecker;
 
 #if TESTFRAMEWORK_MSTEST
 using Before = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
@@ -72,69 +57,22 @@ using TestFixture = Lucene.Net.Attributes.NoOpAttribute;
 
 namespace Lucene.Net.Util
 {
-    using AlcoholicMergePolicy = Lucene.Net.Index.AlcoholicMergePolicy;
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using AssertingAtomicReader = Lucene.Net.Index.AssertingAtomicReader;
-    using AssertingDirectoryReader = Lucene.Net.Index.AssertingDirectoryReader;
-    using AssertingIndexSearcher = Lucene.Net.Search.AssertingIndexSearcher;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
-    using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using CacheEntry = Lucene.Net.Search.FieldCache.CacheEntry;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
-    using CompositeReader = Lucene.Net.Index.CompositeReader;
-    using Directory = Lucene.Net.Store.Directory;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
-    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-    using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using Document = Documents.Document;
-    using FCInvisibleMultiReader = Lucene.Net.Search.FCInvisibleMultiReader;
-    using Field = Field;
-    using FieldFilterAtomicReader = Lucene.Net.Index.FieldFilterAtomicReader;
-    using FieldInfo = Lucene.Net.Index.FieldInfo;
-    using FieldInfos = Lucene.Net.Index.FieldInfos;
-    using Fields = Lucene.Net.Index.Fields;
-    using FieldType = FieldType;
-    using FlushInfo = Lucene.Net.Store.FlushInfo;
-    using FSDirectory = Lucene.Net.Store.FSDirectory;
-    using IIndexableField = Lucene.Net.Index.IIndexableField;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using Insanity = Lucene.Net.Util.FieldCacheSanityChecker.Insanity;
-    using IOContext = Lucene.Net.Store.IOContext;
-    //using Context = Lucene.Net.Store.IOContext.Context;
-    using LockFactory = Lucene.Net.Store.LockFactory;
-    using LogByteSizeMergePolicy = Lucene.Net.Index.LogByteSizeMergePolicy;
-    using LogDocMergePolicy = Lucene.Net.Index.LogDocMergePolicy;
-    using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
-    using MergeInfo = Lucene.Net.Store.MergeInfo;
-    using MergePolicy = Lucene.Net.Index.MergePolicy;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using MockRandomMergePolicy = Lucene.Net.Index.MockRandomMergePolicy;
-    using MultiDocValues = Lucene.Net.Index.MultiDocValues;
-    using MultiFields = Lucene.Net.Index.MultiFields;
-    using NRTCachingDirectory = Lucene.Net.Store.NRTCachingDirectory;
-    using NumericDocValues = Lucene.Net.Index.NumericDocValues;
-    using ParallelAtomicReader = Lucene.Net.Index.ParallelAtomicReader;
-    using ParallelCompositeReader = Lucene.Net.Index.ParallelCompositeReader;
-    using RateLimitedDirectoryWrapper = Lucene.Net.Store.RateLimitedDirectoryWrapper;
-    using RegExp = Lucene.Net.Util.Automaton.RegExp;
-    using SegmentReader = Lucene.Net.Index.SegmentReader;
-    using SerialMergeScheduler = Lucene.Net.Index.SerialMergeScheduler;
-    using SimpleMergedSegmentWarmer = Lucene.Net.Index.SimpleMergedSegmentWarmer;
-    using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
-    using SortedDocValues = Lucene.Net.Index.SortedDocValues;
-    using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
-    using StringField = StringField;
-    using Terms = Lucene.Net.Index.Terms;
-    using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using TextField = TextField;
-    using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Base class for all Lucene.Net unit tests.
@@ -1809,23 +1747,6 @@ namespace Lucene.Net.Util
         public static CultureInfo CultureForName(string localeName) // LUCENENET specific - renamed from LocaleForName
         {
             return new CultureInfo(localeName);
-
-            //string[] elements = Regex.Split(localeName, "\\_", RegexOptions.Compiled);
-            //switch (elements.Length)
-            //{
-            //    case 4: // fallthrough for special cases
-            //    case 3:
-            //    return new Locale(elements[0], elements[1], elements[2]);
-
-            //    case 2:
-            //    return new Locale(elements[0], elements[1]);
-
-            //    case 1:
-            //    return new Locale(elements[0]);
-
-            //    default:
-            //    throw new System.ArgumentException("Invalid Locale: " + localeName);
-            //}
         }
 
         public static bool DefaultCodecSupportsDocValues
@@ -2438,14 +2359,9 @@ namespace Lucene.Net.Util
             }
 
             public bool Get(int index)
-            {
-                return bits.Get(index);
-            }
+                => bits.Get(index);
 
-            public int Length
-            {
-                get { return bits.Length; }
-            }
+            public int Length => bits.Length;
         }
 
         /// <summary>

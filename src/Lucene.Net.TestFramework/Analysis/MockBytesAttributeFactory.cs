@@ -1,6 +1,9 @@
+using Lucene.Net.Util;
+using System.Reflection;
+using Attribute = Lucene.Net.Util.Attribute;
+
 namespace Lucene.Net.Analysis
 {
-    using System.Reflection;
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -17,9 +20,6 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Attribute = Lucene.Net.Util.Attribute;
-    using AttributeSource = Lucene.Net.Util.AttributeSource;
 
     /// <summary>
     /// <see cref="AttributeSource.AttributeFactory"/> that implements <see cref="Lucene.Net.Analysis.TokenAttributes.ICharTermAttribute"/> with

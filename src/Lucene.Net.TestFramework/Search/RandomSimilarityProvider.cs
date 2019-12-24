@@ -1,3 +1,4 @@
+using Lucene.Net.Search.Similarities;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -6,48 +7,21 @@ using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use Sys
 namespace Lucene.Net.Search
 {
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    using AfterEffect = Lucene.Net.Search.Similarities.AfterEffect;
-    using AfterEffectB = Lucene.Net.Search.Similarities.AfterEffectB;
-    using AfterEffectL = Lucene.Net.Search.Similarities.AfterEffectL;
-    using BasicModel = Lucene.Net.Search.Similarities.BasicModel;
-    using BasicModelG = Lucene.Net.Search.Similarities.BasicModelG;
-    using BasicModelIF = Lucene.Net.Search.Similarities.BasicModelIF;
-    using BasicModelIn = Lucene.Net.Search.Similarities.BasicModelIn;
-    using BasicModelIne = Lucene.Net.Search.Similarities.BasicModelIne;
-    using BM25Similarity = Lucene.Net.Search.Similarities.BM25Similarity;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using DFRSimilarity = Lucene.Net.Search.Similarities.DFRSimilarity;
-    using Distribution = Lucene.Net.Search.Similarities.Distribution;
-    using DistributionLL = Lucene.Net.Search.Similarities.DistributionLL;
-    using DistributionSPL = Lucene.Net.Search.Similarities.DistributionSPL;
-    using IBSimilarity = Lucene.Net.Search.Similarities.IBSimilarity;
-    using Lambda = Lucene.Net.Search.Similarities.Lambda;
-    using LambdaDF = Lucene.Net.Search.Similarities.LambdaDF;
-    using LambdaTTF = Lucene.Net.Search.Similarities.LambdaTTF;
-    using LMJelinekMercerSimilarity = Lucene.Net.Search.Similarities.LMJelinekMercerSimilarity;
-    using Normalization = Lucene.Net.Search.Similarities.Normalization;
-    using NormalizationH1 = Lucene.Net.Search.Similarities.NormalizationH1;
-    using NormalizationH2 = Lucene.Net.Search.Similarities.NormalizationH2;
-    using NormalizationH3 = Lucene.Net.Search.Similarities.NormalizationH3;
-    using NormalizationZ = Lucene.Net.Search.Similarities.NormalizationZ;
-    using PerFieldSimilarityWrapper = Lucene.Net.Search.Similarities.PerFieldSimilarityWrapper;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Similarity implementation that randomizes Similarity implementations
@@ -77,29 +51,19 @@ namespace Lucene.Net.Search
         public override float Coord(int overlap, int maxOverlap)
         {
             if (coordType == 0)
-            {
                 return 1.0f;
-            }
             else if (coordType == 1)
-            {
                 return defaultSim.Coord(overlap, maxOverlap);
-            }
             else
-            {
                 return overlap / ((float)maxOverlap + 1);
-            }
         }
 
         public override float QueryNorm(float sumOfSquaredWeights)
         {
             if (shouldQueryNorm)
-            {
                 return defaultSim.QueryNorm(sumOfSquaredWeights);
-            }
             else
-            {
                 return 1.0f;
-            }
         }
 
         public override Similarity Get(string field)
@@ -107,8 +71,7 @@ namespace Lucene.Net.Search
             lock (this)
             {
                 Debug.Assert(field != null);
-                Similarity sim;
-                if (!previousMappings.TryGetValue(field, out sim) || sim == null)
+                if (!previousMappings.TryGetValue(field, out Similarity sim) || sim == null)
                 {
                     sim = knownSims[Math.Max(0, Math.Abs(perFieldSeed ^ field.GetHashCode())) % knownSims.Count];
                     previousMappings[field] = sim;

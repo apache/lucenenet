@@ -1,5 +1,10 @@
+using Lucene.Net.Analysis;
+using Lucene.Net.Codecs;
+using Lucene.Net.Search;
+using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
@@ -22,18 +27,6 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using Directory = Lucene.Net.Store.Directory;
-    using InfoStream = Lucene.Net.Util.InfoStream;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using NullInfoStream = Lucene.Net.Util.NullInfoStream;
-    using Query = Lucene.Net.Search.Query;
-    using Similarity = Search.Similarities.Similarity;
-    using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
     /// Silly class that randomizes the indexing experience.  EG
@@ -212,7 +205,7 @@ namespace Lucene.Net.Index
         {
             private readonly RandomIndexWriter outerInstance;
 
-            private IEnumerable<IndexableField> doc;
+            private readonly IEnumerable<IndexableField> doc;
 
             public IterableAnonymousInnerClassHelper(RandomIndexWriter outerInstance, IEnumerable<IndexableField> doc)
             {
@@ -225,7 +218,7 @@ namespace Lucene.Net.Index
                 return new IteratorAnonymousInnerClassHelper(this);
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
             }
@@ -254,20 +247,12 @@ namespace Lucene.Net.Index
                     return true;
                 }
 
-                public IEnumerable<IndexableField> Current
-                {
-                    get { return current; }
-                }
+                public IEnumerable<IndexableField> Current => current;
 
-                object System.Collections.IEnumerator.Current
-                {
-                    get { return Current; }
-                }
+                object IEnumerator.Current => Current;
 
                 public void Reset()
-                {
-                    throw new NotImplementedException();
-                }
+                    => throw new NotImplementedException();
 
                 public void Dispose()
                 {
@@ -338,10 +323,8 @@ namespace Lucene.Net.Index
                 return new IteratorAnonymousInnerClassHelper2(this);
             }
 
-            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
+            IEnumerator IEnumerable.GetEnumerator() 
+                => GetEnumerator();
 
             private class IteratorAnonymousInnerClassHelper2 : IEnumerator<IEnumerable<IIndexableField>>
             {
@@ -367,20 +350,12 @@ namespace Lucene.Net.Index
                     return true;
                 }
 
-                public IEnumerable<IIndexableField> Current
-                {
-                    get { return current; }
-                }
+                public IEnumerable<IIndexableField> Current => current;
 
-                object System.Collections.IEnumerator.Current
-                {
-                    get { return Current; }
-                }
+                object IEnumerator.Current => Current;
 
                 public virtual void Reset()
-                {
-                    throw new NotImplementedException();
-                }
+                    => throw new NotImplementedException();
 
                 public void Dispose()
                 {
@@ -389,95 +364,57 @@ namespace Lucene.Net.Index
         }
 
         public virtual void AddIndexes(params Directory[] dirs)
-        {
-            IndexWriter.AddIndexes(dirs);
-        }
+            => IndexWriter.AddIndexes(dirs);
 
         public virtual void AddIndexes(params IndexReader[] readers)
-        {
-            IndexWriter.AddIndexes(readers);
-        }
+            => IndexWriter.AddIndexes(readers);
 
         public virtual void UpdateNumericDocValue(Term term, string field, long? value)
-        {
-            IndexWriter.UpdateNumericDocValue(term, field, value);
-        }
+            => IndexWriter.UpdateNumericDocValue(term, field, value);
 
         public virtual void UpdateBinaryDocValue(Term term, string field, BytesRef value)
-        {
-            IndexWriter.UpdateBinaryDocValue(term, field, value);
-        }
+            => IndexWriter.UpdateBinaryDocValue(term, field, value);
 
         public virtual void DeleteDocuments(Term term)
-        {
-            IndexWriter.DeleteDocuments(term);
-        }
+            => IndexWriter.DeleteDocuments(term);
 
         public virtual void DeleteDocuments(Query q)
-        {
-            IndexWriter.DeleteDocuments(q);
-        }
+            => IndexWriter.DeleteDocuments(q);
 
         public virtual void Commit()
-        {
-            IndexWriter.Commit();
-        }
+            => IndexWriter.Commit();
 
         public virtual int NumDocs
-        {
-            get { return IndexWriter.NumDocs; }
-        }
+            => IndexWriter.NumDocs;
 
         public virtual int MaxDoc
-        {
-            get { return IndexWriter.MaxDoc; }
-        }
+            => IndexWriter.MaxDoc;
 
         public virtual void DeleteAll()
-        {
-            IndexWriter.DeleteAll();
-        }
+            => IndexWriter.DeleteAll();
 
         public virtual DirectoryReader GetReader()
-        {
-            return GetReader(true);
-        }
+            => GetReader(true);
 
         private bool doRandomForceMerge = true;
         private bool doRandomForceMergeAssert = true;
 
         public virtual void ForceMergeDeletes(bool doWait)
-        {
-            IndexWriter.ForceMergeDeletes(doWait);
-        }
+            => IndexWriter.ForceMergeDeletes(doWait);
 
         public virtual void ForceMergeDeletes()
-        {
-            IndexWriter.ForceMergeDeletes();
-        }
+            => IndexWriter.ForceMergeDeletes();
 
         public virtual bool DoRandomForceMerge
         {
-            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
-            {
-                return doRandomForceMerge;
-            }
-            set
-            {
-                doRandomForceMerge = value;
-            }
+            get => doRandomForceMerge; // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            set => doRandomForceMerge = value;
         }
 
         public virtual bool DoRandomForceMergeAssert
         {
-            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
-            {
-                return doRandomForceMergeAssert;
-            }
-            set
-            {
-                doRandomForceMergeAssert = value;
-            }
+            get => doRandomForceMergeAssert; // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            set => doRandomForceMergeAssert = value;
         }
 
         private void _DoRandomForceMerge() // LUCENENET specific - added leading underscore to keep this from colliding with the DoRandomForceMerge property

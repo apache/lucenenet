@@ -1,9 +1,8 @@
+using Lucene.Net.Util;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Util;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -35,17 +34,8 @@ namespace Lucene.Net.Index
             Debug.Assert(MaxDoc == 0 || HasDeletions);
         }
 
-        public override IBits LiveDocs
-        {
-            get
-            {
-                return liveDocs;
-            }
-        }
+        public override IBits LiveDocs => liveDocs;
 
-        public override int NumDocs
-        {
-            get { return 0; }
-        }
+        public override int NumDocs => 0;
     }
 }

@@ -1,14 +1,19 @@
 using J2N.Threading;
+using Lucene.Net.Analysis;
+using Lucene.Net.Codecs.Lucene42;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
+using static Lucene.Net.Index.TermsEnum;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -21,47 +26,21 @@ using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
 namespace Lucene.Net.Index
 {
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using BinaryDocValuesField = BinaryDocValuesField;
-    using BooleanQuery = Lucene.Net.Search.BooleanQuery;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using BytesRefHash = Lucene.Net.Util.BytesRefHash;
-    using Directory = Lucene.Net.Store.Directory;
-    using Document = Documents.Document;
-    using Field = Field;
-    using IBits = Lucene.Net.Util.IBits;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using Lucene42DocValuesFormat = Lucene.Net.Codecs.Lucene42.Lucene42DocValuesFormat;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using NumericDocValuesField = NumericDocValuesField;
-    using Query = Lucene.Net.Search.Query;
-    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-    using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
-    using SingleDocValuesField = SingleDocValuesField;
-    using SortedDocValuesField = SortedDocValuesField;
-    using SortedSetDocValuesField = SortedSetDocValuesField;
-    using StoredField = StoredField;
-    using StringField = StringField;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = TextField;
-    using TopDocs = Lucene.Net.Search.TopDocs;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Abstract class to do basic tests for a <see cref="Codecs.DocValuesFormat"/>.
@@ -3422,7 +3401,9 @@ namespace Lucene.Net.Index
                     // Sometimes make all values fixed length since some
                     // codecs have different code paths for this:
                     numDocs = TestUtil.NextInt32(Random, 10, 20);
+#pragma warning disable 612, 618
                     fixedLength = Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH;
+#pragma warning restore 612, 618
                 }
                 else
                 {
@@ -3449,11 +3430,13 @@ namespace Lucene.Net.Index
                             }
                             else if (docID == 0 || Random.Next(5) == 3)
                             {
+#pragma warning disable 612, 618
                                 numBytes = Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH;
                             }
                             else
                             {
                                 numBytes = TestUtil.NextInt32(Random, 1, Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
+#pragma warning restore 612, 618
                             }
                             totalBytes += numBytes;
                             if (totalBytes > 5 * 1024 * 1024)

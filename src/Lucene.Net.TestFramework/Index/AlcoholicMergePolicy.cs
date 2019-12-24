@@ -1,3 +1,4 @@
+using Lucene.Net.Util;
 using System;
 using System.Linq;
 
@@ -19,8 +20,6 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
     /// <para>

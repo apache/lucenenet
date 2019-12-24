@@ -1,3 +1,5 @@
+using Lucene.Net.Index;
+
 namespace Lucene.Net.Codecs.Lucene3x
 {
     /*
@@ -16,8 +18,6 @@ namespace Lucene.Net.Codecs.Lucene3x
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
     /// <summary>
     /// @lucene.internal

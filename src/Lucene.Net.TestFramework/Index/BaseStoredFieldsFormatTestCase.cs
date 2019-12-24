@@ -1,5 +1,8 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Analysis;
+using Lucene.Net.Codecs;
+using Lucene.Net.Codecs.Lucene46;
 using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Documents;
 using Lucene.Net.Documents.Extensions;
@@ -8,6 +11,7 @@ using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,47 +30,22 @@ using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
 
 namespace Lucene.Net.Index
 {
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using Directory = Lucene.Net.Store.Directory;
-    //using SimpleTextCodec = Lucene.Net.Codecs.simpletext.SimpleTextCodec;
-    using Document = Documents.Document;
-    using DoubleField = DoubleField;
-    using Field = Field;
-    using FieldType = FieldType;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using Int32Field = Int32Field;
-    using Int64Field = Int64Field;
-    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
-    using MMapDirectory = Lucene.Net.Store.MMapDirectory;
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
-    using Query = Lucene.Net.Search.Query;
-    using SingleField = SingleField;
-    using StoredField = StoredField;
-    using StringField = StringField;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = TextField;
-    using TopDocs = Lucene.Net.Search.TopDocs;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Base class aiming at testing <see cref="Codecs.StoredFieldsFormat"/>.

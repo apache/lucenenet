@@ -1,49 +1,34 @@
-using Lucene.Net.Search.Similarities;
+using Lucene.Net.Analysis;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
+using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Search
 {
-
-    using AllDeletedFilterReader = Lucene.Net.Index.AllDeletedFilterReader;
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Directory = Lucene.Net.Store.Directory;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using Document = Documents.Document;
-    using IBits = Lucene.Net.Util.IBits;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    //using Assert = junit.framework.Assert;
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using MultiReader = Lucene.Net.Index.MultiReader;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// This is a <see cref="MultiReader"/> that can be used for randomly wrapping other readers
@@ -59,21 +44,9 @@ namespace Lucene.Net.Search
         {
         }
 
-        public override object CoreCacheKey
-        {
-            get
-            {
-                return cacheKey;
-            }
-        }
+        public override object CoreCacheKey => cacheKey;
 
-        public override object CombinedCoreAndDeletesKey
-        {
-            get
-            {
-                return cacheKey;
-            }
-        }
+        public override object CombinedCoreAndDeletesKey => cacheKey;
     }
 
     /// <summary>
@@ -412,15 +385,15 @@ namespace Lucene.Net.Search
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             private readonly LuceneTestCase luceneTestCase;
 #endif
-            private Query q;
-            private IndexSearcher s;
-            private IList<AtomicReaderContext> readerContextArray;
-            private int skip_op;
-            private int[] order;
-            private int[] opidx;
-            private int[] lastDoc;
-            private float maxDiff;
-            private AtomicReader[] lastReader;
+            private readonly Query q;
+            private readonly IndexSearcher s;
+            private readonly IList<AtomicReaderContext> readerContextArray;
+            private readonly int skip_op;
+            private readonly int[] order;
+            private readonly int[] opidx;
+            private readonly int[] lastDoc;
+            private readonly float maxDiff;
+            private readonly AtomicReader[] lastReader;
 
             public CollectorAnonymousInnerClassHelper(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
@@ -577,12 +550,12 @@ namespace Lucene.Net.Search
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             private readonly LuceneTestCase luceneTestCase;
 #endif
-            private Query q;
-            private IndexSearcher s;
-            private float maxDiff;
-            private int[] lastDoc;
-            private AtomicReader[] lastReader;
-            private IList<AtomicReaderContext> context;
+            private readonly Query q;
+            private readonly IndexSearcher s;
+            private readonly float maxDiff;
+            private readonly int[] lastDoc;
+            private readonly AtomicReader[] lastReader;
+            private readonly IList<AtomicReaderContext> context;
 
             public CollectorAnonymousInnerClassHelper2(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION                
@@ -669,10 +642,7 @@ namespace Lucene.Net.Search
                 liveDocs = ((AtomicReader)context.Reader).LiveDocs;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => false;
         }
     }
 }

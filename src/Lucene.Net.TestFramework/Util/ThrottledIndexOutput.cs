@@ -1,3 +1,4 @@
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System;
 using System.Threading;
@@ -21,9 +22,6 @@ namespace Lucene.Net.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using DataInput = Lucene.Net.Store.DataInput;
-    using IndexOutput = Lucene.Net.Store.IndexOutput;
 
     /// <summary>
     /// Intentionally slow <see cref="IndexOutput"/> for testing.
@@ -162,15 +160,8 @@ namespace Lucene.Net.Util
 
         public override long Length
         {
-            set
-            {
-                @delegate.Length = value;
-            }
-
-            get
-            {
-                return @delegate.Length;
-            }
+            get => @delegate.Length;
+            set => @delegate.Length = value;
         }
 
         public override void CopyBytes(DataInput input, long numBytes)
@@ -179,11 +170,6 @@ namespace Lucene.Net.Util
         }
 
         public override long Checksum
-        {
-            get
-            {
-                return @delegate.Checksum;
-            }
-        }
+            => @delegate.Checksum;
     }
 }

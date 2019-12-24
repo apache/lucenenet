@@ -1,3 +1,5 @@
+using Lucene.Net.Util;
+
 namespace Lucene.Net.Codecs.Lucene42
 {
     /*
@@ -17,8 +19,6 @@ namespace Lucene.Net.Codecs.Lucene42
      * limitations under the License.
      */
 
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /// <summary>
     /// Read-write version of <see cref="Lucene42Codec"/> for testing.
     /// </summary>
@@ -37,31 +37,19 @@ namespace Lucene.Net.Codecs.Lucene42
                 get
                 {
                     if (!LuceneTestCase.OldFormatImpersonationIsActive)
-                    {
                         return base.FieldInfosWriter;
-                    }
                     else
-                    {
                         return new Lucene42FieldInfosWriter();
-                    }
                 }
             }
         }
 
         public override DocValuesFormat GetDocValuesFormatForField(string field)
-        {
-            return dv;
-        }
+            => dv;
 
-        public override NormsFormat NormsFormat
-        {
-            get { return norms; }
-        }
+        public override NormsFormat NormsFormat => norms;
 
-        public override FieldInfosFormat FieldInfosFormat
-        {
-            get { return fieldInfosFormat; }
-        }
+        public override FieldInfosFormat FieldInfosFormat => fieldInfosFormat;
     }
 #pragma warning restore 612, 618
 }

@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using System;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
@@ -19,8 +20,6 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
     /// Wraps another <see cref="ICollector"/> and checks that
@@ -47,9 +46,7 @@ namespace Lucene.Net.Search
         }
 
         public virtual void SetScorer(Scorer scorer)
-        {
-            @in.SetScorer(AssertingScorer.GetAssertingScorer(random, scorer));
-        }
+            => @in.SetScorer(AssertingScorer.GetAssertingScorer(random, scorer));
 
         public virtual void Collect(int doc)
         {
@@ -62,13 +59,9 @@ namespace Lucene.Net.Search
         }
 
         public virtual void SetNextReader(AtomicReaderContext context)
-        {
-            lastCollected = -1;
-        }
+            => lastCollected = -1;
 
         public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return @in.AcceptsDocsOutOfOrder; }
-        }
+            => @in.AcceptsDocsOutOfOrder;
     }
 }

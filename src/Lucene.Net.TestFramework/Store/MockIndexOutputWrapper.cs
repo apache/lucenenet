@@ -181,15 +181,8 @@ namespace Lucene.Net.Store
 
         public override long Length
         {
-            get
-            {
-                return @delegate.Length;
-            }
-
-            set
-            {
-                @delegate.Length = value;
-            }
+            get => @delegate.Length;
+            set => @delegate.Length = value;
         }
 
         public override void CopyBytes(DataInput input, long numBytes)
@@ -201,13 +194,7 @@ namespace Lucene.Net.Store
             dir.MaybeThrowDeterministicException();
         }
 
-        public override long Checksum
-        {
-            get
-            {
-                return @delegate.Checksum;
-            }
-        }
+        public override long Checksum => @delegate.Checksum;
 
         public override string ToString()
         {

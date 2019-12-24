@@ -1,11 +1,8 @@
+using Lucene.Net.Codecs.Lucene40;
+using Lucene.Net.Util;
+
 namespace Lucene.Net.Codecs.Lucene41
 {
-    using Lucene40FieldInfosFormat = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosFormat;
-    using Lucene40FieldInfosWriter = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosWriter;
-    using Lucene40RWDocValuesFormat = Lucene.Net.Codecs.Lucene40.Lucene40RWDocValuesFormat;
-    using Lucene40RWNormsFormat = Lucene.Net.Codecs.Lucene40.Lucene40RWNormsFormat;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -39,13 +36,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 get
                 {
                     if (!LuceneTestCase.OldFormatImpersonationIsActive)
-                    {
                         return base.FieldInfosWriter;
-                    }
                     else
-                    {
                         return new Lucene40FieldInfosWriter();
-                    }
                 }
             }
         }
@@ -54,25 +47,13 @@ namespace Lucene.Net.Codecs.Lucene41
         private readonly NormsFormat norms = new Lucene40RWNormsFormat();
 
 
-        public override FieldInfosFormat FieldInfosFormat
-        {
-            get { return fieldInfos; }
-        }
+        public override FieldInfosFormat FieldInfosFormat => fieldInfos;
 
-        public override StoredFieldsFormat StoredFieldsFormat
-        {
-            get { return fieldsFormat; }
-        }
+        public override StoredFieldsFormat StoredFieldsFormat => fieldsFormat;
 
-        public override DocValuesFormat DocValuesFormat
-        {
-            get { return docValues; }
-        }
+        public override DocValuesFormat DocValuesFormat => docValues;
 
-        public override NormsFormat NormsFormat
-        {
-            get { return norms; }
-        }
+        public override NormsFormat NormsFormat => norms;
     }
 #pragma warning restore 612, 618
 }

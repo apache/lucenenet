@@ -1,3 +1,6 @@
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+
 namespace Lucene.Net.Store
 {
     /*
@@ -16,9 +19,6 @@ namespace Lucene.Net.Store
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
     /// Calls check index on dispose.
@@ -52,14 +52,8 @@ namespace Lucene.Net.Store
 
         public virtual bool IsOpen
         {
-            get
-            {
-                return isOpen;
-            }
-            protected set // LUCENENET specific - added protected setter and marked isOpen private because volatile is not CLS compliant
-            {
-                isOpen = value;
-            }
+            get => isOpen;
+            protected set => isOpen = value; // LUCENENET specific - added protected setter and marked isOpen private because volatile is not CLS compliant
         }
 
         /// <summary>
@@ -68,26 +62,14 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual bool CheckIndexOnDispose  // LUCENENET specific - renamed from CheckIndexOnClose
         {
-            set
-            {
-                this.checkIndexOnClose = value;
-            }
-            get
-            {
-                return checkIndexOnClose;
-            }
+            get => checkIndexOnClose;
+            set => checkIndexOnClose = value;
         }
 
         public virtual bool CrossCheckTermVectorsOnDispose  // LUCENENET specific - renamed from CrossCheckTermVectorsOnClose
         {
-            set
-            {
-                this.crossCheckTermVectorsOnClose = value;
-            }
-            get
-            {
-                return crossCheckTermVectorsOnClose;
-            }
+            get => crossCheckTermVectorsOnClose;
+            set => crossCheckTermVectorsOnClose = value;
         }
 
         public override void Copy(Directory to, string src, string dest, IOContext context)

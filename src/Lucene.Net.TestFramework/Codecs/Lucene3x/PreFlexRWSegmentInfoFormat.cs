@@ -25,13 +25,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         private readonly SegmentInfoWriter writer = new PreFlexRWSegmentInfoWriter();
 
-        public override SegmentInfoWriter SegmentInfoWriter
-        {
-            get
-            {
-                return writer;
-            }
-        }
+        public override SegmentInfoWriter SegmentInfoWriter => writer;
     }
 #pragma warning restore 612, 618
 }

@@ -1,47 +1,36 @@
+using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+using Lucene.Net.Util.Fst;
+using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static Lucene.Net.Util.Fst.FST;
+using static Lucene.Net.Util.Packed.PackedInt32s;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene42
 {
-    using Lucene.Net.Util.Fst;
-    using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using BlockPackedWriter = Lucene.Net.Util.Packed.BlockPackedWriter;
-    using ByteArrayDataOutput = Lucene.Net.Store.ByteArrayDataOutput;
-    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Util = Lucene.Net.Util.Fst.Util;
 
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    using FieldInfo = Lucene.Net.Index.FieldInfo;
-    using FormatAndBits = Lucene.Net.Util.Packed.PackedInt32s.FormatAndBits;
-    using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-    using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using INPUT_TYPE = Lucene.Net.Util.Fst.FST.INPUT_TYPE;
-    using Int32sRef = Lucene.Net.Util.Int32sRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using MathUtil = Lucene.Net.Util.MathUtil;
-    using MonotonicBlockPackedWriter = Lucene.Net.Util.Packed.MonotonicBlockPackedWriter;
-    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
-    using PositiveInt32Outputs = Lucene.Net.Util.Fst.PositiveInt32Outputs;
-    using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
-    using Util = Lucene.Net.Util.Fst.Util;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     //   Constants use Lucene42DocValuesProducer.
 

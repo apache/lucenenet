@@ -1,9 +1,14 @@
+using Lucene.Net.Codecs;
+using Lucene.Net.Codecs.Lucene46;
+using Lucene.Net.Codecs.PerField;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -14,7 +19,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Console = Lucene.Net.Support.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
-using System.Collections;
+using Directory = Lucene.Net.Store.Directory;
+
 
 //#if TESTFRAMEWORK_MSTEST
 //using CollectionAssert = Lucene.Net.TestFramework.Assert;
@@ -29,63 +35,22 @@ using System.Collections;
 
 namespace Lucene.Net.Util
 {
-    //using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
-    //using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
-    
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using BinaryDocValuesField = BinaryDocValuesField;
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    using Codec = Lucene.Net.Codecs.Codec;
-    //using CheckIndex = Lucene.Net.Index.CheckIndex;
-    using Directory = Lucene.Net.Store.Directory;
-    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-    using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using Document = Documents.Document;
-    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-    using DocValuesType = Lucene.Net.Index.DocValuesType;
-    using DoubleField = DoubleField;
-    using Field = Field;
-    using FieldDoc = Lucene.Net.Search.FieldDoc;
-    using FieldType = FieldType;
-    using FilteredQuery = Lucene.Net.Search.FilteredQuery;
-    using IIndexableField = Lucene.Net.Index.IIndexableField;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using Int32Field = Int32Field;
-    using Int64Field = Int64Field;
-    using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
-    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
-    using MergePolicy = Lucene.Net.Index.MergePolicy;
-    using MergeScheduler = Lucene.Net.Index.MergeScheduler;
-    using MultiFields = Lucene.Net.Index.MultiFields;
-    using NumericDocValuesField = NumericDocValuesField;
-    using PerFieldDocValuesFormat = Lucene.Net.Codecs.PerField.PerFieldDocValuesFormat;
-    using PerFieldPostingsFormat = Lucene.Net.Codecs.PerField.PerFieldPostingsFormat;
-    using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
-    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
-    using SingleField = SingleField;
-    using SortedDocValuesField = SortedDocValuesField;
-    using Terms = Lucene.Net.Index.Terms;
-    using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
-    using TopDocs = Lucene.Net.Search.TopDocs;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// General utility methods for Lucene unit tests.
@@ -1266,26 +1231,26 @@ namespace Lucene.Net.Util
             }
         }
 
-        /// <summary>
-        /// Shutdown <see cref="TaskScheduler"/> and wait for its.
-        /// </summary>
-        public static void ShutdownExecutorService(TaskScheduler ex) // LUCENENET TODO: API - either implement or comment out
-        {
-            /*if (ex != null)
-            {
-              try
-              {
-                ex.shutdown();
-                ex.awaitTermination(1, TimeUnit.SECONDS);
-              }
-              catch (ThreadInterruptedException e)
-              {
-                // Just report it on the syserr.
-                Console.Error.WriteLine("Could not properly shutdown executor service.");
-                Console.Error.WriteLine(e.StackTrace);
-              }
-            }*/
-        }
+        ///// <summary>
+        ///// Shutdown <see cref="TaskScheduler"/> and wait for its.
+        ///// </summary>
+        //public static void ShutdownExecutorService(TaskScheduler ex) // LUCENENET: TaskScheduler doesn't have a way to terminate in .NET
+        //{
+        //    /*if (ex != null)
+        //    {
+        //      try
+        //      {
+        //        ex.shutdown();
+        //        ex.awaitTermination(1, TimeUnit.SECONDS);
+        //      }
+        //      catch (ThreadInterruptedException e)
+        //      {
+        //        // Just report it on the syserr.
+        //        Console.Error.WriteLine("Could not properly shutdown executor service.");
+        //        Console.Error.WriteLine(e.StackTrace);
+        //      }
+        //    }*/
+        //}
 
         /// <summary>
         /// Returns a valid (compiling) <see cref="Regex"/> instance with random stuff inside. Be careful

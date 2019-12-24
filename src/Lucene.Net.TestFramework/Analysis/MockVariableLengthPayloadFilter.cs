@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
 using System;
 
 namespace Lucene.Net.Analysis
@@ -19,8 +20,6 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
     /// <see cref="TokenFilter"/> that adds random variable-length payloads.

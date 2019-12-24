@@ -52,13 +52,7 @@ namespace Lucene.Net.Index
             return negate ^ fields.Contains(field);
         }
 
-        public override FieldInfos FieldInfos
-        {
-            get
-            {
-                return fieldInfos;
-            }
-        }
+        public override FieldInfos FieldInfos => fieldInfos;
 
         public override Fields GetTermVectors(int docID)
         {

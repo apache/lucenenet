@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
@@ -21,8 +22,6 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using TestUtil = Lucene.Net.Util.TestUtil;
 
     /// <summary>
     /// <see cref="MergePolicy"/> that makes random decisions for testing.

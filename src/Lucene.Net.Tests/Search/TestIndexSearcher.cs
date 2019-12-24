@@ -115,7 +115,8 @@ namespace Lucene.Net.Search
                 }
             }
 
-            TestUtil.ShutdownExecutorService(service);
+            // LUCENENET: .NET doesn't have a way to shut down the TaskScheduler explicitly
+            //TestUtil.ShutdownExecutorService(service);
         }
 
         [Test]

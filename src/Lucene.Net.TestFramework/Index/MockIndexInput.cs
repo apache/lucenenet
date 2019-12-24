@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
     /// </summary>
     public class MockIndexInput : BufferedIndexInput
     {
-        private byte[] buffer;
+        private readonly byte[] buffer;
         private int pointer = 0;
         private readonly long length;
 
@@ -65,9 +65,6 @@ namespace Lucene.Net.Index
             pointer = (int)pos;
         }
 
-        public override long Length
-        {
-            get { return length; }
-        }
+        public override long Length => length;
     }
 }

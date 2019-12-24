@@ -1,6 +1,8 @@
 using J2N.Threading.Atomic;
+using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -18,30 +20,21 @@ using System.Runtime.Serialization;
 namespace Lucene.Net.Store
 {
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using NoDeletionPolicy = Lucene.Net.Index.NoDeletionPolicy;
-    using SegmentInfos = Lucene.Net.Index.SegmentInfos;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-    using ThrottledIndexOutput = Lucene.Net.Util.ThrottledIndexOutput;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Enum for controlling hard disk throttling.
@@ -186,14 +179,8 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual bool PreventDoubleWrite
         {
-            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
-            {
-                return preventDoubleWrite;
-            }
-            set
-            {
-                preventDoubleWrite = value;
-            }
+            get => preventDoubleWrite; // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            set => preventDoubleWrite = value;
         }
 
         /// <summary>
@@ -204,14 +191,8 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual bool AllowRandomFileNotFoundException
         {
-            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
-            {
-                return allowRandomFileNotFoundException;
-            }
-            set
-            {
-                allowRandomFileNotFoundException = value;
-            }
+            get => allowRandomFileNotFoundException; // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            set => allowRandomFileNotFoundException = value;
         }
 
         /// <summary>
@@ -220,28 +201,16 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual bool AllowReadingFilesStillOpenForWrite
         {
-            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
-            {
-                return allowRandomFileNotFoundException;
-            }
-            set
-            {
-                allowReadingFilesStillOpenForWrite = value;
-            }
+            get => allowRandomFileNotFoundException; // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            set => allowReadingFilesStillOpenForWrite = value;
         }
 
         // LUCENENET specific - de-nested Throttling enum
 
         public virtual Throttling Throttling
         {
-            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
-            {
-                return this.throttling;
-            }
-            set
-            {
-                this.throttling = value;
-            }
+            get => throttling; // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            set => throttling = value;
         }
 
         /// <summary>
@@ -441,27 +410,15 @@ namespace Lucene.Net.Store
 
         public virtual long MaxSizeInBytes
         {
-            set
-            {
-                this.maxSize = value;
-            }
-            get
-            {
-                return this.maxSize;
-            }
+            get => maxSize;
+            set => maxSize = value;
         }
 
         /// <summary>
         /// Returns the peek actual storage used (bytes) in this
         /// directory.
         /// </summary>
-        public virtual long MaxUsedSizeInBytes
-        {
-            get
-            {
-                return this.maxUsedSize;
-            }
-        }
+        public virtual long MaxUsedSizeInBytes => maxUsedSize;
 
         public virtual void ResetMaxUsedSizeInBytes()
         {
@@ -474,14 +431,8 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual bool NoDeleteOpenFile
         {
-            set
-            {
-                this.noDeleteOpenFile = value;
-            }
-            get
-            {
-                return noDeleteOpenFile;
-            }
+            get => noDeleteOpenFile;
+            set => noDeleteOpenFile = value;
         }
 
         /// <summary>
@@ -490,14 +441,8 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual bool AssertNoDeleteOpenFile
         {
-            set
-            {
-                this.assertNoDeleteOpenFile = value;
-            }
-            get
-            {
-                return assertNoDeleteOpenFile;
-            }
+            get => assertNoDeleteOpenFile;
+            set => assertNoDeleteOpenFile = value;
         }
 
         /// <summary>
@@ -508,14 +453,8 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual double RandomIOExceptionRate
         {
-            set
-            {
-                randomIOExceptionRate = value;
-            }
-            get
-            {
-                return randomIOExceptionRate;
-            }
+            get => randomIOExceptionRate;
+            set => randomIOExceptionRate = value;
         }
 
         /// <summary>
@@ -527,14 +466,8 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual double RandomIOExceptionRateOnOpen
         {
-            set
-            {
-                randomIOExceptionRateOnOpen = value;
-            }
-            get
-            {
-                return randomIOExceptionRateOnOpen;
-            }
+            get => randomIOExceptionRateOnOpen;
+            set => randomIOExceptionRateOnOpen = value;
         }
 
         internal virtual void MaybeThrowIOException(string message)
@@ -544,7 +477,6 @@ namespace Lucene.Net.Store
                 if (LuceneTestCase.VERBOSE)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception" + (message == null ? "" : " (" + message + ")"));
-                    //(new Exception()).printStackTrace(System.out);
                 }
                 throw new IOException("a random IOException" + (message == null ? "" : " (" + message + ")"));
             }
@@ -557,7 +489,6 @@ namespace Lucene.Net.Store
                 if (LuceneTestCase.VERBOSE)
                 {
                   Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception during open file=" + name);
-                  //(new Exception()).printStackTrace(System.out);
                 }
                 if (allowRandomFileNotFoundException == false || randomState.NextBoolean())
                 {
@@ -674,14 +605,8 @@ namespace Lucene.Net.Store
 
         public virtual bool FailOnCreateOutput
         {
-            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
-            {
-                return failOnCreateOutput;
-            }
-            set
-            {
-                failOnCreateOutput = value;
-            }
+            get => failOnCreateOutput; // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            set => failOnCreateOutput = value;
         }
 
         public override IndexOutput CreateOutput(string name, IOContext context)
@@ -807,14 +732,8 @@ namespace Lucene.Net.Store
 
         public virtual bool FailOnOpenInput
         {
-            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
-            {
-                return FailOnOpenInput;
-            }
-            set
-            {
-                failOnOpenInput = value;
-            }
+            get => failOnOpenInput; // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            set => failOnOpenInput = value;
         }
 
         public override IndexInput OpenInput(string name, IOContext context)
@@ -917,14 +836,8 @@ namespace Lucene.Net.Store
 
         public virtual bool AssertNoUnreferencedFilesOnClose // LUCENENET TODO: Rename AssertNoUnreferencedFilesOnDispose ?
         {
-            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
-            {
-                return assertNoUnreferencedFilesOnClose;
-            }
-            set
-            {
-                assertNoUnreferencedFilesOnClose = value;
-            }
+            get => assertNoUnreferencedFilesOnClose; // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            set => assertNoUnreferencedFilesOnClose = value;
         }
 
         /// <summary>
@@ -938,14 +851,8 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual bool WrapLockFactory
         {
-            get // LUCENENET specific - added getter (to follow MSDN property guidelines)
-            {
-                return wrapLockFactory;
-            }
-            set
-            {
-                this.wrapLockFactory = value;
-            }
+            get => wrapLockFactory; // LUCENENET specific - added getter (to follow MSDN property guidelines)
+            set => wrapLockFactory = value;
         }
 
         protected override void Dispose(bool disposing)
@@ -1388,13 +1295,7 @@ namespace Lucene.Net.Store
                 this.io = io;
             }
 
-            public override long Length
-            {
-                get
-                {
-                    return io.Length;
-                }
-            }
+            public override long Length => io.Length;
 
             protected internal override void FlushBuffer(byte[] b, int offset, int len)
             {

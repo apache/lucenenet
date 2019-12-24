@@ -1,6 +1,8 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Index;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,40 +10,22 @@ using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use Sys
 
 namespace Lucene.Net.Codecs.RAMOnly
 {
-    
-    using IBits = Lucene.Net.Util.IBits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-    using DocsEnum = Lucene.Net.Index.DocsEnum;
-    using FieldInfo = Lucene.Net.Index.FieldInfo;
-    using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-    using IndexInput = Lucene.Net.Store.IndexInput;
-    using IndexOptions = Lucene.Net.Index.IndexOptions;
-    using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
-    using SegmentReadState = Lucene.Net.Index.SegmentReadState;
-    using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
-    using Terms = Lucene.Net.Index.Terms;
-    using TermsEnum = Lucene.Net.Index.TermsEnum;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Stores all postings data in RAM, but writes a small
@@ -63,8 +47,7 @@ namespace Lucene.Net.Codecs.RAMOnly
 #pragma warning restore 659
         {
             public ComparerAnonymousInnerClassHelper()
-            {
-            }
+            { }
 
             public virtual int Compare(BytesRef t1, BytesRef t2)
             {
@@ -104,8 +87,7 @@ namespace Lucene.Net.Codecs.RAMOnly
 
         public RAMOnlyPostingsFormat()
             : base()
-        {
-        }
+        { }
 
         // Postings state:
         internal class RAMPostings : FieldsProducer
@@ -120,15 +102,10 @@ namespace Lucene.Net.Codecs.RAMOnly
                 return result;
             }
 
-            public override int Count
-            {
-                get { return fieldToTerms.Count; }
-            }
+            public override int Count => fieldToTerms.Count;
 
             public override IEnumerator<string> GetEnumerator()
-            {
-                return fieldToTerms.Keys.GetEnumerator();
-            }
+                => fieldToTerms.Keys.GetEnumerator();
 
             protected override void Dispose(bool disposing)
             {
@@ -178,67 +155,31 @@ namespace Lucene.Net.Codecs.RAMOnly
                 return sizeInBytes;
             }
 
-            public override long Count
-            {
-                get { return termToDocs.Count; }
-            }
+            public override long Count => termToDocs.Count;
 
-            public override long SumTotalTermFreq
-            {
-                get
-                {
-                    return sumTotalTermFreq;
-                }
-            }
+            public override long SumTotalTermFreq => sumTotalTermFreq;
 
-            public override long SumDocFreq
-            {
-                get
-                {
-                    return sumDocFreq;
-                }
-            }
+            public override long SumDocFreq => sumDocFreq;
 
-            public override int DocCount
-            {
-                get
-                {
-                    return docCount;
-                }
-            }
+            public override int DocCount => docCount;
 
             public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 return new RAMTermsEnum(this);
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return reverseUnicodeComparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => reverseUnicodeComparer;
 
             public override bool HasFreqs
-            {
-                get { return info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
-            }
+                => info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 
             public override bool HasOffsets
-            {
-                get { return info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
-            }
+                => info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
             public override bool HasPositions
-            {
-                get { return info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
-            }
+                => info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
-            public override bool HasPayloads
-            {
-                get { return info.HasPayloads; }
-            }
+            public override bool HasPayloads => info.HasPayloads;
         }
 
         internal class RAMTerm
@@ -343,13 +284,8 @@ namespace Lucene.Net.Codecs.RAMOnly
                 return postingsWriter;
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return BytesRef.UTF8SortedAsUnicodeComparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer 
+                => BytesRef.UTF8SortedAsUnicodeComparer;
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
@@ -420,12 +356,7 @@ namespace Lucene.Net.Codecs.RAMOnly
             }
 
             public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return BytesRef.UTF8SortedAsUnicodeComparer;
-                }
-            }
+                => BytesRef.UTF8SortedAsUnicodeComparer;
 
             public override BytesRef Next()
             {
@@ -474,33 +405,19 @@ namespace Lucene.Net.Codecs.RAMOnly
             }
 
             public override void SeekExact(long ord)
-            {
-                throw new System.NotSupportedException();
-            }
+                => throw new NotSupportedException();
 
             public override long Ord
-            {
-                get { throw new System.NotSupportedException(); }
-            }
+                => throw new NotSupportedException();
 
-            public override BytesRef Term
-            {
-                get
-                {
-                    // TODO: reuse BytesRef
-                    return new BytesRef(current);
-                }
-            }
+            // TODO: reuse BytesRef
+            public override BytesRef Term => new BytesRef(current);
 
             public override int DocFreq
-            {
-                get { return ramField.termToDocs[current].docs.Count; }
-            }
+                => ramField.termToDocs[current].docs.Count;
 
             public override long TotalTermFreq
-            {
-                get { return ramField.termToDocs[current].totalTermFreq; }
-            }
+                => ramField.termToDocs[current].totalTermFreq;
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
@@ -557,19 +474,13 @@ namespace Lucene.Net.Codecs.RAMOnly
             }
 
             public override int Freq
-            {
-                get { return current.positions.Length; }
-            }
+                => current.positions.Length;
 
             public override int DocID
-            {
-                get { return current.docID; }
-            }
+                => current.docID;
 
             public override long GetCost()
-            {
-                return ramTerm.docs.Count;
-            }
+                => ramTerm.docs.Count;
         }
 
         private class RAMDocsAndPositionsEnum : DocsAndPositionsEnum
@@ -614,29 +525,17 @@ namespace Lucene.Net.Codecs.RAMOnly
             }
 
             public override int Freq
-            {
-                get { return current.positions.Length; }
-            }
+                => current.positions.Length;
 
             public override int DocID
-            {
-                get { return current.docID; }
-            }
+                => current.docID;
 
             public override int NextPosition()
-            {
-                return current.positions[posUpto++];
-            }
+                => current.positions[posUpto++];
 
-            public override int StartOffset
-            {
-                get { return -1; }
-            }
+            public override int StartOffset => -1;
 
-            public override int EndOffset
-            {
-                get { return -1; }
-            }
+            public override int EndOffset => -1;
 
             public override BytesRef GetPayload()
             {
@@ -651,9 +550,7 @@ namespace Lucene.Net.Codecs.RAMOnly
             }
 
             public override long GetCost()
-            {
-                return ramTerm.docs.Count;
-            }
+                => ramTerm.docs.Count;
         }
 
         // Holds all indexes created, keyed by the ID assigned in fieldsConsumer

@@ -1,4 +1,8 @@
+using Lucene.Net.Index;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Util.Packed;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,33 +11,22 @@ using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use Sys
 
 namespace Lucene.Net.Codecs.Lucene40
 {
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
-    using Directory = Lucene.Net.Store.Directory;
-    using FieldInfo = Lucene.Net.Index.FieldInfo;
-    using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-    using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
-    using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
 #pragma warning disable 612, 618
     internal class Lucene40DocValuesWriter : DocValuesConsumer
@@ -428,7 +421,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 currentAddress = data.GetFilePointer() - startPosition;
                 valueToAddress[v] = currentAddress;
-                WriteVShort(data, v.Length);
+                WriteVInt16(data, v.Length);
                 data.WriteBytes(v.Bytes, v.Offset, v.Length);
             }
 
@@ -446,8 +439,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         // the little vint encoding used for var-deref
-        [ExceptionToNetNumericConvention] // LUCENENET: Private API, keeping as-is
-        private static void WriteVShort(IndexOutput o, int i)
+        private static void WriteVInt16(IndexOutput o, int i)
         {
             Debug.Assert(i >= 0 && i <= short.MaxValue);
             if (i < 128)

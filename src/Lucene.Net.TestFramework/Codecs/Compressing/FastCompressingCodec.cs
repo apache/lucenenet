@@ -1,8 +1,8 @@
+using Lucene.Net.Codecs.Lucene42;
+using Lucene.Net.Util.Packed;
+
 namespace Lucene.Net.Codecs.Compressing
 {
-    using Lucene42NormsFormat = Lucene.Net.Codecs.Lucene42.Lucene42NormsFormat;
-    using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -29,19 +29,14 @@ namespace Lucene.Net.Codecs.Compressing
         /// Constructor that allows to configure the chunk size. </summary>
         public FastCompressingCodec(int chunkSize, bool withSegmentSuffix)
             : base(withSegmentSuffix ? "FastCompressingStoredFields" : "", CompressionMode.FAST, chunkSize)
-        {
-        }
+        { }
 
         /// <summary>
         /// Default constructor. </summary>
         public FastCompressingCodec()
             : this(1 << 14, false)
-        {
-        }
+        { }
 
-        public override NormsFormat NormsFormat
-        {
-            get { return new Lucene42NormsFormat(PackedInt32s.FAST); }
-        }
+        public override NormsFormat NormsFormat => new Lucene42NormsFormat(PackedInt32s.FAST);
     }
 }

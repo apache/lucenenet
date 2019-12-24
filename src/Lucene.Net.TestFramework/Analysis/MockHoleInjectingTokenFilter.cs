@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
 using System;
 
 namespace Lucene.Net.Analysis
@@ -19,8 +20,6 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using TestUtil = Lucene.Net.Util.TestUtil;
 
     // TODO: maybe, instead to be more "natural", we should make
     // a MockRemovesTokensTF, ideally subclassing FilteringTF

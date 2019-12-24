@@ -1,3 +1,5 @@
+using SimpleFSIndexInput = Lucene.Net.Store.SimpleFSDirectory.SimpleFSIndexInput;
+
 namespace Lucene.Net.Store
 {
     /*
@@ -16,8 +18,6 @@ namespace Lucene.Net.Store
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using SimpleFSIndexInput = Lucene.Net.Store.SimpleFSDirectory.SimpleFSIndexInput;
 
     /// <summary>
     /// This class provides access to namespace-level features defined in the

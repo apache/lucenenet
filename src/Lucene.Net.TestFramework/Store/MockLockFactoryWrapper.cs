@@ -34,14 +34,8 @@ namespace Lucene.Net.Store
 
         public override string LockPrefix
         {
-            set
-            {
-                @delegate.LockPrefix = value;
-            }
-            get
-            {
-                return @delegate.LockPrefix;
-            }
+            get => @delegate.LockPrefix;
+            set => @delegate.LockPrefix = value;
         }
 
         public override Lock MakeLock(string lockName)

@@ -47,8 +47,7 @@ namespace Lucene.Net.Analysis
         // for testing only, uses a remainder of 0
         public MockCharFilter(TextReader @in)
             : this(@in, 0)
-        {
-        }
+        { }
 
         internal int currentOffset = -1;
         internal int delta = 0;
@@ -122,6 +121,10 @@ namespace Lucene.Net.Analysis
             corrections[off] = cumulativeDiff;
         }
 
+        // LUCENENET TODO: This is the only TreeDictionary reference that uses a method that
+        // SortedDictionary doesn't have. In theory, we can factor out TreeDictionary from Lucene.Net.Support
+        // if we create our own version of SortedDictionary that supports null keys and add a reference to C5 to
+        // this library. Need to test the difference in performance, though.
         internal TreeDictionary<int, int> corrections = new TreeDictionary<int, int>();
     }
 }

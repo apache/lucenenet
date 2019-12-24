@@ -1,7 +1,10 @@
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Search;
+using Lucene.Net.Search.Similarities;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -25,19 +28,6 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using Directory = Lucene.Net.Store.Directory;
-    using Document = Documents.Document;
-    using Field = Field;
-    using FieldType = FieldType;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using StoredField = StoredField;
-    using StringField = StringField;
-    using TextField = TextField;
 
     internal class DocHelper
     {

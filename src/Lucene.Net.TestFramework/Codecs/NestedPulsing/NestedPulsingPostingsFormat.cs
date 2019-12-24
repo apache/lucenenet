@@ -35,8 +35,7 @@ namespace Lucene.Net.Codecs.NestedPulsing
     {
         public NestedPulsingPostingsFormat()
             : base()
-        {
-        }
+        { }
 
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
         {

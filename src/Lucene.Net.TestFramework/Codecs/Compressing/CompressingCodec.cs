@@ -1,28 +1,26 @@
+using Lucene.Net.Codecs.Compressing.Dummy;
+using Lucene.Net.Codecs.Lucene46;
+using Lucene.Net.Randomized.Generators;
 using System;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-    using Lucene.Net.Randomized.Generators;
-
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    using DummyCompressingCodec = Lucene.Net.Codecs.Compressing.Dummy.DummyCompressingCodec;
-    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// A codec that uses <see cref="CompressingStoredFieldsFormat"/> for its stored
@@ -89,18 +87,11 @@ namespace Lucene.Net.Codecs.Compressing
         /// </summary>
         public CompressingCodec(CompressionMode compressionMode, int chunkSize)
             : this("", compressionMode, chunkSize)
-        {
-        }
+        { }
 
-        public override StoredFieldsFormat StoredFieldsFormat
-        {
-            get { return storedFieldsFormat; }
-        }
+        public override StoredFieldsFormat StoredFieldsFormat => storedFieldsFormat;
 
-        public override TermVectorsFormat TermVectorsFormat
-        {
-            get { return termVectorsFormat; }
-        }
+        public override TermVectorsFormat TermVectorsFormat => termVectorsFormat;
 
         public override string ToString()
         {

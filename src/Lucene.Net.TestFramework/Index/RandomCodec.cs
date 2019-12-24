@@ -1,4 +1,18 @@
 using Lucene.Net.Codecs;
+using Lucene.Net.Codecs.Asserting;
+using Lucene.Net.Codecs.Bloom;
+using Lucene.Net.Codecs.DiskDV;
+using Lucene.Net.Codecs.Lucene41;
+using Lucene.Net.Codecs.Lucene41Ords;
+using Lucene.Net.Codecs.Lucene45;
+using Lucene.Net.Codecs.Lucene46;
+using Lucene.Net.Codecs.Memory;
+using Lucene.Net.Codecs.MockIntBlock;
+using Lucene.Net.Codecs.MockRandom;
+using Lucene.Net.Codecs.MockSep;
+using Lucene.Net.Codecs.NestedPulsing;
+using Lucene.Net.Codecs.Pulsing;
+using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -10,52 +24,21 @@ using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use Sys
 namespace Lucene.Net.Index
 {
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    using AssertingDocValuesFormat = Lucene.Net.Codecs.Asserting.AssertingDocValuesFormat;
-    using AssertingPostingsFormat = Lucene.Net.Codecs.Asserting.AssertingPostingsFormat;
-
-    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-
-    using TestBloomFilteredLucene41Postings = Lucene.Net.Codecs.Bloom.TestBloomFilteredLucene41Postings;
-    using DiskDocValuesFormat = Lucene.Net.Codecs.DiskDV.DiskDocValuesFormat;
-    using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
-
-    using Lucene41WithOrds = Lucene.Net.Codecs.Lucene41Ords.Lucene41WithOrds;
-    using Lucene45DocValuesFormat = Lucene.Net.Codecs.Lucene45.Lucene45DocValuesFormat;
-    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
-    using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
-
-    using DirectPostingsFormat = Lucene.Net.Codecs.Memory.DirectPostingsFormat;
-    using MemoryDocValuesFormat = Lucene.Net.Codecs.Memory.MemoryDocValuesFormat;
-    using MemoryPostingsFormat = Lucene.Net.Codecs.Memory.MemoryPostingsFormat;
-    using MockFixedInt32BlockPostingsFormat = Lucene.Net.Codecs.MockIntBlock.MockFixedInt32BlockPostingsFormat;
-    using MockVariableInt32BlockPostingsFormat = Lucene.Net.Codecs.MockIntBlock.MockVariableInt32BlockPostingsFormat;
-    using MockRandomPostingsFormat = Lucene.Net.Codecs.MockRandom.MockRandomPostingsFormat;
-    using MockSepPostingsFormat = Lucene.Net.Codecs.MockSep.MockSepPostingsFormat;
-    using NestedPulsingPostingsFormat = Lucene.Net.Codecs.NestedPulsing.NestedPulsingPostingsFormat;
-    using Pulsing41PostingsFormat = Lucene.Net.Codecs.Pulsing.Pulsing41PostingsFormat;
-    using SimpleTextDocValuesFormat = Lucene.Net.Codecs.SimpleText.SimpleTextDocValuesFormat;
-    using SimpleTextPostingsFormat = Lucene.Net.Codecs.SimpleText.SimpleTextPostingsFormat;
-    using FSTOrdPostingsFormat = Lucene.Net.Codecs.Memory.FSTOrdPostingsFormat;
-    using FSTOrdPulsing41PostingsFormat = Lucene.Net.Codecs.Memory.FSTOrdPulsing41PostingsFormat;
-    using FSTPostingsFormat = Lucene.Net.Codecs.Memory.FSTPostingsFormat;
-    using FSTPulsing41PostingsFormat = Lucene.Net.Codecs.Memory.FSTPulsing41PostingsFormat;
-    using TestUtil = Lucene.Net.Util.TestUtil;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// <see cref="Codec"/> that assigns per-field random <see cref="Codecs.PostingsFormat"/>s.
@@ -228,8 +211,8 @@ namespace Lucene.Net.Index
 
         public override string ToString()
         {
-            // LUCENENET NOTE: using Collections.ToString() method on dictionaries to print out their contents
-            return base.ToString() + ": " + Collections.ToString(previousMappings) + ", docValues:" + Collections.ToString(previousDVMappings);
+            // LUCENENET NOTE: using StringFormatter on dictionaries to print out their contents
+            return string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}: {1}, docValues:{2}", base.ToString(), previousMappings, previousDVMappings);
         }
     }
 }

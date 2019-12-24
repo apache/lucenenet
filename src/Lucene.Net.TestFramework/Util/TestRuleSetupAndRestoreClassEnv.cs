@@ -1,10 +1,18 @@
+using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.Asserting;
+using Lucene.Net.Codecs.CheapBastard;
 using Lucene.Net.Codecs.Compressing;
 using Lucene.Net.Codecs.Lucene3x;
 using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Codecs.Lucene42;
 using Lucene.Net.Codecs.Lucene45;
+using Lucene.Net.Codecs.Lucene46;
+using Lucene.Net.Codecs.MockRandom;
+using Lucene.Net.Codecs.SimpleText;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Search.Similarities;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -30,47 +38,21 @@ using AssumptionViolatedException = Lucene.Net.TestFramework.SkipTestException;
 namespace Lucene.Net.Util
 {
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    /*
-	import static Lucene.Net.Util.LuceneTestCase.INFOSTREAM;
-	import static Lucene.Net.Util.LuceneTestCase.TEST_CODEC;
-	import static Lucene.Net.Util.LuceneTestCase.TEST_DOCVALUESFORMAT;
-	import static Lucene.Net.Util.LuceneTestCase.TEST_POSTINGSFORMAT;
-	import static Lucene.Net.Util.LuceneTestCase.VERBOSE;
-	import static Lucene.Net.Util.LuceneTestCase.assumeFalse;
-	import static Lucene.Net.Util.LuceneTestCase.localeForName;
-	import static Lucene.Net.Util.LuceneTestCase.random;
-	import static Lucene.Net.Util.LuceneTestCase.randomLocale;
-	import static Lucene.Net.Util.LuceneTestCase.randomTimeZone;*/
-
-    using CheapBastardCodec = Lucene.Net.Codecs.CheapBastard.CheapBastardCodec;
-    using Codec = Lucene.Net.Codecs.Codec;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
-    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
-    using MockRandomPostingsFormat = Lucene.Net.Codecs.MockRandom.MockRandomPostingsFormat;
-    using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
-    using RandomCodec = Lucene.Net.Index.RandomCodec;
-    using RandomSimilarityProvider = Lucene.Net.Search.RandomSimilarityProvider;
-    using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using SimpleTextCodec = Lucene.Net.Codecs.SimpleText.SimpleTextCodec;
-
-    //using RandomizedContext = com.carrotsearch.randomizedtesting.RandomizedContext;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Setup and restore suite-level environment (fine grained junk that

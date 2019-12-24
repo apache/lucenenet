@@ -1,24 +1,3 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
 using Lucene.Net.Codecs.BlockTerms;
 using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Index;
@@ -26,6 +5,23 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Codecs.Lucene41Ords
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
     /// Customized version of <see cref="Lucene41PostingsFormat"/> that uses
     /// <see cref="FixedGapTermsIndexWriter"/>.
@@ -143,12 +139,12 @@ namespace Lucene.Net.Codecs.Lucene41Ords
         /// <summary>
         /// Extension of freq postings file
         /// </summary>
-        internal static readonly string FREQ_EXTENSION = "frq"; // LUCENENET NOTE: Not used
+        internal const string FREQ_EXTENSION = "frq"; // LUCENENET NOTE: Not used
 
         /// <summary>
         /// Extension of prox postings file
         /// </summary>
-        internal static readonly string PROX_EXTENSION = "prx"; // LUCENENET NOTE: Not used
+        internal const string PROX_EXTENSION = "prx"; // LUCENENET NOTE: Not used
 #pragma warning restore 414
     }
 }

@@ -1,3 +1,5 @@
+using Lucene.Net.Util;
+
 namespace Lucene.Net.Codecs.Lucene3x
 {
     /*
@@ -16,8 +18,6 @@ namespace Lucene.Net.Codecs.Lucene3x
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /// <summary>
     /// Writes 3.x-like indexes (not perfect emulation yet) for testing only!
@@ -39,13 +39,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             get
             {
                 if (LuceneTestCase.OldFormatImpersonationIsActive)
-                {
                     return postings;
-                }
                 else
-                {
                     return base.PostingsFormat;
-                }
             }
         }
 
@@ -54,13 +50,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             get
             {
                 if (LuceneTestCase.OldFormatImpersonationIsActive)
-                {
                     return norms;
-                }
                 else
-                {
                     return base.NormsFormat;
-                }
             }
         }
 
@@ -69,13 +61,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             get
             {
                 if (LuceneTestCase.OldFormatImpersonationIsActive)
-                {
                     return segmentInfos;
-                }
                 else
-                {
                     return base.SegmentInfoFormat;
-                }
             }
         }
 
@@ -84,13 +72,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             get
             {
                 if (LuceneTestCase.OldFormatImpersonationIsActive)
-                {
                     return fieldInfos;
-                }
                 else
-                {
                     return base.FieldInfosFormat;
-                }
             }
         }
 
@@ -99,13 +83,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             get
             {
                 if (LuceneTestCase.OldFormatImpersonationIsActive)
-                {
                     return termVectors;
-                }
                 else
-                {
                     return base.TermVectorsFormat;
-                }
             }
         }
 
@@ -114,13 +94,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             get
             {
                 if (LuceneTestCase.OldFormatImpersonationIsActive)
-                {
                     return storedFields;
-                }
                 else
-                {
                     return base.StoredFieldsFormat;
-                }
             }
         }
     }

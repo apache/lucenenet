@@ -1,4 +1,7 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
 using System;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
@@ -20,17 +23,6 @@ namespace Lucene.Net.Codecs.Lucene3x
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Lucene.Net.Support;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Directory = Lucene.Net.Store.Directory;
-    using FieldInfo = Lucene.Net.Index.FieldInfo;
-    using FieldInfos = Lucene.Net.Index.FieldInfos;
-    using IIndexableField = Lucene.Net.Index.IIndexableField;
-    using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-    using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using IOContext = Lucene.Net.Store.IOContext;
-    using IOUtils = Lucene.Net.Util.IOUtils;
 
     /// <summary>
     /// @lucene.experimental </summary>

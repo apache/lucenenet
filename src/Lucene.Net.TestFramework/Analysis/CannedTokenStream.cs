@@ -26,21 +26,17 @@ namespace Lucene.Net.Analysis
     {
         private readonly Token[] tokens;
         private int upto = 0;
-        private ICharTermAttribute termAtt;// = addAttribute(typeof(CharTermAttribute));
-        private IPositionIncrementAttribute posIncrAtt;// = addAttribute(typeof(PositionIncrementAttribute));
-        private IPositionLengthAttribute posLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
-        private IOffsetAttribute offsetAtt;// = addAttribute(typeof(OffsetAttribute));
-        private IPayloadAttribute payloadAtt;// = addAttribute(typeof(PayloadAttribute));
+        private readonly ICharTermAttribute termAtt;
+        private readonly IPositionIncrementAttribute posIncrAtt;
+        private readonly IPositionLengthAttribute posLengthAtt;
+        private readonly IOffsetAttribute offsetAtt;
+        private readonly IPayloadAttribute payloadAtt;
         private readonly int finalOffset;
         private readonly int finalPosInc;
 
         public CannedTokenStream(params Token[] tokens)
-        {
-            this.tokens = tokens;
-            finalOffset = 0;
-            finalPosInc = 0;
-            InitParams();
-        }
+            : this(0, 0, tokens)
+        { }
 
         /// <summary>
         /// If you want trailing holes, pass a non-zero
@@ -48,19 +44,15 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public CannedTokenStream(int finalPosInc, int finalOffset, params Token[] tokens)
         {
-            this.tokens = tokens;
-            this.finalOffset = finalOffset;
-            this.finalPosInc = finalPosInc;
-            InitParams();
-        }
-
-        private void InitParams()
-        {
             termAtt = AddAttribute<ICharTermAttribute>();
             posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
             posLengthAtt = AddAttribute<IPositionLengthAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
             payloadAtt = AddAttribute<IPayloadAttribute>();
+
+            this.tokens = tokens;
+            this.finalOffset = finalOffset;
+            this.finalPosInc = finalPosInc;
         }
 
         public override void End()

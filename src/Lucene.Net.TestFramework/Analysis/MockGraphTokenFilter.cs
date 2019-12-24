@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
 using System;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -21,8 +22,6 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using TestUtil = Lucene.Net.Util.TestUtil;
 
     // TODO: sometimes remove tokens too...?
 

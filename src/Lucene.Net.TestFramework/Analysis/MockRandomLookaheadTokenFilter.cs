@@ -22,14 +22,12 @@ namespace Lucene.Net.Analysis
      * limitations under the License.
      */
 
-    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
-
     /// <summary>
     /// Uses <see cref="LookaheadTokenFilter"/> to randomly peek at future tokens.
     /// </summary>
     public sealed class MockRandomLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
     {
-        private readonly ICharTermAttribute termAtt;// = addAttribute(typeof(CharTermAttribute));
+        private readonly ICharTermAttribute termAtt;
         private Random random; // LUCENENET: not readonly to reset seed later
         private readonly int seed; // LUCENENET specific: changed to int, since .NET random seed is int, not long
 

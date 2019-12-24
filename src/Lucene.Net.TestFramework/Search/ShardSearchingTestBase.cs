@@ -1,7 +1,10 @@
 using J2N.Threading;
+using Lucene.Net.Analysis;
+using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
-using Lucene.Net.TestFramework;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -14,35 +17,22 @@ using System.Runtime.Serialization;
 
 namespace Lucene.Net.Search
 {
-    using Directory = Lucene.Net.Store.Directory;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using LineFileDocs = Lucene.Net.Util.LineFileDocs;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OpenMode = Lucene.Net.Index.OpenMode;
-    using Term = Lucene.Net.Index.Term;
-    using TermContext = Lucene.Net.Index.TermContext;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextWriterInfoStream = Lucene.Net.Util.TextWriterInfoStream;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     // TODO: maybe SLM should throw this instead of returning null...
     /// <summary>

@@ -23,8 +23,6 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using AssertingAtomicReader = Lucene.Net.Index.AssertingAtomicReader;
-
     /// <summary>
     /// Wraps a <see cref="Scorer"/> with additional checks.</summary>
     public class AssertingScorer : Scorer
@@ -79,13 +77,7 @@ namespace Lucene.Net.Search
             this.docsEnumIn = new AssertingDocsEnum(@in);
         }
 
-        public virtual Scorer In
-        {
-            get
-            {
-                return @in;
-            }
-        }
+        public virtual Scorer In => @in;
 
         internal virtual bool Iterating()
         {
@@ -127,10 +119,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public override int DocID
-        {
-            get { return @in.DocID; }
-        }
+        public override int DocID => @in.DocID;
 
         public override int NextDoc()
         {

@@ -1,3 +1,6 @@
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+
 namespace Lucene.Net.Codecs.Lucene40
 {
     /*
@@ -16,10 +19,6 @@ namespace Lucene.Net.Codecs.Lucene40
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using IndexFileNames = Lucene.Net.Index.IndexFileNames;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
     /// <summary>
     /// Read-write version of <see cref="Lucene40NormsFormat"/> for testing. </summary>

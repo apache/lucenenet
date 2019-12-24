@@ -1,28 +1,26 @@
+using Lucene.Net.Store;
+using Lucene.Net.Support;
 using System;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene40
 {
-    using Lucene.Net.Support;
-
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
-    using IndexOutput = Lucene.Net.Store.IndexOutput;
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Implements the skip list writer for the 4.0 posting list format
@@ -32,14 +30,14 @@ namespace Lucene.Net.Codecs.Lucene40
     [Obsolete("Only for reading old 4.0 segments")]
     public class Lucene40SkipListWriter : MultiLevelSkipListWriter
     {
-        private int[] lastSkipDoc;
-        private int[] lastSkipPayloadLength;
-        private int[] lastSkipOffsetLength;
-        private long[] lastSkipFreqPointer;
-        private long[] lastSkipProxPointer;
+        private readonly int[] lastSkipDoc;
+        private readonly int[] lastSkipPayloadLength;
+        private readonly int[] lastSkipOffsetLength;
+        private readonly long[] lastSkipFreqPointer;
+        private readonly long[] lastSkipProxPointer;
 
-        private IndexOutput freqOutput;
-        private IndexOutput proxOutput;
+        private readonly IndexOutput freqOutput;
+        private readonly IndexOutput proxOutput;
 
         private int curDoc;
         private bool curStorePayloads;

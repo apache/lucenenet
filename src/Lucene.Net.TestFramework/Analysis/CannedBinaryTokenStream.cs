@@ -1,4 +1,6 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Util;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Analysis
 {
@@ -18,9 +20,6 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Lucene.Net.Util;
-    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Represents a binary token. </summary>
@@ -71,14 +70,8 @@ namespace Lucene.Net.Analysis
 
         public BytesRef BytesRef
         {
-            get
-            {
-                return bytes;
-            }
-            set
-            {
-                this.bytes.CopyBytes(value);
-            }
+            get => bytes;
+            set => this.bytes.CopyBytes(value);
         }
 
         public override void Clear()
@@ -117,10 +110,10 @@ namespace Lucene.Net.Analysis
 
         private readonly BinaryToken[] tokens;
         private int upto = 0;
-        private readonly IBinaryTermAttribute termAtt;// = AddAttribute<BinaryTermAttribute>();
-        private readonly IPositionIncrementAttribute posIncrAtt;// = AddAttribute<PositionIncrementAttribute>();
-        private readonly IPositionLengthAttribute posLengthAtt;// = addAttribute(typeof(PositionLengthAttribute));
-        private readonly IOffsetAttribute offsetAtt;// = addAttribute(typeof(OffsetAttribute));
+        private readonly IBinaryTermAttribute termAtt;
+        private readonly IPositionIncrementAttribute posIncrAtt;
+        private readonly IPositionLengthAttribute posLengthAtt;
+        private readonly IOffsetAttribute offsetAtt;
 
         // LUCENENET specific - de-nested IBinaryTermAttribute
 

@@ -1,3 +1,5 @@
+using Lucene.Net.Codecs.Lucene46;
+
 namespace Lucene.Net.Codecs.Asserting
 {
     /*
@@ -17,8 +19,6 @@ namespace Lucene.Net.Codecs.Asserting
      * limitations under the License.
      */
 
-    using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
-
     /// <summary>
     /// Acts like <see cref="Lucene46Codec"/> but with additional asserts.
     /// </summary>
@@ -33,32 +33,16 @@ namespace Lucene.Net.Codecs.Asserting
 
         public AssertingCodec()
             : base(new Lucene46Codec())
-        {
-        }
+        { }
 
-        public override PostingsFormat PostingsFormat
-        {
-            get { return postings; }
-        }
+        public override PostingsFormat PostingsFormat => postings;
 
-        public override TermVectorsFormat TermVectorsFormat
-        {
-            get { return vectors; }
-        }
+        public override TermVectorsFormat TermVectorsFormat => vectors;
 
-        public override StoredFieldsFormat StoredFieldsFormat
-        {
-            get { return storedFields; }
-        }
+        public override StoredFieldsFormat StoredFieldsFormat => storedFields;
 
-        public override DocValuesFormat DocValuesFormat
-        {
-            get { return docValues; }
-        }
+        public override DocValuesFormat DocValuesFormat => docValues;
 
-        public override NormsFormat NormsFormat
-        {
-            get { return norms; }
-        }
+        public override NormsFormat NormsFormat => norms;
     }
 }

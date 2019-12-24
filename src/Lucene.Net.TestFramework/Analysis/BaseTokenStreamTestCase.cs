@@ -15,6 +15,8 @@ using System.Threading;
 using AttributeFactory = Lucene.Net.Util.AttributeSource.AttributeFactory;
 using Assert = Lucene.Net.TestFramework.Assert;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
+using Attribute = Lucene.Net.Util.Attribute;
+using Directory = Lucene.Net.Store.Directory;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis
@@ -35,19 +37,6 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Attribute = Lucene.Net.Util.Attribute;
-    using Directory = Lucene.Net.Store.Directory;
-    using Document = Documents.Document;
-    using Field = Field;
-    using FieldType = FieldType;
-    using IAttribute = Lucene.Net.Util.IAttribute;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using LineFileDocs = Lucene.Net.Util.LineFileDocs;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-    using TextField = TextField;
 
     /// <summary>
     /// Attribute that records if it was cleared or not.  this is used
