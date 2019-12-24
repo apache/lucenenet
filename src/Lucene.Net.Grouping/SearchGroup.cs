@@ -515,6 +515,8 @@ namespace Lucene.Net.Search.Grouping
         /// <c>null</c> if <c>fillFields=false</c> had
         /// been passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}.GetTopGroups(int, bool)"/>
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        [WritableArray]
         object[] SortValues { get; set; }
     }
 }
