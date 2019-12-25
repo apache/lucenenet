@@ -823,7 +823,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // See: https://github.com/Microsoft/vstest/issues/1022
                 // Once the issue has been identified and fixed we can remove this conditional
                 // compilation for it on .NET Core 2.0.
-#if !NETSTANDARD2_0
+#if !NETSTANDARD2_0 && !NETSTANDARD2_1
                 Debug.Assert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
 #endif
 

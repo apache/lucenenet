@@ -810,7 +810,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 // LUCENENET TODO: BUG - Need to investigate why this assert sometimes fails
                 // which will cause the test runner to crash on .NET Core 2.0
-#if !NETSTANDARD2_0
+#if !NETSTANDARD2_0 && !NETSTANDARD2_1
                 Debug.Assert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
 #endif
 
