@@ -71,19 +71,10 @@ steps:
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
 
-# Special case: Only supports .netcoreapp2.1+
+# Special case: Only supports .netcoreapp3.0
 - template: publish-test-results.yml
   parameters:
-    framework: 'netcoreapp2.1'
-    testProjectName: 'Lucene.Net.Tests.Cli'
-    osName: '${{ parameters.osName }}'
-    testResultsFormat: '${{ parameters.testResultsFormat }}'
-    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
-    testResultsFileName: '${{ parameters.testResultsFileName }}'
-
-- template: publish-test-results.yml
-  parameters:
-    framework: 'netcoreapp3.0'
+    framework: 'netcoreapp3.1'
     testProjectName: 'Lucene.Net.Tests.Cli'
     osName: '${{ parameters.osName }}'
     testResultsFormat: '${{ parameters.testResultsFormat }}'

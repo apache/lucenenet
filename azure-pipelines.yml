@@ -89,9 +89,9 @@ stages:
       displayName: 'Setup Default Variable Values'
 
     - task: DotNetCoreInstaller@0
-      displayName: 'Use .NET Core sdk 3.0.101'
+      displayName: 'Use .NET Core sdk 3.1.100'
       inputs:
-        version: 3.0.101
+        version: 3.1.100
 
     - powershell: |
         Import-Module "$(BuildDirectory)/psake.psm1"
@@ -222,10 +222,11 @@ stages:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(WebsiteArtifactName)'
         ArtifactName: '$(WebsiteArtifactName)'
 
+
 - stage: Test_Stage
   displayName: 'Test Stage:'
   jobs:
-  - job: Test_netcoreapp3_0
+  - job: Test_netcoreapp3_1
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     strategy:
       matrix:
@@ -241,14 +242,14 @@ stages:
           osName: 'macOS'
           imageName: 'macOS-10.14'
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-    displayName: 'Test netcoreapp3.0 on'
+    displayName: 'Test netcoreapp3.1 on'
     pool:
       vmImage: $(imageName)
     steps:
     - template: 'build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        testTargetFrameworks: 'netcoreapp3.0'
+        testTargetFrameworks: 'netcoreapp3.1'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
         maximumParallelJobs: 7

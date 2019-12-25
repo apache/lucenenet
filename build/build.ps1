@@ -27,7 +27,7 @@ properties {
 	[string]$publish_directory = "$release_directory/Publish"
 	[string]$solutionFile = "$base_directory/Lucene.Net.sln"
 	[string]$sdkPath = "$env:programfiles/dotnet/sdk"
-	[string]$sdkVersion = "3.0.101"
+	[string]$sdkVersion = "3.1.100"
 	[string]$globalJsonFile = "$base_directory/global.json"
 	[string]$versionPropsFile = "$base_directory/Version.props"
 	[string]$build_bat = "$base_directory/build.bat"
@@ -48,7 +48,7 @@ properties {
 	[int]$maximumParalellJobs = 8
 	
 	#test paramters
-	[string]$frameworks_to_test = "netcoreapp3.0,netcoreapp2.1,net451"
+	[string]$frameworks_to_test = "netcoreapp3.1,netcoreapp2.1,net451"
 	[string]$where = ""
 }
 
@@ -86,7 +86,7 @@ task InstallSDK -description "This task makes sure the correct SDK version is in
 	& where.exe dotnet.exe
 
 	if ($LASTEXITCODE -ne 0) {
-		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 2.0 SDK, version $sdkVersion."
+		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 3.1 SDK, version $sdkVersion."
 	}
 }
 
@@ -210,8 +210,8 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 
 				$projectName = [System.IO.Path]::GetFileNameWithoutExtension($testProject)
 
-				# Special case - our CLI tool only supports .NET Core 2.1
-				if ($projectName.Contains("Tests.Cli") -and (!$framework.StartsWith("netcoreapp2."))) {
+				# Special case - our CLI tool only supports .NET Core 3.1
+				if ($projectName.Contains("Tests.Cli") -and (!$framework.StartsWith("netcoreapp3.1"))) {
 					continue
 				}
 
@@ -295,8 +295,8 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 		foreach ($framework in $frameworksToTest) {
 			$testName = $testProject.Directory.Name
 
-			# Special case - our CLI tool only supports .NET Core 2.1
-			if ($testName.Contains("Tests.Cli") -and (!$framework.StartsWith("netcoreapp2."))) {
+			# Special case - our CLI tool only supports .NET Core 3.1
+			if ($testName.Contains("Tests.Cli") -and (!$framework.StartsWith("netcoreapp3.1"))) {
 				$totalProjects--
 				$remainingProjects--
 				continue

@@ -41,7 +41,7 @@ steps:
 
 - template: publish-test-results.yml
   parameters:
-    framework: 'netcoreapp3.0'
+    framework: 'netcoreapp3.1'
     testProjectName: '${{ parameters.testProjectName }}'
     osName: '${{ parameters.osName }}'
     testResultsFormat: '${{ parameters.testResultsFormat }}'
