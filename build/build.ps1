@@ -360,7 +360,7 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 			}
 
 			# Execute the jobs in parallel
-			Start-Job $scriptBlock -ArgumentList $testExpression,$testResultDirectory
+			Start-Job -Name "$testName,$framework" -ScriptBlock $scriptBlock -ArgumentList $testExpression,$testResultDirectory
 
 			#Invoke-Expression $testExpression
 			## fail the build on negative exit codes (NUnit errors - if positive it is a test count or, if 1, it could be a dotnet error)
@@ -375,6 +375,12 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 		if ($running.Count -gt 0) {
 			Write-Host ""
 			Write-Host "  Almost finished, only $($running.Count) test projects left..." -ForegroundColor Cyan
+			[int]$number = 0
+			foreach ($runningJob in $running) {
+				$number++
+				$jobName = $runningJob | Select-Object -ExpandProperty Name
+				Write-Host "$number. $jobName"
+			}
 			$running | Wait-Job -Any
 		}
 	} until ($running.Count -eq 0)
