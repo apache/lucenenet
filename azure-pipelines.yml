@@ -255,7 +255,7 @@ stages:
         maximumParallelJobs: 7
         maximumAllowedFailures: $(maximumAllowedFailures)
 
-  - job: Test_netcoreapp2_1
+  - job: Test_netcoreapp2_2
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     strategy:
       matrix:
@@ -271,14 +271,14 @@ stages:
           osName: 'macOS'
           imageName: 'macOS-10.14'
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-    displayName: 'Test netcoreapp2.1 on'
+    displayName: 'Test netcoreapp2.2 on'
     pool:
       vmImage: $(imageName)
     steps:
     - template: 'build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        testTargetFrameworks: 'netcoreapp2.1'
+        testTargetFrameworks: 'netcoreapp2.2'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
         maximumParallelJobs: 7
