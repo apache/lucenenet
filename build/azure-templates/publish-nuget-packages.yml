@@ -21,9 +21,10 @@
 # (except for those named *.Tests.pdb) to TeamServices.
 
 parameters:
-  nugetArtifactName: 'nuget' # The name of the artifact where the NuGet assets (.nupkg and .pdb files) can be downloaded
+  nugetArtifactName: 'nuget' # The name of the artifact where the NuGet assets (.nupkg and .snupkg files) can be downloaded
+  debugArtifactName: 'debug' # The name of the artifact where the .pdb files can be downloaded
   artifactFeedID: '' # The GUID of the Azure Artifacts NuGet feed
-  testSymbolFilesConvention: '**/*.Tests*.pdb' # The glob pattern (within the nugetArtifact) where to look for test project symbols (.pdb) files, so they can be distinguished from other project file types.
+  testSymbolFilesConvention: '**/*.Tests*.pdb' # The glob pattern (within the debugArtifactName) where to look for test project symbols (.pdb) files, so they can be distinguished from other project file types.
 
 steps:
 - powershell: |
@@ -34,6 +35,7 @@ steps:
         }
     }
     EnsureNotNullOrEmpty('${{ parameters.nugetArtifactName }}', 'nugetArtifactName')
+    EnsureNotNullOrEmpty('${{ parameters.debugArtifactName }}', 'debugArtifactName')
     EnsureNotNullOrEmpty('${{ parameters.artifactFeedID }}', 'artifactFeedID')
     EnsureNotNullOrEmpty('${{ parameters.testSymbolFilesConvention }}', 'testSymbolFilesConvention')
   displayName: 'Validate Template Parameters'
@@ -42,6 +44,12 @@ steps:
   displayName: 'Download Build Artifacts: ${{ parameters.nugetArtifactName }}'
   inputs:
     artifactName: ${{ parameters.nugetArtifactName }}
+    downloadPath: '$(Build.ArtifactStagingDirectory)'
+
+- task: DownloadBuildArtifacts@0
+  displayName: 'Download Build Artifacts: ${{ parameters.debugArtifactName }}'
+  inputs:
+    artifactName: ${{ parameters.debugArtifactName }}
     downloadPath: '$(Build.ArtifactStagingDirectory)'
 
 - task: NuGetCommand@2
@@ -55,7 +63,7 @@ steps:
 - task: PublishSymbols@2
   displayName: 'Publish symbols path'
   inputs:
-    SymbolsFolder: '$(Build.ArtifactStagingDirectory)/${{ parameters.nugetArtifactName }}'
+    SymbolsFolder: '$(Build.ArtifactStagingDirectory)/${{ parameters.debugArtifactName }}'
     SearchPattern: |
       **/bin/**/*.pdb
       !${{ parameters.testSymbolFilesConvention }}

@@ -49,6 +49,8 @@ variables:
   value: 'testbinaries'
 - name: NuGetArtifactName
   value: 'nuget'
+- name: DebugArtifactName # For .pdb symbols
+  value: 'debug'
 - name: ReleaseArtifactName
   value: 'release'
 - name: TestResultsArtifactName
@@ -151,11 +153,11 @@ stages:
     # Copy the .pdb files as build artifacts, which will 
     # later be used to push to the Azure Artifacts symbol server.
     - task: CopyFiles@2
-      displayName: 'Copy .pdb Files to: /$(NuGetArtifactName)'
+      displayName: 'Copy .pdb Files to: /$(DebugArtifactName)'
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)'
         Contents: '**/bin/$(BuildConfiguration)/**/*.pdb'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: $(BinaryArtifactName)'
@@ -169,6 +171,12 @@ stages:
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
         ArtifactName: '$(NuGetArtifactName)'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: $(DebugArtifactName)'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
+        ArtifactName: '$(DebugArtifactName)'
 
   - job: Docs
     condition: and(succeeded(), eq(variables['GenerateDocs'], 'true'))
@@ -334,6 +342,7 @@ stages:
       parameters:
         artifactFeedID: '$(ArtifactFeedID)'
         nugetArtifactName: '$(NuGetArtifactName)'
+        debugArtifactName: '$(DebugArtifactName)'
 
 
 - stage: Release_Stage
