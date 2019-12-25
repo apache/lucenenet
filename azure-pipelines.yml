@@ -284,16 +284,16 @@ stages:
         maximumParallelJobs: 7
         maximumAllowedFailures: $(maximumAllowedFailures)
 
-  - job: Test_net451_Windows
+  - job: Test_net48_Windows
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
-    displayName: 'Test net451 on Windows'
+    displayName: 'Test net48 on Windows'
     pool:
       vmImage: 'windows-2019'
     steps:
     - template: 'build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: 'Windows'
-        testTargetFrameworks: 'net451'
+        testTargetFrameworks: 'net48'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
         maximumParallelJobs: 8

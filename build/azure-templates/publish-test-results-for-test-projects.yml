@@ -84,7 +84,7 @@ steps:
 # Special case: Only supports .net45
 - template: publish-test-results.yml
   parameters:
-    framework: 'net451'
+    framework: 'net48'
     testProjectName: 'Lucene.Net.Tests.Analysis.OpenNLP'
     osName: '${{ parameters.osName }}'
     testResultsFormat: '${{ parameters.testResultsFormat }}'

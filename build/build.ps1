@@ -48,7 +48,7 @@ properties {
 	[int]$maximumParalellJobs = 8
 	
 	#test paramters
-	[string]$frameworks_to_test = "netcoreapp3.1,netcoreapp2.2,net451"
+	[string]$frameworks_to_test = "netcoreapp3.1,netcoreapp2.2,net48"
 	[string]$where = ""
 }
 
@@ -216,7 +216,7 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 				}
 
 				# Special case - OpenNLP.NET only supports .NET Framework
-				if ($projectName.Contains("Tests.Analysis.OpenNLP") -and (!$framework.StartsWith("net45"))) {
+				if ($projectName.Contains("Tests.Analysis.OpenNLP") -and (!$framework.StartsWith("net4"))) {
 					continue
 				}
 
@@ -303,7 +303,7 @@ task Test -depends InstallSDK, UpdateLocalSDKVersion, Restore -description "This
 			}
 			
 			# Special case - OpenNLP.NET only supports .NET Framework
-			if ($testName.Contains("Tests.Analysis.OpenNLP") -and (!$framework.StartsWith("net45"))) {
+			if ($testName.Contains("Tests.Analysis.OpenNLP") -and (!$framework.StartsWith("net4"))) {
 				$totalProjects--
 				$remainingProjects--
 				continue

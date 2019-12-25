@@ -26,7 +26,7 @@
     <!-- Changing this setting will allow testing on all target frameworks within Visual Studio 2017.
     Note that the main libraries are multi-targeted, so this has no effect on how they are compiled,
     this setting only affects the test projects. -->
-    <!--<TargetFramework>net451</TargetFramework>-->
+    <!--<TargetFramework>net48</TargetFramework>-->
     <!--<TargetFramework>netcoreapp2.2</TargetFramework>-->
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
@@ -34,7 +34,7 @@
       This overrides the above TargetFramework setting. 
       LUCENENET TODO: Due to a parsing bug, we cannot pass a string with a ; to dotnet msbuild, so passing true as a workaround -->
     <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' ">netcoreapp3.1;netcoreapp2.2</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net451</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(TestFrameworks)' == 'true' AND $([MSBuild]::IsOsPlatform('Windows')) ">$(TargetFrameworks);net48</TargetFrameworks>
     <TargetFramework Condition=" '$(TargetFrameworks)' != '' "></TargetFramework>
   </PropertyGroup>
   
