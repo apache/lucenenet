@@ -39,7 +39,6 @@
     <Compile Include="..\Lucene.Net.Tests\Support\**\*.cs" LinkBase="Support" />
     <Compile Include="..\Lucene.Net.Tests\Util\TestNumericUtils.cs" Link="Util\TestNumericUtils.cs" />
     <EmbeddedResource Include="..\Lucene.Net.Tests\Store\LUCENENET521.zip" Link="Store\LUCENENET521.zip" />
-    <EmbeddedResource Include="..\Lucene.Net.Tests\Support\hyts_PropertiesTest.properties" Link="Support\hyts_PropertiesTest.properties" />
   </ItemGroup>
   
   <ItemGroup>
@@ -53,7 +52,7 @@
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)"/>
+    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">
