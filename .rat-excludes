@@ -1,0 +1,25 @@
+# Note: these patterns are applied to single files or directories, not full paths
+# coverage/* will ignore any coverage dir, but airflow/www/static/coverage/* will match nothing
+
+.rat-excludes
+.gitignore
+.gitattributes
+
+# Exclude build assets
+lib/*
+
+# Exclude auto-generated designers
+.*\.Designer\.cs
+
+# For testing - must not change
+LuceneResourcesWikiPage\.html
+
+# Covered under a different license
+KStemData\d+\.cs
+Snowball/*
+Egothor.Stemmer/*
+Sax/*
+JaspellTernarySearchTrie\.cs
+RectangularArrays\.cs
+LimitedConcurrencyLevelTaskScheduler\.cs
+Automaton/*
