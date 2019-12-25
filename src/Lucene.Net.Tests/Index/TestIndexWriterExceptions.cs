@@ -1110,7 +1110,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-1044: test exception during sync
-        [Test] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
+        [Test]
         public virtual void TestExceptionDuringSync([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             MockDirectoryWrapper dir = NewMockDirectory();
@@ -2221,7 +2221,7 @@ namespace Lucene.Net.Index
         // up), so we successfully close IW or open an NRT
         // reader, we don't lose any deletes or updates:
 #if NETSTANDARD1_6
-        [LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
+        [LongRunningTest]
 #endif
         [Test]
         public virtual void TestNoLostDeletesOrUpdates()
@@ -2610,7 +2610,7 @@ namespace Lucene.Net.Index
         }
 
 #if NETSTANDARD1_6
-        [LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
+        [LongRunningTest]
 #endif
         [Test]
         public virtual void TestRandomExceptionDuringRollback()

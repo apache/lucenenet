@@ -41,7 +41,6 @@ namespace Lucene.Net.Util
         /// IMPORTANT: To make the tests pass in release mode, the method(s) named here 
         /// must be decorated with <c>[MethodImpl(MethodImplOptions.NoInlining)]</c>.
         /// </summary>
-        // LUCENENET TODO: Check whether no inlining is required in .NET Framework/.NET Standard 2.0 and update documentation/make it conditional throughout the project
         public static bool DoesStackTraceContainMethod(string methodName)
         {
 #if FEATURE_STACKTRACE
@@ -67,7 +66,6 @@ namespace Lucene.Net.Util
         /// IMPORTANT: To make the tests pass in release mode, the method(s) named here 
         /// must be decorated with <c>[MethodImpl(MethodImplOptions.NoInlining)]</c>.
         /// </summary>
-        // LUCENENET TODO: Check whether no inlining is required in .NET Framework/.NET Standard 2.0 and update documentation/make it conditional throughout the project
         public static bool DoesStackTraceContainMethod(string className, string methodName) 
         {
 #if FEATURE_STACKTRACE

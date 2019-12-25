@@ -125,8 +125,6 @@ namespace Lucene.Net.Util.Automaton
             0x5555520280000800L, 0x555555L
         }; //2 bits per value
 
-        // LUCENENET TODO: Check whether these conversions are correct. It probably makes more sense to declare these as ulong arrays.
-
         // 8 vectors; 21 states per vector; array length = 168
         private static readonly long[] toStates3 = new long[] {
             0x380e014a051404L, 0xe28245009451140L, unchecked((long)0x8a26880098a6268cL), 0x180a288ca0246213L,

@@ -828,7 +828,7 @@ namespace Lucene.Net.Index
         internal sealed class ApplyDeletesEvent : IEvent
         {
             internal static readonly IEvent INSTANCE = new ApplyDeletesEvent();
-            private int instCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
+            private int instCount = 0;
 
             internal ApplyDeletesEvent()
             {
@@ -845,7 +845,7 @@ namespace Lucene.Net.Index
         internal sealed class MergePendingEvent : IEvent
         {
             internal static readonly IEvent INSTANCE = new MergePendingEvent();
-            private int instCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
+            private int instCount = 0;
 
             internal MergePendingEvent()
             {
@@ -862,7 +862,7 @@ namespace Lucene.Net.Index
         internal sealed class ForcedPurgeEvent : IEvent
         {
             internal static readonly IEvent INSTANCE = new ForcedPurgeEvent();
-            private int instCount = 0; // LUCENENET TODO: What is this for? It will always be zero when initialized and 1 after the constructor is called. Should it be static?
+            private int instCount = 0;
 
             internal ForcedPurgeEvent()
             {
