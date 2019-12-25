@@ -367,13 +367,7 @@ namespace Lucene.Net.Support
 
         public static bool IsLetter(int c)
         {
-            var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory((char)c);
-
-            return unicodeCategory == UnicodeCategory.LowercaseLetter ||
-                   unicodeCategory == UnicodeCategory.UppercaseLetter ||
-                   unicodeCategory == UnicodeCategory.TitlecaseLetter ||
-                   unicodeCategory == UnicodeCategory.ModifierLetter ||
-                   unicodeCategory == UnicodeCategory.OtherLetter;
+            return J2N.Character.IsLetter(c);
         }
 
         /// <summary>
