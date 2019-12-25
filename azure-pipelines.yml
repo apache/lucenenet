@@ -392,6 +392,7 @@ stages:
          !release/**/*
          !src/**/bin/**/*
          !src/**/obj/**/*
+         branding/logo/lucene-net-icon-128x128.png
         TargetFolder: '$(Build.ArtifactStagingDirectory)/srctemp'
 
     - task: ArchiveFiles@2

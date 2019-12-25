@@ -25,12 +25,13 @@
     <Authors>The Apache Software Foundation</Authors>
     <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
     <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
-    <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
+    <PackageIcon>lucene-net-icon-128x128.png</PackageIcon>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageNoticeFile>NOTICE.txt</PackageNoticeFile>
   </PropertyGroup>
   <ItemGroup>
     <None Include="$(SolutionDir)LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
     <None Include="$(SolutionDir)NOTICE.txt" Pack="true" PackagePath="$(PackageNoticeFile)"/>
+    <None Include="$(SolutionDir)branding\logo\lucene-net-icon-128x128.png" Pack="true" PackagePath="$(PackageIcon)"/>
   </ItemGroup>
 </Project>
