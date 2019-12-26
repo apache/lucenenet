@@ -33,5 +33,6 @@
     <None Include="$(SolutionDir)LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)"/>
     <None Include="$(SolutionDir)NOTICE.txt" Pack="true" PackagePath="$(PackageNoticeFile)"/>
     <None Include="$(SolutionDir)branding\logo\lucene-net-icon-128x128.png" Pack="true" PackagePath="$(PackageIcon)"/>
+    <None Remove="$(SolutionDir)branding\logo\lucene-net-icon-128x128.png" />
   </ItemGroup>
 </Project>
