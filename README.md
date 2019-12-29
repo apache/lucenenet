@@ -17,8 +17,8 @@ The Apache Lucene.Net web site is at:
 ### Lucene.Net 4.8.0
 
 
+- [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
-- [.NET Standard 1.6](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - .NET Framework 4.5
 
 ## Status
@@ -60,16 +60,15 @@ PM> Install-Package Lucene.Net -Pre
 
 <!--- TO BE ADDED WHEN RELEASED 
 
-- [Lucene.Net.Analysis.OpenNLP](https://www.nuget.org/packages/Lucene.Net.Analysis.OpenNLP/) - OpenNLP Library Integration
 - [Lucene.Net.Analysis.Nori](https://www.nuget.org/packages/Lucene.Net.Analysis.Nori/) - Korean Morphological Analyzer
-- [Lucene.Net.Analysis.Morfologik](https://www.nuget.org/packages/Lucene.Net.Analysis.Morfologik/) - Analyzer for dictionary stemming, built-in Polish dictionary
-- [Lucene.Net.TestFramework](https://www.nuget.org/packages/Lucene.Net.TestFramework/) - Framework for testing Lucene-based applications
 
 -->
 
 - [Lucene.Net](https://www.nuget.org/packages/Lucene.Net/) - Core library
 - [Lucene.Net.Analysis.Common](https://www.nuget.org/packages/Lucene.Net.Analysis.Common/) - Analyzers for indexing content in different languages and domains
-- [Lucene.Net.Analysis.Kuromoji](https://www.nuget.org/packages/Lucene.Net.Analysis.Kuromoji/) - Japanese Morphological Analyzer 
+- [Lucene.Net.Analysis.Kuromoji](https://www.nuget.org/packages/Lucene.Net.Analysis.Kuromoji/) - Japanese Morphological Analyzer
+- [Lucene.Net.Analysis.Morfologik](https://www.nuget.org/packages/Lucene.Net.Analysis.Morfologik/) - Analyzer for dictionary stemming, built-in Polish dictionary
+- [Lucene.Net.Analysis.OpenNLP](https://www.nuget.org/packages/Lucene.Net.Analysis.OpenNLP/) - OpenNLP Library Integration
 - [Lucene.Net.Analysis.Phonetic](https://www.nuget.org/packages/Lucene.Net.Analysis.Phonetic/) - Analyzer for indexing phonetic signatures (for sounds-alike search)
 - [Lucene.Net.Analysis.SmartCn](https://www.nuget.org/packages/Lucene.Net.Analysis.SmartCn/) - Analyzer for indexing Chinese
 - [Lucene.Net.Analysis.Stempel](https://www.nuget.org/packages/Lucene.Net.Analysis.Stempel/) - Analyzer for indexing Polish
@@ -90,6 +89,7 @@ PM> Install-Package Lucene.Net -Pre
 - [Lucene.Net.Sandbox](https://www.nuget.org/packages/Lucene.Net.Sandbox/) - Various third party contributions and new ideas
 - [Lucene.Net.Spatial](https://www.nuget.org/packages/Lucene.Net.Spatial/) - Geospatial search
 - [Lucene.Net.Suggest](https://www.nuget.org/packages/Lucene.Net.Suggest/) - Auto-suggest and Spell-checking support
+- [Lucene.Net.TestFramework](https://www.nuget.org/packages/Lucene.Net.TestFramework/) - Framework for testing Lucene-based applications
 
 ## Documentation
 
@@ -110,11 +110,13 @@ There are several demos implemented as simple console applications that can be c
 
 There is also a dotnet command line tool available on NuGet. It contains all of the demos as well as tools maintaining your Lucene.Net index, featuring operations such as splitting, merging, listing segment info, fixing, deleting segments, upgrading, etc. Always be sure to back up your index before running any commands against it!
 
+- [Prerequisite: .NET Core 3.1.0 Runtime](https://www.microsoft.com/net/download/core#/runtime)
+
 ```
-dotnet tool install lucene-cli -g --version 4.8.0-beta00006
+dotnet tool install lucene-cli -g --version 4.8.0-beta00007
 ```
 
-Once installed, you can explore what commands and options are available by entering the command `lucene`.
+Once installed, you can explore the commands and options that are available by entering the command `lucene`.
 
 [lucene-cli Documentation](https://github.com/apache/lucenenet/blob/master/src/dotnet/tools/lucene-cli/docs/index.md)
 
@@ -165,7 +167,8 @@ Building on the Command Line is currently only supported on Windows.
 ##### Prerequisites
 
 1. [Powershell](https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) 3.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your Powershell version)
-2. [.NET Core SDK 2.0 or higher](https://www.microsoft.com/net/download/core)
+2. [.NET Core SDK 3.1 or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
+3. [.NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/download/visual-studio-sdks)
 
 ##### Execution
 
@@ -233,9 +236,9 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 
 #### Prerequisites
 
-1. Visual Studio 2017 version 15.3 or higher
-2. [.NET Core SDK 2.0 or higher](https://www.microsoft.com/net/download/core)
-3. [NUnit3 Test Adapter](https://marketplace.visualstudio.com/items?itemName=NUnitDevelopers.NUnit3TestAdapter)
+1. Visual Studio 2019 or higher
+2. [.NET Core SDK 3.1 or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
+3. [.NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/download/visual-studio-sdks)
 
 #### Execution
 
