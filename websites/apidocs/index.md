@@ -46,7 +46,11 @@ on some of the conceptual or inner details of Lucene:
 * [Lucene.Net.Analysis.Phonetic](xref:Lucene.Net.Analysis.Phonetic): Analyzer for indexing phonetic signatures (for sounds-alike search)
 * [Lucene.Net.Analysis.SmartCn](xref:Lucene.Net.Analysis.Cn.Smart): Analyzer for indexing Chinese
 * [Lucene.Net.Analysis.Stempel](xref:Lucene.Net.Analysis.Stempel): Analyzer for indexing Polish
+
 <!-- * [Lucene.Net.Analysis.UIMA](xref:Lucene.Net.Analysis.UIMA): Analysis integration with Apache UIMA -->
+
+<!-- Change to Lucene.Net.Analysis.OpenNLP .... see https://github.com/apache/lucenenet/pull/230> -->
+
 * [Lucene.Net.Benchmark](xref:Lucene.Net.Cli.Benchmark): System for benchmarking Lucene
 * [Lucene.Net.Classification](xref:Lucene.Net.Classification): Classification module for Lucene
 * [Lucene.Net.Codecs](xref:Lucene.Net.Codecs): Lucene codecs and postings formats.
