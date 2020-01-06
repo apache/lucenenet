@@ -22,8 +22,8 @@
 - name: Lucene.Net.Analysis.Stempel
   href: ../obj/docfx/api/Lucene.Net.Analysis.Stempel/toc.yml
   topicUid: Lucene.Net.Analysis.Stempel
-- name: Lucene.Net.Benchmark
-  href: ../obj/docfx/api/Lucene.Net.Benchmark/toc.yml
+- name: Lucene.Net.Benchmarks
+  href: ../obj/docfx/api/Lucene.Net.Benchmarks/toc.yml
   topicUid: Lucene.Net.Benchmarks
 - name: Lucene.Net.Classification
   href: ../obj/docfx/api/Lucene.Net.Classification/toc.yml

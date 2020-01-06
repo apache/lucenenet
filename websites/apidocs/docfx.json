@@ -130,7 +130,7 @@
           "src": "../../src"
         }
       ],
-      "dest": "obj/docfx/api/Lucene.Net.Benchmark",
+      "dest": "obj/docfx/api/Lucene.Net.Benchmarks",
       "properties": {
           "TargetFramework": "netstandard2.0"
       }
@@ -382,7 +382,7 @@
             "Lucene.Net.TestFramework/Lucene.Net.TestFramework.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
-          "src": "../../src/dotnet"
+          "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.TestFramework",

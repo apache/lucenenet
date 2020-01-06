@@ -23,6 +23,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace JavaDocToMarkdownConverter
 {
@@ -65,13 +66,14 @@ namespace JavaDocToMarkdownConverter
         {
             var outputDir = GetOutputDirectory(inputDoc, rootOutputDirectory);
             var outputFile = Path.Combine(outputDir, GetOuputFilename(inputDoc));
+            var inputFileInfo = new FileInfo(inputDoc);
 
             if (!Directory.Exists(outputDir))
             {
                 Console.WriteLine("Output Directory Doesn't Exist: '" + outputDir + "'");
                 return;
             }
-            if (!File.Exists(inputDoc))
+            if (!inputFileInfo.Exists)
             {
                 Console.WriteLine("Input File Doesn't Exist: '" + inputDoc + "'");
                 return;
@@ -80,9 +82,7 @@ namespace JavaDocToMarkdownConverter
             var markdown = _converter.ConvertFile(inputDoc);
 
             var ns = ExtractNamespaceFromFile(outputFile);
-            if (NamespaceFileMappings.TryGetValue(ns, out var realNs))
-                ns = realNs;
-
+            
             foreach (var r in JavaDocFormatters.Replacers)
             {
                 markdown = r.Replace(markdown);
@@ -94,10 +94,10 @@ namespace JavaDocToMarkdownConverter
             }
             if (JavaDocFormatters.CustomProcessors.TryGetValue(ns, out var processor))
             {
-                processor(new ConvertedDocument(new FileInfo(inputDoc), new FileInfo(outputFile), ns, markdown));
+                processor(new ConvertedDocument(inputFileInfo, new FileInfo(outputFile), ns, markdown));
             }
 
-            var appendYamlHeader = ShouldAppendYamlHeader(inputDoc, ns);
+            var appendYamlHeader = ShouldAppendYamlHeader(inputFileInfo, ns);
 
             var fileContent = appendYamlHeader ? AppendYamlHeader(ns, markdown) : markdown;
 
@@ -111,83 +111,78 @@ namespace JavaDocToMarkdownConverter
         /// <param name="inputFile"></param>
         /// <param name="ns"></param>
         /// <returns></returns>
-        private bool ShouldAppendYamlHeader(string inputFile, string ns)
+        private bool ShouldAppendYamlHeader(FileInfo inputFile, string ns)
         {
-            var fileName = Path.GetFileNameWithoutExtension(inputFile); //should be either "overview" or "package"
-            if (string.Equals("overview", fileName, StringComparison.InvariantCultureIgnoreCase))
-            {
-                if (YamlHeadersForPackageFiles.Contains(ns, StringComparer.InvariantCultureIgnoreCase))
-                    return false; //don't append yaml header for this overview file, it will be put on the package file
+            // There are a lot of 'package.md' files that exist in sub folders/namespaces for a project that contain a LOT
+            // of information which should be included as override files. For example, look at Lucene.Net.Highlighter/Hightlight/package.md or
+            // Lucene.Net.Highlighter/VectorHightlight/package.md
+            // Those files should be override files by default. 
+            // There's far more package.md files than overview.md files, overview are related only to entire project.
+            // Based on how the current override files are included in docfx, it seems if we just process both files, 
+            // due to the order in which they are included, it seems that overview.md files
+            // take priority. This is good in most cases but there are some edge cases like SmartCn where we should use the 
+            // package.md file instead of the overview.md file for the root namespace. 
+            // TODO: We'll deal with those scenarios individually.
 
-                return true; //the default for 'overview' files
-            }
-            else if (string.Equals("package", fileName, StringComparison.InvariantCultureIgnoreCase))
+            //should be either "overview" or "package"
+            var fileName = Path.GetFileNameWithoutExtension(inputFile.FullName); 
+
+            if (string.Equals("overview", fileName, StringComparison.InvariantCultureIgnoreCase)
+                || string.Equals("package", fileName, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (YamlHeadersForPackageFiles.Contains(ns, StringComparer.InvariantCultureIgnoreCase))
-                    return true;
+                return true;
             }
+
 
             return false;
         }
 
-        /// <summary>
-        /// For these namespaces we'll use the package.md file instead of the overview.md as the doc file
-        /// </summary>
-        private static readonly List<string> YamlHeadersForPackageFiles = new List<string>
-            {
-                "Lucene.Net.Analysis.SmartCn",
-                "Lucene.Net.Facet",
-                "Lucene.Net.Grouping",
-                "Lucene.Net.Join",
-                "Lucene.Net.Index.Memory",
-                "Lucene.Net.Replicator",
-                "Lucene.Net.QueryParsers.Classic",
-                "Lucene.Net.Codecs",
-                "Lucene.Net.Analysis",
-                "Lucene.Net.Codecs.Compressing",
-                "Lucene.Net.Codecs.Lucene3x",
-                "Lucene.Net.Codecs.Lucene40",
-                "Lucene.Net.Codecs.Lucene41",
-                "Lucene.Net.Codecs.Lucene42",
-                "Lucene.Net.Codecs.Lucene45",
-                "Lucene.Net.Codecs.Lucene46",
-                "Lucene.Net.Documents",
-                "Lucene.Net.Index",
-                "Lucene.Net.Search",
-                "Lucene.Net.Search.Payloads",
-                "Lucene.Net.Search.Similarities",
-                "Lucene.Net.Search.Spans",
-                "Lucene.Net.Store",
-                "Lucene.Net.Util",
-            };
-
-        /// <summary>
-        /// Maps the file based namespace folders to the actual namespaces
-        /// </summary>
-        private static readonly Dictionary<string, string> NamespaceFileMappings = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase)
-        {
-            ["Lucene.Net.Memory"] = "Lucene.Net.Index.Memory",
-            ["Lucene.Net.QueryParser.Classic"] = "Lucene.Net.QueryParsers.Classic",
-            ["Lucene.Net.Document"] = "Lucene.Net.Documents",
-            ["Lucene.Net.Analysis.Kuromoji"] = "Lucene.Net.Analysis.Ja",
-            ["Lucene.Net.Analysis.SmartCn"] = "Lucene.Net.Analysis.Cn.Smart",
-        };
+        ///// <summary>
+        ///// For these namespaces we'll use the package.md file instead of the overview.md as the doc file
+        ///// </summary>
+        //private static readonly List<string> YamlHeadersForPackageFiles = new List<string>
+        //    {
+        //        "Lucene.Net.Analysis.SmartCn",
+        //        "Lucene.Net.Facet",
+        //        "Lucene.Net.Grouping",
+        //        "Lucene.Net.Join",
+        //        "Lucene.Net.Index.Memory",
+        //        "Lucene.Net.Replicator",
+        //        "Lucene.Net.QueryParsers.Classic",
+        //        "Lucene.Net.Codecs",
+        //        "Lucene.Net.Analysis",
+        //        "Lucene.Net.Codecs.Compressing",
+        //        "Lucene.Net.Codecs.Lucene3x",
+        //        "Lucene.Net.Codecs.Lucene40",
+        //        "Lucene.Net.Codecs.Lucene41",
+        //        "Lucene.Net.Codecs.Lucene42",
+        //        "Lucene.Net.Codecs.Lucene45",
+        //        "Lucene.Net.Codecs.Lucene46",
+        //        "Lucene.Net.Documents",
+        //        "Lucene.Net.Index",
+        //        "Lucene.Net.Search",
+        //        "Lucene.Net.Search.Payloads",
+        //        "Lucene.Net.Search.Similarities",
+        //        "Lucene.Net.Search.Spans",
+        //        "Lucene.Net.Store",
+        //        "Lucene.Net.Util",
+        //        "Lucene.Net.Benchmarks",
+        //    };
 
         private string AppendYamlHeader(string ns, string fileContent)
         {
             var sb = new StringBuilder();
             sb.AppendLine("---");
-            sb.Append("uid: ");
-            if (NamespaceFileMappings.TryGetValue(ns, out var realNs))
-                sb.AppendLine(realNs);
-            else
-                sb.AppendLine(ns);
+            sb.Append("uid: ");           
+            sb.AppendLine(ns);
             sb.AppendLine("summary: *content");
             sb.AppendLine("---");
             sb.AppendLine();
 
             return sb + fileContent;
         }
+
+        private static Regex CSharpNamespaceMatch = new Regex(@"^\s*namespace\s*([\w\.]+)", RegexOptions.Multiline | RegexOptions.Compiled);
 
         /// <summary>
         /// Normally the files would be in the same folder name as their namespace but this isn't the case so we need to try to figure it out
@@ -197,6 +192,23 @@ namespace JavaDocToMarkdownConverter
         private string ExtractNamespaceFromFile(string outputFile)
         {
             var folder = Path.GetDirectoryName(outputFile);
+
+            // First check if there are c# files beside this file
+            var csharpFiles = Directory.GetFiles(folder, "*.cs");
+            if (csharpFiles.Length > 0)
+            {
+                // extract the namespace from a file
+                var csharpFile = File.ReadAllText(csharpFiles[0]);
+                var nsMatches = CSharpNamespaceMatch.Matches(csharpFile);
+                if (nsMatches.Count > 0)
+                {
+                    if (nsMatches[0].Groups.Count == 2)
+                        return nsMatches[0].Groups[1].Value;
+                }
+            }
+
+            // Else we'll fall back to trying to determine namespace by folder
+
             var folderParts = folder.Split(Path.DirectorySeparatorChar);
 
             var index = folderParts.Length - 1;
