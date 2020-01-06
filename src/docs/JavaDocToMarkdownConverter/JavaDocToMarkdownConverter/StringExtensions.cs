@@ -104,11 +104,15 @@ namespace JavaDocToMarkdownConverter
             { "analysis.common" , "Lucene.Net.Analysis.Common"},
             { "analysis.icu" , "Lucene.Net.Analysis.ICU"},
             { "analysis.kuromoji" , "Lucene.Net.Analysis.Kuromoji"},
-            { "analysis.morfologik" , "Lucene.Net.Analysis.Morfologik"},
+            
+            // Not ported
+            //{ "analysis.morfologik" , "Lucene.Net.Analysis.Morfologik"},
             { "analysis.phonetic" , "Lucene.Net.Analysis.Phonetic"},
             { "analysis.smartcn" , "Lucene.Net.Analysis.SmartCn"},
             { "analysis.stempel" , "Lucene.Net.Analysis.Stempel"},
-            { "analysis.uima" , "Lucene.Net.Analysis.UIMA"},
+            
+            // Not ported
+            //{ "analysis.uima" , "Lucene.Net.Analysis.UIMA"},
             { "benchmark" , "Lucene.Net.Benchmark"},
             { "classification" , "Lucene.Net.Classification"},
             { "codecs" , "Lucene.Net.Codecs"},
