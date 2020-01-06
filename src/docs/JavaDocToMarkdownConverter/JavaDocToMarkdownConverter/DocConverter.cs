@@ -284,6 +284,10 @@ namespace JavaDocToMarkdownConverter
                 // Special Cases
                 switch (lastSegment.ToLower())
                 {
+                    case "morfologik":
+                        if (segment.Equals("analysis")) continue;
+                        if (segment.Equals("morfologik")) continue;
+                        break;
                     case "stempel":
                         if (segment.Equals("analysis")) continue;
                         if (segment.Equals("egothor")) segment = "Egothor.Stemmer";

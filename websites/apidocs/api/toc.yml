@@ -1,54 +1,81 @@
 - name: Lucene.Net
   href: ../obj/docfx/api/Lucene.Net/toc.yml
   topicUid: Lucene.Net
-- name: Lucene.Net.Queries
-  href: ../obj/docfx/api/Lucene.Net.Queries/toc.yml
-  topicUid: Lucene.Net.Queries
-- name: Lucene.Net.Analysis
-  href: ../obj/docfx/api/Lucene.Net.Analysis/toc.yml
-  topicUid: Lucene.Net.Analysis
+- name: Lucene.Net.Analysis.Common
+  href: ../obj/docfx/api/Lucene.Net.Analysis.Common/toc.yml
+  topicUid: Lucene.Net.Analysis.Common
 - name: Lucene.Net.Analysis.Kuromoji
   href: ../obj/docfx/api/Lucene.Net.Analysis.Kuromoji/toc.yml
   topicUid: Lucene.Net.Analysis.Ja
+- name: Lucene.Net.Analysis.Morfologik
+  href: ../obj/docfx/api/Lucene.Net.Analysis.Morfologik/toc.yml
+  topicUid: Lucene.Net.Analysis.Morfologik
+- name: Lucene.Net.Analysis.OpenNLP
+  href: ../obj/docfx/api/Lucene.Net.Analysis.OpenNLP/toc.yml
+  topicUid: Lucene.Net.Analysis.OpenNLP
+- name: Lucene.Net.Analysis.Phonetic
+  href: ../obj/docfx/api/Lucene.Net.Analysis.Phonetic/toc.yml
+  topicUid: Lucene.Net.Analysis.Phonetic
 - name: Lucene.Net.Analysis.SmartCn
   href: ../obj/docfx/api/Lucene.Net.Analysis.SmartCn/toc.yml
   topicUid: Lucene.Net.Analysis.Cn.Smart
-- name: Lucene.Net.QueryParser
-  href: ../obj/docfx/api/Lucene.Net.QueryParser/toc.yml
-- name: Lucene.Net.Highlighter
-  href: ../obj/docfx/api/Lucene.Net.Highlighter/toc.yml
-  topicUid: Lucene.Net.Highlighter
-- name: Lucene.Net.Facet
-  href: ../obj/docfx/api/Lucene.Net.Facet/toc.yml
-  topicUid: Lucene.Net.Facet  
+- name: Lucene.Net.Analysis.Stempel
+  href: ../obj/docfx/api/Lucene.Net.Analysis.Stempel/toc.yml
+  topicUid: Lucene.Net.Analysis.Stempel
+- name: Lucene.Net.Benchmark
+  href: ../obj/docfx/api/Lucene.Net.Benchmark/toc.yml
+  topicUid: Lucene.Net.Benchmarks
 - name: Lucene.Net.Classification
   href: ../obj/docfx/api/Lucene.Net.Classification/toc.yml
   topicUid: Lucene.Net.Classification
-- name: Lucene.Net.Expressions
-  href: ../obj/docfx/api/Lucene.Net.Expressions/toc.yml
-  topicUid: Lucene.Net.Expressions
 - name: Lucene.Net.Codecs
   href: ../obj/docfx/api/Lucene.Net.Codecs/toc.yml
   topicUid: Lucene.Net.Codecs
-- name: Lucene.Net.Join
-  href: ../obj/docfx/api/Lucene.Net.Join/toc.yml
-  topicUid: Lucene.Net.Join
+- name: Lucene.Net.Expressions
+  href: ../obj/docfx/api/Lucene.Net.Expressions/toc.yml
+  topicUid: Lucene.Net.Expressions
+- name: Lucene.Net.Facet
+  href: ../obj/docfx/api/Lucene.Net.Facet/toc.yml
+  topicUid: Lucene.Net.Facet
 - name: Lucene.Net.Grouping
   href: ../obj/docfx/api/Lucene.Net.Grouping/toc.yml
   topicUid: Lucene.Net.Grouping
-- name: Lucene.Net.Suggest
-  href: ../obj/docfx/api/Lucene.Net.Suggest/toc.yml
-- name: Lucene.Net.Memory
-  href: ../obj/docfx/api/Lucene.Net.Memory/toc.yml
-- name: Lucene.Net.Spatial
-  href: ../obj/docfx/api/Lucene.Net.Spatial/toc.yml
-  topicUid: Lucene.Net.Spatial
-- name: Lucene.Net.Replicator
-  href: ../obj/docfx/api/Lucene.Net.Replicator/toc.yml
-  topicUid: Lucene.Net.Replicator
+- name: Lucene.Net.Highlighter
+  href: ../obj/docfx/api/Lucene.Net.Highlighter/toc.yml
+  topicUid: Lucene.Net.Highlighter
 - name: Lucene.Net.ICU
   href: ../obj/docfx/api/Lucene.Net.ICU/toc.yml
   topicUid: Lucene.Net.Analysis.Icu
+- name: Lucene.Net.Join
+  href: ../obj/docfx/api/Lucene.Net.Join/toc.yml
+  topicUid: Lucene.Net.Join
+- name: Lucene.Net.Memory
+  href: ../obj/docfx/api/Lucene.Net.Memory/toc.yml
+  topicUid: Lucene.Net.Index.Memory
+- name: Lucene.Net.Misc
+  href: ../obj/docfx/api/Lucene.Net.Misc/toc.yml
+  topicUid: Lucene.Net.Misc
+- name: Lucene.Net.Queries
+  href: ../obj/docfx/api/Lucene.Net.Queries/toc.yml
+  topicUid: Lucene.Net.Queries
+- name: Lucene.Net.QueryParser
+  href: ../obj/docfx/api/Lucene.Net.QueryParser/toc.yml
+  topicUid: Lucene.Net.QueryParser
+- name: Lucene.Net.Replicator
+  href: ../obj/docfx/api/Lucene.Net.Replicator/toc.yml
+  topicUid: Lucene.Net.Replicator
+- name: Lucene.Net.Sandbox
+  href: ../obj/docfx/api/Lucene.Net.Sandbox/toc.yml
+  topicUid: Lucene.Net.Sandbox
+- name: Lucene.Net.Spatial
+  href: ../obj/docfx/api/Lucene.Net.Spatial/toc.yml
+  topicUid: Lucene.Net.Spatial
+- name: Lucene.Net.Suggest
+  href: ../obj/docfx/api/Lucene.Net.Suggest/toc.yml
+  topicUid: Lucene.Net.Suggest
+- name: Lucene.Net.TestFramework
+  href: ../obj/docfx/api/Lucene.Net.TestFramework/toc.yml
+  topicUid: Lucene.Net.Testframework
 - name: Lucene.Net.Demo
   href: ../obj/docfx/api/Lucene.Net.Demo/toc.yml
   topicUid: Lucene.Net.Demo

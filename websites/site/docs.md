@@ -9,7 +9,10 @@ Lucene.Net Documentation
 
 ## Lucene 4.8.0
 
-The documentation website for Lucene 4.8.0 is currently still a work in progress. Currently they are available on a temporary website here [https://lucenenetdocs.azurewebsites.net/](https://lucenenetdocs.azurewebsites.net/)
+The API docs are slightly different between versions, each one is listed below:
+
+* [4.8.0-beta00007](http://lucenenet.apache.org/docs/4.8.0-beta00007/Index.html)
+* [4.8.0-beta00001 -> 4.8.0-beta00006](http://lucenenet.apache.org/docs/4.8.0-beta00006/Index.html)
 
 ## Lucene 3.0.3
 
