@@ -35,6 +35,6 @@ namespace JavaDocToMarkdownConverter.Formatters
         public FileInfo InputFile { get; }
         public FileInfo OutputFile { get; }
         public string Namespace { get; }
-        public string Markdown { get; }
+        public string Markdown { get; set; }
     }
 }

@@ -82,7 +82,7 @@ namespace JavaDocToMarkdownConverter
             var markdown = _converter.ConvertFile(inputDoc);
 
             var ns = ExtractNamespaceFromFile(outputFile);
-            
+
             foreach (var r in JavaDocFormatters.Replacers)
             {
                 markdown = r.Replace(markdown);
@@ -92,10 +92,13 @@ namespace JavaDocToMarkdownConverter
                 foreach (var r in replacers)
                     markdown = r.Replace(markdown);
             }
+
+            var doc = new ConvertedDocument(inputFileInfo, new FileInfo(outputFile), ns, markdown);
             if (JavaDocFormatters.CustomProcessors.TryGetValue(ns, out var processor))
             {
-                processor(new ConvertedDocument(inputFileInfo, new FileInfo(outputFile), ns, markdown));
+                processor(doc);
             }
+            markdown = doc.Markdown; // it may have changed
 
             var appendYamlHeader = ShouldAppendYamlHeader(inputFileInfo, ns);
 
@@ -125,7 +128,7 @@ namespace JavaDocToMarkdownConverter
             // TODO: We'll deal with those scenarios individually.
 
             //should be either "overview" or "package"
-            var fileName = Path.GetFileNameWithoutExtension(inputFile.FullName); 
+            var fileName = Path.GetFileNameWithoutExtension(inputFile.FullName);
 
             if (string.Equals("overview", fileName, StringComparison.InvariantCultureIgnoreCase)
                 || string.Equals("package", fileName, StringComparison.InvariantCultureIgnoreCase))
@@ -136,6 +139,16 @@ namespace JavaDocToMarkdownConverter
 
             return false;
         }
+
+        /// <summary>
+        /// These aren't real namespaces but they have overview.md files and in this case we need to prepend an H1 header
+        /// to the overview.md file.
+        /// </summary>
+        private static readonly List<string> StandaloneOverviews = new List<string>
+            {
+                "Lucene.Net",
+                "Lucene.Net.Analysis.Common",
+            };
 
         ///// <summary>
         ///// For these namespaces we'll use the package.md file instead of the overview.md as the doc file
@@ -169,12 +182,30 @@ namespace JavaDocToMarkdownConverter
         //        "Lucene.Net.Benchmarks",
         //    };
 
+        /// <summary>
+        /// Appends the YAML front-matter header
+        /// </summary>
+        /// <param name="ns"></param>
+        /// <param name="fileContent"></param>
+        /// <param name="rawTitle">
+        /// If specified will add the "title" front-matter, this is used for overview.md files that are
+        /// standalone (not part of a real namespace) (aka conceptual files in docfx)
+        /// </param>
+        /// <returns></returns>
         private string AppendYamlHeader(string ns, string fileContent)
         {
             var sb = new StringBuilder();
             sb.AppendLine("---");
-            sb.Append("uid: ");           
+            sb.Append("uid: ");
             sb.AppendLine(ns);
+
+            // Add "title" yaml front-matter if a standalone file
+            if (StandaloneOverviews.Contains(ns))
+            {
+                sb.Append("title: ");
+                sb.AppendLine(ns);
+            }
+
             sb.AppendLine("summary: *content");
             sb.AppendLine("---");
             sb.AppendLine();

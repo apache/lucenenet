@@ -138,6 +138,7 @@
     <Compile Include="Formatters\CodeLinkReplacer.cs" />
     <Compile Include="DocConverter.cs" />
     <Compile Include="Formatters\ConvertedDocument.cs" />
+    <Compile Include="Formatters\DemoCodeFormatter.cs" />
     <Compile Include="Formatters\DivWrapperReplacer.cs" />
     <Compile Include="Formatters\DocTypeReplacer.cs" />
     <Compile Include="Formatters\ExtraHtmlElementReplacer.cs" />
