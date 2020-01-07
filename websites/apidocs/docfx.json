@@ -471,7 +471,9 @@
           "Lucene.Net.Analysis.Common/overview.md",
           "Lucene.Net.Analysis.Morfologik/overview.md",
           "Lucene.Net.Analysis.OpenNLP/overview.md",
-          "Lucene.Net.TestFramework/overview.md"
+          "Lucene.Net.TestFramework/overview.md",
+          "Lucene.Net.Analysis.Stempel/Stempel/package.md",
+          "Lucene.Net.Benchmark/overview.md"
         ]
       },
       {

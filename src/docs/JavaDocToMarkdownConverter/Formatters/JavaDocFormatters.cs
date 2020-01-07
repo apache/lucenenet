@@ -27,15 +27,7 @@ namespace JavaDocToMarkdownConverter.Formatters
 
     public class JavaDocFormatters
     {
-        public static IEnumerable<IReplacer> Replacers => new IReplacer[]
-            {
-                new CodeLinkReplacer(),
-                new RepoLinkReplacer(),
-                new DocTypeReplacer(),
-                new ExtraHtmlElementReplacer(),
-                new NamedAnchorLinkReplacer(),
-                new DivWrapperReplacer()
-            };
+        
 
         /// <summary>
         /// A list of custom replacers for specific uid files

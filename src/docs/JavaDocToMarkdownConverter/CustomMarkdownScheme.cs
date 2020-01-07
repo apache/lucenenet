@@ -23,7 +23,12 @@ using System.Text.RegularExpressions;
 
 namespace JavaDocToMarkdownConverter
 {    
-
+    /// <summary>
+    /// Custom markdown conversion scheme
+    /// </summary>
+    /// <remarks>
+    /// This uses the original replacers but substitues our own for a few things and adds a lot of custom replacers.
+    /// </remarks>
     public class CustomMarkdownScheme : IScheme
     {
         public CustomMarkdownScheme()
@@ -37,6 +42,16 @@ namespace JavaDocToMarkdownConverter
             //TODO: Find out why lists aren't parsed nicely, see https://github.com/baynezy/Html2Markdown/blob/690e1f6b9cbcba2333acfef68c05795d698040ad/src/Html2Markdown/Replacement/HtmlParser.cs
             // http://localhost:8080/api/Lucene.Net/Lucene.Net.Search.Spans.html
             // source: C:\Users\Shannon\Documents\_Projects\Lucene.Net\lucene-solr-releases-lucene-solr-4.8.0\lucene\core\src\java\org\apache\lucene\search\spans\package.html
+
+            
+            _replacers.Add(new WhitespacePrefixReplacer("div"));
+
+            _replacers.Add(new CodeLinkReplacer());
+            _replacers.Add(new RepoLinkReplacer());
+            _replacers.Add(new DocTypeReplacer());
+            _replacers.Add(new ExtraHtmlElementReplacer());
+            _replacers.Add(new NamedAnchorLinkReplacer());
+            _replacers.Add(new DivWrapperReplacer());
         }
 
         private readonly IList<IReplacer> _replacers;

@@ -62,7 +62,7 @@ namespace JavaDocToMarkdownConverter
             }
         }
 
-        public void ConvertDoc(string inputDoc, string rootOutputDirectory)
+        private void ConvertDoc(string inputDoc, string rootOutputDirectory)
         {
             var outputDir = GetOutputDirectory(inputDoc, rootOutputDirectory);
             var outputFile = Path.Combine(outputDir, GetOuputFilename(inputDoc));
@@ -83,10 +83,6 @@ namespace JavaDocToMarkdownConverter
 
             var ns = ExtractNamespaceFromFile(outputFile);
 
-            foreach (var r in JavaDocFormatters.Replacers)
-            {
-                markdown = r.Replace(markdown);
-            }
             if (JavaDocFormatters.CustomReplacers.TryGetValue(ns, out var replacers))
             {
                 foreach (var r in replacers)
@@ -100,44 +96,9 @@ namespace JavaDocToMarkdownConverter
             }
             markdown = doc.Markdown; // it may have changed
 
-            var appendYamlHeader = ShouldAppendYamlHeader(inputFileInfo, ns);
-
-            var fileContent = appendYamlHeader ? AppendYamlHeader(ns, markdown) : markdown;
+            var fileContent = AppendYamlHeader(ns, markdown);
 
             File.WriteAllText(outputFile, fileContent, Encoding.UTF8);
-        }
-
-        /// <summary>
-        /// Normally yaml headers are applied to "overview" files but in some cases it's the equivalent "package" file that 
-        /// contains the documentation we want
-        /// </summary>
-        /// <param name="inputFile"></param>
-        /// <param name="ns"></param>
-        /// <returns></returns>
-        private bool ShouldAppendYamlHeader(FileInfo inputFile, string ns)
-        {
-            // There are a lot of 'package.md' files that exist in sub folders/namespaces for a project that contain a LOT
-            // of information which should be included as override files. For example, look at Lucene.Net.Highlighter/Hightlight/package.md or
-            // Lucene.Net.Highlighter/VectorHightlight/package.md
-            // Those files should be override files by default. 
-            // There's far more package.md files than overview.md files, overview are related only to entire project.
-            // Based on how the current override files are included in docfx, it seems if we just process both files, 
-            // due to the order in which they are included, it seems that overview.md files
-            // take priority. This is good in most cases but there are some edge cases like SmartCn where we should use the 
-            // package.md file instead of the overview.md file for the root namespace. 
-            // TODO: We'll deal with those scenarios individually.
-
-            //should be either "overview" or "package"
-            var fileName = Path.GetFileNameWithoutExtension(inputFile.FullName);
-
-            if (string.Equals("overview", fileName, StringComparison.InvariantCultureIgnoreCase)
-                || string.Equals("package", fileName, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
-
-            return false;
         }
 
         /// <summary>
@@ -148,39 +109,9 @@ namespace JavaDocToMarkdownConverter
             {
                 "Lucene.Net",
                 "Lucene.Net.Analysis.Common",
+                "Lucene.Net.Analysis.Morfologik",
+                "Lucene.Net.Analysis.OpenNLP",
             };
-
-        ///// <summary>
-        ///// For these namespaces we'll use the package.md file instead of the overview.md as the doc file
-        ///// </summary>
-        //private static readonly List<string> YamlHeadersForPackageFiles = new List<string>
-        //    {
-        //        "Lucene.Net.Analysis.SmartCn",
-        //        "Lucene.Net.Facet",
-        //        "Lucene.Net.Grouping",
-        //        "Lucene.Net.Join",
-        //        "Lucene.Net.Index.Memory",
-        //        "Lucene.Net.Replicator",
-        //        "Lucene.Net.QueryParsers.Classic",
-        //        "Lucene.Net.Codecs",
-        //        "Lucene.Net.Analysis",
-        //        "Lucene.Net.Codecs.Compressing",
-        //        "Lucene.Net.Codecs.Lucene3x",
-        //        "Lucene.Net.Codecs.Lucene40",
-        //        "Lucene.Net.Codecs.Lucene41",
-        //        "Lucene.Net.Codecs.Lucene42",
-        //        "Lucene.Net.Codecs.Lucene45",
-        //        "Lucene.Net.Codecs.Lucene46",
-        //        "Lucene.Net.Documents",
-        //        "Lucene.Net.Index",
-        //        "Lucene.Net.Search",
-        //        "Lucene.Net.Search.Payloads",
-        //        "Lucene.Net.Search.Similarities",
-        //        "Lucene.Net.Search.Spans",
-        //        "Lucene.Net.Store",
-        //        "Lucene.Net.Util",
-        //        "Lucene.Net.Benchmarks",
-        //    };
 
         /// <summary>
         /// Appends the YAML front-matter header

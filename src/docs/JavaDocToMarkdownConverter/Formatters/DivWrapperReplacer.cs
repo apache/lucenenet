@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 
 namespace JavaDocToMarkdownConverter.Formatters
 {
+
     public class DivWrapperReplacer : IReplacer
     {
         private static readonly Regex TocArea = new Regex(@"<div id=""minitoc-area"">(.*?)</div>", RegexOptions.Compiled | RegexOptions.Singleline);
