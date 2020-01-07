@@ -41,12 +41,12 @@ namespace Lucene.Net.Index
         /// </summary>
         public abstract class SubReaderWrapper
         {
-            internal virtual AtomicReader[] Wrap(IList<AtomicReader> readers)
+            internal virtual AtomicReader[] Wrap(IList<IndexReader> readers) // LUCENENET specific: Changed from IList<AtomicReader> to IList<IndexReader> to eliminate cast in calling method
             {
                 AtomicReader[] wrapped = new AtomicReader[readers.Count];
                 for (int i = 0; i < readers.Count; i++)
                 {
-                    wrapped[i] = Wrap(readers[i]);
+                    wrapped[i] = Wrap((AtomicReader)readers[i]);
                 }
                 return wrapped;
             }
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
         /// <param name="input"> the <see cref="DirectoryReader"/> to filter </param>
         /// <param name="wrapper"> the <see cref="SubReaderWrapper"/> to use to wrap subreaders </param>
         public FilterDirectoryReader(DirectoryReader input, SubReaderWrapper wrapper)
-            : base(input.Directory, wrapper.Wrap(input.GetSequentialSubReaders().OfType<AtomicReader>().ToList()))
+            : base(input.Directory, wrapper.Wrap(input.GetSequentialSubReaders()))
         {
             this.m_input = input;
         }
