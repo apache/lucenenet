@@ -819,7 +819,7 @@ namespace Lucene.Net.Index
                     return SeekStatus.FOUND;
                 }
 
-                int startIdx = outerInstance.m_indexedTermsArray.ToList().BinarySearch(target);
+                int startIdx = Array.BinarySearch(outerInstance.m_indexedTermsArray, target);
 
                 if (startIdx >= 0)
                 {
