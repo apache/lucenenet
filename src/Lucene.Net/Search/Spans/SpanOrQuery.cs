@@ -42,11 +42,18 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Construct a <see cref="SpanOrQuery"/> merging the provided <paramref name="clauses"/>. </summary>
-        public SpanOrQuery(params SpanQuery[] clauses)
+        public SpanOrQuery(params SpanQuery[] clauses) : this((IList<SpanQuery>)clauses) { }
+
+        // LUCENENET specific overload.
+        // LUCENENET TODO: API - This constructor was added to eliminate casting with PayloadSpanUtil. Make public?
+        // It would be more useful if the type was an IEnumerable<SpanQuery>, but
+        // need to rework the allocation below. It would also be better to change AddClause() to Add() to make
+        // the C# collection initializer function.
+        internal SpanOrQuery(IList<SpanQuery> clauses)
         {
             // copy clauses array into an ArrayList
-            this.clauses = new EquatableList<SpanQuery>(clauses.Length);
-            for (int i = 0; i < clauses.Length; i++)
+            this.clauses = new EquatableList<SpanQuery>(clauses.Count);
+            for (int i = 0; i < clauses.Count; i++)
             {
                 AddClause(clauses[i]);
             }

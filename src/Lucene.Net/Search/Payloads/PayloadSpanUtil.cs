@@ -135,16 +135,18 @@ namespace Lucene.Net.Search.Payloads
                         }
                     }
 
-                    IList<Query>[] disjunctLists = new List<Query>[maxPosition + 1];
+                    // LUCENENET: Changed from Query to SpanQuery to eliminate the O(n) cast
+                    // required to instantiate SpanOrQuery below
+                    IList<SpanQuery>[] disjunctLists = new List<SpanQuery>[maxPosition + 1];
                     int distinctPositions = 0;
 
                     for (int i = 0; i < termArrays.Count; ++i)
                     {
                         Term[] termArray = termArrays[i];
-                        IList<Query> disjuncts = disjunctLists[positions[i]];
+                        IList<SpanQuery> disjuncts = disjunctLists[positions[i]]; // LUCENENET: Changed from Query to SpanQuery
                         if (disjuncts == null)
                         {
-                            disjuncts = (disjunctLists[positions[i]] = new List<Query>(termArray.Length));
+                            disjuncts = (disjunctLists[positions[i]] = new List<SpanQuery>(termArray.Length)); // LUCENENET: Changed from Query to SpanQuery
                             ++distinctPositions;
                         }
                         foreach (Term term in termArray)
@@ -158,10 +160,10 @@ namespace Lucene.Net.Search.Payloads
                     SpanQuery[] clauses = new SpanQuery[distinctPositions];
                     for (int i = 0; i < disjunctLists.Length; ++i)
                     {
-                        IList<Query> disjuncts = disjunctLists[i];
+                        IList<SpanQuery> disjuncts = disjunctLists[i]; // LUCENENET: Changed from Query to SpanQuery
                         if (disjuncts != null)
                         {
-                            clauses[position++] = new SpanOrQuery(disjuncts.OfType<SpanQuery>().ToArray());
+                            clauses[position++] = new SpanOrQuery(disjuncts);
                         }
                         else
                         {
