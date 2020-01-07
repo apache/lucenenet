@@ -20,8 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-    
-
   Analysis for indexing phonetic signatures (for sounds-alike search)
 
  For an introduction to Lucene's analysis API, see the <xref:Lucene.Net.Analysis> package documentation. 

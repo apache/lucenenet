@@ -21,9 +21,6 @@ summary: *content
 -->
 <!-- :Post-Release-Update-Version.LUCENE_XY: - several mentions in this file -->
 
-    
-    
-
 This module exposes functionality from 
 [ICU](http://site.icu-project.org/) to Apache Lucene. ICU4J is a Java
 library that enhances Java's internationalization support by improving 

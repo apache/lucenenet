@@ -3,7 +3,6 @@ uid: Lucene.Net.Analysis.Sinks
 summary: *content
 ---
 
-
 <!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -21,9 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-
-
 <xref:Lucene.Net.Analysis.Sinks.TeeSinkTokenFilter> and implementations
 of <xref:Lucene.Net.Analysis.Sinks.TeeSinkTokenFilter.SinkFilter> that
 might be useful.
-

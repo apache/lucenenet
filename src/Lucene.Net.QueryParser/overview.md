@@ -20,8 +20,6 @@ summary: *content
   limitations under the License.
   -->
 
-    
-
   Apache Lucene QueryParsers.
 
   This module provides a number of queryparsers:

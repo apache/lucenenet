@@ -20,7 +20,5 @@ summary: *content
  limitations under the License.
 -->
 
-    
-
   The highlight package contains classes to provide "keyword in context" features
   typically used to highlight search terms in the text of results pages.
