@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// This constructor is only used for <see cref="DoOpenIfChanged(SegmentInfos)"/> </summary>
-        private static DirectoryReader Open(Directory directory, SegmentInfos infos, IList<AtomicReader> oldReaders, int termInfosIndexDivisor)
+        private static DirectoryReader Open(Directory directory, SegmentInfos infos, IList<IndexReader> oldReaders, int termInfosIndexDivisor) // LUCENENET: Changed from AtomicReader to IndexReader to eliminate casting from the 1 place this is called from
         {
             // we put the old SegmentReaders in a map, that allows us
             // to lookup a reader using its segment name
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
 
         internal DirectoryReader DoOpenIfChanged(SegmentInfos infos)
         {
-            return StandardDirectoryReader.Open(m_directory, infos, GetSequentialSubReaders().OfType<AtomicReader>().ToList(), termInfosIndexDivisor);
+            return StandardDirectoryReader.Open(m_directory, infos, GetSequentialSubReaders(), termInfosIndexDivisor);
         }
 
         public override long Version
