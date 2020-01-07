@@ -323,7 +323,8 @@ namespace Egothor.Stemmer
 
         internal Cell At(char index)
         {
-            return cells.ContainsKey(index) ? cells[index] : null;
+            cells.TryGetValue(index, out Cell value);
+            return value;
         }
     }
 }

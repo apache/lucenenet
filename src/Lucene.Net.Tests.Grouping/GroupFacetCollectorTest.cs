@@ -633,11 +633,10 @@ namespace Lucene.Net.Search.Grouping
                 }
 
                 string contentStr = contentBrs[random.nextInt(contentBrs.Length)];
-                if (!searchTermToFacetToGroups.ContainsKey(contentStr))
+                if (!searchTermToFacetToGroups.TryGetValue(contentStr, out HashMap<string, ISet<string>> facetToGroups))
                 {
-                    searchTermToFacetToGroups[contentStr] = new HashMap<string, ISet<string>>();
+                    searchTermToFacetToGroups[contentStr] = facetToGroups = new HashMap<string, ISet<string>>();
                 }
-                IDictionary<string, ISet<string>> facetToGroups = searchTermToFacetToGroups[contentStr];
 
                 List<string> facetVals = new List<string>();
                 if (useDv || random.nextInt(24) != 18)
@@ -646,11 +645,10 @@ namespace Lucene.Net.Search.Grouping
                     {
                         string facetValue = facetValues[random.nextInt(facetValues.size())];
                         uniqueFacetValues.Add(facetValue);
-                        if (!facetToGroups.ContainsKey(facetValue))
+                        if (!facetToGroups.TryGetValue(facetValue, out ISet<string> groupsInFacet))
                         {
-                            facetToGroups[facetValue] = new HashSet<string>();
+                            facetToGroups[facetValue] = groupsInFacet = new HashSet<string>();
                         }
-                        ISet<string> groupsInFacet = facetToGroups[facetValue];
                         groupsInFacet.add(groupValue);
                         if (groupsInFacet.size() > facetWithMostGroups)
                         {
@@ -666,11 +664,10 @@ namespace Lucene.Net.Search.Grouping
                         {
                             string facetValue = facetValues[random.nextInt(facetValues.size())];
                             uniqueFacetValues.Add(facetValue);
-                            if (!facetToGroups.ContainsKey(facetValue))
+                            if (!facetToGroups.TryGetValue(facetValue, out ISet<string> groupsInFacet))
                             {
-                                facetToGroups[facetValue] = new HashSet<string>();
+                                facetToGroups[facetValue] = groupsInFacet = new HashSet<string>();
                             }
-                            ISet<string> groupsInFacet = facetToGroups[facetValue];
                             groupsInFacet.add(groupValue);
                             if (groupsInFacet.size() > facetWithMostGroups)
                             {
@@ -684,11 +681,10 @@ namespace Lucene.Net.Search.Grouping
                 else
                 {
                     uniqueFacetValues.Add(null);
-                    if (!facetToGroups.ContainsKey(null))
+                    if (!facetToGroups.TryGetValue(null, out ISet<string> groupsInFacet))
                     {
-                        facetToGroups.Put(null, new HashSet<string>());
+                        facetToGroups[null] = groupsInFacet = new HashSet<string>();
                     }
-                    ISet<string> groupsInFacet = facetToGroups[null];
                     groupsInFacet.add(groupValue);
                     if (groupsInFacet.size() > facetWithMostGroups)
                     {
@@ -798,8 +794,7 @@ namespace Lucene.Net.Search.Grouping
                     continue;
                 }
 
-                ISet<string> groups = facetGroups.ContainsKey(facetValue) ? facetGroups[facetValue] : null;
-                int count = groups != null ? groups.size() : 0;
+                int count = facetGroups.TryGetValue(facetValue, out ISet<string> groups) && groups != null ? groups.size() : 0;
                 if (count >= minCount)
                 {
                     entries.Add(new TermGroupFacetCollector.FacetEntry(new BytesRef(facetValue), count));

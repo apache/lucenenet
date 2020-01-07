@@ -685,12 +685,12 @@ namespace Lucene.Net.Search.Grouping
 
             foreach (GroupDoc groupDoc in groupDocs)
             {
-                if (!groupMap.ContainsKey(groupDoc.group))
+                if (!groupMap.TryGetValue(groupDoc.group, out List<GroupDoc> docs))
                 {
                     groupValues.Add(groupDoc.group);
-                    groupMap.Put(groupDoc.group, new List<GroupDoc>());
+                    groupMap[groupDoc.group] = docs = new List<GroupDoc>();
                 }
-                groupMap[groupDoc.group].Add(groupDoc);
+                docs.Add(groupDoc);
             }
 
             RandomIndexWriter w = new RandomIndexWriter(

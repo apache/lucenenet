@@ -3338,12 +3338,8 @@ namespace Lucene.Net.Index
             // just want to update the DS name of this SegmentInfo.
             string dsName = Lucene3xSegmentInfoFormat.GetDocStoreSegment(info.Info);
             Debug.Assert(dsName != null);
-            string newDsName;
-            if (dsNames.ContainsKey(dsName))
-            {
-                newDsName = dsNames[dsName];
-            }
-            else
+            // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+            if (!dsNames.TryGetValue(dsName, out string newDsName))
             {
                 dsNames[dsName] = segName;
                 newDsName = segName;

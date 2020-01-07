@@ -86,17 +86,14 @@ namespace Lucene.Net.QueryParsers.Ext
         /// <code>null</code> if no extension can be found for the key.</returns>
         public ParserExtension GetExtension(string key)
         {
-            if (key == null || !this.extensions.ContainsKey(key)) return null;
-            return this.extensions[key];
+            if (key == null || !this.extensions.TryGetValue(key, out ParserExtension value)) return null;
+            return value;
         }
 
         /// <summary>
         /// Returns the extension field delimiter
         /// </summary>
-        public virtual char ExtensionFieldDelimiter
-        {
-            get { return extensionFieldDelimiter; }
-        }
+        public virtual char ExtensionFieldDelimiter => extensionFieldDelimiter;
 
         /// <summary>
         /// Splits a extension field and returns the field / extension part as a

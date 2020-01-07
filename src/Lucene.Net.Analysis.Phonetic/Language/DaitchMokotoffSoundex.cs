@@ -432,9 +432,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
 
                 ch = char.ToLowerInvariant(ch);
-                if (folding && FOLDINGS.ContainsKey(ch))
+                if (folding && FOLDINGS.TryGetValue(ch, out char newChar))
                 {
-                    ch = FOLDINGS[ch];
+                    ch = newChar;
                 }
                 sb.Append(ch);
             }

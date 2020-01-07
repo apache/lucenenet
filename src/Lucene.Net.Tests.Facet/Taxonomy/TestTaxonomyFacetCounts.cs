@@ -848,8 +848,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         {
                             if (doc.dims[j] != null)
                             {
-                                int? v = expectedCounts[j].ContainsKey(doc.dims[j]) ? expectedCounts[j][doc.dims[j]] : null;
-                                if (v == null)
+                                if (!expectedCounts[j].TryGetValue(doc.dims[j], out int? v) || v == null)
                                 {
                                     expectedCounts[j][doc.dims[j]] = 1;
                                 }

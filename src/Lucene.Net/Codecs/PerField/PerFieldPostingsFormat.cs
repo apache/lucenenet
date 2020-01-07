@@ -220,11 +220,12 @@ namespace Lucene.Net.Codecs.PerField
                                 Debug.Assert(suffix != null);
                                 PostingsFormat format = PostingsFormat.ForName(formatName);
                                 string segmentSuffix = GetSuffix(formatName, suffix);
-                                if (!formats.ContainsKey(segmentSuffix))
+                                // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+                                if (!formats.TryGetValue(segmentSuffix, out Codecs.FieldsProducer field))
                                 {
-                                    formats[segmentSuffix] = format.FieldsProducer(new SegmentReadState(readState, segmentSuffix));
+                                    formats[segmentSuffix] = field = format.FieldsProducer(new SegmentReadState(readState, segmentSuffix));
                                 }
-                                fields[fieldName] = formats[segmentSuffix];
+                                fields[fieldName] = field;
                             }
                         }
                     }

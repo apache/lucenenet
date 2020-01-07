@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
             foreach (string file in d.ListAll())
             {
                 string ext = IndexFileNames.GetExtension(file);
-                long previousLength = bytesUsedByExtension.ContainsKey(ext) ? bytesUsedByExtension[ext] : 0;
+                long previousLength = bytesUsedByExtension.TryGetValue(ext, out long length) ? length : 0;
                 bytesUsedByExtension[ext] = previousLength + d.FileLength(file);
             }
             foreach (string item in ExcludedExtensionsFromByteCounts)

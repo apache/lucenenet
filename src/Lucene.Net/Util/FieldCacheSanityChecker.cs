@@ -232,12 +232,13 @@ namespace Lucene.Net.Util
                 {
                     ReaderField kid = new ReaderField(kidKey, rf.FieldName);
 
-                    if (badChildren.ContainsKey(kid))
+                    // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+                    if (badChildren.TryGetValue(kid, out ISet<ReaderField> badKid))
                     {
                         // we've already process this kid as RF and found other problems
                         // track those problems as our own
                         badKids.Put(rf, kid);
-                        badKids.PutAll(rf, badChildren[kid]);
+                        badKids.PutAll(rf, badKid);
                         badChildren.Remove(kid);
                     }
                     else if (rfToValIdSets.ContainsKey(kid))

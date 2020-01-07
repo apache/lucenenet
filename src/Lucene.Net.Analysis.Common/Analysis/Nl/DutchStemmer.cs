@@ -60,16 +60,9 @@ namespace Lucene.Net.Analysis.Nl
             {
                 return term;
             }
-            if (_stemDict != null && _stemDict.ContainsKey(term))
+            if (_stemDict != null && _stemDict.TryGetValue(term, out string value))
             {
-                if (_stemDict[term] is string)
-                {
-                    return (string)_stemDict[term];
-                }
-                else
-                {
-                    return null;
-                }
+                return value;
             }
 
             // Reset the StringBuilder.

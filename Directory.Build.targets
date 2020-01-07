@@ -30,6 +30,8 @@
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE</DefineConstants>
 
+    <DefineConstants>$(DefineConstants);FEATURE_HASHSET_CAPACITY</DefineConstants>
+    
   </PropertyGroup>
 
   <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, and .NET Core 3.x -->

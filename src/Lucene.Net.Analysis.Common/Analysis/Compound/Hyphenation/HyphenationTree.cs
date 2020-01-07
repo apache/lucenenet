@@ -469,11 +469,11 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             // check exception list first
             string sw = new string(word, 1, len);
-            if (m_stoplist.ContainsKey(sw))
+            // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+            if (m_stoplist.TryGetValue(sw, out IList<object> hw))
             {
                 // assume only simple hyphens (Hyphen.pre="-", Hyphen.post = Hyphen.no =
                 // null)
-                IList<object> hw = m_stoplist[sw];
                 int j = 0;
                 for (i = 0; i < hw.Count; i++)
                 {

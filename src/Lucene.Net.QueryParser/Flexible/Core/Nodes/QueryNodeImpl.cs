@@ -194,6 +194,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return this.tags[CultureInfo.InvariantCulture.TextInfo.ToLower(tagName)];
         }
 
+        // LUCENENET TODO: API - Create TryGetTag method to combine the above 2 operations
+
         private IQueryNode parent = null;
 
         private void SetParent(IQueryNode parent)

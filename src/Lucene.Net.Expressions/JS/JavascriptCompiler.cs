@@ -261,16 +261,11 @@ namespace Lucene.Net.Expressions.JS
                     }
                 case JavascriptParser.NAMESPACE_ID:
                     {
-                        int index;
-                        if (externalsMap.ContainsKey(text))
+                        if (!externalsMap.TryGetValue(text, out int index))
                         {
-                            index = externalsMap[text];
+                            externalsMap[text] = index = externalsMap.Count;
                         }
-                        else
-                        {
-                            index = externalsMap.Count;
-                            externalsMap[text] = index;
-                        }
+
                         gen.Emit(OpCodes.Nop);
 
                         gen.Emit(OpCodes.Ldarg_2);

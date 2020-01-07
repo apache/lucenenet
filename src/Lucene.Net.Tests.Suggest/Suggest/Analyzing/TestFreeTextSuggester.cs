@@ -514,8 +514,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             b.append(doc[j]);
                         }
                         string token = b.toString();
-                        int? curCount = model.ContainsKey(token) ? model[token] : null;
-                        if (curCount == null)
+                        if (!model.TryGetValue(token, out int? curCount) || curCount == null)
                         {
                             model.Put(token, 1);
                         }
@@ -525,7 +524,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         }
                         if (VERBOSE)
                         {
-                            Console.WriteLine("  add '" + token + "' -> count=" + (model.ContainsKey(token) ? model[token].ToString() : ""));
+                            Console.WriteLine("  add '" + token + "' -> count=" + (model.TryGetValue(token, out int? count) ? (count.HasValue ? count.ToString() : "null") : ""));
                         }
                     }
                 }
@@ -630,8 +629,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         //int? count = gramCounts.get(i - 1).get(context);
                         var gramCount = gramCounts[i - 1];
-                        int? count = gramCount.ContainsKey(context) ? gramCount[context] : null;
-                        if (count == null)
+                        if (!gramCount.TryGetValue(context, out int? count) || count == null)
                         {
                             // We never saw this context:
                             backoff *= FreeTextSuggester.ALPHA;
@@ -673,8 +671,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             }
                             string ngram = (context + " " + term).Trim();
                             //Integer count = model.get(ngram);
-                            int? count = model.ContainsKey(ngram) ? model[ngram] : null;
-                            if (count != null)
+                            if (model.TryGetValue(ngram, out int? count) && count != null)
                             {
                                 // LUCENENET NOTE: We need to calculate this as decimal because when using double it can sometimes 
                                 // return numbers that are greater than long.MaxValue, which results in a negative long number.

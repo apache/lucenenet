@@ -79,11 +79,11 @@ namespace Lucene.Net.Index
                     {
                         string s = TestUtil.RandomUnicodeString(Random, 10);
                         BytesRef term = new BytesRef(s);
-                        if (!docs.ContainsKey(term))
+                        if (!docs.TryGetValue(term, out IList<int?> docsTerm))
                         {
-                            docs[term] = new List<int?>();
+                            docs[term] = docsTerm = new List<int?>();
                         }
-                        docs[term].Add(i);
+                        docsTerm.Add(i);
                         terms.Add(term);
                         uniqueTerms.Add(term);
                         f.SetStringValue(s);

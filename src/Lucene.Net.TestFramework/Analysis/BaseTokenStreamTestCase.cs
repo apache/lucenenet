@@ -305,7 +305,7 @@ namespace Lucene.Net.Analysis
 
                             int posLength = posLengthAtt.PositionLength;
 
-                            if (!posToStartOffset.ContainsKey(pos))
+                            if (!posToStartOffset.TryGetValue(pos, out int? oldStartOffset))
                             {
                                 // First time we've seen a token leaving from this position:
                                 posToStartOffset[pos] = startOffset;
@@ -316,12 +316,12 @@ namespace Lucene.Net.Analysis
                                 // We've seen a token leaving from this position
                                 // before; verify the startOffset is the same:
                                 //System.out.println("  + vs " + pos + " -> " + startOffset);
-                                Assert.AreEqual((int)posToStartOffset[pos], startOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
+                                Assert.AreEqual(oldStartOffset.GetValueOrDefault(), startOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
                             }
 
                             int endPos = pos + posLength;
 
-                            if (!posToEndOffset.ContainsKey(endPos))
+                            if (!posToEndOffset.TryGetValue(endPos, out int? oldEndOffset))
                             {
                                 // First time we've seen a token arriving to this position:
                                 posToEndOffset[endPos] = endOffset;
@@ -332,7 +332,7 @@ namespace Lucene.Net.Analysis
                                 // We've seen a token arriving to this position
                                 // before; verify the endOffset is the same:
                                 //System.out.println("  + ve " + endPos + " -> " + endOffset);
-                                Assert.AreEqual((int)posToEndOffset[endPos], endOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
+                                Assert.AreEqual(oldEndOffset.GetValueOrDefault(), endOffset, "pos=" + pos + " posLen=" + posLength + " token=" + termAtt);
                             }
                         }
                     }

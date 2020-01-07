@@ -202,9 +202,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 string epochStr = null;
                 IDictionary<string, string> commitData = ReadCommitData(directory);
-                if (commitData != null && commitData.ContainsKey(INDEX_EPOCH))
+                if (commitData != null && commitData.TryGetValue(INDEX_EPOCH, out string value))
                 {
-                    epochStr = commitData[INDEX_EPOCH];
+                    epochStr = value;
                 }
                 // no commit data, or no epoch in it means an old taxonomy, so set its epoch to 1, for lack
                 // of a better value.

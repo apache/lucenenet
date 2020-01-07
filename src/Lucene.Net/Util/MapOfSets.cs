@@ -50,15 +50,10 @@ namespace Lucene.Net.Util
         /// <returns> The size of the <see cref="ISet{T}"/> associated with key once val is added to it. </returns>
         public virtual int Put(TKey key, TValue val)
         {
-            ISet<TValue> theSet;
-            if (theMap.ContainsKey(key))
+            // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+            if (!theMap.TryGetValue(key, out ISet<TValue> theSet))
             {
-                theSet = theMap[key];
-            }
-            else
-            {
-                theSet = new HashSet<TValue>();
-                theMap[key] = theSet;
+                theMap[key] = theSet = new HashSet<TValue>();
             }
             theSet.Add(val);
             return theSet.Count;
@@ -71,15 +66,10 @@ namespace Lucene.Net.Util
         /// <returns> The size of the <see cref="ISet{T}"/> associated with key once val is added to it. </returns>
         public virtual int PutAll(TKey key, IEnumerable<TValue> vals)
         {
-            ISet<TValue> theSet;
-            if (theMap.ContainsKey(key))
+            // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+            if (!theMap.TryGetValue(key, out ISet<TValue> theSet))
             {
-                theSet = theMap[key];
-            }
-            else
-            {
-                theSet = new HashSet<TValue>();
-                theMap[key] = theSet;
+                theMap[key] = theSet = new HashSet<TValue>();
             }
             theSet.UnionWith(vals);
             return theSet.Count;

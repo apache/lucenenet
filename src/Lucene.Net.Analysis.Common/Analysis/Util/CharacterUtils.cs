@@ -194,15 +194,15 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new System.ArgumentException("srcLen must be >= 0");
             }
-            int codePointCount_Renamed = 0;
+            int codePointCount = 0;
             for (int i = 0; i < srcLen; )
             {
                 int cp = CodePointAt(src, srcOff + i, srcOff + srcLen);
                 int charCount = Character.CharCount(cp);
-                dest[destOff + codePointCount_Renamed++] = cp;
+                dest[destOff + codePointCount++] = cp;
                 i += charCount;
             }
-            return codePointCount_Renamed;
+            return codePointCount;
         }
 
         /// <summary>

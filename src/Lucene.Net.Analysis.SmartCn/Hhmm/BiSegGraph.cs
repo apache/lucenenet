@@ -130,10 +130,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <returns><c>true</c> if a token pair exists</returns>
         public virtual bool IsToExist(int to)
         {
-            //return tokenPairListTable.get(Integer.valueOf(to)) != null;
-            //return tokenPairListTable.ContainsKey(to) && tokenPairListTable[to] != null;
-            IList<SegTokenPair> result;
-            return tokenPairListTable.TryGetValue(to, out result) && result != null;
+            return tokenPairListTable.TryGetValue(to, out IList<SegTokenPair> result) && result != null;
         }
 
         /// <summary>

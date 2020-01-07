@@ -616,32 +616,32 @@ namespace Lucene.Net.Tests.Join
                     docs[i].LinkValues.Add(linkValue);
                     if (from)
                     {
-                        if (!context.FromDocuments.ContainsKey(linkValue))
+                        if (!context.FromDocuments.TryGetValue(linkValue, out IList<RandomDoc> fromDocs))
                         {
-                            context.FromDocuments[linkValue] = new List<RandomDoc>();
+                            context.FromDocuments[linkValue] = fromDocs = new List<RandomDoc>();
                         }
-                        if (!context.RandomValueFromDocs.ContainsKey(value))
+                        if (!context.RandomValueFromDocs.TryGetValue(value, out IList<RandomDoc> randomValueFromDocs))
                         {
-                            context.RandomValueFromDocs[value] = new List<RandomDoc>();
+                            context.RandomValueFromDocs[value] = randomValueFromDocs = new List<RandomDoc>();
                         }
 
-                        context.FromDocuments[linkValue].Add(docs[i]);
-                        context.RandomValueFromDocs[value].Add(docs[i]);
+                        fromDocs.Add(docs[i]);
+                        randomValueFromDocs.Add(docs[i]);
                         document.Add(NewTextField(Random, "from", linkValue, Field.Store.NO));
                     }
                     else
                     {
-                        if (!context.ToDocuments.ContainsKey(linkValue))
+                        if (!context.ToDocuments.TryGetValue(linkValue, out IList<RandomDoc> toDocuments))
                         {
-                            context.ToDocuments[linkValue] = new List<RandomDoc>();
+                            context.ToDocuments[linkValue] = toDocuments = new List<RandomDoc>();
                         }
-                        if (!context.RandomValueToDocs.ContainsKey(value))
+                        if (!context.RandomValueToDocs.TryGetValue(value, out IList<RandomDoc> randomValueToDocs))
                         {
-                            context.RandomValueToDocs[value] = new List<RandomDoc>();
+                            context.RandomValueToDocs[value] = randomValueToDocs = new List<RandomDoc>();
                         }
 
-                        context.ToDocuments[linkValue].Add(docs[i]);
-                        context.RandomValueToDocs[value].Add(docs[i]);
+                        toDocuments.Add(docs[i]);
+                        randomValueToDocs.Add(docs[i]);
                         document.Add(NewTextField(Random, "to", linkValue, Field.Store.NO));
                     }
                 }
@@ -791,8 +791,7 @@ namespace Lucene.Net.Tests.Join
                 while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {
                     docTermOrds.LookupOrd(ord, joinValue);
-                    var joinScore = JoinValueToJoinScores.ContainsKey(joinValue) ? JoinValueToJoinScores[joinValue] : null;
-                    if (joinScore == null)
+                    if (!JoinValueToJoinScores.TryGetValue(joinValue, out JoinScore joinScore) || joinScore == null)
                     {
                         JoinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
                     }
@@ -850,8 +849,7 @@ namespace Lucene.Net.Tests.Join
                     return;
                 }
 
-                var joinScore = JoinValueToJoinScores.ContainsKey(joinValue) ? JoinValueToJoinScores[joinValue] : null;
-                if (joinScore == null)
+                if (!JoinValueToJoinScores.TryGetValue(joinValue, out JoinScore joinScore) || joinScore == null)
                 {
                     JoinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
                 }
@@ -904,8 +902,7 @@ namespace Lucene.Net.Tests.Join
                 while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {
                     docTermOrds.LookupOrd(ord, scratch);
-                    JoinScore joinScore = _joinValueToJoinScores.ContainsKey(scratch) ? _joinValueToJoinScores[scratch] : null;
-                    if (joinScore == null)
+                    if (!_joinValueToJoinScores.TryGetValue(scratch, out JoinScore joinScore) || joinScore == null)
                     {
                         continue;
                     }
@@ -961,8 +958,7 @@ namespace Lucene.Net.Tests.Join
             public virtual void Collect(int doc)
             {
                 terms.Get(doc, spare);
-                JoinScore joinScore = JoinValueToJoinScores.ContainsKey(spare) ? JoinValueToJoinScores[spare] : null;
-                if (joinScore == null)
+                if (!JoinValueToJoinScores.TryGetValue(spare, out JoinScore joinScore) || joinScore == null)
                 {
                     return;
                 }
@@ -1046,8 +1042,7 @@ namespace Lucene.Net.Tests.Join
             }
 
             FixedBitSet expectedResult = new FixedBitSet(topLevelReader.MaxDoc);
-            IList<RandomDoc> matchingDocs = randomValueDocs.ContainsKey(queryValue) ? randomValueDocs[queryValue] : null;
-            if (matchingDocs == null)
+            if (!randomValueDocs.TryGetValue(queryValue, out IList<RandomDoc> matchingDocs) || matchingDocs == null)
             {
                 return new FixedBitSet(topLevelReader.MaxDoc);
             }
@@ -1056,8 +1051,7 @@ namespace Lucene.Net.Tests.Join
             {
                 foreach (string linkValue in matchingDoc.LinkValues)
                 {
-                    IList<RandomDoc> otherMatchingDocs = linkValueDocuments.ContainsKey(linkValue) ? linkValueDocuments[linkValue] : null;
-                    if (otherMatchingDocs == null)
+                    if (!linkValueDocuments.TryGetValue(linkValue, out IList<RandomDoc> otherMatchingDocs) || otherMatchingDocs == null)
                     {
                         continue;
                     }

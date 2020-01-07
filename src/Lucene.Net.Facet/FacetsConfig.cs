@@ -160,14 +160,14 @@ namespace Lucene.Net.Facet
         {
             lock (this)
             {
-                if (!fieldTypes.ContainsKey(dimName))
+                // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+                if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
                 {
-                    var ft = new DimConfig { IsHierarchical = v };
-                    fieldTypes[dimName] = ft;
+                    fieldTypes[dimName] = new DimConfig { IsHierarchical = v };
                 }
                 else
                 {
-                    fieldTypes[dimName].IsHierarchical = v;
+                    fieldType.IsHierarchical = v;
                 }
             }
         }
@@ -180,14 +180,14 @@ namespace Lucene.Net.Facet
         {
             lock (this)
             {
-                if (!fieldTypes.ContainsKey(dimName))
+                // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+                if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
                 {
-                    var ft = new DimConfig { IsMultiValued = v };
-                    fieldTypes[dimName] = ft;
+                    fieldTypes[dimName] = new DimConfig { IsMultiValued = v };
                 }
                 else
                 {
-                    fieldTypes[dimName].IsMultiValued = v;
+                    fieldType.IsMultiValued = v;
                 }
             }
         }
@@ -201,14 +201,14 @@ namespace Lucene.Net.Facet
         {
             lock (this)
             {
-                if (!fieldTypes.ContainsKey(dimName))
+                // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+                if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
                 {
-                    var ft = new DimConfig { RequireDimCount = v };
-                    fieldTypes[dimName] = ft;
+                    fieldTypes[dimName] = new DimConfig { RequireDimCount = v };
                 }
                 else
                 {
-                    fieldTypes[dimName].RequireDimCount = v;
+                    fieldType.RequireDimCount = v;
                 }
             }
         }
@@ -222,14 +222,14 @@ namespace Lucene.Net.Facet
         {
             lock (this)
             {
-                if (!fieldTypes.ContainsKey(dimName))
+                // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
+                if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
                 {
-                    var ft = new DimConfig { IndexFieldName = indexFieldName };
-                    fieldTypes[dimName] = ft;
+                    fieldTypes[dimName] = new DimConfig { IndexFieldName = indexFieldName };
                 }
                 else
                 {
-                    fieldTypes[dimName].IndexFieldName = indexFieldName;
+                    fieldType.IndexFieldName = indexFieldName;
                 }
             }
         }
@@ -237,13 +237,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Returns map of field name to <see cref="DimConfig"/>.
         /// </summary>
-        public virtual IDictionary<string, DimConfig> DimConfigs
-        {
-            get
-            {
-                return fieldTypes;
-            }
-        }
+        public virtual IDictionary<string, DimConfig> DimConfigs => fieldTypes;
 
         private static void CheckSeen(HashSet<string> seenDims, string dim)
         {

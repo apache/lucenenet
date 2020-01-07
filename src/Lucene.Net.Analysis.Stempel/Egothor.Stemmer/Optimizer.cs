@@ -128,10 +128,9 @@ namespace Egothor.Stemmer
             foreach (char ch in master.cells.Keys)
             {
                 // XXX also must handle Cnt and Skip !!
-                Cell a = master.cells.ContainsKey(ch) ? master.cells[ch] : null;
-                Cell b = existing.cells.ContainsKey(ch) ? existing.cells[ch] : null;
+                master.cells.TryGetValue(ch, out Cell a);
 
-                Cell s = (b == null) ? new Cell(a) : Merge(a, b);
+                Cell s = !existing.cells.TryGetValue(ch, out Cell b) || (b == null) ? new Cell(a) : Merge(a, b);
                 if (s == null)
                 {
                     return null;

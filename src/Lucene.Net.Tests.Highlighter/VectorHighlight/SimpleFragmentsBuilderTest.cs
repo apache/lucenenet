@@ -354,11 +354,11 @@ namespace Lucene.Net.Search.VectorHighlight
         private String getRandomValue(String[] randomValues, IDictionary<String, ISet<int>> valueToDocId, int docId)
         {
             String value = randomValues[Random.nextInt(randomValues.Length)];
-            if (!valueToDocId.ContainsKey(value))
+            if (!valueToDocId.TryGetValue(value, out ISet<int> docIds))
             {
-                valueToDocId.Put(value, new HashSet<int>());
+                valueToDocId[value] = docIds = new HashSet<int>();
             }
-            valueToDocId[value].Add(docId);
+            docIds.Add(docId);
             return value;
         }
 

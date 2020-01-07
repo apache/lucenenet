@@ -936,14 +936,12 @@ namespace Lucene.Net.Analysis.Core
 
             private bool Broken(ConstructorInfo ctor, object[] args)
             {
-                IPredicate<object[]> pred = brokenConstructors.ContainsKey(ctor) ? brokenConstructors[ctor] : null;
-                return pred != null && pred.Apply(args);
+                return brokenConstructors.TryGetValue(ctor, out IPredicate<object[]> pred) && pred != null && pred.Apply(args);
             }
 
             private bool BrokenOffsets(ConstructorInfo ctor, object[] args)
             {
-                IPredicate<object[]> pred = brokenOffsetsConstructors.ContainsKey(ctor) ? brokenOffsetsConstructors[ctor] : null;
-                return pred != null && pred.Apply(args);
+                return brokenOffsetsConstructors.TryGetValue(ctor, out IPredicate<object[]> pred) && pred != null && pred.Apply(args);
             }
 
             // create a new random tokenizer from classpath

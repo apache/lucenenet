@@ -152,9 +152,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 string title = nextDoc.GetField("title").GetStringValue();
                 int randomWeight = Random.nextInt(100);
                 keys.Add(new Input(title, randomWeight));
-                if (!mapping.ContainsKey(title) || mapping[title] < randomWeight)
+                if (!mapping.TryGetValue(title, out long titleValue) || titleValue < randomWeight)
                 {
-                    mapping.Put(title, Convert.ToInt64(randomWeight));
+                    mapping[title] = Convert.ToInt64(randomWeight);
                 }
             }
             AnalyzingSuggester analyzingSuggester = new AnalyzingSuggester(new MockAnalyzer(Random), new MockAnalyzer(Random),

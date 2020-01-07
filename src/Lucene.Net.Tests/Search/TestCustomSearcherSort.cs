@@ -180,13 +180,13 @@ namespace Lucene.Net.Search
                     int? luceneId = null;
 
                     luceneId = Convert.ToInt32(hits[docnum].Doc);
-                    if (idMap.ContainsKey(luceneId))
+                    if (idMap.TryGetValue(luceneId, out int? value))
                     {
                         StringBuilder message = new StringBuilder(prefix);
                         message.Append("Duplicate key for hit index = ");
                         message.Append(docnum);
                         message.Append(", previous index = ");
-                        message.Append((idMap[luceneId]).ToString());
+                        message.Append(value.ToString());
                         message.Append(", Lucene ID = ");
                         message.Append(luceneId);
                         Log(message.ToString());

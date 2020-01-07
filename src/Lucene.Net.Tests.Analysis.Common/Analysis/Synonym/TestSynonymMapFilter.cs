@@ -485,8 +485,7 @@ namespace Lucene.Net.Analysis.Synonym
             for (int synIDX = 0; synIDX < numSyn; synIDX++)
             {
                 string synIn = GetRandomString('a', alphabetSize, TestUtil.NextInt32(Random, 1, 5)).Trim();
-                OneSyn s = synMap.ContainsKey(synIn) ? synMap[synIn] : null;
-                if (s == null)
+                if (!synMap.TryGetValue(synIn, out OneSyn s) || s == null)
                 {
                     s = new OneSyn();
                     s.@in = synIn;

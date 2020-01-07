@@ -331,8 +331,7 @@ namespace Lucene.Net.Search.Grouping
                 while (shard.Iter.MoveNext())
                 {
                     ISearchGroup<T> group = shard.Next();
-                    MergedGroup<T> mergedGroup = groupsSeen.ContainsKey(group.GroupValue) ? groupsSeen[group.GroupValue] : null;
-                    bool isNew = mergedGroup == null;
+                    bool isNew = !groupsSeen.TryGetValue(group.GroupValue, out MergedGroup<T> mergedGroup) || mergedGroup == null;
                     //System.out.println("    next group=" + (group.groupValue == null ? "null" : ((BytesRef) group.groupValue).utf8ToString()) + " sort=" + Arrays.toString(group.sortValues));
 
                     if (isNew)

@@ -480,8 +480,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
 
                 // deduplicate patterns
-                int? patternIndex = seenPatterns.ContainsKey(regex) ? seenPatterns[regex] : null;
-                if (patternIndex == null)
+                if (!seenPatterns.TryGetValue(regex, out int? patternIndex) || patternIndex == null)
                 {
                     patternIndex = patterns.Count;
                     if (patternIndex > short.MaxValue)
@@ -493,8 +492,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     patterns.Add(pattern);
                 }
 
-                int? stripOrd = seenStrips.ContainsKey(strip) ? seenStrips[strip] : null;
-                if (stripOrd == null)
+                if (!seenStrips.TryGetValue(strip, out int? stripOrd) || stripOrd == null)
                 {
                     stripOrd = seenStrips.Count;
                     seenStrips[strip] = stripOrd;
@@ -535,11 +533,9 @@ namespace Lucene.Net.Analysis.Hunspell
                     affixArg = cleaned.ToString();
                 }
 
-                IList<char?> list = affixes.ContainsKey(affixArg) ? affixes[affixArg] : null;
-                if (list == null)
+                if (!affixes.TryGetValue(affixArg, out IList<char?> list) || list == null)
                 {
-                    list = new List<char?>();
-                    affixes[affixArg] = list;
+                    affixes[affixArg] = list = new List<char?>();
                 }
 
                 list.Add((char)currentAffix);

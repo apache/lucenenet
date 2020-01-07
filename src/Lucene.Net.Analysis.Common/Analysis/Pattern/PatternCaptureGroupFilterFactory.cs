@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Pattern
             : base(args)
         {
             pattern = GetPattern(args, "pattern");
-            preserveOriginal = args.ContainsKey("preserve_original") ? bool.Parse(args["preserve_original"]) : true;
+            preserveOriginal = args.TryGetValue("preserve_original", out string value) ? bool.Parse(value) : true;
         }
 
         public override TokenStream Create(TokenStream input)

@@ -644,9 +644,9 @@ namespace Sax.Helpers
                 // Start by looking in the cache, and
                 // return immediately if the name
                 // is already known in this content
-                if (table.ContainsKey(qName))
+                if (table.TryGetValue(qName, out string[] value))
                 {
-                    return (string[])table[qName];
+                    return value;
                 }
 
                 // We haven't seen this name in this

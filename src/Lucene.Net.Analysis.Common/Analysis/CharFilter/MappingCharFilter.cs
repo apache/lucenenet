@@ -130,8 +130,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 {
                     // LUCENENET fix: Check the dictionary to ensure it contains a key before reading it.
                     char key = Convert.ToChar((char)firstCH);
-                    FST.Arc<CharsRef> arc = cachedRootArcs.ContainsKey(key) ? cachedRootArcs[key] : null;
-                    if (arc != null)
+                    if (cachedRootArcs.TryGetValue(key, out FST.Arc<CharsRef> arc) && arc != null)
                     {
                         if (!FST.TargetHasArcs(arc))
                         {

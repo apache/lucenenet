@@ -365,13 +365,13 @@ namespace Lucene.Net.QueryParsers.Classic
                 return this.dateResolution;
             }
 
-            if (!fieldToDateResolution.ContainsKey(fieldName))
+            if (!fieldToDateResolution.TryGetValue(fieldName, out DateTools.Resolution resolution))
             {
                 // no date resolutions set for the given field; return default date resolution instead
                 return this.dateResolution;
             }
 
-            return fieldToDateResolution[fieldName];
+            return resolution;
         }
 
         /// <summary>

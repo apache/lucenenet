@@ -827,8 +827,7 @@ namespace Lucene.Net.Util.Fst
                 for (int idx = 0; idx <= pair.Input.Length; idx++)
                 {
                     scratch.Length = idx;
-                    CountMinOutput<T> cmo = prefixes.ContainsKey(scratch) ? prefixes[scratch] : null;
-                    if (cmo == null)
+                    if (!prefixes.TryGetValue(scratch, out CountMinOutput<T> cmo) || cmo == null)
                     {
                         cmo = new CountMinOutput<T>();
                         cmo.Count = 1;
@@ -893,7 +892,7 @@ namespace Lucene.Net.Util.Fst
                         // consult our parent
                         scratch.Length = prefix.Length - 1;
                         Array.Copy(prefix.Int32s, prefix.Offset, scratch.Int32s, 0, scratch.Length);
-                        CountMinOutput<T> cmo2 = prefixes.ContainsKey(scratch) ? prefixes[scratch] : null;
+                        prefixes.TryGetValue(scratch, out CountMinOutput<T> cmo2);
                         //System.out.println("    parent count = " + (cmo2 == null ? -1 : cmo2.count));
                         keep = cmo2 != null && ((prune2 > 1 && cmo2.Count >= prune2) || (prune2 == 1 && (cmo2.Count >= 2 || prefix.Length <= 1)));
                     }
@@ -920,8 +919,7 @@ namespace Lucene.Net.Util.Fst
                     scratch.Length--;
                     while (scratch.Length >= 0)
                     {
-                        CountMinOutput<T> cmo2 = prefixes.ContainsKey(scratch) ? prefixes[scratch] : null;
-                        if (cmo2 != null)
+                        if (prefixes.TryGetValue(scratch, out CountMinOutput<T> cmo2) && cmo2 != null)
                         {
                             //System.out.println("    clear isLeaf " + inputToString(inputMode, scratch));
                             cmo2.IsLeaf = false;
@@ -965,7 +963,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     Console.WriteLine("  fstEnum.next prefix=" + InputToString(inputMode, current.Input, false) + " output=" + outputs.OutputToString(current.Output));
                 }
-                CountMinOutput<T> cmo = prefixes.ContainsKey(current.Input) ? prefixes[current.Input] : null;
+                prefixes.TryGetValue(current.Input, out CountMinOutput<T> cmo);
                 Assert.IsNotNull(cmo);
                 Assert.IsTrue(cmo.IsLeaf || cmo.IsFinal);
                 //if (cmo.isFinal && !cmo.isLeaf) {

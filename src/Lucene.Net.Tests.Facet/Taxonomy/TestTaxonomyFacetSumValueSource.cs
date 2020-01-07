@@ -569,8 +569,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         {
                             if (doc.dims[j] != null)
                             {
-                                float? v = expectedValues[j].ContainsKey(doc.dims[j]) ? expectedValues[j][doc.dims[j]] : null;
-                                if (v == null)
+                                if (!expectedValues[j].TryGetValue(doc.dims[j], out float? v) || v == null)
                                 {
                                     expectedValues[j][doc.dims[j]] = doc.value;
                                 }

@@ -297,16 +297,15 @@ namespace Lucene.Net.Index
                     int tokenOffset = Random.Next(5);
 
                     Token token = MakeToken(text, posIncr, offset + offIncr, offset + offIncr + tokenOffset);
-                    if (!actualTokens.ContainsKey(text))
+                    if (!actualTokens.TryGetValue(text, out IDictionary<int?, IList<Token>> postingsByDoc))
                     {
-                        actualTokens[text] = new Dictionary<int?, IList<Token>>();
+                        actualTokens[text] = postingsByDoc = new Dictionary<int?, IList<Token>>();
                     }
-                    IDictionary<int?, IList<Token>> postingsByDoc = actualTokens[text];
-                    if (!postingsByDoc.ContainsKey(docCount))
+                    if (!postingsByDoc.TryGetValue(docCount, out IList<Token> postings))
                     {
-                        postingsByDoc[docCount] = new List<Token>();
+                        postingsByDoc[docCount] = postings = new List<Token>();
                     }
-                    postingsByDoc[docCount].Add(token);
+                    postings.Add(token);
                     tokens.Add(token);
                     pos += posIncr;
                     // stuff abs position into type:

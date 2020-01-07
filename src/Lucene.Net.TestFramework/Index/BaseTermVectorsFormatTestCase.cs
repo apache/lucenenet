@@ -340,24 +340,24 @@ namespace Lucene.Net.Index
                 startOffsetToTerms = new Dictionary<int?, ISet<int?>>(len);
                 for (int i = 0; i < len; ++i)
                 {
-                    if (!positionToTerms.ContainsKey(positions[i]))
+                    if (!positionToTerms.TryGetValue(positions[i], out ISet<int?> positionTerms))
                     {
-                        positionToTerms[positions[i]] = new HashSet<int?>();//size1
+                        positionToTerms[positions[i]] = positionTerms = NewHashSet<int?>(1);
                     }
-                    positionToTerms[positions[i]].Add(i);
-                    if (!startOffsetToTerms.ContainsKey(startOffsets[i]))
+                    positionTerms.Add(i);
+                    if (!startOffsetToTerms.TryGetValue(startOffsets[i], out ISet<int?> startOffsetTerms))
                     {
-                        startOffsetToTerms[startOffsets[i]] = new HashSet<int?>();//size1
+                        startOffsetToTerms[startOffsets[i]] = startOffsetTerms = NewHashSet<int?>(1);
                     }
-                    startOffsetToTerms[startOffsets[i]].Add(i);
+                    startOffsetTerms.Add(i);
                 }
 
                 freqs = new Dictionary<string, int?>();
                 foreach (string term in terms)
                 {
-                    if (freqs.ContainsKey(term))
+                    if (freqs.TryGetValue(term, out int? freq))
                     {
-                        freqs[term] = freqs[term] + 1;
+                        freqs[term] = freq + 1;
                     }
                     else
                     {
@@ -371,6 +371,17 @@ namespace Lucene.Net.Index
                 piAtt = AddAttribute<IPositionIncrementAttribute>();
                 oAtt = AddAttribute<IOffsetAttribute>();
                 pAtt = AddAttribute<IPayloadAttribute>();
+            }
+
+            // LUCENENET: Since capacity wasn't added until .NET Standard 2.1,
+            // this wrapper ensures we can pass it even if it is ignored
+            private ISet<T> NewHashSet<T>(int capacity)
+            {
+#if FEATURE_HASHSET_CAPACITY
+                return new HashSet<T>(capacity);
+#else
+                return new HashSet<T>();
+#endif
             }
 
             public virtual bool HasPayloads()

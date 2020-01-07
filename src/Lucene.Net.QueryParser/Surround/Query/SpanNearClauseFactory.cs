@@ -86,8 +86,8 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         protected virtual void AddSpanQueryWeighted(SpanQuery sq, float weight)
         {
             float w;
-            if (weightBySpanQuery.ContainsKey(sq))
-                w = weightBySpanQuery[sq] + weight;
+            if (weightBySpanQuery.TryGetValue(sq, out float weightValue))
+                w = weightValue + weight;
             else
                 w = weight;
             weightBySpanQuery[sq] = w;

@@ -128,8 +128,8 @@ namespace Lucene.Net.Documents
                     }
                     else
                     {
-                        int count = fieldValueCounts.ContainsKey(f.Name) ?
-                          fieldValueCounts[f.Name] : 0;
+                        if (!fieldValueCounts.TryGetValue(f.Name, out int count))
+                            count = 0;
                         count++;
                         fieldValueCounts.Put(f.Name, count);
                         assertTrue(f.Name + " is " + f.GetType(),

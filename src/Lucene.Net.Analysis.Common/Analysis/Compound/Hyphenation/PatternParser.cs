@@ -432,8 +432,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             if (local.Equals("hyphen-char", StringComparison.Ordinal))
             {
-                string h = attrs.ContainsKey("value") ? attrs["value"] : null;
-                if (h != null && h.Length == 1)
+                if (attrs.TryGetValue("value", out string h) && h != null && h.Length == 1)
                 {
                     hyphenChar = h[0];
                 }

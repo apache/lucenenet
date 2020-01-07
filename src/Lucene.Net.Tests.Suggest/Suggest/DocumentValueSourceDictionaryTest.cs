@@ -116,7 +116,7 @@ namespace Lucene.Net.Search.Suggest
             while ((f = inputIterator.Next()) != null)
             {
                 string field = f.Utf8ToString();
-                Document doc = docs.ContainsKey(field) ? docs[field] : null;
+                Document doc = docs[field];
                 docs.Remove(field);
                 //Document doc = docs.remove(f.utf8ToString());
                 long w1 = doc.GetField(WEIGHT_FIELD_NAME_1).GetInt64ValueOrDefault();
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search.Suggest
             while ((f = inputIterator.Next()) != null)
             {
                 string field = f.Utf8ToString();
-                Document doc = docs.ContainsKey(field) ? docs[field] : null;
+                Document doc = docs[field];
                 docs.Remove(field);
                 long w1 = doc.GetField(WEIGHT_FIELD_NAME_1).GetInt64ValueOrDefault();
                 long w2 = doc.GetField(WEIGHT_FIELD_NAME_2).GetInt64ValueOrDefault();
@@ -197,7 +197,7 @@ namespace Lucene.Net.Search.Suggest
             while ((f = inputIterator.Next()) != null)
             {
                 string field = f.Utf8ToString();
-                Document doc = docs.ContainsKey(field) ? docs[field] : null;
+                Document doc = docs[field];
                 docs.Remove(field);
                 long w1 = doc.GetField(WEIGHT_FIELD_NAME_1).GetInt64ValueOrDefault();
                 long w2 = doc.GetField(WEIGHT_FIELD_NAME_2).GetInt64ValueOrDefault();
@@ -262,7 +262,7 @@ namespace Lucene.Net.Search.Suggest
             while ((f = inputIterator.Next()) != null)
             {
                 string field = f.Utf8ToString();
-                Document doc = docs.ContainsKey(field) ? docs[field] : null;
+                Document doc = docs[field];
                 docs.Remove(field);
                 long w1 = doc.GetField(WEIGHT_FIELD_NAME_1).GetInt64ValueOrDefault();
                 long w2 = doc.GetField(WEIGHT_FIELD_NAME_2).GetInt64ValueOrDefault();
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search.Suggest
             while ((f = inputIterator.Next()) != null)
             {
                 string field = f.Utf8ToString();
-                Document doc = docs.ContainsKey(field) ? docs[field] : null;
+                Document doc = docs[field];
                 docs.Remove(field);
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 assertEquals(inputIterator.Weight, 10);

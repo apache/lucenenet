@@ -157,7 +157,7 @@ namespace Lucene.Net.Search.Suggest
             while ((f = inputIterator.Next()) != null)
             {
                 string field = f.Utf8ToString();
-                Document doc = docs.ContainsKey(field) ? docs[field] : null;
+                Document doc = docs[field];
                 docs.Remove(field);
                 //Document doc = docs.Remove(f.Utf8ToString());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search.Suggest
             while ((f = inputIterator.Next()) != null)
             {
                 var field = f.Utf8ToString();
-                Document doc = docs.ContainsKey(field) ? docs[field] : null;
+                Document doc = docs[field];
                 docs.Remove(field);
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 IIndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
@@ -246,7 +246,7 @@ namespace Lucene.Net.Search.Suggest
             while ((f = inputIterator.Next()) != null)
             {
                 string field = f.Utf8ToString();
-                Document doc = docs.ContainsKey(field) ? docs[field] : null;
+                Document doc = docs[field];
                 docs.Remove(field);
                 //Document doc = docs.remove(f.utf8ToString());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
@@ -325,7 +325,7 @@ namespace Lucene.Net.Search.Suggest
             while ((f = inputIterator.Next()) != null)
             {
                 var field = f.Utf8ToString();
-                Document doc = docs.ContainsKey(field) ? docs[field] : null;
+                Document doc = docs[field];
                 docs.Remove(field);
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 IIndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);

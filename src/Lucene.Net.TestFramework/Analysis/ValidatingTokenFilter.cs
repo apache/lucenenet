@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis
 
             if (offsetAtt != null && posIncAtt != null && offsetsAreCorrect)
             {
-                if (!posToStartOffset.ContainsKey(pos))
+                if (!posToStartOffset.TryGetValue(pos, out int oldStartOffset))
                 {
                     // First time we've seen a token leaving from this position:
                     posToStartOffset[pos] = startOffset;
@@ -130,7 +130,6 @@ namespace Lucene.Net.Analysis
                     // We've seen a token leaving from this position
                     // before; verify the startOffset is the same:
                     //System.out.println("  + vs " + pos + " -> " + startOffset);
-                    int oldStartOffset = posToStartOffset[pos];
                     if (oldStartOffset != startOffset)
                     {
                         throw new Exception(name + ": inconsistent startOffset at pos=" + pos + ": " + oldStartOffset + " vs " + startOffset + "; token=" + termAtt);
@@ -139,7 +138,7 @@ namespace Lucene.Net.Analysis
 
                 int endPos = pos + posLen;
 
-                if (!posToEndOffset.ContainsKey(endPos))
+                if (!posToEndOffset.TryGetValue(endPos, out int oldEndOffset))
                 {
                     // First time we've seen a token arriving to this position:
                     posToEndOffset[endPos] = endOffset;
@@ -150,7 +149,6 @@ namespace Lucene.Net.Analysis
                     // We've seen a token arriving to this position
                     // before; verify the endOffset is the same:
                     //System.out.println("  + ve " + endPos + " -> " + endOffset);
-                    int oldEndOffset = posToEndOffset[endPos];
                     if (oldEndOffset != endOffset)
                     {
                         throw new Exception(name + ": inconsistent endOffset at pos=" + endPos + ": " + oldEndOffset + " vs " + endOffset + "; token=" + termAtt);

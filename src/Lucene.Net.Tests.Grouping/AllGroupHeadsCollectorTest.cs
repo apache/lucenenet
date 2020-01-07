@@ -489,14 +489,14 @@ namespace Lucene.Net.Search.Grouping
                     continue;
                 }
 
-                if (!groupHeads.ContainsKey(groupDoc.group))
+                if (!groupHeads.TryGetValue(groupDoc.group, out List<GroupDoc> grouphead))
                 {
                     List<GroupDoc> list = new List<GroupDoc>();
                     list.Add(groupDoc);
                     groupHeads[groupDoc.group] = list;
                     continue;
                 }
-                groupHeads[groupDoc.group].Add(groupDoc);
+                grouphead.Add(groupDoc);
             }
 
             int[] allGroupHeads = new int[groupHeads.Count];

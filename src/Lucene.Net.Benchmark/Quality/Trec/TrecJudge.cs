@@ -139,14 +139,8 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
             for (int i = 0; i < qq.Length; i++)
             {
                 string id = qq[i].QueryID;
-                if (missingQueries.ContainsKey(id))
-                {
-                    missingQueries.Remove(id);
-                }
-                else
-                {
+                if (!missingQueries.Remove(id))
                     missingJudgements.Add(id);
-                }
             }
             bool isValid = true;
             if (missingJudgements.Count > 0)

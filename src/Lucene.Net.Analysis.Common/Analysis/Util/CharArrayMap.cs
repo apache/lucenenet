@@ -767,10 +767,10 @@ namespace Lucene.Net.Analysis.Util
             {
                 while (iter.MoveNext())
                 {
-                    if (!this.ContainsKey(iter.Current.Key))
+                    if (!this.TryGetValue(iter.Current.Key, out TValue value))
                         return false;
 
-                    if (!EqualityComparer<TValue>.Default.Equals(this[iter.Current.Key], iter.Current.Value))
+                    if (!EqualityComparer<TValue>.Default.Equals(value, iter.Current.Value))
                         return false;
                 }
             }
