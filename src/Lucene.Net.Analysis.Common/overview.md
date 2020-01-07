@@ -1,5 +1,6 @@
 ﻿---
 uid: Lucene.Net.Analysis.Common
+title: Lucene.Net.Analysis.Common
 summary: *content
 ---
 

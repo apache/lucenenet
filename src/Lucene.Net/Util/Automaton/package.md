@@ -1,4 +1,9 @@
-﻿
+﻿---
+uid: Lucene.Net.Util.Automaton
+summary: *content
+---
+
+
 <!--
  dk.brics.automaton
 

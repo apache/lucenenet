@@ -1,5 +1,5 @@
 ﻿---
-uid: Lucene.Net.Benchmark
+uid: Lucene.Net.Benchmarks
 summary: *content
 ---
 
