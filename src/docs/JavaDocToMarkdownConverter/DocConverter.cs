@@ -33,10 +33,10 @@ namespace JavaDocToMarkdownConverter
 
         public DocConverter()
         {
-            _converter = new Converter(new CustomMarkdownScheme());
+            _defaultConverter = new Converter(new CustomMarkdownScheme());
         }
 
-        private readonly Converter _converter;
+        private readonly Converter _defaultConverter;
 
         /// <summary>
         /// 
@@ -79,13 +79,18 @@ namespace JavaDocToMarkdownConverter
                 return;
             }
 
-            var markdown = _converter.ConvertFile(inputDoc);
-
             var ns = ExtractNamespaceFromFile(outputFile);
 
             // we might need to convert this namespace to an explicit value
             if (PackageNamespaceToStandalone.TryGetValue(ns, out var standaloneNs))
                 ns = standaloneNs;
+
+            // get the MD converter for the namespace
+            var converter = _defaultConverter;
+            if (CustomConverters.TryGetValue(ns, out var customConverter))
+                converter = customConverter;
+
+            var markdown = converter.ConvertFile(inputDoc);
 
             if (JavaDocFormatters.CustomReplacers.TryGetValue(ns, out var replacers))
             {
@@ -106,6 +111,15 @@ namespace JavaDocToMarkdownConverter
         }
 
         /// <summary>
+        /// Custom markdown converters for certain namespaces
+        /// </summary>
+        private static readonly Dictionary<string, Converter> CustomConverters = new Dictionary<string, Converter>(StringComparer.InvariantCultureIgnoreCase)
+        {
+            ["Lucene.Net.Benchmark"] = new Converter(new CustomMarkdownScheme(new ElementWhitespacePrefixReplacer("div"))),
+            ["Lucene.Net.Replicator"] = new Converter(new CustomMarkdownScheme(new AllWhitespacePrefixReplacer()))
+        };
+
+        /// <summary>
         /// Explicit mappings of namespaced package files to standalone files
         /// </summary>
         /// <remarks>
@@ -113,7 +127,10 @@ namespace JavaDocToMarkdownConverter
         /// </remarks>
         private static readonly Dictionary<string, string> PackageNamespaceToStandalone = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase)
         {
-            ["Lucene.Net.Search.Grouping"] = "Lucene.Net.Grouping"
+            ["Lucene.Net.Search.Grouping"] = "Lucene.Net.Grouping",
+            ["Lucene.Net.Index.Memory"] = "Lucene.Net.Memory",
+            ["Lucene.Net.Queryparser"] = "Lucene.Net.QueryParser",
+            ["Lucene.Net.Testframework"] = "Lucene.Net.TestFramework",
         };
 
         /// <summary>
@@ -128,6 +145,11 @@ namespace JavaDocToMarkdownConverter
                 "Lucene.Net.Analysis.OpenNLP",
                 "Lucene.Net.Highlighter",
                 "Lucene.Net.Grouping",
+                "Lucene.Net.Memory",
+                "Lucene.Net.QueryParser",
+                "Lucene.Net.Sandbox",
+                "Lucene.Net.Suggest",
+                "Lucene.Net.TestFramework"
             };
 
         /// <summary>

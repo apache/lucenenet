@@ -1,5 +1,6 @@
 ﻿---
-uid: Lucene.Net.Index.Memory
+uid: Lucene.Net.Memory
+title: Lucene.Net.Memory
 summary: *content
 ---
 

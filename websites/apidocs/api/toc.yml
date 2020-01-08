@@ -75,7 +75,7 @@
   topicUid: Lucene.Net.Suggest
 - name: Lucene.Net.TestFramework
   href: ../obj/docfx/api/Lucene.Net.TestFramework/toc.yml
-  topicUid: Lucene.Net.Testframework
+  topicUid: Lucene.Net.TestFramework
 - name: Lucene.Net.Demo
   href: ../obj/docfx/api/Lucene.Net.Demo/toc.yml
   topicUid: Lucene.Net.Demo

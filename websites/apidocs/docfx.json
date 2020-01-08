@@ -413,9 +413,14 @@
           "Lucene.Net/overview.md",
           "Lucene.Net.Analysis.Common/overview.md",
           "Lucene.Net.Analysis.Morfologik/overview.md",
-          "Lucene.Net.Analysis.OpenNLP/overview.md",
-          "Lucene.Net.TestFramework/overview.md",
-          "Lucene.Net.Grouping/package.md"
+          "Lucene.Net.Analysis.OpenNLP/overview.md",          
+          "Lucene.Net.Highlighter/overview.md",
+          "Lucene.Net.Grouping/package.md",
+          "Lucene.Net.Memory/package.md",
+          "Lucene.Net.QueryParser/overview.md",
+          "Lucene.Net.Sandbox/overview.md",
+          "Lucene.Net.Suggest/overview.md",
+          "Lucene.Net.TestFramework/overview.md"
         ],
         "src": "../../src",
         "dest": "api"
@@ -477,7 +482,11 @@
           "Lucene.Net.Benchmark/overview.md",
           "Lucene.Net.Classification/overview.md",
           "Lucene.Net.Grouping/overview.md",
-          "Lucene.Net.Join/overview.md"
+          "Lucene.Net.Join/overview.md",
+          "Lucene.Net.Memory/overview.md",
+          "Lucene.Net.Queries/overview.md",
+          "Lucene.Net.Replicator/overview.md",
+          "Lucene.Net.Spatial/package.md"
         ]
       },
       {

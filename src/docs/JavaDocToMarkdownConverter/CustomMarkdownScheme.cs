@@ -31,7 +31,7 @@ namespace JavaDocToMarkdownConverter
     /// </remarks>
     public class CustomMarkdownScheme : IScheme
     {
-        public CustomMarkdownScheme()
+        public CustomMarkdownScheme(params IReplacer[] additionalReplacers)
         {
             _replacers = new Markdown().Replacers(); //originals
             _replacers.RemoveAt(0); //this is the 'strong' one
@@ -43,15 +43,15 @@ namespace JavaDocToMarkdownConverter
             // http://localhost:8080/api/Lucene.Net/Lucene.Net.Search.Spans.html
             // source: C:\Users\Shannon\Documents\_Projects\Lucene.Net\lucene-solr-releases-lucene-solr-4.8.0\lucene\core\src\java\org\apache\lucene\search\spans\package.html
 
-            
-            _replacers.Add(new WhitespacePrefixReplacer("div"));
-
             _replacers.Add(new CodeLinkReplacer());
             _replacers.Add(new RepoLinkReplacer());
             _replacers.Add(new DocTypeReplacer());
             _replacers.Add(new ExtraHtmlElementReplacer());
             _replacers.Add(new NamedAnchorLinkReplacer());
             _replacers.Add(new DivWrapperReplacer());
+
+            foreach(var replacer in additionalReplacers)
+                _replacers.Add(replacer);
         }
 
         private readonly IList<IReplacer> _replacers;

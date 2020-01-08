@@ -24,6 +24,8 @@ Lucene 4.0 file format.
 
 # Apache Lucene - Index File Formats
 
+<div>
+
 *   [Introduction](#introduction)
 
 *   [Definitions](#definitions)
@@ -48,7 +50,11 @@ Lucene 4.0 file format.
 
     *   [Limitations](#limitations)
 
+</div>
+
 ## Introduction
+
+<div>
 
 This document defines the index file formats used in this version of Lucene. If you are using a different version of Lucene, please consult the copy of `docs/` that was distributed with the version you are using.
 
@@ -56,7 +62,11 @@ Apache Lucene is written in Java, but several efforts are underway to write [ver
 
 As Lucene evolves, this document should evolve. Versions of Lucene in different programming languages should endeavor to agree on file formats, and generate new versions of this document.
 
+</div>
+
 ## Definitions
+
+<div>
 
 The fundamental concepts in Lucene are index, document, field and term.
 
@@ -106,7 +116,11 @@ The numbers stored in each segment are unique only within the segment, and must 
 
 When documents are deleted, gaps are created in the numbering. These are eventually removed as the index evolves through merging. Deleted documents are dropped when segments are merged. A freshly-merged segment thus has no gaps in its numbering.
 
+</div>
+
 ## Index Structure Overview
+
+<div>
 
 Each segment index maintains the following:
 
@@ -160,7 +174,11 @@ An optional file indicating which documents are deleted.
 
 Details on each of these are provided in their linked pages.
 
+</div>
+
 ## File Naming
+
+<div>
 
 All files belonging to a segment have the same name with varying extensions. The extensions correspond to the different file formats described below. When using the Compound File format (default in 1.4 and greater) these files (except for the Segment info file, the Lock file, and Deleted documents file) are collapsed into a single .cfs file (see below for details)
 
@@ -168,7 +186,11 @@ Typically, all segments in an index are stored in a single directory, although t
 
 As of version 2.1 (lock-less commits), file names are never re-used (there is one exception, "segments.gen", see below). That is, when any file is saved to the Directory it is given a never before used filename. This is achieved using a simple generations approach. For example, the first segments file is segments_1, then segments_2, etc. The generation is a sequential long integer represented in alpha-numeric (base 36) form.
 
+</div>
+
 ## Summary of File Extensions
+
+<div>
 
 The following table summarizes the names and extensions of the files in Lucene:
 
@@ -266,6 +288,7 @@ systems that frequently run out of file handles.</td>
 <td>Info about what files are deleted</td>
 </tr>
 </table>
+</div>
 
 ## Lock File
 
@@ -331,4 +354,8 @@ term vectors.
 
 ## Limitations
 
+<div>
+
 Lucene uses a Java `int` to refer to document numbers, and the index file format uses an `Int32` on-disk to store document numbers. This is a limitation of both the index file format and the current implementation. Eventually these should be replaced with either `UInt64` values, or better yet, [VInt](xref:Lucene.Net.Store.DataOutput#methods) values which have no limit.
+
+</div>

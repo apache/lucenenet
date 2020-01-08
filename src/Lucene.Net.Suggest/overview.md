@@ -1,5 +1,6 @@
 ﻿---
 uid: Lucene.Net.Suggest
+title: Lucene.Net.Suggest
 summary: *content
 ---
 

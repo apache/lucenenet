@@ -20,4 +20,4 @@ summary: *content
  limitations under the License.
 -->
 
-  Provides index files replication capabilities.
+Provides index files replication capabilities.

@@ -1,5 +1,6 @@
 ﻿---
-uid: Lucene.Net.Queryparser
+uid: Lucene.Net.QueryParser
+title: Lucene.Net.QueryParser
 summary: *content
 ---
 

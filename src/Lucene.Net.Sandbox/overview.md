@@ -1,5 +1,6 @@
 ﻿---
 uid: Lucene.Net.Sandbox
+title: Lucene.Net.Sandbox
 summary: *content
 ---
 

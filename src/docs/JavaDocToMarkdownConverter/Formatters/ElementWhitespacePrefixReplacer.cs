@@ -35,9 +35,9 @@ namespace JavaDocToMarkdownConverter.Formatters
     /// Which will end up being rendered as <pre><code> because it's left indented (even though it shouldn't since a div should be rendered as a div).
     /// So this is a work around.
     /// </remarks>
-    public class WhitespacePrefixReplacer : IReplacer
+    public class ElementWhitespacePrefixReplacer : IReplacer
     {
-        public WhitespacePrefixReplacer(string elementName)
+        public ElementWhitespacePrefixReplacer(string elementName)
         {
             elementMatch = new Regex($@"<{elementName}>(.*?)</{elementName}>", RegexOptions.Compiled | RegexOptions.Singleline); ;
         }
