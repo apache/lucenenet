@@ -1,5 +1,6 @@
 ﻿---
-uid: Lucene.Net.Search.Grouping
+uid: Lucene.Net.Grouping
+title: Lucene.Net.Grouping
 summary: *content
 ---
 

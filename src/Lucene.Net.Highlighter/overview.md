@@ -1,5 +1,6 @@
 ﻿---
 uid: Lucene.Net.Highlighter
+title: Lucene.Net.Highlighter
 summary: *content
 ---
 

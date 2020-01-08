@@ -381,7 +381,7 @@
           "files": [
             "Lucene.Net.TestFramework/Lucene.Net.TestFramework.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": ["**/obj/**", "**/bin/**"],
           "src": "../../src"
         }
       ],
@@ -414,7 +414,8 @@
           "Lucene.Net.Analysis.Common/overview.md",
           "Lucene.Net.Analysis.Morfologik/overview.md",
           "Lucene.Net.Analysis.OpenNLP/overview.md",
-          "Lucene.Net.TestFramework/overview.md"
+          "Lucene.Net.TestFramework/overview.md",
+          "Lucene.Net.Grouping/package.md"
         ],
         "src": "../../src",
         "dest": "api"
@@ -473,7 +474,10 @@
           "Lucene.Net.Analysis.OpenNLP/overview.md",
           "Lucene.Net.TestFramework/overview.md",
           "Lucene.Net.Analysis.Stempel/Stempel/package.md",
-          "Lucene.Net.Benchmark/overview.md"
+          "Lucene.Net.Benchmark/overview.md",
+          "Lucene.Net.Classification/overview.md",
+          "Lucene.Net.Grouping/overview.md",
+          "Lucene.Net.Join/overview.md"
         ]
       },
       {

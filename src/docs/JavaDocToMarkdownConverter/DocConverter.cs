@@ -83,6 +83,10 @@ namespace JavaDocToMarkdownConverter
 
             var ns = ExtractNamespaceFromFile(outputFile);
 
+            // we might need to convert this namespace to an explicit value
+            if (PackageNamespaceToStandalone.TryGetValue(ns, out var standaloneNs))
+                ns = standaloneNs;
+
             if (JavaDocFormatters.CustomReplacers.TryGetValue(ns, out var replacers))
             {
                 foreach (var r in replacers)
@@ -102,6 +106,17 @@ namespace JavaDocToMarkdownConverter
         }
 
         /// <summary>
+        /// Explicit mappings of namespaced package files to standalone files
+        /// </summary>
+        /// <remarks>
+        /// This is really edge case stuff
+        /// </remarks>
+        private static readonly Dictionary<string, string> PackageNamespaceToStandalone = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase)
+        {
+            ["Lucene.Net.Search.Grouping"] = "Lucene.Net.Grouping"
+        };
+
+        /// <summary>
         /// These aren't real namespaces but they have overview.md files and in this case we need to prepend an H1 header
         /// to the overview.md file.
         /// </summary>
@@ -111,6 +126,8 @@ namespace JavaDocToMarkdownConverter
                 "Lucene.Net.Analysis.Common",
                 "Lucene.Net.Analysis.Morfologik",
                 "Lucene.Net.Analysis.OpenNLP",
+                "Lucene.Net.Highlighter",
+                "Lucene.Net.Grouping",
             };
 
         /// <summary>
