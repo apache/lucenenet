@@ -357,6 +357,7 @@ namespace Lucene.Net.Util
                 foreach (var key in keysToRemove)
                 {
                     backingStore.Remove(key);
+					key.Free();
                 }
         }
 
