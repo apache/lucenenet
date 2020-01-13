@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Collections;
+using System.Runtime.Serialization;
 
 namespace Lucene.Net.Util
 {
@@ -362,37 +363,66 @@ namespace Lucene.Net.Util
         // we keep a hard reference to our NULL key, so map supports null keys that never get GCed:
         internal static readonly object NULL = new object();
 
-        private sealed class IdentityWeakReference : WeakReference
-        {
-            private readonly int hash;
+		private struct IdentityWeakReference : IEquatable<IdentityWeakReference>, ISerializable
+		{
+			private System.Runtime.InteropServices.GCHandle gcHandle;
+			private readonly int hash;
 
-            internal IdentityWeakReference(object obj/*, ReferenceQueue<object> queue*/)
-                : base(obj == null ? NULL : obj/*, queue*/)
-            {
-                hash = RuntimeHelpers.GetHashCode(obj);
-            }
+			public object Target
+			{
+				get
+				{
+					if (!gcHandle.IsAllocated)
+						return null;
+					return gcHandle.Target;
+				}
+			}
 
-            public override int GetHashCode()
-            {
-                return hash;
-            }
+			public bool IsAlive
+			{
+				get
+				{
+					return gcHandle.Target != null;
+				}
+			}
 
-            public override bool Equals(object o)
-            {
-                if (this == o)
-                {
-                    return true;
-                }
-                IdentityWeakReference @ref = o as IdentityWeakReference;
-                if (@ref != null)
-                {
-                    if (this.Target == @ref.Target)
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }
-    }
+			public IdentityWeakReference(object target)
+			{
+				var obj = target ?? NULL;
+				gcHandle = System.Runtime.InteropServices.GCHandle.Alloc(obj, System.Runtime.InteropServices.GCHandleType.Weak);
+				hash = RuntimeHelpers.GetHashCode(obj);
+			}
+
+			public void Free()
+			{
+				gcHandle.Free();
+			}
+
+			public override int GetHashCode()
+			{
+				return hash;
+			}
+
+			public bool Equals(IdentityWeakReference other)
+			{
+				return other.gcHandle.Target == gcHandle.Target;
+			}
+
+			public void GetObjectData(SerializationInfo info, StreamingContext context)
+			{
+				if (info == null)
+					throw new ArgumentNullException("info");
+
+				info.AddValue("TrackResurrection", false);
+				try
+				{
+					info.AddValue("TrackedObject", gcHandle.Target);
+				}
+				catch (Exception)
+				{
+					info.AddValue("TrackedObject", null);
+				}
+			}
+		}
+	}
 }
