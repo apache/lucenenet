@@ -416,7 +416,6 @@
           "Lucene.Net.Analysis.OpenNLP/overview.md",          
           "Lucene.Net.Highlighter/overview.md",
           "Lucene.Net.Grouping/package.md",
-          "Lucene.Net.Memory/package.md",
           "Lucene.Net.QueryParser/overview.md",
           "Lucene.Net.Sandbox/overview.md",
           "Lucene.Net.Suggest/overview.md",

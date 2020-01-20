@@ -115,7 +115,7 @@ namespace JavaDocToMarkdownConverter
         /// </summary>
         private static readonly Dictionary<string, Converter> CustomConverters = new Dictionary<string, Converter>(StringComparer.InvariantCultureIgnoreCase)
         {
-            ["Lucene.Net.Benchmark"] = new Converter(new CustomMarkdownScheme(new ElementWhitespacePrefixReplacer("div"))),
+            ["Lucene.Net.Benchmarks"] = new Converter(new CustomMarkdownScheme(new ElementWhitespacePrefixReplacer("div"))),
             ["Lucene.Net.Replicator"] = new Converter(new CustomMarkdownScheme(new AllWhitespacePrefixReplacer()))
         };
 
@@ -128,9 +128,10 @@ namespace JavaDocToMarkdownConverter
         private static readonly Dictionary<string, string> PackageNamespaceToStandalone = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase)
         {
             ["Lucene.Net.Search.Grouping"] = "Lucene.Net.Grouping",
-            ["Lucene.Net.Index.Memory"] = "Lucene.Net.Memory",
+            ["Lucene.Net.Memory"] = "Lucene.Net.Index.Memory",
             ["Lucene.Net.Queryparser"] = "Lucene.Net.QueryParser",
             ["Lucene.Net.Testframework"] = "Lucene.Net.TestFramework",
+            ["Lucene.Net.Benchmark"] = "Lucene.Net.Benchmarks"
         };
 
         /// <summary>
@@ -142,14 +143,13 @@ namespace JavaDocToMarkdownConverter
                 "Lucene.Net",
                 "Lucene.Net.Analysis.Common",
                 "Lucene.Net.Analysis.Morfologik",
-                "Lucene.Net.Analysis.OpenNLP",
                 "Lucene.Net.Highlighter",
                 "Lucene.Net.Grouping",
-                "Lucene.Net.Memory",
                 "Lucene.Net.QueryParser",
                 "Lucene.Net.Sandbox",
                 "Lucene.Net.Suggest",
-                "Lucene.Net.TestFramework"
+                "Lucene.Net.TestFramework",
+                "Lucene.Net.Benchmarks",
             };
 
         /// <summary>
@@ -157,10 +157,6 @@ namespace JavaDocToMarkdownConverter
         /// </summary>
         /// <param name="ns"></param>
         /// <param name="fileContent"></param>
-        /// <param name="rawTitle">
-        /// If specified will add the "title" front-matter, this is used for overview.md files that are
-        /// standalone (not part of a real namespace) (aka conceptual files in docfx)
-        /// </param>
         /// <returns></returns>
         private string AppendYamlHeader(string ns, string fileContent)
         {

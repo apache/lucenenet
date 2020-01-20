@@ -1,5 +1,5 @@
 ﻿---
-uid: Lucene.Net.Analysis.OpenNLP
+uid: Lucene.Net.Analysis.OpenNlp
 summary: *content
 ---
 
