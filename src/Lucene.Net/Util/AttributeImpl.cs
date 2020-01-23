@@ -119,21 +119,14 @@ namespace Lucene.Net.Util
         public virtual void ReflectWith(IAttributeReflector reflector) // LUCENENET NOTE: This method was abstract in Lucene
         {
             Type clazz = this.GetType();
-            LinkedList<WeakReference> interfaces = AttributeSource.GetAttributeInterfaces(clazz);
+            LinkedList<WeakReference<Type>> interfaces = AttributeSource.GetAttributeInterfaces(clazz);
 
             if (interfaces.Count != 1)
             {
                 throw new NotSupportedException(clazz.Name + " implements more than one Attribute interface, the default ReflectWith() implementation cannot handle this.");
             }
 
-            Type interf = (System.Type)interfaces.First().Target;
-
-            /*object target = interfaces.First.Value;
-
-            if (target == null)
-                return;
-
-            Type interf = target.GetType();// as Type;*/
+            interfaces.First.Value.TryGetTarget(out Type interf);
 
             //problem: the interfaces list has weak references that could have expired already
 

@@ -55,8 +55,10 @@ namespace Lucene.Net.Util
 
             private sealed class DefaultAttributeFactory : AttributeFactory
             {
-                internal static readonly WeakIdentityMap<Type, WeakReference> attClassImplMap = 
-                    WeakIdentityMap<Type, WeakReference>.NewConcurrentHashMap(false);
+                // LUCENENET: Using ConditionalWeakTable instead of WeakIdentityMap. A Type IS an
+                // identity for a class, so there is no need for an identity wrapper for it.
+                private static readonly ConditionalWeakTable<Type, WeakReference<Type>> attClassImplMap =
+                    new ConditionalWeakTable<Type, WeakReference<Type>>();
 
                 internal DefaultAttributeFactory()
                 {
@@ -77,22 +79,50 @@ namespace Lucene.Net.Util
                 internal static Type GetClassForInterface<T>() where T : IAttribute
                 {
                     var attClass = typeof(T);
-                    WeakReference @ref = attClassImplMap.Get(attClass);
-                    Type clazz = (@ref == null) ? null : (Type)@ref.Target;
-                    if (clazz == null)
+                    Type clazz;
+
+#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                    // LUCENENET: If the weakreference is dead, we need to explicitly remove and re-add its key.
+                    // We synchronize on attClassImplMap only to make the operation atomic. This does not actually
+                    // utilize the same lock as attClassImplMap does internally, but since this is the only place
+                    // it is used, it is fine here.
+
+                    // In .NET Standard 2.1, we can use AddOrUpdate, so don't need the lock.
+                    lock (attClassImplMap)
+#endif
                     {
-                        // we have the slight chance that another thread may do the same, but who cares?
-                        try
+                        var @ref = attClassImplMap.GetValue(attClass, (key) =>
                         {
-                            string name = attClass.FullName.Replace(attClass.Name, attClass.Name.Substring(1)) + ", " + attClass.GetTypeInfo().Assembly.FullName;
-                            attClassImplMap.Put(attClass, new WeakReference(clazz = Type.GetType(name, true)));
-                        }
-                        catch (Exception e)
+                            return CreateAttributeWeakReference(key, out clazz);
+                        });
+
+                        if (!@ref.TryGetTarget(out clazz))
                         {
-                            throw new System.ArgumentException("Could not find implementing class for " + attClass.Name, e);
+#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+                            // There is a small chance that multiple threads will get through here, but it doesn't matter
+                            attClassImplMap.AddOrUpdate(attClass, CreateAttributeWeakReference(attClass, out clazz));
+#else
+                            attClassImplMap.Remove(attClass);
+                            attClassImplMap.Add(attClass, CreateAttributeWeakReference(attClass, out clazz));
+#endif
                         }
                     }
+
                     return clazz;
+                }
+
+                // LUCENENET specific - factored this out so we can reuse
+                private static WeakReference<Type> CreateAttributeWeakReference(Type attClass, out Type clazz)
+                {
+                    try
+                    {
+                        string name = attClass.FullName.Replace(attClass.Name, attClass.Name.Substring(1)) + ", " + attClass.GetTypeInfo().Assembly.FullName;
+                        return new WeakReference<Type>(clazz = Type.GetType(name, true));
+                    }
+                    catch (Exception e)
+                    {
+                        throw new ArgumentException("Could not find implementing class for " + attClass.Name, e);
+                    }
                 }
             }
         }
@@ -147,7 +177,7 @@ namespace Lucene.Net.Util
         {
             if (input == null)
             {
-                throw new System.ArgumentException("input AttributeSource must not be null");
+                throw new ArgumentException("input AttributeSource must not be null");
             }
             this.attributes = input.attributes;
             this.attributeImpls = input.attributeImpls;
@@ -258,36 +288,33 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// A cache that stores all interfaces for known implementation classes for performance (slow reflection) </summary>
-        private static readonly WeakIdentityMap<Type, LinkedList<WeakReference>> knownImplClasses =
-            WeakIdentityMap<Type, LinkedList<WeakReference>>.NewConcurrentHashMap(false);
+        // LUCENENET: Using ConditionalWeakTable instead of WeakIdentityMap. A Type IS an
+        // identity for a class, so there is no need for an identity wrapper for it.
+        private static readonly ConditionalWeakTable<Type, LinkedList<WeakReference<Type>>> knownImplClasses =
+            new ConditionalWeakTable<Type, LinkedList<WeakReference<Type>>>();
 
-        internal static LinkedList<WeakReference> GetAttributeInterfaces(Type clazz)
+        internal static LinkedList<WeakReference<Type>> GetAttributeInterfaces(Type clazz)
         {
-            LinkedList<WeakReference> foundInterfaces = knownImplClasses.Get(clazz);
-            lock (knownImplClasses)
+            return knownImplClasses.GetValue(clazz, (key) =>
             {
-                if (foundInterfaces == null)
+                LinkedList<WeakReference<Type>> foundInterfaces = new LinkedList<WeakReference<Type>>();
+                // find all interfaces that this attribute instance implements
+                // and that extend the Attribute interface
+                Type actClazz = clazz;
+                do
                 {
-                    // we have the slight chance that another thread may do the same, but who cares?
-                    foundInterfaces = new LinkedList<WeakReference>();
-                    // find all interfaces that this attribute instance implements
-                    // and that extend the Attribute interface
-                    Type actClazz = clazz;
-                    do
+                    foreach (Type curInterface in actClazz.GetInterfaces())
                     {
-                        foreach (Type curInterface in actClazz.GetInterfaces())
+                        if (curInterface != typeof(IAttribute) && typeof(IAttribute).IsAssignableFrom(curInterface))
                         {
-                            if (curInterface != typeof(IAttribute) && (typeof(IAttribute)).IsAssignableFrom(curInterface))
-                            {
-                                foundInterfaces.AddLast(new WeakReference(curInterface));
-                            }
+                            foundInterfaces.AddLast(new WeakReference<Type>(curInterface));
                         }
-                        actClazz = actClazz.GetTypeInfo().BaseType;
-                    } while (actClazz != null);
-                    knownImplClasses.Put(clazz, foundInterfaces);
-                }
-            }
-            return foundInterfaces;
+                    }
+                    actClazz = actClazz.GetTypeInfo().BaseType;
+                } while (actClazz != null);
+
+                return foundInterfaces;
+            });
         }
 
         /// <summary>
@@ -307,12 +334,12 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            LinkedList<WeakReference> foundInterfaces = GetAttributeInterfaces(clazz);
+            LinkedList<WeakReference<Type>> foundInterfaces = GetAttributeInterfaces(clazz);
 
             // add all interfaces of this Attribute to the maps
-            foreach (WeakReference curInterfaceRef in foundInterfaces)
+            foreach (var curInterfaceRef in foundInterfaces)
             {
-                Type curInterface = (Type)curInterfaceRef.Target;
+                curInterfaceRef.TryGetTarget(out Type curInterface);
                 Debug.Assert(curInterface != null, "We have a strong reference on the class holding the interfaces, so they should never get evicted");
                 // Attribute is a superclass of this interface
                 if (!attributes.ContainsKey(curInterface))

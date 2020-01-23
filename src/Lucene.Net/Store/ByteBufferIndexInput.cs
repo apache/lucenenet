@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
 {
@@ -50,17 +51,29 @@ namespace Lucene.Net.Store
 
         private ByteBuffer curBuf; // redundant for speed: buffers[curBufIndex]
         private bool isClone = false;
-        private readonly WeakIdentityMap<ByteBufferIndexInput, BoolRefWrapper> clones;
+        // LUCENENET: Using ConditionalWeakTable rather than WeakIdenityMap. ConditionalWeakTable
+        // uses RuntimeHelpers.GetHashCode() to find the item, so technically, it IS an identity collection.
+        private ConditionalWeakTable<ByteBufferIndexInput, BoolRefWrapper> clones;
 
         private class BoolRefWrapper
         {
+            private bool value;
+
             // .NET port: this is needed as bool is not a reference type
             public BoolRefWrapper(bool value)
             {
-                this.Value = value;
+                this.value = value;
             }
 
-            public bool Value { get; private set; }
+            public static implicit operator bool(BoolRefWrapper value)
+            {
+                return value.value;
+            }
+
+            public static implicit operator BoolRefWrapper(bool value)
+            {
+                return new BoolRefWrapper(value);
+            }
         }
 
         internal ByteBufferIndexInput(string resourceDescription, ByteBuffer[] buffers, long length, int chunkSizePower, bool trackClones)
@@ -70,7 +83,9 @@ namespace Lucene.Net.Store
             this.length = length;
             this.chunkSizePower = chunkSizePower;
             this.chunkSizeMask = (1L << chunkSizePower) - 1L;
-            this.clones = trackClones ? WeakIdentityMap<ByteBufferIndexInput, BoolRefWrapper>.NewConcurrentHashMap() : null;
+            // LUCENENET: Using ConditionalWeakTable rather than WeakIdenityMap. ConditionalWeakTable
+            // uses RuntimeHelpers.GetHashCode() to find the item, so technically, it IS an identity collection.
+            this.clones = trackClones ? new ConditionalWeakTable<ByteBufferIndexInput, BoolRefWrapper>() : null;
 
             Debug.Assert(chunkSizePower >= 0 && chunkSizePower <= 30);
             Debug.Assert(((long)((ulong)length >> chunkSizePower)) < int.MaxValue);
@@ -298,7 +313,7 @@ namespace Lucene.Net.Store
             // register the new clone in our clone list to clean it up on closing:
             if (clones != null)
             {
-                this.clones.Put(clone, new BoolRefWrapper(true));
+                this.clones.Add(clone, true);
             }
 
             return clone;
@@ -374,16 +389,22 @@ namespace Lucene.Net.Store
                     // for extra safety unset also all clones' buffers:
                     if (clones != null)
                     {
-                        foreach (ByteBufferIndexInput clone in clones.Keys)
+                        // LUCENENET: Since .NET will GC types that go out of scope automatically,
+                        // this isn't strictly necessary. However, we are doing it anyway when
+                        // the enumerator is available (.NET Standard 2.1+)
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+                        foreach (var pair in clones)
                         {
-                            clone.UnsetBuffers();
+                            pair.Key.UnsetBuffers();
                         }
                         this.clones.Clear();
+#endif
+                        this.clones = null; // LUCENENET: de-reference the table so it can be GC'd
                     }
 
                     foreach (ByteBuffer b in bufs)
                     {
-                        FreeBuffer(b);
+                        FreeBuffer(b); // LUCENENET: This calls Dispose() when necessary
                     }
                 }
                 finally

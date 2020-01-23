@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 #endif
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -69,7 +70,52 @@ namespace Lucene.Net.Util
         private readonly Type baseClass;
         private readonly string method;
         private readonly Type[] parameters;
-        private readonly WeakIdentityMap<Type, int> cache = WeakIdentityMap<Type, int>.NewConcurrentHashMap(false);
+        // LUCENENET: Replaced IdentityHashMap with ConditionalWeakTable. A Type IS an identity, so there is
+        // no need for the extra IdentityWeakReference.
+        private readonly ConditionalWeakTable<Type, Int32Ref> cache = new ConditionalWeakTable<Type, Int32Ref>();
+
+        // LUCENENET specific wrapper needed because ConditionalWeakTable requires a reference type.
+        private class Int32Ref : IEquatable<Int32Ref>
+        {
+            private int value;
+
+            public Int32Ref(int value)
+            {
+                this.value = value;
+            }
+
+            public bool Equals(Int32Ref other)
+            {
+                if (other == null)
+                    return false;
+                return value.Equals(other);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj is Int32Ref other)
+                    return Equals(other);
+                if (obj is int otherInt)
+                    return value.Equals(otherInt);
+                return false;
+            }
+
+            public override int GetHashCode()
+            {
+                return value.GetHashCode();
+            }
+
+            public static implicit operator int(Int32Ref value)
+            {
+                return value.value;
+            }
+
+            public static implicit operator Int32Ref(int value)
+            {
+                return new Int32Ref(value);
+            }
+        }
+
 
         /// <summary>
         /// Creates a new instance for the given <paramref name="baseClass"/> and method declaration. </summary>
@@ -105,13 +151,8 @@ namespace Lucene.Net.Util
         /// <returns> 0 if and only if not overridden, else the distance to the base class. </returns>
         public int GetImplementationDistance(Type subclazz)
         {
-            int distance = cache.Get(subclazz);
-            if (distance == default(int))
-            {
-                // we have the slight chance that another thread may do the same, but who cares?
-                cache.Put(subclazz, distance = Convert.ToInt32(ReflectImplementationDistance(subclazz), CultureInfo.InvariantCulture));
-            }
-            return (int)distance;
+            // LUCENENET: Replaced WeakIdentityMap with ConditionalWeakTable - This operation is simplified over Lucene.
+            return cache.GetValue(subclazz, (key) => Convert.ToInt32(ReflectImplementationDistance(key), CultureInfo.InvariantCulture));
         }
 
         /// <summary>
