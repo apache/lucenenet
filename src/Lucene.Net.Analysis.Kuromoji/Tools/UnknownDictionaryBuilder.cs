@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Analysis.Ja.Dict;
-using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Analysis.Ja.Dict;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

@@ -1,7 +1,8 @@
-using Lucene.Net.Support;
+using J2N;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -55,13 +56,13 @@ namespace Lucene.Net.Util.Automaton
         /// Optionally count transpositions as a primitive edit.
         /// </summary>
         public LevenshteinAutomata(string input, bool withTranspositions)
-            : this(CodePoints(input), Character.MAX_CODE_POINT, withTranspositions)
+            : this(CodePoints(input), Character.MaxCodePoint, withTranspositions)
         {
         }
 
         /// <summary>
         /// Expert: specify a custom maximum possible symbol
-        /// (alphaMax); default is <see cref="Character.MAX_CODE_POINT"/>.
+        /// (alphaMax); default is <see cref="Character.MaxCodePoint"/>.
         /// </summary>
         public LevenshteinAutomata(int[] word, int alphaMax, bool withTranspositions)
         {
@@ -69,7 +70,7 @@ namespace Lucene.Net.Util.Automaton
             this.alphaMax = alphaMax;
 
             // calculate the alphabet
-            SortedSet<int> set = new SortedSet<int>();
+            ISet<int> set = new JCG.SortedSet<int>();
             for (int i = 0; i < word.Length; i++)
             {
                 int v = word[i];
@@ -114,10 +115,10 @@ namespace Lucene.Net.Util.Automaton
             }
 
             descriptions = new ParametricDescription[] {
-            null,
-            withTranspositions ? (ParametricDescription)new Lev1TParametricDescription(word.Length) : new Lev1ParametricDescription(word.Length),
-            withTranspositions ? (ParametricDescription)new Lev2TParametricDescription(word.Length) : new Lev2ParametricDescription(word.Length)
-        };
+                null,
+                withTranspositions ? (ParametricDescription)new Lev1TParametricDescription(word.Length) : new Lev1ParametricDescription(word.Length),
+                withTranspositions ? (ParametricDescription)new Lev2TParametricDescription(word.Length) : new Lev2ParametricDescription(word.Length)
+            };
         }
 
         private static int[] CodePoints(string input)

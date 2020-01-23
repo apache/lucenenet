@@ -274,7 +274,7 @@ namespace Lucene.Net.Analysis.NGram
             // grab gramSize chars from front or back
             int start = side == Side.FRONT ? 0 : inLen - gramSize;
             int end = start + gramSize;
-            termAtt.SetEmpty().Append(inStr, start, end);
+            termAtt.SetEmpty().Append(inStr, start, end - start); // LUCENENET: Corrected 3rd parameter
             offsetAtt.SetOffset(CorrectOffset(start), CorrectOffset(end));
             gramSize++;
             return true;

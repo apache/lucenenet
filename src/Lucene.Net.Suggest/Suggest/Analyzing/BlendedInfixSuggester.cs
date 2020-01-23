@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
@@ -149,7 +150,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // TODO: maybe just stored fields?  they compress...
             BinaryDocValues payloadsDV = MultiDocValues.GetBinaryValues(searcher.IndexReader, "payloads");
 
-            SortedSet<Lookup.LookupResult> results = new SortedSet<Lookup.LookupResult>(LOOKUP_COMP);
+            JCG.SortedSet<Lookup.LookupResult> results = new JCG.SortedSet<Lookup.LookupResult>(LOOKUP_COMP);
 
             // we reduce the num to the one initially requested
             int actualNum = num / numFactor;
@@ -210,7 +211,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <param name="results"> the tree to add in </param>
         /// <param name="result"> the result we try to add </param>
         /// <param name="num"> size limit </param>
-        private static void BoundedTreeAdd(SortedSet<Lookup.LookupResult> results, Lookup.LookupResult result, int num)
+        private static void BoundedTreeAdd(JCG.SortedSet<Lookup.LookupResult> results, Lookup.LookupResult result, int num)
         {
 
             if (results.Count >= num)

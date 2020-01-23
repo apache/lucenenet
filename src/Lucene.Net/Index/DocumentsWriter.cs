@@ -1,5 +1,4 @@
 using J2N.Threading.Atomic;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
             {
                 //Debug.Assert(!Thread.HoldsLock(writer), "IndexWriter lock should never be hold when aborting");
                 bool success = false;
-                HashSet<string> newFilesSet = new HashSet<string>();
+                JCG.HashSet<string> newFilesSet = new JCG.HashSet<string>();
                 try
                 {
                     deleteQueue.Clear();
@@ -301,7 +301,7 @@ namespace Lucene.Net.Index
                 {
                     deleteQueue.Clear();
                     int limit = perThreadPool.MaxThreadStates;
-                    HashSet<string> newFilesSet = new HashSet<string>();
+                    JCG.HashSet<string> newFilesSet = new JCG.HashSet<string>();
                     for (int i = 0; i < limit; i++)
                     {
                         ThreadState perThread = perThreadPool.GetThreadState(i);
@@ -801,7 +801,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    HashSet<string> newFilesSet = new HashSet<string>();
+                    JCG.HashSet<string> newFilesSet = new JCG.HashSet<string>();
                     flushControl.AbortFullFlushes(newFilesSet);
                     PutEvent(new DeleteNewFilesEvent(newFilesSet));
                 }

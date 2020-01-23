@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -85,7 +86,7 @@ namespace Lucene.Net.Index
         private string AddValue()
         {
             StringBuilder sb = new StringBuilder();
-            HashSet<string> terms = new HashSet<string>();
+            ISet<string> terms = new JCG.HashSet<string>();
             int num = TestUtil.NextInt32(Random, 0, 255);
             for (int i = 0; i < num; i++)
             {

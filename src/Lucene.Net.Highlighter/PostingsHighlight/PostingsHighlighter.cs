@@ -1,4 +1,5 @@
 ﻿#if FEATURE_BREAKITERATOR
+using J2N.Text;
 using ICU4N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Index;
@@ -12,25 +13,26 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Simple highlighter that does not analyze fields nor use
@@ -389,7 +391,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
             IndexReader reader = searcher.IndexReader;
             Query rewritten = Rewrite(query);
-            TreeSet<Term> queryTerms = new TreeSet<Term>();
+            JCG.SortedSet<Term> queryTerms = new JCG.SortedSet<Term>();
             rewritten.ExtractTerms(queryTerms);
 
             IndexReaderContext readerContext = reader.Context;
@@ -417,10 +419,10 @@ namespace Lucene.Net.Search.PostingsHighlight
                 int numPassages = maxPassages[i];
                 Term floor = new Term(field, "");
                 Term ceiling = new Term(field, UnicodeUtil.BIG_TERM);
-                // LUCENENET NOTE: System.Collections.Generic.SortedSet<T>.GetViewBetween ceiling is inclusive.
-                // However, in Java, subSet ceiling is exclusive. Also,
-                // SortedSet<T> doesn't seem to have the correct logic, but C5.TreeSet<T> does.
-                var fieldTerms = queryTerms.RangeFromTo(floor, ceiling); //SubSet(floor, ceiling);
+
+                // LUCENENET: Call custom GetViewBetween overload to mimic Java's exclusive upper bound behavior.
+                var fieldTerms = queryTerms.GetViewBetween(floor, lowerValueInclusive: true, ceiling, upperValueInclusive: false);
+
                 // TODO: should we have some reasonable defaults for term pruning? (e.g. stopwords)
 
                 // Strip off the redundant field:
@@ -621,7 +623,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 throw new NullReferenceException("PassageScorer cannot be null");
             }
-            Support.PriorityQueue<OffsetsEnum> pq = new Support.PriorityQueue<OffsetsEnum>();
+            JCG.PriorityQueue<OffsetsEnum> pq = new JCG.PriorityQueue<OffsetsEnum>();
             float[] weights = new float[terms.Length];
             // initialize postings
             for (int i = 0; i < terms.Length; i++)
@@ -666,11 +668,10 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             pq.Add(new OffsetsEnum(EMPTY, int.MaxValue)); // a sentinel for termination
 
-            Support.PriorityQueue<Passage> passageQueue = new Support.PriorityQueue<Passage>(n, new HighlightDocComparerAnonymousHelper1());
+            JCG.PriorityQueue<Passage> passageQueue = new JCG.PriorityQueue<Passage>(n, new HighlightDocComparerAnonymousHelper1());
             Passage current = new Passage();
 
-            OffsetsEnum off;
-            while ((off = pq.Poll()) != null)
+            while (pq.TryDequeue(out OffsetsEnum off))
             {
                 DocsAndPositionsEnum dp = off.dp;
                 int start = dp.StartOffset;
@@ -700,10 +701,10 @@ namespace Lucene.Net.Search.PostingsHighlight
                         }
                         else
                         {
-                            passageQueue.Offer(current);
+                            passageQueue.Enqueue(current);
                             if (passageQueue.Count > n)
                             {
-                                current = passageQueue.Poll();
+                                current = passageQueue.Dequeue();
                                 current.Reset();
                             }
                             else
@@ -754,7 +755,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                     }
                     if (start >= current.endOffset || end > contentLength)
                     {
-                        pq.Offer(off);
+                        pq.Enqueue(off);
                         break;
                     }
                 }

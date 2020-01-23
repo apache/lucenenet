@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -56,7 +57,7 @@ namespace Lucene.Net.Index
             BufferedUpdates bd2 = new BufferedUpdates();
             int last1 = 0;
             int last2 = 0;
-            HashSet<Term> uniqueValues = new HashSet<Term>();
+            ISet<Term> uniqueValues = new JCG.HashSet<Term>();
             for (int j = 0; j < ids.Length; j++)
             {
                 int? i = ids[j];
@@ -82,9 +83,9 @@ namespace Lucene.Net.Index
                 }
                 Assert.AreEqual(j + 1, queue.NumGlobalTermDeletes);
             }
-            assertEquals(uniqueValues, new HashSet<Term>(bd1.terms.Keys));
-            assertEquals(uniqueValues, new HashSet<Term>(bd2.terms.Keys));
-            var frozenSet = new HashSet<Term>();
+            assertEquals(uniqueValues, new JCG.HashSet<Term>(bd1.terms.Keys));
+            assertEquals(uniqueValues, new JCG.HashSet<Term>(bd2.terms.Keys));
+            var frozenSet = new JCG.HashSet<Term>();
             foreach (Term t in queue.FreezeGlobalBuffer(null).GetTermsEnumerable())
             {
                 BytesRef bytesRef = new BytesRef();
@@ -212,7 +213,7 @@ namespace Lucene.Net.Index
         public virtual void TestStressDeleteQueue()
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
-            HashSet<Term> uniqueValues = new HashSet<Term>();
+            ISet<Term> uniqueValues = new JCG.HashSet<Term>();
             int size = 10000 + Random.Next(500) * RANDOM_MULTIPLIER;
             int?[] ids = new int?[size];
             for (int i = 0; i < ids.Length; i++)
@@ -241,10 +242,10 @@ namespace Lucene.Net.Index
                 queue.UpdateSlice(slice);
                 BufferedUpdates deletes = updateThread.Deletes;
                 slice.Apply(deletes, BufferedUpdates.MAX_INT32);
-                assertEquals(uniqueValues, new HashSet<Term>(deletes.terms.Keys));
+                assertEquals(uniqueValues, new JCG.HashSet<Term>(deletes.terms.Keys));
             }
             queue.TryApplyGlobalSlice();
-            HashSet<Term> frozenSet = new HashSet<Term>();
+            ISet<Term> frozenSet = new JCG.HashSet<Term>();
             foreach (Term t in queue.FreezeGlobalBuffer(null).GetTermsEnumerable())
             {
                 BytesRef bytesRef = new BytesRef();

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -92,10 +93,10 @@ namespace Lucene.Net.Codecs.Memory
             long gcd = 0;
             bool missing = false;
             // TODO: more efficient?
-            HashSet<long?> uniqueValues = null;
+            ISet<long?> uniqueValues = null;
             if (optimizeStorage)
             {
-                uniqueValues = new HashSet<long?>();
+                uniqueValues = new JCG.HashSet<long?>();
 
                 long count = 0;
                 foreach (var nv in values)

@@ -1,3 +1,4 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
@@ -281,7 +282,7 @@ namespace Lucene.Net.Index
         {
             Console.WriteLine("TEST: run " + terms.Count + " terms on reader=" + r);
             IndexSearcher s = NewSearcher(r);
-            Collections.Shuffle(terms);
+            terms.Shuffle();
             TermsEnum termsEnum = MultiFields.GetTerms(r, "field").GetIterator(null);
             bool failed = false;
             for (int iter = 0; iter < 10 * terms.Count; iter++)

@@ -1,8 +1,8 @@
-using Lucene.Net.Support;
+using J2N.Text;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text;
+using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="ICharTermAttribute"/>. </summary>
-    public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute
+    public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute, IAppendable
 #if FEATURE_CLONEABLE
         , System.ICloneable
 #endif
@@ -49,6 +49,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
         {
         }
 
+        // LUCENENET specific - ICharSequence member from J2N
+        bool ICharSequence.HasValue => termBuffer != null;
+
         public void CopyBuffer(char[] buffer, int offset, int length)
         {
             GrowTermBuffer(length);
@@ -56,12 +59,11 @@ namespace Lucene.Net.Analysis.TokenAttributes
             termLength = length;
         }
 
+        char[] ICharTermAttribute.Buffer => termBuffer;
+
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public char[] Buffer
-        {
-            get { return termBuffer; }
-        }
+        public char[] Buffer => termBuffer;
 
         public char[] ResizeBuffer(int newSize)
         {
@@ -86,23 +88,27 @@ namespace Lucene.Net.Analysis.TokenAttributes
             }
         }
 
+        int ICharTermAttribute.Length { get => Length; set => SetLength(value); }
+
+        int ICharSequence.Length => Length;
+
         public int Length
         {
-            get { return this.termLength; }
-            set { this.SetLength(value); }
+            get => termLength;
+            set => SetLength(value);
         }
 
-        public ICharTermAttribute SetLength(int length)
+        public CharTermAttribute SetLength(int length)
         {
             if (length > termBuffer.Length)
             {
-                throw new System.ArgumentException("length " + length + " exceeds the size of the termBuffer (" + termBuffer.Length + ")");
+                throw new ArgumentException("length " + length + " exceeds the size of the termBuffer (" + termBuffer.Length + ")");
             }
             termLength = length;
             return this;
         }
 
-        public ICharTermAttribute SetEmpty()
+        public CharTermAttribute SetEmpty()
         {
             termLength = 0;
             return this;
@@ -116,13 +122,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             UnicodeUtil.UTF16toUTF8(termBuffer, 0, termLength, bytes);
         }
 
-        public virtual BytesRef BytesRef
-        {
-            get
-            {
-                return bytes;
-            }
-        }
+        public virtual BytesRef BytesRef => bytes;
 
         // *** CharSequence interface ***
 
@@ -136,160 +136,209 @@ namespace Lucene.Net.Analysis.TokenAttributes
         //    return TermBuffer[index];
         //}
 
+        char ICharSequence.this[int index] => this[index];
+
+        char ICharTermAttribute.this[int index] { get => this[index]; set => this[index] = value; }
+
         // LUCENENET specific indexer to make CharTermAttribute act more like a .NET type
         public char this[int index]
         {
             get
             {
-                if (index >= termLength)
+                if (index < 0 || index >= termLength) // LUCENENET: Added better bounds checking
                 {
-                    throw new IndexOutOfRangeException("index");
+                    throw new ArgumentOutOfRangeException(nameof(index));
                 }
 
                 return termBuffer[index];
             }
             set
             {
-                if (index >= termLength)
+                if (index < 0 || index >= termLength)
                 {
-                    throw new IndexOutOfRangeException("index");
+                    throw new ArgumentOutOfRangeException(nameof(index)); // LUCENENET: Added better bounds checking
                 }
 
                 termBuffer[index] = value;
             }
         }
 
-        public ICharSequence SubSequence(int start, int end)
+        public ICharSequence Subsequence(int startIndex, int length)
         {
-            if (start > termLength || end > termLength)
+            // From Apache Harmony String class
+            if (termBuffer == null || (startIndex == 0 && length == termBuffer.Length))
             {
-                throw new IndexOutOfRangeException();
+                return new CharArrayCharSequence(termBuffer);
             }
-            return new StringCharSequenceWrapper(new string(termBuffer, start, end - start));
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length));
+            if (startIndex + length > Length)
+                throw new ArgumentOutOfRangeException("", $"{nameof(startIndex)} + {nameof(length)} > {nameof(Length)}");
+
+            char[] result = new char[length];
+            for (int i = 0, j = startIndex; i < length; i++, j++)
+                result[i] = termBuffer[j];
+
+            return new CharArrayCharSequence(result);
         }
 
         // *** Appendable interface ***
 
-        public ICharTermAttribute Append(string csq, int start, int end)
+
+        public CharTermAttribute Append(string value, int startIndex, int charCount)
         {
-            if (csq == null)
-                return AppendNull();
+            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+            if (charCount < 0)
+                throw new ArgumentOutOfRangeException(nameof(charCount));
 
-            int len = end - start, csqlen = csq.Length;
-            if (len < 0 || start > csqlen || end > csqlen)
-                throw new IndexOutOfRangeException();
-            if (len == 0)
+            if (value == null)
+            {
+                if (startIndex == 0 && charCount == 0)
+                    return this;
+                throw new ArgumentNullException(nameof(value));
+            }
+            if (charCount == 0)
                 return this;
+            if (startIndex > value.Length - charCount)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
 
-            csq.CopyTo(start, InternalResizeBuffer(termLength + len), termLength, len);
+            value.CopyTo(startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
+            Length += charCount;
+
+            return this;
+        }
+
+        public CharTermAttribute Append(char value)
+        {
+            ResizeBuffer(termLength + 1)[termLength++] = value;
+            return this;
+        }
+
+        public CharTermAttribute Append(char[] value)
+        {
+            if (value == null)
+                //return AppendNull();
+                return this; // No-op
+
+            int len = value.Length;
+            value.CopyTo(InternalResizeBuffer(termLength + len), termLength);
             Length += len;
 
             return this;
         }
 
-        public ICharTermAttribute Append(char c)
+        public CharTermAttribute Append(char[] value, int startIndex, int charCount)
         {
-            ResizeBuffer(termLength + 1)[termLength++] = c;
-            return this;
-        }
+            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+            if (charCount < 0)
+                throw new ArgumentOutOfRangeException(nameof(charCount));
 
-        public ICharTermAttribute Append(char[] chars)
-        {
-            if (chars == null)
-                return AppendNull();
-
-            int len = chars.Length;
-            chars.CopyTo(InternalResizeBuffer(termLength + len), termLength);
-            Length += len;
-
-            return this;
-        }
-
-        public ICharTermAttribute Append(char[] chars, int start, int end)
-        {
-            if (chars == null)
-                return AppendNull();
-
-            int len = end - start, csqlen = chars.Length;
-            if (len < 0 || start > csqlen || end > csqlen)
-                throw new IndexOutOfRangeException();
-            if (len == 0)
+            if (value == null)
+            {
+                if (startIndex == 0 && charCount == 0)
+                    return this;
+                throw new ArgumentNullException(nameof(value));
+            }
+            if (charCount == 0)
                 return this;
+            if (startIndex > value.Length - charCount)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
 
-            chars.Skip(start).Take(len).ToArray().CopyTo(InternalResizeBuffer(termLength + len), termLength);
-            Length += len;
+            Array.Copy(value, startIndex, InternalResizeBuffer(termLength + charCount), termLength, charCount);
+            Length += charCount;
 
             return this;
         }
 
-        public ICharTermAttribute Append(string s)
+        public CharTermAttribute Append(string value)
         {
-            return Append(s, 0, s == null ? 0 : s.Length);
+            return Append(value, 0, value == null ? 0 : value.Length);
         }
 
-        public ICharTermAttribute Append(StringBuilder s)
+        public CharTermAttribute Append(StringBuilder value)
         {
-            if (s == null) // needed for Appendable compliance
+            if (value == null) // needed for Appendable compliance
             {
-                return AppendNull();
+                //return AppendNull();
+                return this; // No-op
             }
 
-            return Append(s.ToString());
+            return Append(value.ToString());
         }
 
-        public ICharTermAttribute Append(StringBuilder s, int start, int end)
+        public CharTermAttribute Append(StringBuilder value, int startIndex, int charCount)
         {
-            if (s == null) // needed for Appendable compliance
-            {
-                return AppendNull();
-            }
+            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+            if (charCount < 0)
+                throw new ArgumentOutOfRangeException(nameof(charCount));
 
-            int len = end - start, csqlen = s.Length;
-            if (len < 0 || start > csqlen || end > csqlen)
-                throw new IndexOutOfRangeException();
-            if (len == 0)
+            if (value == null)
+            {
+                if (startIndex == 0 && charCount == 0)
+                    return this;
+                throw new ArgumentNullException(nameof(value));
+            }
+            if (charCount == 0)
                 return this;
+            if (startIndex > value.Length - charCount)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
 
-            return Append(s.ToString(start, end - start));
+            return Append(value.ToString(startIndex, charCount));
         }
 
-        public ICharTermAttribute Append(ICharTermAttribute ta)
+        public CharTermAttribute Append(ICharTermAttribute value)
         {
-            if (ta == null) // needed for Appendable compliance
+            if (value == null) // needed for Appendable compliance
             {
-                return AppendNull();
+                //return AppendNull();
+                return this; // No-op
             }
-            int len = ta.Length;
-            Array.Copy(ta.Buffer, 0, ResizeBuffer(termLength + len), termLength, len);
+            int len = value.Length;
+            Array.Copy(value.Buffer, 0, ResizeBuffer(termLength + len), termLength, len);
             termLength += len;
             return this;
         }
 
-        public ICharTermAttribute Append(ICharSequence csq)
+        public CharTermAttribute Append(ICharSequence value)
         {
-            if (csq == null)
-                return AppendNull();
+            if (value == null)
+                //return AppendNull();
+                return this; // No-op
 
-            return Append(csq, 0, csq.Length);
+            return Append(value, 0, value.Length);
         }
 
-        public ICharTermAttribute Append(ICharSequence csq, int start, int end)
+        public CharTermAttribute Append(ICharSequence value, int startIndex, int charCount)
         {
-            if (csq == null)
-                csq = new StringCharSequenceWrapper("null");
+            // LUCENENET: Changed semantics to be the same as the StringBuilder in .NET
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+            if (charCount < 0)
+                throw new ArgumentOutOfRangeException(nameof(charCount));
 
-            int len = end - start, csqlen = csq.Length;
-
-            if (len < 0 || start > csqlen || end > csqlen)
-                throw new IndexOutOfRangeException();
-
-            if (len == 0)
+            if (value == null)
+            {
+                if (startIndex == 0 && charCount == 0)
+                    return this;
+                throw new ArgumentNullException(nameof(value));
+            }
+            if (charCount == 0)
                 return this;
+            if (startIndex > value.Length - charCount)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
 
-            ResizeBuffer(termLength + len);
+            ResizeBuffer(termLength + charCount);
 
-            while (start < end)
-                termBuffer[termLength++] = csq[start++];
+            for (int i = 0; i < charCount; i++)
+                termBuffer[termLength++] = value[startIndex + i];
 
             return this;
         }
@@ -311,15 +360,16 @@ namespace Lucene.Net.Analysis.TokenAttributes
             return new char[ArrayUtil.Oversize(length, RamUsageEstimator.NUM_BYTES_CHAR)];
         }
 
-        private CharTermAttribute AppendNull()
-        {
-            ResizeBuffer(termLength + 4);
-            termBuffer[termLength++] = 'n';
-            termBuffer[termLength++] = 'u';
-            termBuffer[termLength++] = 'l';
-            termBuffer[termLength++] = 'l';
-            return this;
-        }
+        // LUCENENET: Not used - we are doing a no-op when the value is null
+        //private CharTermAttribute AppendNull()
+        //{
+        //    ResizeBuffer(termLength + 4);
+        //    termBuffer[termLength++] = 'n';
+        //    termBuffer[termLength++] = 'u';
+        //    termBuffer[termLength++] = 'l';
+        //    termBuffer[termLength++] = 'l';
+        //    return this;
+        //}
 
         // *** Attribute ***
 
@@ -352,9 +402,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return true;
             }
 
-            if (other is CharTermAttribute)
+            if (other is CharTermAttribute o)
             {
-                CharTermAttribute o = ((CharTermAttribute)other);
                 if (termLength != o.termLength)
                 {
                     return false;
@@ -399,5 +448,60 @@ namespace Lucene.Net.Analysis.TokenAttributes
             CharTermAttribute t = (CharTermAttribute)target;
             t.CopyBuffer(termBuffer, 0, termLength);
         }
+
+        #region ICharTermAttribute Members
+
+        void ICharTermAttribute.CopyBuffer(char[] buffer, int offset, int length) => CopyBuffer(buffer, offset, length);
+
+        char[] ICharTermAttribute.ResizeBuffer(int newSize) => ResizeBuffer(newSize);
+
+        ICharTermAttribute ICharTermAttribute.SetLength(int length) => SetLength(length);
+
+        ICharTermAttribute ICharTermAttribute.SetEmpty() => SetEmpty();
+
+        ICharTermAttribute ICharTermAttribute.Append(ICharSequence value) => Append(value);
+
+        ICharTermAttribute ICharTermAttribute.Append(ICharSequence value, int startIndex, int count) => Append(value, startIndex, count);
+
+        ICharTermAttribute ICharTermAttribute.Append(char value) => Append(value);
+
+        ICharTermAttribute ICharTermAttribute.Append(char[] value) => Append(value);
+
+        ICharTermAttribute ICharTermAttribute.Append(char[] value, int startIndex, int count) => Append(value, startIndex, count);
+
+        ICharTermAttribute ICharTermAttribute.Append(string value) => Append(value);
+
+        ICharTermAttribute ICharTermAttribute.Append(string value, int startIndex, int count) => Append(value, startIndex, count);
+
+        ICharTermAttribute ICharTermAttribute.Append(StringBuilder value) => Append(value);
+
+        ICharTermAttribute ICharTermAttribute.Append(StringBuilder value, int startIndex, int count) => Append(value, startIndex, count);
+
+        ICharTermAttribute ICharTermAttribute.Append(ICharTermAttribute value) => Append(value);
+
+        #endregion
+
+        #region IAppendable Members
+
+        IAppendable IAppendable.Append(char value) => Append(value);
+
+        IAppendable IAppendable.Append(string value) => Append(value);
+
+        IAppendable IAppendable.Append(string value, int startIndex, int count) => Append(value, startIndex, count);
+
+        IAppendable IAppendable.Append(StringBuilder value) => Append(value);
+
+        IAppendable IAppendable.Append(StringBuilder value, int startIndex, int count) => Append(value, startIndex, count);
+
+        IAppendable IAppendable.Append(char[] value) => Append(value);
+
+        IAppendable IAppendable.Append(char[] value, int startIndex, int count) => Append(value, startIndex, count);
+
+        IAppendable IAppendable.Append(ICharSequence value) => Append(value);
+
+        IAppendable IAppendable.Append(ICharSequence value, int startIndex, int count) => Append(value, startIndex, count);
+
+
+        #endregion
     }
 }

@@ -1,9 +1,9 @@
 ﻿using J2N.Text;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.Quality.Trec
 {
@@ -112,7 +112,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
             internal QRelJudgement(string queryID)
             {
                 this.queryID = queryID;
-                relevantDocs = new HashMap<string, string>();
+                relevantDocs = new JCG.Dictionary<string, string>();
             }
 
             public virtual void AddRelevantDoc(string docName)

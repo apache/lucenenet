@@ -35,13 +35,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index.Memory
 {
     public class MemoryIndexTest : BaseTokenStreamTestCase
     {
-        private ISet<string> queries = new HashSet<string>();
+        private ISet<string> queries = new JCG.HashSet<string>();
 
         public static readonly int ITERATIONS = 100 * RANDOM_MULTIPLIER;
 
@@ -58,7 +59,7 @@ namespace Lucene.Net.Index.Memory
          */
         private ISet<string> ReadQueries(string resource)
         {
-            ISet<string> queries = new HashSet<string>();
+            ISet<string> queries = new JCG.HashSet<string>();
             Stream stream = GetType().getResourceAsStream(resource);
             TextReader reader = new StreamReader(stream, Encoding.UTF8);
             String line = null;

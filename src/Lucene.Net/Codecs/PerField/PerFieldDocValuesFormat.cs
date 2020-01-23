@@ -1,8 +1,9 @@
-using Lucene.Net.Support;
+using J2N.Runtime.CompilerServices;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.PerField
 {
@@ -24,9 +25,9 @@ namespace Lucene.Net.Codecs.PerField
      */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
+    using IBits = Lucene.Net.Util.IBits;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
@@ -241,7 +242,7 @@ namespace Lucene.Net.Codecs.PerField
             private readonly PerFieldDocValuesFormat outerInstance;
 
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            internal readonly IDictionary<string, DocValuesProducer> fields = new SortedDictionary<string, DocValuesProducer>(StringComparer.Ordinal);
+            internal readonly IDictionary<string, DocValuesProducer> fields = new JCG.SortedDictionary<string, DocValuesProducer>(StringComparer.Ordinal);
             internal readonly IDictionary<string, DocValuesProducer> formats = new Dictionary<string, DocValuesProducer>();
 
             public FieldsReader(PerFieldDocValuesFormat outerInstance, SegmentReadState readState)
@@ -290,7 +291,7 @@ namespace Lucene.Net.Codecs.PerField
             {
                 this.outerInstance = outerInstance;
 
-                IDictionary<DocValuesProducer, DocValuesProducer> oldToNew = new IdentityHashMap<DocValuesProducer, DocValuesProducer>();
+                IDictionary<DocValuesProducer, DocValuesProducer> oldToNew = new JCG.Dictionary<DocValuesProducer, DocValuesProducer>(IdentityEqualityComparer<DocValuesProducer>.Default);
                 // First clone all formats
                 foreach (KeyValuePair<string, DocValuesProducer> ent in other.formats)
                 {

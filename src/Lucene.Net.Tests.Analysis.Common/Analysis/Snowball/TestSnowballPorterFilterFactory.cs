@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Tartarus.Snowball.Ext;
 using NUnit.Framework;
 using System.IO;

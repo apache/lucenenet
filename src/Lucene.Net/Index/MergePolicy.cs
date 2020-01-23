@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
                         readers.Add(reader);
                     }
                 }
-                return Collections.UnmodifiableList(readers);
+                return readers.AsReadOnly();
             }
 
             /// <summary>

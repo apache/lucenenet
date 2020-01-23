@@ -1,3 +1,4 @@
+using J2N.Runtime.CompilerServices;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -107,7 +109,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Sizes of primitive classes.
         /// </summary>
-        private static readonly IDictionary<Type, int> primitiveSizes = new IdentityHashMap<Type, int> // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        private static readonly IDictionary<Type, int> primitiveSizes = new JCG.Dictionary<Type, int>(IdentityEqualityComparer<Type>.Default) // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             [typeof(bool)] = NUM_BYTES_BOOLEAN,
             [typeof(sbyte)] = NUM_BYTES_BYTE,
@@ -486,7 +488,7 @@ namespace Lucene.Net.Util
             // Objects seen so far.
             IdentityHashSet<object> seen = new IdentityHashSet<object>();
             // Class cache with reference Field and precalculated shallow size.
-            HashMap<Type, ClassCache> classCache = new IdentityHashMap<Type, ClassCache>();
+            IDictionary<Type, ClassCache> classCache = new JCG.Dictionary<Type, ClassCache>(IdentityEqualityComparer<Type>.Default);
             // Stack of objects pending traversal. Recursion caused stack overflows.
             Stack<object> stack = new Stack<object>();
             stack.Push(root);

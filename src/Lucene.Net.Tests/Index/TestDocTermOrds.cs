@@ -1,4 +1,3 @@
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -6,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
 
             int NUM_TERMS = AtLeast(20);
-            HashSet<BytesRef> terms = new HashSet<BytesRef>();
+            ISet<BytesRef> terms = new JCG.HashSet<BytesRef>();
             while (terms.Count < NUM_TERMS)
             {
                 string s = TestUtil.RandomRealisticUnicodeString(Random);
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, conf);
 
             int[][] idToOrds = new int[NUM_DOCS][];
-            HashSet<int?> ordsForDocSet = new HashSet<int?>();
+            ISet<int?> ordsForDocSet = new JCG.HashSet<int?>();
 
             for (int id = 0; id < NUM_DOCS; id++)
             {
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
 
-            HashSet<string> prefixes = new HashSet<string>();
+            ISet<string> prefixes = new JCG.HashSet<string>();
             int numPrefix = TestUtil.NextInt32(Random, 2, 7);
             if (VERBOSE)
             {
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
             string[] prefixesArray = prefixes.ToArray(/*new string[prefixes.Count]*/);
 
             int NUM_TERMS = AtLeast(20);
-            HashSet<BytesRef> terms = new HashSet<BytesRef>();
+            ISet<BytesRef> terms = new JCG.HashSet<BytesRef>();
             while (terms.Count < NUM_TERMS)
             {
                 string s = prefixesArray[Random.Next(prefixesArray.Length)] + TestUtil.RandomRealisticUnicodeString(Random);
@@ -242,7 +242,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter w = new RandomIndexWriter(Random, dir, conf);
 
             int[][] idToOrds = new int[NUM_DOCS][];
-            HashSet<int?> ordsForDocSet = new HashSet<int?>();
+            ISet<int?> ordsForDocSet = new JCG.HashSet<int?>();
 
             for (int id = 0; id < NUM_DOCS; id++)
             {

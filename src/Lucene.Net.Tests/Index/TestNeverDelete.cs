@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -68,7 +69,7 @@ namespace Lucene.Net.Index
                 indexThreads[x].Start();
             }
 
-            HashSet<string> allFiles = new HashSet<string>();
+            ISet<string> allFiles = new JCG.HashSet<string>();
 
             DirectoryReader r = DirectoryReader.Open(d);
             while (Environment.TickCount < stopTime)

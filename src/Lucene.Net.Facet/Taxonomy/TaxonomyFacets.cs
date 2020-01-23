@@ -1,7 +1,6 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.Facet.Taxonomy
 {

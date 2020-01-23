@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
+﻿using J2N;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System.IO;
 

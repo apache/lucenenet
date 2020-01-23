@@ -1,9 +1,9 @@
+using J2N.Numerics;
 using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Number = J2N.Numerics.BitOperationExtensions;
 
 namespace Lucene.Net.Util
 {
@@ -229,11 +229,11 @@ namespace Lucene.Net.Util
                 // little endian load order
                 int k1 = (((sbyte)data[i]) & 0xff) | ((((sbyte)data[i + 1]) & 0xff) << 8) | ((((sbyte)data[i + 2]) & 0xff) << 16) | (((sbyte)data[i + 3]) << 24);
                 k1 *= c1;
-                k1 = Number.RotateLeft(k1, 15);
+                k1 = BitOperation.RotateLeft(k1, 15);
                 k1 *= c2;
 
                 h1 ^= k1;
-                h1 = Number.RotateLeft(h1, 13);
+                h1 = BitOperation.RotateLeft(h1, 13);
                 h1 = h1 * 5 + unchecked((int)0xe6546b64);
             }
 
@@ -253,7 +253,7 @@ namespace Lucene.Net.Util
                 case 1:
                     k2 |= (((sbyte)data[roundedEnd]) & 0xff);
                     k2 *= c1;
-                    k2 = Number.RotateLeft(k2, 15);
+                    k2 = BitOperation.RotateLeft(k2, 15);
                     k2 *= c2;
                     h1 ^= k2;
                     break;

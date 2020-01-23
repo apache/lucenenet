@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.PerField
 {
@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.PerField
     {
         protected override Codec GetCodec()
         {
-            return new RandomCodec(new Random(Random.Next()), new HashSet<string>());
+            return new RandomCodec(new Random(Random.Next()), new JCG.HashSet<string>());
         }
 
         [Test]

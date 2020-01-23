@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -86,7 +87,7 @@ namespace Lucene.Net.Analysis.Ja
                 try
                 {
                     CharArraySet tagset = LoadStopwordSet(false, typeof(JapaneseAnalyzer), "stoptags.txt", "#");
-                    var DEFAULT_STOP_TAGS = new HashSet<string>();
+                    var DEFAULT_STOP_TAGS = new JCG.HashSet<string>();
                     foreach (string element in tagset)
                     {
                         DEFAULT_STOP_TAGS.Add(element);

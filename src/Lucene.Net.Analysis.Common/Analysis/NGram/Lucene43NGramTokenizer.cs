@@ -150,7 +150,7 @@ namespace Lucene.Net.Analysis.NGram
 
             int oldPos = pos;
             pos++;
-            termAtt.SetEmpty().Append(inStr, oldPos, oldPos + gramSize);
+            termAtt.SetEmpty().Append(inStr, oldPos, gramSize); // LUCENENET: Corrected 3rd parameter
             offsetAtt.SetOffset(CorrectOffset(oldPos), CorrectOffset(oldPos + gramSize));
             return true;
         }

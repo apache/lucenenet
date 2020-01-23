@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     DocValuesType normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, 
-                        omitNorms, storePayloads, indexOptions, docValuesType, normsType, Collections.UnmodifiableMap(attributes));
+                        omitNorms, storePayloads, indexOptions, docValuesType, normsType, attributes.AsReadOnly());
                 }
 
                 CodecUtil.CheckEOF(input);

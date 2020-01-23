@@ -1,4 +1,6 @@
 ﻿// commons-codec version compatibility level: 1.9
+using J2N.Collections.Generic.Extensions;
+using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -6,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 {
@@ -146,10 +149,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                         rs["common"] = ParseRules(CreateScanner(s, rt, "common"), CreateResourceName(s, rt, "common"));
                     }
 
-                    rts[rt] = Collections.UnmodifiableMap(rs);
+                    rts[rt] = rs.AsReadOnly();
                 }
 
-                rules[s] = Collections.UnmodifiableMap(rts);
+                rules[s] = rts.AsReadOnly();
             }
             return rules;
         }
@@ -296,7 +299,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         /// <returns>A list of <see cref="Rule"/>s that apply.</returns>
         public static IList<Rule> GetInstance(NameType nameType, RuleType rt, string lang)
         {
-            return GetInstance(nameType, rt, LanguageSet.From(new HashSet<string>() { lang }));
+            return GetInstance(nameType, rt, LanguageSet.From(new JCG.HashSet<string>() { lang }));
         }
 
         /// <summary>
@@ -356,7 +359,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 }
                 string before = ph.Substring(0, open - 0);
                 string input = ph.Substring(open + 1, (ph.Length - 1) - (open + 1));
-                ISet<string> langs = new HashSet<string>(PLUS.Split(input).TrimEnd());
+                ISet<string> langs = new JCG.HashSet<string>(PLUS.Split(input).TrimEnd());
 
                 return new Phoneme(before, LanguageSet.From(langs));
             }
@@ -419,7 +422,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private static IDictionary<string, IList<Rule>> ParseRules(TextReader reader, string location)
         {
-            IDictionary<string, IList<Rule>> lines = new HashMap<string, IList<Rule>>();
+            IDictionary<string, IList<Rule>> lines = new JCG.Dictionary<string, IList<Rule>>();
             int currentLine = 0;
 
             bool inMultilineComment = false;
@@ -858,15 +861,15 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
             // evaluate the pattern, left context and right context
             // fail early if any of the evaluations is not successful
-            if (!input.SubSequence(i, ipl).Equals(this.pattern))
+            if (!input.Subsequence(i, ipl - i).Equals(this.pattern)) // LUCENENET: Corrected 2nd Subseqence parameter
             {
                 return false;
             }
-            else if (!this.rContext.IsMatch(input.SubSequence(ipl, input.Length)))
+            else if (!this.rContext.IsMatch(input.Subsequence(ipl, input.Length - ipl))) // LUCENENET: Corrected 2nd Subseqence parameter
             {
                 return false;
             }
-            return this.lContext.IsMatch(input.SubSequence(0, i));
+            return this.lContext.IsMatch(input.Subsequence(0, i - 0)); // LUCENENET: Corrected 2nd Subseqence parameter
         }
 
         /// <summary>

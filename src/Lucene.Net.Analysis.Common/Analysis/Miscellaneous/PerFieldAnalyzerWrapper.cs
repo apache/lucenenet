@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Support;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -75,15 +75,15 @@ namespace Lucene.Net.Analysis.Miscellaneous
         ///         <description>Use when sorted keys are required. <c>null</c> keys are not supported.</description>
         ///     </item>
         ///     <item>
-        ///         <term><see cref="HashMap{TKey, TValue}"/></term>
+        ///         <term><see cref="JCG.Dictionary{TKey, TValue}"/></term>
         ///         <description>Similar behavior as <see cref="Dictionary{TKey, TValue}"/>. <c>null</c> keys are supported.</description>
         ///     </item>
         ///     <item>
-        ///         <term><see cref="TreeDictionary{TKey, TValue}"/></term>
+        ///         <term><see cref="JCG.SortedDictionary{TKey, TValue}"/></term>
         ///         <description>Use when sorted keys are required. <c>null</c> keys are supported.</description>
         ///     </item>
         ///     <item>
-        ///         <term><see cref="LinkedHashMap{TKey, TValue}"/></term>
+        ///         <term><see cref="JCG.LinkedDictionary{TKey, TValue}"/></term>
         ///         <description>Use when insertion order must be preserved (<see cref="Dictionary{TKey, TValue}"/> preserves insertion
         ///             order only until items are removed). <c>null</c> keys are supported.</description>
         ///     </item>
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             : base(PER_FIELD_REUSE_STRATEGY)
         {
             this.defaultAnalyzer = defaultAnalyzer;
-            this.fieldAnalyzers = fieldAnalyzers ?? new HashMap<string, Analyzer>(); // LUCENENET-615: Must support nullable keys
+            this.fieldAnalyzers = fieldAnalyzers ?? new JCG.Dictionary<string, Analyzer>(); // LUCENENET-615: Must support nullable keys
         }
 
         protected override Analyzer GetWrappedAnalyzer(string fieldName)

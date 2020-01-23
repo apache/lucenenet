@@ -1,8 +1,9 @@
+using J2N.Text;
 using Lucene.Net.Index;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -62,7 +63,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly SegmentInfo si;
 
         // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-        internal readonly SortedDictionary<string, FieldInfo> fields = new SortedDictionary<string, FieldInfo>(StringComparer.Ordinal);
+        internal readonly IDictionary<string, FieldInfo> fields = new JCG.SortedDictionary<string, FieldInfo>(StringComparer.Ordinal);
         internal readonly IDictionary<string, Terms> preTerms = new Dictionary<string, Terms>();
         private readonly Directory dir;
         private readonly IOContext context;

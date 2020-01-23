@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -42,7 +43,7 @@ namespace Lucene.Net.Codecs.Memory
         private const int INTERVAL = FSTOrdTermsWriter.SKIP_INTERVAL;
 
         // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-        private readonly SortedDictionary<string, TermsReader> fields = new SortedDictionary<string, TermsReader>(StringComparer.Ordinal);
+        private readonly IDictionary<string, TermsReader> fields = new JCG.SortedDictionary<string, TermsReader>(StringComparer.Ordinal);
         private readonly PostingsReaderBase postingsReader;
         private int version;
         //static final boolean TEST = false;

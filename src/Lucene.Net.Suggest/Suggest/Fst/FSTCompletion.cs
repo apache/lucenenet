@@ -1,5 +1,4 @@
-﻿using Lucene.Net.Support;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;

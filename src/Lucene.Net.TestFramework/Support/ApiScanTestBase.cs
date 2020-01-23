@@ -909,7 +909,7 @@ namespace Lucene.Net.Support
                     }
 
                     // Ignore properties, methods, and events with IgnoreNetNumericConventionAttribute
-                    if (member.IsDefined(typeof(ExceptionToNullableEnumConvention)))
+                    if (member.IsDefined(typeof(ExceptionToNullableEnumConventionAttribute)))
                     {
                         continue;
                     }

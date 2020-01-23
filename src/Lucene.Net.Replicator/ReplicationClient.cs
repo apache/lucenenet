@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Replicator
@@ -360,7 +361,7 @@ namespace Lucene.Net.Replicator
             foreach (KeyValuePair<string, IList<RevisionFile>> pair in handlerRevisionFiles)
             {
                 // put the handler files in a Set, for faster contains() checks later
-                HashSet<string> handlerFiles = new HashSet<string>(pair.Value.Select(v => v.FileName));
+                ISet<string> handlerFiles = new JCG.HashSet<string>(pair.Value.Select(v => v.FileName));
 
                 // make sure to preserve revisionFiles order
                 string source = pair.Key;

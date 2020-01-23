@@ -1,3 +1,4 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
@@ -107,7 +108,7 @@ namespace Lucene.Net.Index
             }
             Expected.Add(max);
 
-            Collections.Shuffle(terms);
+            terms.Shuffle();
             return Arrays.ToString(terms.ToArray());
         }
 

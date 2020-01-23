@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
 using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
@@ -63,6 +63,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 Array.Copy(chars, clone.chars, chars.Length);
                 return clone;
             }
+
+            
 
             // LUCENENET specific
             public void Serialize(Stream writer)
@@ -224,20 +226,18 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        public virtual int Length
-        {
-            get
-            {
-                return this.length;
-            }
-        }
+        public virtual int Length => this.length;
 
-        public virtual string SubSequence(int start, int end)
+
+        // LUCENENET specific
+        bool ICharSequence.HasValue => true;
+
+        public virtual ICharSequence Subsequence(int startIndex, int length)
         {
-            int remaining = end - start;
+            int remaining = length;
             StringBuilder sb = new StringBuilder(remaining);
-            int blockIdx = BlockIndex(start);
-            int indexInBlock = IndexInBlock(start);
+            int blockIdx = BlockIndex(startIndex);
+            int indexInBlock = IndexInBlock(startIndex);
             while (remaining > 0)
             {
                 Block b = blocks[blockIdx++];
@@ -246,12 +246,12 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 remaining -= numToAppend;
                 indexInBlock = 0; // 2nd+ iterations read from start of the block
             }
-            return sb.ToString();
+            return new StringBuilderCharSequence(sb);
         }
 
-        ICharSequence ICharSequence.SubSequence(int start, int end)
+        ICharSequence ICharSequence.Subsequence(int startIndex, int length)
         {
-            return new StringCharSequenceWrapper(this.SubSequence(start, end));
+            return Subsequence(startIndex, length);
         }
 
         public override string ToString()

@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestKeep()
         {
-            CharacterRunAutomaton keepWords = new CharacterRunAutomaton(BasicOperations.Complement(Automaton.Union(Arrays.AsList(BasicAutomata.MakeString("foo"), BasicAutomata.MakeString("bar")))));
+            CharacterRunAutomaton keepWords = new CharacterRunAutomaton(BasicOperations.Complement(Automaton.Union(new Automaton[] { BasicAutomata.MakeString("foo"), BasicAutomata.MakeString("bar") })));
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, keepWords);
             AssertAnalyzesTo(a, "quick foo brown bar bar fox foo", new string[] { "foo", "bar", "bar", "foo" }, new int[] { 2, 2, 1, 2 });
         }

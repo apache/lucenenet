@@ -1,10 +1,12 @@
 ﻿// commons-codec version compatibility level: 1.9
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 {
@@ -89,7 +91,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         public static Languages GetInstance(string languagesResourceName)
         {
             // read languages list
-            ISet<string> ls = new HashSet<string>();
+            ISet<string> ls = new JCG.HashSet<string>();
             Stream langIS = typeof(Languages).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(Languages), languagesResourceName);
 
             if (langIS == null)
@@ -125,7 +127,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 }
             }
 
-            return new Languages(Collections.UnmodifiableSet(ls));
+            return new Languages(ls.AsReadOnly());
         }
 
         private static string LangResourceName(NameType nameType)
@@ -265,7 +267,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         internal SomeLanguages(ISet<string> languages)
         {
-            this.languages = Collections.UnmodifiableSet(languages);
+            this.languages = languages.AsReadOnly();
         }
 
         public override bool Contains(string language)
@@ -306,7 +308,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             else
             {
                 SomeLanguages sl = (SomeLanguages)other;
-                ISet<string> ls = new HashSet<string>(/*Math.Min(languages.Count, sl.languages.Count)*/);
+                ISet<string> ls = new JCG.HashSet<string>(Math.Min(languages.Count, sl.languages.Count));
                 foreach (string lang in languages)
                 {
                     if (sl.languages.Contains(lang))

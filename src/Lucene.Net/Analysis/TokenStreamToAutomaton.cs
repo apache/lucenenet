@@ -1,5 +1,5 @@
+using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
@@ -56,14 +56,8 @@ namespace Lucene.Net.Analysis
         /// Whether to generate holes in the automaton for missing positions, <c>true</c> by default. </summary>
         public virtual bool PreservePositionIncrements
         {
-            get
-            {
-                return this.preservePositionIncrements; // LUCENENET specific - properties should always have a getter
-            }
-            set
-            {
-                this.preservePositionIncrements = value;
-            }
+            get => this.preservePositionIncrements; // LUCENENET specific - properties should always have a getter
+            set => this.preservePositionIncrements = value;
         }
 
         /// <summary>
@@ -72,14 +66,8 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public virtual bool UnicodeArcs
         {
-            get
-            {
-                return this.unicodeArcs; // LUCENENET specific - properties should always have a getter
-            }
-            set
-            {
-                this.unicodeArcs = value;
-            }
+            get => this.unicodeArcs; // LUCENENET specific - properties should always have a getter
+            set => this.unicodeArcs = value;
         }
 
         private class Position : RollingBuffer.IResettable

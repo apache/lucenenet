@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.CharFilters
 {
@@ -83,7 +84,7 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             // LUCENENET specific - we need to use StringComparer.Ordinal for the
             // sort order to correctly match Lucene, otherwise FST.Builder will throw Debug.Assert failures
-            private readonly IDictionary<string, string> pendingPairs = new SortedDictionary<string, string>(StringComparer.Ordinal);
+            private readonly IDictionary<string, string> pendingPairs = new JCG.SortedDictionary<string, string>(StringComparer.Ordinal);
 
             /// <summary>
             /// Records a replacement to be applied to the input

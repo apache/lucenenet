@@ -1,8 +1,8 @@
+using J2N.Runtime.CompilerServices;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Support;
-using NUnit.Framework;
-using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -32,7 +32,7 @@ namespace Lucene.Net.Util
         {
             Random rnd = Random;
 
-            ISet<object> jdk = Collections.NewSetFromMap<object, bool?>(new IdentityHashMap<object, bool?>());
+            ISet<object> jdk = new JCG.HashSet<object>(IdentityEqualityComparer<object>.Default);
             RamUsageEstimator.IdentityHashSet<object> us = new RamUsageEstimator.IdentityHashSet<object>();
 
             int max = 100000;
@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
                 Assert.AreEqual(e1, e2);
             }
 
-            ISet<object> collected = Collections.NewSetFromMap<object, bool?>(new IdentityHashMap<object, bool?>());
+            ISet<object> collected = new JCG.HashSet<object>(IdentityEqualityComparer<object>.Default);
             foreach (object o in us)
             {
                 collected.Add(o);

@@ -52,7 +52,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <para/>
         /// Setting <paramref name="limit"/> to a very large value, like <see cref="int.MaxValue"/>
         /// is allowed, but is less efficient than
-        /// using <see cref="Support.HashMap{TKey, TValue}"/> or 
+        /// using <see cref="J2N.Collections.Generic.Dictionary{TKey, TValue}"/> or 
         /// <see cref="Dictionary{TKey, TValue}"/> because our class needs
         /// to keep track of the use order (via an additional doubly-linked
         /// list) which is not used when the map's size is always below the
@@ -76,7 +76,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <para/>
         /// Setting <paramref name="limit"/> to a very large value, like <see cref="int.MaxValue"/>
         /// is allowed, but is less efficient than
-        /// using <see cref="Support.HashMap{TKey, TValue}"/> or 
+        /// using <see cref="J2N.Collections.Generic.Dictionary{TKey, TValue}"/> or 
         /// <see cref="Dictionary{TKey, TValue}"/> because our class needs
         /// to keep track of the use order (via an additional doubly-linked
         /// list) which is not used when the map's size is always below the
@@ -104,10 +104,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public virtual int Limit
         {
-            get
-            {
-                return cache.Limit;
-            }
+            get => cache.Limit;
             set
             {
                 if (value < 1)
@@ -131,8 +128,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public TValue Get(TKey key)
         {
-            TValue result;
-            if (!cache.TryGetValue(key, out result))
+            if (!cache.TryGetValue(key, out TValue result))
             {
                 return default(TValue);
             }
@@ -143,51 +139,21 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public TValue this[TKey key]
         {
-            get
-            {
-                return cache[key];
-            }
-            set
-            {
-                cache[key] = value;
-            }
+            get => cache[key];
+            set => cache[key] = value;
         }
 
-        public int Count
-        {
-            get
-            {
-                return cache.Count;
-            }
-        }
+        public int Count => cache.Count;
 
-        public bool IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public bool IsReadOnly => false;
 
-        public ICollection<TKey> Keys
-        {
-            get
-            {
-                return cache.Keys;
-            }
-        }
+        public ICollection<TKey> Keys => cache.Keys;
 
-        public ICollection<TValue> Values
-        {
-            get
-            {
-                return cache.Values;
-            }
-        }
+        public ICollection<TValue> Values => cache.Values;
 
         public void Add(KeyValuePair<TKey, TValue> item)
         {
-            throw new NotSupportedException();
+            cache.Add(item.Key, item.Value);
         }
 
         public void Add(TKey key, TValue value)

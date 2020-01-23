@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -55,7 +56,7 @@ namespace Lucene.Net.Search
         public static void CheckNoMatchExplanations(Query q, string defaultFieldName, IndexSearcher searcher, int[] results)
         {
             string d = q.ToString(defaultFieldName);
-            SortedSet<int?> ignore = new SortedSet<int?>();
+            JCG.SortedSet<int?> ignore = new JCG.SortedSet<int?>();
             for (int i = 0; i < results.Length; i++)
             {
                 ignore.Add(Convert.ToInt32(results[i], CultureInfo.InvariantCulture));
@@ -118,12 +119,12 @@ namespace Lucene.Net.Search
 
             Trace.TraceInformation("Checked");
 
-            SortedSet<int?> correct = new SortedSet<int?>();
+            JCG.SortedSet<int?> correct = new JCG.SortedSet<int?>();
             for (int i = 0; i < results.Length; i++)
             {
                 correct.Add(Convert.ToInt32(results[i], CultureInfo.InvariantCulture));
             }
-            SortedSet<int?> actual = new SortedSet<int?>();
+            JCG.SortedSet<int?> actual = new JCG.SortedSet<int?>();
             ICollector c = new SetCollector(actual);
 
             searcher.Search(query, c);

@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Collections;
 
 namespace Lucene.Net.Search
 {
@@ -123,8 +123,8 @@ namespace Lucene.Net.Search
         {
             return J2N.BitConversion.SingleToInt32Bits(Boost) 
                 ^ Slop 
-                ^ Equatable.Wrap(GetTerms()).GetHashCode() 
-                ^ Equatable.Wrap(GetPositions()).GetHashCode() 
+                ^ ArrayEqualityComparer<Term>.OneDimensional.GetHashCode(GetTerms()) 
+                ^ ArrayEqualityComparer<int>.OneDimensional.GetHashCode(GetPositions()) 
                 ^ n;
         }
     }

@@ -1,13 +1,14 @@
 ﻿// Lucene version compatibility level < 7.1.0
+using J2N;
 using ICU4N.Text;
 using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using ExceptionToClassNameConventionAttribute = Lucene.Net.Support.ExceptionToClassNameConventionAttribute;
 
 namespace Lucene.Net.Analysis.Icu
 {
@@ -135,7 +136,7 @@ namespace Lucene.Net.Analysis.Icu
                     break;
                 }
 
-                int lastCodePoint = Character.CodePointBefore(tmpBuffer.Buffer, tmpBuffer.Length /*, 0*/);
+                int lastCodePoint = Character.CodePointBefore(tmpBuffer.Buffer, tmpBuffer.Length , 0);
                 if (normalizer.IsInert(lastCodePoint))
                 {
                     // we require an inert char so that we can normalize content before and

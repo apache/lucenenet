@@ -1,16 +1,14 @@
-﻿using Lucene.Net.Analysis;
-using System.Collections.Generic;
-using NUnit.Framework;
-using Lucene.Net.Support;
-using Lucene.Net.Analysis.Miscellaneous;
-using Lucene.Net.Util;
+﻿using J2N.Text;
+using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Synonym;
+using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Attributes;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Analysis.Core;
-using Lucene.Net.Attributes;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -49,7 +47,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public virtual void TestDups(string expected, params Token[] tokens)
         {
 
-            IEnumerator<Token> toks = Arrays.AsList(tokens).GetEnumerator();
+            IEnumerator<Token> toks = ((IEnumerable<Token>)tokens).GetEnumerator();
             TokenStream ts = new RemoveDuplicatesTokenFilter((new TokenStreamAnonymousInnerClassHelper(this, toks)));
 
             AssertTokenStreamContents(ts, Regex.Split(expected, "\\s").TrimEnd());

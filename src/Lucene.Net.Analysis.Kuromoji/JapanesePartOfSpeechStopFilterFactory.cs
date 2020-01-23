@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -58,7 +59,7 @@ namespace Lucene.Net.Analysis.Ja
             CharArraySet cas = GetWordSet(loader, stopTagFiles, false);
             if (cas != null)
             {
-                stopTags = new HashSet<string>();
+                stopTags = new JCG.HashSet<string>();
                 foreach (string element in cas) 
                 {
                     stopTags.Add(element);

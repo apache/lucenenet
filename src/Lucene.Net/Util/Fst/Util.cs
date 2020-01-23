@@ -1,3 +1,5 @@
+using J2N;
+using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Collections;
@@ -5,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -361,7 +364,7 @@ namespace Lucene.Net.Util.Fst
 
             internal readonly IComparer<T> comparer;
 
-            internal SortedSet<FSTPath<T>> queue = null;
+            internal JCG.SortedSet<FSTPath<T>> queue = null;
 
             private object syncLock = new object();
 
@@ -379,7 +382,7 @@ namespace Lucene.Net.Util.Fst
                 this.maxQueueDepth = maxQueueDepth;
                 this.comparer = comparer;
 
-                queue = new SortedSet<FSTPath<T>>(new TieBreakByInputComparer<T>(comparer));
+                queue = new JCG.SortedSet<FSTPath<T>>(new TieBreakByInputComparer<T>(comparer));
             }
 
             /// <summary>
@@ -482,7 +485,7 @@ namespace Lucene.Net.Util.Fst
 
             public virtual TopResults<T> Search()
             {
-                IList<Result<T>> results = new List<Result<T>>();
+                IList<Result<T>> results = new JCG.List<Result<T>>();
 
                 //System.out.println("search topN=" + topN);
 
@@ -751,15 +754,15 @@ namespace Lucene.Net.Util.Fst
             FST.Arc<T> startArc = fst.GetFirstArc(new FST.Arc<T>());
 
             // A queue of transitions to consider for the next level.
-            IList<FST.Arc<T>> thisLevelQueue = new List<FST.Arc<T>>();
+            IList<FST.Arc<T>> thisLevelQueue = new JCG.List<FST.Arc<T>>();
 
             // A queue of transitions to consider when processing the next level.
-            IList<FST.Arc<T>> nextLevelQueue = new List<FST.Arc<T>>();
+            IList<FST.Arc<T>> nextLevelQueue = new JCG.List<FST.Arc<T>>();
             nextLevelQueue.Add(startArc);
             //System.out.println("toDot: startArc: " + startArc);
 
             // A list of states on the same level (for ranking).
-            IList<int?> sameLevelStates = new List<int?>();
+            IList<int?> sameLevelStates = new JCG.List<int?>();
 
             // A bitset of already seen states (target offset).
             BitArray seen = new BitArray(32);

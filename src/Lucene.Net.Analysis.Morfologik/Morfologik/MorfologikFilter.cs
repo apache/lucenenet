@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 8.2.0
+using J2N;
 using Lucene.Net.Analysis.Morfologik.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;

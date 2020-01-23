@@ -1,8 +1,10 @@
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -44,7 +46,7 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestBasic()
         {
-            HashSet<string> fileExtensions = new HashSet<string>();
+            ISet<string> fileExtensions = new JCG.HashSet<string>();
             fileExtensions.Add(Lucene40StoredFieldsWriter.FIELDS_EXTENSION);
             fileExtensions.Add(Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION);
 
@@ -113,7 +115,7 @@ namespace Lucene.Net.Store
             DirectoryInfo secondDir = CreateTempDir("bar");
             System.IO.Directory.Delete(primDir.FullName, true);
             System.IO.Directory.Delete(secondDir.FullName, true);
-            using (Directory dir = NewFSSwitchDirectory(primDir, secondDir, new HashSet<string>()))
+            using (Directory dir = NewFSSwitchDirectory(primDir, secondDir, new JCG.HashSet<string>()))
             {
                 try
                 {
@@ -127,17 +129,22 @@ namespace Lucene.Net.Store
             }
         }
 
+        private static bool ContainsFile(Directory directory, string file) // LUCENENET specific method to prevent having to use Arrays.AsList(), which creates unnecessary memory allocations
+        {
+            return Array.IndexOf(directory.ListAll(), file) > -1;
+        }
+
         // LUCENE-3380 test that we can add a file, and then when we call list() we get it back
         [Test]
         public virtual void TestDirectoryFilter()
         {
-            Directory dir = NewFSSwitchDirectory(new HashSet<string>());
+            Directory dir = NewFSSwitchDirectory(new JCG.HashSet<string>());
             string name = "file";
             try
             {
                 dir.CreateOutput(name, NewIOContext(Random)).Dispose();
                 Assert.IsTrue(SlowFileExists(dir, name));
-                Assert.IsTrue(Arrays.AsList(dir.ListAll()).Contains(name));
+                Assert.IsTrue(ContainsFile(dir, name));
             }
             finally
             {
@@ -149,7 +156,7 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestCompoundFileAppendTwice()
         {
-            Directory newDir = NewFSSwitchDirectory(Collections.Singleton("cfs"));
+            Directory newDir = NewFSSwitchDirectory(new JCG.HashSet<string> { "cfs" });
             var csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random), true);
             CreateSequenceFile(newDir, "d1", (sbyte)0, 15);
             IndexOutput @out = csw.CreateOutput("d.xyz", NewIOContext(Random));

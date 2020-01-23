@@ -66,7 +66,7 @@ namespace Lucene.Net.Queries
 
             public FieldAndTermEnumAnonymousInnerClassHelper(IList<Term> terms)
             {
-                if (!terms.Any())
+                if (terms.Count == 0)
                 {
                     throw new ArgumentException("no terms provided");
                 }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Queries
         /// a single field.
         /// </summary>
         public TermsFilter(string field, params BytesRef[] terms)
-            : this(field, Arrays.AsList(terms))
+            : this(field, (IList<BytesRef>)terms)
         {
             // this ctor prevents unnecessary Term creations
         }
@@ -143,7 +143,7 @@ namespace Lucene.Net.Queries
         /// contain duplicate terms and multiple fields.
         /// </summary>
         public TermsFilter(params Term[] terms)
-            : this(terms.ToList())
+            : this((IList<Term>)terms)
         {
         }
 

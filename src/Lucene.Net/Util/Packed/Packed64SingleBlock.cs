@@ -1,7 +1,6 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
-using System.Linq;
 
 // this file has been automatically generated, DO NOT EDIT
 

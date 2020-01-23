@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene40
@@ -166,7 +167,7 @@ namespace Lucene.Net.Codecs.Lucene40
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
             // examine the values to determine best type to use
-            HashSet<BytesRef> uniqueValues = new HashSet<BytesRef>();
+            ISet<BytesRef> uniqueValues = new JCG.HashSet<BytesRef>();
             int minLength = int.MaxValue;
             int maxLength = int.MinValue;
 
@@ -362,7 +363,7 @@ namespace Lucene.Net.Codecs.Lucene40
             CodecUtil.WriteHeader(index, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_CODEC_NAME_IDX, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_VERSION_CURRENT);
 
             // deduplicate
-            SortedSet<BytesRef> dictionary = new SortedSet<BytesRef>();
+            JCG.SortedSet<BytesRef> dictionary = new JCG.SortedSet<BytesRef>();
             foreach (BytesRef v in values)
             {
                 dictionary.Add(v == null ? new BytesRef() : BytesRef.DeepCopyOf(v));
@@ -407,7 +408,7 @@ namespace Lucene.Net.Codecs.Lucene40
             CodecUtil.WriteHeader(index, Lucene40DocValuesFormat.BYTES_VAR_DEREF_CODEC_NAME_IDX, Lucene40DocValuesFormat.BYTES_VAR_DEREF_VERSION_CURRENT);
 
             // deduplicate
-            SortedSet<BytesRef> dictionary = new SortedSet<BytesRef>();
+            JCG.SortedSet<BytesRef> dictionary = new JCG.SortedSet<BytesRef>();
             foreach (BytesRef v in values)
             {
                 dictionary.Add(v == null ? new BytesRef() : BytesRef.DeepCopyOf(v));

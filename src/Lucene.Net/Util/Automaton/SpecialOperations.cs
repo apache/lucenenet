@@ -1,7 +1,8 @@
-using Lucene.Net.Support;
+using J2N.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 /*
  * dk.brics.automaton
@@ -115,7 +116,7 @@ namespace Lucene.Net.Util.Automaton
                 return a.singleton;
             }
             StringBuilder b = new StringBuilder();
-            HashSet<State> visited = new HashSet<State>();
+            JCG.HashSet<State> visited = new JCG.HashSet<State>();
             State s = a.initial;
             bool done;
             do
@@ -146,7 +147,7 @@ namespace Lucene.Net.Util.Automaton
                 return new BytesRef(a.singleton);
             }
             BytesRef @ref = new BytesRef(10);
-            HashSet<State> visited = new HashSet<State>();
+            JCG.HashSet<State> visited = new JCG.HashSet<State>();
             State s = a.initial;
             bool done;
             do
@@ -229,7 +230,7 @@ namespace Lucene.Net.Util.Automaton
             // reverse all edges
             Dictionary<State, ISet<Transition>> m = new Dictionary<State, ISet<Transition>>();
             State[] states = a.GetNumberedStates();
-            ISet<State> accept = new EquatableSet<State>();
+            ISet<State> accept = new JCG.HashSet<State>();
             foreach (State s in states)
             {
                 if (s.Accept)
@@ -239,7 +240,7 @@ namespace Lucene.Net.Util.Automaton
             }
             foreach (State r in states)
             {
-                m[r] = new EquatableSet<Transition>();
+                m[r] = new JCG.HashSet<Transition>();
                 r.accept = false;
             }
             foreach (State r in states)
@@ -278,7 +279,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static ISet<Int32sRef> GetFiniteStrings(Automaton a, int limit)
         {
-            HashSet<Int32sRef> strings = new HashSet<Int32sRef>();
+            JCG.HashSet<Int32sRef> strings = new JCG.HashSet<Int32sRef>();
             if (a.IsSingleton)
             {
                 if (limit > 0)
@@ -286,7 +287,7 @@ namespace Lucene.Net.Util.Automaton
                     strings.Add(Util.ToUTF32(a.Singleton, new Int32sRef()));
                 }
             }
-            else if (!GetFiniteStrings(a.initial, new HashSet<State>(), strings, new Int32sRef(), limit))
+            else if (!GetFiniteStrings(a.initial, new JCG.HashSet<State>(), strings, new Int32sRef(), limit))
             {
                 return strings;
             }
@@ -298,7 +299,7 @@ namespace Lucene.Net.Util.Automaton
         /// <c>false</c> if more than <paramref name="limit"/> strings are found.
         /// <paramref name="limit"/>&lt;0 means "infinite".
         /// </summary>
-        private static bool GetFiniteStrings(State s, HashSet<State> pathstates, HashSet<Int32sRef> strings, Int32sRef path, int limit)
+        private static bool GetFiniteStrings(State s, JCG.HashSet<State> pathstates, JCG.HashSet<Int32sRef> strings, Int32sRef path, int limit)
         {
             pathstates.Add(s);
             foreach (Transition t in s.GetTransitions())

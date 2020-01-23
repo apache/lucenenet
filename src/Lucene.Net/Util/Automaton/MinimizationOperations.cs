@@ -1,6 +1,7 @@
-using Lucene.Net.Support;
+using J2N;
 using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 /*
  * dk.brics.automaton
@@ -65,7 +66,7 @@ namespace Lucene.Net.Util.Automaton
             if (a.initial.numTransitions == 1)
             {
                 Transition t = a.initial.TransitionsArray[0];
-                if (t.to == a.initial && t.min == Character.MIN_CODE_POINT && t.max == Character.MAX_CODE_POINT)
+                if (t.to == a.initial && t.min == Character.MinCodePoint && t.max == Character.MaxCodePoint)
                 {
                     return;
                 }
@@ -77,7 +78,7 @@ namespace Lucene.Net.Util.Automaton
             State[] states = a.GetNumberedStates();
             int sigmaLen = sigma.Length, statesLen = states.Length;
             List<State>[,] reverse = new List<State>[statesLen, sigmaLen];
-            ISet<State>[] partition = new EquatableSet<State>[statesLen];
+            ISet<State>[] partition = new JCG.HashSet<State>[statesLen];
             List<State>[] splitblock = new List<State>[statesLen];
             int[] block = new int[statesLen];
             StateList[,] active = new StateList[statesLen, sigmaLen];
@@ -89,7 +90,7 @@ namespace Lucene.Net.Util.Automaton
             for (int q = 0; q < statesLen; q++)
             {
                 splitblock[q] = new List<State>();
-                partition[q] = new EquatableSet<State>();
+                partition[q] = new JCG.HashSet<State>();
                 for (int x = 0; x < sigmaLen; x++)
                 {
                     active[q, x] = new StateList();

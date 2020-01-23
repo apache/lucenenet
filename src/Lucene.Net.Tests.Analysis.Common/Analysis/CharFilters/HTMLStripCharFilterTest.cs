@@ -1,10 +1,11 @@
-using Lucene.Net.Support;
+using J2N.Text;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.CharFilters
 {
@@ -107,7 +108,7 @@ namespace Lucene.Net.Analysis.CharFilters
         [Test]
         public virtual void TestGamma()
         {
-            AssertHTMLStripsTo("&Gamma;", "\u0393", new HashSet<string>(Arrays.AsList("reserved")));
+            AssertHTMLStripsTo("&Gamma;", "\u0393", new JCG.HashSet<string> { "reserved" });
         }
 
         [Test]
@@ -115,7 +116,7 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             string test = "&nbsp; &lt;foo&gt; &Uuml;bermensch &#61; &Gamma; bar &#x393;";
             string gold = "  <foo> \u00DCbermensch = \u0393 bar \u0393";
-            AssertHTMLStripsTo(test, gold, new HashSet<string>(Arrays.AsList("reserved")));
+            AssertHTMLStripsTo(test, gold, new JCG.HashSet<string> { "reserved" });
         }
 
         [Test]
@@ -123,14 +124,14 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             string test = "&nbsp; &lt;junk/&gt; &nbsp; &#33; &#64; and &#8217;";
             string gold = "  <junk/>   ! @ and ’";
-            AssertHTMLStripsTo(test, gold, new HashSet<string>(Arrays.AsList("reserved")));
+            AssertHTMLStripsTo(test, gold, new JCG.HashSet<string> { "reserved" });
         }
 
         [Test]
         public virtual void TestReserved()
         {
             string test = "aaa bbb <reserved ccc=\"ddddd\"> eeee </reserved> ffff <reserved ggg=\"hhhh\"/> <other/>";
-            ISet<string> set = new HashSet<string>();
+            ISet<string> set = new JCG.HashSet<string>();
             set.Add("reserved");
             TextReader reader = new HTMLStripCharFilter(new StringReader(test), set);
             StringBuilder builder = new StringBuilder();
@@ -481,7 +482,7 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             string test = "one<script no-value-attr>callSomeMethod();</script>two";
             string gold = "one<script no-value-attr></script>two";
-            ISet<string> escapedTags = new HashSet<string>(Arrays.AsList("SCRIPT"));
+            ISet<string> escapedTags = new JCG.HashSet<string> { "SCRIPT" };
             AssertHTMLStripsTo(test, gold, escapedTags);
         }
 
@@ -502,7 +503,7 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             string test = "one<style type=\"text/css\"> body,font,a { font-family:arial; } </style>two";
             string gold = "one<style type=\"text/css\"></style>two";
-            ISet<string> escapedTags = new HashSet<string>(Arrays.AsList("STYLE"));
+            ISet<string> escapedTags = new JCG.HashSet<string> { "STYLE" };
             AssertHTMLStripsTo(test, gold, escapedTags);
         }
 
@@ -526,7 +527,7 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             string test = "one<BR class='whatever'>two</\nBR\n>";
             string gold = "one<BR class='whatever'>two</\nBR\n>";
-            ISet<string> escapedTags = new HashSet<string>(Arrays.AsList("BR"));
+            ISet<string> escapedTags = new JCG.HashSet<string> { "BR" };
             AssertHTMLStripsTo(test, gold, escapedTags);
         }
 

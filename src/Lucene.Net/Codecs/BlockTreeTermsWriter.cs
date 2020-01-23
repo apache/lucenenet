@@ -1,3 +1,4 @@
+using J2N.Text;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;

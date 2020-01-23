@@ -1,9 +1,11 @@
+using J2N.Runtime.CompilerServices;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -70,7 +72,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 AtomicReader indexReader = (AtomicReader)ctx.Reader;
                 Terms terms = indexReader.GetTerms("body");
                 TermsEnum iterator = terms.GetIterator(null);
-                IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
+                IDictionary<DocsEnum, bool?> enums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
                 MatchNoBits bits = new MatchNoBits(indexReader.MaxDoc);
                 while ((iterator.Next()) != null)
                 {
@@ -99,7 +101,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 Terms terms = ((AtomicReader)ctx.Reader).GetTerms("body");
                 TermsEnum iterator = terms.GetIterator(null);
-                IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
+                IDictionary<DocsEnum, bool?> enums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
                 MatchNoBits bits = new MatchNoBits(open.MaxDoc);
                 DocsEnum docs = null;
                 while ((iterator.Next()) != null)
@@ -155,7 +157,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 Terms terms = ((AtomicReader)ctx.Reader).GetTerms("body");
                 TermsEnum iterator = terms.GetIterator(null);
-                IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
+                IDictionary<DocsEnum, bool?> enums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
                 MatchNoBits bits = new MatchNoBits(firstReader.MaxDoc);
                 iterator = terms.GetIterator(null);
                 DocsEnum docs = null;

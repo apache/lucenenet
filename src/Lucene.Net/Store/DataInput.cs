@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -297,7 +298,7 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual ISet<string> ReadStringSet()
         {
-            ISet<string> set = new HashSet<string>();
+            ISet<string> set = new JCG.HashSet<string>();
             int count = ReadInt32();
             for (int i = 0; i < count; i++)
             {

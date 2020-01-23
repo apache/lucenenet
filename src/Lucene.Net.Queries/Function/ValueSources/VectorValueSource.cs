@@ -1,9 +1,9 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -292,16 +292,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             var that = (VectorValueSource)o;
 
-            // LUCENENET specific: ensure our passed in list is equatable by
-            // wrapping it in an EquatableList if it is not one already
-            return Equatable.Wrap(m_sources).Equals(that.m_sources);
+            // LUCENENET specific: use structural equality comparison
+            return JCG.ListEqualityComparer<ValueSource>.Default.Equals(m_sources, that.m_sources);
         }
 
         public override int GetHashCode()
         {
-            // LUCENENET specific: ensure our passed in list is equatable by
-            // wrapping it in an EquatableList if it is not one already
-            return Equatable.Wrap(m_sources).GetHashCode();
+            // LUCENENET specific: use structural equality comparison
+            return JCG.ListEqualityComparer<ValueSource>.Default.GetHashCode(m_sources);
         }
     }
 }

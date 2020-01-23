@@ -19,10 +19,10 @@
  *
 */
 
+using J2N.Text;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Queries.Function

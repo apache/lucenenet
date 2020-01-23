@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Lucene.Net.Support;
+using JCG = J2N.Collections.Generic;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -89,12 +90,12 @@ namespace Lucene.Net.Util
 
         internal static void assertEquals<T>(ISet<T> expected, ISet<T> actual)
         {
-            Assert.True(expected.SetEquals(actual));
+            Assert.True(JCG.SetEqualityComparer<T>.Aggressive.Equals(expected, actual));
         }
 
         internal static void assertEquals<T>(string message, ISet<T> expected, ISet<T> actual)
         {
-            Assert.True(expected.SetEquals(actual), message);
+            Assert.True(JCG.SetEqualityComparer<T>.Aggressive.Equals(expected, actual), message);
         }
 
         internal static void assertEquals<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
@@ -175,7 +176,7 @@ namespace Lucene.Net.Util
 
         internal static ISet<T> AsSet<T>(params T[] args)
         {
-            return new HashSet<T>(args);
+            return new JCG.HashSet<T>(args);
         }
 
         [ExceptionToNetNumericConvention] // LUCENENET: This is for making test porting easier, keeping as-is

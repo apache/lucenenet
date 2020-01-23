@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
 using NUnit.Framework;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -166,7 +165,7 @@ namespace Lucene.Net.Index
                     dir.RandomIOExceptionRateOnOpen = 0.0;
                     r = DirectoryReader.Open(dir);
                     dirCopy = NewMockFSDirectory(CreateTempDir("TestIndexWriterOutOfFileDescriptors.copy"));
-                    HashSet<string> files = new HashSet<string>();
+                    ISet<string> files = new JCG.HashSet<string>();
                     foreach (string file in dir.ListAll())
                     {
                         dir.Copy(dirCopy, file, file, IOContext.DEFAULT);

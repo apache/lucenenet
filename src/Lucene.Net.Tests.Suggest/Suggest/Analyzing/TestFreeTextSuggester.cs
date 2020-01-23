@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N.Text;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Documents;
@@ -11,6 +12,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
@@ -441,7 +443,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public void TestRandom()
         {
             string[] terms = new string[TestUtil.NextInt32(Random, 2, 10)];
-            ISet<string> seen = new HashSet<string>();
+            ISet<string> seen = new JCG.HashSet<string>();
             while (seen.size() < terms.Length)
             {
                 string token = TestUtil.RandomSimpleString(Random, 1, 5);
@@ -498,7 +500,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     Console.WriteLine("TEST: build model for gram=" + gram);
                 }
-                IDictionary<string, int?> model = new HashMap<string, int?>();
+                IDictionary<string, int?> model = new JCG.Dictionary<string, int?>();
                 gramCounts.Add(model);
                 foreach (string[] doc in docs)
                 {
@@ -571,7 +573,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // Expected:
                 List<Lookup.LookupResult> expected = new List<Lookup.LookupResult>();
                 double backoff = 1.0;
-                seen = new HashSet<string>();
+                seen = new JCG.HashSet<string>();
 
                 if (VERBOSE)
                 {

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
 using System;
 using System.Text;
 
@@ -46,10 +46,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             int mark = 0; // that much is skipped
                           // optionally skip some of the text, set date (no title?)
             DateTime? date = null;
-            int h1 = docBuf.IndexOf(TEXT);
+            int h1 = docBuf.IndexOf(TEXT, StringComparison.Ordinal);
             if (h1 >= 0)
             {
-                int h2 = docBuf.IndexOf(TEXT_END, h1);
+                int h2 = docBuf.IndexOf(TEXT_END, h1, StringComparison.Ordinal);
                 mark = h1 + TEXT_LENGTH;
                 // date...
                 string dateStr = Extract(docBuf, DATE, DATE_END, h2, DATE_NOISE_PREFIXES);

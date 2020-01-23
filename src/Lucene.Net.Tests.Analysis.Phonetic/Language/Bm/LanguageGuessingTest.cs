@@ -1,5 +1,4 @@
-﻿using Lucene.Net.Support;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -29,10 +28,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
     /// </summary>
     public class LanguageGuessingTest
     {
-        private static string EXACT = "exact";
-        private static string ONE_OF = "one of";
+        private const string EXACT = "exact";
+        private const string ONE_OF = "one of";
 
-        public static List<object[]> Values =  Arrays.AsList(new object[][] {
+        public static IList<object[]> Values = new object[][] {
                 new object[] { "Renault", "french", EXACT },
                 new object[] { "Mickiewicz", "polish", EXACT },
                 new object[] { "Thompson", "english", ONE_OF }, // this also hits german and greeklatin
@@ -51,7 +50,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 new object[] { "\u05db\u05d4\u05df", "hebrew", EXACT }, // כהן
                 new object[] { "\u00e1cz", "any", EXACT }, // ácz
                 new object[] { "\u00e1tz", "any", EXACT } // átz
-        });
+        };
             
        
 

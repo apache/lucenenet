@@ -8,6 +8,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index.Sorter
 {
@@ -81,7 +82,7 @@ namespace Lucene.Net.Index.Sorter
             dir2 = NewDirectory();
             int numDocs = AtLeast(150);
             int numTerms = TestUtil.NextInt32(Random, 1, numDocs / 5);
-            ISet<string> randomTerms = new HashSet<string>();
+            ISet<string> randomTerms = new JCG.HashSet<string>();
             while (randomTerms.size() < numTerms)
             {
                 randomTerms.add(TestUtil.RandomSimpleString(Random));

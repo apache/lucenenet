@@ -1,8 +1,8 @@
-﻿using Lucene.Net.Facet.Taxonomy.Directory;
+﻿using J2N.Text;
+using Lucene.Net.Facet.Taxonomy.Directory;
 using Lucene.Net.Facet.Taxonomy.WriterCache;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

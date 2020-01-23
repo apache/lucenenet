@@ -1,9 +1,10 @@
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -87,11 +88,11 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestGetFieldNameVariations()
         {
-            ICollection<string> allFieldNames = new HashSet<string>();
-            ICollection<string> indexedFieldNames = new HashSet<string>();
-            ICollection<string> notIndexedFieldNames = new HashSet<string>();
-            ICollection<string> tvFieldNames = new HashSet<string>();
-            ICollection<string> noTVFieldNames = new HashSet<string>();
+            ICollection<string> allFieldNames = new JCG.HashSet<string>();
+            ICollection<string> indexedFieldNames = new JCG.HashSet<string>();
+            ICollection<string> notIndexedFieldNames = new JCG.HashSet<string>();
+            ICollection<string> tvFieldNames = new JCG.HashSet<string>();
+            ICollection<string> noTVFieldNames = new JCG.HashSet<string>();
 
             foreach (FieldInfo fieldInfo in Reader.FieldInfos)
             {

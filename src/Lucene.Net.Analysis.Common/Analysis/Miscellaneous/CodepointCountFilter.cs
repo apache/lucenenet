@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Analysis.TokenAttributes;
+﻿using J2N;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 

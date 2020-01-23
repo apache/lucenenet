@@ -1,14 +1,15 @@
+using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Codecs.MockSep;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -294,7 +295,7 @@ namespace Lucene.Net.Index
             //final int numTerms = 2;
             TermData[] terms = new TermData[numTerms];
 
-            HashSet<string> termsSeen = new HashSet<string>();
+            ISet<string> termsSeen = new JCG.HashSet<string>();
 
             for (int i = 0; i < numTerms; i++)
             {

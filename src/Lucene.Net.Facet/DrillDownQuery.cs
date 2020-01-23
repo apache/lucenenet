@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
@@ -61,7 +62,7 @@ namespace Lucene.Net.Facet
 
         private readonly FacetsConfig config;
         private readonly BooleanQuery query;
-        private readonly IDictionary<string, int?> drillDownDims = new LinkedHashMap<string, int?>();
+        private readonly IDictionary<string, int?> drillDownDims = new JCG.LinkedDictionary<string, int?>();
 
         /// <summary>
         /// Used by <see cref="Clone"/>

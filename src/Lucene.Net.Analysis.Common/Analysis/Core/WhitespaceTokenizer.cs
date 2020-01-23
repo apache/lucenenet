@@ -1,7 +1,6 @@
-﻿using System.IO;
-using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Core
 {

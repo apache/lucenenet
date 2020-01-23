@@ -1,8 +1,9 @@
-using Lucene.Net.Support;
+using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -155,7 +156,7 @@ namespace Lucene.Net.Index
 
         public ICollection<DocFieldConsumerPerField> Fields()
         {
-            ICollection<DocFieldConsumerPerField> fields = new HashSet<DocFieldConsumerPerField>();
+            ICollection<DocFieldConsumerPerField> fields = new JCG.HashSet<DocFieldConsumerPerField>();
             for (int i = 0; i < fieldHash.Length; i++)
             {
                 DocFieldProcessorPerField field = fieldHash[i];

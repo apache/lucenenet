@@ -1,7 +1,6 @@
 ﻿// lucene version compatibility level: 4.8.1
 using J2N.IO;
 using Lucene.Net.Support;
-using Lucene.Net.Support.IO;
 using System;
 using System.IO;
 using System.Reflection;

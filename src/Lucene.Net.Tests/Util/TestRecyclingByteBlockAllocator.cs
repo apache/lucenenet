@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -43,7 +44,7 @@ namespace Lucene.Net.Util
         public virtual void TestAllocate()
         {
             RecyclingByteBlockAllocator allocator = NewAllocator();
-            var set = new HashSet<byte[]>();
+            var set = new JCG.HashSet<byte[]>();
             var block = allocator.GetByteBlock();
             set.Add(block);
             Assert.IsNotNull(block);
@@ -65,7 +66,7 @@ namespace Lucene.Net.Util
         public virtual void TestAllocateAndRecycle()
         {
             RecyclingByteBlockAllocator allocator = NewAllocator();
-            var allocated = new HashSet<byte[]>();
+            var allocated = new JCG.HashSet<byte[]>();
 
             var block = allocator.GetByteBlock();
             allocated.Add(block);
@@ -107,7 +108,7 @@ namespace Lucene.Net.Util
         public virtual void TestAllocateAndFree()
         {
             RecyclingByteBlockAllocator allocator = NewAllocator();
-            var allocated = new HashSet<byte[]>();
+            var allocated = new JCG.HashSet<byte[]>();
             int freeButAllocated = 0;
             var block = allocator.GetByteBlock();
             allocated.Add(block);

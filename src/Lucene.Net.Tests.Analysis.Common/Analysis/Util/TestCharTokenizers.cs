@@ -1,11 +1,12 @@
-﻿using System;
+﻿using J2N;
+using J2N.Text;
+using System;
 using System.IO;
 using System.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 

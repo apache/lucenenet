@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Numerics;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
@@ -53,7 +54,7 @@ namespace Lucene.Net.Codecs.SimpleText
         private IndexOutput data;
         private readonly BytesRef scratch = new BytesRef();
         private readonly int numDocs;
-        private readonly HashSet<string> _fieldsSeen = new HashSet<string>(); // for asserting
+        private readonly ISet<string> _fieldsSeen = new JCG.HashSet<string>(); // for asserting
 
         // LUCENENET NOTE: Changed from public to internal because the class had to be made public, but is not for public use.
         internal SimpleTextDocValuesWriter(SegmentWriteState state, string ext)

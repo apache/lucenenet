@@ -1,8 +1,8 @@
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -64,13 +64,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
-        public virtual int Count
-        {
-            get
-            {
-                return size;
-            }
-        }
+        public virtual int Count => size;
 
         /// <summary>
         /// Return the maximum size of the priority queue (for boolean rewrites this is <see cref="BooleanQuery.MaxClauseCount"/>). </summary>
@@ -79,7 +73,7 @@ namespace Lucene.Net.Search
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)
         {
             int maxSize = Math.Min(size, MaxSize);
-            PriorityQueue<ScoreTerm> stQueue = new PriorityQueue<ScoreTerm>();
+            JCG.PriorityQueue<ScoreTerm> stQueue = new JCG.PriorityQueue<ScoreTerm>();
             CollectTerms(reader, query, new TermCollectorAnonymousInnerClassHelper(this, maxSize, stQueue));
 
             var q = GetTopLevelQuery();
@@ -100,9 +94,9 @@ namespace Lucene.Net.Search
             private readonly TopTermsRewrite<Q> outerInstance;
 
             private int maxSize;
-            private PriorityQueue<ScoreTerm> stQueue;
+            private JCG.PriorityQueue<ScoreTerm> stQueue;
 
-            public TermCollectorAnonymousInnerClassHelper(TopTermsRewrite<Q> outerInstance, int maxSize, PriorityQueue<ScoreTerm> stQueue)
+            public TermCollectorAnonymousInnerClassHelper(TopTermsRewrite<Q> outerInstance, int maxSize, JCG.PriorityQueue<ScoreTerm> stQueue)
             {
                 this.outerInstance = outerInstance;
                 this.maxSize = maxSize;
@@ -178,10 +172,9 @@ namespace Lucene.Net.Search
                         return true;
                     }
                 }
-                ScoreTerm t2;
                 TermState state = termsEnum.GetTermState();
                 Debug.Assert(state != null);
-                if (visitedTerms.TryGetValue(bytes, out t2))
+                if (visitedTerms.TryGetValue(bytes, out ScoreTerm t2))
                 {
                     // if the term is already in the PQ, only update docFreq of term in PQ
                     Debug.Assert(t2.Boost == boost, "boost should be equal in all segment TermsEnums");
@@ -199,7 +192,7 @@ namespace Lucene.Net.Search
                     // possibly drop entries from queue
                     if (stQueue.Count > maxSize)
                     {
-                        st = stQueue.Poll();
+                        st = stQueue.Dequeue();
                         visitedTerms.Remove(st.Bytes);
                         st.TermState.Clear(); // reset the termstate!
                     }
@@ -240,12 +233,15 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            var other = (TopTermsRewrite<Q>)obj;
-            if (size != other.size)
+            if (obj is TopTermsRewrite<Q> other)
             {
-                return false;
+                if (size != other.size)
+                {
+                    return false;
+                }
+                return true;
             }
-            return true;
+            return false;
         }
 
         private static readonly IComparer<ScoreTerm> scoreTermSortByTermComp = new ComparerAnonymousInnerClassHelper();

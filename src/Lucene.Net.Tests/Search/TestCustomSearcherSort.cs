@@ -1,9 +1,9 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text;
 using Lucene.Net.Documents;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
             // make a query without sorting first
             ScoreDoc[] hitsByRank = searcher.Search(Query, null, int.MaxValue).ScoreDocs;
             CheckHits(hitsByRank, "Sort by rank: "); // check for duplicates
-            IDictionary<int?, int?> resultMap = new SortedDictionary<int?, int?>();
+            IDictionary<int?, int?> resultMap = new JCG.SortedDictionary<int?, int?>();
             // store hits in TreeMap - TreeMap does not allow duplicates; existing
             // entries are silently overwritten
             for (int hitid = 0; hitid < hitsByRank.Length; ++hitid)
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
         {
             if (hits != null)
             {
-                IDictionary<int?, int?> idMap = new SortedDictionary<int?, int?>();
+                IDictionary<int?, int?> idMap = new JCG.SortedDictionary<int?, int?>();
                 for (int docnum = 0; docnum < hits.Length; ++docnum)
                 {
                     int? luceneId = null;

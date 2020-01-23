@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -110,7 +111,7 @@ namespace Lucene.Net.Search.Spans
 
             QueryUtils.CheckEqual(q, qr);
 
-            HashSet<Term> terms = new HashSet<Term>();
+            ISet<Term> terms = new JCG.HashSet<Term>();
             qr.ExtractTerms(terms);
             Assert.AreEqual(1, terms.Count);
         }
@@ -125,7 +126,7 @@ namespace Lucene.Net.Search.Spans
 
             QueryUtils.CheckUnequal(q, qr);
 
-            HashSet<Term> terms = new HashSet<Term>();
+            ISet<Term> terms = new JCG.HashSet<Term>();
             qr.ExtractTerms(terms);
             Assert.AreEqual(2, terms.Count);
         }
@@ -156,7 +157,7 @@ namespace Lucene.Net.Search.Spans
 
             QueryUtils.CheckEqual(q, qr);
 
-            HashSet<Term> set = new HashSet<Term>();
+            ISet<Term> set = new JCG.HashSet<Term>();
             qr.ExtractTerms(set);
             Assert.AreEqual(2, set.Count);
         }

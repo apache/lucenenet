@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -123,7 +124,7 @@ namespace Lucene.Net.Util
             MapOfSets<ReaderField, int> readerFieldToValIds = new MapOfSets<ReaderField, int>(new Dictionary<ReaderField, ISet<int>>(17));
 
             // any keys that we know result in more then one valId
-            ISet<ReaderField> valMismatchKeys = new HashSet<ReaderField>();
+            ISet<ReaderField> valMismatchKeys = new JCG.HashSet<ReaderField>();
 
             // iterate over all the cacheEntries to get the mappings we'll need
             for (int i = 0; i < cacheEntries.Length; i++)
@@ -139,7 +140,7 @@ namespace Lucene.Net.Util
                     continue;
                 }
 
-                if (val is Lucene.Net.Search.FieldCache.CreationPlaceholder)
+                if (val is FieldCache.CreationPlaceholder)
                 {
                     continue;
                 }

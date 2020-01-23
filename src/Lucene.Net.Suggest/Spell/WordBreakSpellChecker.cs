@@ -1,8 +1,10 @@
-﻿using Lucene.Net.Index;
-using Lucene.Net.Support;
+﻿using J2N;
+using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using JCG = J2N.Collections.Generic;
+using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -97,7 +99,7 @@ namespace Lucene.Net.Search.Spell
             IComparer<SuggestWordArrayWrapper> queueComparer = sortMethod == BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY 
                 ? (IComparer<SuggestWordArrayWrapper>)new LengthThenMaxFreqComparer(this) 
                 : new LengthThenSumFreqComparer(this);
-            PriorityQueue<SuggestWordArrayWrapper> suggestions = new PriorityQueue<SuggestWordArrayWrapper>(queueInitialCapacity, queueComparer);
+            JCG.PriorityQueue<SuggestWordArrayWrapper> suggestions = new JCG.PriorityQueue<SuggestWordArrayWrapper>(queueInitialCapacity, queueComparer);
 
             int origFreq = ir.DocFreq(term);
             if (origFreq > 0 && suggestMode == SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX)
@@ -116,7 +118,7 @@ namespace Lucene.Net.Search.Spell
             SuggestWord[][] suggestionArray = new SuggestWord[suggestions.Count][];
             for (int i = suggestions.Count - 1; i >= 0; i--)
             {
-                suggestionArray[i] = suggestions.Remove().SuggestWords;
+                suggestionArray[i] = suggestions.Dequeue().SuggestWords;
             }
 
             return suggestionArray;
@@ -169,7 +171,7 @@ namespace Lucene.Net.Search.Spell
 
             int queueInitialCapacity = maxSuggestions > 10 ? 10 : maxSuggestions;
             IComparer<CombineSuggestionWrapper> queueComparer = new CombinationsThenFreqComparer(this);
-            PriorityQueue<CombineSuggestionWrapper> suggestions = new PriorityQueue<CombineSuggestionWrapper>(queueInitialCapacity, queueComparer);
+            JCG.PriorityQueue<CombineSuggestionWrapper> suggestions = new JCG.PriorityQueue<CombineSuggestionWrapper>(queueInitialCapacity, queueComparer);
 
             int thisTimeEvaluations = 0;
             for (int i = 0; i < terms.Length - 1; i++)
@@ -234,10 +236,10 @@ namespace Lucene.Net.Search.Spell
                                 word.Score = origIndexes.Length - 1;
                                 word.String = combinedTerm.Text();
                                 CombineSuggestionWrapper suggestion = new CombineSuggestionWrapper(this, new CombineSuggestion(word, origIndexes), (origIndexes.Length - 1));
-                                suggestions.Offer(suggestion);
+                                suggestions.Enqueue(suggestion);
                                 if (suggestions.Count > maxSuggestions)
                                 {
-                                    suggestions.Poll();
+                                    suggestions.TryDequeue(out CombineSuggestionWrapper _);
                                 }
                             }
                         }
@@ -252,14 +254,14 @@ namespace Lucene.Net.Search.Spell
             CombineSuggestion[] combineSuggestions = new CombineSuggestion[suggestions.Count];
             for (int i = suggestions.Count - 1; i >= 0; i--)
             {
-                combineSuggestions[i] = suggestions.Remove().CombineSuggestion;
+                combineSuggestions[i] = suggestions.Dequeue().CombineSuggestion;
             }
             return combineSuggestions;
         }
 
         private int GenerateBreakUpSuggestions(Term term, IndexReader ir, 
             int numberBreaks, int maxSuggestions, int useMinSuggestionFrequency, 
-            SuggestWord[] prefix, PriorityQueue<SuggestWordArrayWrapper> suggestions, 
+            SuggestWord[] prefix, JCG.PriorityQueue<SuggestWordArrayWrapper> suggestions, 
             int totalEvaluations, BreakSuggestionSortMethod sortMethod)
         {
             string termText = term.Text();
@@ -288,10 +290,10 @@ namespace Lucene.Net.Search.Spell
                     if (rightWord.Freq >= useMinSuggestionFrequency)
                     {
                         SuggestWordArrayWrapper suggestion = new SuggestWordArrayWrapper(this, NewSuggestion(prefix, leftWord, rightWord));
-                        suggestions.Offer(suggestion);
+                        suggestions.Enqueue(suggestion);
                         if (suggestions.Count > maxSuggestions)
                         {
-                            suggestions.Poll();
+                            suggestions.Dequeue();
                         }
                     }
                     int newNumberBreaks = numberBreaks + 1;

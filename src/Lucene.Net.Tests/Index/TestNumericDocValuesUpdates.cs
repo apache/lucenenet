@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -1445,7 +1446,7 @@ namespace Lucene.Net.Index
 
             int numDocs = AtLeast(50);
             int numTerms = TestUtil.NextInt32(Random, 1, numDocs / 5);
-            HashSet<string> randomTerms = new HashSet<string>();
+            ISet<string> randomTerms = new JCG.HashSet<string>();
             while (randomTerms.Count < numTerms)
             {
                 randomTerms.Add(TestUtil.RandomSimpleString(Random));
@@ -1553,7 +1554,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(20000);
             int numNumericFields = AtLeast(5);
             int numTerms = TestUtil.NextInt32(random, 10, 100); // terms should affect many docs
-            HashSet<string> updateTerms = new HashSet<string>();
+            ISet<string> updateTerms = new JCG.HashSet<string>();
             while (updateTerms.Count < numTerms)
             {
                 updateTerms.Add(TestUtil.RandomSimpleString(random));

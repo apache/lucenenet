@@ -2,9 +2,11 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -95,7 +97,7 @@ namespace Lucene.Net.Index
             void OnClose(IndexReader reader);
         }
 
-        private readonly ISet<IReaderClosedListener> readerClosedListeners = new ConcurrentHashSet<IReaderClosedListener>();
+        private readonly ISet<IReaderClosedListener> readerClosedListeners = new JCG.LinkedHashSet<IReaderClosedListener>().AsConcurrent();
 
         private readonly ISet<IdentityWeakReference<IndexReader>> parentReaders = new ConcurrentHashSet<IdentityWeakReference<IndexReader>>();
 
@@ -138,7 +140,7 @@ namespace Lucene.Net.Index
 
         private void NotifyReaderClosedListeners(Exception th)
         {
-            lock (readerClosedListeners)
+            lock (((ICollection)readerClosedListeners).SyncRoot) // LUCENENET: Ensure we sync on the SyncRoot of ConcurrentSet<T>
             {
                 foreach (IReaderClosedListener listener in readerClosedListeners)
                 {
@@ -164,7 +166,7 @@ namespace Lucene.Net.Index
 
         private void ReportCloseToParentReaders()
         {
-            lock (parentReaders)
+            lock (parentReaders) // LUCENENET: This does not actually synchronize the set, it only ensures this method can only be entered by 1 thread
             {
                 foreach (IdentityWeakReference<IndexReader> parent in parentReaders)
                 {

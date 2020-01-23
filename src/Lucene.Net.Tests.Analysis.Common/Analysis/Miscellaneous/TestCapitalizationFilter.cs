@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -33,7 +32,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestCapitalization()
         {
-            CharArraySet keep = new CharArraySet(TEST_VERSION_CURRENT, Arrays.AsList("and", "the", "it", "BIG"), false);
+            CharArraySet keep = new CharArraySet(TEST_VERSION_CURRENT, new string[] { "and", "the", "it", "BIG" }, false);
 
             AssertCapitalizesTo("kiTTEN", new string[] { "Kitten" }, true, keep, true, null, 0, CapitalizationFilter.DEFAULT_MAX_WORD_COUNT, CapitalizationFilter.DEFAULT_MAX_TOKEN_LENGTH);
 

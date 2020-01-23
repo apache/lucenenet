@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -251,12 +252,12 @@ namespace Lucene.Net.Index
 
         // Holds all SegmentInfo instances currently involved in
         // merges
-        private readonly HashSet<SegmentCommitInfo> mergingSegments = new HashSet<SegmentCommitInfo>();
+        private readonly JCG.HashSet<SegmentCommitInfo> mergingSegments = new JCG.HashSet<SegmentCommitInfo>();
 
         private readonly MergePolicy mergePolicy;
         private readonly IMergeScheduler mergeScheduler;
         private readonly LinkedList<MergePolicy.OneMerge> pendingMerges = new LinkedList<MergePolicy.OneMerge>();
-        private readonly HashSet<MergePolicy.OneMerge> runningMerges = new HashSet<MergePolicy.OneMerge>();
+        private readonly JCG.HashSet<MergePolicy.OneMerge> runningMerges = new JCG.HashSet<MergePolicy.OneMerge>();
         private IList<MergePolicy.OneMerge> mergeExceptions = new List<MergePolicy.OneMerge>();
         private long mergeGen;
         private bool stopMerges;
@@ -729,7 +730,7 @@ namespace Lucene.Net.Index
             /// </summary>
             private bool NoDups()
             {
-                HashSet<string> seen = new HashSet<string>();
+                JCG.HashSet<string> seen = new JCG.HashSet<string>();
                 foreach (SegmentCommitInfo info in readerMap.Keys)
                 {
                     Debug.Assert(!seen.Contains(info.Info.Name));
@@ -2937,7 +2938,7 @@ namespace Lucene.Net.Index
 
         private void NoDupDirs(params Directory[] dirs)
         {
-            HashSet<Directory> dups = new HashSet<Directory>();
+            JCG.HashSet<Directory> dups = new JCG.HashSet<Directory>();
             for (int i = 0; i < dirs.Length; i++)
             {
                 if (dups.Contains(dirs[i]))
@@ -3057,9 +3058,9 @@ namespace Lucene.Net.Index
                         }
                         SegmentInfos sis = new SegmentInfos(); // read infos from dir
                         sis.Read(dir);
-                        HashSet<string> dsFilesCopied = new HashSet<string>();
+                        JCG.HashSet<string> dsFilesCopied = new JCG.HashSet<string>();
                         IDictionary<string, string> dsNames = new Dictionary<string, string>();
-                        HashSet<string> copiedFiles = new HashSet<string>();
+                        JCG.HashSet<string> copiedFiles = new JCG.HashSet<string>();
                         foreach (SegmentCommitInfo info in sis.Segments)
                         {
                             Debug.Assert(!infos.Contains(info), "dup info dir=" + info.Info.Dir + " name=" + info.Info.Name);
@@ -3249,7 +3250,7 @@ namespace Lucene.Net.Index
 
                 SegmentCommitInfo infoPerCommit = new SegmentCommitInfo(info, 0, -1L, -1L);
 
-                info.SetFiles(new HashSet<string>(trackingDir.CreatedFiles));
+                info.SetFiles(new JCG.HashSet<string>(trackingDir.CreatedFiles));
                 trackingDir.CreatedFiles.Clear();
 
                 SetDiagnostics(info, SOURCE_ADDINDEXES_READERS);
@@ -3377,7 +3378,7 @@ namespace Lucene.Net.Index
             SegmentInfo newInfo = new SegmentInfo(directory, info.Info.Version, segName, info.Info.DocCount, info.Info.UseCompoundFile, info.Info.Codec, info.Info.Diagnostics, attributes);
             SegmentCommitInfo newInfoPerCommit = new SegmentCommitInfo(newInfo, info.DelCount, info.DelGen, info.FieldInfosGen);
 
-            HashSet<string> segFiles = new HashSet<string>();
+            JCG.HashSet<string> segFiles = new JCG.HashSet<string>();
 
             // Build up new segment's file names.  Must do this
             // before writing SegmentInfo:
@@ -5078,7 +5079,7 @@ namespace Lucene.Net.Index
                     }
                 }
                 Debug.Assert(mergeState.SegmentInfo == merge.info.Info);
-                merge.info.Info.SetFiles(new HashSet<string>(dirWrapper.CreatedFiles));
+                merge.info.Info.SetFiles(new JCG.HashSet<string>(dirWrapper.CreatedFiles));
 
                 // Record which codec was used to write the segment
 
@@ -5785,7 +5786,7 @@ namespace Lucene.Net.Index
             }
 
             // Replace all previous files with the CFS/CFE files:
-            HashSet<string> siFiles = new HashSet<string>();
+            JCG.HashSet<string> siFiles = new JCG.HashSet<string>();
             siFiles.Add(fileName);
             siFiles.Add(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
             info.SetFiles(siFiles);

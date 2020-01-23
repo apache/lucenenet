@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
 using System.Globalization;
 using System.Text;
 
@@ -106,26 +106,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
         //    return this.chars[index];
         //}
 
+        bool ICharSequence.HasValue => this.chars != null;
 
-        public int Length
-        {
-            get { return this.chars.Length; }
-        }
+        public int Length => this.chars.Length;
 
         public char this[int index]
         {
-            get
-            {
-                return this.chars[index];
-            }
+            get => this.chars[index];
         }
 
-        public ICharSequence SubSequence(int start, int end)
+        public ICharSequence Subsequence(int startIndex, int length)
         {
-            int newLength = end - start;
+            // LUCENENET: Changed to have .NET semantics - startIndex/length rather than start/end
+            //int newLength = length - startIndex;
 
-            return new UnescapedCharSequence(this.chars, this.wasEscaped, start,
-                newLength);
+            return new UnescapedCharSequence(this.chars, this.wasEscaped, startIndex,
+                length);
         }
 
         public override string ToString()
@@ -184,7 +180,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
 
                 result.Append(this.chars[i]);
             }
-            return new StringCharSequenceWrapper(result.ToString());
+            return new StringCharSequence(result.ToString());
         }
 
         public bool WasEscaped(int index)

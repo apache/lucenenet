@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 #endif
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -122,7 +123,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private EquatableList<BooleanClause> clauses = new EquatableList<BooleanClause>();
+        private IList<BooleanClause> clauses = new JCG.List<BooleanClause>();
         private readonly bool disableCoord;
 
         /// <summary>
@@ -630,7 +631,7 @@ namespace Lucene.Net.Search
         public override object Clone()
         {
             BooleanQuery clone = (BooleanQuery)base.Clone();
-            clone.clauses = (EquatableList<BooleanClause>)this.clauses.Clone();
+            clone.clauses = new JCG.List<BooleanClause>(this.clauses);
             return clone;
         }
 

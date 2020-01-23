@@ -8,10 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
 using Directory = Lucene.Net.Store.Directory;
+using J2N.Collections.Generic.Extensions;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -321,7 +323,7 @@ namespace Lucene.Net.Index
         }
 
         // Holds all postings:
-        private static SortedDictionary<string, SortedDictionary<BytesRef, long>> fields;
+        private static JCG.SortedDictionary<string, JCG.SortedDictionary<BytesRef, long>> fields;
 
         private static FieldInfos fieldInfos;
 
@@ -392,7 +394,7 @@ namespace Lucene.Net.Index
             totalPayloadBytes = 0;
 
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            fields = new SortedDictionary<string, SortedDictionary<BytesRef, long>>(StringComparer.Ordinal);
+            fields = new JCG.SortedDictionary<string, JCG.SortedDictionary<BytesRef, long>>(StringComparer.Ordinal);
 
             int numFields = TestUtil.NextInt32(Random, 1, 5);
             if (VERBOSE)
@@ -416,9 +418,9 @@ namespace Lucene.Net.Index
                                                         DocValuesType.NONE, DocValuesType.NUMERIC, null);
                 fieldUpto++;
 
-                SortedDictionary<BytesRef, long> postings = new SortedDictionary<BytesRef, long>();
+                JCG.SortedDictionary<BytesRef, long> postings = new JCG.SortedDictionary<BytesRef, long>();
                 fields[field] = postings;
-                HashSet<string> seenTerms = new HashSet<string>();
+                ISet<string> seenTerms = new JCG.HashSet<string>();
 
                 int numTerms;
                 if (Random.Next(10) == 7)
@@ -492,7 +494,7 @@ namespace Lucene.Net.Index
             }
 
             allTerms = new List<FieldAndTerm>();
-            foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in fields)
+            foreach (KeyValuePair<string, JCG.SortedDictionary<BytesRef, long>> fieldEnt in fields)
             {
                 string field = fieldEnt.Key;
                 foreach (KeyValuePair<BytesRef, long> termEnt in fieldEnt.Value)
@@ -584,7 +586,7 @@ namespace Lucene.Net.Index
             using (FieldsConsumer fieldsConsumer = codec.PostingsFormat.FieldsConsumer(writeState))
             {
 
-                foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in fields)
+                foreach (KeyValuePair<string, JCG.SortedDictionary<BytesRef, long>> fieldEnt in fields)
                 {
                     string field = fieldEnt.Key;
                     IDictionary<BytesRef, long> terms = fieldEnt.Value;
@@ -1172,7 +1174,7 @@ namespace Lucene.Net.Index
             IList<TermState> termStates = new List<TermState>();
             IList<FieldAndTerm> termStateTerms = new List<FieldAndTerm>();
 
-            Collections.Shuffle(allTerms, Random);
+            allTerms.Shuffle(Random);
             int upto = 0;
             while (upto < allTerms.Count)
             {
@@ -1298,17 +1300,17 @@ namespace Lucene.Net.Index
 
                     var allOptions = ((IndexOptions[])Enum.GetValues(typeof(IndexOptions))).Skip(1).ToArray(); // LUCENENET: Skip our NONE option
                                                                                                                //IndexOptions_e.values();
-                    int maxIndexOption = Arrays.AsList(allOptions).IndexOf(options);
+                    int maxIndexOption = Array.IndexOf(allOptions, options);
 
                     for (int i = 0; i <= maxIndexOption; i++)
                     {
-                        ISet<Option> allOptionsHashSet = new HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>());
+                        ISet<Option> allOptionsHashSet = new JCG.HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>());
                         TestTerms(fieldsProducer, allOptionsHashSet, allOptions[i], options, true);
                         if (withPayloads)
                         {
                             // If we indexed w/ payloads, also test enums w/o accessing payloads:
-                            ISet<Option> payloadsHashSet = new HashSet<Option>() { Option.PAYLOADS };
-                            var complementHashSet = new HashSet<Option>(allOptionsHashSet.Except(payloadsHashSet));
+                            ISet<Option> payloadsHashSet = new JCG.HashSet<Option>() { Option.PAYLOADS };
+                            var complementHashSet = new JCG.HashSet<Option>(allOptionsHashSet.Except(payloadsHashSet));
                             TestTerms(fieldsProducer, complementHashSet, allOptions[i], options, true);
                         }
                     }
@@ -1375,7 +1377,7 @@ namespace Lucene.Net.Index
                         // you indexed with:
                         TestTerms(fieldsProducer,
                             // LUCENENET: Skip our NONE option
-                            new HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>().Skip(1)),
+                            new JCG.HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>().Skip(1)),
                             IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
                             IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
                             false);

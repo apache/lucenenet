@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Utils;
-using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Benchmarks.ByTask.Utils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -269,7 +269,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 docBuf.Length = 0;
                 Read(docBuf, DOCNO, true, false);
                 name = docBuf.ToString(DOCNO.Length, docBuf.IndexOf(TERMINATING_DOCNO,
-                    DOCNO.Length) - DOCNO.Length).Trim();
+                    DOCNO.Length, StringComparison.Ordinal) - DOCNO.Length).Trim();
 
                 if (!excludeDocnameIteration)
                 {

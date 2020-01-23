@@ -1,7 +1,7 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Index;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -116,7 +116,7 @@ namespace Lucene.Net.Expressions
             {
                 bool reversed = Random.NextBoolean();
                 SortField[] fields =
-				{
+                {
                     new SortField("int", SortFieldType.INT32, reversed),
                     new SortField("long", SortFieldType.INT64, reversed),
                     new SortField("float", SortFieldType.SINGLE, reversed),
@@ -125,7 +125,7 @@ namespace Lucene.Net.Expressions
                     new SortField("floatdocvalues", SortFieldType.SINGLE, reversed),
                     new SortField("score", SortFieldType.SCORE)
                 };
-                Collections.Shuffle(Arrays.AsList(fields), Random);
+                fields.Shuffle(Random);
                 int numSorts = TestUtil.NextInt32(Random, 1, fields.Length);
                 AssertQuery(query, filter, new Sort(Arrays.CopyOfRange(fields, 0, numSorts)));
             }

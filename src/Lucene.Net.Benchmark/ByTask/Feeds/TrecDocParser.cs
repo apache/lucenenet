@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -131,18 +131,18 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// <returns></returns>
         public static string Extract(StringBuilder buf, string startTag, string endTag, int maxPos, string[] noisePrefixes)
         {
-            int k1 = buf.IndexOf(startTag);
+            int k1 = buf.IndexOf(startTag, StringComparison.Ordinal);
             if (k1 >= 0 && (maxPos < 0 || k1 < maxPos))
             {
                 k1 += startTag.Length;
-                int k2 = buf.IndexOf(endTag, k1);
+                int k2 = buf.IndexOf(endTag, k1, StringComparison.Ordinal);
                 if (k2 >= 0 && (maxPos < 0 || k2 < maxPos))
                 { // found end tag with allowed range
                     if (noisePrefixes != null)
                     {
                         foreach (string noise in noisePrefixes)
                         {
-                            int k1a = buf.IndexOf(noise, k1);
+                            int k1a = buf.IndexOf(noise, k1, StringComparison.Ordinal);
                             if (k1a >= 0 && k1a < k2)
                             {
                                 k1 = k1a + noise.Length;

@@ -1,5 +1,4 @@
-﻿using Lucene.Net.Support;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
@@ -51,7 +50,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         public InputArrayIterator(Input[] i)
-            : this(Arrays.AsList(i))
+            : this((IEnumerable<Input>)i)
         {
         }
         public InputArrayIterator(IEnumerable<Input> i)
@@ -59,10 +58,7 @@ namespace Lucene.Net.Search.Suggest
         {
         }
 
-        public long Weight
-        {
-            get { return current.v; }
-        }
+        public long Weight => current.v;
 
         public BytesRef Next()
         {
@@ -86,29 +82,14 @@ namespace Lucene.Net.Search.Suggest
             return spare;
         }
 
-        public BytesRef Payload
-        {
-            get { return current.payload; }
-        }
+        public BytesRef Payload => current.payload;
 
-        public bool HasPayloads
-        {
-            get { return hasPayloads; }
-        }
+        public bool HasPayloads => hasPayloads;
 
-        public IComparer<BytesRef> Comparer
-        {
-            get { return null; }
-        }
+        public IComparer<BytesRef> Comparer => null;
 
-        public IEnumerable<BytesRef> Contexts
-        {
-            get { return current.contexts; }
-        }
+        public IEnumerable<BytesRef> Contexts => current.contexts;
 
-        public bool HasContexts
-        {
-            get { return hasContexts; }
-        }
+        public bool HasContexts => hasContexts;
     }
 }

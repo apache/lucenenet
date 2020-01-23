@@ -6,6 +6,7 @@ using Spatial4n.Core.Distance;
 using Spatial4n.Core.Shapes;
 using System.Collections.Generic;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -112,7 +113,7 @@ namespace Lucene.Net.Spatial.Prefix
             assertEquals("" + args, assertNumFound, got.numFound);
             if (assertIds != null)
             {
-                ISet<int?> gotIds = new HashSet<int?>();
+                ISet<int?> gotIds = new JCG.HashSet<int?>();
                 foreach (SearchResult result in got.results)
                 {
                     gotIds.add(int.Parse(result.document.Get("id"), CultureInfo.InvariantCulture));

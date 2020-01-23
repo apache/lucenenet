@@ -5,6 +5,7 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
+using J2N;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

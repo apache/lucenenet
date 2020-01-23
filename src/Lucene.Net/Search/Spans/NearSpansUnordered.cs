@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -313,7 +314,7 @@ namespace Lucene.Net.Search.Spans
         /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
         public override ICollection<byte[]> GetPayload()
         {
-            var matchPayload = new HashSet<byte[]>();
+            var matchPayload = new JCG.HashSet<byte[]>();
             for (var cell = first; cell != null; cell = cell.next)
             {
                 if (cell.IsPayloadAvailable)

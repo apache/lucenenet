@@ -7,6 +7,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Sandbox.Queries
 {
@@ -82,7 +83,7 @@ namespace Lucene.Net.Sandbox.Queries
         public void TestDefaultFilter()
         {
             DuplicateFilter df = new DuplicateFilter(KEY_FIELD);
-            HashSet<string> results = new HashSet<string>();
+            ISet<string> results = new JCG.HashSet<string>();
             ScoreDoc[] hits = searcher.Search(tq, df, 1000).ScoreDocs;
 
             foreach (ScoreDoc hit in hits)
@@ -96,7 +97,7 @@ namespace Lucene.Net.Sandbox.Queries
         [Test]
         public void TestNoFilter()
         {
-            HashSet<string> results = new HashSet<string>();
+            ISet<string> results = new JCG.HashSet<string>();
             ScoreDoc[] hits = searcher.Search(tq, null, 1000).ScoreDocs;
             assertTrue("Default searching should have found some matches", hits.Length > 0);
             bool dupsFound = false;
@@ -117,7 +118,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             DuplicateFilter df = new DuplicateFilter(KEY_FIELD);
             df.ProcessingMode = (ProcessingMode.PM_FAST_INVALIDATION);
-            HashSet<string> results = new HashSet<string>();
+            ISet<string> results = new JCG.HashSet<string>();
             ScoreDoc[] hits = searcher.Search(tq, df, 1000).ScoreDocs;
             assertTrue("Filtered searching should have found some matches", hits.Length > 0);
 

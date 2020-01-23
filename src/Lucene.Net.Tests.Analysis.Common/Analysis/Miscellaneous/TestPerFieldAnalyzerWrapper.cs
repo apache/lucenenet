@@ -7,6 +7,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -79,7 +80,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             var whitespace = new WhitespaceAnalyzer(Lucene.Net.Util.LuceneVersion.LUCENE_48);
 
-            var pf = new PerFieldAnalyzerWrapper(english, new Lucene.Net.Support.HashMap<string, Analyzer>() { { "foo", whitespace } });
+            var pf = new PerFieldAnalyzerWrapper(english, new JCG.Dictionary<string, Analyzer>() { { "foo", whitespace } });
 
             var test1 = english.GetTokenStream(null, "test"); // Does not throw
 

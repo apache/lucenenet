@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -40,7 +41,7 @@ namespace Lucene.Net.Util.Automaton
         // O(N^2) linear ops to O(N log(N)) TreeMap
         private const int TREE_MAP_CUTOVER = 30;
 
-        private readonly IDictionary<int, int> map = new SortedDictionary<int, int>();
+        private readonly IDictionary<int, int> map = new JCG.SortedDictionary<int, int>();
 
         private bool useTreeMap;
 

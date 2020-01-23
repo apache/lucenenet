@@ -10,9 +10,11 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
+using J2N.Runtime.CompilerServices;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
@@ -108,7 +110,7 @@ namespace Lucene.Net.Store
         internal bool allowReadingFilesStillOpenForWrite = false;
         private ISet<string> unSyncedFiles;
         private ISet<string> createdFiles;
-        private ISet<string> openFilesForWrite = new HashSet<string>(StringComparer.Ordinal);
+        private ISet<string> openFilesForWrite = new JCG.HashSet<string>(StringComparer.Ordinal);
         internal ISet<string> openLocks = new ConcurrentHashSet<string>(StringComparer.Ordinal);
         internal volatile bool crashed;
         private ThrottledIndexOutput throttledOutput;
@@ -119,7 +121,7 @@ namespace Lucene.Net.Store
 
         // use this for tracking files for crash.
         // additionally: provides debugging information in case you leave one open
-        private readonly ConcurrentDictionary<IDisposable, Exception> openFileHandles = new ConcurrentDictionary<IDisposable, Exception>(IdentityComparer<IDisposable>.Default);
+        private readonly ConcurrentDictionary<IDisposable, Exception> openFileHandles = new ConcurrentDictionary<IDisposable, Exception>(IdentityEqualityComparer<IDisposable>.Default);
 
         // NOTE: we cannot initialize the Map here due to the
         // order in which our constructor actually does this
@@ -138,16 +140,16 @@ namespace Lucene.Net.Store
                 if (openFiles == null)
                 {
                     openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
-                    openFilesDeleted = new HashSet<string>(StringComparer.Ordinal);
+                    openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
                 }
 
                 if (createdFiles == null)
                 {
-                    createdFiles = new HashSet<string>(StringComparer.Ordinal);
+                    createdFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
                 }
                 if (unSyncedFiles == null)
                 {
-                    unSyncedFiles = new HashSet<string>(StringComparer.Ordinal);
+                    unSyncedFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
                 }
             }
         }
@@ -289,14 +291,14 @@ namespace Lucene.Net.Store
             {
                 crashed = true;
                 openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
-                openFilesForWrite = new HashSet<string>(StringComparer.Ordinal);
-                openFilesDeleted = new HashSet<string>(StringComparer.Ordinal);
+                openFilesForWrite = new JCG.HashSet<string>(StringComparer.Ordinal);
+                openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
                 using (IEnumerator<string> it = unSyncedFiles.GetEnumerator())
                 {
-                    unSyncedFiles = new HashSet<string>(StringComparer.Ordinal);
+                    unSyncedFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
                     // first force-close all files, so we can corrupt on windows etc.
                     // clone the file map, as these guys want to remove themselves on close.
-                    var m = new IdentityHashMap<IDisposable, Exception>(openFileHandles);
+                    var m = new JCG.Dictionary<IDisposable, Exception>(openFileHandles, IdentityEqualityComparer<IDisposable>.Default);
                     foreach (IDisposable f in m.Keys)
                     {
                         try
@@ -597,7 +599,7 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                return new HashSet<string>(openFilesDeleted, StringComparer.Ordinal);
+                return new JCG.HashSet<string>(openFilesDeleted, StringComparer.Ordinal);
             }
         }
 
@@ -863,12 +865,12 @@ namespace Lucene.Net.Store
                 {
                     // files that we tried to delete, but couldn't because readers were open.
                     // all that matters is that we tried! (they will eventually go away)
-                    ISet<string> pendingDeletions = new HashSet<string>(openFilesDeleted, StringComparer.Ordinal);
+                    ISet<string> pendingDeletions = new JCG.HashSet<string>(openFilesDeleted, StringComparer.Ordinal);
                     MaybeYield();
                     if (openFiles == null)
                     {
                         openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
-                        openFilesDeleted = new HashSet<string>(StringComparer.Ordinal);
+                        openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
                     }
                     if (openFiles.Count > 0)
                     {
@@ -908,7 +910,7 @@ namespace Lucene.Net.Store
                             if (assertNoUnreferencedFilesOnClose)
                             {
                                 // now look for unreferenced files: discount ones that we tried to delete but could not
-                                HashSet<string> allFiles = new HashSet<string>(Arrays.AsList(ListAll()));
+                                ISet<string> allFiles = new JCG.HashSet<string>(ListAll());
                                 allFiles.ExceptWith(pendingDeletions);
                                 string[] startFiles = allFiles.ToArray(/*new string[0]*/);
                                 IndexWriterConfig iwc = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null);
@@ -916,8 +918,8 @@ namespace Lucene.Net.Store
                                 new IndexWriter(m_input, iwc).Rollback();
                                 string[] endFiles = m_input.ListAll();
 
-                                ISet<string> startSet = new SortedSet<string>(Arrays.AsList(startFiles), StringComparer.Ordinal);
-                                ISet<string> endSet = new SortedSet<string>(Arrays.AsList(endFiles), StringComparer.Ordinal);
+                                ISet<string> startSet = new JCG.SortedSet<string>(startFiles, StringComparer.Ordinal);
+                                ISet<string> endSet = new JCG.SortedSet<string>(endFiles, StringComparer.Ordinal);
 
                                 if (pendingDeletions.Contains("segments.gen") && endSet.Contains("segments.gen"))
                                 {
@@ -956,7 +958,7 @@ namespace Lucene.Net.Store
 
                                         try
                                         {
-                                            ISet<string> ghosts = new HashSet<string>(sis.GetFiles(m_input, false));
+                                            ISet<string> ghosts = new JCG.HashSet<string>(sis.GetFiles(m_input, false));
                                             foreach (string s in ghosts)
                                             {
                                                 if (endSet.Contains(s) && !startSet.Contains(s))

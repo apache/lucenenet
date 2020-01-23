@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.PerField
 {
@@ -195,7 +196,7 @@ namespace Lucene.Net.Codecs.PerField
             private readonly PerFieldPostingsFormat outerInstance;
 
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            internal readonly IDictionary<string, FieldsProducer> fields = new SortedDictionary<string, FieldsProducer>(StringComparer.Ordinal);
+            internal readonly IDictionary<string, FieldsProducer> fields = new JCG.SortedDictionary<string, FieldsProducer>(StringComparer.Ordinal);
             internal readonly IDictionary<string, FieldsProducer> formats = new Dictionary<string, FieldsProducer>();
 
             public FieldsReader(PerFieldPostingsFormat outerInstance, SegmentReadState readState)

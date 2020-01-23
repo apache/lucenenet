@@ -1,6 +1,7 @@
 ﻿using J2N.IO;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 /*
                     Egothor Software License version 1.00
@@ -64,7 +65,7 @@ namespace Egothor.Stemmer
     /// </summary>
     public class Row
     {
-        internal SortedDictionary<char, Cell> cells = new SortedDictionary<char, Cell>();
+        internal IDictionary<char, Cell> cells = new JCG.SortedDictionary<char, Cell>();
         internal int uniformCnt = 0;
         internal int uniformSkip = 0;
 

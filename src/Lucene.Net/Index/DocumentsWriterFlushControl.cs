@@ -1,9 +1,10 @@
+using J2N.Runtime.CompilerServices;
 using J2N.Threading.Atomic;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -53,7 +54,7 @@ namespace Lucene.Net.Index
         // only for safety reasons if a DWPT is close to the RAM limit
         private readonly LinkedList<BlockedFlush> blockedFlushes = new LinkedList<BlockedFlush>();
 
-        private readonly IdentityHashMap<DocumentsWriterPerThread, long?> flushingWriters = new IdentityHashMap<DocumentsWriterPerThread, long?>();
+        private readonly IDictionary<DocumentsWriterPerThread, long?> flushingWriters = new JCG.Dictionary<DocumentsWriterPerThread, long?>(IdentityEqualityComparer<DocumentsWriterPerThread>.Default);
 
         internal double maxConfiguredRamBuffer = 0;
         internal long peakActiveBytes = 0; // only with assert

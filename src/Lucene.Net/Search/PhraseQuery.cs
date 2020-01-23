@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -65,8 +66,8 @@ namespace Lucene.Net.Search
     public class PhraseQuery : Query, IEnumerable<Term> // LUCENENET specific - implemented IEnumerable<Term>, which allows for use of collection initializer. See: https://stackoverflow.com/a/9195144
     {
         private string field;
-        private IList<Term> terms = new EquatableList<Term>(4);
-        private IList<int?> positions = new EquatableList<int?>(4);
+        private IList<Term> terms = new JCG.List<Term>(4);
+        private IList<int?> positions = new JCG.List<int?>(4);
         private int maxPosition = 0;
         private int slop = 0;
 

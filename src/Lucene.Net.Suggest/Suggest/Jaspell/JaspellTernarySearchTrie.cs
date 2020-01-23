@@ -25,7 +25,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-using Lucene.Net.Support;
+using J2N.Text;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;

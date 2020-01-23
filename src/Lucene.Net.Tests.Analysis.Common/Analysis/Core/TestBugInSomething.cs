@@ -6,32 +6,31 @@ using Lucene.Net.Analysis.Shingle;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Analysis.Wikipedia;
 using Lucene.Net.Attributes;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Console = Lucene.Net.Support.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-    
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     [SuppressCodecs("Direct")]
     public class TestBugInSomething : BaseTokenStreamTestCase
     {
@@ -338,7 +337,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestCuriousWikipediaString()
         {
-            CharArraySet protWords = new CharArraySet(TEST_VERSION_CURRENT, new HashSet<string>(Arrays.AsList("rrdpafa", "pupmmlu", "xlq", "dyy", "zqrxrrck", "o", "hsrlfvcha")), false);
+            CharArraySet protWords = new CharArraySet(TEST_VERSION_CURRENT, new JCG.HashSet<string> { "rrdpafa", "pupmmlu", "xlq", "dyy", "zqrxrrck", "o", "hsrlfvcha" }, false);
             byte[] table = (byte[])(Array)new sbyte[] { -57, 26, 1, 48, 63, -23, 55, -84, 18, 120, -97, 103, 58, 13, 84, 89, 57, -13, -63, 5, 28, 97, -54, -94, 102, -108, -5, 5, 46, 40, 43, 78, 43, -72, 36, 29, 124, -106, -22, -51, 65, 5, 31, -42, 6, -99, 97, 14, 81, -128, 74, 100, 54, -55, -25, 53, -71, -98, 44, 33, 86, 106, -42, 47, 115, -89, -18, -26, 22, -95, -43, 83, -125, 105, -104, -24, 106, -16, 126, 115, -105, 97, 65, -33, 57, 44, -1, 123, -68, 100, 13, -41, -64, -119, 0, 92, 94, -36, 53, -9, -102, -18, 90, 94, -26, 31, 71, -20 };
             Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, protWords, table);
             CheckAnalysisConsistency(Random, a, false, "B\u28c3\ue0f8[ \ud800\udfc2 </p> jb");

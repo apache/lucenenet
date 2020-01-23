@@ -3,6 +3,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -1034,7 +1035,7 @@ namespace Lucene.Net.Codecs.Memory
             ChecksumIndexInput @in = state.Directory.OpenChecksumInput(fileName, IOContext.READ_ONCE);
 
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            var fields = new SortedDictionary<string, TermsReader>(StringComparer.Ordinal);
+            var fields = new JCG.SortedDictionary<string, TermsReader>(StringComparer.Ordinal);
 
             try
             {
@@ -1058,14 +1059,14 @@ namespace Lucene.Net.Codecs.Memory
                 @in.Dispose();
             }
 
-            return new FieldsProducerAnonymousInnerClassHelper(this, fields);
+            return new FieldsProducerAnonymousInnerClassHelper(fields);
         }
 
         private class FieldsProducerAnonymousInnerClassHelper : FieldsProducer
         {
-            private readonly SortedDictionary<string, TermsReader> _fields;
+            private readonly IDictionary<string, TermsReader> _fields;
 
-            public FieldsProducerAnonymousInnerClassHelper(MemoryPostingsFormat outerInstance, SortedDictionary<string, TermsReader> fields)
+            public FieldsProducerAnonymousInnerClassHelper(IDictionary<string, TermsReader> fields)
             {
                 _fields = fields;
             }

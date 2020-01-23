@@ -1,26 +1,27 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
 
 namespace Lucene.Net.Analysis.Util
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// A StringBuilder that allows one to access the array.
@@ -35,6 +36,8 @@ namespace Lucene.Net.Analysis.Util
         {
         }
 
+        bool ICharSequence.HasValue => m_buf != null;
+
         public OpenStringBuilder(int size)
         {
             m_buf = new char[size];
@@ -47,11 +50,8 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual int Length
         {
-            set
-            {
-                this.m_len = value;
-            }
-            get { return m_len; }
+            get => m_len;
+            set => m_len = value;
         }
 
         public virtual void Set(char[] arr, int end)
@@ -62,13 +62,7 @@ namespace Lucene.Net.Analysis.Util
 
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual char[] Array
-        {
-            get
-            {
-                return m_buf;
-            }
-        }
+        public virtual char[] Array => m_buf;
 
         // LUCENENE NOTE: This is essentially a duplicate of Length (except that property can be set).
         // .NET uses Length for StringBuilder anyway, so that property is preferable to this one.
@@ -77,17 +71,14 @@ namespace Lucene.Net.Analysis.Util
         //    get{ return m_len; }
         //}
 
-        public virtual int Capacity
-        {
-            get { return m_buf.Length; }
-        }
+        public virtual int Capacity => m_buf.Length;
 
         public virtual OpenStringBuilder Append(ICharSequence csq) 
         {
             return Append(csq, 0, csq.Length);
         }
 
-        public virtual OpenStringBuilder Append(ICharSequence csq, int start, int end)
+        public virtual OpenStringBuilder Append(ICharSequence csq, int start, int end) // LUCENENET TODO: API - change to startIndex/length to match .NET
         {
             EnsureCapacity(end - start);
             for (int i = start; i < end; i++)
@@ -104,7 +95,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         // LUCENENET specific - overload for string (more common in .NET than ICharSequence)
-        public virtual OpenStringBuilder Append(string csq, int start, int end)
+        public virtual OpenStringBuilder Append(string csq, int start, int end) // LUCENENET TODO: API - change to startIndex/length to match .NET
         {
             EnsureCapacity(end - start);
             for (int i = start; i < end; i++)
@@ -121,7 +112,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         // LUCENENET specific - overload for StringBuilder
-        public virtual OpenStringBuilder Append(StringBuilder csq, int start, int end)
+        public virtual OpenStringBuilder Append(StringBuilder csq, int start, int end) // LUCENENET TODO: API - change to startIndex/length to match .NET
         {
             EnsureCapacity(end - start);
             for (int i = start; i < end; i++)
@@ -152,13 +143,29 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - added to .NETify
         public virtual char this[int index]
         {
-            get { return m_buf[index]; }
-            set { m_buf[index] = value; }
+            get => m_buf[index];
+            set => m_buf[index] = value;
         }
 
-        public virtual ICharSequence SubSequence(int start, int end)
+        public virtual ICharSequence Subsequence(int startIndex, int length)
         {
-            throw new System.NotSupportedException(); // todo
+            // From Apache Harmony String class
+            if (m_buf == null || (startIndex == 0 && length == m_buf.Length))
+            {
+                return new CharArrayCharSequence(m_buf);
+            }
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length));
+            if (startIndex + length > m_buf.Length)
+                throw new ArgumentOutOfRangeException("", $"{nameof(startIndex)} + {nameof(length)} > {nameof(Length)}");
+
+            char[] result = new char[length];
+            for (int i = 0, j = startIndex; i < length; i++, j++)
+                result[i] = m_buf[j];
+
+            return new CharArrayCharSequence(result);
         }
 
         public virtual void UnsafeWrite(char b)

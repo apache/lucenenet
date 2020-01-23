@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Index;
+﻿using J2N.Runtime.CompilerServices;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using System;
 using System.Collections;
 
@@ -22,7 +22,7 @@ namespace Lucene.Net.Queries.Function
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// Instantiates <see cref="FunctionValues"/> for a particular reader.
     /// <para/>
@@ -65,9 +65,10 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public static IDictionary NewContext(IndexSearcher searcher)
         {
-            var context = new Hashtable(IdentityComparer.Default);
-            context["searcher"] = searcher;
-            return context;
+            return new Hashtable(IdentityEqualityComparer<object>.Default)
+            {
+                ["searcher"] = searcher
+            };
         }
 
 

@@ -1,7 +1,7 @@
-﻿using Lucene.Net.Index;
+﻿using J2N;
+using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 {

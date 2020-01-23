@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis.Pt
 #pragma warning disable 612, 618
                     LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-                    Arrays.AsList(exceptions), false);
+                    exceptions, false);
             }
 
             public override bool Matches(char[] s, int len)

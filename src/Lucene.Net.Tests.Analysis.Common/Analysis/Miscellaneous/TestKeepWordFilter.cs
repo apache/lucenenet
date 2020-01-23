@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -31,7 +32,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestStopAndGo()
         {
-            ISet<string> words = new HashSet<string>();
+            ISet<string> words = new JCG.HashSet<string>();
             words.Add("aaa");
             words.Add("bbb");
 
@@ -65,7 +66,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestRandomStrings()
         {
-            ISet<string> words = new HashSet<string>();
+            ISet<string> words = new JCG.HashSet<string>();
             words.Add("a");
             words.Add("b");
 

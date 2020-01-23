@@ -3,8 +3,8 @@ using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.PerField
 {
@@ -55,18 +55,18 @@ namespace Lucene.Net.Codecs.PerField
     [TestFixture]
     public class TestPerFieldDocValuesFormat : BaseDocValuesFormatTestCase
     {
-        private Codec Codec_Renamed;
+        private Codec codec;
 
         [SetUp]
         public override void SetUp()
         {
-            Codec_Renamed = new RandomCodec(new Random(Random.Next()), new HashSet<string>());
+            codec = new RandomCodec(new Random(Random.Next()), new JCG.HashSet<string>());
             base.SetUp();
         }
 
         protected override Codec GetCodec()
         {
-            return Codec_Renamed;
+            return codec;
         }
 
         protected override bool CodecAcceptsHugeBinaryValues(string field)

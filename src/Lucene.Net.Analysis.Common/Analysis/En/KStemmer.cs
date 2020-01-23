@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
 
@@ -820,8 +820,8 @@ namespace Lucene.Net.Analysis.En
 
                 DictEntry entry = WordInDict();
                 if (entry != null) 
-		        {
-			        if (!entry.exception) 
+                {
+                    if (!entry.exception) 
                     {
                         // if it's in the dictionary and
                         // not an exception
@@ -1101,9 +1101,9 @@ namespace Lucene.Net.Analysis.En
                     return;
                 }
                 word.Length = j; /*
-	                          * try removing -e/ance altogether
-	                          * (disappearance/disappear)
-	                          */
+                              * try removing -e/ance altogether
+                              * (disappearance/disappear)
+                              */
                 k = j - 1;
                 if (Lookup())
                 {
@@ -1376,9 +1376,9 @@ namespace Lucene.Net.Analysis.En
                 word.UnsafeWrite('e');
                 k = j + 1;
                 if (Lookup()) /*
-	                     * remove -ition and add `e', and check against the
-	                     * dictionary
-	                     */
+                         * remove -ition and add `e', and check against the
+                         * dictionary
+                         */
                 {
                     return; // (e.g., definition->define, opposition->oppose)
                 }
@@ -1401,9 +1401,9 @@ namespace Lucene.Net.Analysis.En
 
                 word.Length = j + 1;
                 word.UnsafeWrite('e'); /*
-	                              * remove -ation and add `e', and check against the
-	                              * dictionary
-	                              */
+                                  * remove -ation and add `e', and check against the
+                                  * dictionary
+                                  */
                 k = j + 1;
                 if (Lookup())
                 {
@@ -1411,9 +1411,9 @@ namespace Lucene.Net.Analysis.En
                 }
 
                 word.Length = j + 1; /*
-	                             * just remove -ation (resignation->resign) and
-	                             * check dictionary
-	                             */
+                                 * just remove -ation (resignation->resign) and
+                                 * check dictionary
+                                 */
                 k = j;
                 if (Lookup())
                 {
@@ -1439,9 +1439,9 @@ namespace Lucene.Net.Analysis.En
                 word.UnsafeWrite('y');
                 k = j + 1;
                 if (Lookup()) /*
-	                     * remove -ication and add `y', and check against the
-	                     * dictionary
-	                     */
+                         * remove -ication and add `y', and check against the
+                         * dictionary
+                         */
                 {
                     return; // (e.g., amplification -> amplify)
                 }
@@ -1606,14 +1606,14 @@ namespace Lucene.Net.Analysis.En
                 }
 
                 if ((j > 0) && (word[j - 1] == 'a') && (word[j] == 'l')) /*
-	                                                                              * always
-	                                                                              * convert
-	                                                                              * -
-	                                                                              * ally
-	                                                                              * to
-	                                                                              * -
-	                                                                              * al
-	                                                                              */
+                                                                                  * always
+                                                                                  * convert
+                                                                                  * -
+                                                                                  * ally
+                                                                                  * to
+                                                                                  * -
+                                                                                  * al
+                                                                                  */
                 {
                     return;
                 }

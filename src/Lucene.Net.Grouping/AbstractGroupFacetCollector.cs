@@ -1,26 +1,26 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Base class for computing grouped facets.
@@ -157,7 +157,7 @@ namespace Lucene.Net.Search.Grouping
             private readonly static IComparer<FacetEntry> orderByValue = new OrderByValueComparer();
 
             private readonly int maxSize;
-            private readonly TreeSet<FacetEntry> facetEntries;
+            private readonly JCG.SortedSet<FacetEntry> facetEntries;
             private readonly int totalMissingCount;
             private readonly int totalCount;
 
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search.Grouping
 
             public GroupedFacetResult(int size, int minCount, bool orderByCount, int totalCount, int totalMissingCount)
             {
-                this.facetEntries = new TreeSet<FacetEntry>(orderByCount ? orderByCountAndValue : orderByValue);
+                this.facetEntries = new JCG.SortedSet<FacetEntry>(orderByCount ? orderByCountAndValue : orderByValue);
                 this.totalMissingCount = totalMissingCount;
                 this.totalCount = totalCount;
                 maxSize = size;
@@ -182,18 +182,20 @@ namespace Lucene.Net.Search.Grouping
                 FacetEntry facetEntry = new FacetEntry(facetValue, count);
                 if (facetEntries.Count == maxSize)
                 {
-                    FacetEntry temp;
-                    if (!facetEntries.TrySuccessor(facetEntry, out temp))
+                    if (!facetEntries.TryGetSuccessor(facetEntry, out FacetEntry _))
                     {
                         return;
                     }
-                    facetEntries.DeleteMax();
+                    var max = facetEntries.Max;
+                    if (max != null)
+                        facetEntries.Remove(max);
                 }
                 facetEntries.Add(facetEntry);
 
                 if (facetEntries.Count == maxSize)
                 {
-                    currentMin = facetEntries.FindMax().Count;
+                    var max = facetEntries.Max;
+                    currentMin =  max != null ? max.Count : 0;
                 }
             }
 
@@ -229,24 +231,12 @@ namespace Lucene.Net.Search.Grouping
             /// <summary>
             /// Gets the sum of all facet entries counts.
             /// </summary>
-            public virtual int TotalCount
-            {
-                get
-                {
-                    return totalCount;
-                }
-            }
+            public virtual int TotalCount => totalCount;
 
             /// <summary>
             /// Gets the number of groups that didn't have a facet value.
             /// </summary>
-            public virtual int TotalMissingCount
-            {
-                get
-                {
-                    return totalMissingCount;
-                }
-            }
+            public virtual int TotalMissingCount => totalMissingCount;
         }
 
         /// <summary>
@@ -295,24 +285,12 @@ namespace Lucene.Net.Search.Grouping
             /// <summary>
             /// Gets the value of this facet entry
             /// </summary>
-            public virtual BytesRef Value
-            {
-                get
-                {
-                    return value;
-                }
-            }
+            public virtual BytesRef Value => value;
 
             /// <summary>
             /// Gets the count (number of groups) of this facet entry.
             /// </summary>
-            public virtual int Count
-            {
-                get
-                {
-                    return count;
-                }
-            }
+            public virtual int Count => count;
         }
 
         /// <summary>

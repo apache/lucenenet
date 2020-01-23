@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Replicator
@@ -165,7 +166,7 @@ namespace Lucene.Net.Replicator
 
                 if (commit != null && commit.SegmentsFileName.Equals(segmentsFile, StringComparison.Ordinal))
                 {
-                    HashSet<string> commitFiles = new HashSet<string>( commit.FileNames
+                    ISet<string> commitFiles = new JCG.HashSet<string>( commit.FileNames
                         .Union(new[] {IndexFileNames.SEGMENTS_GEN}));
 
                     Regex matcher = IndexFileNames.CODEC_FILE_PATTERN;

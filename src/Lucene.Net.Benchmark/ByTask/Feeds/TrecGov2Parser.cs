@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
 using System;
 using System.IO;
 using System.Text;
@@ -39,10 +39,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // skip some of the non-html text, optionally set date
             DateTime? date = null;
             int start = 0;
-            int h1 = docBuf.IndexOf(DOCHDR);
+            int h1 = docBuf.IndexOf(DOCHDR, StringComparison.Ordinal);
             if (h1 >= 0)
             {
-                int h2 = docBuf.IndexOf(TERMINATING_DOCHDR, h1);
+                int h2 = docBuf.IndexOf(TERMINATING_DOCHDR, h1, StringComparison.Ordinal);
                 string dateStr = Extract(docBuf, DATE, DATE_END, h2, null);
                 if (dateStr != null)
                 {

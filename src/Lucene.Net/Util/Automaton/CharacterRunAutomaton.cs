@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -25,7 +25,7 @@ namespace Lucene.Net.Util.Automaton
     public class CharacterRunAutomaton : RunAutomaton
     {
         public CharacterRunAutomaton(Automaton a)
-            : base(a, Character.MAX_CODE_POINT, false)
+            : base(a, Character.MaxCodePoint, false)
         {
         }
 

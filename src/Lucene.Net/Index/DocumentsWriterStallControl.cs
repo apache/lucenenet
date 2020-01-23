@@ -1,9 +1,9 @@
+using J2N.Runtime.CompilerServices;
 using J2N.Threading;
-using Lucene.Net.Support;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         private volatile bool stalled;
         private int numWaiting; // only with assert
         private bool wasStalled; // only with assert
-        private readonly IDictionary<ThreadJob, bool?> waiting = new IdentityHashMap<ThreadJob, bool?>(); // only with assert
+        private readonly IDictionary<ThreadJob, bool?> waiting = new JCG.Dictionary<ThreadJob, bool?>(IdentityEqualityComparer<ThreadJob>.Default); // only with assert
 
         /// <summary>
         /// Update the stalled flag status. this method will set the stalled flag to

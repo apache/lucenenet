@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Phonetic
 {
@@ -63,7 +64,7 @@ namespace Lucene.Net.Analysis.Phonetic
         [Test]
         public void TestLanguageSet()
         {
-            LanguageSet languages = LanguageSet.From(new HashSet<String>() {
+            LanguageSet languages = LanguageSet.From(new JCG.HashSet<String>() {
                 "italian", "greek", "spanish"
             });
             Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>

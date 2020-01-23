@@ -1,3 +1,4 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -324,7 +325,7 @@ namespace Lucene.Net.Search
                     priorSearches.Add(searchState);
                     if (priorSearches.Count > 200)
                     {
-                        Collections.Shuffle(priorSearches);
+                        priorSearches.Shuffle();
                         priorSearches.SubList(100, priorSearches.Count).Clear();
                     }
                 }

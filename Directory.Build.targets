@@ -29,8 +29,6 @@
 
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE</DefineConstants>
-
-    <DefineConstants>$(DefineConstants);FEATURE_HASHSET_CAPACITY</DefineConstants>
     
   </PropertyGroup>
 

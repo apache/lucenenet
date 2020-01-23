@@ -6,6 +6,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -82,7 +83,7 @@ namespace Lucene.Net.Search
             internal readonly ISet<string> Relationships;
 
             public CountingCollector(ICollector other)
-                : this(other, new HashSet<string> { "MUST", "SHOULD", "MUST_NOT" })
+                : this(other, new JCG.HashSet<string> { "MUST", "SHOULD", "MUST_NOT" })
             {
             }
 
@@ -177,7 +178,7 @@ namespace Lucene.Net.Search
 
             // Only needed in Java6; Java7+ has a @SafeVarargs annotated Arrays#asList()!
             // see http://docs.oracle.com/javase/7/docs/api/java/lang/SafeVarargs.html
-            IEnumerable<ISet<string>> occurList = Arrays.AsList(Collections.Singleton("MUST"), new HashSet<string>(Arrays.AsList("MUST", "SHOULD")));
+            IEnumerable<ISet<string>> occurList = new ISet<string>[] { new JCG.HashSet<string> { "MUST" }, new JCG.HashSet<string> { "MUST", "SHOULD" } };
 
             foreach (var occur in occurList)
             {

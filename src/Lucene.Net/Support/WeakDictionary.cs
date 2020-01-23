@@ -25,6 +25,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Support
 {
@@ -33,7 +34,7 @@ namespace Lucene.Net.Support
 #endif
     public sealed class WeakDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKey : class 
     {
-        private HashMap<WeakKey<TKey>, TValue> _hm;
+        private IDictionary<WeakKey<TKey>, TValue> _hm;
         private int _gcCollections = 0;
 
         public WeakDictionary(int initialCapacity)
@@ -50,7 +51,7 @@ namespace Lucene.Net.Support
 
         private WeakDictionary(int initialCapacity, IEnumerable<KeyValuePair<TKey, TValue>> otherDict)
         {
-            _hm = new HashMap<WeakKey<TKey>, TValue>(initialCapacity);
+            _hm = new JCG.Dictionary<WeakKey<TKey>, TValue>(initialCapacity);
             foreach (var kvp in otherDict)
             {
                 _hm.Add(new WeakKey<TKey>(kvp.Key), kvp.Value);
@@ -64,7 +65,7 @@ namespace Lucene.Net.Support
         private void Clean()
         {
             if (_hm.Count == 0) return;
-            var newHm = new HashMap<WeakKey<TKey>, TValue>(_hm.Count);
+            var newHm = new JCG.Dictionary<WeakKey<TKey>, TValue>(_hm.Count);
             foreach (var entry in _hm.Where(x => x.Key != null && x.Key.IsAlive))
             {
                 newHm.Add(entry.Key, entry.Value);
@@ -191,9 +192,9 @@ namespace Lucene.Net.Support
 
         private class KeyCollection : ICollection<TKey>
         {
-            private readonly HashMap<WeakKey<TKey>, TValue> _internalDict;
+            private readonly IDictionary<WeakKey<TKey>, TValue> _internalDict;
 
-            public KeyCollection(HashMap<WeakKey<TKey>, TValue> dict)
+            public KeyCollection(IDictionary<WeakKey<TKey>, TValue> dict)
             {
                 _internalDict = dict;
             }

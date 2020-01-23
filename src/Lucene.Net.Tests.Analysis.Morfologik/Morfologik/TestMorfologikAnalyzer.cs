@@ -9,6 +9,8 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
+using SCG = System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Morfologik
 {
@@ -140,8 +142,8 @@ namespace Lucene.Net.Analysis.Morfologik
             ts.IncrementToken();
             assertEquals(term, ts.GetAttribute<ICharTermAttribute>().ToString());
 
-            TreeSet<String> actual = new TreeSet<String>();
-            TreeSet<String> expected = new TreeSet<String>();
+            SCG.ISet<String> actual = new JCG.SortedSet<String>(StringComparer.Ordinal);
+            SCG.ISet<String> expected = new JCG.SortedSet<String>(StringComparer.Ordinal);
             foreach (StringBuilder b in ts.GetAttribute<IMorphosyntacticTagsAttribute>().Tags)
             {
                 actual.add(b.toString());

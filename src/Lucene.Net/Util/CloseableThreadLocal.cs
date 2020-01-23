@@ -1,8 +1,8 @@
 using J2N.Threading.Atomic;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
 
         // Use a WeakHashMap so that if a Thread exits and is
         // GC'able, its entry may be removed:
-        private IDictionary<Thread, T> hardRefs = new HashMap<Thread, T>();
+        private IDictionary<Thread, T> hardRefs = new JCG.Dictionary<Thread, T>();
 
         // Increase this to decrease frequency of purging in get:
         private static int PURGE_MULTIPLIER = 20;

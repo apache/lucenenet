@@ -1,10 +1,11 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N;
+using J2N.Text;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Search.Grouping.Terms;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -12,26 +13,29 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
+using Collections = Lucene.Net.Support.Collections;
 using Console = Lucene.Net.Support.SystemConsole;
+
 
 namespace Lucene.Net.Search.Grouping
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     public class GroupFacetCollectorTest : AbstractGroupingTestCase
     {
@@ -604,12 +608,10 @@ namespace Lucene.Net.Search.Grouping
             docNoFacet.Add(content);
             docNoGroupNoFacet.Add(content);
 
-            // LUCENENET NOTE: TreeSet (the class used in Java) allows duplicate keys. However, SortedSet seems to work,
-            // and based on the name of the variable, presuming the entries are meant to be unique.
-            ISet<string> uniqueFacetValues = new SortedSet<string>(new ComparerAnonymousHelper1());
+            ISet<string> uniqueFacetValues = new JCG.SortedSet<string>(new ComparerAnonymousHelper1());
 
-            // LUCENENET NOTE: Need HashMap here because of null keys
-            IDictionary<string, HashMap<string, ISet<string>>> searchTermToFacetToGroups = new Dictionary<string, HashMap<string, ISet<string>>>();
+            // LUCENENET NOTE: Need JCG.Dictionary here because of null keys
+            IDictionary<string, JCG.Dictionary<string, ISet<string>>> searchTermToFacetToGroups = new Dictionary<string, JCG.Dictionary<string, ISet<string>>>();
             int facetWithMostGroups = 0;
             for (int i = 0; i < numDocs; i++)
             {
@@ -633,9 +635,9 @@ namespace Lucene.Net.Search.Grouping
                 }
 
                 string contentStr = contentBrs[random.nextInt(contentBrs.Length)];
-                if (!searchTermToFacetToGroups.TryGetValue(contentStr, out HashMap<string, ISet<string>> facetToGroups))
+                if (!searchTermToFacetToGroups.TryGetValue(contentStr, out JCG.Dictionary<string, ISet<string>> facetToGroups))
                 {
-                    searchTermToFacetToGroups[contentStr] = facetToGroups = new HashMap<string, ISet<string>>();
+                    searchTermToFacetToGroups[contentStr] = facetToGroups = new JCG.Dictionary<string, ISet<string>>();
                 }
 
                 List<string> facetVals = new List<string>();
@@ -647,7 +649,7 @@ namespace Lucene.Net.Search.Grouping
                         uniqueFacetValues.Add(facetValue);
                         if (!facetToGroups.TryGetValue(facetValue, out ISet<string> groupsInFacet))
                         {
-                            facetToGroups[facetValue] = groupsInFacet = new HashSet<string>();
+                            facetToGroups[facetValue] = groupsInFacet = new JCG.HashSet<string>();
                         }
                         groupsInFacet.add(groupValue);
                         if (groupsInFacet.size() > facetWithMostGroups)
@@ -666,7 +668,7 @@ namespace Lucene.Net.Search.Grouping
                             uniqueFacetValues.Add(facetValue);
                             if (!facetToGroups.TryGetValue(facetValue, out ISet<string> groupsInFacet))
                             {
-                                facetToGroups[facetValue] = groupsInFacet = new HashSet<string>();
+                                facetToGroups[facetValue] = groupsInFacet = new JCG.HashSet<string>();
                             }
                             groupsInFacet.add(groupValue);
                             if (groupsInFacet.size() > facetWithMostGroups)
@@ -683,7 +685,7 @@ namespace Lucene.Net.Search.Grouping
                     uniqueFacetValues.Add(null);
                     if (!facetToGroups.TryGetValue(null, out ISet<string> groupsInFacet))
                     {
-                        facetToGroups[null] = groupsInFacet = new HashSet<string>();
+                        facetToGroups[null] = groupsInFacet = new JCG.HashSet<string>();
                     }
                     groupsInFacet.add(groupValue);
                     if (groupsInFacet.size() > facetWithMostGroups)
@@ -760,10 +762,10 @@ namespace Lucene.Net.Search.Grouping
 
         private GroupedFacetResult CreateExpectedFacetResult(string searchTerm, IndexContext context, int offset, int limit, int minCount, bool orderByCount, string facetPrefix)
         {
-            HashMap<string, ISet<string>> facetGroups;
+            JCG.Dictionary<string, ISet<string>> facetGroups;
             if (!context.searchTermToFacetGroups.TryGetValue(searchTerm, out facetGroups))
             {
-                facetGroups = new HashMap<string, ISet<string>>();
+                facetGroups = new JCG.Dictionary<string, ISet<string>>();
             }
 
             int totalCount = 0;
@@ -771,7 +773,7 @@ namespace Lucene.Net.Search.Grouping
             ISet<string> facetValues;
             if (facetPrefix != null)
             {
-                facetValues = new HashSet<string>();
+                facetValues = new JCG.HashSet<string>();
                 foreach (string facetValue in context.facetValues)
                 {
                     if (facetValue != null && facetValue.StartsWith(facetPrefix, StringComparison.Ordinal))
@@ -856,7 +858,7 @@ namespace Lucene.Net.Search.Grouping
         {
             internal readonly int numDocs;
             internal readonly DirectoryReader indexReader;
-            internal readonly IDictionary<string, HashMap<string, ISet<string>>> searchTermToFacetGroups;
+            internal readonly IDictionary<string, JCG.Dictionary<string, ISet<string>>> searchTermToFacetGroups;
             internal readonly ISet<string> facetValues;
             internal readonly Directory dir;
             internal readonly int facetWithMostGroups;
@@ -864,7 +866,7 @@ namespace Lucene.Net.Search.Grouping
             internal readonly string[] contentStrings;
             internal readonly bool useDV;
 
-            public IndexContext(IDictionary<string, HashMap<string, ISet<string>>> searchTermToFacetGroups, DirectoryReader r,
+            public IndexContext(IDictionary<string, JCG.Dictionary<string, ISet<string>>> searchTermToFacetGroups, DirectoryReader r,
                                 int numDocs, Directory dir, int facetWithMostGroups, int numGroups, string[] contentStrings, ISet<string> facetValues, bool useDV)
             {
                 this.searchTermToFacetGroups = searchTermToFacetGroups;

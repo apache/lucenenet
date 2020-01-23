@@ -1,8 +1,8 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
-using Lucene.Net.Support;
 using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial.Util
 {
@@ -36,7 +36,7 @@ namespace Lucene.Net.Spatial.Util
         public CachingDoubleValueSource(ValueSource source)
         {
             this.m_source = source;
-            m_cache = new HashMap<int, double>();
+            m_cache = new JCG.Dictionary<int, double>();
         }
 
         public override string GetDescription()

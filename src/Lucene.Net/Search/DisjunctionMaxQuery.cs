@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -60,7 +61,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// The subqueries
         /// </summary>
-        private EquatableList<Query> disjuncts = new EquatableList<Query>();
+        private IList<Query> disjuncts = new JCG.List<Query>();
 
         /// <summary>
         /// Multiple of the non-max disjunct scores added into our final score.  Non-zero values support tie-breaking.
@@ -118,22 +119,10 @@ namespace Lucene.Net.Search
         }
 
         /// <returns> The disjuncts. </returns>
-        public virtual IList<Query> Disjuncts
-        {
-            get
-            {
-                return disjuncts;
-            }
-        }
+        public virtual IList<Query> Disjuncts => disjuncts;
 
         /// <returns> Tie breaker value for multiple matches. </returns>
-        public virtual float TieBreakerMultiplier
-        {
-            get
-            {
-                return tieBreakerMultiplier;
-            }
-        }
+        public virtual float TieBreakerMultiplier => tieBreakerMultiplier;
 
         /// <summary>
         /// Expert: the Weight for DisjunctionMaxQuery, used to
@@ -163,13 +152,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Return our associated <see cref="DisjunctionMaxQuery"/> </summary>
-            public override Query Query
-            {
-                get
-                {
-                    return outerInstance;
-                }
-            }
+            public override Query Query => outerInstance;
 
             /// <summary>
             /// Compute the sub of squared weights of us applied to our subqueries.  Used for normalization. </summary>
@@ -305,7 +288,7 @@ namespace Lucene.Net.Search
         public override object Clone()
         {
             DisjunctionMaxQuery clone = (DisjunctionMaxQuery)base.Clone();
-            clone.disjuncts = (EquatableList<Query>)this.disjuncts.Clone();
+            clone.disjuncts = new JCG.List<Query>(this.disjuncts);
             return clone;
         }
 

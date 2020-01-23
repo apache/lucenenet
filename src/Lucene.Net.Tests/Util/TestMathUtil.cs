@@ -54,7 +54,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                return RandomPicks.RandomFrom(Random, Arrays.AsList(long.MinValue, long.MaxValue, 0L, -1L, 1L));
+                return RandomPicks.RandomFrom(Random, new long[] { long.MinValue, long.MaxValue, 0L, -1L, 1L });
             }
         }
 

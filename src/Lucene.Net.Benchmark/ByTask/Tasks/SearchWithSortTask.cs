@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Feeds;
+﻿using J2N.Text;
+using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks

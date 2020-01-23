@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Text;
 using Lucene.Net.Util;
 using System;
 using System.Text;
@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     /// <summary>
     /// The term text of a <see cref="Token"/>.
     /// </summary>
-    public interface ICharTermAttribute : IAttribute, ICharSequence
+    public interface ICharTermAttribute : IAttribute, ICharSequence, IAppendable
     {
         /// <summary>
         /// Copies the contents of buffer, starting at offset for
@@ -92,128 +92,194 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         /// <summary>
         /// Appends the contents of the <see cref="ICharSequence"/> to this character sequence.
-        /// <para>
+        /// <para/>
         /// The characters of the <see cref="ICharSequence"/> argument are appended, in order, increasing the length of
-        /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
-        /// characters <c>"null"</c> are appended.
-        /// </para>
+        /// this sequence by the length of the argument. If <paramref name="value"/> is <c>null</c>, this method is a no-op.
+        /// <para/>
+        /// IMPORTANT: This method uses .NET semantics. In Lucene, a <c>null</c> <paramref name="value"/> would append the
+        /// string <c>"null"</c> to the instance, but in Lucene.NET a <c>null</c> value will be ignored.
         /// </summary>
-        ICharTermAttribute Append(ICharSequence csq);
+        new ICharTermAttribute Append(ICharSequence value);
 
         /// <summary>
-        /// Appends the contents of the <see cref="ICharSequence"/> to this character sequence, beginning and ending
-        /// at the specified indices.
+        /// Appends the a string representation of the specified <see cref="ICharSequence"/> to this instance.
         /// <para>
         /// The characters of the <see cref="ICharSequence"/> argument are appended, in order, increasing the length of
-        /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
-        /// characters <c>"null"</c> are appended.
+        /// this sequence by the length of <paramref name="count"/>. If <paramref name="value"/> is <c>null</c>
+        /// and <paramref name="startIndex"/> and <paramref name="count"/> are not 0, an
+        /// <see cref="ArgumentNullException"/> is thrown.
         /// </para>
         /// </summary>
-        /// <param name="csq">The index of the first character in the subsequence.</param>
-        /// <param name="start">The start index of the <see cref="ICharSequence"/> to begin copying characters.</param>
-        /// <param name="end">The index of the character following the last character in the subsequence.</param>
-        ICharTermAttribute Append(ICharSequence csq, int start, int end);
+        /// <param name="value">The sequence of characters to append.</param>
+        /// <param name="startIndex">The start index of the <see cref="ICharSequence"/> to begin copying characters.</param>
+        /// <param name="count">The number of characters to append.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <c>null</c>, and
+        /// <paramref name="startIndex"/> and <paramref name="count"/> are not zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="count"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> + <paramref name="count"/> is greater than the length of <paramref name="value"/>.
+        /// </exception>
+        new ICharTermAttribute Append(ICharSequence value, int startIndex, int count); // LUCENENET: changed to startIndex/length to match .NET
 
         /// <summary>
         /// Appends the supplied <see cref="char"/> to this character sequence.
         /// </summary>
-        /// <param name="c">The <see cref="char"/> to append.</param>
-        ICharTermAttribute Append(char c);
+        /// <param name="value">The <see cref="char"/> to append.</param>
+        new ICharTermAttribute Append(char value);
 
         /// <summary>
         /// Appends the contents of the <see cref="T:char[]"/> array to this character sequence.
-        /// <para>
+        /// <para/>
         /// The characters of the <see cref="T:char[]"/> argument are appended, in order, increasing the length of
-        /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
-        /// characters <c>"null"</c> are appended.
-        /// </para>
+        /// this sequence by the length of the <paramref name="value"/>.
+        /// If <paramref name="value"/> is <c>null</c>, this method is a no-op.
+        /// <para/>
+        /// This method uses .NET semantics. In Lucene, a <c>null</c> <paramref name="value"/> would append the
+        /// string <c>"null"</c> to the instance, but in Lucene.NET a <c>null</c> value will be safely ignored.
         /// </summary>
-        /// <param name="csq">The <see cref="T:char[]"/> array to append.</param>
+        /// <param name="value">The <see cref="T:char[]"/> array to append.</param>
         /// <remarks>
         /// LUCENENET specific method, added to simulate using the CharBuffer class in Java.
         /// </remarks>
-        ICharTermAttribute Append(char[] csq);
+        new ICharTermAttribute Append(char[] value);
 
         /// <summary>
-        /// Appends the contents of the <see cref="T:char[]"/> array to this character sequence, beginning and ending
-        /// at the specified indices.
+        /// Appends the string representation of the <see cref="T:char[]"/> array to this instance.
         /// <para>
         /// The characters of the <see cref="T:char[]"/> argument are appended, in order, increasing the length of
-        /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
-        /// characters <c>"null"</c> are appended.
+        /// this sequence by the length of the <paramref name="value"/>. If <paramref name="value"/> is <c>null</c>
+        /// and <paramref name="startIndex"/> and <paramref name="count"/> are not 0, an
+        /// <see cref="ArgumentNullException"/> is thrown.
         /// </para>
         /// </summary>
-        /// <param name="csq">The <see cref="T:char[]"/> array to append.</param>
-        /// <param name="start">The start index of the <see cref="T:char[]"/> to begin copying characters.</param>
-        /// <param name="end">The index of the character following the last character in the subsequence.</param>
+        /// <param name="value">The sequence of characters to append.</param>
+        /// <param name="startIndex">The start index of the <see cref="T:char[]"/> to begin copying characters.</param>
+        /// <param name="count">The number of characters to append.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <c>null</c>, and
+        /// <paramref name="startIndex"/> and <paramref name="count"/> are not zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="count"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> + <paramref name="count"/> is greater than the length of <paramref name="value"/>.
+        /// </exception>
         /// <remarks>
         /// LUCENENET specific method, added to simulate using the CharBuffer class in Java. Note that
-        /// the <see cref="CopyBuffer(char[], int, int)"/> method provides similar functionality, except for
-        /// the last argument of this method is an index of the array rather than the length of characters to copy.
+        /// the <see cref="CopyBuffer(char[], int, int)"/> method provides similar functionality.
         /// </remarks>
-        ICharTermAttribute Append(char[] csq, int start, int end);
+        new ICharTermAttribute Append(char[] value, int startIndex, int count); // LUCENENET: changed to startIndex/length to match .NET
 
         /// <summary>
         /// Appends the specified <see cref="string"/> to this character sequence.
         /// <para>
         /// The characters of the <see cref="string"/> argument are appended, in order, increasing the length of
-        /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
-        /// characters <c>"null"</c> are appended.
+        /// this sequence by the length of the argument. If argument is <c>null</c>, this method is a no-op.
+        /// <para/>
+        /// This method uses .NET semantics. In Lucene, a <c>null</c> <paramref name="value"/> would append the
+        /// string <c>"null"</c> to the instance, but in Lucene.NET a <c>null</c> value will be safely ignored.
         /// </para>
         /// </summary>
+        /// <param name="value">The sequence of characters to append.</param>
         /// <remarks>
         /// LUCENENET specific method, added because the .NET <see cref="string"/> data type 
         /// doesn't implement <see cref="ICharSequence"/>. 
         /// </remarks>
-        ICharTermAttribute Append(string s);
+        new ICharTermAttribute Append(string value);
 
         /// <summary>
-        /// Appends the contents of the <see cref="string"/> to this character sequence, beginning and ending
-        /// at the specified indices.
+        /// Appends the contents of the <see cref="string"/> to this character sequence.
         /// <para>
         /// The characters of the <see cref="string"/> argument are appended, in order, increasing the length of
-        /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
-        /// characters <c>"null"</c> are appended.
+        /// this sequence by the length of <paramref name="value"/>. If <paramref name="value"/> is <c>null</c>
+        /// and <paramref name="startIndex"/> and <paramref name="count"/> are not 0, an
+        /// <see cref="ArgumentNullException"/> is thrown.
         /// </para>
         /// </summary>
-        /// <param name="csq">The index of the first character in the subsequence.</param>
-        /// <param name="start">The start index of the <see cref="string"/> to begin copying characters.</param>
-        /// <param name="end">The index of the character following the last character in the subsequence.</param>
+        /// <param name="value">The sequence of characters to append.</param>
+        /// <param name="startIndex">The start index of the <see cref="string"/> to begin copying characters.</param>
+        /// <param name="count">The number of characters to append.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <c>null</c>, and
+        /// <paramref name="startIndex"/> and <paramref name="count"/> are not zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="count"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> + <paramref name="count"/> is greater than the length of <paramref name="value"/>.
+        /// </exception>
         /// <remarks>
         /// LUCENENET specific method, added because the .NET <see cref="string"/> data type 
         /// doesn't implement <see cref="ICharSequence"/>. 
         /// </remarks>
-        ICharTermAttribute Append(string csq, int start, int end);
+        new ICharTermAttribute Append(string value, int startIndex, int count); // LUCENENET TODO: API - change to startIndex/length to match .NET
 
 
         /// <summary>
-        /// Appends the specified <see cref="StringBuilder"/> to this character sequence.
+        /// Appends a string representation of the specified <see cref="StringBuilder"/> to this character sequence.
         /// <para>
         /// The characters of the <see cref="StringBuilder"/> argument are appended, in order, increasing the length of
-        /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
-        /// characters <c>"null"</c> are appended.
+        /// this sequence by the length of the argument. If argument is <c>null</c>, this method is a no-op.
+        /// <para/>
+        /// This method uses .NET semantics. In Lucene, a <c>null</c> <paramref name="value"/> would append the
+        /// string <c>"null"</c> to the instance, but in Lucene.NET a <c>null</c> value will be safely ignored.
         /// </para>
         /// </summary>
-        ICharTermAttribute Append(StringBuilder sb);
+        new ICharTermAttribute Append(StringBuilder value);
 
         /// <summary>
-        /// Appends the specified <see cref="StringBuilder"/> to this character sequence.
+        /// Appends a string representation of the specified <see cref="StringBuilder"/> to this character sequence.
         /// <para/>The characters of the <see cref="StringBuilder"/> argument are appended, in order, increasing the length of
-        /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
-        /// characters <c>"null"</c> are appended.
+        /// this sequence by the length of the argument. If <paramref name="value"/> is <c>null</c>
+        /// and <paramref name="startIndex"/> and <paramref name="count"/> are not 0, an
+        /// <see cref="ArgumentNullException"/> is thrown.
         /// </summary>
+        /// <param name="value">The sequence of characters to append.</param>
+        /// <param name="startIndex">The start index of the <see cref="StringBuilder"/> to begin copying characters.</param>
+        /// <param name="count">The number of characters to append.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <c>null</c>, and
+        /// <paramref name="startIndex"/> and <paramref name="count"/> are not zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="count"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> is less than zero.
+        /// <para/>
+        /// -or-
+        /// <para/>
+        /// <paramref name="startIndex"/> + <paramref name="count"/> is greater than the length of <paramref name="value"/>.
+        /// </exception>
         /// <remarks>
         /// LUCENENET specific method, added because the .NET <see cref="StringBuilder"/> data type 
         /// doesn't implement <see cref="ICharSequence"/>.
         /// </remarks>
-        ICharTermAttribute Append(StringBuilder s, int start, int end);
+        new ICharTermAttribute Append(StringBuilder value, int startIndex, int count);
 
         /// <summary>
         /// Appends the contents of the other <see cref="ICharTermAttribute"/> to this character sequence.
         /// <para/>The characters of the <see cref="ICharTermAttribute"/> argument are appended, in order, increasing the length of
-        /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
-        /// characters <c>"null"</c> are appended.
+        /// this sequence by the length of the argument. If argument is <c>null</c>, this method is a no-op.
+        /// <para/>
+        /// This method uses .NET semantics. In Lucene, a <c>null</c> <paramref name="value"/> would append the
+        /// string <c>"null"</c> to the instance, but in Lucene.NET a <c>null</c> value will be safely ignored.
         /// </summary>
-        ICharTermAttribute Append(ICharTermAttribute termAtt);
+        /// <param name="value">The sequence of characters to append.</param>
+        ICharTermAttribute Append(ICharTermAttribute value);
     }
 }

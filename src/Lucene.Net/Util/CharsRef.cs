@@ -1,8 +1,9 @@
-using Lucene.Net.Support;
+using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
 
 namespace Lucene.Net.Util
 {
@@ -41,6 +42,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// An empty character array for convenience </summary>
         public static readonly char[] EMPTY_CHARS = new char[0];
+
+        bool ICharSequence.HasValue => true;
 
         /// <summary>
         /// The contents of the <see cref="CharsRef"/>. Should never be <c>null</c>.
@@ -284,20 +287,30 @@ namespace Lucene.Net.Util
                 // NOTE: must do a real check here to meet the specs of CharSequence
                 if (index < 0 || index >= Length)
                 {
-                    throw new IndexOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(index)); // LUCENENET: Changed exception type to ArgumentOutOfRangeException
                 }
                 return chars[Offset + index];
             }
         }
 
-        public ICharSequence SubSequence(int start, int end)
+        public ICharSequence Subsequence(int startIndex, int length)
         {
             // NOTE: must do a real check here to meet the specs of CharSequence
-            if (start < 0 || end > Length || start > end)
-            {
-                throw new System.IndexOutOfRangeException();
-            }
-            return new CharsRef(chars, Offset + start, end - start);
+            //if (start < 0 || end > Length || start > end)
+            //{
+            //    throw new System.IndexOutOfRangeException();
+            //}
+
+            // LUCENENET specific - changed semantics from start/end to startIndex/length to match .NET
+            // From Apache Harmony String class
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length));
+            if (startIndex + length > Length)
+                throw new ArgumentOutOfRangeException("", $"{nameof(startIndex)} + {nameof(length)} > {nameof(Length)}");
+
+            return new CharsRef(chars, Offset + startIndex, length);
         }
 
         /// @deprecated this comparer is only a transition mechanism

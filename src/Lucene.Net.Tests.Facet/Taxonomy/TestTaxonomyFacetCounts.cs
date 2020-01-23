@@ -2,11 +2,10 @@
 using Lucene.Net.Support.IO;
 using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Console = Lucene.Net.Support.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -31,7 +30,6 @@ namespace Lucene.Net.Facet.Taxonomy
 
     using System.Text;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
-    using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
@@ -43,7 +41,6 @@ namespace Lucene.Net.Facet.Taxonomy
     using IOUtils = Lucene.Net.Util.IOUtils;
     using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using NoMergePolicy = Lucene.Net.Index.NoMergePolicy;
     using OpenMode = Lucene.Net.Index.OpenMode;
     using PerFieldSimilarityWrapper = Lucene.Net.Search.Similarities.PerFieldSimilarityWrapper;
     using Query = Lucene.Net.Search.Query;
@@ -525,7 +522,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             FacetResult result = facets.GetTopChildren(int.MaxValue, "dim");
             Assert.AreEqual(numLabels, result.LabelValues.Length);
-            var allLabels = new HashSet<string>();
+            var allLabels = new JCG.HashSet<string>();
             foreach (LabelAndValue labelValue in result.LabelValues)
             {
                 allLabels.Add(labelValue.Label);

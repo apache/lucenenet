@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -8,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Synonym
         /// </summary>
         public class Builder
         {
-            internal readonly HashMap<CharsRef, MapEntry> workingSet = new HashMap<CharsRef, MapEntry>();
+            internal readonly IDictionary<CharsRef, MapEntry> workingSet = new JCG.Dictionary<CharsRef, MapEntry>();
             internal readonly BytesRefHash words = new BytesRefHash();
             internal readonly BytesRef utf8Scratch = new BytesRef(8);
             internal int maxHorizontalContext;
@@ -251,11 +251,11 @@ namespace Lucene.Net.Analysis.Synonym
                 BytesRef scratch = new BytesRef(64);
                 ByteArrayDataOutput scratchOutput = new ByteArrayDataOutput();
 
-                HashSet<int?> dedupSet;
+                ISet<int?> dedupSet;
 
                 if (dedup)
                 {
-                    dedupSet = new HashSet<int?>();
+                    dedupSet = new JCG.HashSet<int?>();
                 }
                 else
                 {

@@ -1,10 +1,10 @@
 ﻿using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
@@ -325,7 +325,7 @@ namespace Lucene.Net.Search.Suggest
             ushort ctxSetSize = (ushort)tmpInput.ReadInt16();
             scratch.Length -= 2;
 
-            var contextSet = new HashSet<BytesRef>();
+            var contextSet = new JCG.HashSet<BytesRef>();
             for (ushort i = 0; i < ctxSetSize; i++)
             {
                 tmpInput.Position = scratch.Length - 2;
@@ -344,7 +344,7 @@ namespace Lucene.Net.Search.Suggest
             // is reversed. So, we need to fix that before returning the result.
             // If the underlying problem is found and fixed, then this line can just be
             // return contextSet;
-            return new HashSet<BytesRef>(contextSet.Reverse());
+            return new JCG.HashSet<BytesRef>(contextSet.Reverse());
         }
 
         /// <summary>

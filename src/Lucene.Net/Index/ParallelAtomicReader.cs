@@ -1,8 +1,10 @@
+using J2N.Runtime.CompilerServices;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -54,14 +56,14 @@ namespace Lucene.Net.Index
         private readonly FieldInfos fieldInfos;
         private ParallelFields fields;
         private readonly AtomicReader[] parallelReaders, storedFieldsReaders;
-        private readonly ISet<AtomicReader> completeReaderSet = new IdentityHashSet<AtomicReader>();
+        private readonly ISet<AtomicReader> completeReaderSet = new JCG.HashSet<AtomicReader>(IdentityEqualityComparer<AtomicReader>.Default);
         private readonly bool closeSubReaders;
         private readonly int maxDoc, numDocs;
         private readonly bool hasDeletions;
 
         // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-        private readonly IDictionary<string, AtomicReader> fieldToReader = new SortedDictionary<string, AtomicReader>(StringComparer.Ordinal);
-        private readonly IDictionary<string, AtomicReader> tvFieldToReader = new SortedDictionary<string, AtomicReader>(StringComparer.Ordinal);
+        private readonly IDictionary<string, AtomicReader> fieldToReader = new JCG.SortedDictionary<string, AtomicReader>(StringComparer.Ordinal);
+        private readonly IDictionary<string, AtomicReader> tvFieldToReader = new JCG.SortedDictionary<string, AtomicReader>(StringComparer.Ordinal);
 
         /// <summary>
         /// Create a <see cref="ParallelAtomicReader"/> based on the provided
@@ -195,7 +197,7 @@ namespace Lucene.Net.Index
             private readonly ParallelAtomicReader outerInstance;
 
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            internal readonly IDictionary<string, Terms> fields = new SortedDictionary<string, Terms>(StringComparer.Ordinal);
+            internal readonly IDictionary<string, Terms> fields = new JCG.SortedDictionary<string, Terms>(StringComparer.Ordinal);
 
             internal ParallelFields(ParallelAtomicReader outerInstance)
             {

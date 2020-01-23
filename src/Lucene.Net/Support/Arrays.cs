@@ -1,8 +1,6 @@
 ﻿using J2N.Collections;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Support
@@ -163,11 +161,6 @@ namespace Lucene.Net.Support
             }
             sb.Append(']');
             return sb.ToString();
-        }
-
-        public static List<T> AsList<T>(params T[] objects)
-        {
-            return objects.ToList();
         }
     }
 }

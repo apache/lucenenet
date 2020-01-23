@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -14,6 +15,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard
 {
@@ -83,7 +85,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             qp = new StandardQueryParser(ANALYZER);
 
-            HashMap<String, /*Number*/object> randomNumberMap = new HashMap<string, object>();
+            IDictionary<string, /*Number*/object> randomNumberMap = new JCG.Dictionary<string, object>();
 
             /*SimpleDateFormat*/
             string dateFormat;
@@ -183,7 +185,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             randomNumberMap.Put(NumericType.DOUBLE.ToString(), randomDouble);
             randomNumberMap.Put(DATE_FIELD_NAME, randomDate);
 
-            RANDOM_NUMBER_MAP = Collections.UnmodifiableMap(randomNumberMap);
+            RANDOM_NUMBER_MAP = randomNumberMap.AsReadOnly();
 
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, directory,
@@ -192,8 +194,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     .SetMergePolicy(NewLogMergePolicy()));
 
             Document doc = new Document();
-            HashMap<String, NumericConfig> numericConfigMap = new HashMap<String, NumericConfig>();
-            HashMap<String, Field> numericFieldMap = new HashMap<String, Field>();
+            IDictionary<String, NumericConfig> numericConfigMap = new JCG.Dictionary<String, NumericConfig>();
+            IDictionary<String, Field> numericFieldMap = new JCG.Dictionary<String, Field>();
             qp.NumericConfigMap = (numericConfigMap);
 
             foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
@@ -313,7 +315,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         private static void setFieldValues(NumberType numberType,
-            HashMap<String, Field> numericFieldMap)
+            IDictionary<String, Field> numericFieldMap)
         {
 
             /*Number*/

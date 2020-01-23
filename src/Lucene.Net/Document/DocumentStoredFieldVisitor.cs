@@ -1,5 +1,6 @@
 using Lucene.Net.Index;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Documents
 {
@@ -32,7 +33,7 @@ namespace Lucene.Net.Documents
     /// </summary>
     public class DocumentStoredFieldVisitor : StoredFieldVisitor
     {
-        private readonly Documents.Document doc = new Documents.Document();
+        private readonly Document doc = new Document();
         private readonly ISet<string> fieldsToAdd;
 
         /// <summary>
@@ -47,7 +48,7 @@ namespace Lucene.Net.Documents
         /// Load only fields named in the provided fields. </summary>
         public DocumentStoredFieldVisitor(params string[] fields)
         {
-            fieldsToAdd = new HashSet<string>();
+            fieldsToAdd = new JCG.HashSet<string>();
             foreach (string field in fields)
             {
                 fieldsToAdd.Add(field);
@@ -107,12 +108,6 @@ namespace Lucene.Net.Documents
         ///         the stored information in the field instances is valid,
         ///         data such as boosts, indexing options, term vector options,
         ///         etc is not set. </returns>
-        public virtual Documents.Document Document
-        {
-            get
-            {
-                return doc;
-            }
-        }
+        public virtual Document Document => doc;
     }
 }

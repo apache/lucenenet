@@ -1,5 +1,4 @@
 using J2N.Threading;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -8,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -247,10 +247,10 @@ namespace Lucene.Net.Index
             reader = DirectoryReader.Open(d);
             fieldInfos = MultiFields.GetMergedFieldInfos(reader);
 
-            ICollection<string> allFieldNames = new HashSet<string>();
-            ICollection<string> indexedFieldNames = new HashSet<string>();
-            ICollection<string> notIndexedFieldNames = new HashSet<string>();
-            ICollection<string> tvFieldNames = new HashSet<string>();
+            ICollection<string> allFieldNames = new JCG.HashSet<string>();
+            ICollection<string> indexedFieldNames = new JCG.HashSet<string>();
+            ICollection<string> notIndexedFieldNames = new JCG.HashSet<string>();
+            ICollection<string> tvFieldNames = new JCG.HashSet<string>();
 
             foreach (FieldInfo fieldInfo in fieldInfos)
             {
@@ -803,7 +803,7 @@ namespace Lucene.Net.Index
             foreach (IndexCommit commit in commits)
             {
                 ICollection<string> files = commit.FileNames;
-                HashSet<string> seen = new HashSet<string>();
+                ISet<string> seen = new JCG.HashSet<string>();
                 foreach (String fileName in files)
                 {
                     Assert.IsTrue(!seen.Contains(fileName), "file " + fileName + " was duplicated");
@@ -1264,7 +1264,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
             DirectoryReader r = writer.GetReader();
             writer.Dispose();
-            HashSet<string> fieldsToLoad = new HashSet<string>();
+            ISet<string> fieldsToLoad = new JCG.HashSet<string>();
             Assert.AreEqual(0, r.Document(0, fieldsToLoad).Fields.Count);
             fieldsToLoad.Add("field1");
             Document doc2 = r.Document(0, fieldsToLoad);

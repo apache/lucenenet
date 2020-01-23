@@ -7,6 +7,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -360,7 +361,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 string field = "f" + f;
                 int numTerms = AtLeast(200);
 
-                ISet<string> uniqueTerms = new HashSet<string>();
+                ISet<string> uniqueTerms = new JCG.HashSet<string>();
 
                 for (int i = 0; i < numTerms; i++)
                 {

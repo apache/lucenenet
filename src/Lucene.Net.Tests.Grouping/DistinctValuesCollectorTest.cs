@@ -6,7 +6,6 @@ using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Search.Grouping.Function;
 using Lucene.Net.Search.Grouping.Terms;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Mutable;
 using NUnit.Framework;
@@ -15,8 +14,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using Console = Lucene.Net.Support.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -499,7 +498,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     break;
                 }
-                ISet<BytesRef> uniqueValues = new HashSet<BytesRef>();
+                ISet<BytesRef> uniqueValues = new JCG.HashSet<BytesRef>();
                 foreach (string val in groupCounts[group])
                 {
                     uniqueValues.Add(val != null ? new BytesRef(val) : null);
@@ -542,7 +541,7 @@ namespace Lucene.Net.Search.Grouping
             }
 
             List<string> contentStrings = new List<string>();
-            IDictionary<string, IDictionary<string, ISet<string>>> searchTermToGroupCounts = new HashMap<string, IDictionary<string, ISet<string>>>();
+            IDictionary<string, IDictionary<string, ISet<string>>> searchTermToGroupCounts = new JCG.Dictionary<string, IDictionary<string, ISet<string>>>();
             for (int i = 1; i <= numDocs; i++)
             {
                 string groupValue = random.nextInt(23) == 14 ? null : groupValues[random.nextInt(groupValues.Length)];
@@ -552,14 +551,14 @@ namespace Lucene.Net.Search.Grouping
                 if (!searchTermToGroupCounts.TryGetValue(content, out groupToCounts))
                 {
                     // Groups sort always DOCID asc...
-                    searchTermToGroupCounts.Add(content, groupToCounts = new LinkedHashMap<string, ISet<string>>());
+                    searchTermToGroupCounts.Add(content, groupToCounts = new JCG.LinkedDictionary<string, ISet<string>>());
                     contentStrings.Add(content);
                 }
 
                 ISet<string> countsVals;
                 if (!groupToCounts.TryGetValue(groupValue, out countsVals))
                 {
-                    groupToCounts.Add(groupValue, countsVals = new HashSet<string>());
+                    groupToCounts.Add(groupValue, countsVals = new JCG.HashSet<string>());
                 }
                 countsVals.Add(countValue);
 

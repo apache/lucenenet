@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -30,7 +31,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual void DoRandom(int iter, bool ignoreCase)
         {
             CharArrayMap<int?> map = new CharArrayMap<int?>(TEST_VERSION_CURRENT, 1, ignoreCase);
-            HashMap<string, int?> hmap = new HashMap<string, int?>();
+            IDictionary<string, int?> hmap = new JCG.Dictionary<string, int?>();
 
             char[] key;
             for (int i = 0; i < iter; i++)

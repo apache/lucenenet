@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -38,8 +39,8 @@ namespace Lucene.Net.Index
         private readonly bool hasNorms;
         private readonly bool hasDocValues;
 
-        private readonly SortedDictionary<int, FieldInfo> byNumber = new SortedDictionary<int, FieldInfo>();
-        private readonly Dictionary<string, FieldInfo> byName = new Dictionary<string, FieldInfo>();
+        private readonly IDictionary<int, FieldInfo> byNumber = new JCG.SortedDictionary<int, FieldInfo>();
+        private readonly IDictionary<string, FieldInfo> byName = new JCG.Dictionary<string, FieldInfo>();
         private readonly ICollection<FieldInfo> values; // for an unmodifiable iterator
 
         /// <summary>

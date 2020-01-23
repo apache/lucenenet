@@ -1,6 +1,8 @@
-using Lucene.Net.Support;
+using J2N;
+using J2N.Runtime.CompilerServices;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Util.Automaton
@@ -284,7 +286,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return;
             }
-            ISet<State> initialset = new EquatableSet<State>();
+            ISet<State> initialset = new JCG.HashSet<State>();
             initialset.Add(a.initial);
             DeterminizeSimple(a, initialset);
         }
@@ -319,7 +321,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 for (int n = 0; n < points.Length; n++)
                 {
-                    ISet<State> p = new EquatableSet<State>();
+                    ISet<State> p = new JCG.HashSet<State>();
                     foreach (State q in s)
                     {
                         foreach (Transition t in q.GetTransitions())
@@ -345,7 +347,7 @@ namespace Lucene.Net.Util.Automaton
                     }
                     else
                     {
-                        max = Character.MAX_CODE_POINT;
+                        max = Character.MaxCodePoint;
                     }
                     r.AddTransition(new Transition(min, max, q_));
                 }
@@ -367,7 +369,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return true;
             }
-            return IsFiniteSlow(a.initial, new HashSet<State>());
+            return IsFiniteSlow(a.initial, new JCG.HashSet<State>());
         }
 
         /// <summary>
@@ -376,7 +378,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         // TODO: not great that this is recursive... in theory a
         // large automata could exceed java's stack
-        private static bool IsFiniteSlow(State s, HashSet<State> path)
+        private static bool IsFiniteSlow(State s, JCG.HashSet<State> path)
         {
             path.Add(s);
             foreach (Transition t in s.GetTransitions())
@@ -437,11 +439,11 @@ namespace Lucene.Net.Util.Automaton
 
             // must use IdentityHashmap because two Transitions w/
             // different start nodes can be considered the same
-            leadsToAccept = new IdentityHashMap<Transition, bool?>();
+            leadsToAccept = new JCG.Dictionary<Transition, bool?>(IdentityEqualityComparer<Transition>.Default);
             IDictionary<State, IList<ArrivingTransition>> allArriving = new Dictionary<State, IList<ArrivingTransition>>();
 
             LinkedList<State> q = new LinkedList<State>();
-            HashSet<State> seen = new HashSet<State>();
+            ISet<State> seen = new JCG.HashSet<State>();
 
             // reverse map the transitions, so we can quickly look
             // up all arriving transitions to a given state

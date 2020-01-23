@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
@@ -43,10 +44,10 @@ namespace Lucene.Net.Search.Suggest
 #pragma warning disable 612, 618
             IComparer<BytesRef> comparer = random.nextBoolean() ? BytesRef.UTF8SortedAsUnicodeComparer : BytesRef.UTF8SortedAsUTF16Comparer;
 #pragma warning restore 612, 618
-            IDictionary<BytesRef, KeyValuePair<long, BytesRef>> sorted = new SortedDictionary<BytesRef, KeyValuePair<long, BytesRef>>(comparer); //new TreeMap<>(comparer);
-            IDictionary<BytesRef, long> sortedWithoutPayload = new SortedDictionary<BytesRef, long>(comparer); //new TreeMap<>(comparer);
-            IDictionary<BytesRef, KeyValuePair<long, ISet<BytesRef>>> sortedWithContext = new SortedDictionary<BytesRef, KeyValuePair<long, ISet<BytesRef>>>(comparer); //new TreeMap<>(comparer);
-            IDictionary<BytesRef, KeyValuePair<long, KeyValuePair<BytesRef, ISet<BytesRef>>>> sortedWithPayloadAndContext = new SortedDictionary<BytesRef, KeyValuePair<long, KeyValuePair<BytesRef, ISet<BytesRef>>>>(comparer); //new TreeMap<>(comparer);
+            IDictionary<BytesRef, KeyValuePair<long, BytesRef>> sorted = new JCG.SortedDictionary<BytesRef, KeyValuePair<long, BytesRef>>(comparer);
+            IDictionary<BytesRef, long> sortedWithoutPayload = new JCG.SortedDictionary<BytesRef, long>(comparer);
+            IDictionary<BytesRef, KeyValuePair<long, ISet<BytesRef>>> sortedWithContext = new JCG.SortedDictionary<BytesRef, KeyValuePair<long, ISet<BytesRef>>>(comparer);
+            IDictionary<BytesRef, KeyValuePair<long, KeyValuePair<BytesRef, ISet<BytesRef>>>> sortedWithPayloadAndContext = new JCG.SortedDictionary<BytesRef, KeyValuePair<long, KeyValuePair<BytesRef, ISet<BytesRef>>>>(comparer);
             Input[] unsorted = new Input[num];
             Input[] unsortedWithoutPayload = new Input[num];
             Input[] unsortedWithContexts = new Input[num];
@@ -56,7 +57,7 @@ namespace Lucene.Net.Search.Suggest
             {
                 BytesRef key2;
                 BytesRef payload;
-                ctxs = new HashSet<BytesRef>();
+                ctxs = new JCG.HashSet<BytesRef>();
                 do
                 {
                     key2 = new BytesRef(TestUtil.RandomUnicodeString(random));
@@ -121,7 +122,7 @@ namespace Lucene.Net.Search.Suggest
 
             // test the unsorted iterator wrapper with payloads
             wrapper = new UnsortedInputIterator(new InputArrayIterator(unsorted));
-            IDictionary<BytesRef, KeyValuePair<long, BytesRef>> actual = new SortedDictionary<BytesRef, KeyValuePair<long, BytesRef>>(); //new TreeMap<>();
+            IDictionary<BytesRef, KeyValuePair<long, BytesRef>> actual = new JCG.SortedDictionary<BytesRef, KeyValuePair<long, BytesRef>>();
             BytesRef key;
             while ((key = wrapper.Next()) != null)
             {
@@ -147,7 +148,7 @@ namespace Lucene.Net.Search.Suggest
 
             // test the unsorted iterator wrapper without payloads
             wrapperWithoutPayload = new UnsortedInputIterator(new InputArrayIterator(unsortedWithoutPayload));
-            IDictionary<BytesRef, long> actualWithoutPayload = new SortedDictionary<BytesRef, long>(); //new TreeMap<>();
+            IDictionary<BytesRef, long> actualWithoutPayload = new JCG.SortedDictionary<BytesRef, long>();
             while ((key = wrapperWithoutPayload.Next()) != null)
             {
                 long value = wrapperWithoutPayload.Weight;

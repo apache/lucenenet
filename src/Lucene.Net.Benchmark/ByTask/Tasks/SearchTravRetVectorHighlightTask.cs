@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N.Text;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -7,6 +8,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -61,7 +63,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         protected int m_numToHighlight = int.MaxValue;
         protected int m_maxFrags = 2;
         protected int m_fragSize = 100;
-        protected ISet<string> m_paramFields = new HashSet<string>();
+        protected ISet<string> m_paramFields = new JCG.HashSet<string>();
         protected FastVectorHighlighter m_highlighter;
 
         public SearchTravRetVectorHighlightTask(PerfRunData runData)
@@ -175,7 +177,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 else if (splits[i].StartsWith("fields[", StringComparison.Ordinal) == true)
                 {
-                    m_paramFields = new HashSet<string>();
+                    m_paramFields = new JCG.HashSet<string>();
                     int len = "fields[".Length;
                     string fieldNames = splits[i].Substring(len, (splits[i].Length - 1) - len);
                     string[] fieldSplits = fieldNames.Split(';').TrimEnd();

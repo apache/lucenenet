@@ -2,6 +2,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -67,7 +68,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public override void SetParams(string @params)
         {
             this.m_params = @params; // cannot just call super.setParams(), b/c it's params differ.
-            m_fieldsToLoad = new HashSet<string>();
+            m_fieldsToLoad = new JCG.HashSet<string>();
             for (StringTokenizer tokenizer = new StringTokenizer(@params, ","); tokenizer.MoveNext();)
             {
                 string s = tokenizer.Current;

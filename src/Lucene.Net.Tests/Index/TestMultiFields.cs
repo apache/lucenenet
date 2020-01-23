@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -50,7 +51,7 @@ namespace Lucene.Net.Index
                 w.KeepFullyDeletedSegments = true;
 
                 IDictionary<BytesRef, IList<int?>> docs = new Dictionary<BytesRef, IList<int?>>();
-                HashSet<int?> deleted = new HashSet<int?>();
+                ISet<int?> deleted = new JCG.HashSet<int?>();
                 IList<BytesRef> terms = new List<BytesRef>();
 
                 int numDocs = TestUtil.NextInt32(Random, 1, 100 * RANDOM_MULTIPLIER);
@@ -65,7 +66,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: onlyUniqueTerms=" + onlyUniqueTerms + " numDocs=" + numDocs);
                 }
-                HashSet<BytesRef> uniqueTerms = new HashSet<BytesRef>();
+                ISet<BytesRef> uniqueTerms = new JCG.HashSet<BytesRef>();
                 for (int i = 0; i < numDocs; i++)
                 {
                     if (!onlyUniqueTerms && Random.NextBoolean() && terms.Count > 0)

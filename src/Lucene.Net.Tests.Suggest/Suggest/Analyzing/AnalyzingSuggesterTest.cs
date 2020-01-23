@@ -1,7 +1,7 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N.Text;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -11,7 +11,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
+using J2N.Collections.Generic.Extensions;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -142,7 +144,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public void TestRandomRealisticKeys()
         {
             LineFileDocs lineFile = new LineFileDocs(Random);
-            IDictionary<string, long> mapping = new HashMap<string, long>();
+            IDictionary<string, long> mapping = new JCG.Dictionary<string, long>();
             List<Input> keys = new List<Input>();
 
             int howMany = AtLeast(100); // this might bring up duplicates
@@ -777,8 +779,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             int numQueries = AtLeast(1000);
 
             List<TermFreq2> slowCompletor = new List<TermFreq2>();
-            ISet<string> allPrefixes = new SortedSet<string>(StringComparer.Ordinal); //new TreeSet<>();
-            ISet<string> seen = new HashSet<string>();
+            ISet<string> allPrefixes = new JCG.SortedSet<string>(StringComparer.Ordinal);
+            ISet<string> seen = new JCG.HashSet<string>();
 
             bool doPayloads = Random.nextBoolean();
 
@@ -1500,7 +1502,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 asList.Add(value);
             }
-            Collections.Shuffle(asList);
+            asList.Shuffle();
             return asList;
         }
     }

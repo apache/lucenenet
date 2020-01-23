@@ -91,7 +91,7 @@ namespace Lucene.Net.Search
             query = new FuzzyQuery(new Term("field", "bbbbb"), FuzzyQuery.DefaultMaxEdits, 0);
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(3, hits.Length, "3 documents should match");
-            IList<string> order = Arrays.AsList("bbbbb", "abbbb", "aabbb");
+            IList<string> order = new List<string> { "bbbbb", "abbbb", "aabbb" };
             for (int i = 0; i < hits.Length; i++)
             {
                 string term = searcher.Doc(hits[i].Doc).Get("field");
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
             query = new FuzzyQuery(new Term("field", "bbbbb"), FuzzyQuery.DefaultMaxEdits, 0, 2, false);
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length, "only 2 documents should match");
-            order = Arrays.AsList("bbbbb", "abbbb");
+            order = new List<string> { "bbbbb", "abbbb" };
             for (int i = 0; i < hits.Length; i++)
             {
                 string term = searcher.Doc(hits[i].Doc).Get("field");

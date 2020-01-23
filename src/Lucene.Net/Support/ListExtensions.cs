@@ -118,26 +118,6 @@ namespace Lucene.Net.Support
             return -mid - (result < 0 ? 1 : 2);
         }
 
-        /// <summary>
-        /// Shuffles an <see cref="IList{T}"/> in place using a new <see cref="Random"/> instance.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list">This <see cref="IList{T}"/>.</param>
-        public static void Shuffle<T>(this IList<T> list)
-        {
-            Collections.Shuffle(list, new Random());
-        }
-
-        /// <summary>
-        /// Shuffles an <see cref="IList{T}"/> in place using the specified <paramref name="random"/> instance.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list">This <see cref="IList{T}"/>.</param>
-        public static void Shuffle<T>(this IList<T> list, Random random)
-        {
-            Collections.Shuffle(list, random);
-        }
-
         public static IList<T> SubList<T>(this IList<T> list, int fromIndex, int toIndex)
         {
             // .NET Port: This is to mimic Java's List.subList method, which has a different usage
@@ -149,13 +129,6 @@ namespace Lucene.Net.Support
             // that behavior as well.
 
             return new SubList<T>(list, fromIndex, toIndex);
-        }
-
-        public static void Swap<T>(this IList<T> list, int indexA, int indexB)
-        {
-            T tmp = list[indexA];
-            list[indexA] = list[indexB];
-            list[indexB] = tmp;
         }
 
         /// <summary>

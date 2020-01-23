@@ -2,7 +2,6 @@
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -85,7 +84,7 @@ namespace Lucene.Net.Sandbox.Queries
             query = new SlowFuzzyQuery(new Term("field", "bbbbb"), SlowFuzzyQuery.defaultMinSimilarity, 0);
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             assertEquals("3 documents should match", 3, hits.Length);
-            List<String> order = Arrays.AsList("bbbbb", "abbbb", "aabbb");
+            IList<String> order = new string[] { "bbbbb", "abbbb", "aabbb" };
             for (int i = 0; i < hits.Length; i++)
             {
                 string term = searcher.Doc(hits[i].Doc).Get("field");
@@ -98,7 +97,7 @@ namespace Lucene.Net.Sandbox.Queries
             query = new SlowFuzzyQuery(new Term("field", "bbbbb"), SlowFuzzyQuery.defaultMinSimilarity, 0, 2);
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             assertEquals("only 2 documents should match", 2, hits.Length);
-            order = Arrays.AsList("bbbbb", "abbbb");
+            order = new string[] { "bbbbb", "abbbb" };
             for (int i = 0; i < hits.Length; i++)
             {
                 string term = searcher.Doc(hits[i].Doc).Get("field");

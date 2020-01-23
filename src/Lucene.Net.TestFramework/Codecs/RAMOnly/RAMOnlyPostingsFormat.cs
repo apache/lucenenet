@@ -1,11 +1,12 @@
+using J2N.Text;
 using J2N.Threading.Atomic;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.RAMOnly
@@ -93,7 +94,7 @@ namespace Lucene.Net.Codecs.RAMOnly
         internal class RAMPostings : FieldsProducer
         {
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            internal readonly IDictionary<string, RAMField> fieldToTerms = new SortedDictionary<string, RAMField>(StringComparer.Ordinal);
+            internal readonly IDictionary<string, RAMField> fieldToTerms = new JCG.SortedDictionary<string, RAMField>(StringComparer.Ordinal);
 
             public override Terms GetTerms(string field)
             {
@@ -131,7 +132,7 @@ namespace Lucene.Net.Codecs.RAMOnly
             internal readonly string field;
 
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            internal readonly SortedDictionary<string, RAMTerm> termToDocs = new SortedDictionary<string, RAMTerm>(StringComparer.Ordinal);
+            internal readonly JCG.SortedDictionary<string, RAMTerm> termToDocs = new JCG.SortedDictionary<string, RAMTerm>(StringComparer.Ordinal);
             internal long sumTotalTermFreq;
             internal long sumDocFreq;
             internal int docCount;

@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Support;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -24,11 +23,11 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-    using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using IAccountable = Lucene.Net.Util.IAccountable;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
+    using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
+    using IAccountable = Lucene.Net.Util.IAccountable;
     using Int32sRef = Lucene.Net.Util.Int32sRef;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 

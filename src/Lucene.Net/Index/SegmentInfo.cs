@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
             {
                 throw new InvalidOperationException("files were not computed yet");
             }
-            return Collections.UnmodifiableSet(setFiles);
+            return setFiles.AsReadOnly();
         }
 
         public override string ToString()

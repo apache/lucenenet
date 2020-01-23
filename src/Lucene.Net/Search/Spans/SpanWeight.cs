@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -42,7 +43,7 @@ namespace Lucene.Net.Search.Spans
             this.m_query = query;
 
             m_termContexts = new Dictionary<Term, TermContext>();
-            SortedSet<Term> terms = new SortedSet<Term>();
+            ISet<Term> terms = new JCG.SortedSet<Term>();
             query.ExtractTerms(terms);
             IndexReaderContext context = searcher.TopReaderContext;
             TermStatistics[] termStats = new TermStatistics[terms.Count];

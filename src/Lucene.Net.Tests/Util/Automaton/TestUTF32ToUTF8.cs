@@ -1,6 +1,5 @@
-using Lucene.Net.Attributes;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
+using J2N;
+using J2N.Text;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;

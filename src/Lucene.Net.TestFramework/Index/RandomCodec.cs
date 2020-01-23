@@ -18,8 +18,10 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
+using J2N.Collections.Generic.Extensions;
 
 namespace Lucene.Net.Index
 {
@@ -62,11 +64,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// unique set of format names this codec knows about </summary>
-        public ISet<string> FormatNames { get; set; } = new HashSet<string>();
+        public ISet<string> FormatNames { get; set; } = new JCG.HashSet<string>();
 
         /// <summary>
         /// unique set of docvalues format names this codec knows about </summary>
-        public ISet<string> DvFormatNames { get; set; } = new HashSet<string>();
+        public ISet<string> DvFormatNames { get; set; } = new JCG.HashSet<string>();
 
         /// <summary>
         /// memorized field->postingsformat mappings </summary>
@@ -166,8 +168,8 @@ namespace Lucene.Net.Index
                 new SimpleTextDocValuesFormat(), 
                 new AssertingDocValuesFormat());
 
-            Collections.Shuffle(formats, random);
-            Collections.Shuffle(dvFormats, random);
+            formats.Shuffle(random);
+            dvFormats.Shuffle(random);
 
             // Avoid too many open files:
             if (formats.Count > 4)
@@ -181,7 +183,7 @@ namespace Lucene.Net.Index
         }
 
         public RandomCodec(Random random)
-            : this(random, new HashSet<string>())
+            : this(random, new JCG.HashSet<string>())
         {
         }
 

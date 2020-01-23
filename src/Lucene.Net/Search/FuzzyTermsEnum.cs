@@ -1,3 +1,4 @@
+using J2N;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -5,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -111,15 +113,15 @@ namespace Lucene.Net.Search
             InitializeInstanceFields();
             if (minSimilarity >= 1.0f && minSimilarity != (int)minSimilarity)
             {
-                throw new System.ArgumentException("fractional edit distances are not allowed");
+                throw new ArgumentException("fractional edit distances are not allowed");
             }
             if (minSimilarity < 0.0f)
             {
-                throw new System.ArgumentException("minimumSimilarity cannot be less than 0");
+                throw new ArgumentException("minimumSimilarity cannot be less than 0");
             }
             if (prefixLength < 0)
             {
-                throw new System.ArgumentException("prefixLength cannot be less than 0");
+                throw new ArgumentException("prefixLength cannot be less than 0");
             }
             this.m_terms = terms;
             this.term = term;
@@ -325,18 +327,9 @@ namespace Lucene.Net.Search
             return actualEnum.GetTermState();
         }
 
-        public override IComparer<BytesRef> Comparer
-        {
-            get
-            {
-                return actualEnum.Comparer;
-            }
-        }
+        public override IComparer<BytesRef> Comparer => actualEnum.Comparer;
 
-        public override long Ord
-        {
-            get { return actualEnum.Ord; }
-        }
+        public override long Ord => actualEnum.Ord;
 
         public override bool SeekExact(BytesRef text)
         {
@@ -353,10 +346,7 @@ namespace Lucene.Net.Search
             actualEnum.SeekExact(ord);
         }
 
-        public override BytesRef Term
-        {
-            get { return actualEnum.Term; }
-        }
+        public override BytesRef Term => actualEnum.Term;
 
         /// <summary>
         /// Implement fuzzy enumeration with <see cref="Terms.Intersect(CompiledAutomaton, BytesRef)"/>.
@@ -451,23 +441,11 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// @lucene.internal </summary>
-        public virtual float MinSimilarity
-        {
-            get
-            {
-                return m_minSimilarity;
-            }
-        }
+        public virtual float MinSimilarity => m_minSimilarity;
 
         /// <summary>
         /// @lucene.internal </summary>
-        public virtual float ScaleFactor
-        {
-            get
-            {
-                return m_scaleFactor;
-            }
-        }
+        public virtual float ScaleFactor => m_scaleFactor;
 
         /// <summary>
         /// Reuses compiled automata across different segments,
@@ -487,8 +465,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public sealed class LevenshteinAutomataAttribute : Attribute, ILevenshteinAutomataAttribute
         {
-            // LUCENENET NOTE: Must use EquatableList for Equals and GetHashCode()
-            private readonly IList<CompiledAutomaton> automata = new EquatableList<CompiledAutomaton>();
+            // LUCENENET NOTE: Must use JCG.List for Equals and GetHashCode()
+            private readonly IList<CompiledAutomaton> automata = new JCG.List<CompiledAutomaton>();
 
             public IList<CompiledAutomaton> Automata
             {

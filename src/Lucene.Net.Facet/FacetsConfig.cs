@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
@@ -239,7 +240,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         public virtual IDictionary<string, DimConfig> DimConfigs => fieldTypes;
 
-        private static void CheckSeen(HashSet<string> seenDims, string dim)
+        private static void CheckSeen(ISet<string> seenDims, string dim)
         {
             if (seenDims.Contains(dim))
             {
@@ -282,7 +283,7 @@ namespace Lucene.Net.Facet
             // ... and also all AssociationFacetFields
             IDictionary<string, IList<AssociationFacetField>> assocByField = new Dictionary<string, IList<AssociationFacetField>>();
 
-            var seenDims = new HashSet<string>();
+            var seenDims = new JCG.HashSet<string>();
 
             foreach (IIndexableField field in doc.Fields)
             {

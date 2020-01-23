@@ -1,5 +1,5 @@
+using J2N.Text;
 using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Text;

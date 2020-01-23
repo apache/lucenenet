@@ -2,11 +2,11 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using Lucene.Net.Store;
 using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
 
         private IDictionary<string, long> BytesUsedByExtension(Directory d)
         {
-            IDictionary<string, long> bytesUsedByExtension = new HashMap<string, long>();
+            IDictionary<string, long> bytesUsedByExtension = new JCG.Dictionary<string, long>();
             foreach (string file in d.ListAll())
             {
                 string ext = IndexFileNames.GetExtension(file);

@@ -1,13 +1,14 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N.Text;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.ComplexPhrase
 {
@@ -106,7 +107,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
 
             Query q = qp.Parse(qString);
 
-            HashSet<string> expecteds = new HashSet<string>();
+            ISet<string> expecteds = new JCG.HashSet<string>();
             string[] vals = expectedVals.Split(',').TrimEnd();
             for (int i = 0; i < vals.Length; i++)
             {

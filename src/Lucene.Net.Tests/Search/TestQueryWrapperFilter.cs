@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -103,7 +104,7 @@ namespace Lucene.Net.Search
                 Random, d);
             w.IndexWriter.Config.SetMaxBufferedDocs(17);
             int numDocs = AtLeast(100);
-            HashSet<string> aDocs = new HashSet<string>();
+            ISet<string> aDocs = new JCG.HashSet<string>();
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();

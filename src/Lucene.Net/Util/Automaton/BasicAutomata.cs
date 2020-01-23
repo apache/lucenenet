@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Util.Automaton
             State s = new State();
             a.initial = s;
             s.accept = true;
-            s.AddTransition(new Transition(Character.MIN_CODE_POINT, Character.MAX_CODE_POINT, s));
+            s.AddTransition(new Transition(Character.MinCodePoint, Character.MaxCodePoint, s));
             a.deterministic = true;
             return a;
         }
@@ -88,7 +88,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static Automaton MakeAnyChar()
         {
-            return MakeCharRange(Character.MIN_CODE_POINT, Character.MAX_CODE_POINT);
+            return MakeCharRange(Character.MinCodePoint, Character.MaxCodePoint);
         }
 
         /// <summary>

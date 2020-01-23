@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Core
         private readonly bool useWhitelist;
         private readonly bool enablePositionIncrements;
         private readonly string stopTypesFiles;
-        private HashSet<string> stopTypes;
+        private JCG.HashSet<string> stopTypes;
 
         /// <summary>
         /// Creates a new <see cref="TypeTokenFilterFactory"/> </summary>
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Core
             IList<string> files = SplitFileNames(stopTypesFiles);
             if (files.Count() > 0)
             {
-                stopTypes = new HashSet<string>();
+                stopTypes = new JCG.HashSet<string>();
                 foreach (string file in files)
                 {
                     IList<string> typesLines = GetLines(loader, file.Trim());
@@ -69,21 +69,9 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        public virtual bool EnablePositionIncrements
-        {
-            get
-            {
-                return enablePositionIncrements;
-            }
-        }
+        public virtual bool EnablePositionIncrements => enablePositionIncrements;
 
-        public virtual ICollection<string> StopTypes
-        {
-            get
-            {
-                return stopTypes;
-            }
-        }
+        public virtual ICollection<string> StopTypes => stopTypes;
 
         public override TokenStream Create(TokenStream input)
         {

@@ -1,6 +1,6 @@
+using J2N.Collections.Generic;
 using J2N.Threading.Atomic;
-using Lucene.Net.Support;
-using System.Collections.Generic;
+using SCG = System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -121,9 +121,9 @@ namespace Lucene.Net.Index
         internal readonly AtomicInt32 numTermDeletes = new AtomicInt32();
         internal readonly AtomicInt32 numNumericUpdates = new AtomicInt32();
         internal readonly AtomicInt32 numBinaryUpdates = new AtomicInt32();
-        internal readonly IDictionary<Term, int?> terms = new Dictionary<Term, int?>();
-        internal readonly IDictionary<Query, int?> queries = new Dictionary<Query, int?>();
-        internal readonly IList<int?> docIDs = new List<int?>();
+        internal readonly SCG.IDictionary<Term, int?> terms = new Dictionary<Term, int?>();
+        internal readonly SCG.IDictionary<Query, int?> queries = new Dictionary<Query, int?>();
+        internal readonly SCG.IList<int?> docIDs = new SCG.List<int?>();
 
 
         // Map<dvField,Map<updateTerm,NumericUpdate>>
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
         // one that came in wins), and helps us detect faster if the same Term is
         // used to update the same field multiple times (so we later traverse it
         // only once).
-        internal readonly IDictionary<string, LinkedHashMap<Term, NumericDocValuesUpdate>> numericUpdates = new Dictionary<string, LinkedHashMap<Term, NumericDocValuesUpdate>>();
+        internal readonly SCG.IDictionary<string, LinkedDictionary<Term, NumericDocValuesUpdate>> numericUpdates = new Dictionary<string, LinkedDictionary<Term, NumericDocValuesUpdate>>();
 
         // Map<dvField,Map<updateTerm,BinaryUpdate>>
         // For each field we keep an ordered list of BinaryUpdates, key'd by the
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
         // one that came in wins), and helps us detect faster if the same Term is
         // used to update the same field multiple times (so we later traverse it
         // only once).
-        internal readonly IDictionary<string, LinkedHashMap<Term, BinaryDocValuesUpdate>> binaryUpdates = new Dictionary<string, LinkedHashMap<Term, BinaryDocValuesUpdate>>();
+        internal readonly SCG.IDictionary<string, LinkedDictionary<Term, BinaryDocValuesUpdate>> binaryUpdates = new Dictionary<string, LinkedDictionary<Term, BinaryDocValuesUpdate>>();
 
         /// <summary>
         /// NOTE: This was MAX_INT in Lucene
@@ -248,16 +248,14 @@ namespace Lucene.Net.Index
 
         public virtual void AddNumericUpdate(NumericDocValuesUpdate update, int docIDUpto)
         {
-            LinkedHashMap<Term, NumericDocValuesUpdate> fieldUpdates = null;
-            if (!numericUpdates.TryGetValue(update.field, out fieldUpdates))
+            if (!numericUpdates.TryGetValue(update.field, out LinkedDictionary<Term, NumericDocValuesUpdate> fieldUpdates))
             {
-                fieldUpdates = new LinkedHashMap<Term, NumericDocValuesUpdate>();
+                fieldUpdates = new LinkedDictionary<Term, NumericDocValuesUpdate>();
                 numericUpdates[update.field] = fieldUpdates;
                 bytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
             }
 
-            NumericDocValuesUpdate current;
-            if (fieldUpdates.TryGetValue(update.term, out current) && current != null && docIDUpto < current.docIDUpto)
+            if (fieldUpdates.TryGetValue(update.term, out NumericDocValuesUpdate current) && current != null && docIDUpto < current.docIDUpto)
             {
                 // Only record the new number if it's greater than or equal to the current
                 // one. this is important because if multiple threads are replacing the
@@ -283,16 +281,14 @@ namespace Lucene.Net.Index
 
         public virtual void AddBinaryUpdate(BinaryDocValuesUpdate update, int docIDUpto)
         {
-            LinkedHashMap<Term, BinaryDocValuesUpdate> fieldUpdates;
-            if (!binaryUpdates.TryGetValue(update.field, out fieldUpdates))
+            if (!binaryUpdates.TryGetValue(update.field, out LinkedDictionary<Term, BinaryDocValuesUpdate> fieldUpdates))
             {
-                fieldUpdates = new LinkedHashMap<Term, BinaryDocValuesUpdate>();
+                fieldUpdates = new LinkedDictionary<Term, BinaryDocValuesUpdate>();
                 binaryUpdates[update.field] = fieldUpdates;
                 bytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
             }
 
-            BinaryDocValuesUpdate current;
-            if (fieldUpdates.TryGetValue(update.term, out current) && current != null && docIDUpto < current.docIDUpto)
+            if (fieldUpdates.TryGetValue(update.term, out BinaryDocValuesUpdate current) && current != null && docIDUpto < current.docIDUpto)
             {
                 // Only record the new number if it's greater than or equal to the current
                 // one. this is important because if multiple threads are replacing the

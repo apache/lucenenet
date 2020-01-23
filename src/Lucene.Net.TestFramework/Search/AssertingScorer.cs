@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Search
 {
@@ -30,7 +31,13 @@ namespace Lucene.Net.Search
         // we need to track scorers using a weak hash map because otherwise we
         // could loose references because of eg.
         // AssertingScorer.Score(Collector) which needs to delegate to work correctly
-        private static IDictionary<Scorer, WeakReference> ASSERTING_INSTANCES = new ConcurrentHashMapWrapper<Scorer, WeakReference>(new HashMap<Scorer, WeakReference>());
+#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+        private static readonly ConditionalWeakTable<Scorer, AssertingScorer> ASSERTING_INSTANCES = 
+            new ConditionalWeakTable<Scorer, AssertingScorer>();
+#else
+        private static readonly IDictionary<Scorer, WeakReference<AssertingScorer>> ASSERTING_INSTANCES = 
+            new ConcurrentHashMapWrapper<Scorer, WeakReference<AssertingScorer>>(new WeakDictionary<Scorer, WeakReference<AssertingScorer>>());
+#endif
 
         public static Scorer Wrap(Random random, Scorer other)
         {
@@ -39,7 +46,12 @@ namespace Lucene.Net.Search
                 return other;
             }
             AssertingScorer assertScorer = new AssertingScorer(random, other);
-            ASSERTING_INSTANCES[other] = new WeakReference(assertScorer);
+#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+            ASSERTING_INSTANCES.AddOrUpdate(other, assertScorer);
+#else
+            ASSERTING_INSTANCES[other] = new WeakReference<AssertingScorer>(assertScorer);
+#endif
+
             return assertScorer;
         }
 
@@ -49,9 +61,13 @@ namespace Lucene.Net.Search
             {
                 return other;
             }
-            WeakReference assertingScorerRef = ASSERTING_INSTANCES[other];
-            AssertingScorer assertingScorer = assertingScorerRef == null ? null : (AssertingScorer)assertingScorerRef.Target;
-            if (assertingScorer == null)
+
+#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
+            if (!ASSERTING_INSTANCES.TryGetValue(other, out AssertingScorer assertingScorer) || assertingScorer == null)
+#else
+            if (!ASSERTING_INSTANCES.TryGetValue(other, out WeakReference<AssertingScorer> assertingScorerRef) || assertingScorerRef == null ||
+                !assertingScorerRef.TryGetTarget(out AssertingScorer assertingScorer) || assertingScorer == null)
+#endif
             {
                 // can happen in case of memory pressure or if
                 // scorer1.Score(collector) calls

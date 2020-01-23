@@ -29,7 +29,6 @@ namespace Lucene.Net.Search
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using DocTermOrds = Lucene.Net.Index.DocTermOrds;
@@ -38,6 +37,7 @@ namespace Lucene.Net.Search
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using GrowableWriter = Lucene.Net.Util.Packed.GrowableWriter;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using MonotonicAppendingInt64Buffer = Lucene.Net.Util.Packed.MonotonicAppendingInt64Buffer;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;

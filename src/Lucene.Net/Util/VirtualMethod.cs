@@ -7,6 +7,7 @@ using System.Linq;
 #endif
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -65,7 +66,7 @@ namespace Lucene.Net.Util
     // is not generic).
     public sealed class VirtualMethod
     {
-        private static readonly ISet<MethodInfo> singletonSet = new ConcurrentHashSet<MethodInfo>(new HashSet<MethodInfo>());
+        private static readonly ISet<MethodInfo> singletonSet = new ConcurrentHashSet<MethodInfo>();
 
         private readonly Type baseClass;
         private readonly string method;

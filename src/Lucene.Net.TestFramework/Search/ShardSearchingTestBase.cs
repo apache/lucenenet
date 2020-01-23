@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -303,7 +304,7 @@ namespace Lucene.Net.Search
                 public override Query Rewrite(Query original)
                 {
                     Query rewritten = base.Rewrite(original);
-                    HashSet<Term> terms = new HashSet<Term>();
+                    ISet<Term> terms = new JCG.HashSet<Term>();
                     rewritten.ExtractTerms(terms);
 
                     // Make a single request to remote nodes for term
@@ -315,7 +316,7 @@ namespace Lucene.Net.Search
                             continue;
                         }
 
-                        HashSet<Term> missing = new HashSet<Term>();
+                        ISet<Term> missing = new JCG.HashSet<Term>();
                         foreach (Term term in terms)
                         {
                             TermAndShardVersion key = new TermAndShardVersion(nodeID, nodeVersions[nodeID], term);

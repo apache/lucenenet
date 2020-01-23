@@ -1,3 +1,5 @@
+using J2N.Collections.Generic.Extensions;
+using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
@@ -989,7 +991,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // random placement of id field also
-                    Collections.Swap(fields, NextInt(fields.Count), 0);
+                    fields.Swap(NextInt(fields.Count), 0);
                 }
 
                 for (int i = 0; i < fields.Count; i++)

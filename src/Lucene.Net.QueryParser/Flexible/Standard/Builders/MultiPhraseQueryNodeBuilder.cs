@@ -4,6 +4,7 @@ using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
 using Lucene.Net.Search;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 {
@@ -45,7 +46,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             if (children != null)
             {
-                IDictionary<int?, List<Term>> positionTermMap = new SortedDictionary<int?, List<Term>>();
+                IDictionary<int?, List<Term>> positionTermMap = new JCG.SortedDictionary<int?, List<Term>>();
 
                 foreach (IQueryNode child in children)
                 {

@@ -2,7 +2,6 @@
 using Lucene.Net.Index;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Spatial.Queries;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using Spatial4n.Core.Context;
 
@@ -43,7 +42,7 @@ namespace Lucene.Net.Spatial.Prefix
             }
             losAngeles.Add(new StoredField(prefixGridStrategy.FieldName, point.toString()));//just for diagnostics
 
-            addDocumentsAndCommit(Arrays.AsList(losAngeles));
+            addDocumentsAndCommit(new Document[] { losAngeles });
 
             // This won't work with simple spatial context...
             SpatialArgsParser spatialArgsParser = new SpatialArgsParser();

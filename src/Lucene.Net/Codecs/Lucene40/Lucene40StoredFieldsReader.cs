@@ -1,4 +1,3 @@
-using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Reflection;

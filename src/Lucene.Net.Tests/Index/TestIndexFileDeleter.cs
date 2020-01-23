@@ -4,6 +4,7 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -134,7 +135,7 @@ namespace Lucene.Net.Index
             Array.Sort(files);
             Array.Sort(files2);
 
-            HashSet<string> dif = DifFiles(files, files2);
+            ISet<string> dif = DifFiles(files, files2);
 
             if (!Arrays.Equals(files, files2))
             {
@@ -142,11 +143,11 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static HashSet<string> DifFiles(string[] files1, string[] files2)
+        private static ISet<string> DifFiles(string[] files1, string[] files2)
         {
-            HashSet<string> set1 = new HashSet<string>();
-            HashSet<string> set2 = new HashSet<string>();
-            HashSet<string> extra = new HashSet<string>();
+            ISet<string> set1 = new JCG.HashSet<string>();
+            ISet<string> set2 = new JCG.HashSet<string>();
+            ISet<string> extra = new JCG.HashSet<string>();
 
             for (int x = 0; x < files1.Length; x++)
             {

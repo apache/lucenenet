@@ -1,7 +1,6 @@
-using Lucene.Net.Support;
-using Lucene.Net.Support.C5Compatibility;
 using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Analysis
@@ -102,8 +101,8 @@ namespace Lucene.Net.Analysis
         protected override int Correct(int currentOff)
         {
             int ret;
-            // LUCENENET NOTE: TryPredecessor is equivalent to TreeMap.lowerEntry() in Java
-            if (corrections.TryPredecessor(currentOff + 1, out KeyValuePair<int, int> lastEntry))
+            // LUCENENET NOTE: TryGetPredecessor is equivalent to TreeMap.lowerEntry() in Java
+            if (corrections.TryGetPredecessor(currentOff + 1, out KeyValuePair<int, int> lastEntry))
             {
                 ret = currentOff + lastEntry.Value;
             }
@@ -121,10 +120,6 @@ namespace Lucene.Net.Analysis
             corrections[off] = cumulativeDiff;
         }
 
-        // LUCENENET TODO: This is the only TreeDictionary reference that uses a method that
-        // SortedDictionary doesn't have. In theory, we can factor out TreeDictionary from Lucene.Net.Support
-        // if we create our own version of SortedDictionary that supports null keys and add a reference to C5 to
-        // this library. Need to test the difference in performance, though.
-        internal TreeDictionary<int, int> corrections = new TreeDictionary<int, int>();
+        internal JCG.SortedDictionary<int, int> corrections = new JCG.SortedDictionary<int, int>();
     }
 }

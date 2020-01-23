@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using SubInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo.SubInfo;
 using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
 using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo;
@@ -7,21 +8,21 @@ using WeightedPhraseInfo = Lucene.Net.Search.VectorHighlight.FieldPhraseList.Wei
 namespace Lucene.Net.Search.VectorHighlight
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// A weighted implementation of <see cref="FieldFragList"/>.
@@ -42,9 +43,9 @@ namespace Lucene.Net.Search.VectorHighlight
         /// </summary>
         public override void Add(int startOffset, int endOffset, IList<WeightedPhraseInfo> phraseInfoList)
         {
-            List<SubInfo> tempSubInfos = new List<SubInfo>();
-            List<SubInfo> realSubInfos = new List<SubInfo>();
-            HashSet<string> distinctTerms = new HashSet<string>();
+            IList<SubInfo> tempSubInfos = new List<SubInfo>();
+            IList<SubInfo> realSubInfos = new List<SubInfo>();
+            ISet<string> distinctTerms = new JCG.HashSet<string>();
             int length = 0;
 
             foreach (WeightedPhraseInfo phraseInfo in phraseInfoList)
@@ -57,7 +58,7 @@ namespace Lucene.Net.Search.VectorHighlight
                     length++;
                 }
                 tempSubInfos.Add(new SubInfo(phraseInfo.GetText(), phraseInfo.TermsOffsets,
-                  phraseInfo.Seqnum, phraseTotalBoost));
+                    phraseInfo.Seqnum, phraseTotalBoost));
             }
 
             // We want that terms per fragment (length) is included into the weight. Otherwise a one-word-query

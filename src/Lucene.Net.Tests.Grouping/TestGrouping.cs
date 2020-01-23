@@ -19,6 +19,7 @@
  *
 */
 
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -37,9 +38,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -562,12 +563,12 @@ namespace Lucene.Net.Search.Grouping
             //Arrays.Sort(groupDocs, groupSortComp);
             ArrayUtil.TimSort(groupDocs, groupSortComp);
             
-            HashMap<BytesRef, List<GroupDoc>> groups = new HashMap<BytesRef, List<GroupDoc>>();
+            IDictionary<BytesRef, List<GroupDoc>> groups = new JCG.Dictionary<BytesRef, List<GroupDoc>>();
             List<BytesRef> sortedGroups = new List<BytesRef>();
             List<IComparable[]> sortedGroupFields = new List<IComparable[]>();
 
             int totalHitCount = 0;
-            ISet<BytesRef> knownGroups = new HashSet<BytesRef>();
+            ISet<BytesRef> knownGroups = new JCG.HashSet<BytesRef>();
 
             //Console.WriteLine("TEST: slowGrouping");
             foreach (GroupDoc d in groupDocs)
@@ -679,8 +680,8 @@ namespace Lucene.Net.Search.Grouping
         private DirectoryReader GetDocBlockReader(Directory dir, GroupDoc[] groupDocs)
         {
             // Coalesce by group, but in random order:
-            Collections.Shuffle(groupDocs, Random);
-            HashMap<BytesRef, List<GroupDoc>> groupMap = new HashMap<BytesRef, List<GroupDoc>>();
+            groupDocs.Shuffle(Random);
+            IDictionary<BytesRef, List<GroupDoc>> groupMap = new JCG.Dictionary<BytesRef, List<GroupDoc>>();
             List<BytesRef> groupValues = new List<BytesRef>();
 
             foreach (GroupDoc groupDoc in groupDocs)

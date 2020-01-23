@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -32,11 +33,11 @@ namespace Lucene.Net.Util
     /// </summary>
     public class SPIClassIterator<S> : IEnumerable<Type>
     {
-        private static HashSet<Type> types = LoadTypes();
+        private static JCG.HashSet<Type> types = LoadTypes();
 
-        private static HashSet<Type> LoadTypes() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        private static JCG.HashSet<Type> LoadTypes() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            types = new HashSet<Type>();
+            types = new JCG.HashSet<Type>();
 
             var assembliesToExamine = Support.AssemblyUtils.GetReferencedAssemblies();
 

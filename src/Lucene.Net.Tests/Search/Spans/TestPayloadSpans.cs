@@ -7,6 +7,7 @@ using System.Text;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search.Spans
@@ -277,7 +278,7 @@ namespace Lucene.Net.Search.Spans
             Spans spans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
 
             TopDocs topDocs = @is.Search(snq, 1);
-            HashSet<string> payloadSet = new HashSet<string>();
+            ISet<string> payloadSet = new JCG.HashSet<string>();
             for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
             {
                 while (spans.Next())
@@ -316,7 +317,7 @@ namespace Lucene.Net.Search.Spans
             Spans spans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
 
             TopDocs topDocs = @is.Search(snq, 1);
-            HashSet<string> payloadSet = new HashSet<string>();
+            ISet<string> payloadSet = new JCG.HashSet<string>();
             for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
             {
                 while (spans.Next())
@@ -355,7 +356,7 @@ namespace Lucene.Net.Search.Spans
             Spans spans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
 
             TopDocs topDocs = @is.Search(snq, 1);
-            HashSet<string> payloadSet = new HashSet<string>();
+            ISet<string> payloadSet = new JCG.HashSet<string>();
             for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
             {
                 while (spans.Next())
@@ -522,8 +523,8 @@ namespace Lucene.Net.Search.Spans
         {
             private readonly TestPayloadSpans OuterInstance;
 
-            internal HashSet<string> Entities = new HashSet<string>();
-            internal HashSet<string> Nopayload = new HashSet<string>();
+            internal ISet<string> Entities = new JCG.HashSet<string>();
+            internal ISet<string> Nopayload = new JCG.HashSet<string>();
             internal int Pos;
             internal IPayloadAttribute PayloadAtt;
             internal ICharTermAttribute TermAtt;

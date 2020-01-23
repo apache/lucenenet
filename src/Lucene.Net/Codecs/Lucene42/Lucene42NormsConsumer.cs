@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene42
 {
@@ -84,10 +85,10 @@ namespace Lucene.Net.Codecs.Lucene42
             long maxValue = long.MinValue;
             long gcd = 0;
             // TODO: more efficient?
-            HashSet<long> uniqueValues = null;
+            JCG.HashSet<long> uniqueValues = null;
             if (true)
             {
-                uniqueValues = new HashSet<long>();
+                uniqueValues = new JCG.HashSet<long>();
 
                 long count = 0;
                 foreach (long? nv in values)

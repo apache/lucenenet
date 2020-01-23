@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Stats;
-using Lucene.Net.Support;
 using System.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -56,7 +56,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             // aggregate by task name
             int reported = 0;
-            LinkedHashMap<string, TaskStats> p2 = new LinkedHashMap<string, TaskStats>();
+            JCG.LinkedDictionary<string, TaskStats> p2 = new JCG.LinkedDictionary<string, TaskStats>();
             foreach (TaskStats stat1 in taskStats)
             {
                 if (stat1.Elapsed >= 0)

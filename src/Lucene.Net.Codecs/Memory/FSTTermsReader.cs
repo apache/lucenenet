@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -59,7 +60,7 @@ namespace Lucene.Net.Codecs.Memory
     public class FSTTermsReader : FieldsProducer
     {
         // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-        private readonly SortedDictionary<string, TermsReader> fields = new SortedDictionary<string, TermsReader>(StringComparer.Ordinal);
+        private readonly IDictionary<string, TermsReader> fields = new JCG.SortedDictionary<string, TermsReader>(StringComparer.Ordinal);
         private readonly PostingsReaderBase postingsReader;
         //static boolean TEST = false;
         private readonly int version;

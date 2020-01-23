@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -36,7 +37,7 @@ namespace Lucene.Net.Store
             // LUCENENET specific - using string here because MethodInfo.GetHashCode() returns a different
             // value even if the signature is the same. The string seems to be a reasonable way to check 
             // equality between method signatures.
-            HashSet<string> exclude = new HashSet<string>();
+            ISet<string> exclude = new JCG.HashSet<string>();
             exclude.Add(typeof(Directory).GetMethod("Copy", new Type[] { typeof(Directory), typeof(string), typeof(string), typeof(IOContext) }).ToString());
             exclude.Add(typeof(Directory).GetMethod("CreateSlicer", new Type[] { typeof(string), typeof(IOContext) }).ToString());
             exclude.Add(typeof(Directory).GetMethod("OpenChecksumInput", new Type[] { typeof(string), typeof(IOContext) }).ToString());

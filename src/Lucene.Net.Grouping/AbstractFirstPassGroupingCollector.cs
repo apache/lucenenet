@@ -1,28 +1,28 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// FirstPassGroupingCollector is the first of two passes necessary
@@ -48,7 +48,7 @@ namespace Lucene.Net.Search.Grouping
 
         // Set once we reach topNGroups unique groups:
         // @lucene.internal
-        protected SortedSet<CollectedSearchGroup<TGroupValue>> m_orderedGroups;
+        protected JCG.SortedSet<CollectedSearchGroup<TGroupValue>> m_orderedGroups;
         private int docBase;
         private int spareSlot;
 
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search.Grouping
             }
 
             spareSlot = topNGroups;
-            groupMap = new HashMap<TGroupValue, CollectedSearchGroup<TGroupValue>>(topNGroups);
+            groupMap = new JCG.Dictionary<TGroupValue, CollectedSearchGroup<TGroupValue>>(topNGroups);
         }
 
         /// <summary>
@@ -372,7 +372,7 @@ namespace Lucene.Net.Search.Grouping
         private void BuildSortedSet()
         {
             var comparer = new BuildSortedSetComparer(this);
-            m_orderedGroups = new SortedSet<CollectedSearchGroup<TGroupValue>>(comparer);
+            m_orderedGroups = new JCG.SortedSet<CollectedSearchGroup<TGroupValue>>(comparer);
             m_orderedGroups.UnionWith(groupMap.Values);
             Debug.Assert(m_orderedGroups.Count > 0);
 

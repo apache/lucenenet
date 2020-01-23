@@ -1,6 +1,7 @@
-﻿using Lucene.Net.Support;
+﻿using J2N;
 using Lucene.Net.Util;
 using System;
+using RectangularArrays = Lucene.Net.Support.RectangularArrays;
 
 namespace Lucene.Net.Search.Spell
 {

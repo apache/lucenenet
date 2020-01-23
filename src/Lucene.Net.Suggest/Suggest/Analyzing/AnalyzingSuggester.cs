@@ -9,25 +9,26 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Suggester that first analyzes the surface form, adds the
@@ -515,7 +516,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // still index the hightest-weight one).  We clear
                 // this when we see a new analyzed form, so it cannot
                 // grow unbounded (at most 256 entries):
-                var seenSurfaceForms = new HashSet<BytesRef>();
+                var seenSurfaceForms = new JCG.HashSet<BytesRef>();
 
                 var dedup = 0;
                 while (reader.Read(scratch))
@@ -888,10 +889,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.outerInstance = outerInstance;
                 this.utf8Key = utf8Key;
                 this.results = results;
-                seen = new HashSet<BytesRef>();
+                seen = new JCG.HashSet<BytesRef>();
             }
 
-            private readonly HashSet<BytesRef> seen;
+            private readonly ISet<BytesRef> seen;
 
             protected override bool AcceptResult(Int32sRef input, PairOutputs<long?, BytesRef>.Pair output)
             {

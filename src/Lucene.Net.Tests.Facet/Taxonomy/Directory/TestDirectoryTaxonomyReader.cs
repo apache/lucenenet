@@ -1,21 +1,19 @@
 ﻿using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using ChildrenIterator = Lucene.Net.Facet.Taxonomy.TaxonomyReader.ChildrenIterator;
+    using Directory = Lucene.Net.Store.Directory;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using OpenMode = Lucene.Net.Index.OpenMode;
+    using IOUtils = Lucene.Net.Util.IOUtils;
     using LogByteSizeMergePolicy = Lucene.Net.Index.LogByteSizeMergePolicy;
     using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
-    using Directory = Lucene.Net.Store.Directory;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using IOUtils = Lucene.Net.Util.IOUtils;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -586,7 +584,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, it.Next());
 
             // root's children
-            var roots = new HashSet<string>(Arrays.AsList("a", "b", "c"));
+            var roots = new JCG.HashSet<string> { "a", "b", "c" };
             it = taxoReader.GetChildren(TaxonomyReader.ROOT_ORDINAL);
             while (roots.Count > 0)
             {

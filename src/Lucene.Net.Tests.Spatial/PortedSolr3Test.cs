@@ -11,6 +11,7 @@ using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial
 {
@@ -186,7 +187,7 @@ namespace Lucene.Net.Spatial
             assertEquals("" + shape, assertNumFound, results.numFound);
             if (assertIds != null)
             {
-                ISet<int?> resultIds = new HashSet<int?>();
+                ISet<int?> resultIds = new JCG.HashSet<int?>();
                 foreach (SearchResult result in results.results)
                 {
                     resultIds.add(int.Parse(result.document.Get("id"), CultureInfo.InvariantCulture));

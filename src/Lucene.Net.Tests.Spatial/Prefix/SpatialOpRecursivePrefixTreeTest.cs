@@ -10,6 +10,7 @@ using Spatial4n.Core.Shapes.Impl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Spatial.Prefix
@@ -217,8 +218,8 @@ namespace Lucene.Net.Spatial.Prefix
             bool biasContains = (operation == SpatialOperation.Contains);
 
             //Main index loop:
-            IDictionary<String, IShape> indexedShapes = new LinkedHashMap<String, IShape>();
-            IDictionary<String, IShape> indexedShapesGS = new LinkedHashMap<String, IShape>();//grid snapped
+            IDictionary<String, IShape> indexedShapes = new JCG.LinkedDictionary<String, IShape>();
+            IDictionary<String, IShape> indexedShapesGS = new JCG.LinkedDictionary<String, IShape>();//grid snapped
             int numIndexedShapes = randomIntBetween(1, 6);
 #pragma warning disable 219
             bool indexedAtLeastOneShapePair = false;
@@ -300,11 +301,11 @@ namespace Lucene.Net.Spatial.Prefix
                 // We ensure true-positive matches (if the predicate on the raw shapes match
                 //  then the search should find those same matches).
                 // approximations, false-positive matches
-                ISet<String> expectedIds = new /* LinkedHashSet<string>*/ HashSet<string>();//true-positives
-                ISet<String> secondaryIds = new /* LinkedHashSet<string>*/ HashSet<string>();//false-positives (unless disjoint)
+                ISet<string> expectedIds = new JCG.LinkedHashSet<string>();//true-positives
+                ISet<string> secondaryIds = new JCG.LinkedHashSet<string>();//false-positives (unless disjoint)
                 foreach (var entry in indexedShapes)
                 {
-                    String id = entry.Key;
+                    string id = entry.Key;
                     IShape indexedShapeCompare = entry.Value;
                     if (indexedShapeCompare == null)
                         continue;
@@ -312,14 +313,14 @@ namespace Lucene.Net.Spatial.Prefix
 
                     if (operation.Evaluate(indexedShapeCompare, queryShapeCompare))
                     {
-                        expectedIds.add(id);
+                        expectedIds.Add(id);
                         if (opIsDisjoint)
                         {
                             //if no longer intersect after buffering them, for disjoint, remember this
                             indexedShapeCompare = indexedShapesGS[id];
                             queryShapeCompare = queryShapeGS;
                             if (!operation.Evaluate(indexedShapeCompare, queryShapeCompare))
-                                secondaryIds.add(id);
+                                secondaryIds.Add(id);
                         }
                     }
                     else if (!opIsDisjoint)
@@ -342,7 +343,7 @@ namespace Lucene.Net.Spatial.Prefix
                             queryShapeCompare = queryShapeGS;
                         }
                         if (operation.Evaluate(indexedShapeCompare, queryShapeCompare))
-                            secondaryIds.add(id);
+                            secondaryIds.Add(id);
                     }
                 }
 
@@ -352,18 +353,18 @@ namespace Lucene.Net.Spatial.Prefix
                     args.DistErrPct = (0.0);//a hack; we want to be more detailed than gridSnap(queryShape)
                 Query query = strategy.MakeQuery(args);
                 SearchResults got = executeQuery(query, 100);
-                ISet<String> remainingExpectedIds = new /* LinkedHashSet<string>*/ HashSet<string>(expectedIds);
+                ISet<String> remainingExpectedIds = new JCG.LinkedHashSet<string>(expectedIds);
                 foreach (SearchResult result in got.results)
                 {
                     String id = result.GetId();
-                    bool removed = remainingExpectedIds.remove(id);
-                    if (!removed && (!opIsDisjoint && !secondaryIds.contains(id)))
+                    bool removed = remainingExpectedIds.Remove(id);
+                    if (!removed && (!opIsDisjoint && !secondaryIds.Contains(id)))
                     {
                         fail("Shouldn't match", id, indexedShapes, indexedShapesGS, queryShape);
                     }
                 }
                 if (opIsDisjoint)
-                    remainingExpectedIds.removeAll(secondaryIds);
+                    remainingExpectedIds.ExceptWith(secondaryIds);
                 if (remainingExpectedIds.Any())
                 {
                     var iter = remainingExpectedIds.GetEnumerator();
@@ -436,7 +437,7 @@ namespace Lucene.Net.Spatial.Prefix
             internal bool biasContainsThenWithin;//a hack
 
             public ShapePair(IShape shape1, IShape shape2, bool containsThenWithin, SpatialContext ctx)
-                        : base(Arrays.AsList(shape1, shape2), ctx)
+                        : base(new List<IShape> { shape1, shape2 }, ctx)
             {
                 this.ctx = ctx;
 

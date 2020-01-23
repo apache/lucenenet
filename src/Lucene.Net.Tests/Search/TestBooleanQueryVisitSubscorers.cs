@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -138,7 +139,7 @@ namespace Lucene.Net.Search
             internal int DocBase;
 
             public readonly IDictionary<int, int> DocCounts = new Dictionary<int, int>();
-            internal readonly HashSet<Scorer> TqsSet = new HashSet<Scorer>();
+            internal readonly ISet<Scorer> TqsSet = new JCG.HashSet<Scorer>();
 
             internal MyCollector()
             {

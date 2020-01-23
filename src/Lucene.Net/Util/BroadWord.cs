@@ -43,7 +43,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Bit count of a <see cref="long"/>.
         /// Only here to compare the implementation with <see cref="Select(long, int)"/>,
-        /// normally <see cref="J2N.Numerics.BitOperationExtensions.PopCount(long)"/> is preferable. </summary>
+        /// normally <see cref="BitOperation.PopCount(long)"/> is preferable. </summary>
         /// <returns> The total number of 1 bits in x. </returns>
         internal static int BitCount(long x)
         {
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util
         public static readonly long H16_L = L16_L << 15;
 
         /// <summary>
-        /// Naive implementation of <see cref="Select(long, int)"/>, using <see cref="J2N.Numerics.BitOperationExtensions.TrailingZeroCount(long)"/> repetitively.
+        /// Naive implementation of <see cref="Select(long, int)"/>, using <see cref="BitOperation.TrailingZeroCount(long)"/> repetitively.
         /// Works relatively fast for low ranks. </summary>
         /// <returns> The index of the r-th 1 bit in x, or if no such bit exists, 72. </returns>
         public static int SelectNaive(long x, int r)

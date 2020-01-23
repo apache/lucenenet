@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
             expectedOrder[3] = "Document 2";
             expectedOrder[4] = "Document 1";
 
-            Assert.AreEqual(Arrays.AsList(expectedOrder), Arrays.AsList(actualOrder));
+            assertEquals(expectedOrder, actualOrder);
         }
 
         private Document CreateDocument(string text, long time)

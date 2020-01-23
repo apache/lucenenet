@@ -41,7 +41,7 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class State : IComparable<State>
+    public class State : IComparable<State>, IEquatable<State> // LUCENENET specific: Implemented IEquatable, since this class is used in hashtables
     {
         internal bool accept;
         [WritableArray]
@@ -77,18 +77,18 @@ namespace Lucene.Net.Util.Automaton
             numTransitions = 0;
         }
 
-        private class TransitionsIterable : IEnumerable<Transition>
+        internal class TransitionsEnumerable : IEnumerable<Transition>
         {
             private readonly State outerInstance;
 
-            public TransitionsIterable(State outerInstance)
+            public TransitionsEnumerable(State outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
 
             public virtual IEnumerator<Transition> GetEnumerator()
             {
-                return new IteratorAnonymousInnerClassHelper(this);
+                return new TransitionsEnumerator(this);
             }
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -96,17 +96,18 @@ namespace Lucene.Net.Util.Automaton
                 return GetEnumerator();
             }
 
-            private class IteratorAnonymousInnerClassHelper : IEnumerator<Transition>
+            private struct TransitionsEnumerator : IEnumerator<Transition>
             {
-                private readonly TransitionsIterable outerInstance;
+                private readonly TransitionsEnumerable outerInstance;
                 private Transition current;
                 private int i, upTo;
 
-                public IteratorAnonymousInnerClassHelper(TransitionsIterable outerInstance)
+                public TransitionsEnumerator(TransitionsEnumerable outerInstance)
                 {
                     this.outerInstance = outerInstance;
                     upTo = this.outerInstance.outerInstance.numTransitions;
                     i = 0;
+                    current = default;
                 }
 
                 public bool MoveNext()
@@ -119,21 +120,9 @@ namespace Lucene.Net.Util.Automaton
                     return false;
                 }
 
-                public Transition Current
-                {
-                    get
-                    {
-                        return current;
-                    }
-                }
+                public Transition Current => current;
 
-                object System.Collections.IEnumerator.Current
-                {
-                    get
-                    {
-                        return Current;
-                    }
-                }
+                object System.Collections.IEnumerator.Current => Current;
 
                 public void Reset()
                 {
@@ -153,7 +142,7 @@ namespace Lucene.Net.Util.Automaton
         /// <returns> Transition set. </returns>
         public virtual IEnumerable<Transition> GetTransitions()
         {
-            return new TransitionsIterable(this);
+            return new TransitionsEnumerable(this);
         }
 
         public virtual int NumTransitions
@@ -187,14 +176,8 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public virtual bool Accept
         {
-            set
-            {
-                this.accept = value;
-            }
-            get
-            {
-                return accept;
-            }
+            get => accept;
+            set => this.accept = value;
         }
 
         /// <summary>
@@ -343,13 +326,7 @@ namespace Lucene.Net.Util.Automaton
         /// Expert: Will be useless unless <see cref="Automaton.GetNumberedStates()"/>
         /// has been called first to number the states. </summary>
         /// <returns> The number. </returns>
-        public virtual int Number
-        {
-            get
-            {
-                return number;
-            }
-        }
+        public virtual int Number => number;
 
         /// <summary>
         /// Returns string describing this state. Normally invoked via
@@ -382,6 +359,14 @@ namespace Lucene.Net.Util.Automaton
         public virtual int CompareTo(State s)
         {
             return s.id - id;
+        }
+
+        // LUCENENET specific - implemented IEquatable and changed to a struct.
+        public bool Equals(State other)
+        {
+            if (other == null)
+                return false;
+            return id.Equals(other.id);
         }
 
         public override int GetHashCode()

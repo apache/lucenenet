@@ -4,6 +4,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Query
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Analysis.Query
     public sealed class QueryAutoStopWordAnalyzer : AnalyzerWrapper
     {
         private readonly Analyzer @delegate;
-        private readonly IDictionary<string, HashSet<string>> stopWordsPerField = new Dictionary<string, HashSet<string>>();
+        private readonly IDictionary<string, ISet<string>> stopWordsPerField = new Dictionary<string, ISet<string>>();
         //The default maximum percentage (40%) of index documents which
         //can contain a term, after which the term is considered to be a stop word.
         public const float defaultMaxDocFreqPercent = 0.4f;
@@ -124,7 +125,7 @@ namespace Lucene.Net.Analysis.Query
 
             foreach (string field in fields)
             {
-                var stopWords = new HashSet<string>();
+                var stopWords = new JCG.HashSet<string>();
                 Terms terms = MultiFields.GetTerms(indexReader, field);
                 CharsRef spare = new CharsRef();
                 if (terms != null)
@@ -151,7 +152,7 @@ namespace Lucene.Net.Analysis.Query
 
         protected override TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
         {
-            if (!stopWordsPerField.TryGetValue(fieldName, out HashSet<string> stopWords) || stopWords == null)
+            if (!stopWordsPerField.TryGetValue(fieldName, out ISet<string> stopWords) || stopWords == null)
             {
                 return components;
             }
@@ -180,7 +181,7 @@ namespace Lucene.Net.Analysis.Query
             IList<Term> allStopWords = new List<Term>();
             foreach (string fieldName in stopWordsPerField.Keys)
             {
-                HashSet<string> stopWords = stopWordsPerField[fieldName];
+                ISet<string> stopWords = stopWordsPerField[fieldName];
                 foreach (string text in stopWords)
                 {
                     allStopWords.Add(new Term(fieldName, text));

@@ -1,12 +1,12 @@
 using Lucene.Net.Index;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Bloom
 {
@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs.Bloom
         {
             private readonly BloomFilteringPostingsFormat outerInstance;
             private readonly FieldsProducer _delegateFieldsProducer;
-            private readonly HashMap<string, FuzzySet> _bloomsByFieldName = new HashMap<string, FuzzySet>();
+            private readonly JCG.Dictionary<string, FuzzySet> _bloomsByFieldName = new JCG.Dictionary<string, FuzzySet>();
 
             public BloomFilteredFieldsProducer(BloomFilteringPostingsFormat outerInstance, SegmentReadState state)
             {

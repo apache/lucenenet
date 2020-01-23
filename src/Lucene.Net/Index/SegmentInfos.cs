@@ -1,7 +1,9 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
 using System.Collections;
+using J2N;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,6 +11,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -154,7 +157,7 @@ namespace Lucene.Net.Index
         /// Opaque <see cref="T:IDictionary{string, string}"/> that user can specify during <see cref="IndexWriter.Commit()"/> </summary>
         private IDictionary<string, string> userData = Collections.EmptyMap<string, string>();
 
-        private List<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
+        private IList<SegmentCommitInfo> segments = new JCG.List<SegmentCommitInfo>();
 
         /// <summary>
         /// If non-null, information about loading segments_N files 
@@ -266,7 +269,7 @@ namespace Lucene.Net.Index
             }
             else if (fileName.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal))
             {
-                return Number.Parse(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length), Character.MAX_RADIX);
+                return Number.Parse(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length), Character.MaxRadix);
             }
             else
             {
@@ -299,7 +302,7 @@ namespace Lucene.Net.Index
                 finally
                 {
                     genOutput.Dispose();
-                    dir.Sync(Collections.Singleton(IndexFileNames.SEGMENTS_GEN));
+                    dir.Sync(new JCG.HashSet<string> { IndexFileNames.SEGMENTS_GEN });
                 }
             }
             catch (Exception)
@@ -512,7 +515,7 @@ namespace Lucene.Net.Index
             IndexOutput segnOutput = null;
             bool success = false;
 
-            var upgradedSIFiles = new HashSet<string>();
+            var upgradedSIFiles = new JCG.HashSet<string>();
 
             try
             {
@@ -1164,7 +1167,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public ICollection<string> GetFiles(Directory dir, bool includeSegmentsFile)
         {
-            var files = new HashSet<string>();
+            var files = new JCG.HashSet<string>();
             if (includeSegmentsFile)
             {
                 string segmentFileName = GetSegmentsFileName();
@@ -1244,7 +1247,7 @@ namespace Lucene.Net.Index
             success = false;
             try
             {
-                dir.Sync(Collections.Singleton(fileName));
+                dir.Sync(new JCG.HashSet<string> { fileName });
                 success = true;
             }
             finally
@@ -1355,7 +1358,7 @@ namespace Lucene.Net.Index
         /// applies all changes caused by committing a merge to this <see cref="SegmentInfos"/> </summary>
         internal void ApplyMergeChanges(MergePolicy.OneMerge merge, bool dropSegment)
         {
-            var mergedAway = new HashSet<SegmentCommitInfo>(merge.Segments);
+            var mergedAway = new JCG.HashSet<SegmentCommitInfo>(merge.Segments);
             bool inserted = false;
             int newSegIdx = 0;
             for (int segIdx = 0, cnt = segments.Count; segIdx < cnt; segIdx++)
@@ -1426,7 +1429,7 @@ namespace Lucene.Net.Index
         /// Returns all contained segments as an <b>unmodifiable</b> <see cref="T:IList{SegmentCommitInfo}"/> view. </summary>
         public IList<SegmentCommitInfo> AsList()
         {
-            return Collections.UnmodifiableList<SegmentCommitInfo>(segments);
+            return segments.AsReadOnly();
         }
 
         /// <summary>

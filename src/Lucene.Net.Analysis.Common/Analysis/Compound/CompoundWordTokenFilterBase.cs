@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Analysis.TokenAttributes;
+﻿using J2N.Text;
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -181,7 +181,7 @@ namespace Lucene.Net.Analysis.Compound
             /// Construct the compound token based on a slice of the current <see cref="CompoundWordTokenFilterBase.m_termAtt"/>. </summary>
             public CompoundToken(CompoundWordTokenFilterBase outerInstance, int offset, int length)
             {
-                this.txt = outerInstance.m_termAtt.SubSequence(offset, offset + length);
+                this.txt = outerInstance.m_termAtt.Subsequence(offset, length); // LUCENENET: Corrected 2nd Subsequence parameter
 
                 // offsets of the original word
                 int startOff = outerInstance.m_offsetAtt.StartOffset;

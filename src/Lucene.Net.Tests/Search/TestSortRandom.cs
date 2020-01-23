@@ -1,15 +1,14 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Index;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Index;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -61,7 +60,7 @@ namespace Lucene.Net.Search
 #endif
                 random, dir);
             bool allowDups = random.NextBoolean();
-            HashSet<string> seen = new HashSet<string>();
+            ISet<string> seen = new JCG.HashSet<string>();
             int maxLength = TestUtil.NextInt32(random, 5, 100);
             if (VERBOSE)
             {

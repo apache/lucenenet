@@ -1,5 +1,5 @@
 using J2N.Numerics;
-using Lucene.Net.Support;
+using J2N.Text;
 using System;
 using System.Collections.Generic;
 

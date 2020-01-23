@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -102,7 +103,7 @@ namespace Lucene.Net.Search.Grouping
             public GroupCount(TGroupValue groupValue)
             {
                 this.GroupValue = groupValue;
-                this.UniqueValues = new HashSet<TGroupValue>();
+                this.UniqueValues = new JCG.HashSet<TGroupValue>();
             }
         }
 

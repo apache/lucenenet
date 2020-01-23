@@ -1,3 +1,4 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
@@ -5,6 +6,7 @@ using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -46,7 +48,7 @@ namespace Lucene.Net.Index
         private Directory Dir;
         private IndexReader Reader;
         private IndexSearcher Searcher;
-        private SortedSet<BytesRef> Terms; // the terms we put in the index
+        private JCG.SortedSet<BytesRef> Terms; // the terms we put in the index
         private Automaton TermsAutomaton; // automata of the same
         internal int NumIterations;
 
@@ -62,7 +64,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             Field field = NewStringField("field", "", Field.Store.YES);
             doc.Add(field);
-            Terms = new SortedSet<BytesRef>();
+            Terms = new JCG.SortedSet<BytesRef>();
 
             int num = AtLeast(200);
             for (int i = 0; i < num; i++)
@@ -127,7 +129,7 @@ namespace Lucene.Net.Index
                 Automaton automaton = (new RegExp(reg, RegExpSyntax.NONE)).ToAutomaton();
                 TermsEnum te = MultiFields.GetTerms(Reader, "field").GetIterator(null);
                 IList<BytesRef> unsortedTerms = new List<BytesRef>(Terms);
-                Collections.Shuffle(unsortedTerms);
+                unsortedTerms.Shuffle();
 
                 foreach (BytesRef term in unsortedTerms)
                 {
@@ -191,7 +193,7 @@ namespace Lucene.Net.Index
                 CompiledAutomaton ca = new CompiledAutomaton(automaton, SpecialOperations.IsFinite(automaton), false);
                 TermsEnum te = MultiFields.GetTerms(Reader, "field").Intersect(ca, null);
                 Automaton expected = BasicOperations.Intersection(TermsAutomaton, automaton);
-                SortedSet<BytesRef> found = new SortedSet<BytesRef>();
+                JCG.SortedSet<BytesRef> found = new JCG.SortedSet<BytesRef>();
                 while (te.Next() != null)
                 {
                     found.Add(BytesRef.DeepCopyOf(te.Term));

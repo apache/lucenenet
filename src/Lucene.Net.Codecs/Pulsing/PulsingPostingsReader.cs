@@ -1,3 +1,4 @@
+using J2N.Runtime.CompilerServices;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Pulsing
 {
@@ -41,7 +43,7 @@ namespace Lucene.Net.Codecs.Pulsing
         private readonly SegmentReadState _segmentState;
         private int _maxPositions;
         private int _version;
-        private SortedDictionary<int, int> _fields;
+        private IDictionary<int, int> _fields;
 
         public PulsingPostingsReader(SegmentReadState state, PostingsReaderBase wrappedPostingsReader)
         {
@@ -64,7 +66,7 @@ namespace Lucene.Net.Codecs.Pulsing
             }
             else
             {
-                _fields = new SortedDictionary<int, int>();
+                _fields = new JCG.SortedDictionary<int, int>();
                 var summaryFileName = IndexFileNames.SegmentFileName(_segmentState.SegmentInfo.Name,
                     _segmentState.SegmentSuffix, PulsingPostingsWriter.SUMMARY_EXTENSION);
                 IndexInput input = null;
@@ -705,7 +707,7 @@ namespace Lucene.Net.Codecs.Pulsing
             // you don't reuse? and maybe pulsingPostingsReader should throw an exc if it wraps
             // another pulsing, because this is just stupid and wasteful. 
             // we still have to be careful in case someone does Pulsing(Stomping(Pulsing(...
-            private readonly IDictionary<PulsingPostingsReader, DocsEnum> _enums = new IdentityHashMap<PulsingPostingsReader, DocsEnum>();
+            private readonly IDictionary<PulsingPostingsReader, DocsEnum> _enums = new JCG.Dictionary<PulsingPostingsReader, DocsEnum>(IdentityEqualityComparer<PulsingPostingsReader>.Default);
 
             public IDictionary<PulsingPostingsReader, DocsEnum> Enums
             {

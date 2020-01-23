@@ -1,7 +1,7 @@
+using J2N.Numerics;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Number = J2N.Numerics.BitOperationExtensions;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -318,13 +318,13 @@ namespace Lucene.Net.Search.Spans
         public override int GetHashCode()
         {
             int h = base.GetHashCode();
-            h = Number.RotateLeft(h, 1);
+            h = BitOperation.RotateLeft(h, 1);
             h ^= include.GetHashCode();
-            h = Number.RotateLeft(h, 1);
+            h = BitOperation.RotateLeft(h, 1);
             h ^= exclude.GetHashCode();
-            h = Number.RotateLeft(h, 1);
+            h = BitOperation.RotateLeft(h, 1);
             h ^= pre;
-            h = Number.RotateLeft(h, 1);
+            h = BitOperation.RotateLeft(h, 1);
             h ^= post;
             return h;
         }

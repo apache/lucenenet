@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping.Terms
 {
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             : base(groupField, sortWithinGroup.GetSort().Length)
         {
             this.sortWithinGroup = sortWithinGroup;
-            groups = new HashMap<BytesRef, GroupHead>();
+            groups = new JCG.Dictionary<BytesRef, GroupHead>();
 
             SortField[] sortFields = sortWithinGroup.GetSort();
             for (int i = 0; i < sortFields.Length; i++)

@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -74,11 +74,11 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
                     IDictionary<string, string> fields = new Dictionary<string, string>();
                     // id
                     sb = Read(reader, "<num>", null, true, false);
-                    int k = sb.IndexOf(":");
+                    int k = sb.IndexOf(":", StringComparison.Ordinal);
                     string id = sb.ToString(k + 1, sb.Length - (k + 1)).Trim();
                     // title
                     sb = Read(reader, "<title>", null, true, false);
-                    k = sb.IndexOf(">");
+                    k = sb.IndexOf(">", StringComparison.Ordinal);
                     string title = sb.ToString(k + 1, sb.Length - (k + 1)).Trim();
                     // description
                     Read(reader, "<desc>", null, false, false);

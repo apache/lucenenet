@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
@@ -9,6 +8,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Queries
 {
@@ -306,13 +306,7 @@ namespace Lucene.Net.Queries
         /// for the high and low frequency query instance. The top level query will
         /// always disable coords.
         /// </summary>
-        public virtual bool IsCoordDisabled
-        {
-            get
-            {
-                return m_disableCoord;
-            }
-        }
+        public virtual bool IsCoordDisabled => m_disableCoord;
 
         /// <summary>
         /// Gets or Sets a minimum number of the low frequent optional BooleanClauses which must be
@@ -408,9 +402,8 @@ namespace Lucene.Net.Queries
             result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_maxTermFrequency);
             result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_lowFreqMinNrShouldMatch);
             result = prime * result + J2N.BitConversion.SingleToInt32Bits(m_highFreqMinNrShouldMatch);
-            // LUCENENET specific: wrap the m_terms to ensure the collection values are
-            // compared for equalitly
-            result = prime * result + ((m_terms == null) ? 0 : Equatable.Wrap(m_terms).GetHashCode());
+            // LUCENENET specific: use structural equality comparison
+            result = prime * result + ((m_terms == null) ? 0 : JCG.ListEqualityComparer<Term>.Default.GetHashCode(m_terms));
             return result;
         }
 
@@ -468,9 +461,8 @@ namespace Lucene.Net.Queries
                     return false;
                 }
             }
-            // LUCENENET specific: wrap the m_terms to ensure the collection values are
-            // compared for equalitly
-            else if (!Equatable.Wrap(m_terms).Equals(other.m_terms))
+            // LUCENENET specific: use structural equality comparison
+            else if (!JCG.ListEqualityComparer<Term>.Default.Equals(m_terms, other.m_terms))
             {
                 return false;
             }

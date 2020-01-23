@@ -1,8 +1,8 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
+﻿using J2N.Text;
+using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Processors;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 
@@ -48,14 +48,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                     && (!(upperText is UnescapedCharSequence) || !((UnescapedCharSequence)upperText)
                         .WasEscaped(0)))
                 {
-                    upperText = "".ToCharSequence();
+                    upperText = "".AsCharSequence();
                 }
 
                 if (OPEN_RANGE_TOKEN.Equals(lowerNode.GetTextAsString(), StringComparison.Ordinal)
                     && (!(lowerText is UnescapedCharSequence) || !((UnescapedCharSequence)lowerText)
                         .WasEscaped(0)))
                 {
-                    lowerText = "".ToCharSequence();
+                    lowerText = "".AsCharSequence();
                 }
 
                 lowerNode.Text = lowerText;

@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
             // assert with keyword marker
             tokenizer = new MockTokenizer(new StringReader("lucene is awesome"));
-            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, Arrays.AsList("Lucene"), true);
+            CharArraySet set = new CharArraySet(TEST_VERSION_CURRENT, new string[] { "Lucene" }, true);
             filter = new HunspellStemFilter(new SetKeywordMarkerFilter(tokenizer, set), dictionary);
             AssertTokenStreamContents(filter, new string[] { "lucene", "is", "awesome" }, new int[] { 1, 1, 1 });
         }
@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis.Hunspell
             System.IO.Stream dictStream = typeof(TestStemmer).getResourceAsStream("simple.dic");
             try
             {
-                d = new Dictionary(affixStream, Arrays.AsList(dictStream), true);
+                d = new Dictionary(affixStream, new Stream[] { dictStream }, true);
             }
             finally
             {

@@ -28,6 +28,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Documents
@@ -108,7 +109,7 @@ namespace Lucene.Net.Documents
                 Document d = visitor.doc;
 
                 int numFieldValues = 0;
-                IDictionary<string, int> fieldValueCounts = new HashMap<string, int>();
+                IDictionary<string, int> fieldValueCounts = new JCG.Dictionary<string, int>();
 
                 // at this point, all FIELDS should be Lazy and unrealized
                 foreach (IIndexableField f in d)
@@ -231,7 +232,7 @@ namespace Lucene.Net.Documents
             internal LazyTestingStoredFieldVisitor(LazyDocument l, params string[] fields)
             {
                 lazyDoc = l;
-                lazyFieldNames = new HashSet<string>(Arrays.AsList(fields));
+                lazyFieldNames = new JCG.HashSet<string>(fields);
             }
 
 

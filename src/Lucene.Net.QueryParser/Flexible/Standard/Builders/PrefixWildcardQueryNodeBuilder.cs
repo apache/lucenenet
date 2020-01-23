@@ -38,7 +38,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
         {
             PrefixWildcardQueryNode wildcardNode = (PrefixWildcardQueryNode)queryNode;
 
-            string text = wildcardNode.Text.SubSequence(0, wildcardNode.Text.Length - 1).ToString();
+            string text = wildcardNode.Text.Subsequence(0, wildcardNode.Text.Length - 1).ToString(); // LUCENENET: Checked 2nd Subsequence parameter
             PrefixQuery q = new PrefixQuery(new Term(wildcardNode.GetFieldAsString(), text));
 
             MultiTermQuery.RewriteMethod method = (MultiTermQuery.RewriteMethod)queryNode.GetTag(MultiTermRewriteMethodProcessor.TAG_ID);

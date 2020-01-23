@@ -1,8 +1,8 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
 
 namespace Lucene.Net.Search.VectorHighlight
@@ -34,11 +34,11 @@ namespace Lucene.Net.Search.VectorHighlight
 
         // fieldMatch==true,  Map<fieldName,QueryPhraseMap>
         // fieldMatch==false, Map<null,QueryPhraseMap>
-        internal IDictionary<string, QueryPhraseMap> rootMaps = new HashMap<string, QueryPhraseMap>();
+        internal IDictionary<string, QueryPhraseMap> rootMaps = new JCG.Dictionary<string, QueryPhraseMap>();
 
         // fieldMatch==true,  Map<fieldName,setOfTermsInQueries>
         // fieldMatch==false, Map<null,setOfTermsInQueries>
-        internal IDictionary<string, ISet<string>> termSetMap = new HashMap<string, ISet<string>>();
+        internal IDictionary<string, ISet<string>> termSetMap = new JCG.Dictionary<string, ISet<string>>();
 
         internal int termOrPhraseNumber; // used for colored tag support
 
@@ -48,8 +48,8 @@ namespace Lucene.Net.Search.VectorHighlight
         internal FieldQuery(Query query, IndexReader reader, bool phraseHighlight, bool fieldMatch)
         {
             this.fieldMatch = fieldMatch;
-            // LUCENENET NOTE: LinkedHashSet cares about insertion order - in .NET, we can just use List<T> for that
-            List<Query> flatQueries = new List<Query>();
+            // LUCENENET NOTE: LinkedHashSet cares about insertion order
+            ISet<Query> flatQueries = new JCG.LinkedHashSet<Query>();
             Flatten(query, reader, flatQueries);
             SaveTerms(flatQueries, reader);
             ICollection<Query> expandQueries = Expand(flatQueries);
@@ -119,8 +119,7 @@ namespace Lucene.Net.Search.VectorHighlight
                     {
                         Query flat = new TermQuery(pq.GetTerms()[0]);
                         flat.Boost = pq.Boost;
-                        if (!flatQueries.Contains(flat)) // LUCENENET specific - set semantics, but this is a list
-                            flatQueries.Add(flat);
+                        flatQueries.Add(flat);
                     }
                 }
             }
@@ -192,8 +191,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <returns></returns>
         internal ICollection<Query> Expand(ICollection<Query> flatQueries)
         {
-            // LUCENENET NOTE: LinkedHashSet cares about insertion order - in .NET, we can just use List<T> for that
-            List<Query> expandQueries = new List<Query>();
+            ISet<Query> expandQueries = new JCG.LinkedHashSet<Query>();
 
             for (int i = 0; i < flatQueries.Count; )
             {
@@ -203,8 +201,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 {
                     i++;
                 }
-                if (!expandQueries.Contains(query)) // LUCENENET specific - set semantics, but this is a list
-                    expandQueries.Add(query);
+                expandQueries.Add(query);
                 if (!(query is PhraseQuery)) continue;
                 using (IEnumerator<Query> j = flatQueries.GetEnumerator())
                 {
@@ -385,10 +382,9 @@ namespace Lucene.Net.Search.VectorHighlight
         private ISet<string> GetTermSet(Query query)
         {
             string key = GetKey(query);
-            ISet<string> set;
-            if (!termSetMap.TryGetValue(key, out set) || set == null)
+            if (!termSetMap.TryGetValue(key, out ISet<string> set) || set == null)
             {
-                set = new HashSet<string>();
+                set = new JCG.HashSet<string>();
                 termSetMap[key] = set;
             }
             return set;
@@ -396,8 +392,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         internal ISet<string> GetTermSet(string field)
         {
-            ISet<string> result;
-            termSetMap.TryGetValue(fieldMatch ? field : null, out result);
+            termSetMap.TryGetValue(fieldMatch ? field : null, out ISet<string> result);
             return result;
         }
 
@@ -406,8 +401,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             QueryPhraseMap rootMap = GetRootMap(fieldName);
             if (rootMap == null) return null;
-            QueryPhraseMap result;
-            rootMap.subMap.TryGetValue(term, out result);
+            rootMap.subMap.TryGetValue(term, out QueryPhraseMap result);
             return result;
         }
 
@@ -421,8 +415,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         private QueryPhraseMap GetRootMap(string fieldName)
         {
-            QueryPhraseMap result;
-            rootMaps.TryGetValue(fieldMatch ? fieldName : null, out result);
+            rootMaps.TryGetValue(fieldMatch ? fieldName : null, out QueryPhraseMap result);
             return result;
         }
 
@@ -457,8 +450,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             private QueryPhraseMap GetOrNewMap(IDictionary<string, QueryPhraseMap> subMap, string term)
             {
-                QueryPhraseMap map;
-                if (!subMap.TryGetValue(term, out map) || map == null)
+                if (!subMap.TryGetValue(term, out QueryPhraseMap map) || map == null)
                 {
                     map = new QueryPhraseMap(fieldQuery);
                     subMap[term] = map;
@@ -509,25 +501,13 @@ namespace Lucene.Net.Search.VectorHighlight
                 this.termOrPhraseNumber = fieldQuery.NextTermOrPhraseNumber();
             }
 
-            public virtual bool IsTerminal
-            {
-                get { return terminal; }
-            }
+            public virtual bool IsTerminal => terminal;
 
-            public virtual int Slop
-            {
-                get { return slop; }
-            }
+            public virtual int Slop => slop;
 
-            public virtual float Boost
-            {
-                get { return boost; }
-            }
+            public virtual float Boost => boost;
 
-            public virtual int TermOrPhraseNumber
-            {
-                get { return termOrPhraseNumber; }
-            }
+            public virtual int TermOrPhraseNumber => termOrPhraseNumber;
 
             public virtual QueryPhraseMap SearchPhrase(IList<TermInfo> phraseCandidate)
             {

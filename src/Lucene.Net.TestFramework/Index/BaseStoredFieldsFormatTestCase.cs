@@ -1,3 +1,5 @@
+using J2N.Collections.Generic.Extensions;
+using J2N.Text;
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
@@ -17,6 +19,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -135,7 +138,7 @@ namespace Lucene.Net.Index
                         if (rand.Next(50) == 17)
                         {
                             // mixup binding of field name -> Number every so often
-                            Collections.Shuffle(fieldIDs);
+                            fieldIDs.Shuffle();
                         }
                         if (rand.Next(5) == 3 && i > 0)
                         {
@@ -421,8 +424,15 @@ namespace Lucene.Net.Index
                     float f = Random.NextSingle();
                     double d = Random.NextDouble();
 
-                    IList<Field> fields = Arrays.AsList(new Field("bytes", bytes, ft), new Field("string", @string, ft), new Int64Field("long", l, Field.Store.YES), new Int32Field("int", i, Field.Store.YES), new SingleField("float", f, Field.Store.YES), new DoubleField("double", d, Field.Store.YES)
-                   );
+                    Field[] fields = new Field[]
+                    {
+                        new Field("bytes", bytes, ft), 
+                        new Field("string", @string, ft), 
+                        new Int64Field("long", l, Field.Store.YES), 
+                        new Int32Field("int", i, Field.Store.YES), 
+                        new SingleField("float", f, Field.Store.YES), 
+                        new DoubleField("double", d, Field.Store.YES)
+                    };
 
                     for (int k = 0; k < 100; ++k)
                     {
@@ -441,7 +451,7 @@ namespace Lucene.Net.Index
                         foreach (Field fld in fields)
                         {
                             string fldName = fld.Name;
-                            Document sDoc = reader.Document(docID, Collections.Singleton(fldName));
+                            Document sDoc = reader.Document(docID, new JCG.HashSet<string> { fldName });
                             IIndexableField sField = sDoc.GetField(fldName);
                             if (typeof(Field) == fld.GetType())
                             {
@@ -770,7 +780,7 @@ namespace Lucene.Net.Index
                     Document[] docs = new Document[numDocs];
                     for (int i = 0; i < numDocs; ++i)
                     {
-                        docs[i] = RandomPicks.RandomFrom(Random, Arrays.AsList(emptyDoc, bigDoc1, bigDoc2));
+                        docs[i] = RandomPicks.RandomFrom(Random, new Document[] { emptyDoc, bigDoc1, bigDoc2 });
                     }
                     for (int i = 0; i < numDocs; ++i)
                     {

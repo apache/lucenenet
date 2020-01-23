@@ -1,13 +1,13 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Simple
 {
@@ -131,7 +131,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /// <summary>Creates a new parser searching over a single field.</summary>
         public SimpleQueryParser(Analyzer analyzer, string field)
-            : this(analyzer, new HashMap<string, float>() { { field, 1.0F } })
+            : this(analyzer, new JCG.Dictionary<string, float>() { { field, 1.0F } })
         {
         }
 

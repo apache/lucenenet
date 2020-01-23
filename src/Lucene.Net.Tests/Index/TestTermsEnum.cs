@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -245,7 +246,7 @@ namespace Lucene.Net.Index
             int numTerms = AtLeast(300);
             //final int numTerms = 50;
 
-            HashSet<string> terms = new HashSet<string>();
+            ISet<string> terms = new JCG.HashSet<string>();
             ICollection<string> pendingTerms = new List<string>();
             IDictionary<BytesRef, int?> termToID = new Dictionary<BytesRef, int?>();
             int id = 0;
@@ -265,7 +266,7 @@ namespace Lucene.Net.Index
             AddDoc(w, pendingTerms, termToID, id++);
 
             BytesRef[] termsArray = new BytesRef[terms.Count];
-            HashSet<BytesRef> termsSet = new HashSet<BytesRef>();
+            ISet<BytesRef> termsSet = new JCG.HashSet<BytesRef>();
             {
                 int upto = 0;
                 foreach (string s in terms)
@@ -298,8 +299,8 @@ namespace Lucene.Net.Index
 
                 // From the random terms, pick some ratio and compile an
                 // automaton:
-                HashSet<string> acceptTerms = new HashSet<string>();
-                SortedSet<BytesRef> sortedAcceptTerms = new SortedSet<BytesRef>();
+                ISet<string> acceptTerms = new JCG.HashSet<string>();
+                JCG.SortedSet<BytesRef> sortedAcceptTerms = new JCG.SortedSet<BytesRef>();
                 double keepPct = Random.NextDouble();
                 Automaton a;
                 if (iter == 0)
@@ -345,7 +346,7 @@ namespace Lucene.Net.Index
                 CompiledAutomaton c = new CompiledAutomaton(a, true, false);
 
                 BytesRef[] acceptTermsArray = new BytesRef[acceptTerms.Count];
-                HashSet<BytesRef> acceptTermsSet = new HashSet<BytesRef>();
+                ISet<BytesRef> acceptTermsSet = new JCG.HashSet<BytesRef>();
                 int upto = 0;
                 foreach (string s in acceptTerms)
                 {
@@ -632,7 +633,7 @@ namespace Lucene.Net.Index
         public virtual void TestRandomTerms()
         {
             var terms = new string[TestUtil.NextInt32(Random, 1, AtLeast(1000))];
-            var seen = new HashSet<string>();
+            var seen = new JCG.HashSet<string>();
 
             var allowEmptyString = Random.NextBoolean();
 

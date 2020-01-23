@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestCollectionUtil : LuceneTestCase
     {
-        private List<int> CreateRandomList(int maxSize)
+        private IList<int> CreateRandomList(int maxSize)
         {
             Random rnd = Random;
             int[] a = new int[rnd.Next(maxSize) + 1];
@@ -35,7 +35,7 @@ namespace Lucene.Net.Util
             {
                 a[i] = Convert.ToInt32(rnd.Next(a.Length));
             }
-            return Arrays.AsList(a);
+            return a;
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace Lucene.Net.Util
         {
             for (int i = 0, c = AtLeast(500); i < c; i++)
             {
-                List<int> list1 = CreateRandomList(2000), list2 = new List<int>(list1);
+                IList<int> list1 = CreateRandomList(2000), list2 = new List<int>(list1);
                 CollectionUtil.IntroSort(list1);
                 list2.Sort();
                 Assert.AreEqual(list2, list1);
@@ -65,7 +65,7 @@ namespace Lucene.Net.Util
         {
             for (int i = 0, c = AtLeast(500); i < c; i++)
             {
-                List<int> list1 = CreateRandomList(2000), list2 = new List<int>(list1);
+                IList<int> list1 = CreateRandomList(2000), list2 = new List<int>(list1);
                 CollectionUtil.TimSort(list1);
                 list2.Sort();
                 Assert.AreEqual(list2, list1);
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
         public virtual void TestEmptyListSort()
         {
             // should produce no exceptions
-            IList<int> list = Arrays.AsList(new int[0]); // LUCENE-2989
+            IList<int> list = new int[0]; // LUCENE-2989
             CollectionUtil.IntroSort(list);
             CollectionUtil.TimSort(list);
             CollectionUtil.IntroSort(list, Collections.ReverseOrder<int>());

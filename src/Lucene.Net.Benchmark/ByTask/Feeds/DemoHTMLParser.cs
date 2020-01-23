@@ -1,12 +1,13 @@
 ﻿// LUCENENET TODO: Use HTML Agility pack instead of SAX ?
 
-using Lucene.Net.Support;
+using J2N.Collections.Generic.Extensions;
 using Sax;
 using Sax.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -204,7 +205,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             private static ISet<string> CreateElementNameSet(params string[] names)
             {
-                return Collections.UnmodifiableSet(new HashSet<string>(names));
+                return new JCG.HashSet<string>(names).AsReadOnly();
             }
 
             /// <summary>HTML elements that cause a line break (they are block-elements).</summary>

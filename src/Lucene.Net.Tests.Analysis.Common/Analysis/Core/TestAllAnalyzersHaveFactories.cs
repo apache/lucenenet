@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Fr;
+﻿using J2N.Runtime.CompilerServices;
+using Lucene.Net.Analysis.Fr;
 using Lucene.Net.Analysis.In;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Nl;
@@ -7,7 +8,6 @@ using Lucene.Net.Analysis.Sinks;
 using Lucene.Net.Analysis.Snowball;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using Lucene.Net.TestFramework.Analysis;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -16,25 +16,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Tests that any newly added Tokenizers/TokenFilters/CharFilters have a
@@ -44,7 +45,7 @@ namespace Lucene.Net.Analysis.Core
     {
 
         // these are test-only components (e.g. test-framework)
-        private static readonly ISet<Type> testComponents = new IdentityHashSet<Type>();
+        private static readonly ISet<Type> testComponents = new JCG.HashSet<Type>(IdentityEqualityComparer<Type>.Default);
         static TestAllAnalyzersHaveFactories()
         {
             testComponents.addAll(new Type[] {
@@ -81,16 +82,16 @@ namespace Lucene.Net.Analysis.Core
         }
 
         // these are 'crazy' components like cachingtokenfilter. does it make sense to add factories for these?
-        private static readonly ISet<Type> crazyComponents = new IdentityHashSet<Type>();
+        private static readonly ISet<Type> crazyComponents = new JCG.HashSet<Type>(IdentityEqualityComparer<Type>.Default);
 
         // these are deprecated components that are just exact dups of other functionality: they dont need factories
         // (they never had them)
-        private static readonly ISet<Type> deprecatedDuplicatedComponents = new IdentityHashSet<Type>();
+        private static readonly ISet<Type> deprecatedDuplicatedComponents = new JCG.HashSet<Type>(IdentityEqualityComparer<Type>.Default);
 
         // these are oddly-named (either the actual analyzer, or its factory)
         // they do actually have factories.
         // TODO: clean this up!
-        private static readonly ISet<Type> oddlyNamedComponents = new IdentityHashSet<Type>();
+        private static readonly ISet<Type> oddlyNamedComponents = new JCG.HashSet<Type>(IdentityEqualityComparer<Type>.Default);
 
         private static readonly IResourceLoader loader = new StringMockResourceLoader("");
 

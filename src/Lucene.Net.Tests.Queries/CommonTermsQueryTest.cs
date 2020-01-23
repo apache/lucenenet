@@ -25,12 +25,11 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Queries;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Tests.Queries
 {
@@ -276,7 +275,7 @@ namespace Lucene.Net.Tests.Queries
                 assertEquals(search.TotalHits, 3);
                 assertEquals(search.ScoreDocs[1].Score, search.ScoreDocs[2].Score, 0F);
                 assertEquals(@"0", r.Document(search.ScoreDocs[0].Doc).Get(@"id"));
-                assertEquals(new HashSet<string>(Arrays.AsList(@"2", @"3")), new HashSet<string>(Arrays.AsList(r.Document(search.ScoreDocs[1].Doc).Get(@"id"), r.Document(search.ScoreDocs[2].Doc).Get(@"id"))));
+                assertEquals(new JCG.HashSet<string> { @"2", @"3" }, new JCG.HashSet<string> { r.Document(search.ScoreDocs[1].Doc).Get(@"id"), r.Document(search.ScoreDocs[2].Doc).Get(@"id") });
             }
 
             {
@@ -299,7 +298,7 @@ namespace Lucene.Net.Tests.Queries
                 query.HighFreqMinimumNumberShouldMatch = 2F;
                 TopDocs search = s.Search(query, 10);
                 assertEquals(search.TotalHits, 2);
-                assertEquals(new HashSet<string>(Arrays.AsList(@"0", @"2")), new HashSet<string>(Arrays.AsList(r.Document(search.ScoreDocs[0].Doc).Get(@"id"), r.Document(search.ScoreDocs[1].Doc).Get(@"id"))));
+                assertEquals(new JCG.HashSet<string> { @"0", @"2" }, new JCG.HashSet<string> { r.Document(search.ScoreDocs[0].Doc).Get(@"id"), r.Document(search.ScoreDocs[1].Doc).Get(@"id") });
             }
 
             r.Dispose();
@@ -465,7 +464,7 @@ namespace Lucene.Net.Tests.Queries
                 TopDocs cqSearch = searcher.Search(cq, reader.MaxDoc);
                 TopDocs verifySearch = searcher.Search(verifyQuery, reader.MaxDoc);
                 assertEquals(verifySearch.TotalHits, cqSearch.TotalHits);
-                var hits = new HashSet<int>();
+                var hits = new JCG.HashSet<int>();
                 foreach (ScoreDoc doc in verifySearch.ScoreDocs)
                 {
                     hits.Add(doc.Doc);

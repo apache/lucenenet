@@ -1,3 +1,5 @@
+using J2N;
+using J2N.Collections;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Packed;
@@ -7,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -411,7 +414,7 @@ namespace Lucene.Net.Util.Fst
             // their values are equal, so we need to do that manually.
             // Note that we are testing the values without regard to whether
             // the enumerable type is nullable.
-            return Collections.Equals(a, b);
+            return StructuralEqualityComparer.Default.Equals(a, b);
         }
 
         // FST is complete
@@ -426,7 +429,7 @@ namespace Lucene.Net.Util.Fst
             {
                 FST<long?> fstLong0 = fst as FST<long?>;
                 fstLong = fstLong0;
-                validOutputs = new HashSet<long?>();
+                validOutputs = new JCG.HashSet<long?>();
                 foreach (InputOutput<T> pair in pairs)
                 {
                     long? output = pair.Output as long?;
@@ -819,7 +822,7 @@ namespace Lucene.Net.Util.Fst
             //System.out.println("TEST: tally prefixes");
 
             // build all prefixes
-            IDictionary<Int32sRef, CountMinOutput<T>> prefixes = new HashMap<Int32sRef, CountMinOutput<T>>();
+            IDictionary<Int32sRef, CountMinOutput<T>> prefixes = new JCG.Dictionary<Int32sRef, CountMinOutput<T>>();
             Int32sRef scratch = new Int32sRef(10);
             foreach (InputOutput<T> pair in pairs)
             {

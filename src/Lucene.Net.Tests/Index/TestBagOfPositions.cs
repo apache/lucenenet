@@ -1,3 +1,4 @@
+using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
@@ -78,7 +79,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            Collections.Shuffle(postingsList);
+            postingsList.Shuffle();
 
             ConcurrentQueue<string> postings = new ConcurrentQueue<string>(postingsList);
 

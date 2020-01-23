@@ -133,7 +133,7 @@ namespace Lucene.Net.Search
             public AutomatonProviderAnonymousInnerClassHelper(TestRegexpQuery outerInstance)
             {
                 this.OuterInstance = outerInstance;
-                quickBrownAutomaton = BasicOperations.Union(Arrays.AsList(BasicAutomata.MakeString("quick"), BasicAutomata.MakeString("brown"), BasicAutomata.MakeString("bob")));
+                quickBrownAutomaton = BasicOperations.Union(new Automaton[] { BasicAutomata.MakeString("quick"), BasicAutomata.MakeString("brown"), BasicAutomata.MakeString("bob") });
             }
 
             // automaton that matches quick or brown

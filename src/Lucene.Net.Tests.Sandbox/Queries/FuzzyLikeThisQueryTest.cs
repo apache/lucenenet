@@ -7,6 +7,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Sandbox.Queries
 {
@@ -77,7 +78,7 @@ namespace Lucene.Net.Sandbox.Queries
             FuzzyLikeThisQuery flt = new FuzzyLikeThisQuery(10, analyzer);
             flt.AddTerms("smith", "name", 0.3f, 1);
             Query q = flt.Rewrite(searcher.IndexReader);
-            HashSet<Term> queryTerms = new HashSet<Term>();
+            ISet<Term> queryTerms = new JCG.HashSet<Term>();
             q.ExtractTerms(queryTerms);
             assertTrue("Should have variant smythe", queryTerms.contains(new Term("name", "smythe")));
             assertTrue("Should have variant smith", queryTerms.contains(new Term("name", "smith")));
@@ -96,7 +97,7 @@ namespace Lucene.Net.Sandbox.Queries
             FuzzyLikeThisQuery flt = new FuzzyLikeThisQuery(10, analyzer);
             flt.AddTerms("jonathin smoth", "name", 0.3f, 1);
             Query q = flt.Rewrite(searcher.IndexReader);
-            HashSet<Term> queryTerms = new HashSet<Term>();
+            ISet<Term> queryTerms = new JCG.HashSet<Term>();
             q.ExtractTerms(queryTerms);
             assertTrue("Should have variant jonathan", queryTerms.contains(new Term("name", "jonathan")));
             assertTrue("Should have variant smith", queryTerms.contains(new Term("name", "smith")));
@@ -116,7 +117,7 @@ namespace Lucene.Net.Sandbox.Queries
             flt.AddTerms("jonathin smoth", "this field does not exist", 0.3f, 1);
             // don't fail here just because the field doesn't exits
             Query q = flt.Rewrite(searcher.IndexReader);
-            HashSet<Term> queryTerms = new HashSet<Term>();
+            ISet<Term> queryTerms = new JCG.HashSet<Term>();
             q.ExtractTerms(queryTerms);
             assertTrue("Should have variant jonathan", queryTerms.contains(new Term("name", "jonathan")));
             assertTrue("Should have variant smith", queryTerms.contains(new Term("name", "smith")));
@@ -135,7 +136,7 @@ namespace Lucene.Net.Sandbox.Queries
             FuzzyLikeThisQuery flt = new FuzzyLikeThisQuery(10, analyzer);
             flt.AddTerms("fernando smith", "name", 0.3f, 1);
             Query q = flt.Rewrite(searcher.IndexReader);
-            HashSet<Term> queryTerms = new HashSet<Term>();
+            ISet<Term> queryTerms = new JCG.HashSet<Term>();
             q.ExtractTerms(queryTerms);
             assertTrue("Should have variant smith", queryTerms.contains(new Term("name", "smith")));
             TopDocs topDocs = searcher.Search(flt, 1);

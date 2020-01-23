@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -338,7 +339,7 @@ namespace Lucene.Net.Search
         {
             if (listener == null)
             {
-                throw new System.ArgumentNullException("Listener cannot be null");
+                throw new ArgumentNullException("Listener cannot be null");
             }
             refreshListeners.Add(listener);
         }
@@ -350,7 +351,7 @@ namespace Lucene.Net.Search
         {
             if (listener == null)
             {
-                throw new System.ArgumentNullException("Listener cannot be null");
+                throw new ArgumentNullException("Listener cannot be null");
             }
             refreshListeners.Remove(listener);
         }

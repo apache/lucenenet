@@ -1,11 +1,8 @@
-﻿using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Linq;
-using Lucene.Net.Facet;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Facet
@@ -29,14 +26,14 @@ namespace Lucene.Net.Facet
      */
 
 
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using CachedOrdinalsReader = Lucene.Net.Facet.Taxonomy.CachedOrdinalsReader;
     using DocValuesOrdinalsReader = Lucene.Net.Facet.Taxonomy.DocValuesOrdinalsReader;
     using FastTaxonomyFacetCounts = Lucene.Net.Facet.Taxonomy.FastTaxonomyFacetCounts;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using OrdinalsReader = Lucene.Net.Facet.Taxonomy.OrdinalsReader;
     using TaxonomyFacetCounts = Lucene.Net.Facet.Taxonomy.TaxonomyFacetCounts;
     using TaxonomyReader = Lucene.Net.Facet.Taxonomy.TaxonomyReader;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     [SuppressCodecs("Lucene3x")]

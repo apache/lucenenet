@@ -1,3 +1,4 @@
+using J2N.Text;
 using J2N.Threading.Atomic;
 using Lucene.Net.Support;
 using System;
@@ -267,8 +268,8 @@ namespace Lucene.Net.Index
                             // Don't delete by Term here; DocumentsWriterPerThread
                             // already did that on flush:
                             delCount += (int)ApplyQueryDeletes(packet.GetQueriesEnumerable(), rld, reader);
-                            ApplyDocValuesUpdates(Arrays.AsList(packet.numericDVUpdates), rld, reader, dvUpdates);
-                            ApplyDocValuesUpdates(Arrays.AsList(packet.binaryDVUpdates), rld, reader, dvUpdates);
+                            ApplyDocValuesUpdates(packet.numericDVUpdates, rld, reader, dvUpdates);
+                            ApplyDocValuesUpdates(packet.binaryDVUpdates, rld, reader, dvUpdates);
                             if (dvUpdates.Any())
                             {
                                 rld.WriteFieldUpdates(info.Info.Dir, dvUpdates);

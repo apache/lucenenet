@@ -13,6 +13,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
@@ -45,7 +46,7 @@ namespace Lucene.Net.Search.Suggest
 
         private IDictionary<string, Document> GenerateIndexDocuments(int ndocs)
         {
-            IDictionary<string, Document> docs = new HashMap<string, Document>();
+            IDictionary<string, Document> docs = new JCG.Dictionary<string, Document>();
             for (int i = 0; i < ndocs; i++)
             {
                 Field field = new TextField(FIELD_NAME, "field_" + i, Field.Store.YES);
@@ -162,7 +163,7 @@ namespace Lucene.Net.Search.Suggest
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 assertEquals(inputIterator.Weight, (w1 + w2 + w3));
                 assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
-                ISet<BytesRef> originalCtxs = new HashSet<BytesRef>();
+                ISet<BytesRef> originalCtxs = new JCG.HashSet<BytesRef>();
                 foreach (IIndexableField ctxf in doc.GetFields(CONTEXTS_FIELD_NAME))
                 {
                     originalCtxs.add(ctxf.GetBinaryValue());

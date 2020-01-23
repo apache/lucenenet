@@ -8,6 +8,7 @@ using System.Text;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
+    using J2N.Collections.Generic.Extensions;
     using Lucene.Net.Randomized.Generators;
     using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
@@ -152,7 +153,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 i++;
             }
-            Collections.Shuffle(shuffled);
+            shuffled.Shuffle();
             foreach (string term in shuffled)
             {
                 sb.Append(term);

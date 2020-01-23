@@ -1,3 +1,4 @@
+using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using System;

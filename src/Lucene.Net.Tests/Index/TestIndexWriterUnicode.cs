@@ -1,15 +1,15 @@
+using J2N.Text;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Util;
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharsRef = Lucene.Net.Util.CharsRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
 
             BytesRef last = new BytesRef();
 
-            HashSet<string> seenTerms = new HashSet<string>();
+            ISet<string> seenTerms = new JCG.HashSet<string>();
 
             while (true)
             {
@@ -328,7 +328,7 @@ namespace Lucene.Net.Index
             Field f = NewStringField("f", "", Field.Store.NO);
             d.Add(f);
             char[] chars = new char[2];
-            HashSet<string> allTerms = new HashSet<string>();
+            ISet<string> allTerms = new JCG.HashSet<string>();
 
             int num = AtLeast(200);
             for (int i = 0; i < num; i++)

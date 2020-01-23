@@ -1,13 +1,14 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N.Text;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Queries.Mlt;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Xml.Builders
 {
@@ -68,10 +69,10 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             //TODO MoreLikeThis needs to ideally have per-field stopWords lists - until then
             //I use all analyzers/fields to generate multi-field compatible stop list
             string stopWords = e.GetAttribute("stopWords");
-            HashSet<string> stopWordsSet = null;
+            ISet<string> stopWordsSet = null;
             if ((stopWords != null) && (fields != null))
             {
-                stopWordsSet = new HashSet<string>();
+                stopWordsSet = new JCG.HashSet<string>();
                 foreach (string field in fields)
                 {
                     TokenStream ts = null;

@@ -24,6 +24,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util.Fst
@@ -65,7 +66,7 @@ namespace Lucene.Net.Util.Fst
                 for (int inputMode = 0; inputMode < 2; inputMode++)
                 {
                     int numWords = random.nextInt(maxNumWords + 1);
-                    ISet<Int32sRef> termsSet = new HashSet<Int32sRef>();
+                    ISet<Int32sRef> termsSet = new JCG.HashSet<Int32sRef>();
                     Int32sRef[] terms = new Int32sRef[numWords];
                     while (termsSet.size() < numWords)
                     {
@@ -90,7 +91,7 @@ namespace Lucene.Net.Util.Fst
                     Console.WriteLine("TEST: now test UpToTwoPositiveIntOutputs");
                 }
                 UpToTwoPositiveInt64Outputs outputs = UpToTwoPositiveInt64Outputs.GetSingleton(true);
-                List<InputOutput<object>> pairs = new List<InputOutput<object>>(terms.Length);
+                IList<InputOutput<object>> pairs = new JCG.List<InputOutput<object>>(terms.Length);
                 long lastOutput = 0;
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
@@ -108,7 +109,7 @@ namespace Lucene.Net.Util.Fst
                         {
                             value2 = lastOutput + TestUtil.NextInt32(Random, -100, 1000);
                         }
-                        List<long> values = new List<long>();
+                        IList<long> values = new JCG.List<long>();
                         values.Add(value);
                         values.Add(value2);
                         output = values;
@@ -130,13 +131,13 @@ namespace Lucene.Net.Util.Fst
                     }
                     PositiveInt32Outputs _outputs = PositiveInt32Outputs.Singleton; 
                     ListOfOutputs<long?> outputs2 = new ListOfOutputs<long?>(_outputs);
-                    List<InputOutput<object>> pairs2 = new List<InputOutput<object>>(terms.Length);
+                    IList<InputOutput<object>> pairs2 = new JCG.List<InputOutput<object>>(terms.Length);
                     long lastOutput2 = 0;
                     for (int idx = 0; idx < terms.Length; idx++)
                     {
 
                         int outputCount = TestUtil.NextInt32(Random, 1, 7);
-                        List<long?> values = new List<long?>();
+                        IList<long?> values = new JCG.List<long?>();
                         for (int i = 0; i < outputCount; i++)
                         {
                             // Sometimes go backwards
@@ -168,24 +169,20 @@ namespace Lucene.Net.Util.Fst
 
         private class FSTTesterHelper<T> : FSTTester<T>
         {
-            public FSTTesterHelper(Random random, Directory dir, int inputMode, List<InputOutput<T>> pairs, Outputs<T> outputs, bool doReverseLookup)
+            public FSTTesterHelper(Random random, Directory dir, int inputMode, IList<InputOutput<T>> pairs, Outputs<T> outputs, bool doReverseLookup)
                 : base(random, dir, inputMode, pairs, outputs, doReverseLookup)
             {
             }
 
             protected override bool OutputsEqual(T output1, T output2)
             {
-                if (output1 is UpToTwoPositiveInt64Outputs.TwoInt64s && output2 is IEnumerable<long>)
+                if (output1 is UpToTwoPositiveInt64Outputs.TwoInt64s twoLongs1 && output2 is IEnumerable<long> output2Enumerable)
                 {
-                    UpToTwoPositiveInt64Outputs.TwoInt64s twoLongs1 = output1 as UpToTwoPositiveInt64Outputs.TwoInt64s;
-                    long[] list2 = (output2 as IEnumerable<long>).ToArray();
-                    return (new long[] { twoLongs1.First, twoLongs1.Second }).SequenceEqual(list2);
+                    return (new long[] { twoLongs1.First, twoLongs1.Second }).SequenceEqual(output2Enumerable);
                 }
-                else if (output2 is UpToTwoPositiveInt64Outputs.TwoInt64s && output1 is IEnumerable<long>)
+                else if (output2 is UpToTwoPositiveInt64Outputs.TwoInt64s twoLongs2 && output1 is IEnumerable<long> output1Enumerable)
                 {
-                    long[] list1 = (output1 as IEnumerable<long>).ToArray();
-                    UpToTwoPositiveInt64Outputs.TwoInt64s twoLongs2 = output2 as UpToTwoPositiveInt64Outputs.TwoInt64s;
-                    return (new long[] { twoLongs2.First, twoLongs2.Second }).SequenceEqual(list1);
+                    return (new long[] { twoLongs2.First, twoLongs2.Second }).SequenceEqual(output1Enumerable);
                 }
 
                 return output1.Equals(output2);

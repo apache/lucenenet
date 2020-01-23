@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using static Lucene.Net.Util.Fst.FST;
 using static Lucene.Net.Util.Packed.PackedInt32s;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
@@ -83,10 +84,10 @@ namespace Lucene.Net.Codecs.Lucene42
             long maxValue = long.MinValue;
             long gcd = 0;
             // TODO: more efficient?
-            HashSet<long> uniqueValues = null;
+            ISet<long> uniqueValues = null;
             if (optimizeStorage)
             {
-                uniqueValues = new HashSet<long>();
+                uniqueValues = new JCG.HashSet<long>();
 
                 long count = 0;
                 foreach (long? nv in values)

@@ -1,14 +1,14 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-    //using AlreadySetException = Lucene.Net.Util.SetOnce.AlreadySetException;
-    using NUnit.Framework;
     using Codec = Lucene.Net.Codecs.Codec;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(InfoStream.Default, conf.InfoStream);
             Assert.AreEqual(IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM, conf.UseCompoundFile);
             // Sanity check - validate that all getters are covered.
-            HashSet<string> getters = new HashSet<string>();
+            ISet<string> getters = new JCG.HashSet<string>();
             getters.Add("getAnalyzer");
             getters.Add("getIndexCommit");
             getters.Add("getIndexDeletionPolicy");
@@ -128,8 +128,8 @@ namespace Lucene.Net.Index
         public virtual void TestSettersChaining()
         {
             // Ensures that every setter returns IndexWriterConfig to allow chaining.
-            HashSet<string> liveSetters = new HashSet<string>();
-            HashSet<string> allSetters = new HashSet<string>();
+            ISet<string> liveSetters = new JCG.HashSet<string>();
+            ISet<string> allSetters = new JCG.HashSet<string>();
             foreach (MethodInfo m in typeof(IndexWriterConfig).GetMethods())
             {
                 if (m.Name.StartsWith("Set", StringComparison.Ordinal) && !m.IsStatic)
@@ -204,7 +204,7 @@ namespace Lucene.Net.Index
             // Test that IndexWriterConfig overrides all getters, so that javadocs
             // contain all methods for the users. Also, ensures that IndexWriterConfig
             // doesn't declare getters that are not declared on LiveIWC.
-            HashSet<string> liveGetters = new HashSet<string>();
+            ISet<string> liveGetters = new JCG.HashSet<string>();
             foreach (MethodInfo m in typeof(LiveIndexWriterConfig).GetMethods())
             {
                 if (m.Name.StartsWith("get", StringComparison.Ordinal) && !m.IsStatic)

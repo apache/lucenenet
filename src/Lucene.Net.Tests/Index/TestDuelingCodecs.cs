@@ -1,6 +1,6 @@
+using J2N.Text;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Text.RegularExpressions;

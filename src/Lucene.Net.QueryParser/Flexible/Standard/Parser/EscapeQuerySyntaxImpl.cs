@@ -1,8 +1,8 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Messages;
+﻿using J2N.Text;
+using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;
 using Lucene.Net.QueryParsers.Flexible.Messages;
-using Lucene.Net.Support;
 using System;
 using System.Globalization;
 using System.Text;
@@ -65,8 +65,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             {
                 if (buffer[0] == escapableTermExtraFirstChars[i][0])
                 {
-                    buffer = new StringCharSequenceWrapper("\\" + buffer[0]
-                        + buffer.SubSequence(1, buffer.Length).ToString());
+                    buffer = new StringCharSequence("\\" + buffer[0]
+                        + buffer.Subsequence(1, buffer.Length - 1).ToString()); // LUCENENET: Corrected 2nd Subsequence parameter
                     break;
                 }
             }
@@ -102,7 +102,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             for (int i = 0; i < escapableWordTokens.Length; i++)
             {
                 if (escapableWordTokens[i].Equals(term.ToString(), StringComparison.OrdinalIgnoreCase))
-                    return new StringCharSequenceWrapper("\\" + term);
+                    return new StringCharSequence("\\" + term);
             }
             return term;
         }
@@ -134,7 +134,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     result2.Append(@string[i]);
                     result2.Append(escapeChar);
                 }
-                return result2.ToString().ToCharSequence();
+                return result2.ToString().AsCharSequence();
             }
 
             // normal case
@@ -177,7 +177,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             if (result.Length == 0 && copyStart == 0)
                 return @string;
             result.Append(@string.ToString().Substring(copyStart));
-            return result.ToString().ToCharSequence();
+            return result.ToString().AsCharSequence();
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             if (text == null || text.Length == 0)
                 return text;
 
-            return Escape(text.ToCharSequence(), locale, type).ToString();
+            return Escape(text.AsCharSequence(), locale, type).ToString();
         }
 
         public virtual ICharSequence Escape(ICharSequence text, CultureInfo locale, EscapeQuerySyntaxType type)  

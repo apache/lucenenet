@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
 using Lucene.Net.Analysis.TokenAttributes;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Wikipedia
 {
@@ -72,7 +73,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         [Test]
         public virtual void TestLucene1133()
         {
-            ISet<string> untoks = new HashSet<string>();
+            ISet<string> untoks = new JCG.HashSet<string>();
             untoks.Add(WikipediaTokenizer.CATEGORY);
             untoks.Add(WikipediaTokenizer.ITALICS);
             //should be exactly the same, regardless of untoks
@@ -86,7 +87,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         [Test]
         public virtual void TestBoth()
         {
-            ISet<string> untoks = new HashSet<string>();
+            ISet<string> untoks = new JCG.HashSet<string>();
             untoks.Add(WikipediaTokenizer.CATEGORY);
             untoks.Add(WikipediaTokenizer.ITALICS);
             string test = "[[Category:a b c d]] [[Category:e f g]] [[link here]] [[link there]] ''italics here'' something ''more italics'' [[Category:h   i   j]]";

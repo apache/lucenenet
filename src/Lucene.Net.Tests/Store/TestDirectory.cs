@@ -301,6 +301,11 @@ namespace Lucene.Net.Store
             CheckDirectoryFilter(NewFSDirectory(CreateTempDir("test")));
         }
 
+        private static bool ContainsFile(Directory directory, string file) // LUCENENET specific method to prevent having to use Arrays.AsList(), which creates unnecessary memory allocations
+        {
+            return Array.IndexOf(directory.ListAll(), file) > -1;
+        }
+
         // LUCENE-1468
         private void CheckDirectoryFilter(Directory dir)
         {
@@ -309,7 +314,7 @@ namespace Lucene.Net.Store
             {
                 dir.CreateOutput(name, NewIOContext(Random)).Dispose();
                 Assert.IsTrue(SlowFileExists(dir, name));
-                Assert.IsTrue(Arrays.AsList(dir.ListAll()).Contains(name));
+                Assert.IsTrue(ContainsFile(dir, name));
             }
             finally
             {

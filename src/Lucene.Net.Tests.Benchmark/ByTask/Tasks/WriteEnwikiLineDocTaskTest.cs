@@ -1,8 +1,8 @@
-﻿using J2N.Threading.Atomic;
+﻿using J2N.Text;
+using J2N.Threading.Atomic;
 using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

@@ -2,8 +2,8 @@
 using J2N.Threading.Atomic;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
@@ -262,7 +262,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             var dtr = new DirectoryTaxonomyReader(dest);
             // +2 to account for the root category + "a"
             Assert.AreEqual(numCategories + 2, dtr.Count);
-            var categories = new HashSet<FacetLabel>();
+            var categories = new JCG.HashSet<FacetLabel>();
             for (int i = 1; i < dtr.Count; i++)
             {
                 FacetLabel cat = dtr.GetPath(i);

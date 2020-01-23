@@ -28,6 +28,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Tests.Queries
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Tests.Queries
         public void TestCachability()
         {
             TermFilter a = TermFilter(@"field1", @"a");
-            var cachedFilters = new HashSet<Filter>();
+            var cachedFilters = new JCG.HashSet<Filter>();
             cachedFilters.Add(a);
             assertTrue(@"Must be cached", cachedFilters.Contains(TermFilter(@"field1", @"a")));
             assertFalse(@"Must not be cached", cachedFilters.Contains(TermFilter(@"field1", @"b")));

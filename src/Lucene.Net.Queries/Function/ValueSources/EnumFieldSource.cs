@@ -1,13 +1,12 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Mutable;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -304,13 +303,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             EnumFieldSource that = (EnumFieldSource)o;
 
-            // LUCENENET specific: must use Collections.Equals() to ensure values
+            // LUCENENET specific: must use DictionaryEqualityComparer.Equals() to ensure values
             // contained within the dictionaries are compared for equality
-            if (!Collections.Equals(enumIntToStringMap, that.enumIntToStringMap))
+            if (!JCG.DictionaryEqualityComparer<int?, string>.Default.Equals(enumIntToStringMap, that.enumIntToStringMap))
             {
                 return false;
             }
-            if (!Collections.Equals(enumStringToIntMap, that.enumStringToIntMap))
+            if (!JCG.DictionaryEqualityComparer<string, int?>.Default.Equals(enumStringToIntMap, that.enumStringToIntMap))
             {
                 return false;
             }
@@ -326,10 +325,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             int result = base.GetHashCode();
             result = 31 * result + parser.GetHashCode();
-            // LUCENENET specific: must use Collections.GetHashCode() to ensure values
+            // LUCENENET specific: must use DictionaryEqualityComparer.GetHashCode() to ensure values
             // contained within the dictionaries are compared for equality
-            result = 31 * result + Collections.GetHashCode(enumIntToStringMap);
-            result = 31 * result + Collections.GetHashCode(enumStringToIntMap);
+            result = 31 * result + JCG.DictionaryEqualityComparer<int?, string>.Default.GetHashCode(enumIntToStringMap);
+            result = 31 * result + JCG.DictionaryEqualityComparer<string, int?>.Default.GetHashCode(enumStringToIntMap);
             return result;
         }
     }

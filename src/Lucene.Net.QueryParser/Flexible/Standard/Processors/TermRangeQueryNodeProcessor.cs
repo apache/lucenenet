@@ -1,10 +1,10 @@
-﻿using Lucene.Net.Documents;
+﻿using J2N.Text;
+using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers.Flexible.Core.Config;
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Processors;
 using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -111,7 +111,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                     if (DateTime.TryParseExact(part1, shortDateFormat, locale, DateTimeStyles.None, out d1))
                     {
                         part1 = DateTools.DateToString(d1, dateRes);
-                        lower.Text = new StringCharSequenceWrapper(part1);
+                        lower.Text = new StringCharSequence(part1);
                     }
 
                     if (DateTime.TryParseExact(part2, shortDateFormat, locale, DateTimeStyles.None, out d2))
@@ -139,7 +139,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         }
 
                         part2 = DateTools.DateToString(d2, dateRes);
-                        upper.Text = new StringCharSequenceWrapper(part2);
+                        upper.Text = new StringCharSequence(part2);
                     }
 
                 }

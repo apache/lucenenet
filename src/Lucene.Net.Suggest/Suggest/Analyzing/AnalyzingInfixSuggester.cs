@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
@@ -419,7 +420,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             TokenStream ts = null;
             BooleanQuery query;
-            var matchedTokens = new HashSet<string>();
+            var matchedTokens = new JCG.HashSet<string>();
             string prefixToken = null;
 
             try
@@ -433,7 +434,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 string lastToken = null;
                 query = new BooleanQuery();
                 int maxEndOffset = -1;
-                matchedTokens = new HashSet<string>();
+                matchedTokens = new JCG.HashSet<string>();
                 while (ts.IncrementToken())
                 {
                     if (lastToken != null)
@@ -576,10 +577,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // Must look up sorted-set by segment:
                 int segment = ReaderUtil.SubIndex(fd.Doc, leaves);
                 SortedSetDocValues contextsDV = leaves[segment].AtomicReader.GetSortedSetDocValues(CONTEXTS_FIELD_NAME);
-                HashSet<BytesRef> contexts;
+                ISet<BytesRef> contexts;
                 if (contextsDV != null)
                 {
-                    contexts = new HashSet<BytesRef>();
+                    contexts = new JCG.HashSet<BytesRef>();
                     contextsDV.SetDocument(fd.Doc - leaves[segment].DocBase);
                     long ord;
                     while ((ord = contextsDV.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)

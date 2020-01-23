@@ -1,9 +1,9 @@
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
@@ -203,7 +203,7 @@ namespace Lucene.Net.Util
                 // LUCENENET specific - to ensure sorting strings works the same in the SortedSet,
                 // we need to use StringComparer.Ordinal, which compares strings the same
                 // way they are done in Java.
-                SortedSet<string> strings = new SortedSet<string>(StringComparer.Ordinal);
+                JCG.SortedSet<string> strings = new JCG.SortedSet<string>(StringComparer.Ordinal);
                 for (int k = 0; k < 797; k++)
                 {
                     string str;
@@ -247,7 +247,7 @@ namespace Lucene.Net.Util
             int num = AtLeast(2);
             for (int j = 0; j < num; j++)
             {
-                HashSet<string> strings = new HashSet<string>();
+                ISet<string> strings = new JCG.HashSet<string>();
                 int uniqueCount = 0;
                 for (int i = 0; i < 797; i++)
                 {
@@ -291,7 +291,7 @@ namespace Lucene.Net.Util
             int num = AtLeast(2);
             for (int j = 0; j < num; j++)
             {
-                HashSet<string> strings = new HashSet<string>();
+                ISet<string> strings = new JCG.HashSet<string>();
                 int uniqueCount = 0;
                 for (int i = 0; i < 797; i++)
                 {
@@ -373,7 +373,7 @@ namespace Lucene.Net.Util
             int num = AtLeast(2);
             for (int j = 0; j < num; j++)
             {
-                HashSet<string> strings = new HashSet<string>();
+                ISet<string> strings = new JCG.HashSet<string>();
                 int uniqueCount = 0;
                 for (int i = 0; i < 797; i++)
                 {

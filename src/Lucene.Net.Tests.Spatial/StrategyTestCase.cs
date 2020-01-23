@@ -9,7 +9,7 @@ using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Spatial
 {
@@ -167,7 +167,7 @@ namespace Lucene.Net.Spatial
                 // We are looking at how the results overlap
                 if (concern.resultsAreSuperset)
                 {
-                    ISet<string> found = new HashSet<string>();
+                    ISet<string> found = new JCG.HashSet<string>();
                     foreach (SearchResult r in got.results)
                     {
                         found.add(r.document.Get("id"));
@@ -259,7 +259,7 @@ namespace Lucene.Net.Spatial
                                        SpatialOperation operation, IShape queryShape)
         {
             //Generate truth via brute force
-            ISet<string> expectedIds = new HashSet<string>();
+            ISet<string> expectedIds = new JCG.HashSet<string>();
             foreach (var stringShapeEntry in indexedDocs)
             {
                 if (operation.Evaluate(stringShapeEntry.Value, queryShape))

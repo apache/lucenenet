@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Analysis;
 using Lucene.Net.Search.Suggest.Analyzing;
 using Lucene.Net.Search.Suggest.Fst;
 using Lucene.Net.Search.Suggest.Jaspell;
@@ -39,7 +40,7 @@ namespace Lucene.Net.Search.Suggest
     [Ignore("COMMENT ME TO RUN BENCHMARKS!")]
     public class LookupBenchmarkTest : LuceneTestCase
     {
-        private readonly List<Type> benchmarkClasses = Arrays.AsList(
+        private readonly IList<Type> benchmarkClasses = new Type[] {
             typeof(FuzzySuggester),
             typeof(AnalyzingSuggester),
             typeof(AnalyzingInfixSuggester),
@@ -47,7 +48,7 @@ namespace Lucene.Net.Search.Suggest
             typeof(TSTLookup),
             typeof(FSTCompletionLookup),
             typeof(WFSTCompletionLookup)
-            );
+        };
 
         private readonly static int rounds = 15;
         private readonly static int warmup = 5;
@@ -75,9 +76,9 @@ namespace Lucene.Net.Search.Suggest
         {
             Debug.Assert(false, "disable assertions before running benchmarks!");
             IList<Input> input = ReadTop50KWiki();
-            Collections.Shuffle(input);
+            input.Shuffle();
             dictionaryInput = input.ToArray();
-            Collections.Shuffle(input);
+            input.Shuffle();
             benchmarkInput = input;
         }
 

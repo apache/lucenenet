@@ -134,19 +134,25 @@ namespace Lucene.Net.Store
         //    }
         //}
 
+        private static bool ContainsFile(Directory directory, string file) // LUCENENET specific method to prevent having to use Arrays.AsList(), which creates unnecessary memory allocations
+        {
+            return Array.IndexOf(directory.ListAll(), file) > -1;
+        }
+
+
         [Test]
         public virtual void TestDeleteFile()
         {
             using (Directory dir = GetDirectory(CreateTempDir("testDeleteFile")))
             {
-                String file = "foo.txt";
-                Assert.IsFalse(Arrays.AsList(dir.ListAll()).Contains(file));
+                string file = "foo.txt";
+                Assert.IsFalse(ContainsFile(dir, file));
 
                 using (dir.CreateOutput("foo.txt", IOContext.DEFAULT)) { }
-                Assert.IsTrue(Arrays.AsList(dir.ListAll()).Contains(file));
+                Assert.IsTrue(ContainsFile(dir, file));
 
                 dir.DeleteFile("foo.txt");
-                Assert.IsFalse(Arrays.AsList(dir.ListAll()).Contains(file));
+                Assert.IsFalse(ContainsFile(dir, file));
 
                 Assert.ThrowsAnyOf<DirectoryNotFoundException, FileNotFoundException>(() => {
                     dir.DeleteFile("foo.txt");
@@ -379,7 +385,7 @@ namespace Lucene.Net.Store
         //        using (IndexOutput output = dir.CreateOutput("stringset", NewIOContext(Random)))
         //        {
         //            output.WriteSetOfStrings(AsSet("test1", "test2"));
-        //            output.WriteSetOfStrings(new HashSet<string>());
+        //            output.WriteSetOfStrings(new JCG.HashSet<string>());
         //            output.WriteSetOfStrings(AsSet("test3"));
         //        } // output.close();
 
@@ -393,14 +399,14 @@ namespace Lucene.Net.Store
         //            });
 
         //            ISet<string> set2 = input.ReadSetOfStrings();
-        //            assertEquals(new HashSet<string>(), set2);
+        //            assertEquals(new JCG.HashSet<string>(), set2);
         //            // set should be immutable
         //            Assert.Throws<NotSupportedException>(() => {
         //                set2.Add("bogus");
         //            });
 
         //            ISet<string> set3 = input.ReadSetOfStrings();
-        //            assertEquals(new HashSet<string> { "test3" }, set3);
+        //            assertEquals(new JCG.HashSet<string> { "test3" }, set3);
         //            // set should be immutable
         //            Assert.Throws<NotSupportedException>(() => {
         //                set3.Add("bogus");
@@ -640,7 +646,7 @@ namespace Lucene.Net.Store
                 string name = "file";
                 using (dir.CreateOutput(name, NewIOContext(Random))) { }
                 assertTrue(SlowFileExists(dir, name));
-                assertTrue(Arrays.AsList(dir.ListAll()).Contains(name));
+                assertTrue(ContainsFile(dir, name));
             }
         }
 
@@ -1495,7 +1501,7 @@ namespace Lucene.Net.Store
         //        }
 
         //        // Make sure listAll does NOT include the file:
-        //        Assert.IsFalse(Arrays.AsList(fsDir.ListAll()).Contains(fileName));
+        //        Assert.IsFalse(ContainsFile(fsDir, fileName));
 
         //        // Make sure fileLength claims it's deleted:
         //        Assert.Throws<FileNotFoundException>(() => {
@@ -1526,7 +1532,7 @@ namespace Lucene.Net.Store
         //    using (Directory dir = GetDirectory(CreateTempDir()))
         //    {
         //        int count = AtLeast(20);
-        //        ISet<string> names = new HashSet<string>();
+        //        ISet<string> names = new JCG.HashSet<string>();
         //        while (names.Count < count)
         //        {
         //            // create a random filename (segment file name style), so it cannot hit windows problem with special filenames ("con", "com1",...):

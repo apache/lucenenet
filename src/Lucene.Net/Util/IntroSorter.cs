@@ -1,5 +1,4 @@
 using J2N.Numerics;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {

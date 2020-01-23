@@ -12,7 +12,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using Console = Lucene.Net.Support.SystemConsole;
-
+using System.Linq;
 
 namespace Lucene.Net.Search
 {
@@ -364,7 +364,7 @@ namespace Lucene.Net.Search
             {
                 termOrds.SetDocument(i);
                 // this will remove identical terms. A DocTermOrds doesn't return duplicate ords for a docId
-                IList<BytesRef> values = new List<BytesRef>(new /*Linked*/HashSet<BytesRef>(Arrays.AsList(MultiValued[i])));
+                IList<BytesRef> values = MultiValued[i].Distinct().ToList();
                 foreach (BytesRef v in values)
                 {
                     if (v == null)

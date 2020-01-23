@@ -1,5 +1,4 @@
-using System.Globalization;
-using Lucene.Net.Support;
+using J2N;
 using NUnit.Framework;
 using System;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -198,9 +197,9 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestNewString()
         {
-            int[] codePoints = new int[] { Character.ToCodePoint(Character.MIN_HIGH_SURROGATE, Character.MAX_LOW_SURROGATE), Character.ToCodePoint(Character.MAX_HIGH_SURROGATE, Character.MIN_LOW_SURROGATE), Character.MAX_HIGH_SURROGATE, 'A', -1 };
+            int[] codePoints = new int[] { Character.ToCodePoint(Character.MinHighSurrogate, Character.MaxLowSurrogate), Character.ToCodePoint(Character.MaxHighSurrogate, Character.MinLowSurrogate), Character.MaxHighSurrogate, 'A', -1 };
 
-            string cpString = "" + Character.MIN_HIGH_SURROGATE + Character.MAX_LOW_SURROGATE + Character.MAX_HIGH_SURROGATE + Character.MIN_LOW_SURROGATE + Character.MAX_HIGH_SURROGATE + 'A';
+            string cpString = "" + Character.MinHighSurrogate + Character.MaxLowSurrogate + Character.MaxHighSurrogate + Character.MinLowSurrogate + Character.MaxHighSurrogate + 'A';
 
             int[][] tests = new int[][] { new int[] { 0, 1, 0, 2 }, new int[] { 0, 2, 0, 4 }, new int[] { 1, 1, 2, 2 }, new int[] { 1, 2, 2, 3 }, new int[] { 1, 3, 2, 4 }, new int[] { 2, 2, 4, 2 }, new int[] { 2, 3, 0, -1 }, new int[] { 4, 5, 0, -1 }, new int[] { 3, -1, 0, -1 } };
 

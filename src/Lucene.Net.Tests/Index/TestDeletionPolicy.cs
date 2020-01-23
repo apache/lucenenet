@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -147,7 +148,7 @@ namespace Lucene.Net.Index
             internal int NumOnCommit;
             internal int NumToKeep;
             internal int NumDelete;
-            internal HashSet<string> Seen = new HashSet<string>();
+            internal ISet<string> Seen = new JCG.HashSet<string>();
 
             public KeepLastNDeletionPolicy(TestDeletionPolicy outerInstance, int numToKeep)
             {

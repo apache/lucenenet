@@ -159,6 +159,11 @@ namespace Lucene.Net.Store
             }
         }
 
+        private static bool ContainsFile(Directory directory, string file) // LUCENENET specific method to prevent having to use Arrays.AsList(), which creates unnecessary memory allocations
+        {
+            return Array.IndexOf(directory.ListAll(), file) > -1;
+        }
+
         // LUCENE-3382 test that we can add a file, and then when we call list() we get it back
         [Test]
         public virtual void TestDirectoryFilter()
@@ -169,7 +174,7 @@ namespace Lucene.Net.Store
             {
                 dir.CreateOutput(name, NewIOContext(Random)).Dispose();
                 Assert.IsTrue(SlowFileExists(dir, name));
-                Assert.IsTrue(Arrays.AsList(dir.ListAll()).Contains(name));
+                Assert.IsTrue(ContainsFile(dir, name));
             }
             finally
             {

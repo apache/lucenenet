@@ -1,9 +1,9 @@
-﻿using Lucene.Net.Support;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Compound.Hyphenation
 {
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public HyphenationTree()
         {
-            m_stoplist = new HashMap<string, IList<object>>(23); // usually a small table
+            m_stoplist = new JCG.Dictionary<string, IList<object>>(23); // usually a small table
             m_classmap = new TernaryTree();
             m_vspace = new ByteVector();
             m_vspace.Alloc(1); // this reserves index 0, which we don't use

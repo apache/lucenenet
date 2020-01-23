@@ -1,7 +1,11 @@
-using Lucene.Net.Support;
+using J2N;
+using J2N.Text;
+using J2N.Runtime.CompilerServices;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
+using Arrays = Lucene.Net.Support.Arrays;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -119,10 +123,7 @@ namespace Lucene.Net.Util.Automaton
             /// Return <c>true</c> if this state has any children (outgoing
             /// transitions).
             /// </summary>
-            internal bool HasChildren
-            {
-                get { return labels.Length > 0; }
-            }
+            internal bool HasChildren => labels.Length > 0;
 
             /// <summary>
             /// Create a new outgoing transition labeled <paramref name="label"/> and return
@@ -272,7 +273,9 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Internal recursive traversal for conversion.
         /// </summary>
-        private static Util.Automaton.State Convert(State s, IdentityHashMap<State, Lucene.Net.Util.Automaton.State> visited)
+        /// <param name="s"></param>
+        /// <param name="visited">Must use a dictionary with <see cref="IdentityEqualityComparer{State}.Default"/> passed into its constructor.</param>
+        private static Util.Automaton.State Convert(State s, IDictionary<State, Lucene.Net.Util.Automaton.State> visited)
         {
             if (visited.TryGetValue(s, out Util.Automaton.State converted) && converted != null)
             {
@@ -308,10 +311,11 @@ namespace Lucene.Net.Util.Automaton
                 builder.Add(scratch);
             }
 
-            Automaton a = new Automaton();
-            a.initial = Convert(builder.Complete(), new IdentityHashMap<State, Lucene.Net.Util.Automaton.State>());
-            a.deterministic = true;
-            return a;
+            return new Automaton
+            {
+                initial = Convert(builder.Complete(), new JCG.Dictionary<State, Lucene.Net.Util.Automaton.State>(IdentityEqualityComparer<State>.Default)),
+                deterministic = true
+            };
         }
 
         /// <summary>

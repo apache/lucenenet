@@ -193,7 +193,7 @@ namespace Lucene.Net.Analysis
               new CharacterRunAutomaton(
                   BasicOperations.Complement(
                       BasicOperations.Union(
-                          Arrays.AsList(BasicAutomata.MakeString("foo"), BasicAutomata.MakeString("bar"))) /*,
+                          BasicAutomata.MakeString("foo"), BasicAutomata.MakeString("bar")) /*,
                       Operations.DEFAULT_MAX_DETERMINIZED_STATES*/));
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, keepWords);
             AssertAnalyzesTo(a, "quick foo brown bar bar fox foo",

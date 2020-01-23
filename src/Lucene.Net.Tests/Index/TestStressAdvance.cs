@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -47,7 +48,7 @@ namespace Lucene.Net.Index
                     this,
 #endif
                     Random, dir);
-                HashSet<int> aDocs = new HashSet<int>();
+                ISet<int> aDocs = new JCG.HashSet<int>();
                 Documents.Document doc = new Documents.Document();
                 Field f = NewStringField("field", "", Field.Store.NO);
                 doc.Add(f);

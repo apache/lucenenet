@@ -1,3 +1,4 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Search.Similarities;
 using Lucene.Net.Support;
 using System;
@@ -45,7 +46,7 @@ namespace Lucene.Net.Search
             coordType = random.Next(3);
             shouldQueryNorm = random.NextBoolean();
             knownSims = new List<Similarity>(allSims);
-            Collections.Shuffle(knownSims, random);
+            knownSims.Shuffle(random);
         }
 
         public override float Coord(int overlap, int maxOverlap)

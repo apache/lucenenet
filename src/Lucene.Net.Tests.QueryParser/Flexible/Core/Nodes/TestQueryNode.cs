@@ -31,9 +31,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             IQueryNode nodeA = new FieldQueryNode("foo", "A", 0, 1);
             IQueryNode nodeB = new FieldQueryNode("foo", "B", 1, 2);
             BooleanQueryNode bq = new BooleanQueryNode(
-                Arrays.AsList(nodeA));
-            bq.Add(Arrays.AsList(nodeB));
-            assertEquals(2, bq.GetChildren().size());
+                new IQueryNode[] { nodeA });
+            bq.Add(new IQueryNode[] { nodeB });
+            assertEquals(2, bq.GetChildren().Count);
         }
 
         /* LUCENE-3045 bug in QueryNodeImpl.containsTag(String key)*/

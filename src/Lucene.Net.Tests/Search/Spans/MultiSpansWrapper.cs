@@ -1,10 +1,10 @@
+using Lucene.Net.Index;
 using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
-    using Lucene.Net.Index;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -55,7 +55,7 @@ namespace Lucene.Net.Search.Spans
         public static Spans Wrap(IndexReaderContext topLevelReaderContext, SpanQuery query)
         {
             IDictionary<Term, TermContext> termContexts = new Dictionary<Term, TermContext>();
-            SortedSet<Term> terms = new SortedSet<Term>();
+            JCG.SortedSet<Term> terms = new JCG.SortedSet<Term>();
             query.ExtractTerms(terms);
             foreach (Term term in terms)
             {

@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
@@ -138,8 +139,8 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             int numWords = AtLeast(1000);
 
-            IDictionary<string, long> slowCompletor = new SortedDictionary<string, long>(StringComparer.Ordinal); //new TreeMap<>();
-            ISet<string> allPrefixes = new SortedSet<string>(StringComparer.Ordinal); //new TreeSet<>();
+            IDictionary<string, long> slowCompletor = new JCG.SortedDictionary<string, long>(StringComparer.Ordinal);
+            ISet<string> allPrefixes = new JCG.SortedSet<string>(StringComparer.Ordinal);
 
             Input[] keys = new Input[numWords];
 

@@ -1,28 +1,28 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Highlight
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// <see cref="IScorer"/> implementation which scores text fragments by the number of
@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.Highlight
     public class QueryTermScorer : IScorer
     {
         private TextFragment currentTextFragment = null;
-        private HashSet<string> uniqueTermsInFragment;
+        private ISet<string> uniqueTermsInFragment;
 
         private float totalScore = 0;
         private float maxTermWeight = 0;
@@ -84,8 +84,7 @@ namespace Lucene.Net.Search.Highlight
             termsToFind = new Dictionary<string, WeightedTerm>();
             for (int i = 0; i < weightedTerms.Length; i++)
             {
-                WeightedTerm existingTerm;
-                if (!termsToFind.TryGetValue(weightedTerms[i].Term, out existingTerm)
+                if (!termsToFind.TryGetValue(weightedTerms[i].Term, out WeightedTerm existingTerm)
                     || (existingTerm == null)
                     || (existingTerm.Weight < weightedTerms[i].Weight))
                 {
@@ -108,7 +107,7 @@ namespace Lucene.Net.Search.Highlight
 
         public virtual void StartFragment(TextFragment newFragment)
         {
-            uniqueTermsInFragment = new HashSet<string>();
+            uniqueTermsInFragment = new JCG.HashSet<string>();
             currentTextFragment = newFragment;
             totalScore = 0;
         }
@@ -138,10 +137,7 @@ namespace Lucene.Net.Search.Highlight
         /// <summary>
         /// <seealso cref="IScorer.FragmentScore"/>
         /// </summary>
-        public virtual float FragmentScore
-        {
-            get { return totalScore; }
-        }
+        public virtual float FragmentScore => totalScore;
 
         public virtual void AllFragmentsProcessed()
         {
@@ -152,9 +148,6 @@ namespace Lucene.Net.Search.Highlight
         /// The highest weighted term (useful for passing to <see cref="GradientFormatter"/> 
         /// to set top end of coloring scale.
         /// </summary>
-        public virtual float MaxTermWeight
-        {
-            get { return maxTermWeight; }
-        }
+        public virtual float MaxTermWeight => maxTermWeight;
     }
 }

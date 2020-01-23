@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
@@ -115,7 +116,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override Fields Get(int doc)
         {
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            var fields = new SortedDictionary<string, SimpleTVTerms>(StringComparer.Ordinal);
+            var fields = new JCG.SortedDictionary<string, SimpleTVTerms>(StringComparer.Ordinal);
 
             _input.Seek(_offsets[doc]);
             ReadLine();
@@ -304,7 +305,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTVTerms : Terms
         {
-            internal readonly SortedDictionary<BytesRef, SimpleTVPostings> terms;
+            internal readonly JCG.SortedDictionary<BytesRef, SimpleTVPostings> terms;
             private readonly bool _hasOffsetsRenamed;
             private readonly bool _hasPositionsRenamed;
             private readonly bool _hasPayloadsRenamed;
@@ -314,7 +315,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 _hasOffsetsRenamed = hasOffsets;
                 _hasPositionsRenamed = hasPositions;
                 _hasPayloadsRenamed = hasPayloads;
-                terms = new SortedDictionary<BytesRef, SimpleTVPostings>();
+                terms = new JCG.SortedDictionary<BytesRef, SimpleTVPostings>();
             }
 
             public override TermsEnum GetIterator(TermsEnum reuse)
@@ -380,11 +381,11 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTVTermsEnum : TermsEnum
         {
-            private readonly SortedDictionary<BytesRef, SimpleTVPostings> _terms;
+            private readonly JCG.SortedDictionary<BytesRef, SimpleTVPostings> _terms;
             private IEnumerator<KeyValuePair<BytesRef, SimpleTVPostings>> _iterator;
             private KeyValuePair<BytesRef, SimpleTVPostings> _current;
 
-            internal SimpleTVTermsEnum(SortedDictionary<BytesRef, SimpleTVPostings> terms)
+            internal SimpleTVTermsEnum(JCG.SortedDictionary<BytesRef, SimpleTVPostings> terms)
             {
                 _terms = terms;
                 _iterator = terms.GetEnumerator();
@@ -392,7 +393,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override SeekStatus SeekCeil(BytesRef text)
             {
-                var newTerms = new SortedDictionary<BytesRef, SimpleTVPostings>(_terms.Comparer);
+                var newTerms = new JCG.SortedDictionary<BytesRef, SimpleTVPostings>(_terms.Comparer);
                 foreach (var p in _terms.Where(p => p.Key.CompareTo(text) >= 0))
                     newTerms.Add(p.Key, p.Value);
 

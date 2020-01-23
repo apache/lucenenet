@@ -1,54 +1,52 @@
 ﻿using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
-using System.Globalization;
-using System.IO;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Analysis.En
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /*
-	
-	   Porter stemmer in .NET. The original paper is in
-	
-	       Porter, 1980, An algorithm for suffix stripping, Program, Vol. 14,
-	       no. 3, pp 130-137,
-	
-	   See also http://www.tartarus.org/~martin/PorterStemmer/index.html
-	
-	   Bug 1 (reported by Gonzalo Parra 16/10/99) fixed as marked below.
-	   Tthe words 'aed', 'eed', 'oed' leave k at 'a' for step 3, and b[k-1]
-	   is then out outside the bounds of b.
-	
-	   Similarly,
-	
-	   Bug 2 (reported by Steve Dyrdahl 22/2/00) fixed as marked below.
-	   'ion' by itself leaves j = -1 in the test for 'ion' in step 5, and
-	   b[j] is then outside the bounds of b.
-	
-	   Release 3.
-	
-	   [ This version is derived from Release 3, modified by Brian Goetz to
-	     optimize for fewer object creations.  ]
-	
-	*/
+    
+       Porter stemmer in .NET. The original paper is in
+    
+           Porter, 1980, An algorithm for suffix stripping, Program, Vol. 14,
+           no. 3, pp 130-137,
+    
+       See also http://www.tartarus.org/~martin/PorterStemmer/index.html
+    
+       Bug 1 (reported by Gonzalo Parra 16/10/99) fixed as marked below.
+       Tthe words 'aed', 'eed', 'oed' leave k at 'a' for step 3, and b[k-1]
+       is then out outside the bounds of b.
+    
+       Similarly,
+    
+       Bug 2 (reported by Steve Dyrdahl 22/2/00) fixed as marked below.
+       'ion' by itself leaves j = -1 in the test for 'ion' in step 5, and
+       b[j] is then outside the bounds of b.
+    
+       Release 3.
+    
+       [ This version is derived from Release 3, modified by Brian Goetz to
+         optimize for fewer object creations.  ]
+    
+    */
 
     /// 
     /// <summary>

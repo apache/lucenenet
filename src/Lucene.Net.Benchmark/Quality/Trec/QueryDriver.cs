@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.Quality.Trec
@@ -73,7 +74,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
                 // validate topics & judgments match each other
                 judge.ValidateData(qqs, logger);
 
-                ISet<string> fieldSet = new HashSet<string>();
+                ISet<string> fieldSet = new JCG.HashSet<string>();
                 if (fieldSpec.IndexOf('T') >= 0) fieldSet.Add("title");
                 if (fieldSpec.IndexOf('D') >= 0) fieldSet.Add("description");
                 if (fieldSpec.IndexOf('N') >= 0) fieldSet.Add("narrative");

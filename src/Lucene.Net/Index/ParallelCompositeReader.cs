@@ -1,7 +1,8 @@
-using Lucene.Net.Support;
+using J2N.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -49,7 +50,7 @@ namespace Lucene.Net.Index
     public class ParallelCompositeReader : BaseCompositeReader<IndexReader>
     {
         private readonly bool closeSubReaders;
-        private readonly ISet<IndexReader> completeReaderSet = new IdentityHashSet<IndexReader>();
+        private readonly ISet<IndexReader> completeReaderSet = new JCG.HashSet<IndexReader>(IdentityEqualityComparer<IndexReader>.Default);
 
         /// <summary>
         /// Create a <see cref="ParallelCompositeReader"/> based on the provided

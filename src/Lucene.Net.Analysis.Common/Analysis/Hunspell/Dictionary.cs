@@ -1,9 +1,12 @@
-﻿using Lucene.Net.Store;
+﻿using J2N.Collections.Generic.Extensions;
+using J2N.Text;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
+using J2N;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,25 +14,26 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Hunspell
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// In-memory structure for the dictionary (.dic) and affix (.aff)
@@ -262,17 +266,19 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <exception cref="IOException"> Can be thrown while reading from the InputStream </exception>
         private void ReadAffixFile(Stream affixStream, Encoding decoder)
         {
-            SortedDictionary<string, IList<char?>> prefixes = new SortedDictionary<string, IList<char?>>(StringComparer.Ordinal);
-            SortedDictionary<string, IList<char?>> suffixes = new SortedDictionary<string, IList<char?>>(StringComparer.Ordinal);
-            IDictionary<string, int?> seenPatterns = new Dictionary<string, int?>();
+            JCG.SortedDictionary<string, IList<char?>> prefixes = new JCG.SortedDictionary<string, IList<char?>>(StringComparer.Ordinal);
+            JCG.SortedDictionary<string, IList<char?>> suffixes = new JCG.SortedDictionary<string, IList<char?>>(StringComparer.Ordinal);
+            IDictionary<string, int?> seenPatterns = new JCG.Dictionary<string, int?>();
 
             // zero condition -> 0 ord
             seenPatterns[".*"] = 0;
             patterns.Add(null);
 
             // zero strip -> 0 ord
-            IDictionary<string, int?> seenStrips = new LinkedHashMap<string, int?>();
-            seenStrips[""] = 0;
+            IDictionary<string, int?> seenStrips = new JCG.LinkedDictionary<string, int?>
+            {
+                [""] = 0
+            };
 
             var reader = new StreamReader(affixStream, decoder);
             string line = null;
@@ -372,7 +378,7 @@ namespace Lucene.Net.Analysis.Hunspell
             stripOffsets[currentIndex] = currentOffset;
         }
 
-        private FST<Int32sRef> AffixFST(SortedDictionary<string, IList<char?>> affixes)
+        private FST<Int32sRef> AffixFST(JCG.SortedDictionary<string, IList<char?>> affixes)
         {
             Int32SequenceOutputs outputs = Int32SequenceOutputs.Singleton;
             Builder<Int32sRef> builder = new Builder<Int32sRef>(FST.INPUT_TYPE.BYTE4, outputs);
@@ -395,7 +401,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <summary>
         /// Parses a specific affix rule putting the result into the provided affix map
         /// </summary>
-        /// <param name="affixes"> <see cref="SortedDictionary{TKey, TValue}"/> where the result of the parsing will be put </param>
+        /// <param name="affixes"> <see cref="JCG.SortedDictionary{TKey, TValue}"/> where the result of the parsing will be put </param>
         /// <param name="header"> Header line of the affix rule </param>
         /// <param name="reader"> <see cref="TextReader"/> to read the content of the rule from </param>
         /// <param name="conditionPattern"> <see cref="string.Format(string, object[])"/> pattern to be used to generate the condition regex
@@ -403,7 +409,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="seenPatterns"> map from condition -> index of patterns, for deduplication. </param>
         /// <param name="seenStrips"></param>
         /// <exception cref="IOException"> Can be thrown while reading the rule </exception>
-        private void ParseAffix(SortedDictionary<string, IList<char?>> affixes, string header, TextReader reader, string conditionPattern, IDictionary<string, int?> seenPatterns, IDictionary<string, int?> seenStrips)
+        private void ParseAffix(JCG.SortedDictionary<string, IList<char?>> affixes, string header, TextReader reader, string conditionPattern, IDictionary<string, int?> seenPatterns, IDictionary<string, int?> seenStrips)
         {
             BytesRef scratch = new BytesRef();
             StringBuilder sb = new StringBuilder();
@@ -545,7 +551,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         private FST<CharsRef> ParseConversions(TextReader reader, int num)
         {
-            IDictionary<string, string> mappings = new SortedDictionary<string, string>(StringComparer.Ordinal);
+            IDictionary<string, string> mappings = new JCG.SortedDictionary<string, string>(StringComparer.Ordinal);
 
             for (int i = 0; i < num; i++)
             {
@@ -623,12 +629,11 @@ namespace Lucene.Net.Analysis.Hunspell
         internal static readonly IDictionary<string, string> CHARSET_ALIASES = LoadCharsetAliases();
         private static IDictionary<string, string> LoadCharsetAliases() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            IDictionary<string, string> m = new Dictionary<string, string>
+            return new Dictionary<string, string>
             {
                 ["microsoft-cp1251"] = "windows-1251",
                 ["TIS620-2533"] = "TIS-620"
-            };
-            return Collections.UnmodifiableMap(m);
+            }.AsReadOnly();
         }
 
         /// <summary>

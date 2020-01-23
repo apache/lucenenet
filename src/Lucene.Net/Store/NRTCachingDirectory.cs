@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Store
@@ -131,7 +132,7 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                ISet<string> files = new HashSet<string>();
+                ISet<string> files = new JCG.HashSet<string>();
                 foreach (string f in cache.ListAll())
                 {
                     files.Add(f);

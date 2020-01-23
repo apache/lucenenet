@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -28,7 +29,7 @@ namespace Lucene.Net.Util.Fst
     // let you read while writing which FST needs
     internal class BytesStore : DataOutput
     {
-        private readonly List<byte[]> blocks = new List<byte[]>();
+        private readonly JCG.List<byte[]> blocks = new JCG.List<byte[]>();
 
         private readonly int blockSize;
         private readonly int blockBits;

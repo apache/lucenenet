@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Precedence
 {
@@ -482,7 +483,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             String hourField = "hour";
             PrecedenceQueryParser qp = new PrecedenceQueryParser(new MockAnalyzer(Random));
 
-            IDictionary<string, DateTools.Resolution?> fieldMap = new HashMap<string, DateTools.Resolution?>();
+            IDictionary<string, DateTools.Resolution?> fieldMap = new JCG.Dictionary<string, DateTools.Resolution?>();
             // set a field specific date resolution
             fieldMap.Put(monthField, DateTools.Resolution.MONTH);
 #pragma warning disable 612, 618

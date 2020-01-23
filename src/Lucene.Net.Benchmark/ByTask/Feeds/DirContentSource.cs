@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Benchmarks.ByTask.Utils;
-using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Support.IO;
 using System;
 using System.Collections;

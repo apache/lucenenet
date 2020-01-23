@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 using static Lucene.Net.Benchmarks.ByTask.Feeds.TrecDocParser;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
@@ -385,7 +386,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             bool gotExpectedException = false;
             // LUCENENET specific - skip our UNKNOWN element.
             var pathTypes = ((ParsePathType[])Enum.GetValues(typeof(ParsePathType))).Where(x => x != ParsePathType.UNKNOWN).ToArray();
-            HashSet<ParsePathType> unseenTypes = new HashSet<ParsePathType>(pathTypes);
+            ISet<ParsePathType> unseenTypes = new JCG.HashSet<ParsePathType>(pathTypes);
             try
             {
                 while (n < 100)

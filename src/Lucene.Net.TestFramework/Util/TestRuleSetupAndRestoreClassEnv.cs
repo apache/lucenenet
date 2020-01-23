@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug;
 
@@ -78,7 +79,7 @@ namespace Lucene.Net.Util
         internal Codec codec;
 
         /// <seealso cref="LuceneTestCase.SuppressCodecsAttribute"/>
-        internal HashSet<string> avoidCodecs;
+        internal ISet<string> avoidCodecs;
 
         internal class ThreadNameFixingPrintStreamInfoStream : TextWriterInfoStream
         {
@@ -141,7 +142,7 @@ namespace Lucene.Net.Util
             }
 
             Type targetClass = testInstance?.GetType() ?? LuceneTestCase.GetTestClass();
-            avoidCodecs = new HashSet<string>();
+            avoidCodecs = new JCG.HashSet<string>();
             var suppressCodecsAttribute = targetClass.GetTypeInfo().GetCustomAttribute<LuceneTestCase.SuppressCodecsAttribute>();
             if (suppressCodecsAttribute != null)
             {

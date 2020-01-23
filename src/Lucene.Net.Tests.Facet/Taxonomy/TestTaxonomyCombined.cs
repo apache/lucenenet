@@ -5,13 +5,11 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-    using Directory = Lucene.Net.Store.Directory;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
     using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;

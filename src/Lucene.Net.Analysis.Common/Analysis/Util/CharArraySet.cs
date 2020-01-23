@@ -1,5 +1,5 @@
 ﻿using J2N.Globalization;
-using Lucene.Net.Support;
+using J2N.Text;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
@@ -8,25 +8,26 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Util
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// A simple class that stores <see cref="string"/>s as <see cref="T:char[]"/>'s in a
@@ -340,7 +341,9 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if the specified object is equal to this set</returns>
         public override bool Equals(object obj)
         {
-            return Collections.Equals(this, obj as ISet<string>);
+            if (obj is ISet<string> other)
+                return JCG.SetEqualityComparer<string>.Default.Equals(this, other);
+            return false;
         }
 
         /// <summary>
@@ -355,7 +358,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns>the hash code value for this set</returns>
         public override int GetHashCode()
         {
-            return Collections.GetHashCode(this);
+            return JCG.SetEqualityComparer<string>.Default.GetHashCode(this);
         }
 
         /// <summary>
@@ -393,8 +396,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if the current set is equal to other; otherwise, <c>false</c>.</returns>
         public virtual bool SetEquals(IEnumerable<string> other)
         {
-            var otherSet = other as CharArraySet;
-            if (otherSet == null)
+            if (!(other is CharArraySet otherSet))
                 return false;
 
             // Invoke the implementation on CharArrayMap that

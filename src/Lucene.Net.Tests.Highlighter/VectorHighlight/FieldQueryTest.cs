@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Occur = Lucene.Net.Search.Occur;
 using QueryPhraseMap = Lucene.Net.Search.VectorHighlight.FieldQuery.QueryPhraseMap;
 using TermInfo = Lucene.Net.Search.VectorHighlight.FieldTermStack.TermInfo;
@@ -54,7 +55,7 @@ namespace Lucene.Net.Search.VectorHighlight
             booleanQuery.Add(innerQuery, Occur.MUST_NOT);
 
             FieldQuery fq = new FieldQuery(booleanQuery, true, true);
-            ISet<Query> flatQueries = new HashSet<Query>();
+            ISet<Query> flatQueries = new JCG.HashSet<Query>();
             fq.Flatten(booleanQuery, reader, flatQueries);
             assertCollectionQueries(flatQueries, tq(boost, "A"), tq(boost, "B"), tq(boost, "C"));
         }
@@ -66,7 +67,7 @@ namespace Lucene.Net.Search.VectorHighlight
             Query query = dmq(tq("A"), tq("B"), pqF("C", "D"));
             query.Boost = (boost);
             FieldQuery fq = new FieldQuery(query, true, true);
-            ISet<Query> flatQueries = new HashSet<Query>();
+            ISet<Query> flatQueries = new JCG.HashSet<Query>();
             fq.Flatten(query, reader, flatQueries);
             assertCollectionQueries(flatQueries, tq(boost, "A"), tq(boost, "B"), pqF(boost, "C", "D"));
         }
@@ -81,7 +82,7 @@ namespace Lucene.Net.Search.VectorHighlight
             booleanQuery.Add(pqF("B", "C"), Occur.MUST);
 
             FieldQuery fq = new FieldQuery(booleanQuery, true, true);
-            ISet<Query> flatQueries = new HashSet<Query>();
+            ISet<Query> flatQueries = new JCG.HashSet<Query>();
             fq.Flatten(booleanQuery, reader, flatQueries);
             assertCollectionQueries(flatQueries, tq(boost, "A"), pqF(boost, "B", "C"));
         }
@@ -95,7 +96,7 @@ namespace Lucene.Net.Search.VectorHighlight
             query.Add(toPhraseQuery(analyze("EFGH", F, analyzerB), F), Occur.SHOULD);
 
             FieldQuery fq = new FieldQuery(query, true, true);
-            ISet<Query> flatQueries = new HashSet<Query>();
+            ISet<Query> flatQueries = new JCG.HashSet<Query>();
             fq.Flatten(query, reader, flatQueries);
             assertCollectionQueries(flatQueries, tq("AA"), pqF("BC", "CD"), pqF("EF", "FG", "GH"));
         }
@@ -106,7 +107,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             Query query = pqF("A");
             FieldQuery fq = new FieldQuery(query, true, true);
-            ISet<Query> flatQueries = new HashSet<Query>();
+            ISet<Query> flatQueries = new JCG.HashSet<Query>();
             fq.Flatten(query, reader, flatQueries);
             assertCollectionQueries(flatQueries, tq("A"));
         }
@@ -118,56 +119,56 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldQuery fq = new FieldQuery(dummy, true, true);
 
             // "a b","b c" => "a b","b c","a b c"
-            ISet<Query> flatQueries = new HashSet<Query>();
+            ISet<Query> flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b"));
             flatQueries.Add(pqF("b", "c"));
             assertCollectionQueries(fq.Expand(flatQueries),
                 pqF("a", "b"), pqF("b", "c"), pqF("a", "b", "c"));
 
             // "a b","b c d" => "a b","b c d","a b c d"
-            flatQueries = new HashSet<Query>();
+            flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b"));
             flatQueries.Add(pqF("b", "c", "d"));
             assertCollectionQueries(fq.Expand(flatQueries),
                 pqF("a", "b"), pqF("b", "c", "d"), pqF("a", "b", "c", "d"));
 
             // "a b c","b c d" => "a b c","b c d","a b c d"
-            flatQueries = new HashSet<Query>();
+            flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b", "c"));
             flatQueries.Add(pqF("b", "c", "d"));
             assertCollectionQueries(fq.Expand(flatQueries),
                 pqF("a", "b", "c"), pqF("b", "c", "d"), pqF("a", "b", "c", "d"));
 
             // "a b c","c d e" => "a b c","c d e","a b c d e"
-            flatQueries = new HashSet<Query>();
+            flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b", "c"));
             flatQueries.Add(pqF("c", "d", "e"));
             assertCollectionQueries(fq.Expand(flatQueries),
                 pqF("a", "b", "c"), pqF("c", "d", "e"), pqF("a", "b", "c", "d", "e"));
 
             // "a b c d","b c" => "a b c d","b c"
-            flatQueries = new HashSet<Query>();
+            flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b", "c", "d"));
             flatQueries.Add(pqF("b", "c"));
             assertCollectionQueries(fq.Expand(flatQueries),
                 pqF("a", "b", "c", "d"), pqF("b", "c"));
 
             // "a b b","b c" => "a b b","b c","a b b c"
-            flatQueries = new HashSet<Query>();
+            flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b", "b"));
             flatQueries.Add(pqF("b", "c"));
             assertCollectionQueries(fq.Expand(flatQueries),
                 pqF("a", "b", "b"), pqF("b", "c"), pqF("a", "b", "b", "c"));
 
             // "a b","b a" => "a b","b a","a b a", "b a b"
-            flatQueries = new HashSet<Query>();
+            flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b"));
             flatQueries.Add(pqF("b", "a"));
             assertCollectionQueries(fq.Expand(flatQueries),
                 pqF("a", "b"), pqF("b", "a"), pqF("a", "b", "a"), pqF("b", "a", "b"));
 
             // "a b","a b c" => "a b","a b c"
-            flatQueries = new HashSet<Query>();
+            flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b"));
             flatQueries.Add(pqF("a", "b", "c"));
             assertCollectionQueries(fq.Expand(flatQueries),
@@ -181,42 +182,42 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldQuery fq = new FieldQuery(dummy, true, true);
 
             // "a b","c d" => "a b","c d"
-            ISet<Query> flatQueries = new HashSet<Query>();
+            ISet<Query> flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b"));
             flatQueries.Add(pqF("c", "d"));
             assertCollectionQueries(fq.Expand(flatQueries),
                 pqF("a", "b"), pqF("c", "d"));
 
             // "a","a b" => "a", "a b"
-            flatQueries = new HashSet<Query>();
+            flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(tq("a"));
             flatQueries.Add(pqF("a", "b"));
             assertCollectionQueries(fq.Expand(flatQueries),
                 tq("a"), pqF("a", "b"));
 
             // "a b","b" => "a b", "b"
-            flatQueries = new HashSet<Query>();
+            flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b"));
             flatQueries.Add(tq("b"));
             assertCollectionQueries(fq.Expand(flatQueries),
                 pqF("a", "b"), tq("b"));
 
             // "a b c","b c" => "a b c","b c"
-            flatQueries = new HashSet<Query>();
+            flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b", "c"));
             flatQueries.Add(pqF("b", "c"));
             assertCollectionQueries(fq.Expand(flatQueries),
                 pqF("a", "b", "c"), pqF("b", "c"));
 
             // "a b","a b c" => "a b","a b c"
-            flatQueries = new HashSet<Query>();
+            flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b"));
             flatQueries.Add(pqF("a", "b", "c"));
             assertCollectionQueries(fq.Expand(flatQueries),
                 pqF("a", "b"), pqF("a", "b", "c"));
 
             // "a b c","b d e" => "a b c","b d e"
-            flatQueries = new HashSet<Query>();
+            flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pqF("a", "b", "c"));
             flatQueries.Add(pqF("b", "d", "e"));
             assertCollectionQueries(fq.Expand(flatQueries),
@@ -230,7 +231,7 @@ namespace Lucene.Net.Search.VectorHighlight
             FieldQuery fq = new FieldQuery(dummy, true, false);
 
             // f1:"a b",f2:"b c" => f1:"a b",f2:"b c",f1:"a b c"
-            ISet<Query> flatQueries = new HashSet<Query>();
+            ISet<Query> flatQueries = new JCG.HashSet<Query>();
             flatQueries.Add(pq(F1, "a", "b"));
             flatQueries.Add(pq(F2, "b", "c"));
             assertCollectionQueries(fq.Expand(flatQueries),
@@ -1021,7 +1022,7 @@ namespace Lucene.Net.Search.VectorHighlight
             Query query = new FilteredQuery(pqF("A"), new TestFlattenFilteredQueryFilterAnonymousHelper());
             query.Boost = (boost);
             FieldQuery fq = new FieldQuery(query, true, true);
-            ISet<Query> flatQueries = new HashSet<Query>();
+            ISet<Query> flatQueries = new JCG.HashSet<Query>();
             fq.Flatten(query, reader, flatQueries);
             assertCollectionQueries(flatQueries, tq(boost, "A"));
         }
@@ -1033,7 +1034,7 @@ namespace Lucene.Net.Search.VectorHighlight
             Query query = new ConstantScoreQuery(pqF("A"));
             query.Boost = (boost);
             FieldQuery fq = new FieldQuery(query, true, true);
-            ISet<Query> flatQueries = new HashSet<Query>();
+            ISet<Query> flatQueries = new JCG.HashSet<Query>();
             fq.Flatten(query, reader, flatQueries);
             assertCollectionQueries(flatQueries, tq(boost, "A"));
         }

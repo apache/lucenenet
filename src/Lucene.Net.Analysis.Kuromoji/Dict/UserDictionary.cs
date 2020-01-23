@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Analysis.Ja.Util;
-using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Analysis.Ja.Util;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ja.Dict
 {
@@ -144,7 +145,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         public int[][] Lookup(char[] chars, int off, int len)
         {
             // TODO: can we avoid this treemap/toIndexArray?
-            TreeDictionary<int, int[]> result = new TreeDictionary<int, int[]>(); // index, [length, length...]
+            IDictionary<int, int[]> result = new JCG.SortedDictionary<int, int[]>(); // index, [length, length...]
             bool found = false; // true if we found any results
 
             FST.BytesReader fstReader = fst.GetBytesReader();
@@ -188,7 +189,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         /// </summary>
         /// <param name="input"></param>
         /// <returns>Array of {wordId, index, length}.</returns>
-        private int[][] ToIndexArray(TreeDictionary<int, int[]> input)
+        private int[][] ToIndexArray(IDictionary<int, int[]> input)
         {
             List<int[]> result = new List<int[]>();
             foreach (int i in input.Keys)

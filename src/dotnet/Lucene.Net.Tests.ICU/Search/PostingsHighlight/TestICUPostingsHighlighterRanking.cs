@@ -1,17 +1,18 @@
 ﻿#if FEATURE_BREAKITERATOR
+using J2N;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {
@@ -179,7 +180,7 @@ namespace Lucene.Net.Search.PostingsHighlight
          */
         internal class FakePassageFormatter : PassageFormatter
         {
-            internal HashSet<Pair> seen = new HashSet<Pair>();
+            internal ISet<Pair> seen = new JCG.HashSet<Pair>();
 
             public override object Format(Passage[] passages, String content)
             {

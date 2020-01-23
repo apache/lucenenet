@@ -1,12 +1,12 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Simple
 {
@@ -57,7 +57,7 @@ namespace Lucene.Net.QueryParsers.Simple
         private Query Parse(string text, Operator flags)
         {
             Analyzer analyzer = new MockAnalyzer(Random);
-            SimpleQueryParser parser = new SimpleQueryParser(analyzer, new HashMap<string, float>() { { "field", 1f } }, flags);
+            SimpleQueryParser parser = new SimpleQueryParser(analyzer, new JCG.Dictionary<string, float>() { { "field", 1f } }, flags);
             parser.DefaultOperator = Occur.MUST;
             return parser.Parse(text);
         }
@@ -541,7 +541,7 @@ namespace Lucene.Net.QueryParsers.Simple
         [Test]
         public virtual void TestWeightedTerm()
         {
-            IDictionary<string, float> weights = new LinkedHashMap<string, float>();
+            IDictionary<string, float> weights = new JCG.LinkedDictionary<string, float>();
             weights["field0"] = 5f;
             weights["field1"] = 10f;
 
@@ -562,7 +562,7 @@ namespace Lucene.Net.QueryParsers.Simple
         [Test]
         public virtual void TestWeightedOR()
         {
-            IDictionary<string, float> weights = new LinkedHashMap<string, float>();
+            IDictionary<string, float> weights = new JCG.LinkedDictionary<string, float>();
             weights["field0"] = 5f;
             weights["field1"] = 10f;
 
@@ -595,7 +595,7 @@ namespace Lucene.Net.QueryParsers.Simple
         {
             Analyzer analyzer = new MockAnalyzer(Random, MockTokenizer.KEYWORD, false);
             SimpleQueryParser parser = new SimpleQueryParser(analyzer,
-                new HashMap<string, float>() { { "field", 1f } },
+                new JCG.Dictionary<string, float>() { { "field", 1f } },
                 flags);
             return parser.Parse(text);
         }

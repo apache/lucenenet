@@ -1,8 +1,8 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
+﻿using J2N.Text;
+using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Processors;
 using Lucene.Net.QueryParsers.Flexible.Core.Util;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
-using Lucene.Net.Support;
 using System.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
@@ -84,7 +84,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // start at the end since it's more common to put wildcards at the end
             for (int i = text.Length - 1; i >= 0; i--)
             {
-                if ((text[i] == '*' || text[i] == '?') && !UnescapedCharSequence.WasEscaped(new StringCharSequenceWrapper(text), i))
+                if ((text[i] == '*' || text[i] == '?') && !UnescapedCharSequence.WasEscaped(new StringCharSequence(text), i))
                 {
                     return true;
                 }
@@ -100,7 +100,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             // Validate last character is a '*' and was not escaped
             // If single '*' is is a wildcard not prefix to simulate old queryparser
             if (text[text.Length - 1] != '*') return false;
-            if (UnescapedCharSequence.WasEscaped(new StringCharSequenceWrapper(text), text.Length - 1)) return false;
+            if (UnescapedCharSequence.WasEscaped(new StringCharSequence(text), text.Length - 1)) return false;
             if (text.Length == 1) return false;
 
             // Only make a prefix if there is only one single star at the end and no '?' or '*' characters
@@ -108,7 +108,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             for (int i = 0; i < text.Length; i++)
             {
                 if (text[i] == '?') return false;
-                if (text[i] == '*' && !UnescapedCharSequence.WasEscaped(new StringCharSequenceWrapper(text), i))
+                if (text[i] == '*' && !UnescapedCharSequence.WasEscaped(new StringCharSequence(text), i))
                 {
                     if (i == text.Length - 1)
                         return true;

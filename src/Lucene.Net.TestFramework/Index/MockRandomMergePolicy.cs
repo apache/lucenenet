@@ -1,3 +1,4 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -59,7 +60,7 @@ namespace Lucene.Net.Index
 
             if (numSegments > 1 && (numSegments > 30 || random.Next(5) == 3))
             {
-                Collections.Shuffle(segments, random);
+                segments.Shuffle(random);
 
                 // TODO: sometimes make more than 1 merge?
                 mergeSpec = new MergeSpecification();
@@ -88,7 +89,7 @@ namespace Lucene.Net.Index
                 mergeSpec = new MergeSpecification();
                 // Already shuffled having come out of a set but
                 // shuffle again for good measure:
-                Collections.Shuffle(eligibleSegments, random);
+                eligibleSegments.Shuffle(random);
                 int upto = 0;
                 while (upto < eligibleSegments.Count)
                 {

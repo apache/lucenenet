@@ -1,4 +1,6 @@
-﻿using Lucene.Net.Support;
+﻿using J2N;
+using J2N.Text;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
@@ -68,6 +70,26 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
+        /// Returns the code point at the given index of the <see cref="string"/>.
+        /// Depending on the <see cref="LuceneVersion"/> passed to
+        /// <see cref="CharacterUtils.GetInstance(LuceneVersion)"/> this method mimics the behavior
+        /// of <c>Character.CodePointAt(char[], int)</c> as it would have been
+        /// available on a Java 1.4 JVM or on a later virtual machine version.
+        /// </summary>
+        /// <param name="seq">
+        ///          a character sequence </param>
+        /// <param name="offset">
+        ///          the offset to the char values in the chars array to be converted
+        /// </param>
+        /// <returns> the Unicode code point at the given index </returns>
+        /// <exception cref="NullReferenceException">
+        ///           - if the sequence is null. </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///           - if the value offset is negative or not less than the length of
+        ///           the character sequence. </exception>
+        public abstract int CodePointAt(string seq, int offset);
+
+        /// <summary>
         /// Returns the code point at the given index of the <see cref="ICharSequence"/>.
         /// Depending on the <see cref="LuceneVersion"/> passed to
         /// <see cref="CharacterUtils.GetInstance(LuceneVersion)"/> this method mimics the behavior
@@ -82,11 +104,9 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> the Unicode code point at the given index </returns>
         /// <exception cref="NullReferenceException">
         ///           - if the sequence is null. </exception>
-        /// <exception cref="IndexOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         ///           - if the value offset is negative or not less than the length of
         ///           the character sequence. </exception>
-        public abstract int CodePointAt(string seq, int offset);
-
         public abstract int CodePointAt(ICharSequence seq, int offset);
 
         /// <summary>
@@ -107,7 +127,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> the Unicode code point at the given index </returns>
         /// <exception cref="NullReferenceException">
         ///           - if the array is null. </exception>
-        /// <exception cref="IndexOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         ///           - if the value offset is negative or not less than the length of
         ///           the char array. </exception>
         public abstract int CodePointAt(char[] chars, int offset, int limit);
@@ -127,7 +147,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (bufferSize < 2)
             {
-                throw new System.ArgumentException("buffersize must be >= 2");
+                throw new ArgumentException("buffersize must be >= 2");
             }
             return new CharacterBuffer(new char[bufferSize], 0, 0);
         }
@@ -138,17 +158,17 @@ namespace Lucene.Net.Analysis.Util
         /// at the given offset. </summary>
         /// <param name="buffer"> the char buffer to lowercase </param>
         /// <param name="offset"> the offset to start at </param>
-        /// <param name="limit"> the max char in the buffer to lower case </param>
-        public virtual void ToLower(char[] buffer, int offset, int limit) // LUCENENET specific - marked virtual so we can override the default
+        /// <param name="length"> the number of characters in the buffer to lower case </param>
+        public virtual void ToLower(char[] buffer, int offset, int length) // LUCENENET specific - marked virtual so we can override the default
         {
-            Debug.Assert(buffer.Length >= limit);
+            Debug.Assert(buffer.Length >= length);
             Debug.Assert(offset <= 0 && offset <= buffer.Length);
 
             // Optimization provided by Vincent Van Den Berghe: 
             // http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
-            new string(buffer, offset, limit)
+            new string(buffer, offset, length)
                 .ToLowerInvariant()
-                .CopyTo(0, buffer, offset, limit);
+                .CopyTo(0, buffer, offset, length);
 
             // Original (slow) Lucene implementation:
             //for (int i = offset; i < limit; )
@@ -164,17 +184,17 @@ namespace Lucene.Net.Analysis.Util
         /// at the given offset. </summary>
         /// <param name="buffer"> the char buffer to UPPERCASE </param>
         /// <param name="offset"> the offset to start at </param>
-        /// <param name="limit"> the max char in the buffer to lower case </param>
-        public virtual void ToUpper(char[] buffer, int offset, int limit) // LUCENENET specific - marked virtual so we can override the default
+        /// <param name="length"> the number of characters in the buffer to lower case </param>
+        public virtual void ToUpper(char[] buffer, int offset, int length) // LUCENENET specific - marked virtual so we can override the default
         {
-            Debug.Assert(buffer.Length >= limit);
+            Debug.Assert(buffer.Length >= length);
             Debug.Assert(offset <= 0 && offset <= buffer.Length);
 
             // Optimization provided by Vincent Van Den Berghe: 
             // http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
-            new string(buffer, offset, limit)
+            new string(buffer, offset, length)
                 .ToUpperInvariant()
-                .CopyTo(0, buffer, offset, limit);
+                .CopyTo(0, buffer, offset, length);
 
             // Original (slow) Lucene implementation:
             //for (int i = offset; i < limit; )
@@ -192,7 +212,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (srcLen < 0)
             {
-                throw new System.ArgumentException("srcLen must be >= 0");
+                throw new ArgumentException("srcLen must be >= 0");
             }
             int codePointCount = 0;
             for (int i = 0; i < srcLen; )
@@ -212,7 +232,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (srcLen < 0)
             {
-                throw new System.ArgumentException("srcLen must be >= 0");
+                throw new ArgumentException("srcLen must be >= 0");
             }
             int written = 0;
             for (int i = 0; i < srcLen; ++i)
@@ -299,7 +319,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override int CodePointAt(char[] chars, int offset, int limit)
             {
-                return Character.CodePointAt(chars, offset, limit); // LUCENENET TODO: This will throw a NullReferenceException if chars is null. Should this be an ArgumentNullException in .NET?
+                return Character.CodePointAt(chars, offset, limit);
             }
 
             public override bool Fill(CharacterBuffer buffer, TextReader reader, int numChars)
@@ -307,7 +327,7 @@ namespace Lucene.Net.Analysis.Util
                 Debug.Assert(buffer.Buffer.Length >= 2);
                 if (numChars < 2 || numChars > buffer.Buffer.Length)
                 {
-                    throw new System.ArgumentException("numChars must be >= 2 and <= the buffer size");
+                    throw new ArgumentException("numChars must be >= 2 and <= the buffer size");
                 }
                 char[] charBuffer = buffer.Buffer;
                 buffer.offset = 0;
@@ -361,21 +381,39 @@ namespace Lucene.Net.Analysis.Util
         {
             public override int CodePointAt(string seq, int offset)
             {
+                // LUCENENET specific - added guard clauses
+                if (seq == null)
+                    throw new ArgumentNullException(nameof(seq));
+                if (offset < 0 || offset >= seq.Length)
+                    throw new ArgumentOutOfRangeException(nameof(offset));
+
                 return seq[offset];
             }
 
             public override int CodePointAt(ICharSequence seq, int offset)
             {
+                // LUCENENET specific - added guard clauses
+                if (seq == null)
+                    throw new ArgumentNullException(nameof(seq));
+                if (offset < 0 || offset >= seq.Length)
+                    throw new ArgumentOutOfRangeException(nameof(offset));
+
                 return seq[offset];
             }
 
             public override int CodePointAt(char[] chars, int offset, int limit)
             {
+                if (chars == null)
+                    throw new ArgumentNullException(nameof(chars)); // LUCENENET specific - added for .NET compatibility
                 if (offset >= limit)
                 {
-                    throw new System.IndexOutOfRangeException("offset must be less than limit");
+                    throw new ArgumentOutOfRangeException("offset must be less than limit");
                 }
-                return chars[offset]; // LUCENENET TODO: This will throw a NullReferenceException if chars is null. Should this be an ArgumentNullException in .NET?
+                // LUCENENET specific - added array bound check
+                if (offset < 0  || offset >= chars.Length)
+                    throw new ArgumentOutOfRangeException(nameof(offset));
+
+                return chars[offset];
             }
 
             public override bool Fill(CharacterBuffer buffer, TextReader reader, int numChars)
@@ -383,7 +421,7 @@ namespace Lucene.Net.Analysis.Util
                 Debug.Assert(buffer.Buffer.Length >= 1);
                 if (numChars < 1 || numChars > buffer.Buffer.Length)
                 {
-                    throw new System.ArgumentException("numChars must be >= 1 and <= the buffer size");
+                    throw new ArgumentException("numChars must be >= 1 and <= the buffer size");
                 }
                 buffer.offset = 0;
                 int read = ReadFully(reader, buffer.Buffer, 0, numChars);
@@ -402,7 +440,7 @@ namespace Lucene.Net.Analysis.Util
                 int result = index + offset;
                 if (result < 0 || result > count)
                 {
-                    throw new System.IndexOutOfRangeException();
+                    throw new ArgumentOutOfRangeException();
                 }
                 return result;
             }
@@ -421,8 +459,8 @@ namespace Lucene.Net.Analysis.Util
 
                 for (int i = offset; i < limit;)
                 {
-                    i += Character.ToChars(
-                        Character.ToLower(
+                    i += J2N.Character.ToChars(
+                        J2N.Character.ToLower(
                             CodePointAt(buffer, i, limit)), buffer, i);
                 }
             }
@@ -467,38 +505,20 @@ namespace Lucene.Net.Analysis.Util
             /// <returns> the buffer </returns>
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-            public char[] Buffer
-            {
-                get
-                {
-                    return buffer;
-                }
-            }
+            public char[] Buffer => buffer;
 
             /// <summary>
             /// Returns the data offset in the internal buffer.
             /// </summary>
             /// <returns> the offset </returns>
-            public int Offset
-            {
-                get
-                {
-                    return offset;
-                }
-            }
+            public int Offset => offset;
 
             /// <summary>
             /// Return the length of the data in the internal buffer starting at
             /// <see cref="Offset"/>
             /// </summary>
             /// <returns> the length </returns>
-            public int Length
-            {
-                get
-                {
-                    return length;
-                }
-            }
+            public int Length => length;
 
             /// <summary>
             /// Resets the CharacterBuffer. All internals are reset to its default

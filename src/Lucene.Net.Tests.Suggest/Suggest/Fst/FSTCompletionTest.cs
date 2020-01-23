@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Collections;
+using J2N.Text;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -272,7 +273,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 result[i] = res.ElementAt(i).toString();
             }
 
-            if (!Arrays.Equals(StripScore(expected), StripScore(result)))
+            if (!ArrayEqualityComparer<string>.OneDimensional.Equals(StripScore(expected), StripScore(result)))
             {
                 int colLen = Math.Max(MaxLen(expected), MaxLen(result));
 

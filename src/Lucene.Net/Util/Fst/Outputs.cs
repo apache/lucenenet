@@ -29,6 +29,10 @@ namespace Lucene.Net.Util.Fst
     /// <para>Note that any operation that returns NO_OUTPUT must
     /// return the same singleton object from
     /// <see cref="NoOutput"/>.</para>
+    /// 
+    /// <para>LUCENENET IMPORTANT: If <typeparamref name="T"/> is a collection type,
+    /// it must implement <see cref="System.Collections.IStructuralEquatable"/>
+    /// in order to properly compare its nested values.</para>
     ///
     /// @lucene.experimental
     /// </summary>

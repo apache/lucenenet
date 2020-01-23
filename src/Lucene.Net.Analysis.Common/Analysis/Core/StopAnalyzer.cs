@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.IO;
@@ -45,10 +44,10 @@ namespace Lucene.Net.Analysis.Core
 
         private static CharArraySet LoadEnglishStopWordsSet() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            IList<string> stopWords = Arrays.AsList("a", "an", "and", "are", "as", "at", "be", 
-                "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on", 
-                "or", "such", "that", "the", "their", "then", "there", "these", "they", "this", 
-                "to", "was", "will", "with");
+            IList<string> stopWords = new string[] { "a", "an", "and", "are", "as", "at", "be",
+                "but", "by", "for", "if", "in", "into", "is", "it", "no", "not", "of", "on",
+                "or", "such", "that", "the", "their", "then", "there", "these", "they", "this",
+                "to", "was", "will", "with" };
 #pragma warning disable 612, 618
             var stopSet = new CharArraySet(LuceneVersion.LUCENE_CURRENT, stopWords, false);
 #pragma warning restore 612, 618

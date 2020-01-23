@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -318,7 +319,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static ICollection<string> GetIndexedFields(IndexReader reader)
         {
-            ICollection<string> fields = new HashSet<string>();
+            ICollection<string> fields = new JCG.HashSet<string>();
             foreach (FieldInfo fieldInfo in GetMergedFieldInfos(reader))
             {
                 if (fieldInfo.IsIndexed)

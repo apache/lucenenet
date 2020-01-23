@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.BlockTerms
 {
@@ -48,7 +49,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         // produce DocsEnum on demand
         private readonly PostingsReaderBase postingsReader;
 
-        private readonly IDictionary<string, FieldReader> fields = new SortedDictionary<string, FieldReader>(StringComparer.Ordinal);
+        private readonly IDictionary<string, FieldReader> fields = new JCG.SortedDictionary<string, FieldReader>(StringComparer.Ordinal);
 
         // Reads the terms index
         private TermsIndexReaderBase indexReader;

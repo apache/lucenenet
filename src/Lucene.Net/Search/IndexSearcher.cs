@@ -767,7 +767,7 @@ namespace Lucene.Net.Search
 
             public TopDocs Call()
             {
-                TopDocs docs = searcher.Search(Arrays.AsList(slice.Leaves), weight, after, nDocs);
+                TopDocs docs = searcher.Search(slice.Leaves, weight, after, nDocs);
                 ScoreDoc[] scoreDocs = docs.ScoreDocs;
                 //it would be so nice if we had a thread-safe insert
                 @lock.Lock();
@@ -825,7 +825,7 @@ namespace Lucene.Net.Search
             public TopFieldDocs Call()
             {
                 Debug.Assert(slice.Leaves.Length == 1);
-                TopFieldDocs docs = searcher.Search(Arrays.AsList(slice.Leaves), weight, after, nDocs, sort, true, doDocScores || sort.NeedsScores, doMaxScore);
+                TopFieldDocs docs = searcher.Search(slice.Leaves, weight, after, nDocs, sort, true, doDocScores || sort.NeedsScores, doMaxScore);
                 @lock.Lock();
                 try
                 {

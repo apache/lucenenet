@@ -1,11 +1,11 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
@@ -52,7 +52,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
     internal class SimpleTextFieldsReader : FieldsProducer
     {
-        private readonly SortedDictionary<string, long?> _fields;
+        private readonly IDictionary<string, long?> _fields;
         private readonly IndexInput _input;
         private readonly FieldInfos _fieldInfos;
         private readonly int _maxDoc;
@@ -81,13 +81,13 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private SortedDictionary<string, long?> ReadFields(IndexInput @in)
+        private IDictionary<string, long?> ReadFields(IndexInput @in)
         {
             ChecksumIndexInput input = new BufferedChecksumIndexInput(@in);
             var scratch = new BytesRef(10);
 
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            var fields = new SortedDictionary<string, long?>(StringComparer.Ordinal);
+            var fields = new JCG.SortedDictionary<string, long?>(StringComparer.Ordinal);
 
             while (true)
             {

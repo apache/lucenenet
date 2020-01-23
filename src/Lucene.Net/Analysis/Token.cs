@@ -1,3 +1,4 @@
+using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Reflection;
@@ -113,7 +114,7 @@ namespace Lucene.Net.Analysis
     /// </para>
     /// <para>
     /// <b>Please note:</b> With Lucene 3.1, the <see cref="CharTermAttribute.ToString()"/> method had to be changed to match the
-    /// <see cref="Support.ICharSequence"/> interface introduced by the interface <see cref="ICharTermAttribute"/>.
+    /// <see cref="ICharSequence"/> interface introduced by the interface <see cref="ICharTermAttribute"/>.
     /// this method now only prints the term text, no additional information anymore.
     /// </para>
     /// </summary>

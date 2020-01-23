@@ -1,9 +1,9 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Stats;
 using Lucene.Net.Benchmarks.ByTask.Utils;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -136,7 +136,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             return sb.ToString();
         }
 
-        protected virtual Report GenPartialReport(int reported, LinkedHashMap<string, TaskStats> partOfTasks, int totalSize)
+        protected virtual Report GenPartialReport(int reported, JCG.LinkedDictionary<string, TaskStats> partOfTasks, int totalSize)
         {
             string longetOp = LongestOp(partOfTasks.Values);
             bool first = true;

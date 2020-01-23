@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
+using J2N.Collections.Generic.Extensions;
 
 namespace Lucene.Net.Tests.Join
 {
@@ -296,13 +297,13 @@ namespace Lucene.Net.Tests.Join
             IList<Document> docs = new List<Document>();
             docs.Add(MakeJob("java", 2007));
             docs.Add(MakeJob("python", 2010));
-            Collections.Shuffle(docs);
+            docs.Shuffle();
             docs.Add(MakeResume("Lisa", "United Kingdom"));
 
             IList<Document> docs2 = new List<Document>();
             docs2.Add(MakeJob("ruby", 2005));
             docs2.Add(MakeJob("java", 2006));
-            Collections.Shuffle(docs2);
+            docs2.Shuffle();
             docs2.Add(MakeResume("Frank", "United States"));
 
             AddSkillless(w);
@@ -804,8 +805,8 @@ namespace Lucene.Net.Tests.Join
                 }
 
                 // Merge both sorts:
-                IList<SortField> sortFields = new List<SortField>(Arrays.AsList(parentSort.GetSort()));
-                sortFields.AddRange(Arrays.AsList(childSort.GetSort()));
+                IList<SortField> sortFields = new List<SortField>(parentSort.GetSort());
+                sortFields.AddRange(childSort.GetSort());
                 Sort parentAndChildSort = new Sort(sortFields.ToArray());
 
                 TopDocs results = s.Search(parentQuery, null, r.NumDocs, parentAndChildSort);
@@ -1254,7 +1255,7 @@ namespace Lucene.Net.Tests.Join
             childDoc.Add(NewStringField("child", "1", Field.Store.NO));
             Document parentDoc = new Document();
             parentDoc.Add(NewStringField("parent", "1", Field.Store.NO));
-            w.AddDocuments(Arrays.AsList(childDoc, parentDoc));
+            w.AddDocuments(new Document[] { childDoc, parentDoc });
             IndexReader r = w.GetReader();
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
@@ -1277,7 +1278,7 @@ namespace Lucene.Net.Tests.Join
             Document parentDoc = new Document();
             parentDoc.Add(NewStringField("parent", "1", Field.Store.NO));
             parentDoc.Add(NewStringField("isparent", "yes", Field.Store.NO));
-            w.AddDocuments(Arrays.AsList(parentDoc));
+            w.AddDocuments(new Document[] { parentDoc });
 
             // Add another doc so scorer is not null
             parentDoc = new Document();
@@ -1285,7 +1286,7 @@ namespace Lucene.Net.Tests.Join
             parentDoc.Add(NewStringField("isparent", "yes", Field.Store.NO));
             Document childDoc = new Document();
             childDoc.Add(NewStringField("child", "2", Field.Store.NO));
-            w.AddDocuments(Arrays.AsList(childDoc, parentDoc));
+            w.AddDocuments(new Document[] { childDoc, parentDoc });
 
             // Need single seg:
             w.ForceMerge(1);
@@ -1319,7 +1320,7 @@ namespace Lucene.Net.Tests.Join
             docs.Add(MakeJob("java", 2006));
             docs.Add(MakeJob("java", 2010));
             docs.Add(MakeJob("java", 2012));
-            Collections.Shuffle(docs);
+            docs.Shuffle();
             docs.Add(MakeResume("Frank", "United States"));
 
             AddSkillless(w);
@@ -1612,12 +1613,12 @@ namespace Lucene.Net.Tests.Join
             parentDoc.Add(NewStringField("isparent", "yes", Field.Store.NO));
             Document childDoc = new Document();
             childDoc.Add(NewStringField("child", "1", Field.Store.NO));
-            w.AddDocuments(Arrays.AsList(childDoc, parentDoc));
+            w.AddDocuments(new Document[] { childDoc, parentDoc });
 
             parentDoc = new Document();
             parentDoc.Add(NewStringField("parent", "2", Field.Store.NO));
             parentDoc.Add(NewStringField("isparent", "yes", Field.Store.NO));
-            w.AddDocuments(Arrays.AsList(parentDoc));
+            w.AddDocuments(new Document[] { parentDoc });
 
             w.DeleteDocuments(new Term("parent", "2"));
 
@@ -1626,7 +1627,7 @@ namespace Lucene.Net.Tests.Join
             parentDoc.Add(NewStringField("isparent", "yes", Field.Store.NO));
             childDoc = new Document();
             childDoc.Add(NewStringField("child", "2", Field.Store.NO));
-            w.AddDocuments(Arrays.AsList(childDoc, parentDoc));
+            w.AddDocuments(new Document[] { childDoc, parentDoc });
 
             IndexReader r = w.GetReader();
             w.Dispose();

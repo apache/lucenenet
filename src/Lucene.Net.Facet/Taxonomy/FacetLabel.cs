@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -170,7 +171,8 @@ namespace Lucene.Net.Facet.Taxonomy
             int hash = Length;
             for (int i = 0; i < Length; i++)
             {
-                hash = hash * 31 + Components[i].GetHashCode();
+                // LUCENENET specific: Use CharSequenceComparer to get the same value as StringCharSequence.GetHashCode()
+                hash = hash * 31 + CharSequenceComparer.Ordinal.GetHashCode(Components[i]);
             }
             return hash;
         }

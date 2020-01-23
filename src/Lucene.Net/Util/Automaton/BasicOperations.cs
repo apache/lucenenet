@@ -1,10 +1,11 @@
-using Lucene.Net.Support;
+using J2N;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 /*
  * dk.brics.automaton
@@ -125,7 +126,7 @@ namespace Lucene.Net.Util.Automaton
                         return BasicAutomata.MakeEmpty();
                     }
                 }
-                HashSet<int> ids = new HashSet<int>();
+                JCG.HashSet<int> ids = new JCG.HashSet<int>();
                 foreach (Automaton a in l)
                 {
                     ids.Add(a.GetHashCode());
@@ -493,7 +494,7 @@ namespace Lucene.Net.Util.Automaton
             Transition[][] transitions1 = a1.GetSortedTransitions();
             Transition[][] transitions2 = a2.GetSortedTransitions();
             LinkedList<StatePair> worklist = new LinkedList<StatePair>();
-            HashSet<StatePair> visited = new HashSet<StatePair>();
+            JCG.HashSet<StatePair> visited = new JCG.HashSet<StatePair>();
             StatePair p = new StatePair(a1.initial, a2.initial);
             worklist.AddLast(p);
             visited.Add(p);
@@ -521,14 +522,14 @@ namespace Lucene.Net.Util.Automaton
                         {
                             return false;
                         }
-                        if (t2[n2].max < Character.MAX_CODE_POINT)
+                        if (t2[n2].max < Character.MaxCodePoint)
                         {
                             min1 = t2[n2].max + 1;
                         }
                         else
                         {
-                            min1 = Character.MAX_CODE_POINT;
-                            max1 = Character.MIN_CODE_POINT;
+                            min1 = Character.MaxCodePoint;
+                            max1 = Character.MinCodePoint;
                         }
                         StatePair q = new StatePair(t1[n1].to, t2[n2].to);
                         if (!visited.Contains(q))
@@ -587,7 +588,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static Automaton Union(ICollection<Automaton> l)
         {
-            HashSet<int> ids = new HashSet<int>();
+            JCG.HashSet<int> ids = new JCG.HashSet<int>();
             foreach (Automaton a in l)
             {
                 ids.Add(a.GetHashCode());
@@ -928,35 +929,34 @@ namespace Lucene.Net.Util.Automaton
         public static void AddEpsilons(Automaton a, ICollection<StatePair> pairs)
         {
             a.ExpandSingleton();
-            Dictionary<State, HashSet<State>> forward = new Dictionary<State, HashSet<State>>();
-            Dictionary<State, HashSet<State>> back = new Dictionary<State, HashSet<State>>();
+            Dictionary<State, JCG.HashSet<State>> forward = new Dictionary<State, JCG.HashSet<State>>();
+            Dictionary<State, JCG.HashSet<State>> back = new Dictionary<State, JCG.HashSet<State>>();
             foreach (StatePair p in pairs)
             {
-                HashSet<State> to;
-                if (!forward.TryGetValue(p.S1, out to))
+                if (!forward.TryGetValue(p.S1, out JCG.HashSet<State> to))
                 {
-                    to = new HashSet<State>();
+                    to = new JCG.HashSet<State>();
                     forward[p.S1] = to;
                 }
                 to.Add(p.S2);
-                HashSet<State> from;
+                JCG.HashSet<State> from;
                 if (!back.TryGetValue(p.S2, out from))
                 {
-                    from = new HashSet<State>();
+                    from = new JCG.HashSet<State>();
                     back[p.S2] = from;
                 }
                 from.Add(p.S1);
             }
             // calculate epsilon closure
             LinkedList<StatePair> worklist = new LinkedList<StatePair>(pairs);
-            HashSet<StatePair> workset = new HashSet<StatePair>(pairs);
+            JCG.HashSet<StatePair> workset = new JCG.HashSet<StatePair>(pairs);
             while (worklist.Count > 0)
             {
                 StatePair p = worklist.First.Value;
                 worklist.Remove(p);
                 workset.Remove(p);
-                HashSet<State> to;
-                HashSet<State> from;
+                JCG.HashSet<State> to;
+                JCG.HashSet<State> from;
                 if (forward.TryGetValue(p.S2, out to))
                 {
                     foreach (State s in to)
@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Util.Automaton
             if (a.initial.accept && a.initial.NumTransitions == 1)
             {
                 Transition t = a.initial.GetTransitions().First();
-                return t.to == a.initial && t.min == Character.MIN_CODE_POINT && t.max == Character.MAX_CODE_POINT;
+                return t.to == a.initial && t.min == Character.MinCodePoint && t.max == Character.MaxCodePoint;
             }
             return false;
         }

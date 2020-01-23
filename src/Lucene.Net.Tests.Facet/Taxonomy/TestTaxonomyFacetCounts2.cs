@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Lucene.Net.Randomized.Generators;
+﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -26,22 +25,20 @@ namespace Lucene.Net.Facet.Taxonomy
      */
 
 
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Documents.Document;
-    using Store = Lucene.Net.Documents.Field.Store;
-    using StringField = Lucene.Net.Documents.StringField;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Documents.Document;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using NoMergePolicy = Lucene.Net.Index.NoMergePolicy;
-    using Term = Lucene.Net.Index.Term;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using Directory = Lucene.Net.Store.Directory;
     using IOUtils = Lucene.Net.Util.IOUtils;
+    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Store = Lucene.Net.Documents.Field.Store;
+    using StringField = Lucene.Net.Documents.StringField;
+    using Term = Lucene.Net.Index.Term;
+    using TermQuery = Lucene.Net.Search.TermQuery;
     [TestFixture]
     public class TestTaxonomyFacetCounts2 : FacetTestCase
     {
@@ -99,11 +96,11 @@ namespace Lucene.Net.Facet.Taxonomy
             int numFacetsA = random.Next(3) + 1; // 1-3
             int numFacetsB = random.Next(2) + 1; // 1-2
             List<FacetField> categories_a = new List<FacetField>();
-            categories_a.AddRange(Arrays.AsList(CATEGORIES_A));
+            categories_a.AddRange(CATEGORIES_A);
             List<FacetField> categories_b = new List<FacetField>();
-            categories_b.AddRange(Arrays.AsList(CATEGORIES_B));
-            Collections.Shuffle(categories_a);
-            Collections.Shuffle(categories_b);
+            categories_b.AddRange(CATEGORIES_B);
+            categories_a.Shuffle();
+            categories_b.Shuffle();
 
             List<FacetField> categories = new List<FacetField>();
             categories.AddRange(categories_a.SubList(0, numFacetsA));

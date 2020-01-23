@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
-using Lucene.Net.Analysis.Util;
+﻿using J2N;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -46,20 +46,20 @@ namespace Lucene.Net.Analysis.Util
                 java4.CodePointAt(highSurrogateAt3, 4);
                 fail("string index out of bounds");
             }
-            catch (IndexOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
             }
 
             var java5 = CharacterUtils.GetInstance(TEST_VERSION_CURRENT);
             assertEquals((int)'A', java5.CodePointAt(cpAt3, 0));
-            assertEquals(Character.CodePointAt('\ud801', '\udc1c'), java5.CodePointAt(cpAt3, 3));
+            assertEquals(Character.ToCodePoint('\ud801', '\udc1c'), java5.CodePointAt(cpAt3, 3));
             assertEquals((int)'\ud801', java5.CodePointAt(highSurrogateAt3, 3));
             try
             {
                 java5.CodePointAt(highSurrogateAt3, 4);
                 fail("string index out of bounds");
             }
-            catch (System.IndexOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
             }
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.Util
                     var to = java4.OffsetByCodePoints(s, 0, s.Length, index, offset);
                     assertEquals(to, index + offset);
                 }
-                catch (System.IndexOutOfRangeException)
+                catch (ArgumentOutOfRangeException)
                 {
                     assertTrue((index + offset) < 0 || (index + offset) > s.Length);
                 }
@@ -119,14 +119,14 @@ namespace Lucene.Net.Analysis.Util
                 {
                     o = java5.OffsetByCodePoints(s, 0, s.Length, index, offset);
                 }
-                catch (System.IndexOutOfRangeException)
+                catch (ArgumentOutOfRangeException)
                 {
                     try
                     {
                         Character.OffsetByCodePoints(s, 0, s.Length, index, offset);
                         fail();
                     }
-                    catch (System.IndexOutOfRangeException)
+                    catch (ArgumentOutOfRangeException)
                     {
                         // OK
                     }

@@ -195,7 +195,7 @@ namespace Lucene.Net.Queries.Function
 
             public override ICollection<ChildScorer> GetChildren()
             {
-                return Collections.Singleton(new ChildScorer(scorer, "CUSTOM"));
+                return new List<ChildScorer> { new ChildScorer(scorer, "CUSTOM") };
             }
 
             public Explanation Explain(int doc)

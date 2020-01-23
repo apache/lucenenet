@@ -122,7 +122,7 @@ namespace Lucene.Net.Analysis.Pattern
                             continue;
                         }
 
-                        termAtt.SetEmpty().Append(str.ToString(), index, endIndex);
+                        termAtt.SetEmpty().Append(str.ToString(), index, endIndex - index); // LUCENENET: Corrected 3rd parameter
                         offsetAtt.SetOffset(CorrectOffset(index), CorrectOffset(endIndex));
                         return true;
 
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Pattern
                         if (matcher.Index - index > 0)
                         {
                             // found a non-zero-length token
-                            termAtt.SetEmpty().Append(str.ToString(), index, matcher.Index);
+                            termAtt.SetEmpty().Append(str.ToString(), index, matcher.Index - index); // LUCENENET: Corrected 3rd parameter
                             offsetAtt.SetOffset(CorrectOffset(index), CorrectOffset(matcher.Index));
                             index = matcher.Index + matcher.Length;
                             return true;
@@ -162,7 +162,7 @@ namespace Lucene.Net.Analysis.Pattern
                     return false;
                 }
 
-                termAtt.SetEmpty().Append(str.ToString(), index, str.Length);
+                termAtt.SetEmpty().Append(str.ToString(), index, str.Length - index); // LUCENENET: Corrected 3rd parameter
                 offsetAtt.SetOffset(CorrectOffset(index), CorrectOffset(str.Length));
                 index = int.MaxValue; // mark exhausted
                 return true;

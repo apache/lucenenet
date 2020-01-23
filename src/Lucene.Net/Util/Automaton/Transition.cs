@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -92,33 +92,15 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Returns minimum of this transition interval. </summary>
-        public virtual int Min
-        {
-            get
-            {
-                return min;
-            }
-        }
+        public virtual int Min => min;
 
         /// <summary>
         /// Returns maximum of this transition interval. </summary>
-        public virtual int Max
-        {
-            get
-            {
-                return max;
-            }
-        }
+        public virtual int Max => max;
 
         /// <summary>
         /// Returns destination of this transition. </summary>
-        public virtual State Dest
-        {
-            get
-            {
-                return to;
-            }
-        }
+        public virtual State Dest => to;
 
         /// <summary>
         /// Checks for equality.

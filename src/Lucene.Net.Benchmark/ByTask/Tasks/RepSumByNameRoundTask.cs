@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Stats;
-using Lucene.Net.Support;
 using System.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -55,7 +55,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         protected virtual Report ReportSumByNameRound(IList<TaskStats> taskStats)
         {
             // aggregate by task name and round
-            LinkedHashMap<string, TaskStats> p2 = new LinkedHashMap<string, TaskStats>();
+            JCG.LinkedDictionary<string, TaskStats> p2 = new JCG.LinkedDictionary<string, TaskStats>();
             int reported = 0;
             foreach (TaskStats stat1 in taskStats)
             {

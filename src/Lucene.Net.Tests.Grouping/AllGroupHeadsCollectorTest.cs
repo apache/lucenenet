@@ -7,7 +7,6 @@ using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Search.Grouping.Function;
 using Lucene.Net.Search.Grouping.Terms;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -17,6 +16,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -481,7 +481,7 @@ namespace Lucene.Net.Search.Grouping
 
         private int[] CreateExpectedGroupHeads(string searchTerm, GroupDoc[] groupDocs, Sort docSort, bool sortByScoreOnly, int[] fieldIdToDocID)
         {
-            IDictionary<BytesRef, List<GroupDoc>> groupHeads = new HashMap<BytesRef, List<GroupDoc>>();
+            IDictionary<BytesRef, List<GroupDoc>> groupHeads = new JCG.Dictionary<BytesRef, List<GroupDoc>>();
             foreach (GroupDoc groupDoc in groupDocs)
             {
                 if (!groupDoc.content.StartsWith(searchTerm, StringComparison.Ordinal))

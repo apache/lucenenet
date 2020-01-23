@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -191,7 +192,7 @@ namespace Lucene.Net.Index
 #endif
                 random, dir);
             bool allowDups = random.NextBoolean();
-            HashSet<string> seen = new HashSet<string>();
+            ISet<string> seen = new JCG.HashSet<string>();
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS + " allowDups=" + allowDups);

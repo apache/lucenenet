@@ -1,3 +1,4 @@
+using J2N.Text;
 using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.Lucene46;
 using Lucene.Net.Codecs.PerField;
@@ -5,7 +6,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
 using System.Collections;
@@ -16,7 +16,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Directory = Lucene.Net.Store.Directory;
@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
         /// of directories) cannot be removed.</exception>
         public static void Rm(params DirectoryInfo[] locations)
         {
-            HashSet<FileSystemInfo> unremoved = Rm(new HashSet<FileSystemInfo>(), locations);
+            ISet<FileSystemInfo> unremoved = Rm(new JCG.HashSet<FileSystemInfo>(), locations);
             if (unremoved.Any())
             {
                 StringBuilder b = new StringBuilder("Could not remove the following files (in the order of attempts):\n");
@@ -78,7 +78,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private static HashSet<FileSystemInfo> Rm(HashSet<FileSystemInfo> unremoved, params DirectoryInfo[] locations)
+        private static ISet<FileSystemInfo> Rm(ISet<FileSystemInfo> unremoved, params DirectoryInfo[] locations)
         {
             foreach (DirectoryInfo location in locations)
             {
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// LUCENENET specific overload, since files and directories are different entities in .NET
         /// </summary>
-        private static HashSet<FileSystemInfo> Rm(HashSet<FileSystemInfo> unremoved, params FileInfo[] locations)
+        private static ISet<FileSystemInfo> Rm(ISet<FileSystemInfo> unremoved, params FileInfo[] locations)
         {
             foreach (FileInfo file in locations)
             {
@@ -446,17 +446,17 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Operators for <see cref="RandomRegexpishString(Random, int)"/>.
         /// </summary>
-        private static readonly IList<string> ops = Arrays.AsList(
-            ".", "?", 
+        private static readonly IList<string> ops = new string[] {
+            ".", "?",
             "{0," + MaxRecursionBound + "}", // bounded replacement for '*'
             "{1," + MaxRecursionBound + "}", // bounded replacement for '+'
-            "(", 
-            ")", 
-            "-", 
-            "[", 
-            "]", 
+            "(",
+            ")",
+            "-",
+            "[",
+            "]",
             "|"
-        );
+        };
 
         /// <summary>
         /// Returns a <see cref="string"/> thats "regexpish" (contains lots of operators typically found in regular expressions)
@@ -1227,7 +1227,7 @@ namespace Lucene.Net.Util
                 //case 3: // LUCENENET: Not ported
                 //    return CharBuffer.Wrap(@ref.Utf8ToString());
                 default:
-                    return new StringCharSequenceWrapper(@ref.Utf8ToString());
+                    return new StringCharSequence(@ref.Utf8ToString());
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using ICU4N.Text;
 using ICU4N.Util;
 using J2N;
+using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;

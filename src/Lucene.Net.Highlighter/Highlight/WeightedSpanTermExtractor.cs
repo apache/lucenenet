@@ -1,32 +1,33 @@
-﻿using Lucene.Net.Analysis;
+﻿using J2N.Text;
+using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Memory;
 using Lucene.Net.Queries;
 using Lucene.Net.Search.Spans;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Highlight
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Class used to extract <see cref="WeightedSpanTerm"/>s from a <see cref="Query"/> based on whether 
@@ -244,17 +245,19 @@ namespace Lucene.Net.Search.Highlight
         /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
         protected virtual void ExtractWeightedSpanTerms(IDictionary<string, WeightedSpanTerm> terms, SpanQuery spanQuery)
         {
-            HashSet<string> fieldNames;
+            ISet<string> fieldNames;
 
             if (fieldName == null)
             {
-                fieldNames = new HashSet<string>();
+                fieldNames = new JCG.HashSet<string>();
                 CollectSpanQueryFields(spanQuery, fieldNames);
             }
             else
             {
-                fieldNames = new HashSet<string>();
-                fieldNames.Add(fieldName);
+                fieldNames = new JCG.HashSet<string>
+                {
+                    fieldName
+                };
             }
             // To support the use of the default field name
             if (defaultField != null)
@@ -262,9 +265,9 @@ namespace Lucene.Net.Search.Highlight
                 fieldNames.Add(defaultField);
             }
 
-            IDictionary<string, SpanQuery> queries = new HashMap<string, SpanQuery>();
+            IDictionary<string, SpanQuery> queries = new JCG.Dictionary<string, SpanQuery>();
 
-            var nonWeightedTerms = new HashSet<Term>();
+            var nonWeightedTerms = new JCG.HashSet<Term>();
             bool mustRewriteQuery = MustRewriteQuery(spanQuery);
             if (mustRewriteQuery)
             {
@@ -288,8 +291,8 @@ namespace Lucene.Net.Search.Highlight
                 q = mustRewriteQuery ? queries[field] : spanQuery;
 
                 AtomicReaderContext context = GetLeafContext();
-                var termContexts = new HashMap<Term, TermContext>();
-                TreeSet<Term> extractedTerms = new TreeSet<Term>();
+                var termContexts = new JCG.Dictionary<Term, TermContext>();
+                ISet<Term> extractedTerms = new JCG.SortedSet<Term>();
                 q.ExtractTerms(extractedTerms);
                 foreach (Term term in extractedTerms)
                 {
@@ -343,7 +346,7 @@ namespace Lucene.Net.Search.Highlight
         /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
         protected virtual void ExtractWeightedTerms(IDictionary<string, WeightedSpanTerm> terms, Query query)
         {
-            var nonWeightedTerms = new HashSet<Term>();
+            var nonWeightedTerms = new JCG.HashSet<Term>();
             query.ExtractTerms(nonWeightedTerms);
 
             foreach (Term queryTerm in nonWeightedTerms)

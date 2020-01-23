@@ -1,25 +1,24 @@
 ﻿using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.El
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// A stemmer for Greek words, according to: <c>Development of a Stemmer for the
@@ -256,7 +255,7 @@ namespace Lucene.Net.Analysis.El
         }
 
 #pragma warning disable 612, 618
-        private static readonly CharArraySet exc4 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, Arrays.AsList("θ", "δ", "ελ", "γαλ", "ν", "π", "ιδ", "παρ"), false);
+        private static readonly CharArraySet exc4 = new CharArraySet(LuceneVersion.LUCENE_CURRENT, new string[] { "θ", "δ", "ελ", "γαλ", "ν", "π", "ιδ", "παρ" }, false);
 #pragma warning restore 612, 618
 
         private int Rule4(char[] s, int len)
@@ -299,11 +298,11 @@ namespace Lucene.Net.Analysis.El
 #pragma warning disable 612, 618
             new CharArraySet(LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("αλ", "αδ", "ενδ", "αμαν", "αμμοχαλ", "ηθ", "ανηθ", 
-                "αντιδ", "φυσ", "βρωμ", "γερ", "εξωδ", "καλπ", "καλλιν", "καταδ", 
-                "μουλ", "μπαν", "μπαγιατ", "μπολ", "μποσ", "νιτ", "ξικ", "συνομηλ", 
-                "πετσ", "πιτσ", "πικαντ", "πλιατσ", "ποστελν", "πρωτοδ", "σερτ", 
-                "συναδ", "τσαμ", "υποδ", "φιλον", "φυλοδ", "χασ"), false);
+            new string[] { "αλ", "αδ", "ενδ", "αμαν", "αμμοχαλ", "ηθ", "ανηθ",
+                "αντιδ", "φυσ", "βρωμ", "γερ", "εξωδ", "καλπ", "καλλιν", "καταδ",
+                "μουλ", "μπαν", "μπαγιατ", "μπολ", "μποσ", "νιτ", "ξικ", "συνομηλ",
+                "πετσ", "πιτσ", "πικαντ", "πλιατσ", "ποστελν", "πρωτοδ", "σερτ",
+                "συναδ", "τσαμ", "υποδ", "φιλον", "φυλοδ", "χασ" }, false);
 
         private int Rule6(char[] s, int len)
         {
@@ -335,8 +334,8 @@ namespace Lucene.Net.Analysis.El
 #pragma warning disable 612, 618
             new CharArraySet(LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("αναπ", "αποθ", "αποκ", "αποστ", "βουβ", "ξεθ", "ουλ", 
-                "πεθ", "πικρ", "ποτ", "σιχ", "χ"), false);
+            new string[] { "αναπ", "αποθ", "αποκ", "αποστ", "βουβ", "ξεθ", "ουλ",
+                "πεθ", "πικρ", "ποτ", "σιχ", "χ" }, false);
 
         private int Rule7(char[] s, int len)
         {
@@ -376,25 +375,25 @@ namespace Lucene.Net.Analysis.El
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("τρ", "τσ"), false);
+            new string[] { "τρ", "τσ" }, false);
 
         private static readonly CharArraySet exc8b = new CharArraySet(
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("βετερ", "βουλκ", "βραχμ", "γ", "δραδουμ", "θ", "καλπουζ", 
-                "καστελ", "κορμορ", "λαοπλ", "μωαμεθ", "μ", "μουσουλμ", "ν", "ουλ", 
-                "π", "πελεκ", "πλ", "πολισ", "πορτολ", "σαρακατσ", "σουλτ", 
-                "τσαρλατ", "ορφ", "τσιγγ", "τσοπ", "φωτοστεφ", "χ", "ψυχοπλ", "αγ", 
-                "ορφ", "γαλ", "γερ", "δεκ", "διπλ", "αμερικαν", "ουρ", "πιθ", 
-                "πουριτ", "σ", "ζωντ", "ικ", "καστ", "κοπ", "λιχ", "λουθηρ", "μαιντ", 
-                "μελ", "σιγ", "σπ", "στεγ", "τραγ", "τσαγ", "φ", "ερ", "αδαπ", 
-                "αθιγγ", "αμηχ", "ανικ", "ανοργ", "απηγ", "απιθ", "ατσιγγ", "βασ", 
-                "βασκ", "βαθυγαλ", "βιομηχ", "βραχυκ", "διατ", "διαφ", "ενοργ", 
-                "θυσ", "καπνοβιομηχ", "καταγαλ", "κλιβ", "κοιλαρφ", "λιβ", 
-                "μεγλοβιομηχ", "μικροβιομηχ", "νταβ", "ξηροκλιβ", "ολιγοδαμ", 
-                "ολογαλ", "πενταρφ", "περηφ", "περιτρ", "πλατ", "πολυδαπ", "πολυμηχ", 
-                "στεφ", "ταβ", "τετ", "υπερηφ", "υποκοπ", "χαμηλοδαπ", "ψηλοταβ"), false);
+            new string[] { "βετερ", "βουλκ", "βραχμ", "γ", "δραδουμ", "θ", "καλπουζ",
+                "καστελ", "κορμορ", "λαοπλ", "μωαμεθ", "μ", "μουσουλμ", "ν", "ουλ",
+                "π", "πελεκ", "πλ", "πολισ", "πορτολ", "σαρακατσ", "σουλτ",
+                "τσαρλατ", "ορφ", "τσιγγ", "τσοπ", "φωτοστεφ", "χ", "ψυχοπλ", "αγ",
+                "ορφ", "γαλ", "γερ", "δεκ", "διπλ", "αμερικαν", "ουρ", "πιθ",
+                "πουριτ", "σ", "ζωντ", "ικ", "καστ", "κοπ", "λιχ", "λουθηρ", "μαιντ",
+                "μελ", "σιγ", "σπ", "στεγ", "τραγ", "τσαγ", "φ", "ερ", "αδαπ",
+                "αθιγγ", "αμηχ", "ανικ", "ανοργ", "απηγ", "απιθ", "ατσιγγ", "βασ",
+                "βασκ", "βαθυγαλ", "βιομηχ", "βραχυκ", "διατ", "διαφ", "ενοργ",
+                "θυσ", "καπνοβιομηχ", "καταγαλ", "κλιβ", "κοιλαρφ", "λιβ",
+                "μεγλοβιομηχ", "μικροβιομηχ", "νταβ", "ξηροκλιβ", "ολιγοδαμ",
+                "ολογαλ", "πενταρφ", "περηφ", "περιτρ", "πλατ", "πολυδαπ", "πολυμηχ",
+                "στεφ", "ταβ", "τετ", "υπερηφ", "υποκοπ", "χαμηλοδαπ", "ψηλοταβ" }, false);
 
         private int Rule8(char[] s, int len)
         {
@@ -454,9 +453,9 @@ namespace Lucene.Net.Analysis.El
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("αβαρ", "βεν", "εναρ", "αβρ", "αδ", "αθ", "αν", "απλ", 
-                "βαρον", "ντρ", "σκ", "κοπ", "μπορ", "νιφ", "παγ", "παρακαλ", "σερπ", 
-                "σκελ", "συρφ", "τοκ", "υ", "δ", "εμ", "θαρρ", "θ"), false);
+            new string[] { "αβαρ", "βεν", "εναρ", "αβρ", "αδ", "αθ", "αν", "απλ",
+                "βαρον", "ντρ", "σκ", "κοπ", "μπορ", "νιφ", "παγ", "παρακαλ", "σερπ",
+                "σκελ", "συρφ", "τοκ", "υ", "δ", "εμ", "θαρρ", "θ" }, false);
 
         private int Rule9(char[] s, int len)
         {
@@ -557,10 +556,10 @@ namespace Lucene.Net.Analysis.El
 
 #pragma warning disable 612, 618
         private static readonly CharArraySet exc12a = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
-            Arrays.AsList("π", "απ", "συμπ", "ασυμπ", "ακαταπ", "αμεταμφ"), false);
+            new string[] { "π", "απ", "συμπ", "ασυμπ", "ακαταπ", "αμεταμφ" }, false);
 
         private static readonly CharArraySet exc12b = new CharArraySet(LuceneVersion.LUCENE_CURRENT, 
-            Arrays.AsList("αλ", "αρ", "εκτελ", "ζ", "μ", "ξ", "παρακαλ", "αρ", "προ", "νισ"), false);
+            new string[] { "αλ", "αρ", "εκτελ", "ζ", "μ", "ξ", "παρακαλ", "αρ", "προ", "νισ" }, false);
 #pragma warning restore 612, 618
 
         private int Rule12(char[] s, int len)
@@ -590,7 +589,7 @@ namespace Lucene.Net.Analysis.El
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("διαθ", "θ", "παρακαταθ", "προσθ", "συνθ"), false);
+            new string[] { "διαθ", "θ", "παρακαταθ", "προσθ", "συνθ" }, false);
 
         private int Rule13(char[] s, int len)
         {
@@ -634,9 +633,9 @@ namespace Lucene.Net.Analysis.El
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("φαρμακ", "χαδ", "αγκ", "αναρρ", "βρομ", "εκλιπ", "λαμπιδ", 
-                "λεχ", "μ", "πατ", "ρ", "λ", "μεδ", "μεσαζ", "υποτειν", "αμ", "αιθ", 
-                "ανηκ", "δεσποζ", "ενδιαφερ", "δε", "δευτερευ", "καθαρευ", "πλε", "τσα"), false);
+            new string[] { "φαρμακ", "χαδ", "αγκ", "αναρρ", "βρομ", "εκλιπ", "λαμπιδ",
+                "λεχ", "μ", "πατ", "ρ", "λ", "μεδ", "μεσαζ", "υποτειν", "αμ", "αιθ",
+                "ανηκ", "δεσποζ", "ενδιαφερ", "δε", "δευτερευ", "καθαρευ", "πλε", "τσα" }, false);
 
         private int Rule14(char[] s, int len)
         {
@@ -679,18 +678,18 @@ namespace Lucene.Net.Analysis.El
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("αβαστ", "πολυφ", "αδηφ", "παμφ", "ρ", "ασπ", "αφ", "αμαλ", 
-                "αμαλλι", "ανυστ", "απερ", "ασπαρ", "αχαρ", "δερβεν", "δροσοπ", 
-                "ξεφ", "νεοπ", "νομοτ", "ολοπ", "ομοτ", "προστ", "προσωποπ", "συμπ", 
-                "συντ", "τ", "υποτ", "χαρ", "αειπ", "αιμοστ", "ανυπ", "αποτ", 
-                "αρτιπ", "διατ", "εν", "επιτ", "κροκαλοπ", "σιδηροπ", "λ", "ναυ", 
-                "ουλαμ", "ουρ", "π", "τρ", "μ"), false);
+            new string[] { "αβαστ", "πολυφ", "αδηφ", "παμφ", "ρ", "ασπ", "αφ", "αμαλ",
+                "αμαλλι", "ανυστ", "απερ", "ασπαρ", "αχαρ", "δερβεν", "δροσοπ",
+                "ξεφ", "νεοπ", "νομοτ", "ολοπ", "ομοτ", "προστ", "προσωποπ", "συμπ",
+                "συντ", "τ", "υποτ", "χαρ", "αειπ", "αιμοστ", "ανυπ", "αποτ",
+                "αρτιπ", "διατ", "εν", "επιτ", "κροκαλοπ", "σιδηροπ", "λ", "ναυ",
+                "ουλαμ", "ουρ", "π", "τρ", "μ" }, false);
 
         private static readonly CharArraySet exc15b = new CharArraySet(
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("ψοφ", "ναυλοχ"), false);
+            new string[] { "ψοφ", "ναυλοχ" }, false);
 
         private int Rule15(char[] s, int len)
         {
@@ -735,7 +734,7 @@ namespace Lucene.Net.Analysis.El
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("ν", "χερσον", "δωδεκαν", "ερημον", "μεγαλον", "επταν"), false);
+            new string[] { "ν", "χερσον", "δωδεκαν", "ερημον", "μεγαλον", "επταν" }, false);
 
         private int Rule16(char[] s, int len)
         {
@@ -763,7 +762,7 @@ namespace Lucene.Net.Analysis.El
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("ασβ", "σβ", "αχρ", "χρ", "απλ", "αειμν", "δυσχρ", "ευχρ", "κοινοχρ", "παλιμψ"), false);
+            new string[] { "ασβ", "σβ", "αχρ", "χρ", "απλ", "αειμν", "δυσχρ", "ευχρ", "κοινοχρ", "παλιμψ" }, false);
 
         private int Rule17(char[] s, int len)
         {
@@ -783,7 +782,7 @@ namespace Lucene.Net.Analysis.El
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("ν", "ρ", "σπι", "στραβομουτσ", "κακομουτσ", "εξων"), false);
+            new string[] { "ν", "ρ", "σπι", "στραβομουτσ", "κακομουτσ", "εξων" }, false);
 
         private int Rule18(char[] s, int len)
         {
@@ -814,7 +813,7 @@ namespace Lucene.Net.Analysis.El
 #pragma warning disable 612, 618
             LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-            Arrays.AsList("παρασουσ", "φ", "χ", "ωριοπλ", "αζ", "αλλοσουσ", "ασουσ"), false);
+            new string[] { "παρασουσ", "φ", "χ", "ωριοπλ", "αζ", "αλλοσουσ", "ασουσ" }, false);
 
         private int Rule19(char[] s, int len)
         {

@@ -11,7 +11,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
+using J2N.Collections.Generic.Extensions;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -308,7 +310,7 @@ namespace Lucene.Net.Util.Fst
                 for (int inputMode = 0; inputMode < 2; inputMode++)
                 {
                     int numWords = random.Next(maxNumWords + 1);
-                    HashSet<Int32sRef> termsSet = new HashSet<Int32sRef>();
+                    ISet<Int32sRef> termsSet = new JCG.HashSet<Int32sRef>();
                     Int32sRef[] terms = new Int32sRef[numWords];
                     while (termsSet.Count < numWords)
                     {
@@ -1040,7 +1042,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     Console.WriteLine("TEST: NUM_IDS=" + NUM_IDS);
                 }
-                HashSet<string> allIDs = new HashSet<string>();
+                ISet<string> allIDs = new JCG.HashSet<string>();
                 for (int id = 0; id < NUM_IDS; id++)
                 {
                     string idString;
@@ -1078,7 +1080,7 @@ namespace Lucene.Net.Util.Fst
                 CollectionUtil.TimSort(sortedAllIDsList);
 
                 // Sprinkle in some non-existent PKs:
-                HashSet<string> outOfBounds = new HashSet<string>();
+                ISet<string> outOfBounds = new JCG.HashSet<string>();
                 for (int idx = 0; idx < NUM_IDS / 10; idx++)
                 {
                     string idString;
@@ -1206,7 +1208,7 @@ namespace Lucene.Net.Util.Fst
                 Console.WriteLine("TEST: NUM_TERMS=" + NUM_TERMS);
             }
 
-            HashSet<string> allTerms = new HashSet<string>();
+            ISet<string> allTerms = new JCG.HashSet<string>();
             while (allTerms.Count < NUM_TERMS)
             {
                 allTerms.Add(FSTTester<object>.SimpleRandomString(Random));
@@ -1232,7 +1234,7 @@ namespace Lucene.Net.Util.Fst
             w.Dispose();
 
             IList<string> allTermsList = new List<string>(allTerms);
-            Collections.Shuffle(allTermsList);
+            allTermsList.Shuffle();
 
             // verify exact lookup
             foreach (string term in allTermsList)
@@ -1637,8 +1639,8 @@ namespace Lucene.Net.Util.Fst
             Random random = Random;
             int numWords = AtLeast(1000);
 
-            SortedDictionary<string, long> slowCompletor = new SortedDictionary<string, long>(StringComparer.Ordinal);
-            SortedSet<string> allPrefixes = new SortedSet<string>(StringComparer.Ordinal);
+            JCG.SortedDictionary<string, long> slowCompletor = new JCG.SortedDictionary<string, long>(StringComparer.Ordinal);
+            JCG.SortedSet<string> allPrefixes = new JCG.SortedSet<string>(StringComparer.Ordinal);
 
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
@@ -1776,8 +1778,8 @@ namespace Lucene.Net.Util.Fst
         {
             int numWords = AtLeast(1000);
 
-            SortedDictionary<string, TwoLongs> slowCompletor = new SortedDictionary<string, TwoLongs>(StringComparer.Ordinal);
-            SortedSet<string> allPrefixes = new SortedSet<string>(StringComparer.Ordinal);
+            JCG.SortedDictionary<string, TwoLongs> slowCompletor = new JCG.SortedDictionary<string, TwoLongs>(StringComparer.Ordinal);
+            JCG.SortedSet<string> allPrefixes = new JCG.SortedSet<string>(StringComparer.Ordinal);
 
             PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(PositiveInt32Outputs.Singleton, PositiveInt32Outputs.Singleton); // output -  weight
             Builder<Pair> builder = new Builder<Pair>(FST.INPUT_TYPE.BYTE1, outputs);

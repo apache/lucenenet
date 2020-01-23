@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis.CharFilters
@@ -323,7 +324,7 @@ namespace Lucene.Net.Analysis.CharFilters
             Random random = Random;
             NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
             // we can't add duplicate keys, or NormalizeCharMap gets angry
-            ISet<string> keys = new HashSet<string>();
+            ISet<string> keys = new JCG.HashSet<string>();
             int num = random.Next(5);
             //System.out.println("NormalizeCharMap=");
             for (int i = 0; i < num; i++)

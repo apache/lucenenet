@@ -1,8 +1,10 @@
+using J2N.Runtime.CompilerServices;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -84,7 +86,7 @@ namespace Lucene.Net.Index
         }
 
         internal readonly IDictionary<string, DocValuesProducer> dvProducersByField = new Dictionary<string, DocValuesProducer>();
-        internal readonly ISet<DocValuesProducer> dvProducers = new IdentityHashSet<DocValuesProducer>();
+        internal readonly ISet<DocValuesProducer> dvProducers = new JCG.HashSet<DocValuesProducer>(IdentityEqualityComparer<DocValuesProducer>.Default);
 
         private readonly FieldInfos fieldInfos; // LUCENENET specific - since it is readonly, made all internal classes use property
 

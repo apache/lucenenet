@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System.IO;
 
@@ -29,7 +28,7 @@ namespace Lucene.Net.Analysis.CommonGrams
     /// </summary>
     public class CommonGramsFilterTest : BaseTokenStreamTestCase
     {
-        private static readonly CharArraySet commonWords = new CharArraySet(TEST_VERSION_CURRENT, Arrays.AsList("s", "a", "b", "c", "d", "the", "of"), false);
+        private static readonly CharArraySet commonWords = new CharArraySet(TEST_VERSION_CURRENT, new string[] { "s", "a", "b", "c", "d", "the", "of" }, false);
 
         [Test]
         public virtual void TestReset()

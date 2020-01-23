@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Support;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.VectorHighlight
 {
@@ -51,8 +51,8 @@ namespace Lucene.Net.Search.VectorHighlight
         public SimpleBoundaryScanner(int maxScan, char[] boundaryChars)
         {
             this.m_maxScan = maxScan;
-            this.m_boundaryChars = new HashSet<char>();
-            this.m_boundaryChars.UnionWith(Arrays.AsList(boundaryChars));
+            this.m_boundaryChars = new JCG.HashSet<char>();
+            this.m_boundaryChars.UnionWith(boundaryChars);
         }
 
         public SimpleBoundaryScanner(int maxScan, ISet<char> boundaryChars)

@@ -23,3 +23,4 @@ JaspellTernarySearchTrie\.cs
 RectangularArrays\.cs
 LimitedConcurrencyLevelTaskScheduler\.cs
 Automaton/*
+ConcurrentHashSet\.cs

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -134,7 +135,7 @@ namespace Lucene.Net.Codecs.Memory
         private sealed class DirectFields : FieldsProducer
         {
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-            private readonly IDictionary<string, DirectField> fields = new SortedDictionary<string, DirectField>(StringComparer.Ordinal);
+            private readonly IDictionary<string, DirectField> fields = new JCG.SortedDictionary<string, DirectField>(StringComparer.Ordinal);
 
             public DirectFields(SegmentReadState state, Fields fields, int minSkipCount, int lowFreqCutoff)
             {

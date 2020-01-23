@@ -82,7 +82,7 @@ namespace Lucene.Net.Spatial
             indexWriter.AddDocument(doc);
         }
 
-        protected virtual void addDocumentsAndCommit(List<Document> documents)
+        protected virtual void addDocumentsAndCommit(IList<Document> documents)
         {
             foreach (Document document in documents)
             {

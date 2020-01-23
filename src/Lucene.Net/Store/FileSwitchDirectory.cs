@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -88,7 +89,7 @@ namespace Lucene.Net.Store
 
         public override string[] ListAll()
         {
-            ISet<string> files = new HashSet<string>();
+            ISet<string> files = new JCG.HashSet<string>();
             // LUCENE-3380: either or both of our dirs could be FSDirs,
             // but if one underlying delegate is an FSDir and mkdirs() has not
             // yet been called, because so far everything is written to the other,

@@ -1,4 +1,5 @@
-using Lucene.Net.Support;
+using J2N.Collections;
+using J2N.Collections.Generic.Extensions;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -55,7 +56,7 @@ namespace Lucene.Net.Index
         private CompositeReaderContext(CompositeReaderContext parent, CompositeReader reader, int ordInParent, int docbaseInParent, IList<IndexReaderContext> children, IList<AtomicReaderContext> leaves)
             : base(parent, ordInParent, docbaseInParent)
         {
-            this.children = Collections.UnmodifiableList(children);
+            this.children = children.AsReadOnly();
             this.leaves = leaves;
             this.reader = reader;
         }
@@ -73,15 +74,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override IList<IndexReaderContext> Children
-        {
-            get { return children; }
-        }
+        public override IList<IndexReaderContext> Children => children;
 
-        public override IndexReader Reader
-        {
-            get { return reader; }
-        }
+        public override IndexReader Reader => reader;
 
         public sealed class Builder
         {
@@ -113,7 +108,7 @@ namespace Lucene.Net.Index
                 {
                     CompositeReader cr = (CompositeReader)reader;
                     var sequentialSubReaders = cr.GetSequentialSubReaders();
-                    var children = Arrays.AsList(new IndexReaderContext[sequentialSubReaders.Count]);
+                    var children = new IndexReaderContext[sequentialSubReaders.Count];
                     CompositeReaderContext newParent;
                     if (parent == null)
                     {

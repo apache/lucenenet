@@ -1,5 +1,5 @@
+using J2N.Text;
 using Lucene.Net.Attributes;
-using Lucene.Net.Support;
 using NUnit.Framework;
 
 namespace Lucene.Net.Util
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
         {
             for (int i = 0; i < 100; i++)
             {
-                ICharSequence s = new StringCharSequenceWrapper(TestUtil.RandomUnicodeString(Random));
+                ICharSequence s = new StringCharSequence(TestUtil.RandomUnicodeString(Random));
                 string s2 = (new BytesRef(s)).Utf8ToString();
                 Assert.AreEqual(s, s2);
             }

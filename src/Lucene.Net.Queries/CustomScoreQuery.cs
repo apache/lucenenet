@@ -384,7 +384,7 @@ namespace Lucene.Net.Queries
 
             public override ICollection<ChildScorer> GetChildren()
             {
-                return Collections.Singleton(new ChildScorer(subQueryScorer, "CUSTOM"));
+                return new List<ChildScorer> { new ChildScorer(subQueryScorer, "CUSTOM") };
             }
 
             public override int Advance(int target)

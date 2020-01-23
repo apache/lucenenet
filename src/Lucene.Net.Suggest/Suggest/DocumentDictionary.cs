@@ -5,6 +5,7 @@ using Lucene.Net.Search.Spell;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
 {
@@ -112,14 +113,14 @@ namespace Lucene.Net.Search.Suggest
 
 
             private readonly int docCount;
-            private readonly HashSet<string> relevantFields;
+            private readonly ISet<string> relevantFields;
             private readonly bool hasPayloads;
             private readonly bool hasContexts;
             private readonly IBits liveDocs;
             private int currentDocId = -1;
             private long currentWeight;
             private BytesRef currentPayload;
-            private HashSet<BytesRef> currentContexts;
+            private ISet<BytesRef> currentContexts;
             private readonly NumericDocValues weightValues;
 
 
@@ -166,7 +167,7 @@ namespace Lucene.Net.Search.Suggest
 
                     BytesRef tempPayload = null;
                     BytesRef tempTerm = null;
-                    HashSet<BytesRef> tempContexts = new HashSet<BytesRef>();
+                    ISet<BytesRef> tempContexts = new JCG.HashSet<BytesRef>();
 
                     if (hasPayloads)
                     {
@@ -210,15 +211,9 @@ namespace Lucene.Net.Search.Suggest
                 return null;
             }
 
-            public virtual BytesRef Payload
-            {
-                get { return currentPayload; }
-            }
+            public virtual BytesRef Payload => currentPayload;
 
-            public virtual bool HasPayloads
-            {
-                get { return hasPayloads; }
-            }
+            public virtual bool HasPayloads => hasPayloads;
 
             /// <summary>
             /// Returns the value of the <see cref="Weight"/> property for the current document.
@@ -243,9 +238,9 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            private HashSet<string> GetRelevantFields(params string[] fields)
+            private ISet<string> GetRelevantFields(params string[] fields)
             {
-                var relevantFields = new HashSet<string>();
+                var relevantFields = new JCG.HashSet<string>();
                 foreach (string relevantField in fields)
                 {
                     if (relevantField != null)
@@ -268,10 +263,7 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            public virtual bool HasContexts
-            {
-                get { return hasContexts; }
-            }
+            public virtual bool HasContexts => hasContexts;
         }
     }
 }

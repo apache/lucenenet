@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using Lucene.Net.Attributes;
+using J2N.Text;
 
 namespace Lucene.Net.Util
 {

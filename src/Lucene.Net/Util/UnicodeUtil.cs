@@ -1,4 +1,5 @@
-using Lucene.Net.Support;
+using J2N;
+using J2N.Text;
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -117,7 +118,7 @@ namespace Lucene.Net.Util
         private const long HALF_SHIFT = 10;
         private const long HALF_MASK = 0x3FFL;
 
-        private const int SURROGATE_OFFSET = Character.MIN_SUPPLEMENTARY_CODE_POINT - (UNI_SUR_HIGH_START << (int)HALF_SHIFT) - UNI_SUR_LOW_START;
+        private const int SURROGATE_OFFSET = Character.MinSupplementaryCodePoint - (UNI_SUR_HIGH_START << (int)HALF_SHIFT) - UNI_SUR_LOW_START;
 
         /// <summary>
         /// Encode characters from a <see cref="T:char[]"/> <paramref name="source"/>, starting at

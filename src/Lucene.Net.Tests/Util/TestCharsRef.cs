@@ -1,5 +1,6 @@
+using J2N.Text;
 using Lucene.Net.Attributes;
-using Lucene.Net.Support;
+//using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Text;
@@ -162,7 +163,7 @@ namespace Lucene.Net.Util
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.IndexOutOfRangeException expected)
+            catch (ArgumentOutOfRangeException expected)
 #pragma warning restore 168
             {
                 // expected exception
@@ -174,7 +175,7 @@ namespace Lucene.Net.Util
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.IndexOutOfRangeException expected)
+            catch (ArgumentOutOfRangeException expected)
 #pragma warning restore 168
             {
                 // expected exception
@@ -186,7 +187,12 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestCharSequenceSubSequence()
         {
-            ICharSequence[] sequences = { new CharsRef("abc"), new CharsRef("0abc".ToCharArray(), 1, 3), new CharsRef("abc0".ToCharArray(), 0, 3), new CharsRef("0abc0".ToCharArray(), 1, 3) };
+            ICharSequence[] sequences = {
+                new CharsRef("abc"),
+                new CharsRef("0abc".ToCharArray(), 1, 3),
+                new CharsRef("abc0".ToCharArray(), 0, 3),
+                new CharsRef("0abc0".ToCharArray(), 1, 3)
+            };
 
             foreach (ICharSequence c in sequences)
             {
@@ -197,21 +203,21 @@ namespace Lucene.Net.Util
         private void DoTestSequence(ICharSequence c)
         {
             // slice
-            Assert.AreEqual("a", c.SubSequence(0, 1).ToString());
+            Assert.AreEqual("a", c.Subsequence(0, 1 - 0).ToString()); // LUCENENET: Corrected 2nd parameter
             // mid subsequence
-            Assert.AreEqual("b", c.SubSequence(1, 2).ToString());
+            Assert.AreEqual("b", c.Subsequence(1, 2 - 1).ToString()); // LUCENENET: Corrected 2nd parameter
             // end subsequence
-            Assert.AreEqual("bc", c.SubSequence(1, 3).ToString());
+            Assert.AreEqual("bc", c.Subsequence(1, 3 - 1).ToString()); // LUCENENET: Corrected 2nd parameter
             // empty subsequence
-            Assert.AreEqual("", c.SubSequence(0, 0).ToString());
+            Assert.AreEqual("", c.Subsequence(0, 0 - 0).ToString()); // LUCENENET: Corrected 2nd parameter
 
             try
             {
-                c.SubSequence(-1, 1);
+                c.Subsequence(-1, 1 - -1); // LUCENENET: Corrected 2nd parameter
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.IndexOutOfRangeException expected)
+            catch (ArgumentOutOfRangeException expected)
 #pragma warning restore 168
             {
                 // expected exception
@@ -219,11 +225,11 @@ namespace Lucene.Net.Util
 
             try
             {
-                c.SubSequence(0, -1);
+                c.Subsequence(0, -1 - 0); // LUCENENET: Corrected 2nd parameter
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.IndexOutOfRangeException expected)
+            catch (ArgumentOutOfRangeException expected)
 #pragma warning restore 168
             {
                 // expected exception
@@ -231,11 +237,11 @@ namespace Lucene.Net.Util
 
             try
             {
-                c.SubSequence(0, 4);
+                c.Subsequence(0, 4 - 0); // LUCENENET: Corrected 2nd parameter
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.IndexOutOfRangeException expected)
+            catch (ArgumentOutOfRangeException expected)
 #pragma warning restore 168
             {
                 // expected exception
@@ -243,11 +249,11 @@ namespace Lucene.Net.Util
 
             try
             {
-                c.SubSequence(2, 1);
+                c.Subsequence(2, 1 - 2); // LUCENENET: Corrected 2nd parameter
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.IndexOutOfRangeException expected)
+            catch (ArgumentOutOfRangeException expected)
 #pragma warning restore 168
             {
                 // expected exception

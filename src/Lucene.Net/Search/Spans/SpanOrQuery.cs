@@ -1,8 +1,8 @@
-using Lucene.Net.Support;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -37,7 +37,7 @@ namespace Lucene.Net.Search.Spans
         , System.ICloneable
 #endif
     {
-        private readonly EquatableList<SpanQuery> clauses;
+        private readonly IList<SpanQuery> clauses;
         private string field;
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Spans
         internal SpanOrQuery(IList<SpanQuery> clauses)
         {
             // copy clauses array into an ArrayList
-            this.clauses = new EquatableList<SpanQuery>(clauses.Count);
+            this.clauses = new JCG.List<SpanQuery>(clauses.Count);
             for (int i = 0; i < clauses.Count; i++)
             {
                 AddClause(clauses[i]);
@@ -81,13 +81,7 @@ namespace Lucene.Net.Search.Spans
             return clauses.ToArray();
         }
 
-        public override string Field
-        {
-            get
-            {
-                return field;
-            }
-        }
+        public override string Field => field;
 
         public override void ExtractTerms(ISet<Term> terms)
         {

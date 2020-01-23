@@ -10,6 +10,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -891,7 +892,7 @@ namespace Lucene.Net.Index
             const float SECONDS = 0.5f;
 
             long endTime = (long)(Environment.TickCount + 1000.0 * SECONDS);
-            ConcurrentHashSet<Exception> excs = new ConcurrentHashSet<Exception>();
+            ConcurrentQueue<Exception> excs = new ConcurrentQueue<Exception>();
 
             // Only one thread can addIndexes at a time, because
             // IndexWriter acquires a write lock in each directory:
@@ -953,9 +954,9 @@ namespace Lucene.Net.Index
             private IndexWriter Writer;
             private Directory[] Dirs;
             private long EndTime;
-            private ISet<Exception> Excs;
+            private ConcurrentQueue<Exception> Excs;
 
-            public ThreadAnonymousInnerClassHelper(IndexWriter writer, Directory[] dirs, long endTime, ISet<Exception> excs)
+            public ThreadAnonymousInnerClassHelper(IndexWriter writer, Directory[] dirs, long endTime, ConcurrentQueue<Exception> excs)
             {
                 this.Writer = writer;
                 this.Dirs = dirs;
@@ -974,7 +975,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception t)
                     {
-                        Excs.Add(t);
+                        Excs.Enqueue(t);
                         throw new Exception(t.Message, t);
                     }
                 } while (Environment.TickCount < EndTime);

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Store
 {
@@ -30,7 +31,7 @@ namespace Lucene.Net.Store
     /// <seealso cref="LockFactory"/>
     public class SingleInstanceLockFactory : LockFactory
     {
-        private HashSet<string> locks = new HashSet<string>();
+        private JCG.HashSet<string> locks = new JCG.HashSet<string>();
 
         public override Lock MakeLock(string lockName)
         {
@@ -55,9 +56,9 @@ namespace Lucene.Net.Store
     internal class SingleInstanceLock : Lock
     {
         internal string lockName;
-        private HashSet<string> locks;
+        private JCG.HashSet<string> locks;
 
-        public SingleInstanceLock(HashSet<string> locks, string lockName)
+        public SingleInstanceLock(JCG.HashSet<string> locks, string lockName)
         {
             this.locks = locks;
             this.lockName = lockName;

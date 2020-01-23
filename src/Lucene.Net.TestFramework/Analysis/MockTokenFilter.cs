@@ -38,16 +38,16 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Set of common english stopwords </summary>
         public static readonly CharacterRunAutomaton ENGLISH_STOPSET = 
-            new CharacterRunAutomaton(BasicOperations.Union(Arrays.AsList(
-                BasicAutomata.MakeString("a"), BasicAutomata.MakeString("an"), BasicAutomata.MakeString("and"), BasicAutomata.MakeString("are"), 
-                BasicAutomata.MakeString("as"), BasicAutomata.MakeString("at"), BasicAutomata.MakeString("be"), BasicAutomata.MakeString("but"), 
-                BasicAutomata.MakeString("by"), BasicAutomata.MakeString("for"), BasicAutomata.MakeString("if"), BasicAutomata.MakeString("in"), 
-                BasicAutomata.MakeString("into"), BasicAutomata.MakeString("is"), BasicAutomata.MakeString("it"), BasicAutomata.MakeString("no"), 
-                BasicAutomata.MakeString("not"), BasicAutomata.MakeString("of"), BasicAutomata.MakeString("on"), BasicAutomata.MakeString("or"), 
-                BasicAutomata.MakeString("such"), BasicAutomata.MakeString("that"), BasicAutomata.MakeString("the"), BasicAutomata.MakeString("their"), 
-                BasicAutomata.MakeString("then"), BasicAutomata.MakeString("there"), BasicAutomata.MakeString("these"), BasicAutomata.MakeString("they"), 
-                BasicAutomata.MakeString("this"), BasicAutomata.MakeString("to"), BasicAutomata.MakeString("was"), BasicAutomata.MakeString("will"), 
-                BasicAutomata.MakeString("with"))));
+            new CharacterRunAutomaton(BasicOperations.Union(new Automaton[] {
+                BasicAutomata.MakeString("a"), BasicAutomata.MakeString("an"), BasicAutomata.MakeString("and"), BasicAutomata.MakeString("are"),
+                BasicAutomata.MakeString("as"), BasicAutomata.MakeString("at"), BasicAutomata.MakeString("be"), BasicAutomata.MakeString("but"),
+                BasicAutomata.MakeString("by"), BasicAutomata.MakeString("for"), BasicAutomata.MakeString("if"), BasicAutomata.MakeString("in"),
+                BasicAutomata.MakeString("into"), BasicAutomata.MakeString("is"), BasicAutomata.MakeString("it"), BasicAutomata.MakeString("no"),
+                BasicAutomata.MakeString("not"), BasicAutomata.MakeString("of"), BasicAutomata.MakeString("on"), BasicAutomata.MakeString("or"),
+                BasicAutomata.MakeString("such"), BasicAutomata.MakeString("that"), BasicAutomata.MakeString("the"), BasicAutomata.MakeString("their"),
+                BasicAutomata.MakeString("then"), BasicAutomata.MakeString("there"), BasicAutomata.MakeString("these"), BasicAutomata.MakeString("they"),
+                BasicAutomata.MakeString("this"), BasicAutomata.MakeString("to"), BasicAutomata.MakeString("was"), BasicAutomata.MakeString("will"),
+                BasicAutomata.MakeString("with") } ));
 
         private readonly CharacterRunAutomaton filter;
 

@@ -1,4 +1,3 @@
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -6,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -472,26 +472,12 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns the number of delete terms in this <see cref="DocumentsWriterPerThread"/>
         /// </summary>
-        public virtual int NumDeleteTerms
-        {
-            get
-            {
-                // public for FlushPolicy
-                return pendingUpdates.numTermDeletes;
-            }
-        }
+        public virtual int NumDeleteTerms => pendingUpdates.numTermDeletes; // public for FlushPolicy
 
         /// <summary>
         /// Returns the number of RAM resident documents in this <see cref="DocumentsWriterPerThread"/>
         /// </summary>
-        public virtual int NumDocsInRAM
-        {
-            get
-            {
-                // public for FlushPolicy
-                return numDocsInRAM;
-            }
-        }
+        public virtual int NumDocsInRAM => numDocsInRAM; // public for FlushPolicy
 
         /// <summary>
         /// Prepares this DWPT for flushing. this method will freeze and return the
@@ -560,7 +546,7 @@ namespace Lucene.Net.Index
             {
                 consumer.Flush(flushState);
                 pendingUpdates.terms.Clear();
-                segmentInfo.SetFiles(new HashSet<string>(directory.CreatedFiles));
+                segmentInfo.SetFiles(new JCG.HashSet<string>(directory.CreatedFiles));
 
                 SegmentCommitInfo segmentInfoPerCommit = new SegmentCommitInfo(segmentInfo, 0, -1L, -1L);
                 if (infoStream.IsEnabled("DWPT"))
@@ -605,12 +591,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        private readonly HashSet<string> filesToDelete = new HashSet<string>();
+        private readonly JCG.HashSet<string> filesToDelete = new JCG.HashSet<string>();
 
-        public virtual ISet<string> PendingFilesToDelete
-        {
-            get { return filesToDelete; }
-        }
+        public virtual ISet<string> PendingFilesToDelete => filesToDelete;
 
         /// <summary>
         /// Seals the <see cref="Index.SegmentInfo"/> for the new flushed segment and persists
@@ -689,13 +672,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Get current segment info we are writing. </summary>
-        internal virtual SegmentInfo SegmentInfo
-        {
-            get
-            {
-                return segmentInfo;
-            }
-        }
+        internal virtual SegmentInfo SegmentInfo => segmentInfo;
 
         public virtual long BytesUsed => bytesUsed.Get() + pendingUpdates.bytesUsed;
 

@@ -1,8 +1,10 @@
-using Lucene.Net.Support;
+using J2N;
+using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 /*
  * dk.brics.automaton
@@ -439,7 +441,7 @@ namespace Lucene.Net.Util.Automaton
                 e = ParseUnionExp();
                 if (pos < b.Length)
                 {
-                    throw new System.ArgumentException("end-of-string expected at position " + pos);
+                    throw new ArgumentException("end-of-string expected at position " + pos);
                 }
             }
             kind = e.kind;
@@ -610,12 +612,12 @@ namespace Lucene.Net.Util.Automaton
                         }
                         catch (System.IO.IOException e)
                         {
-                            throw new System.ArgumentException(e.ToString(), e);
+                            throw new ArgumentException(e.ToString(), e);
                         }
                     }
                     if (aa == null)
                     {
-                        throw new System.ArgumentException("'" + s + "' not found");
+                        throw new ArgumentException("'" + s + "' not found");
                     }
                     a = (Automaton)aa.Clone(); // always clone here (ignore allow_mutate)
                     break;
@@ -761,7 +763,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public virtual ISet<string> GetIdentifiers()
         {
-            ISet<string> set = new EquatableSet<string>();
+            ISet<string> set = new JCG.HashSet<string>();
             GetIdentifiers(set);
             return set;
         }
@@ -999,7 +1001,7 @@ namespace Lucene.Net.Util.Automaton
         {
             if (!More())
             {
-                throw new System.ArgumentException("unexpected end-of-string");
+                throw new ArgumentException("unexpected end-of-string");
             }
             int ch = b.CodePointAt(pos);
             pos += Character.CharCount(ch);
@@ -1067,7 +1069,7 @@ namespace Lucene.Net.Util.Automaton
                     }
                     if (start == pos)
                     {
-                        throw new System.ArgumentException("integer expected at position " + pos);
+                        throw new ArgumentException("integer expected at position " + pos);
                     }
                     int n = Convert.ToInt32(b.Substring(start, pos - start), CultureInfo.InvariantCulture);
                     int m = -1;
@@ -1089,7 +1091,7 @@ namespace Lucene.Net.Util.Automaton
                     }
                     if (!Match('}'))
                     {
-                        throw new System.ArgumentException("expected '}' at position " + pos);
+                        throw new ArgumentException("expected '}' at position " + pos);
                     }
                     if (m == -1)
                     {
@@ -1132,7 +1134,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 if (!Match(']'))
                 {
-                    throw new System.ArgumentException("expected ']' at position " + pos);
+                    throw new ArgumentException("expected ']' at position " + pos);
                 }
                 return e;
             }
@@ -1188,7 +1190,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 if (!Match('"'))
                 {
-                    throw new System.ArgumentException("expected '\"' at position " + pos);
+                    throw new ArgumentException("expected '\"' at position " + pos);
                 }
                 return MakeString(b.Substring(start, pos - 1 - start));
             }
@@ -1201,7 +1203,7 @@ namespace Lucene.Net.Util.Automaton
                 RegExp e = ParseUnionExp();
                 if (!Match(')'))
                 {
-                    throw new System.ArgumentException("expected ')' at position " + pos);
+                    throw new ArgumentException("expected ')' at position " + pos);
                 }
                 return e;
             }
@@ -1214,7 +1216,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 if (!Match('>'))
                 {
-                    throw new System.ArgumentException("expected '>' at position " + pos);
+                    throw new ArgumentException("expected '>' at position " + pos);
                 }
                 string s = b.Substring(start, pos - 1 - start);
                 int i = s.IndexOf('-');
@@ -1222,7 +1224,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     if (!Check(RegExpSyntax.AUTOMATON))
                     {
-                        throw new System.ArgumentException("interval syntax error at position " + (pos - 1));
+                        throw new ArgumentException("interval syntax error at position " + (pos - 1));
                     }
                     return MakeAutomaton(s);
                 }
@@ -1230,13 +1232,13 @@ namespace Lucene.Net.Util.Automaton
                 {
                     if (!Check(RegExpSyntax.INTERVAL))
                     {
-                        throw new System.ArgumentException("illegal identifier at position " + (pos - 1));
+                        throw new ArgumentException("illegal identifier at position " + (pos - 1));
                     }
                     try
                     {
                         if (i == 0 || i == s.Length - 1 || i != s.LastIndexOf('-'))
                         {
-                            throw new System.FormatException();
+                            throw new FormatException();
                         }
                         string smin = s.Substring(0, i);
                         string smax = s.Substring(i + 1, s.Length - (i + 1));
@@ -1263,7 +1265,7 @@ namespace Lucene.Net.Util.Automaton
                     catch (System.FormatException e)
 #pragma warning restore 168
                     {
-                        throw new System.ArgumentException("interval syntax error at position " + (pos - 1), e);
+                        throw new ArgumentException("interval syntax error at position " + (pos - 1), e);
                     }
                 }
             }

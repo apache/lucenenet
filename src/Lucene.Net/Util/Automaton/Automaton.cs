@@ -1,10 +1,11 @@
-using Lucene.Net.Support;
+using J2N;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 /*
  * dk.brics.automaton
@@ -197,13 +198,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-        internal bool IsSingleton
-        {
-            get
-            {
-                return singleton != null;
-            }
-        }
+        internal bool IsSingleton => singleton != null;
 
         /// <summary>
         /// Returns the singleton string for this automaton. An automaton that accepts
@@ -211,13 +206,7 @@ namespace Lucene.Net.Util.Automaton
         /// case, this method may be used to obtain the string.
         /// </summary>
         /// <returns> String, <c>null</c> if this automaton is not in singleton mode. </returns>
-        public virtual string Singleton
-        {
-            get
-            {
-                return singleton;
-            }
-        }
+        public virtual string Singleton => singleton;
 
         ///// <summary>
         ///// Sets initial state.
@@ -247,14 +236,8 @@ namespace Lucene.Net.Util.Automaton
         ///         automaton may be nondeterministic </returns>
         public virtual bool IsDeterministic
         {
-            get
-            {
-                return deterministic;
-            }
-            set
-            {
-                this.deterministic = value;
-            }
+            get => deterministic;
+            set => deterministic = value;
         }
 
         /// <summary>
@@ -263,14 +246,8 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="value"> extra information </param>
         public virtual object Info
         {
-            set
-            {
-                this.info = value;
-            }
-            get
-            {
-                return info;
-            }
+            get => info;
+            set => info = value;
         }
 
         // cached
@@ -281,7 +258,7 @@ namespace Lucene.Net.Util.Automaton
             if (numberedStates == null)
             {
                 ExpandSingleton();
-                HashSet<State> visited = new HashSet<State>();
+                JCG.HashSet<State> visited = new JCG.HashSet<State>();
                 LinkedList<State> worklist = new LinkedList<State>();
                 State[] states = new State[4];
                 int upto = 0;
@@ -358,8 +335,8 @@ namespace Lucene.Net.Util.Automaton
         public virtual ISet<State> GetAcceptStates()
         {
             ExpandSingleton();
-            HashSet<State> accepts = new HashSet<State>();
-            HashSet<State> visited = new HashSet<State>();
+            JCG.HashSet<State> accepts = new JCG.HashSet<State>();
+            JCG.HashSet<State> visited = new JCG.HashSet<State>();
             LinkedList<State> worklist = new LinkedList<State>();
             worklist.AddLast(initial);
             visited.Add(initial);
@@ -390,10 +367,10 @@ namespace Lucene.Net.Util.Automaton
         internal virtual void Totalize()
         {
             State s = new State();
-            s.AddTransition(new Transition(Character.MIN_CODE_POINT, Character.MAX_CODE_POINT, s));
+            s.AddTransition(new Transition(Character.MinCodePoint, Character.MaxCodePoint, s));
             foreach (State p in GetNumberedStates())
             {
-                int maxi = Character.MIN_CODE_POINT;
+                int maxi = Character.MinCodePoint;
                 p.SortTransitions(Transition.COMPARE_BY_MIN_MAX_THEN_DEST);
                 foreach (Transition t in p.GetTransitions())
                 {
@@ -406,9 +383,9 @@ namespace Lucene.Net.Util.Automaton
                         maxi = t.max + 1;
                     }
                 }
-                if (maxi <= Character.MAX_CODE_POINT)
+                if (maxi <= Character.MaxCodePoint)
                 {
-                    p.AddTransition(new Transition(maxi, Character.MAX_CODE_POINT, s));
+                    p.AddTransition(new Transition(maxi, Character.MaxCodePoint, s));
                 }
             }
             ClearNumberedStates();
@@ -448,14 +425,14 @@ namespace Lucene.Net.Util.Automaton
         public virtual int[] GetStartPoints()
         {
             State[] states = GetNumberedStates();
-            HashSet<int> pointset = new HashSet<int>();
-            pointset.Add(Character.MIN_CODE_POINT);
+            JCG.HashSet<int> pointset = new JCG.HashSet<int>();
+            pointset.Add(Character.MinCodePoint);
             foreach (State s in states)
             {
                 foreach (Transition t in s.GetTransitions())
                 {
                     pointset.Add(t.min);
-                    if (t.max < Character.MAX_CODE_POINT)
+                    if (t.max < Character.MaxCodePoint)
                     {
                         pointset.Add((t.max + 1));
                     }
@@ -479,7 +456,7 @@ namespace Lucene.Net.Util.Automaton
         private State[] GetLiveStates()
         {
             State[] states = GetNumberedStates();
-            HashSet<State> live = new HashSet<State>();
+            JCG.HashSet<State> live = new JCG.HashSet<State>();
             foreach (State q in states)
             {
                 if (q.Accept)
@@ -488,10 +465,10 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
             // map<state, set<state>>
-            ISet<State>[] map = new HashSet<State>[states.Length];
+            ISet<State>[] map = new JCG.HashSet<State>[states.Length];
             for (int i = 0; i < map.Length; i++)
             {
-                map[i] = new HashSet<State>();
+                map[i] = new JCG.HashSet<State>();
             }
             foreach (State s in states)
             {
@@ -662,7 +639,7 @@ namespace Lucene.Net.Util.Automaton
 
             Transition[][] transitions = this.GetSortedTransitions();
             LinkedList<State> worklist = new LinkedList<State>();
-            HashSet<State> visited = new HashSet<State>();
+            JCG.HashSet<State> visited = new JCG.HashSet<State>();
 
             State current = this.initial;
             worklist.AddLast(this.initial);

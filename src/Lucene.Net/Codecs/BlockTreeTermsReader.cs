@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs
 {
@@ -99,7 +100,7 @@ namespace Lucene.Net.Codecs
         private readonly PostingsReaderBase postingsReader;
 
         // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
-        private readonly SortedDictionary<string, FieldReader> fields = new SortedDictionary<string, FieldReader>(StringComparer.Ordinal);
+        private readonly IDictionary<string, FieldReader> fields = new JCG.SortedDictionary<string, FieldReader>(StringComparer.Ordinal);
 
         /// <summary>
         /// File offset where the directory starts in the terms file. </summary>

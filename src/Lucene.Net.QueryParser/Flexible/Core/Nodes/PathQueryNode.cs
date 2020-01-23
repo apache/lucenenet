@@ -1,5 +1,5 @@
-﻿using Lucene.Net.QueryParsers.Flexible.Core.Parser;
-using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.QueryParsers.Flexible.Core.Parser;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -195,7 +195,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             foreach (QueryText pathelement in GetPathElements(1))
             {
-                string value = escaper.Escape(new StringCharSequenceWrapper(pathelement.Value), 
+                string value = escaper.Escape(new StringCharSequence(pathelement.Value), 
                     CultureInfo.InvariantCulture, EscapeQuerySyntaxType.STRING).ToString();
                 path.Append("/\"").Append(value).Append("\"");
             }

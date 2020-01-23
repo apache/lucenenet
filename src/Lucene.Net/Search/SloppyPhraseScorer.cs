@@ -1,8 +1,8 @@
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -464,7 +464,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Detect repetition groups. Done once - for first doc. </summary>
-        private IList<IList<PhrasePositions>> GatherRptGroups(LinkedHashMap<Term, int?> rptTerms)
+        private IList<IList<PhrasePositions>> GatherRptGroups(JCG.LinkedDictionary<Term, int?> rptTerms)
         {
             PhrasePositions[] rpp = RepeatingPPs(rptTerms);
             IList<IList<PhrasePositions>> res = new List<IList<PhrasePositions>>();
@@ -504,14 +504,14 @@ namespace Lucene.Net.Search
             else
             {
                 // more involved - has multi-terms
-                List<HashSet<PhrasePositions>> tmp = new List<HashSet<PhrasePositions>>();
+                IList<JCG.HashSet<PhrasePositions>> tmp = new List<JCG.HashSet<PhrasePositions>>();
                 IList<FixedBitSet> bb = PpTermsBitSets(rpp, rptTerms);
                 UnionTermGroups(bb);
                 IDictionary<Term, int> tg = TermGroups(rptTerms, bb);
-                HashSet<int> distinctGroupIDs = new HashSet<int>(tg.Values);
+                JCG.HashSet<int> distinctGroupIDs = new JCG.HashSet<int>(tg.Values);
                 for (int i = 0; i < distinctGroupIDs.Count; i++)
                 {
-                    tmp.Add(new HashSet<PhrasePositions>());
+                    tmp.Add(new JCG.HashSet<PhrasePositions>());
                 }
                 foreach (PhrasePositions pp in rpp)
                 {
@@ -526,7 +526,7 @@ namespace Lucene.Net.Search
                         }
                     }
                 }
-                foreach (HashSet<PhrasePositions> hs in tmp)
+                foreach (JCG.HashSet<PhrasePositions> hs in tmp)
                 {
                     res.Add(new List<PhrasePositions>(hs));
                 }
@@ -543,9 +543,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Find repeating terms and assign them ordinal values </summary>
-        private LinkedHashMap<Term, int?> RepeatingTerms()
+        private JCG.LinkedDictionary<Term, int?> RepeatingTerms()
         {
-            LinkedHashMap<Term, int?> tord = new LinkedHashMap<Term, int?>();
+            JCG.LinkedDictionary<Term, int?> tord = new JCG.LinkedDictionary<Term, int?>();
             Dictionary<Term, int?> tcnt = new Dictionary<Term, int?>();
             for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
             {
@@ -566,7 +566,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Find repeating pps, and for each, if has multi-terms, update this.hasMultiTermRpts </summary>
-        private PhrasePositions[] RepeatingPPs(HashMap<Term, int?> rptTerms)
+        private PhrasePositions[] RepeatingPPs(IDictionary<Term, int?> rptTerms)
         {
             List<PhrasePositions> rp = new List<PhrasePositions>();
             for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
@@ -586,7 +586,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// bit-sets - for each repeating pp, for each of its repeating terms, the term ordinal values is set </summary>
-        private IList<FixedBitSet> PpTermsBitSets(PhrasePositions[] rpp, HashMap<Term, int?> tord)
+        private IList<FixedBitSet> PpTermsBitSets(PhrasePositions[] rpp, IDictionary<Term, int?> tord)
         {
             List<FixedBitSet> bb = new List<FixedBitSet>(rpp.Length);
             foreach (PhrasePositions pp in rpp)
@@ -630,7 +630,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Map each term to the single group that contains it </summary>
-        private IDictionary<Term, int> TermGroups(LinkedHashMap<Term, int?> tord, IList<FixedBitSet> bb)
+        private IDictionary<Term, int> TermGroups(JCG.LinkedDictionary<Term, int?> tord, IList<FixedBitSet> bb)
         {
             Dictionary<Term, int> tg = new Dictionary<Term, int>();
             Term[] t = tord.Keys.ToArray(/*new Term[0]*/);

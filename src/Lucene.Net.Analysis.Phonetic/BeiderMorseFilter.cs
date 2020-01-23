@@ -89,8 +89,8 @@ namespace Lucene.Net.Analysis.Phonetic
                 RestoreState(state);
 
                 int start = matcher.Index;
-                int end = start + matcher.Length;
-                termAtt.SetEmpty().Append(encoded, start, end);
+                //int end = start + matcher.Length;
+                termAtt.SetEmpty().Append(encoded, start, matcher.Length); // LUCENENET: Corrected 3rd parameter
                 posIncAtt.PositionIncrement = 0;
                 return true;
             }
@@ -106,8 +106,8 @@ namespace Lucene.Net.Analysis.Phonetic
                 if (matcher.Success)
                 {
                     int start = matcher.Index;
-                    int end = start + matcher.Length;
-                    termAtt.SetEmpty().Append(encoded, start, end);
+                    //int end = start + matcher.Length;
+                    termAtt.SetEmpty().Append(encoded, start, matcher.Length); // LUCENENET: Corrected 3rd parameter
                 }
                 return true;
             }

@@ -1,9 +1,8 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 

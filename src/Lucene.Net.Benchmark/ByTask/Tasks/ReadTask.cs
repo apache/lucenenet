@@ -7,6 +7,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
@@ -328,7 +329,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         protected virtual ICollection<string> GetFieldsToHighlight(Document document)
         {
             IList<IIndexableField> fields = document.Fields;
-            ISet<string> result = new HashSet<string>(/*fields.Count*/);
+            ISet<string> result = new JCG.HashSet<string>(fields.Count);
             foreach (IIndexableField f in fields)
             {
                 result.Add(f.Name);

@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -27,7 +28,7 @@ namespace Lucene.Net.Analysis.Core
     {
 
         private StopAnalyzer stop = new StopAnalyzer(TEST_VERSION_CURRENT);
-        private ISet<object> inValidTokens = new HashSet<object>();
+        private ISet<object> inValidTokens = new JCG.HashSet<object>();
 
         public override void SetUp()
         {

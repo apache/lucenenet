@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace Lucene.Net.Support
 {
@@ -19,21 +19,12 @@ namespace Lucene.Net.Support
 	 * limitations under the License.
 	 */
 
-    public class IdentityHashMap<TKey, TValue> : HashMap<TKey, TValue> where TKey : class
+    /// <summary>
+    /// Use this attribute to make an exception to the nullable enum rule.
+    /// Some of these cannot be avoided.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Constructor, AllowMultiple = false)]
+    public class ExceptionToNullableEnumConventionAttribute : Attribute
     {
-        public IdentityHashMap()
-            : base(IdentityComparer<TKey>.Default)
-        {
-        }
-
-        public IdentityHashMap(int initialCapacity)
-            : base(initialCapacity, IdentityComparer<TKey>.Default)
-        {
-        }
-
-        public IdentityHashMap(IDictionary<TKey, TValue> wrappedDictionary)
-            : base(wrappedDictionary, IdentityComparer<TKey>.Default)
-        {
-        }
     }
 }

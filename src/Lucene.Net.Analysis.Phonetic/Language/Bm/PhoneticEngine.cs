@@ -1,11 +1,14 @@
 ﻿// commons-codec version compatibility level: 1.9
+using J2N.Collections.Generic.Extensions;
+using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
+
 
 namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 {
@@ -284,17 +287,11 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         private static IDictionary<NameType, ISet<string>> LoadNamePrefixes() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             var namePrefixes = new Dictionary<NameType, ISet<string>>();
-            namePrefixes[NameType.ASHKENAZI] =
-                    Collections.UnmodifiableSet(
-                            new HashSet<string>() { "bar", "ben", "da", "de", "van", "von" });
-            namePrefixes[NameType.SEPHARDIC] =
-                    Collections.UnmodifiableSet(
-                            new HashSet<string>() { "al", "el", "da", "dal", "de", "del", "dela", "de la",
-                                                              "della", "des", "di", "do", "dos", "du", "van", "von" });
-            namePrefixes[NameType.GENERIC] =
-                    Collections.UnmodifiableSet(
-                            new HashSet<string>() { "da", "dal", "de", "del", "dela", "de la", "della",
-                                                          "des", "di", "do", "dos", "du", "van", "von" });
+            namePrefixes[NameType.ASHKENAZI] = new JCG.HashSet<string>() { "bar", "ben", "da", "de", "van", "von" }.AsReadOnly();
+            namePrefixes[NameType.SEPHARDIC] = new JCG.HashSet<string>() { "al", "el", "da", "dal", "de", "del", "dela", "de la",
+                                                              "della", "des", "di", "do", "dos", "du", "van", "von" }.AsReadOnly();
+            namePrefixes[NameType.GENERIC] = new JCG.HashSet<string>() { "da", "dal", "de", "del", "dela", "de la", "della",
+                                                          "des", "di", "do", "dos", "du", "van", "von" }.AsReadOnly();
             return namePrefixes;
         }
 
@@ -387,7 +384,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 return phonemeBuilder;
             }
 
-            ISet<Phoneme> phonemes = new SortedSet<Phoneme>(Phoneme.COMPARER);
+            ISet<Phoneme> phonemes = new JCG.SortedSet<Phoneme>(Phoneme.COMPARER);
 
             foreach (Phoneme phoneme in phonemeBuilder.Phonemes)
             {

@@ -1,3 +1,4 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
@@ -186,7 +187,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                 }
             }
-            Collections.Shuffle(sample);
+            sample.Shuffle();
             return sample;
         }
 

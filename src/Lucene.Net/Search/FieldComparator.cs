@@ -1,8 +1,6 @@
-using Lucene.Net.Support;
-using Lucene.Net.Util;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -25,8 +23,8 @@ namespace Lucene.Net.Search
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using IBits = Lucene.Net.Util.IBits;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
 
     /// <summary>
@@ -192,9 +190,9 @@ namespace Lucene.Net.Search
             }
             else
             {
-                // LUCENENET NOTE: We need to compare using NaturalComparer<T>
+                // LUCENENET NOTE: We need to compare using JCG.Comparer<T>.Default
                 // to ensure that if comparing strings we do so in Ordinal sort order
-                return ArrayUtil.GetNaturalComparer<T>().Compare(first, second);
+                return JCG.Comparer<T>.Default.Compare(first, second);
             }
         }
 
@@ -320,9 +318,6 @@ namespace Lucene.Net.Search
         /// <returns> Value in this slot </returns>
         public abstract IComparable this[int slot] { get; }
 
-
-        internal static readonly IComparer<double> SIGNED_ZERO_COMPARER = new SignedZeroComparer();
-
         /// <summary>
         /// Base FieldComparer class for numeric types
         /// </summary>
@@ -381,7 +376,7 @@ namespace Lucene.Net.Search
             public override int Compare(int slot1, int slot2)
             {
                 // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
-                return values[slot1].CompareTo(values[slot2]);
+                return JCG.Comparer<sbyte>.Default.Compare(values[slot1], values[slot2]);
             }
 
             public override int CompareBottom(int doc)
@@ -394,7 +389,7 @@ namespace Lucene.Net.Search
                     v2 = m_missingValue.GetValueOrDefault();
                 }
                 // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
-                return bottom.CompareTo(v2);
+                return JCG.Comparer<sbyte>.Default.Compare(bottom, v2);
             }
 
             public override void Copy(int slot, int doc)
@@ -442,7 +437,7 @@ namespace Lucene.Net.Search
                     docValue = m_missingValue.GetValueOrDefault();
                 }
                 // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
-                return topValue.CompareTo(docValue);
+                return JCG.Comparer<sbyte>.Default.Compare(topValue, docValue);
             }
         }
 
@@ -470,17 +465,10 @@ namespace Lucene.Net.Search
                 double v1 = values[slot1];
                 double v2 = values[slot2];
 
-                int c = v1.CompareTo(v2);
-
-                if (c == 0 && v1 == 0)
-                {
-                    // LUCENENET specific special case:
-                    // In case of zero, we may have a "positive 0" or "negative 0"
-                    // to tie-break.
-                    c = SIGNED_ZERO_COMPARER.Compare(v1, v2);
-                }
-
-                return c;
+                // LUCENENET specific special case:
+                // In case of zero, we may have a "positive 0" or "negative 0"
+                // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
+                return JCG.Comparer<double>.Default.Compare(v1, v2);
             }
 
             public override int CompareBottom(int doc)
@@ -493,7 +481,10 @@ namespace Lucene.Net.Search
                     v2 = m_missingValue.GetValueOrDefault();
                 }
 
-                return bottom.CompareTo(v2);
+                // LUCENENET specific special case:
+                // In case of zero, we may have a "positive 0" or "negative 0"
+                // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
+                return JCG.Comparer<double>.Default.Compare(bottom, v2);
             }
 
             public override void Copy(int slot, int doc)
@@ -541,7 +532,11 @@ namespace Lucene.Net.Search
                 {
                     docValue = m_missingValue.GetValueOrDefault();
                 }
-                return topValue.CompareTo(docValue);
+
+                // LUCENENET specific special case:
+                // In case of zero, we may have a "positive 0" or "negative 0"
+                // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
+                return JCG.Comparer<double>.Default.Compare(topValue, docValue);
             }
         }
 
@@ -571,17 +566,10 @@ namespace Lucene.Net.Search
                 float v1 = values[slot1];
                 float v2 = values[slot2];
 
-                int c = v1.CompareTo(v2);
-
-                if (c == 0 && v1 == 0)
-                {
-                    // LUCENENET specific special case:
-                    // In case of zero, we may have a "positive 0" or "negative 0"
-                    // to tie-break.
-                    c = SIGNED_ZERO_COMPARER.Compare(v1, v2);
-                }
-
-                return c;
+                // LUCENENET specific special case:
+                // In case of zero, we may have a "positive 0" or "negative 0"
+                // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
+                return JCG.Comparer<float>.Default.Compare(v1, v2);
             }
 
             public override int CompareBottom(int doc)
@@ -595,7 +583,10 @@ namespace Lucene.Net.Search
                     v2 = m_missingValue.GetValueOrDefault();
                 }
 
-                return bottom.CompareTo(v2);
+                // LUCENENET specific special case:
+                // In case of zero, we may have a "positive 0" or "negative 0"
+                // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
+                return JCG.Comparer<float>.Default.Compare(bottom, v2);
             }
 
             public override void Copy(int slot, int doc)
@@ -643,7 +634,11 @@ namespace Lucene.Net.Search
                 {
                     docValue = m_missingValue.GetValueOrDefault();
                 }
-                return topValue.CompareTo(docValue);
+
+                // LUCENENET specific special case:
+                // In case of zero, we may have a "positive 0" or "negative 0"
+                // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
+                return JCG.Comparer<float>.Default.Compare(topValue, docValue);
             }
         }
 
@@ -672,7 +667,7 @@ namespace Lucene.Net.Search
             public override int Compare(int slot1, int slot2)
             {
                 // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
-                return values[slot1].CompareTo(values[slot2]);
+                return JCG.Comparer<short>.Default.Compare(values[slot1], values[slot2]);
             }
 
             public override int CompareBottom(int doc)
@@ -686,7 +681,7 @@ namespace Lucene.Net.Search
                 }
 
                 // LUCENENET NOTE: Same logic as the Byte.compare() method in Java
-                return bottom.CompareTo(v2);
+                return JCG.Comparer<short>.Default.Compare(bottom, v2);
             }
 
             public override void Copy(int slot, int doc)
@@ -734,7 +729,7 @@ namespace Lucene.Net.Search
                 {
                     docValue = m_missingValue.GetValueOrDefault();
                 }
-                return topValue.CompareTo(docValue);
+                return JCG.Comparer<short>.Default.Compare(topValue, docValue);
             }
         }
 
@@ -761,7 +756,7 @@ namespace Lucene.Net.Search
 
             public override int Compare(int slot1, int slot2)
             {
-                return values[slot1].CompareTo(values[slot2]);
+                return JCG.Comparer<int>.Default.Compare(values[slot1], values[slot2]);
             }
 
             public override int CompareBottom(int doc)
@@ -773,7 +768,7 @@ namespace Lucene.Net.Search
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
-                return bottom.CompareTo(v2);
+                return JCG.Comparer<int>.Default.Compare(bottom, v2);
             }
 
             public override void Copy(int slot, int doc)
@@ -821,7 +816,7 @@ namespace Lucene.Net.Search
                 {
                     docValue = m_missingValue.GetValueOrDefault();
                 }
-                return topValue.CompareTo(docValue);
+                return JCG.Comparer<int>.Default.Compare(topValue, docValue);
             }
         }
 
@@ -849,7 +844,7 @@ namespace Lucene.Net.Search
             public override int Compare(int slot1, int slot2)
             {
                 // LUCENENET NOTE: Same logic as the Long.compare() method in Java
-                return values[slot1].CompareTo(values[slot2]);
+                return JCG.Comparer<long>.Default.Compare(values[slot1], values[slot2]);
             }
 
             public override int CompareBottom(int doc)
@@ -865,7 +860,7 @@ namespace Lucene.Net.Search
                 }
 
                 // LUCENENET NOTE: Same logic as the Long.compare() method in Java
-                return bottom.CompareTo(v2);
+                return JCG.Comparer<long>.Default.Compare(bottom, v2);
             }
 
             public override void Copy(int slot, int doc)
@@ -913,7 +908,7 @@ namespace Lucene.Net.Search
                 {
                     docValue = m_missingValue.GetValueOrDefault();
                 }
-                return topValue.CompareTo(docValue);
+                return JCG.Comparer<long>.Default.Compare(topValue, docValue);
             }
         }
 
@@ -939,14 +934,21 @@ namespace Lucene.Net.Search
 
             public override int Compare(int slot1, int slot2)
             {
-                return scores[slot2].CompareTo(scores[slot1]);
+                // LUCENENET specific special case:
+                // In case of zero, we may have a "positive 0" or "negative 0"
+                // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
+                return JCG.Comparer<float>.Default.Compare(scores[slot2], scores[slot1]);
             }
 
             public override int CompareBottom(int doc)
             {
                 float score = scorer.GetScore();
                 Debug.Assert(!float.IsNaN(score));
-                return score.CompareTo(bottom);
+
+                // LUCENENET specific special case:
+                // In case of zero, we may have a "positive 0" or "negative 0"
+                // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
+                return JCG.Comparer<float>.Default.Compare(score, bottom);
             }
 
             public override void Copy(int slot, int doc)
@@ -995,14 +997,22 @@ namespace Lucene.Net.Search
             {
                 // Reversed intentionally because relevance by default
                 // sorts descending:
-                return second.CompareTo(first);
+
+                // LUCENENET specific special case:
+                // In case of zero, we may have a "positive 0" or "negative 0"
+                // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
+                return JCG.Comparer<float>.Default.Compare(second, first);
             }
 
             public override int CompareTop(int doc)
             {
                 float docValue = scorer.GetScore();
                 Debug.Assert(!float.IsNaN(docValue));
-                return docValue.CompareTo(topValue);
+
+                // LUCENENET specific special case:
+                // In case of zero, we may have a "positive 0" or "negative 0"
+                // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
+                return JCG.Comparer<float>.Default.Compare(docValue, topValue);
             }
         }
 
@@ -1065,7 +1075,7 @@ namespace Lucene.Net.Search
             {
                 int docValue = docBase + doc;
                 // LUCENENET NOTE: Same logic as the Integer.compare() method in Java
-                return topValue.CompareTo(docValue);
+                return JCG.Comparer<int>.Default.Compare(topValue, docValue);
             }
         }
 
@@ -1499,7 +1509,7 @@ namespace Lucene.Net.Search
             {
                 if (value == null)
                 {
-                    throw new System.ArgumentException("value cannot be null");
+                    throw new ArgumentException("value cannot be null");
                 }
                 topValue = (BytesRef)value;
             }

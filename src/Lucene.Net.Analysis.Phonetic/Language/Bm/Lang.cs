@@ -1,11 +1,13 @@
 ﻿// commons-codec version compatibility level: 1.9
+using J2N.Collections.Generic.Extensions;
+using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 {
@@ -205,7 +207,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                             string[] langs = TOKEN.Split(parts[1]).TrimEnd();
                             bool accept = parts[2].Equals("true", StringComparison.Ordinal);
 
-                            rules.Add(new LangRule(pattern, new HashSet<string>(langs), accept));
+                            rules.Add(new LangRule(pattern, new JCG.HashSet<string>(langs), accept));
                         }
                     }
                 }
@@ -218,7 +220,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private Lang(IList<LangRule> rules, Languages languages)
         {
-            this.rules = Collections.UnmodifiableList(rules);
+            this.rules = rules.AsReadOnly();
             this.languages = languages;
         }
 
@@ -242,7 +244,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         {
             string text = input.ToLowerInvariant();
 
-            ISet<string> langs = new HashSet<string>(this.languages.GetLanguages());
+            ISet<string> langs = new JCG.HashSet<string>(this.languages.GetLanguages());
             foreach (LangRule rule in this.rules)
             {
                 if (rule.Matches(text))
