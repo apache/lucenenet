@@ -1,5 +1,9 @@
 # Apache Lucene.Net
 
+[![Nuget](https://img.shields.io/nuget/dt/Lucene.Net)](https://www.nuget.org/packages/Lucene.Net)
+[![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/lucene-net/6ba240c9-9598-47e7-a793-0ed8a4ba2f8b/3/master)](https://dev.azure.com/lucene-net/Lucene.NET/_build?definitionId=3&_a=summary)
+[![GitHub](https://img.shields.io/github/license/NightOwl888/ICU4N)](https://github.com/NightOwl888/ICU4N/blob/master/LICENSE.txt)
+
 ## Full-text search for .NET
 
 Apache Lucene.Net is a .NET full-text search engine framework, a C# port of the popular Apache Lucene project.  Apache Lucene.Net is not a complete application, but rather a code library and API that can easily be used to add search capabilities to applications.
@@ -181,42 +185,42 @@ To build the source, clone or download and unzip the repository. From the reposi
 ##### Build Options
 
 <table>
-	<tr>
-		<th>Short</th>
-		<th>Long</th>
-		<th>Description</th>
-		<th>Example</th>
-	</tr>
-	<tr>
-		<td>&#8209;config</td>
-		<td>&#8209;&#8209;Configuration</td>
-		<td>The build configuration ("Release" or "Debug").</td>
-		<td>build&nbsp;&#8209;&#8209;Configuration:Debug</td>
-	</tr>
-	<tr>
-		<td>&#8209;mp</td>
-		<td>&#8209;&#8209;MaximumParallelJobs</td>
-		<td>The maximum number of parallel jobs to run during testing. If not supplied, the default is 8.</td>
-		<td>build&nbsp;&#8209;t&nbsp;&#8209;mp:10</td>
-	</tr>
-	<tr>
-		<td>&#8209;pv</td>
-		<td>&#8209;&#8209;PackageVersion</td>
-		<td>The NuGet package version. If not supplied, will use the version from the Version.proj file.</td>
-		<td>build&nbsp;&#8209;pv:4.8.0&#8209;beta00001</td>
-	</tr>
-	<tr>
-		<td>&#8209;t</td>
-		<td>&#8209;&#8209;Test</td>
-		<td>Runs the tests after building. Note that testing typically takes around 40 minutes with 8 parallel jobs.</td>
-		<td>build&nbsp;&#8209;t</td>
-	</tr>
-	<tr>
-		<td>&#8209;v</td>
-		<td>&#8209;&#8209;Version</td>
-		<td>The assembly file version. If not supplied, will use the PackageVersion (excluding any pre-release tag).</td>
-		<td>build&nbsp;&#8209;pv:4.8.0&#8209;beta00001&nbsp;&#8209;v:4.8.0</td>
-	</tr>
+    <tr>
+        <th>Short</th>
+        <th>Long</th>
+        <th>Description</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td>&#8209;config</td>
+        <td>&#8209;&#8209;Configuration</td>
+        <td>The build configuration ("Release" or "Debug").</td>
+        <td>build&nbsp;&#8209;&#8209;Configuration:Debug</td>
+    </tr>
+    <tr>
+        <td>&#8209;mp</td>
+        <td>&#8209;&#8209;MaximumParallelJobs</td>
+        <td>The maximum number of parallel jobs to run during testing. If not supplied, the default is 8.</td>
+        <td>build&nbsp;&#8209;t&nbsp;&#8209;mp:10</td>
+    </tr>
+    <tr>
+        <td>&#8209;pv</td>
+        <td>&#8209;&#8209;PackageVersion</td>
+        <td>The NuGet package version. If not supplied, will use the version from the Version.proj file.</td>
+        <td>build&nbsp;&#8209;pv:4.8.0&#8209;beta00001</td>
+    </tr>
+    <tr>
+        <td>&#8209;t</td>
+        <td>&#8209;&#8209;Test</td>
+        <td>Runs the tests after building. Note that testing typically takes around 40 minutes with 8 parallel jobs.</td>
+        <td>build&nbsp;&#8209;t</td>
+    </tr>
+    <tr>
+        <td>&#8209;v</td>
+        <td>&#8209;&#8209;Version</td>
+        <td>The assembly file version. If not supplied, will use the PackageVersion (excluding any pre-release tag).</td>
+        <td>build&nbsp;&#8209;pv:4.8.0&#8209;beta00001&nbsp;&#8209;v:4.8.0</td>
+    </tr>
 </table>
 
 NuGet packages are output by the build to the `/release/NuGetPackages/` directory. Test results (if applicable) are output to the `/release/TestResults/` directory.
@@ -248,3 +252,38 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 4. Run or debug the tests in Test Explorer, optionally using the desired filters.
 
 > **NOTE:** When running tests in Visual Studio, be sure to [set the default processor architecture to 64 bit](https://stackoverflow.com/a/45946727) to avoid running out of virtual memory on some tests.
+
+### Azure DevOps
+
+We have setup our `azure-pipelines.yml` file with logical defaults so anyone with an Azure DevOps account can build Lucene.Net and run the tests with minimal effort. Even a free Azure DevOps account will work, but tests will run much faster if the account is setup as public, which enables up to 10 parallel jobs to run simultaneously.
+
+#### Prerequisites
+
+1. An [Azure DevOps](https://azure.microsoft.com/en-us/services/devops/) account.
+2. A fork of this repository either on GitHub or Azure DevOps. The rest of these instructions assume a [GitHub fork](https://help.github.com/en/github/getting-started-with-github/fork-a-repo).
+
+#### Execution
+
+##### If you don't already have a pipeline set up:
+
+1. [Create an Azure DevOps organization](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/create-organization?view=azure-devops). If you already have one that you wish to use, you may skip this step.
+2. [Create an Azure DevOps project](https://docs.microsoft.com/en-us/azure/devops/organizations/projects/create-project?view=azure-devops&tabs=preview-page). We recommend naming the project Lucene.NET. Note that if you are using a free Azure DevOps account, you should choose to make the project public in order to enable 10 parallel jobs. If you make the project private, you will only get 1 parallel job. Also, if disabling features, make sure to leave Pipelines enabled.
+3. Create an Azure DevOps pipeline.
+   - Click on "Pipelines" from the left menu.
+   - Click the "Create Pipeline" or "New Pipeline" button, depending on whether any pipelines already exist.
+   - Select GitHub as the location to find the YAML file.
+   - Select the fork of this repository you created in "Prerequisites". Note that if this is a new Azure DevOps account you may need to [setup extra permissions to access your GitHub account](https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/github?view=azure-devops&tabs=yaml).
+   - Next a "Review your YAML" page is presented showing the contents of `azure-pipelines.yml`. There is documentation near the top of the file indicating the varaibles that can be setup to enable additional options, but note that the default configuration will automatically run the build and all of the tests.
+   - Click the "Run" button at the top right of the page.
+
+##### If you already have a pipeline set up:
+
+1. Click on "Pipelines" from the left menu.
+2. Select the pipeline you wish to run.
+3. Click the "Queue" button on the upper right.
+4. (Optional) Select the branch and override any variables in the pipeline for this run.
+5. Click the "Run" button.
+
+Note that after the build is complete, the `nuget` artifact contains `.nupkg` files which may be downloaded to your local machine where you can [setup a local folder to act as a NuGet feed](https://docs.microsoft.com/en-us/nuget/hosting-packages/local-feeds).
+
+> It is also possible to add an Azure DevOps feed id to a new variable named `ArtifactFeedID`, but we are getting mixed results due to permission issues.
