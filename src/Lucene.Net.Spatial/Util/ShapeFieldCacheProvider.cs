@@ -1,6 +1,5 @@
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
 using System.Runtime.CompilerServices;
@@ -40,13 +39,8 @@ namespace Lucene.Net.Spatial.Util
     {
         //private Logger log = Logger.GetLogger(GetType().FullName);
 
-#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
         private readonly ConditionalWeakTable<IndexReader, ShapeFieldCache<T>> sidx =
             new ConditionalWeakTable<IndexReader, ShapeFieldCache<T>>();
-#else
-        private readonly WeakDictionary<IndexReader, ShapeFieldCache<T>> sidx =
-            new WeakDictionary<IndexReader, ShapeFieldCache<T>>();
-#endif
 
         protected internal readonly int m_defaultSize;
         protected internal readonly string m_shapeField;
@@ -60,23 +54,17 @@ namespace Lucene.Net.Spatial.Util
 
         protected internal abstract T ReadShape(BytesRef term);
 
-        private readonly object locker = new object();
-
         public virtual ShapeFieldCache<T> GetCache(AtomicReader reader)
         {
-            lock (locker)
+            // LUCENENET: ConditionalWeakTable allows us to simplify and remove locks
+            return sidx.GetValue(reader, (key) =>
             {
-                ShapeFieldCache<T> idx;
-                if (sidx.TryGetValue(reader, out idx) && idx != null)
-                {
-                    return idx;
-                }
                 /*long startTime = Runtime.CurrentTimeMillis();
                 log.Fine("Building Cache [" + reader.MaxDoc() + "]");*/
-                idx = new ShapeFieldCache<T>(reader.MaxDoc, m_defaultSize);
+                ShapeFieldCache<T> idx = new ShapeFieldCache<T>(key.MaxDoc, m_defaultSize);
                 int count = 0;
                 DocsEnum docs = null;
-                Terms terms = reader.GetTerms(m_shapeField);
+                Terms terms = ((AtomicReader)key).GetTerms(m_shapeField);
                 TermsEnum te = null;
                 if (terms != null)
                 {
@@ -99,12 +87,10 @@ namespace Lucene.Net.Spatial.Util
                         term = te.Next();
                     }
                 }
-                sidx.AddOrUpdate(reader, idx);
-
                 /*long elapsed = Runtime.CurrentTimeMillis() - startTime;
                 log.Fine("Cached: [" + count + " in " + elapsed + "ms] " + idx);*/
                 return idx;
-            }
+            });
         }
     }
 }
