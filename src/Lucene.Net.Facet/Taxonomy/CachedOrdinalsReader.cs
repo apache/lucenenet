@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -78,26 +79,24 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private CachedOrds GetCachedOrds(AtomicReaderContext context)
         {
+            object cacheKey = context.Reader.CoreCacheKey;
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+            return ordsCache.GetValue(cacheKey, (cacheKey) => new CachedOrds(source.GetReader(context), context.Reader.MaxDoc));
+#else
             lock (this)
             {
-                object cacheKey = context.Reader.CoreCacheKey;
                 if (!ordsCache.TryGetValue(cacheKey, out CachedOrds ords) || ords == null)
                 {
                     ords = new CachedOrds(source.GetReader(context), context.Reader.MaxDoc);
-                    ordsCache.AddOrUpdate(cacheKey, ords);
+                    ordsCache[cacheKey] =  ords;
                 }
 
                 return ords;
             }
+#endif
         }
 
-        public override string IndexFieldName
-        {
-            get
-            {
-                return source.IndexFieldName;
-            }
-        }
+        public override string IndexFieldName => source.IndexFieldName;
 
         public override OrdinalsSegmentReader GetReader(AtomicReaderContext context)
         {
@@ -199,19 +198,10 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public virtual long RamBytesUsed()
         {
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
             lock (this)
-            {
-                long bytes = 0;
-#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-                foreach (var pair in ordsCache)
-                    bytes += pair.Value.RamBytesUsed();
-#else
-                foreach (CachedOrds ords in ordsCache.Values)
-                    bytes += ords.RamBytesUsed();
 #endif
-
-                return bytes;
-            }
+                return ordsCache.Sum(pair => pair.Value.RamBytesUsed());
         }
     }
 }
