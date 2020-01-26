@@ -56,7 +56,7 @@ namespace Lucene.Net.Facet
         {
         }
 
-        protected override bool LessThan(OrdAndValue a, OrdAndValue b)
+        protected internal override bool LessThan(OrdAndValue a, OrdAndValue b)
         {
             if (a.Value < b.Value)
             {

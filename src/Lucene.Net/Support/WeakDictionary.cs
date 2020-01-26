@@ -32,7 +32,7 @@ namespace Lucene.Net.Support
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public sealed class WeakDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKey : class 
+    internal sealed class WeakDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKey : class 
     {
         private IDictionary<WeakKey<TKey>, TValue> _hm;
         private int _gcCollections = 0;
@@ -287,10 +287,8 @@ namespace Lucene.Net.Support
                     return true;
                 }
 
-                if (obj is WeakKey<T>)
+                if (obj is WeakKey<T> other)
                 {
-                    var other = (WeakKey<T>)obj;
-
                     var referenceTarget = reference.Target; // Careful: can be null in the mean time...
                     return referenceTarget != null && referenceTarget.Equals(other.Target);
                 }
