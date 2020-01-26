@@ -32,8 +32,8 @@ namespace Lucene.Net.Search
         // could loose references because of eg.
         // AssertingScorer.Score(Collector) which needs to delegate to work correctly
 #if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-        private static readonly ConditionalWeakTable<Scorer, AssertingScorer> ASSERTING_INSTANCES = 
-            new ConditionalWeakTable<Scorer, AssertingScorer>();
+        private static readonly ConditionalWeakTable<Scorer, WeakReference<AssertingScorer>> ASSERTING_INSTANCES =
+            new ConditionalWeakTable<Scorer, WeakReference<AssertingScorer>>();
 #else
         private static readonly IDictionary<Scorer, WeakReference<AssertingScorer>> ASSERTING_INSTANCES = 
             new ConcurrentHashMapWrapper<Scorer, WeakReference<AssertingScorer>>(new WeakDictionary<Scorer, WeakReference<AssertingScorer>>());
@@ -47,7 +47,7 @@ namespace Lucene.Net.Search
             }
             AssertingScorer assertScorer = new AssertingScorer(random, other);
 #if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-            ASSERTING_INSTANCES.AddOrUpdate(other, assertScorer);
+            ASSERTING_INSTANCES.AddOrUpdate(other, new WeakReference<AssertingScorer>(assertScorer));
 #else
             ASSERTING_INSTANCES[other] = new WeakReference<AssertingScorer>(assertScorer);
 #endif
@@ -61,13 +61,8 @@ namespace Lucene.Net.Search
             {
                 return other;
             }
-
-#if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-            if (!ASSERTING_INSTANCES.TryGetValue(other, out AssertingScorer assertingScorer) || assertingScorer == null)
-#else
             if (!ASSERTING_INSTANCES.TryGetValue(other, out WeakReference<AssertingScorer> assertingScorerRef) || assertingScorerRef == null ||
                 !assertingScorerRef.TryGetTarget(out AssertingScorer assertingScorer) || assertingScorer == null)
-#endif
             {
                 // can happen in case of memory pressure or if
                 // scorer1.Score(collector) calls
