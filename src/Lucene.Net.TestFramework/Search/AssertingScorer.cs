@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
             new ConditionalWeakTable<Scorer, WeakReference<AssertingScorer>>();
 #else
         private static readonly IDictionary<Scorer, WeakReference<AssertingScorer>> ASSERTING_INSTANCES = 
-            new ConcurrentHashMapWrapper<Scorer, WeakReference<AssertingScorer>>(new WeakDictionary<Scorer, WeakReference<AssertingScorer>>());
+            new WeakDictionary<Scorer, WeakReference<AssertingScorer>>().AsConcurrent();
 #endif
 
         public static Scorer Wrap(Random random, Scorer other)

@@ -549,8 +549,7 @@ namespace Lucene.Net.Index
 #if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
         private readonly ConditionalWeakTable<SegmentCoreReaders, BooleanRef> warmed = new ConditionalWeakTable<SegmentCoreReaders, BooleanRef>();
 #else
-        private readonly IDictionary<SegmentCoreReaders, BooleanRef> warmed = new ConcurrentHashMapWrapper<SegmentCoreReaders, BooleanRef>(new WeakDictionary<SegmentCoreReaders, BooleanRef>());
-                                                                                                                                    // Collections.synchronizedMap(new WeakHashMap<SegmentCoreReaders, BooleanRef>());
+        private readonly IDictionary<SegmentCoreReaders, BooleanRef> warmed = new WeakDictionary<SegmentCoreReaders, BooleanRef>().AsConcurrent();
 #endif
 
         public virtual void RunTest(string testName)

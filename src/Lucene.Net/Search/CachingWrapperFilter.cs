@@ -41,8 +41,7 @@ namespace Lucene.Net.Search
 #if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
         private readonly ConditionalWeakTable<object, DocIdSet> _cache = new ConditionalWeakTable<object, DocIdSet>();
 #else
-        //private readonly IDictionary<object, DocIdSet> Cache = Collections.synchronizedMap(new WeakHashMap<object, DocIdSet>());
-        private readonly IDictionary<object, DocIdSet> _cache = new ConcurrentHashMapWrapper<object, DocIdSet>(new WeakDictionary<object, DocIdSet>());
+        private readonly IDictionary<object, DocIdSet> _cache = new WeakDictionary<object, DocIdSet>().AsConcurrent();
 #endif
 
         /// <summary>
