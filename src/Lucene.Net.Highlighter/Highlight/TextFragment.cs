@@ -50,7 +50,11 @@ namespace Lucene.Net.Search.Highlight
         /// <summary>
         /// the fragment sequence number
         /// </summary>
-        public virtual int FragNum { get; protected internal set; }
+        public virtual int FragNum
+        {
+	        get { return fragNum; }
+	        protected internal set { fragNum = value; }
+        }
 
         /// <param name="frag2">Fragment to be merged into this one</param>
         public virtual void Merge(TextFragment frag2)
