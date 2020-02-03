@@ -46,6 +46,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyKeys.cs" Link="Properties\CommonAssemblyKeys.cs" />
+  </ItemGroup>
+
+  <PropertyGroup Label="NuGet Package File Paths">
+    <LuceneNetCodeAnalysisDir>$(SolutionDir)src\dotnet\Lucene.Net.CodeAnalysis\</LuceneNetCodeAnalysisDir>
+    <LuceneNetCodeAnalysisAssemblyFile>$(LuceneNetCodeAnalysisDir)bin\$(Configuration)\netstandard2.0\*.dll</LuceneNetCodeAnalysisAssemblyFile>
+  </PropertyGroup>
+
+  <ItemGroup Label="NuGet Package Files">
+    <None Include="$(LuceneNetCodeAnalysisDir)tools\*.ps1" Pack="true" PackagePath="tools" />
+    <None Include="$(LuceneNetCodeAnalysisAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="$(LuceneNetCodeAnalysisAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/vb" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="J2N" Version="$(J2NPackageVersion)" />
   </ItemGroup>
     

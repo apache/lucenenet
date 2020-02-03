@@ -71,7 +71,17 @@ steps:
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
 
-# Special case: Only supports .netcoreapp3.0
+# Special case: Only supports .NET Standard 2.0
+- template: publish-test-results.yml
+  parameters:
+    framework: 'netcoreapp2.2'
+    testProjectName: 'Lucene.Net.Tests.CodeAnalysis'
+    osName: '${{ parameters.osName }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+# Special case: Only supports .netcoreapp3.1
 - template: publish-test-results.yml
   parameters:
     framework: 'netcoreapp3.1'
@@ -81,7 +91,7 @@ steps:
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
 
-# Special case: Only supports .net45
+# Special case: Only supports .net48
 - template: publish-test-results.yml
   parameters:
     framework: 'net48'
