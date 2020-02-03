@@ -85,7 +85,8 @@ namespace Lucene.Net.Analysis
         /// </summary>
         protected TokenStream()
         {
-            AssertFinal();
+            // LUCENENET: Rather than using AssertFinal() to run Reflection code at runtime,
+            // we are using a Roslyn code analyzer to ensure the rules are followed at compile time.
         }
 
         /// <summary>
@@ -94,7 +95,8 @@ namespace Lucene.Net.Analysis
         protected TokenStream(AttributeSource input)
             : base(input)
         {
-            AssertFinal();
+            // LUCENENET: Rather than using AssertFinal() to run Reflection code at runtime,
+            // we are using a Roslyn code analyzer to ensure the rules are followed at compile time.
         }
 
         /// <summary>
@@ -104,31 +106,8 @@ namespace Lucene.Net.Analysis
         protected TokenStream(AttributeFactory factory)
             : base(factory)
         {
-            AssertFinal();
-        }
-
-        private bool AssertFinal()
-        {
-            var type = this.GetType();
-
-            //if (!type.desiredAssertionStatus()) return true; // not supported in .NET
-
-            var hasCompilerGeneratedAttribute =
-                type.GetTypeInfo().GetCustomAttributes(typeof (CompilerGeneratedAttribute), false).Any();
-            var isAnonymousType = hasCompilerGeneratedAttribute && type.FullName.Contains("AnonymousType");
-
-            var method = type.GetMethod("IncrementToken", BindingFlags.Public | BindingFlags.Instance);
-
-            if (!(isAnonymousType || type.GetTypeInfo().IsSealed || (method != null && method.IsFinal)))            
-            {
-                // Original Java code throws an AssertException via Java's assert, we can't do this here
-                throw new InvalidOperationException("TokenStream implementation classes or at least their IncrementToken() implementation must be marked sealed");
-            }
-
-            // type.GetMethod returns null if the method doesn't exist.
-            // To emulate Lucene (which catches a NoSuchMethodException),
-            // we need to return false in that case.
-            return method != null;
+            // LUCENENET: Rather than using AssertFinal() to run Reflection code at runtime,
+            // we are using a Roslyn code analyzer to ensure the rules are followed at compile time.
         }
 
         /// <summary>
