@@ -6,7 +6,6 @@ using Lucene.Net.Documents.Extensions;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.IO;
@@ -207,7 +206,7 @@ namespace Lucene.Net.Documents
 
             TrySetBoost(field);
             TrySetByteValue(field);
-            field.SetBytesValue("fubar".ToBytesRefArray(Encoding.UTF8));
+            field.SetBytesValue("fubar".GetBytes(Encoding.UTF8));
             field.SetBytesValue(new BytesRef("baz"));
             TrySetDoubleValue(field);
             TrySetIntValue(field);
@@ -228,7 +227,7 @@ namespace Lucene.Net.Documents
 
             TrySetBoost(field);
             TrySetByteValue(field);
-            field.SetBytesValue("fubar".ToBytesRefArray(Encoding.UTF8));
+            field.SetBytesValue("fubar".GetBytes(Encoding.UTF8));
             field.SetBytesValue(new BytesRef("baz"));
             TrySetDoubleValue(field);
             TrySetIntValue(field);
@@ -328,7 +327,7 @@ namespace Lucene.Net.Documents
             {
                 TrySetBoost(field);
                 TrySetByteValue(field);
-                field.SetBytesValue("baz".ToBytesRefArray(Encoding.UTF8));
+                field.SetBytesValue("baz".GetBytes(Encoding.UTF8));
                 field.SetBytesValue(new BytesRef("baz"));
                 TrySetDoubleValue(field);
                 TrySetIntValue(field);
