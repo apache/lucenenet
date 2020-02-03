@@ -69,7 +69,7 @@ namespace Lucene.Net.Analysis.Snowball
         ///    <see cref="StandardFilter"/>, a <see cref="LowerCaseFilter"/>, a <see cref="StopFilter"/>,
         ///    and a <see cref="SnowballFilter"/> 
         /// </summary>
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer tokenizer = new StandardTokenizer(matchVersion, reader);
             TokenStream result = new StandardFilter(matchVersion, tokenizer);

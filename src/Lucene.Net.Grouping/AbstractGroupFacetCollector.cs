@@ -334,7 +334,7 @@ namespace Lucene.Net.Search.Grouping
             {
             }
 
-            protected override bool LessThan(AbstractSegmentResult a, AbstractSegmentResult b)
+            protected internal override bool LessThan(AbstractSegmentResult a, AbstractSegmentResult b)
             {
                 return a.m_mergeTerm.CompareTo(b.m_mergeTerm) < 0;
             }

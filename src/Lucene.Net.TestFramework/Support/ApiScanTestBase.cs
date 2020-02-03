@@ -460,6 +460,10 @@ namespace Lucene.Net.Support
                 {
                     continue;
                 }
+                if (!string.IsNullOrEmpty(c.Name) && c.Name.Equals("AssemblyKeys", StringComparison.Ordinal))
+                {
+                    continue;
+                }
 
                 var fields = c.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 

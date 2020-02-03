@@ -723,7 +723,7 @@ namespace Lucene.Net.Queries.Mlt
             {
             }
 
-            protected override bool LessThan(object[] aa, object[] bb)
+            protected internal override bool LessThan(object[] aa, object[] bb)
             {
                 float? fa = (float?)aa[2];
                 float? fb = (float?)bb[2];

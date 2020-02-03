@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Cjk
         {
         }
 
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
 #pragma warning disable 612, 618
             if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_36))

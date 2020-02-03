@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Ja
             }
         }
 
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer tokenizer = new JapaneseTokenizer(reader, userDict, true, mode);
             TokenStream stream = new JapaneseBaseFormFilter(tokenizer);

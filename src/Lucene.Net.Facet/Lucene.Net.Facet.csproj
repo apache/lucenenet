@@ -36,10 +36,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyKeys.cs" Link="Properties\CommonAssemblyKeys.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Join\Lucene.Net.Join.csproj" />
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
   </ItemGroup>

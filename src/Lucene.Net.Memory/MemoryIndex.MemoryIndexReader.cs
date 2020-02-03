@@ -651,7 +651,7 @@ namespace Lucene.Net.Index.Memory
 #endif
                 // no-op: there are no stored fields
             }
-            protected override void DoClose()
+            protected internal override void DoClose()
             {
 #if DEBUG
                 Debug.WriteLine("MemoryIndexReader.DoClose");

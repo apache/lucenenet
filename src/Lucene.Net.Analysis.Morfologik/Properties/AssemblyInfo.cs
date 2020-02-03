@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Licensed to the Apache Software Foundation (ASF) under one or more
 * contributor license agreements.  See the NOTICE file distributed with
 * this work for additional information regarding copyright ownership.
@@ -15,7 +15,6 @@
 * limitations under the License.
 */
 
-using Lucene.Net;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -24,7 +23,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyDefaultAlias("Lucene.Net.Analysis.Kuromoji")]
+[assembly: AssemblyDefaultAlias("Lucene.Net.Analysis.Morfologik")]
 [assembly: AssemblyCulture("")]
 
 [assembly: CLSCompliant(true)]
@@ -35,9 +34,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("8408625a-2508-46d5-8519-045183c43724")]
-
-// for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Kuromoji, PublicKey=" + AssemblyKeys.PublicKey)]
-
-
+[assembly: Guid("2e4a99a0-c52e-4e66-9246-69ef75124b61")]

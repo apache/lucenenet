@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Uk
             this.stemExclusionSet = CharArraySet.UnmodifiableSet(CharArraySet.Copy(matchVersion, stemExclusionSet));
         }
 
-        protected override TextReader InitReader(string fieldName, TextReader reader)
+        protected internal override TextReader InitReader(string fieldName, TextReader reader)
         {
             NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
             // different apostrophes
@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.Uk
         /// <returns>A <see cref="TokenStreamComponents"/> built from a <see cref="StandardTokenizer"/>
         /// filtered with <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>, <see cref="SetKeywordMarkerFilter"/>
         /// if a stem exclusion set is provided and <see cref="MorfologikFilter"/> on the Ukrainian dictionary.</returns>
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new StandardTokenizer(m_matchVersion, reader);
             TokenStream result = new LowerCaseFilter(m_matchVersion, source);

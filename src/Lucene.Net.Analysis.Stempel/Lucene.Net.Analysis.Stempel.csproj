@@ -36,7 +36,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyKeys.cs" Link="Properties\CommonAssemblyKeys.cs" />
     <EmbeddedResource Include="Pl\stemmer_20000.tbl;Pl\stopwords.txt" />
   </ItemGroup>
 

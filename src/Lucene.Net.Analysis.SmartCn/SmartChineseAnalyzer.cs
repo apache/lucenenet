@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
             this.matchVersion = matchVersion;
         }
 
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer tokenizer;
             TokenStream result;

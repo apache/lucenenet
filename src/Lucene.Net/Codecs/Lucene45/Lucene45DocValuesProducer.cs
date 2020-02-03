@@ -503,7 +503,7 @@ namespace Lucene.Net.Codecs.Lucene45
         /// <para/>
         /// @lucene.internal
         /// </summary>
-        protected internal virtual MonotonicBlockPackedReader GetAddressInstance(IndexInput data, FieldInfo field, BinaryEntry bytes)
+        protected virtual MonotonicBlockPackedReader GetAddressInstance(IndexInput data, FieldInfo field, BinaryEntry bytes)
         {
             MonotonicBlockPackedReader addresses;
             lock (addressInstances)
@@ -574,7 +574,7 @@ namespace Lucene.Net.Codecs.Lucene45
         /// <para/>
         /// @lucene.internal
         /// </summary>
-        protected internal virtual MonotonicBlockPackedReader GetIntervalInstance(IndexInput data, FieldInfo field, BinaryEntry bytes)
+        protected virtual MonotonicBlockPackedReader GetIntervalInstance(IndexInput data, FieldInfo field, BinaryEntry bytes)
         {
             MonotonicBlockPackedReader addresses;
             long interval = bytes.AddressInterval;
@@ -687,7 +687,7 @@ namespace Lucene.Net.Codecs.Lucene45
         /// <para/>
         /// @lucene.internal
         /// </summary>
-        protected internal virtual MonotonicBlockPackedReader GetOrdIndexInstance(IndexInput data, FieldInfo field, NumericEntry entry)
+        protected virtual MonotonicBlockPackedReader GetOrdIndexInstance(IndexInput data, FieldInfo field, NumericEntry entry)
         {
             MonotonicBlockPackedReader ordIndex;
             lock (ordIndexInstances)

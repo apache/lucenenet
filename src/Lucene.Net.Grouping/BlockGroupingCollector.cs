@@ -160,7 +160,7 @@ namespace Lucene.Net.Search.Grouping
                 this.outerInstance = outerInstance;
             }
 
-            protected override bool LessThan(OneGroup group1, OneGroup group2)
+            protected internal override bool LessThan(OneGroup group1, OneGroup group2)
             {
 
                 //System.out.println("    ltcheck");

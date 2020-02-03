@@ -220,7 +220,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Reads terms file header. </summary>
-        protected internal virtual int ReadHeader(IndexInput input)
+        protected virtual int ReadHeader(IndexInput input)
         {
             int version = CodecUtil.CheckHeader(input, BlockTreeTermsWriter.TERMS_CODEC_NAME, BlockTreeTermsWriter.VERSION_START, BlockTreeTermsWriter.VERSION_CURRENT);
             if (version < BlockTreeTermsWriter.VERSION_APPEND_ONLY)
@@ -232,7 +232,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Reads index file header. </summary>
-        protected internal virtual int ReadIndexHeader(IndexInput input)
+        protected virtual int ReadIndexHeader(IndexInput input)
         {
             int version = CodecUtil.CheckHeader(input, BlockTreeTermsWriter.TERMS_INDEX_CODEC_NAME, BlockTreeTermsWriter.VERSION_START, BlockTreeTermsWriter.VERSION_CURRENT);
             if (version < BlockTreeTermsWriter.VERSION_APPEND_ONLY)
@@ -244,7 +244,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Seek <paramref name="input"/> to the directory offset. </summary>
-        protected internal virtual void SeekDir(IndexInput input, long dirOffset)
+        protected virtual void SeekDir(IndexInput input, long dirOffset)
         {
             if (version >= BlockTreeTermsWriter.VERSION_CHECKSUM)
             {

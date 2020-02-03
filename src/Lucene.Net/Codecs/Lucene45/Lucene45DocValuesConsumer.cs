@@ -355,7 +355,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         /// <summary>
         /// Expert: writes a value dictionary for a sorted/sortedset field. </summary>
-        protected internal virtual void AddTermsDict(FieldInfo field, IEnumerable<BytesRef> values)
+        protected virtual void AddTermsDict(FieldInfo field, IEnumerable<BytesRef> values)
         {
             // first check if its a "fixed-length" terms dict
             int minLength = int.MaxValue;

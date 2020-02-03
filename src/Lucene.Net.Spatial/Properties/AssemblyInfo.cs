@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Support;
+using Lucene.Net;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;

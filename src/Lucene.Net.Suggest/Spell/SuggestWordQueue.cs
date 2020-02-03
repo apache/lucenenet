@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Spell
             this.comparer = comparer;
         }
 
-        protected override bool LessThan(SuggestWord wa, SuggestWord wb)
+        protected internal override bool LessThan(SuggestWord wa, SuggestWord wb)
         {
             int val = comparer.Compare(wa, wb);
             return val < 0;

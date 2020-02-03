@@ -36,10 +36,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyKeys.cs" Link="Properties\CommonAssemblyKeys.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
     <ProjectReference Include="..\Lucene.Net.Expressions\Lucene.Net.Expressions.csproj" />

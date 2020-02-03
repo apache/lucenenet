@@ -145,7 +145,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
             {
             }
 
-            protected override bool LessThan(TermDf tf1, TermDf tf2)
+            protected internal override bool LessThan(TermDf tf1, TermDf tf2)
             {
                 return tf1.df < tf2.df;
             }

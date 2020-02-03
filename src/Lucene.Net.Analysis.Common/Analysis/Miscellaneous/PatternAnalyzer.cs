@@ -225,7 +225,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="reader">
         ///            the reader delivering the text </param>
         /// <returns> a new token stream </returns>
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             return CreateComponents(fieldName, reader, null);
         }

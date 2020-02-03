@@ -63,7 +63,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 this.outerInstance = outerInstance;
             }
 
-            protected override TextReader InitReader(string fieldName, TextReader reader)
+            protected internal override TextReader InitReader(string fieldName, TextReader reader)
             {
                 if (outerInstance.charFilterFactories != null && outerInstance.charFilterFactories.Count > 0)
                 {
@@ -77,7 +77,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 return reader;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = outerInstance.tokenizerFactory.Create(reader);
                 TokenStream tokenStream = tokenizer;

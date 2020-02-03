@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis.Standard
             get { return maxTokenLength; }
         }
 
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             UAX29URLEmailTokenizer src = new UAX29URLEmailTokenizer(m_matchVersion, reader);
             src.MaxTokenLength = maxTokenLength;
@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.Standard
                 this.src = src;
             }
 
-            protected override void SetReader(TextReader reader)
+            protected internal override void SetReader(TextReader reader)
             {
                 src.MaxTokenLength = outerInstance.maxTokenLength;
                 base.SetReader(reader);

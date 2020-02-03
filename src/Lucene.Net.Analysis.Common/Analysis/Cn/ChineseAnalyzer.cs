@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Cn
         /// <returns> <see cref="TokenStreamComponents"/>
         ///         built from a <see cref="ChineseTokenizer"/> filtered with
         ///         <see cref="ChineseFilter"/> </returns>
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer source = new ChineseTokenizer(reader);
             return new TokenStreamComponents(source, new ChineseFilter(source));

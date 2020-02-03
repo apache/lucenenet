@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Morfologik
         /// <returns>A <see cref="TokenStreamComponents"/>
         /// built from a <see cref="StandardTokenizer"/> filtered with
         /// <see cref="MorfologikFilter"/>.</returns>
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             Tokenizer src = new StandardTokenizer(this.version, reader);
 

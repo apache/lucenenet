@@ -36,7 +36,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyKeys.cs" Link="Properties\CommonAssemblyKeys.cs" />
     <EmbeddedResource Include="Analysis\Gl\galician.rslp;Analysis\Pt\portuguese.rslp;Analysis\Compound\Hyphenation\hyphenation.dtd" />
     <EmbeddedResource Include="Analysis\**\stopwords.txt;Analysis\Snowball\*_stop.txt" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
