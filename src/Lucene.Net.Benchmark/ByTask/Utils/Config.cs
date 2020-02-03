@@ -1,4 +1,5 @@
-﻿using J2N.Text;
+﻿using J2N;
+using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -85,7 +86,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             this.props = new Dictionary<string, string>();
             writer.Flush();
             ms.Position = 0;
-            props.Load(ms); 
+            props.LoadProperties(ms); 
 
             // make sure work dir is set properly 
             string temp;
