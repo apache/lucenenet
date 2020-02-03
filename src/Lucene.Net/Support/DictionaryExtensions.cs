@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Lucene.Net.Support
 {
@@ -25,6 +24,9 @@ namespace Lucene.Net.Support
     {
         public static void PutAll<TKey, TValue>(this IDictionary<TKey, TValue> dict, IEnumerable<KeyValuePair<TKey, TValue>> kvps)
         {
+            if (dict == null)
+                throw new ArgumentNullException(nameof(dict));
+
             foreach (var kvp in kvps)
             {
                 dict[kvp.Key] = kvp.Value;
@@ -34,9 +36,10 @@ namespace Lucene.Net.Support
         public static TValue Put<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
         {
             if (dict == null)
-                return default(TValue);
+                throw new ArgumentNullException(nameof(dict));
 
-            var oldValue = dict.ContainsKey(key) ? dict[key] : default(TValue);
+            if (!dict.TryGetValue(key, out TValue oldValue))
+                oldValue = default;
             dict[key] = value;
             return oldValue;
         }
