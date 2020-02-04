@@ -52,7 +52,7 @@ steps:
     EnsureNotNullOrEmpty('${{ parameters.maximumAllowedFailures }}', 'maximumAllowedFailures')
   displayName: 'Validate Template Parameters'
 
-- task: DotNetCoreInstaller@0
+- task: UseDotNet@2
   displayName: 'Use .NET Core sdk 3.1.100'
   inputs:
     version: 3.1.100
