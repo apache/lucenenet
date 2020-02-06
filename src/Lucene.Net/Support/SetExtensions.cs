@@ -22,7 +22,7 @@ namespace Lucene.Net.Support
      * limitations under the License.
      */
 
-    public static class SetExtensions
+    internal static class SetExtensions
     {
         [DebuggerStepThrough]
         public static void RemoveAll<T>(this ICollection<T> theSet, IEnumerable<T> removeList)

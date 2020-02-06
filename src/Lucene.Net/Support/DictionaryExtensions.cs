@@ -20,7 +20,7 @@ namespace Lucene.Net.Support
      * limitations under the License.
      */
 
-    public static class DictionaryExtensions
+    internal static class DictionaryExtensions
     {
         public static void PutAll<TKey, TValue>(this IDictionary<TKey, TValue> dict, IEnumerable<KeyValuePair<TKey, TValue>> kvps)
         {
