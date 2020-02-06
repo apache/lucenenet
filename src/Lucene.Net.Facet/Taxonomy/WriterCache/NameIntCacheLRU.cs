@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -38,7 +38,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         private IDictionary<object, int> cache;
         internal long nMisses = 0; // for debug
         internal long nHits = 0; // for debug
-        private int maxCacheSize;
+        private readonly int maxCacheSize;
 
         internal NameInt32CacheLRU(int limit)
         {
@@ -49,24 +49,12 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// <summary>
         /// Maximum number of cache entries before eviction.
         /// </summary>
-        public virtual int Limit
-        {
-            get
-            {
-                return maxCacheSize;
-            }
-        }
+        public virtual int Limit => maxCacheSize;
 
         /// <summary>
         /// Number of entries currently in the cache.
         /// </summary>
-        public virtual int Count
-        {
-            get
-            {
-                return cache.Count;
-            }
-        }
+        public virtual int Count => cache.Count;
 
         private void CreateCache(int maxSize)
         {
@@ -82,8 +70,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal virtual int Get(FacetLabel name)
         {
-            int result;
-            TryGetValue(name, out result);
+            TryGetValue(name, out int result);
             return result;
         }
 
@@ -131,13 +118,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             return IsCacheFull;
         }
 
-        private bool IsCacheFull
-        {
-            get
-            {
-                return cache.Count > maxCacheSize;
-            }
-        }
+        private bool IsCacheFull => cache.Count > maxCacheSize;
 
         internal virtual void Clear()
         {

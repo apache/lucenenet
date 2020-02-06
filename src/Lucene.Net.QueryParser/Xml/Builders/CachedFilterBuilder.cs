@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Search;
-using Lucene.Net.Support;
+﻿using J2N.Collections.Concurrent;
+using Lucene.Net.Search;
 using System.Xml;
 
 namespace Lucene.Net.QueryParsers.Xml.Builders

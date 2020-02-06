@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Collections.Concurrent;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public class LRUHashMap<TKey, TValue> : IDictionary<TKey, TValue>
     {
-        private LurchTable<TKey, TValue> cache;
+        private readonly LurchTable<TKey, TValue> cache;
 
         /// <summary>
         /// Create a new hash map with a bounded size and with least recently
@@ -117,7 +117,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public TValue Put(TKey key, TValue value)
         {
-            TValue oldValue = default(TValue);
+            TValue oldValue = default;
             cache.AddOrUpdate(key, value, (k, v) =>
             {
                 oldValue = cache[key];
@@ -130,7 +130,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             if (!cache.TryGetValue(key, out TValue result))
             {
-                return default(TValue);
+                return default;
             }
             return result;
         }
@@ -168,7 +168,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public bool Contains(KeyValuePair<TKey, TValue> item)
         {
-            throw new NotSupportedException();
+            return ((ICollection<KeyValuePair<TKey, TValue>>)cache).Contains(item);
         }
 
         public bool ContainsKey(TKey key)
@@ -176,9 +176,9 @@ namespace Lucene.Net.Facet.Taxonomy
             return cache.ContainsKey(key);
         }
 
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int index)
         {
-            throw new NotSupportedException();
+            cache.CopyTo(array, index);
         }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
@@ -188,7 +188,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
-            throw new NotSupportedException();
+            return cache.TryRemove(item);
         }
 
         public bool Remove(TKey key)
