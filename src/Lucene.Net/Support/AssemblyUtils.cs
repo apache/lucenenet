@@ -30,7 +30,7 @@ namespace Lucene.Net.Support
     /// <summary>
     /// Methods for working with Assemblies.
     /// </summary>
-    public class AssemblyUtils
+    internal class AssemblyUtils
     {
         /// <summary>
         /// Gets a list of the host assembly's referenced assemblies excluding 
