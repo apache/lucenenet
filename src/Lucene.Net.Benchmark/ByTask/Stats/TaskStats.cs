@@ -91,7 +91,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         /// </summary>
         internal void MarkEnd(int numParallelTasks, int count)
         {
-            elapsed = Support.Time.CurrentTimeMilliseconds();
+            elapsed = J2N.Time.CurrentTimeMilliseconds();
             long totMem = GC.GetTotalMemory(false); //Runtime.getRuntime().totalMemory();
             if (totMem > maxTotMem)
             {

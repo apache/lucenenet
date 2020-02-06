@@ -95,9 +95,9 @@ namespace Lucene.Net.Benchmarks.Quality
                 // generate query
                 Query q = m_qqParser.Parse(qq);
                 // search with this query 
-                long t1 = Support.Time.CurrentTimeMilliseconds();
+                long t1 = J2N.Time.CurrentTimeMilliseconds();
                 TopDocs td = m_searcher.Search(q, null, maxResults);
-                long searchTime = Support.Time.CurrentTimeMilliseconds() - t1;
+                long searchTime = J2N.Time.CurrentTimeMilliseconds() - t1;
                 //most likely we either submit or judge, but check both 
                 if (judge != null)
                 {
@@ -120,13 +120,13 @@ namespace Lucene.Net.Benchmarks.Quality
         {
             QualityStats stts = new QualityStats(judge.MaxRecall(qq), searchTime);
             ScoreDoc[] sd = td.ScoreDocs;
-            long t1 = Support.Time.CurrentTimeMilliseconds(); // extraction of first doc name we measure also construction of doc name extractor, just in case.
+            long t1 = J2N.Time.CurrentTimeMilliseconds(); // extraction of first doc name we measure also construction of doc name extractor, just in case.
             DocNameExtractor xt = new DocNameExtractor(m_docNameField);
             for (int i = 0; i < sd.Length; i++)
             {
                 string docName = xt.DocName(m_searcher, sd[i].Doc);
-                long docNameExtractTime = Support.Time.CurrentTimeMilliseconds() - t1;
-                t1 = Support.Time.CurrentTimeMilliseconds();
+                long docNameExtractTime = J2N.Time.CurrentTimeMilliseconds() - t1;
+                t1 = J2N.Time.CurrentTimeMilliseconds();
                 bool isRelevant = judge.IsRelevant(docName, qq);
                 stts.AddResult(i + 1, isRelevant, docNameExtractTime);
             }

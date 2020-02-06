@@ -63,7 +63,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
 
 
-            long t = Support.Time.CurrentTimeMilliseconds();
+            long t = J2N.Time.CurrentTimeMilliseconds();
             DirectoryReader r = DirectoryReader.Open(w, true);
             runData.SetIndexReader(r);
             // Transfer our reference to runData
@@ -76,18 +76,18 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             reopenCount = 0;
             while (!Stop)
             {
-                long waitForMsec = (pauseMSec - (Support.Time.CurrentTimeMilliseconds() - t));
+                long waitForMsec = (pauseMSec - (J2N.Time.CurrentTimeMilliseconds() - t));
                 if (waitForMsec > 0)
                 {
                     Thread.Sleep((int)waitForMsec);
                     //System.out.println("NRT wait: " + waitForMsec + " msec");
                 }
 
-                t = Support.Time.CurrentTimeMilliseconds();
+                t = J2N.Time.CurrentTimeMilliseconds();
                 DirectoryReader newReader = DirectoryReader.OpenIfChanged(r);
                 if (newReader != null)
                 {
-                    int delay = (int)(Support.Time.CurrentTimeMilliseconds() - t);
+                    int delay = (int)(J2N.Time.CurrentTimeMilliseconds() - t);
                     if (reopenTimes.Length == reopenCount)
                     {
                         reopenTimes = ArrayUtil.Grow(reopenTimes, 1 + reopenCount);

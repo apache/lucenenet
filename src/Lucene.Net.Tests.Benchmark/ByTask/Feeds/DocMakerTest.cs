@@ -171,7 +171,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // leading to a file handle leak.
             FileInfo f = new FileInfo(Path.Combine(getWorkDir().FullName, "docMakerLeak.txt"));
             TextWriter ps = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.UTF8);
-            ps.WriteLine("one title\t" + Time.CurrentTimeMilliseconds() + "\tsome content");
+            ps.WriteLine("one title\t" + J2N.Time.CurrentTimeMilliseconds() + "\tsome content");
             ps.Dispose();
 
             Dictionary<string, string> props = new Dictionary<string, string>();

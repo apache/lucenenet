@@ -48,7 +48,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             lock (syncLock)
             {
                 prevLastMillis = lastMillis;
-                lastMillis = Time.CurrentTimeMilliseconds();
+                lastMillis = J2N.Time.CurrentTimeMilliseconds();
                 if (0 == numSearches)
                 {
                     startMillis = prevLastMillis = lastMillis;

@@ -201,7 +201,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             long runTime = (long)(runTimeSec * 1000);
             List<RunBackgroundTask> bgTasks = null;
 
-            long t0 = Support.Time.CurrentTimeMilliseconds();
+            long t0 = J2N.Time.CurrentTimeMilliseconds();
             for (int k = 0; fixedTime || (repetitions == REPEAT_EXHAUST && !exhausted) || k < repetitions; k++)
             {
                 if (Stop)
@@ -232,7 +232,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             count += inc;
                             if (countsByTime != null)
                             {
-                                int slot = (int)((Support.Time.CurrentTimeMilliseconds() - t0) / logByTimeMsec);
+                                int slot = (int)((J2N.Time.CurrentTimeMilliseconds() - t0) / logByTimeMsec);
                                 if (slot >= countsByTime.Length)
                                 {
                                     countsByTime = ArrayUtil.Grow(countsByTime, 1 + slot);
@@ -248,7 +248,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                         }
                     }
                 }
-                if (fixedTime && Support.Time.CurrentTimeMilliseconds() - t0 > runTime)
+                if (fixedTime && J2N.Time.CurrentTimeMilliseconds() - t0 > runTime)
                 {
                     repetitions = k + 1;
                     break;
@@ -282,9 +282,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             InitTasksArray();
             long delayStep = (perMin ? 60000 : 1000) / rate;
-            long nextStartTime = Support.Time.CurrentTimeMilliseconds();
+            long nextStartTime = J2N.Time.CurrentTimeMilliseconds();
             int count = 0;
-            long t0 = Support.Time.CurrentTimeMilliseconds();
+            long t0 = J2N.Time.CurrentTimeMilliseconds();
             for (int k = 0; (repetitions == REPEAT_EXHAUST && !exhausted) || k < repetitions; k++)
             {
                 if (Stop)
@@ -296,7 +296,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     PerfTask task = tasksArray[l];
                     while (!Stop)
                     {
-                        long waitMore = nextStartTime - Support.Time.CurrentTimeMilliseconds();
+                        long waitMore = nextStartTime - J2N.Time.CurrentTimeMilliseconds();
                         if (waitMore > 0)
                         {
                             // TODO: better to use condition to notify
@@ -318,7 +318,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                         count += inc;
                         if (countsByTime != null)
                         {
-                            int slot = (int)((Support.Time.CurrentTimeMilliseconds() - t0) / logByTimeMsec);
+                            int slot = (int)((J2N.Time.CurrentTimeMilliseconds() - t0) / logByTimeMsec);
                             if (slot >= countsByTime.Length)
                             {
                                 countsByTime = ArrayUtil.Grow(countsByTime, 1 + slot);
@@ -509,10 +509,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private void StartlThreadsWithRate(ParallelTask[] t)
         {
             long delayStep = (perMin ? 60000 : 1000) / rate;
-            long nextStartTime = Support.Time.CurrentTimeMilliseconds();
+            long nextStartTime = J2N.Time.CurrentTimeMilliseconds();
             for (int i = 0; i < t.Length; i++)
             {
-                long waitMore = nextStartTime - Support.Time.CurrentTimeMilliseconds();
+                long waitMore = nextStartTime - J2N.Time.CurrentTimeMilliseconds();
                 if (waitMore > 0)
                 {
                     Thread.Sleep((int)waitMore);
