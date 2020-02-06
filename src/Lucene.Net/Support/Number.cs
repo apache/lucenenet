@@ -27,7 +27,7 @@ namespace Lucene.Net.Support
     /// <summary>
     /// A simple class for number conversions.
     /// </summary>
-    public static class Number
+    internal static class Number
     {
         /// <summary>
         /// Min radix value.
