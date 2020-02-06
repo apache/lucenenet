@@ -61,7 +61,7 @@ namespace Lucene.Net.Support.Threading
     /// 
     /// Source: https://msdn.microsoft.com/en-us/library/system.threading.tasks.taskscheduler(v=vs.110).aspx
     /// </summary>
-    public class LimitedConcurrencyLevelTaskScheduler : TaskScheduler
+    internal class LimitedConcurrencyLevelTaskScheduler : TaskScheduler
     {
         // Indicates whether the current thread is processing work items.
         [ThreadStatic]
