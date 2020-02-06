@@ -1,10 +1,9 @@
-﻿using Lucene.Net.Support;
+﻿using J2N;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Util
@@ -58,7 +57,7 @@ namespace Lucene.Net.Analysis.Util
             // before passing it to our resource loader.
             string englishStopFile = "english_stop.txt";
             var file = CreateTempFile(System.IO.Path.GetFileNameWithoutExtension(englishStopFile), System.IO.Path.GetExtension(englishStopFile));
-            using (var stream = typeof(Snowball.SnowballFilter).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(Snowball.SnowballFilter), englishStopFile))
+            using (var stream = typeof(Snowball.SnowballFilter).FindAndGetManifestResourceStream(englishStopFile))
             {
                 using (var outputStream = new FileStream(file.FullName, FileMode.OpenOrCreate, FileAccess.Write))
                 {

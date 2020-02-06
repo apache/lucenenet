@@ -1,10 +1,9 @@
+using J2N;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text;
-using System.Threading;
 
 namespace Lucene.Net.Util
 {
@@ -431,7 +430,7 @@ namespace Lucene.Net.Util
             bool success = false;
             try
             {
-                stream = clazz.GetTypeInfo().Assembly.FindAndGetManifestResourceStream(clazz, resource);
+                stream = clazz.FindAndGetManifestResourceStream(resource);
                 TextReader reader = GetDecodingReader(stream, charSet);
                 success = true;
                 return reader;

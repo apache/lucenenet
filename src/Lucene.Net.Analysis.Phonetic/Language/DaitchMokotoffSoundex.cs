@@ -1,10 +1,10 @@
 ﻿// commons-codec version compatibility level: 1.10
+using J2N;
 using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -253,7 +253,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
         static DaitchMokotoffSoundex()
         {
-            Stream rulesIS = typeof(DaitchMokotoffSoundex).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(DaitchMokotoffSoundex), RESOURCE_FILE);
+            Stream rulesIS = typeof(DaitchMokotoffSoundex).FindAndGetManifestResourceStream(RESOURCE_FILE);
             if (rulesIS == null)
             {
                 throw new ArgumentException("Unable to load resource: " + RESOURCE_FILE);

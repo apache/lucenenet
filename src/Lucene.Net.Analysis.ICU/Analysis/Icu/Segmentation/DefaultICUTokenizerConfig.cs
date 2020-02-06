@@ -2,11 +2,10 @@
 using ICU4N.Globalization;
 using ICU4N.Text;
 using ICU4N.Util;
+using J2N;
 using Lucene.Net.Analysis.Standard;
-using Lucene.Net.Support;
 using System;
 using System.IO;
-using System.Reflection;
 
 namespace Lucene.Net.Analysis.Icu.Segmentation
 {
@@ -132,8 +131,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         private static RuleBasedBreakIterator ReadBreakIterator(string filename)
         {
-            using (Stream @is =
-              typeof(DefaultICUTokenizerConfig).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(DefaultICUTokenizerConfig), filename))
+            using (Stream @is = typeof(DefaultICUTokenizerConfig).FindAndGetManifestResourceStream(filename))
             {
                 try
                 {

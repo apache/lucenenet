@@ -1,11 +1,10 @@
 ﻿// commons-codec version compatibility level: 1.9
+using J2N;
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
 
@@ -149,7 +148,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         public static Lang LoadFromResource(string languageRulesResourceName, Languages languages)
         {
             IList<LangRule> rules = new List<LangRule>();
-            Stream lRulesIS = typeof(Lang).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(Lang), languageRulesResourceName);
+            Stream lRulesIS = typeof(Lang).FindAndGetManifestResourceStream(languageRulesResourceName);
 
             if (lRulesIS == null)
             {

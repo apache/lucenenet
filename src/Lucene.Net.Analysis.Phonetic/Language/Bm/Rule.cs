@@ -1,11 +1,11 @@
 ﻿// commons-codec version compatibility level: 1.9
+using J2N;
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
@@ -200,7 +200,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         private static TextReader CreateScanner(NameType nameType, RuleType rt, string lang)
         {
             string resName = CreateResourceName(nameType, rt, lang);
-            Stream rulesIS = typeof(Languages).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(Languages), resName);
+            Stream rulesIS = typeof(Languages).FindAndGetManifestResourceStream(resName);
 
             if (rulesIS == null)
             {
@@ -213,7 +213,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         private static TextReader CreateScanner(string lang)
         {
             string resName = string.Format("{0}.txt", lang); 
-            Stream rulesIS = typeof(Languages).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(Languages), resName);
+            Stream rulesIS = typeof(Languages).FindAndGetManifestResourceStream(resName);
 
             if (rulesIS == null)
             {

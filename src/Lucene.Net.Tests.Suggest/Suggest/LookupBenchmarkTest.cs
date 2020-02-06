@@ -1,4 +1,5 @@
-﻿using J2N.Collections.Generic.Extensions;
+﻿using J2N;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis;
 using Lucene.Net.Search.Suggest.Analyzing;
 using Lucene.Net.Search.Suggest.Fst;
@@ -91,9 +92,7 @@ namespace Lucene.Net.Search.Suggest
         {
             List<Input> input = new List<Input>();
 
-            //URL resource = LookupBenchmarkTest.class.getResource("Top50KWiki.utf8");
-            //var resource = typeof(LookupBenchmarkTest).GetTypeInfo().Assembly.GetManifestResourceStream("Lucene.Net.Tests.Suggest.Suggest.Top50KWiki.utf8");
-            var resource = typeof(LookupBenchmarkTest).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(LookupBenchmarkTest), "Top50KWiki.utf8");
+            var resource = typeof(LookupBenchmarkTest).FindAndGetManifestResourceStream("Top50KWiki.utf8");
             Debug.Assert(resource != null, "Resource missing: Top50KWiki.utf8");
 
             string line = null;
@@ -297,9 +296,9 @@ namespace Lucene.Net.Search.Suggest
                 List<double> times = new List<double>();
                 for (int i = 0; i < warmup + rounds; i++)
                 {
-                    long start = Time.NanoTime();
+                    long start = J2N.Time.NanoTime();
                     guard = Convert.ToInt32(callable.Call());
-                    times.Add((Time.NanoTime() - start) / NANOS_PER_MS );
+                    times.Add((J2N.Time.NanoTime() - start) / NANOS_PER_MS );
                 }
                 return new BenchmarkResult(times, warmup, rounds);
             }

@@ -1,7 +1,7 @@
 ﻿using ICU4N.Text;
+using J2N;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
 
 namespace Lucene.Net.Support
 {
@@ -37,12 +37,12 @@ namespace Lucene.Net.Support
         static JdkBreakIterator()
         {
             using (Stream @is =
-                typeof(JdkBreakIterator).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(JdkBreakIterator), "jdksent.brk"))
+                typeof(JdkBreakIterator).FindAndGetManifestResourceStream("jdksent.brk"))
             {
                 SentenceInstance = RuleBasedBreakIterator.GetInstanceFromCompiledRules(@is);
             }
             using (Stream @is =
-                typeof(JdkBreakIterator).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(JdkBreakIterator), "jdkword.brk"))
+                typeof(JdkBreakIterator).FindAndGetManifestResourceStream("jdkword.brk"))
             {
                 WordInstance = RuleBasedBreakIterator.GetInstanceFromCompiledRules(@is);
             }

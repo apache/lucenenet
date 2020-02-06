@@ -1,3 +1,4 @@
+using J2N;
 using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
@@ -7,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using Console = Lucene.Net.Support.SystemConsole;
 
@@ -209,7 +209,7 @@ namespace Lucene.Net.Index
             foreach (string name in names)
             {
                 DirectoryInfo dir = CreateTempDir(name);
-                using (Stream zipFileStream = this.GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), "index." + name + ".zip"))
+                using (Stream zipFileStream = this.GetType().FindAndGetManifestResourceStream("index." + name + ".zip"))
                 {
                     TestUtil.Unzip(zipFileStream, dir);
                 }
@@ -953,7 +953,7 @@ namespace Lucene.Net.Index
             foreach (string name in OldIndexDirs.Keys)
             {
                 DirectoryInfo dir = CreateTempDir(name);
-                using (Stream dataFile = this.GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), "index." + name + ".zip"))
+                using (Stream dataFile = this.GetType().FindAndGetManifestResourceStream("index." + name + ".zip"))
                 {
                     TestUtil.Unzip(dataFile, dir);
                 }

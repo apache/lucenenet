@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -42,13 +42,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <returns> the analyzer's stopword set or an empty set if the analyzer has no
         ///         stopwords </returns>
-        public virtual CharArraySet StopwordSet
-        {
-            get
-            {
-                return m_stopwords;
-            }
-        }
+        public virtual CharArraySet StopwordSet => m_stopwords;
 
         /// <summary>
         /// Creates a new instance initialized with the given stopword set
@@ -96,7 +90,7 @@ namespace Lucene.Net.Analysis.Util
             TextReader reader = null;
             try
             {
-                var resourceStream = aClass.GetTypeInfo().Assembly.FindAndGetManifestResourceStream(aClass, resource);
+                var resourceStream = aClass.FindAndGetManifestResourceStream(resource);
                 reader = IOUtils.GetDecodingReader(resourceStream, Encoding.UTF8);
                 return WordlistLoader.GetWordSet(reader, comment, new CharArraySet(
 #pragma warning disable 612, 618

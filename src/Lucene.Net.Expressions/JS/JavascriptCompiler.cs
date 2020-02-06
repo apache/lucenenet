@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using JCG = J2N.Collections.Generic;
+using J2N;
 
 #if NETSTANDARD
 using System.IO;
@@ -659,8 +660,7 @@ namespace Lucene.Net.Expressions.JS
 #if NETSTANDARD
             var settings = new Dictionary<string, string>();
             var type = typeof(JavascriptCompiler);
-            var assembly = type.GetTypeInfo().Assembly;
-            using (var reader = new StreamReader(assembly.FindAndGetManifestResourceStream(type, type.GetTypeInfo().Name + ".properties")))
+            using (var reader = new StreamReader(type.FindAndGetManifestResourceStream(type.GetTypeInfo().Name + ".properties")))
             {
                 string line;
                 while(!string.IsNullOrWhiteSpace(line = reader.ReadLine()))

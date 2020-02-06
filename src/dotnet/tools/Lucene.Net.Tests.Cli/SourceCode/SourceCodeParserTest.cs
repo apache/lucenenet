@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Attributes;
-using Lucene.Net.Support;
+﻿using J2N;
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System.IO;
 using System.Reflection;
@@ -30,11 +30,10 @@ namespace Lucene.Net.Cli.SourceCode
         public void TestSourceCodeSectionParser()
         {
             var parser = new SourceCodeSectionParser();
-            var thisAssembly = this.GetType().GetTypeInfo().Assembly;
 
             using (var output = new MemoryStream())
             {
-                using (var input = thisAssembly.FindAndGetManifestResourceStream(this.GetType(), "TestInputForParser.cs"))
+                using (var input = this.GetType().FindAndGetManifestResourceStream("TestInputForParser.cs"))
                 {
                     parser.ParseSourceCodeFiles(input, output);
                 }

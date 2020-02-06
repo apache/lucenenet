@@ -1,11 +1,11 @@
 ﻿// Lucene version compatibility level 8.2.0
+using J2N;
 using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Morfologik;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Morfologik.Stemming;
 using System;
@@ -164,8 +164,8 @@ namespace Lucene.Net.Analysis.Uk
                 // (see https://search.maven.org/search?q=a:morfologik-ukrainian-search). However, we are embedding the file in .NET.
                 // Since it doesn't appear to be updated frequently, this should be okay.
                 string dictFile = "ukrainian.dict";
-                using (var dictStream = type.Assembly.FindAndGetManifestResourceStream(type, dictFile))
-                using (var metadataStream = type.Assembly.FindAndGetManifestResourceStream(type, DictionaryMetadata.GetExpectedMetadataFileName(dictFile)))
+                using (var dictStream = type.FindAndGetManifestResourceStream(dictFile))
+                using (var metadataStream = type.FindAndGetManifestResourceStream(DictionaryMetadata.GetExpectedMetadataFileName(dictFile)))
                     return Dictionary.Read(dictStream, metadataStream);
             }
             catch (IOException e)

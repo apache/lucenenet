@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N;
 using System;
 using System.Reflection;
 using System.Resources;
@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
         /// <returns>The resource name.</returns>
         protected virtual string GetResourceName(Type clazz)
         {
-            string resource = clazz.GetTypeInfo().Assembly.FindResource(clazz, string.Concat(clazz.Name, ResourceSuffix, ".resources"));
+            string resource = clazz.FindResource(string.Concat(clazz.Name, ResourceSuffix, ".resources"));
             return !string.IsNullOrEmpty(resource)
                 ? resource.Substring(0, resource.Length - 10)
                 : null;

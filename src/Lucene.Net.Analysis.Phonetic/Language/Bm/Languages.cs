@@ -1,11 +1,10 @@
 ﻿// commons-codec version compatibility level: 1.9
+using J2N;
 using J2N.Collections.Generic.Extensions;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Phonetic.Language.Bm
@@ -92,7 +91,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         {
             // read languages list
             ISet<string> ls = new JCG.HashSet<string>();
-            Stream langIS = typeof(Languages).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(Languages), languagesResourceName);
+            Stream langIS = typeof(Languages).FindAndGetManifestResourceStream(languagesResourceName);
 
             if (langIS == null)
             {

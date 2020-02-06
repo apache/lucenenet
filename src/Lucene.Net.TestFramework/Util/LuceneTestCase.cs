@@ -2117,7 +2117,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Gets a resource from the classpath as <see cref="Stream"/>. This method should only
         /// be used, if a real file is needed. To get a stream, code should prefer
-        /// <see cref="Lucene.Net.Support.AssemblyExtensions.FindAndGetManifestResourceStream(Assembly, Type, string)"/> using 
+        /// <see cref="J2N.AssemblyExtensions.FindAndGetManifestResourceStream(Assembly, Type, string)"/> using 
         /// <c>this.GetType().Assembly</c> and <c>this.GetType()</c>.
         /// </summary>
         protected virtual Stream GetDataFile(string name)

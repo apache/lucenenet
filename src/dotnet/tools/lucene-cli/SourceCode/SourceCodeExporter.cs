@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using J2N;
+using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -44,11 +45,10 @@ namespace Lucene.Net.Cli.SourceCode
             {
                 Directory.CreateDirectory(outputPath);
             }
-            var thisAssembly = this.GetType().GetTypeInfo().Assembly;
 
             foreach (var file in files)
             {
-                using (var input = thisAssembly.FindAndGetManifestResourceStream(typeof(Program), file))
+                using (var input = typeof(Program).FindAndGetManifestResourceStream(file))
                 using (var output = new FileStream(Path.Combine(outputPath, file), FileMode.Create, FileAccess.Write))
                 {
                     sectionParser.ParseSourceCodeFiles(input, output);

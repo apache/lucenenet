@@ -1,11 +1,10 @@
-using Lucene.Net.Support;
+using J2N;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Console = Lucene.Net.Support.SystemConsole;
@@ -299,7 +298,7 @@ namespace Lucene.Net
         /// </summary>
         public static Stream getResourceAsStream(this Type t, string name)
         {
-            return t.GetTypeInfo().Assembly.FindAndGetManifestResourceStream(t, name);
+            return t.FindAndGetManifestResourceStream(name);
         }
 
         public static int read(this TextReader reader, char[] buffer)

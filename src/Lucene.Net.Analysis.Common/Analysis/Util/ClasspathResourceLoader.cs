@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N;
 using System;
 using System.IO;
 using System.Reflection;
@@ -44,6 +44,10 @@ namespace Lucene.Net.Analysis.Util
 
         public Stream OpenResource(string resource)
         {
+            // LUCENENET NOTE: For some unknown reason, the shorthand version of this line
+            // Stream stream = this.clazz.FindAndGetManifestResourceStream(resource);
+            // causes TestMappingCharFilter.TestRandomMaps2 to run 2-3 times slower.
+            // So, we are using the long-hand syntax in this one place.
             Stream stream = this.clazz.GetTypeInfo().Assembly.FindAndGetManifestResourceStream(clazz, resource);
             if (stream == null)
             {

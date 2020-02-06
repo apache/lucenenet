@@ -1,5 +1,6 @@
 ﻿// Lucene version compatibility level 7.1.0
 using ICU4N.Text;
+using J2N;
 using Lucene.Net.Support;
 using System.Reflection;
 
@@ -64,7 +65,11 @@ namespace Lucene.Net.Analysis.Icu
     [ExceptionToClassNameConvention]
     public sealed class ICUFoldingFilter : ICUNormalizer2Filter
     {
-        private static readonly Normalizer2 normalizer;
+        // TODO: if the wrong version of the ICU jar is used, loading these data files may give a strange error.
+        // maybe add an explicit check? http://icu-project.org/apiref/icu4j/com/ibm/icu/util/VersionInfo.html
+        private static readonly Normalizer2 normalizer = Normalizer2.GetInstance(
+            typeof(ICUFoldingFilter).FindAndGetManifestResourceStream("utr30.nrm"),
+            "utr30", Normalizer2Mode.Compose);
 
         /// <summary>
         /// Create a new <see cref="ICUFoldingFilter"/> on the specified input
@@ -72,15 +77,6 @@ namespace Lucene.Net.Analysis.Icu
         public ICUFoldingFilter(TokenStream input)
             : base(input, normalizer)
         {
-        }
-
-        static ICUFoldingFilter()
-        {
-            // TODO: if the wrong version of the ICU jar is used, loading these data files may give a strange error.
-            // maybe add an explicit check? http://icu-project.org/apiref/icu4j/com/ibm/icu/util/VersionInfo.html
-            normalizer = Normalizer2.GetInstance(
-                typeof(ICUFoldingFilter).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(ICUFoldingFilter), "utr30.nrm"),
-                "utr30", Normalizer2Mode.Compose);
         }
     }
 }

@@ -1,3 +1,4 @@
+using J2N;
 using J2N.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
@@ -5,7 +6,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 using Console = Lucene.Net.Support.SystemConsole;
 
@@ -485,7 +485,7 @@ namespace Lucene.Net.Store
         public void TestLUCENENET521()
         {
             var newDirectoryInfo = CreateTempDir("LUCENENET521");
-            using (var zipFileStream = this.GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(this.GetType(), "LUCENENET521.zip"))
+            using (var zipFileStream = this.GetType().FindAndGetManifestResourceStream("LUCENENET521.zip"))
             {
                 TestUtil.Unzip(zipFileStream, newDirectoryInfo);
             }

@@ -1,9 +1,8 @@
-﻿using Lucene.Net.Support;
+﻿using J2N;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 
 namespace Lucene.Net.Cli.SourceCode
 {
@@ -58,7 +57,7 @@ namespace Lucene.Net.Cli.SourceCode
         public ConsolePager(IEnumerable<string> files)
         {
             if (files == null)
-                throw new ArgumentNullException("files");
+                throw new ArgumentNullException(nameof(files));
             this.enumerator = new MultipleFileLineEnumerator(files);
         }
 
@@ -124,8 +123,6 @@ namespace Lucene.Net.Cli.SourceCode
         /// </summary>
         internal sealed class MultipleFileLineEnumerator : IEnumerator<string>
         {
-            private static Assembly thisAssembly = typeof(Program).GetTypeInfo().Assembly;
-
             private readonly IEnumerator<string> fileEnumerator;
             private TextReader currentFile;
             private string line = null;
@@ -133,7 +130,7 @@ namespace Lucene.Net.Cli.SourceCode
             public MultipleFileLineEnumerator(IEnumerable<string> files)
             {
                 if (files == null)
-                    throw new ArgumentNullException("files");
+                    throw new ArgumentNullException(nameof(files));
                 this.fileEnumerator = files.GetEnumerator();
                 NextFile();
             }
@@ -144,28 +141,16 @@ namespace Lucene.Net.Cli.SourceCode
                 if (this.fileEnumerator.MoveNext())
                 {
                     currentFile = new SourceCodeSectionReader(new StreamReader(
-                        thisAssembly.FindAndGetManifestResourceStream(typeof(Program), this.fileEnumerator.Current), 
+                        typeof(Program).FindAndGetManifestResourceStream(this.fileEnumerator.Current), 
                         SourceCodeSectionParser.ENCODING));
                     return true;
                 }
                 return false;
             }
 
-            public string Current
-            {
-                get
-                {
-                    return line;
-                }
-            }
+            public string Current => line;
 
-            object IEnumerator.Current
-            {
-                get
-                {
-                    return line;
-                }
-            }
+            object IEnumerator.Current => line;
 
             public void Dispose()
             {
@@ -188,7 +173,7 @@ namespace Lucene.Net.Cli.SourceCode
                 return line != null;
             }
 
-            public void Reset()
+            void IEnumerator.Reset()
             {
                 throw new NotSupportedException();
             }

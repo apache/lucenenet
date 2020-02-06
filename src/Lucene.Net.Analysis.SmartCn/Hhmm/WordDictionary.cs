@@ -1,9 +1,8 @@
 ﻿// lucene version compatibility level: 4.8.1
+using J2N;
 using J2N.IO;
-using Lucene.Net.Support;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
@@ -166,7 +165,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <exception cref="IOException">If there is a low-level I/O error.</exception>
         public virtual void Load()
         {
-            using (Stream input = this.GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(this.GetType(), "coredict.mem"))
+            using (Stream input = this.GetType().FindAndGetManifestResourceStream("coredict.mem"))
             {
                 LoadFromObjectInputStream(input);
             }

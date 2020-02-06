@@ -1,11 +1,11 @@
-﻿using J2N.IO;
+﻿using J2N;
+using J2N.IO;
 using Lucene.Net.Codecs;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Security;
 
 namespace Lucene.Net.Analysis.Ja.Dict
@@ -186,7 +186,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             // we load the data from the kuromoji-data directory (which can be set via the kuromoji.data.dir environment variable).
             if (string.IsNullOrEmpty(DATA_DIR))
             {
-                Stream @is = clazz.GetTypeInfo().Assembly.FindAndGetManifestResourceStream(clazz, fileName);
+                Stream @is = clazz.FindAndGetManifestResourceStream(fileName);
                 if (@is == null)
                     throw new FileNotFoundException("Not in assembly: " + clazz.FullName + suffix);
                 return @is;

@@ -1,9 +1,8 @@
 ﻿// lucene version compatibility level: 4.8.1
+using J2N;
 using J2N.IO;
-using Lucene.Net.Support;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
@@ -244,7 +243,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         private void Load()
         {
-            using (Stream input = this.GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(this.GetType(), "bigramdict.mem"))
+            using (Stream input = this.GetType().FindAndGetManifestResourceStream("bigramdict.mem"))
             {
                 LoadFromInputStream(input);
             }

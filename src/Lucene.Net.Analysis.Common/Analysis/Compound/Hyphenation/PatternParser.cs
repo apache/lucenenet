@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using J2N;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -404,7 +404,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 string dtdFilename = "hyphenation.dtd";
                 if (dtdFilename.Equals(absoluteUri.Segments.LastOrDefault(), StringComparison.Ordinal))
                 {
-                    return GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(PatternParser), dtdFilename);
+                    return typeof(PatternParser).FindAndGetManifestResourceStream(dtdFilename);
                 }
 
                 return base.GetEntity(absoluteUri, role, ofObjectToReturn);

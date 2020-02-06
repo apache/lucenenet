@@ -1,7 +1,7 @@
+using J2N;
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
-using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Facet;
 using Lucene.Net.Facet.Taxonomy;
@@ -15,10 +15,9 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Threading;
-using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Support.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -1807,14 +1806,14 @@ namespace Lucene.Net.Index
 
             // Unzip index
             DirectoryInfo indexDir = CreateTempDir("index");
-            using (Stream zipFileStream = this.GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), "index.48.w-binary-doc-values.zip"))
+            using (Stream zipFileStream = this.GetType().FindAndGetManifestResourceStream("index.48.w-binary-doc-values.zip"))
             {
                 TestUtil.Unzip(zipFileStream, indexDir);
             }
 
             // Unzip taxonomy
             DirectoryInfo taxoDir = CreateTempDir("taxo");
-            using (Stream zipFileStream = this.GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), "taxo.48.w-binary-doc-values.zip"))
+            using (Stream zipFileStream = this.GetType().FindAndGetManifestResourceStream("taxo.48.w-binary-doc-values.zip"))
             {
                 TestUtil.Unzip(zipFileStream, taxoDir);
             }

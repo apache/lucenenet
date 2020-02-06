@@ -1,10 +1,9 @@
-﻿using Lucene.Net.Analysis.Ja.Util;
+﻿using J2N;
+using Lucene.Net.Analysis.Ja.Util;
 using Lucene.Net.Attributes;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Lucene.Net.Analysis.Ja.Tools
 {
@@ -41,7 +40,7 @@ namespace Lucene.Net.Analysis.Ja.Tools
         {
             var inputDir = CreateTempDir("build-dictionary-input");
             var outputDir = CreateTempDir("build-dictionary-output");
-            using (var zipFileStream = this.GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(this.GetType(), "custom-dictionary-input.zip"))
+            using (var zipFileStream = this.GetType().FindAndGetManifestResourceStream("custom-dictionary-input.zip"))
             {
                 TestUtil.Unzip(zipFileStream, inputDir);
             }
