@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new HunspellStemFilter(tokenizer, dictionary));
@@ -121,7 +121,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new HunspellStemFilter(tokenizer, dictionary));
@@ -158,7 +158,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 this.d = d;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new HunspellStemFilter(tokenizer, d));

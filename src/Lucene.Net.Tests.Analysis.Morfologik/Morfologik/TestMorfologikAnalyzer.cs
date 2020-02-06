@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 8.2.0
+using J2N.Text;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Morfologik.TokenAttributes;
 using Lucene.Net.Analysis.Standard;
@@ -87,7 +88,7 @@ namespace Lucene.Net.Analysis.Morfologik
                 ICharTermAttribute charTerm = ts.GetAttribute<ICharTermAttribute>();
                 while (ts.IncrementToken())
                 {
-                    Console.WriteLine(charTerm.ToString() + " => " + Collections.ToString(attribute.Tags));
+                    Console.WriteLine(charTerm.ToString() + " => " + string.Format(StringFormatter.InvariantCulture, "{0}", attribute.Tags));
                 }
                 ts.End();
             }

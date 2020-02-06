@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.Path
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new PathHierarchyTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
@@ -194,7 +194,7 @@ namespace Lucene.Net.Analysis.Path
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new PathHierarchyTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);

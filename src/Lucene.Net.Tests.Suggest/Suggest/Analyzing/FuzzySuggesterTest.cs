@@ -266,7 +266,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            protected override void SetReader(TextReader reader)
+            protected internal override void SetReader(TextReader reader)
             {
             }
         }
@@ -279,7 +279,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TestGraphDupsTokenStreamComponents(outerInstance, tokenizer);
@@ -357,7 +357,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            protected override void SetReader(TextReader reader)
+            protected internal override void SetReader(TextReader reader)
             {
             }
         }
@@ -371,7 +371,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new TestInputPathRequiredTokenStreamComponents(outerInstance, tokenizer);
@@ -462,7 +462,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            protected override void SetReader(TextReader reader)
+            protected internal override void SetReader(TextReader reader)
             {
             }
         }
@@ -474,7 +474,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
                 return new UsualTokenStreamComponents(outerInstance, tokenizer);
@@ -684,7 +684,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.numStopChars = numStopChars;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
                 tokenizer.EnableChecks = (true);

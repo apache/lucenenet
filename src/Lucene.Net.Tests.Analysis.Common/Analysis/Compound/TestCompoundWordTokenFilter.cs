@@ -262,14 +262,14 @@ namespace Lucene.Net.Analysis.Compound
             }
 
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenFilter filter = new DictionaryCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, dict);
                 return new TokenStreamComponents(tokenizer, filter);
             }
 
-            protected override TextReader InitReader(string fieldName, TextReader reader)
+            protected internal override TextReader InitReader(string fieldName, TextReader reader)
             {
                 return new MappingCharFilter(normMap, reader);
             }
@@ -306,7 +306,7 @@ namespace Lucene.Net.Analysis.Compound
             }
 
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new DictionaryCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, dict));
@@ -326,7 +326,7 @@ namespace Lucene.Net.Analysis.Compound
             }
 
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenFilter filter = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, hyphenator);
@@ -364,7 +364,7 @@ namespace Lucene.Net.Analysis.Compound
             }
 
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new DictionaryCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, dict));
@@ -384,7 +384,7 @@ namespace Lucene.Net.Analysis.Compound
             }
 
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 TokenFilter filter = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, hyphenator);

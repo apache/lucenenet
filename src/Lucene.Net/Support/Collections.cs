@@ -28,7 +28,7 @@ namespace Lucene.Net.Support
      * limitations under the License.
      */
 
-    public static class Collections
+    internal static class Collections
     {
         public static IList<T> EmptyList<T>()
         {

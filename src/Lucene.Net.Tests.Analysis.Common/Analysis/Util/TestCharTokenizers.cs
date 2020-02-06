@@ -152,7 +152,7 @@ namespace Lucene.Net.Analysis.Util
 
         private sealed class AnalyzerAnonymousInnerClassHelper : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new LetterTokenizerAnonymousInnerClassHelper(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
@@ -215,7 +215,7 @@ namespace Lucene.Net.Analysis.Util
 
         private sealed class AnalyzerAnonymousInnerClassHelper2 : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new LetterTokenizerAnonymousInnerClassHelper2(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
@@ -261,7 +261,7 @@ namespace Lucene.Net.Analysis.Util
             public AnalyzerAnonymousInnerClassHelper3()
             { }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new NumberAndSurrogatePairTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);

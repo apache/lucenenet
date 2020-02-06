@@ -192,7 +192,7 @@ namespace Lucene.Net.Analysis.Pattern
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new PatternCaptureGroupTokenFilter(tokenizer, false, new Regex("((..)(..))", RegexOptions.Compiled)));

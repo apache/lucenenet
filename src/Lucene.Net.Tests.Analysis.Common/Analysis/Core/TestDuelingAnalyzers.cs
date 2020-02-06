@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
@@ -172,7 +172,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
@@ -201,7 +201,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
@@ -233,7 +233,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);

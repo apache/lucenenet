@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.En
             public AnalyzerAnonymousInnerClassHelper()
             {
             }
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
                 return new TokenStreamComponents(t, new PorterStemFilter(t));
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.En
 
         private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
         {
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new PorterStemFilter(tokenizer));

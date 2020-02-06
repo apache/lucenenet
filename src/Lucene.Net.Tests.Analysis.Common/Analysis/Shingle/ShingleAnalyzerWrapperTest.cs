@@ -233,7 +233,7 @@ namespace Lucene.Net.Analysis.Shingle
                 this.outerInstance = outerInstance;
             }
 
-            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 CharArraySet stopSet = StopFilter.MakeStopSet(TEST_VERSION_CURRENT, "into");
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
