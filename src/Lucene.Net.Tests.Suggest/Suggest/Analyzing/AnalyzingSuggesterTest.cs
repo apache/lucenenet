@@ -1,4 +1,5 @@
-﻿using J2N.Text;
+﻿using J2N.Collections.Generic.Extensions;
+using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
@@ -12,8 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Support.SystemConsole;
-using J2N.Collections.Generic.Extensions;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {

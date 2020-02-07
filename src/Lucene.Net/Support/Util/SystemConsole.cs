@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Permissions;
 #endif
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

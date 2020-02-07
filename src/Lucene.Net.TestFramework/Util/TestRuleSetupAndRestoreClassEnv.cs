@@ -22,7 +22,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug;
 
 // LUCENENET NOTE: These are primarily here because they are referred to

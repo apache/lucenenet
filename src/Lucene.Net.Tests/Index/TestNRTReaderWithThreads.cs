@@ -5,7 +5,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
 using System;
 using System.Threading;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {

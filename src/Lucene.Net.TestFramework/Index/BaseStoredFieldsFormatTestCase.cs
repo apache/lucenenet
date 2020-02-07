@@ -20,7 +20,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 #if TESTFRAMEWORK_MSTEST

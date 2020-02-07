@@ -14,7 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Sandbox.Queries
 {

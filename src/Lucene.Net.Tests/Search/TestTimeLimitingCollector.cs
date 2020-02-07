@@ -10,7 +10,7 @@ using NUnit.Framework;
 using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {

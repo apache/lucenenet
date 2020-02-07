@@ -2,7 +2,7 @@ using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Util.Automaton
 {

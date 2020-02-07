@@ -2,7 +2,7 @@
 // LUCENENET NOTE: This is incomplete
 using System;
 using System.Diagnostics;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Util
 {

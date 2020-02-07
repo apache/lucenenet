@@ -1,6 +1,6 @@
 using Lucene.Net.Index;
 using Lucene.Net.Util;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {

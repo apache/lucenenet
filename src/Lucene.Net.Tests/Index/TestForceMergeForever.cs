@@ -3,7 +3,7 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {

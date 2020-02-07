@@ -2,7 +2,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis
 {

@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
-using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -12,12 +11,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using AttributeFactory = Lucene.Net.Util.AttributeSource.AttributeFactory;
 using Assert = Lucene.Net.TestFramework.Assert;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Attribute = Lucene.Net.Util.Attribute;
+using AttributeFactory = Lucene.Net.Util.AttributeSource.AttributeFactory;
+using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
-using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis
 {

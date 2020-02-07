@@ -9,7 +9,7 @@ using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.IO;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core

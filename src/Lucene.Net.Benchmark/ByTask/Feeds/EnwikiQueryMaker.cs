@@ -9,7 +9,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {

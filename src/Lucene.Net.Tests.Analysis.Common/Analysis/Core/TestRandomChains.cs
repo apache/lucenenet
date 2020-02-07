@@ -1,4 +1,5 @@
-﻿using J2N.Text;
+﻿
+using J2N.Text;
 using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.Cjk;
 using Lucene.Net.Analysis.CommonGrams;
@@ -32,7 +33,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 using J2N.Runtime.CompilerServices;
 
 namespace Lucene.Net.Analysis.Core

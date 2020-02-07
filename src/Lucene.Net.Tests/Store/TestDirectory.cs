@@ -7,7 +7,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Store
 {

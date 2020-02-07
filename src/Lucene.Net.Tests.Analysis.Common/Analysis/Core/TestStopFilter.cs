@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.Core

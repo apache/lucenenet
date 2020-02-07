@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Lucene.Net.Documents;
 using NUnit.Framework;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {

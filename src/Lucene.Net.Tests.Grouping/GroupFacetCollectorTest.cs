@@ -15,7 +15,7 @@ using System.Globalization;
 using System.Linq;
 using JCG = J2N.Collections.Generic;
 using Collections = Lucene.Net.Support.Collections;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 
 namespace Lucene.Net.Search.Grouping

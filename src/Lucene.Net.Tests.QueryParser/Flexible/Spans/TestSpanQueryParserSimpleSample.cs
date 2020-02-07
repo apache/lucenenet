@@ -7,7 +7,7 @@ using Lucene.Net.Search.Spans;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.QueryParsers.Flexible.Spans
 {

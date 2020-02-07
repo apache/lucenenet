@@ -3,7 +3,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index.Sorter
 {

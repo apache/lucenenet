@@ -19,7 +19,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using J2N.Collections.Generic.Extensions;
 

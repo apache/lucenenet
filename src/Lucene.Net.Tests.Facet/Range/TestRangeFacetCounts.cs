@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Facet.Range
 {

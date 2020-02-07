@@ -3,7 +3,7 @@ using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.IO;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Store
 {

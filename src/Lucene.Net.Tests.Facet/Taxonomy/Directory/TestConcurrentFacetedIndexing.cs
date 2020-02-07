@@ -3,7 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using NUnit.Framework;
-using Console = Lucene.Net.Support.SystemConsole;
+using Console = Lucene.Net.Util.SystemConsole;
 using J2N.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
