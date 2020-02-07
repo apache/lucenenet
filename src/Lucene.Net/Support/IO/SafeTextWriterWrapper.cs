@@ -10,21 +10,21 @@ using System.Threading.Tasks;
 namespace Lucene.Net.Support.IO
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Decorates a <see cref="TextWriter"/> instance and
@@ -41,19 +41,14 @@ namespace Lucene.Net.Support.IO
     /// non-disposable object can continue to make calls to the <see cref="TextWriter"/> without raising
     /// exceptions (it is presumed that the <see cref="TextWriter"/> functionality is optional).
     /// </summary>
-    public class SafeTextWriterWrapper : TextWriter
+    internal class SafeTextWriterWrapper : TextWriter
     {
         private readonly TextWriter textWriter;
         private bool isDisposed = false;
 
         public SafeTextWriterWrapper(TextWriter textWriter)
         {
-            if (textWriter == null)
-            {
-                throw new ArgumentNullException("textWriter");
-            }
-
-            this.textWriter = textWriter;
+            this.textWriter = textWriter ?? throw new ArgumentNullException(nameof(textWriter));
         }
 
         public override Encoding Encoding
@@ -206,13 +201,13 @@ namespace Lucene.Net.Support.IO
             Run(() => textWriter.Write(value));
         }
 
-        [CLSCompliant(false)]
+        //[CLSCompliant(false)]
         public override void Write(uint value)
         {
             Run(() => textWriter.Write(value));
         }
 
-        [CLSCompliant(false)]
+        //[CLSCompliant(false)]
         public override void Write(ulong value)
         {
             Run(() => textWriter.Write(value));
@@ -313,13 +308,13 @@ namespace Lucene.Net.Support.IO
             Run(() => textWriter.WriteLine(value));
         }
 
-        [CLSCompliant(false)]
+        //[CLSCompliant(false)]
         public override void WriteLine(uint value)
         {
             Run(() => textWriter.WriteLine(value));
         }
 
-        [CLSCompliant(false)]
+        //[CLSCompliant(false)]
         public override void WriteLine(ulong value)
         {
             Run(() => textWriter.WriteLine(value));
