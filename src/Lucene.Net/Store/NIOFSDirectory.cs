@@ -158,8 +158,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads bytes with the <see cref="FileStreamExtensions.Read(FileStream, ByteBuffer, long)"/>
-        /// extension method for <see cref="FileStream"/>.
+        /// Reads bytes with the <see cref="StreamExtensions.Read(Stream, ByteBuffer, long)"/>
+        /// extension method for <see cref="Stream"/>.
         /// </summary>
         protected class NIOFSIndexInput : BufferedIndexInput
         {
