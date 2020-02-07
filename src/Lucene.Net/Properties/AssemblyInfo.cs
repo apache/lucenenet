@@ -70,6 +70,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Common, PublicKey=" + AssemblyKeys.PublicKey)]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Kuromoji, PublicKey=" + AssemblyKeys.PublicKey)]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Phonetic, PublicKey=" + AssemblyKeys.PublicKey)]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Benchmark, PublicKey=" + AssemblyKeys.PublicKey)]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Expressions, PublicKey=" + AssemblyKeys.PublicKey)]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Facet, PublicKey=" + AssemblyKeys.PublicKey)]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Grouping, PublicKey=" + AssemblyKeys.PublicKey)]

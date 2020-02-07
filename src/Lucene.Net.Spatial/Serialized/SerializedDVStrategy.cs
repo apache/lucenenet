@@ -4,7 +4,6 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
-using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.IO;
@@ -61,7 +60,7 @@ namespace Lucene.Net.Spatial.Serialized
         public override Field[] CreateIndexableFields(IShape shape)
         {
             int bufSize = Math.Max(128, (int)(this.indexLastBufSize * 1.5));//50% headroom over last
-            ByteArrayOutputStream byteStream = new ByteArrayOutputStream(bufSize);
+            MemoryStream byteStream = new MemoryStream(bufSize);
             BytesRef bytesRef = new BytesRef();//receiver of byteStream's bytes
             try
             {
