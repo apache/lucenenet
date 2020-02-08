@@ -2,6 +2,7 @@
 #if TESTFRAMEWORK_NUNIT
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using Lucene.Net.Attributes;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

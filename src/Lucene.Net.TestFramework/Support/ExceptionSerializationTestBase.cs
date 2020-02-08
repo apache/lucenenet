@@ -1,6 +1,4 @@
 ﻿#if FEATURE_SERIALIZABLE
-using Lucene.Net.TestFramework;
-using Lucene.Net.Util;
 using System;
 using System.Globalization;
 using System.IO;
@@ -9,7 +7,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Assert = Lucene.Net.TestFramework.Assert;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
