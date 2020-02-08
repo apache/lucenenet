@@ -65,50 +65,27 @@ namespace Lucene.Net.Search
 
         public virtual Occur Occur
         {
-            get
-            {
-                return occur;
-            }
-            set
-            {
-                occur = value;
-            }
+            get => occur;
+            set => occur = value;
         }
 
         public virtual Query Query
         {
-            get
-            {
-                return query;
-            }
-            set
-            {
-                query = value;
-            }
+            get => query;
+            set => query = value;
         }
 
-        public virtual bool IsProhibited
-        {
-            get
-            {
-                return Occur.MUST_NOT == occur;
-            }
-        }
+        public virtual bool IsProhibited => Occur.MUST_NOT == occur;
 
-        public virtual bool IsRequired
-        {
-            get
-            {
-                return Occur.MUST == occur;
-            }
-        }
+        public virtual bool IsRequired => Occur.MUST == occur;
 
         /// <summary>
         /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
-            BooleanClause bc = o as BooleanClause;
-            return this.Equals(bc);
+            if (o is BooleanClause other)
+                return this.Equals(other);
+            return false;
         }
 
         /// <summary>
@@ -123,16 +100,16 @@ namespace Lucene.Net.Search
         // LUCENENET specific
         public bool Equals(BooleanClause other)
         {
-            bool success = true;
-            if (object.ReferenceEquals(null, other))
-            {
-                return object.ReferenceEquals(null, this); // LUCENENET TODO: This can never happen - revert to original code
-            }
-            if (query == null)
-            {
-                success &= other.Query == null;
-            }
-            return success && this.query.Equals(other.query) && this.occur == other.occur;
+            if (null == other)
+                return false;
+
+            bool success;
+            if (query is null)
+                success = other.Query is null;
+            else
+                success = query.Equals(other.query);
+
+            return success && this.occur == other.occur;
         }
 
         public override string ToString()
