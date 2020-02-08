@@ -23,7 +23,7 @@ using System;
 
 namespace Lucene.Net.Support
 {
-    public class CRC32 : IChecksum
+    internal class CRC32 : IChecksum
     {
         private static readonly UInt32[] crcTable = InitializeCRCTable();
 

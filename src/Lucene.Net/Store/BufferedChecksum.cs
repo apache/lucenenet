@@ -24,7 +24,12 @@ namespace Lucene.Net.Store
     /// Wraps another <see cref="IChecksum"/> with an internal buffer
     /// to speed up checksum calculations.
     /// </summary>
-    public class BufferedChecksum : IChecksum
+    // LUCENENET TODO: This class was public in Lucene. Marking internal, since
+    // a better approach would be to map this to the HashAlgorithm abstract class in .NET
+    // instead of using IChecksum from Java. See LUCENENET-637.
+    // After this conversion is done, this can be made public again. However, it is
+    // now internal so the conversion doesn't introduce a breaking public API change.
+    internal class BufferedChecksum : IChecksum
     {
         private readonly IChecksum @in;
         private readonly byte[] buffer;
