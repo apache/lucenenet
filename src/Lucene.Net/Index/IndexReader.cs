@@ -1,6 +1,7 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;

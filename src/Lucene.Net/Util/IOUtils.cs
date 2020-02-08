@@ -349,7 +349,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Since there's no C# equivalent of Java's Exception.AddSuppressed, we add the
         /// suppressed exceptions to a data field via the 
-        /// <see cref="Support.ExceptionExtensions.AddSuppressed(Exception, Exception)"/> method.
+        /// <see cref="ExceptionExtensions.AddSuppressed(Exception, Exception)"/> method.
         /// <para/>
         /// The exceptions can be retrieved by calling <see cref="ExceptionExtensions.GetSuppressed(Exception)"/>
         /// or <see cref="ExceptionExtensions.GetSuppressedAsList(Exception)"/>.
