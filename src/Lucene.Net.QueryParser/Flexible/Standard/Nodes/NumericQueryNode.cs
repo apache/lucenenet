@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Parser;
-using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System.Globalization;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
@@ -38,12 +38,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
         /// <summary>
         /// Creates a <see cref="NumericQueryNode"/> object using the given field,
-        /// <see cref="object"/> (representing a .NET numeric type) value and <see cref="Support.NumberFormat"/> used to convert the value to
+        /// <see cref="object"/> (representing a .NET numeric type) value and <see cref="Util.NumberFormat"/> used to convert the value to
         /// <see cref="string"/>.
         /// </summary>
         /// <param name="field">the field associated with this query node</param>
         /// <param name="value">the value hold by this node</param>
-        /// <param name="numberFormat">the <see cref="Support.NumberFormat"/> used to convert the value to <see cref="string"/></param>
+        /// <param name="numberFormat">the <see cref="Util.NumberFormat"/> used to convert the value to <see cref="string"/></param>
         public NumericQueryNode(string field, /*Number*/ object value,
             NumberFormat numberFormat)
             : base()
@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         }
 
         /// <summary>
-        /// Gets or Sets the <see cref="Support.NumberFormat"/> used to convert the value to <see cref="string"/>.
+        /// Gets or Sets the <see cref="Util.NumberFormat"/> used to convert the value to <see cref="string"/>.
         /// </summary>
         public virtual NumberFormat NumberFormat
         {

@@ -1,6 +1,6 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Documents;
+using Lucene.Net.Util;
 using System;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 {
@@ -26,13 +26,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     /// <see cref="Search.NumericRangeQuery"/>s.
     /// </summary>
     /// <seealso cref="Search.NumericRangeQuery"/>
-    /// <seealso cref="Support.NumberFormat"/>
+    /// <seealso cref="Util.NumberFormat"/>
     public class NumericConfig
     {
         private int precisionStep;
-
         private NumberFormat format;
-
         private NumericType type;
 
         /// <summary>
@@ -58,26 +56,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// <seealso cref="Search.NumericRangeQuery{T}.PrecisionStep"/>
         public virtual int PrecisionStep
         {
-            get { return precisionStep; }
-            set { precisionStep = value; }
+            get => precisionStep;
+            set => precisionStep = value;
         }
 
         /// <summary>
-        /// Gets or Sets the <seealso cref="Support.NumberFormat"/> used to parse a <see cref="string"/> to
+        /// Gets or Sets the <seealso cref="Util.NumberFormat"/> used to parse a <see cref="string"/> to
         /// <see cref="object"/> representing a .NET numeric type, cannot be <c>null</c>
         /// </summary>
         public virtual NumberFormat NumberFormat
         {
-            get { return format; }
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentException("format cannot be null!");
-                }
-
-                this.format = value;
-            }
+            get => format;
+            set => format = value ?? throw new ArgumentException("format cannot be null!");
         }
 
         /// <summary>
@@ -85,18 +75,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// </summary>
         public virtual NumericType Type
         {
-            get { return type; }
-            set { type = value; }
+            get => type;
+            set => type = value;
         }
 
         public override bool Equals(object obj)
         {
             if (obj == this) return true;
 
-            if (obj is NumericConfig)
+            if (obj is NumericConfig other)
             {
-                NumericConfig other = (NumericConfig)obj;
-
                 if (this.precisionStep == other.precisionStep
                     && this.type == other.type
                     && (this.format == other.format || (this.format.Equals(other.format))))
