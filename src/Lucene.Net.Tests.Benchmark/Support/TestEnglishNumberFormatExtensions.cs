@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Attributes;
+using Lucene.Net.Util;
 using NUnit.Framework;
 
 namespace Lucene.Net.Support

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
