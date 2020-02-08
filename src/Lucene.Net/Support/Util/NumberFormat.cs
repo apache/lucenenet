@@ -33,17 +33,19 @@ namespace Lucene.Net.Util
     // types instead of just the ones that Java supports, as well.
     public class NumberFormat
     {
-        protected readonly CultureInfo locale;
+        private readonly CultureInfo culture;
 
         //private int maximumIntegerDigits;
         //private int minimumIntegerDigits;
         //private int maximumFractionDigits;
         //private int minimumFractionDigits;
 
-        public NumberFormat(CultureInfo locale)
+        public NumberFormat(CultureInfo culture)
         {
-            this.locale = locale;
+            this.culture = culture;
         }
+
+        protected CultureInfo Culture => culture;
 
         public virtual string Format(object number)
         {
@@ -51,27 +53,27 @@ namespace Lucene.Net.Util
 
             if (number is int)
             {
-                return ((int)number).ToString(format, locale);
+                return ((int)number).ToString(format, culture);
             }
             else if (number is long)
             {
-                return ((long)number).ToString(format, locale);
+                return ((long)number).ToString(format, culture);
             }
             else if (number is short)
             {
-                return ((short)number).ToString(format, locale);
+                return ((short)number).ToString(format, culture);
             }
             else if (number is float)
             {
-                return ((float)number).ToString(format, locale);
+                return ((float)number).ToString(format, culture);
             }
             else if (number is double)
             {
-                return ((double)number).ToString(format, locale);
+                return ((double)number).ToString(format, culture);
             }
             else if (number is decimal)
             {
-                return ((decimal)number).ToString(format, locale);
+                return ((decimal)number).ToString(format, culture);
             }
 
             throw new ArgumentException("Cannot format given object as a Number");
@@ -80,13 +82,13 @@ namespace Lucene.Net.Util
         public virtual string Format(double number)
         {
             string format = GetNumberFormat();
-            return number.ToString(format, locale);
+            return number.ToString(format, culture);
         }
 
         public virtual string Format(long number)
         {
             string format = GetNumberFormat();
-            return number.ToString(format, locale);
+            return number.ToString(format, culture);
         }
 
         /// <summary>
@@ -102,12 +104,12 @@ namespace Lucene.Net.Util
 
         public virtual /*Number*/ object Parse(string source)
         {
-            return decimal.Parse(source, locale);
+            return decimal.Parse(source, culture);
         }
 
         public override string ToString()
         {
-            return base.ToString() + " - " + GetNumberFormat() + " - " + locale.ToString();
+            return base.ToString() + " - " + GetNumberFormat() + " - " + culture.ToString();
         }
 
         // LUCENENET TODO: Add additional functionality to edit the NumberFormatInfo

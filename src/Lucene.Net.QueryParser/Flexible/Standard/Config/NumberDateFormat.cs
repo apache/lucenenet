@@ -64,10 +64,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         /// <summary>
         /// Constructs a <see cref="NumberDateFormat"/> object using the given <paramref name="dateStyle"/>,
-        /// <paramref name="timeStyle"/>, and <paramref name="locale"/>.
+        /// <paramref name="timeStyle"/>, and <paramref name="culture"/>.
         /// </summary>
-        public NumberDateFormat(DateFormat dateStyle, DateFormat timeStyle, CultureInfo locale)
-            : base(locale)
+        public NumberDateFormat(DateFormat dateStyle, DateFormat timeStyle, CultureInfo culture)
+            : base(culture)
         {
             this.dateStyle = dateStyle;
             this.timeStyle = timeStyle;
@@ -81,26 +81,26 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public override string Format(double number)
         {
-            return new DateTime(EPOCH).AddMilliseconds(number).ToString(GetDateFormat(), this.locale);
+            return new DateTime(EPOCH).AddMilliseconds(number).ToString(GetDateFormat(), Culture);
         }
 
         public override string Format(long number)
         {
-            return new DateTime(EPOCH).AddMilliseconds(number).ToString(GetDateFormat(), this.locale);
+            return new DateTime(EPOCH).AddMilliseconds(number).ToString(GetDateFormat(), Culture);
         }
 
         public override object Parse(string source)
         {
             // Try exact format first, if it fails, do a loose DateTime.Parse
             DateTime d;
-            d = DateTime.ParseExact(source, GetDateFormat(), this.locale, DateTimeStyles.None);
+            d = DateTime.ParseExact(source, GetDateFormat(), Culture, DateTimeStyles.None);
 
             return (d - new DateTime(EPOCH)).TotalMilliseconds;
         }
 
         public override string Format(object number)
         {
-            return new DateTime(EPOCH).AddMilliseconds(Convert.ToInt64(number, CultureInfo.InvariantCulture)).ToString(GetDateFormat(), this.locale);
+            return new DateTime(EPOCH).AddMilliseconds(Convert.ToInt64(number, CultureInfo.InvariantCulture)).ToString(GetDateFormat(), Culture);
         }
 
         public void SetDateFormat(string dateFormat)
@@ -117,45 +117,45 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         {
             if (dateFormat != null) return dateFormat;
 
-            return GetDateFormat(this.dateStyle, this.timeStyle, this.locale);
+            return GetDateFormat(this.dateStyle, this.timeStyle, Culture);
         }
 
-        public static string GetDateFormat(DateFormat dateStyle, DateFormat timeStyle, CultureInfo locale)
+        public static string GetDateFormat(DateFormat dateStyle, DateFormat timeStyle, CultureInfo culture)
         {
             string datePattern = "", timePattern = "";
 
             switch (dateStyle)
             {
                 case DateFormat.SHORT:
-                    datePattern = locale.DateTimeFormat.ShortDatePattern;
+                    datePattern = culture.DateTimeFormat.ShortDatePattern;
                     break;
                 case DateFormat.MEDIUM:
-                    datePattern = locale.DateTimeFormat.LongDatePattern
+                    datePattern = culture.DateTimeFormat.LongDatePattern
                         .Replace("dddd,", "").Replace(", dddd", "") // Remove the day of the week
                         .Replace("MMMM", "MMM"); // Replace month with abbreviated month
                     break;
                 case DateFormat.LONG:
-                    datePattern = locale.DateTimeFormat.LongDatePattern
+                    datePattern = culture.DateTimeFormat.LongDatePattern
                         .Replace("dddd,", "").Replace(", dddd", ""); // Remove the day of the week
                     break;
                 case DateFormat.FULL:
-                    datePattern = locale.DateTimeFormat.LongDatePattern;
+                    datePattern = culture.DateTimeFormat.LongDatePattern;
                     break;
             }
 
             switch (timeStyle)
             {
                 case DateFormat.SHORT:
-                    timePattern = locale.DateTimeFormat.ShortTimePattern;
+                    timePattern = culture.DateTimeFormat.ShortTimePattern;
                     break;
                 case DateFormat.MEDIUM:
-                    timePattern = locale.DateTimeFormat.LongTimePattern;
+                    timePattern = culture.DateTimeFormat.LongTimePattern;
                     break;
                 case DateFormat.LONG:
-                    timePattern = locale.DateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z";
+                    timePattern = culture.DateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z";
                     break;
                 case DateFormat.FULL:
-                    timePattern = locale.DateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z"; // LUCENENET TODO: Time zone info not being added to match behavior of Java, but Java doc is unclear on what the difference is between this and LONG
+                    timePattern = culture.DateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z"; // LUCENENET TODO: Time zone info not being added to match behavior of Java, but Java doc is unclear on what the difference is between this and LONG
                     break;
             }
 
