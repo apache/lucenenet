@@ -1,6 +1,6 @@
 ﻿using J2N;
 using J2N.Text;
-using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -50,10 +50,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         private static readonly string NEW_LINE = Environment.NewLine;
 
         private int roundNumber = 0;
-        private IDictionary<string, string> props;
-        private IDictionary<string, object> valByRound = new Dictionary<string, object>();
-        private IDictionary<string, string> colForValByRound = new Dictionary<string, string>();
-        private string algorithmText;
+        private readonly IDictionary<string, string> props;
+        private readonly IDictionary<string, object> valByRound = new Dictionary<string, object>();
+        private readonly IDictionary<string, string> colForValByRound = new Dictionary<string, string>();
+        private readonly string algorithmText;
 
         /// <summary>
         /// Read both algorithm and config properties.

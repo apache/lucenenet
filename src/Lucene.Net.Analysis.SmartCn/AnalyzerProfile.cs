@@ -1,8 +1,8 @@
 ﻿// lucene version compatibility level: 4.8.1
+using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Security;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Analysis.Cn.Smart
 {

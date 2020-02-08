@@ -1,6 +1,6 @@
 ﻿using J2N.IO;
 using J2N.Text;
-using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
