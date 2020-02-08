@@ -384,9 +384,7 @@ namespace Lucene.Net.Search.Spans
                 Spans prevSpans = subSpans[i];
                 if (collectPayloads && prevSpans.IsPayloadAvailable)
                 {
-                    var payload = prevSpans.GetPayload();
-                    possiblePayload = new List<byte[]>(payload.Count);
-                    possiblePayload.AddRange(payload);
+                    possiblePayload = new List<byte[]>(prevSpans.GetPayload()); // LUCENENET specific - using copy constructor instead of AddRange()
                 }
 
                 int prevStart = prevSpans.Start;
@@ -418,9 +416,7 @@ namespace Lucene.Net.Search.Spans
                             prevEnd = ppEnd;
                             if (collectPayloads && prevSpans.IsPayloadAvailable)
                             {
-                                var payload = prevSpans.GetPayload();
-                                possiblePayload = new List<byte[]>(payload.Count);
-                                possiblePayload.AddRange(payload);
+                                possiblePayload = new List<byte[]>(prevSpans.GetPayload()); // LUCENENET specific - using copy constructor instead of AddRange()
                             }
                         }
                     }

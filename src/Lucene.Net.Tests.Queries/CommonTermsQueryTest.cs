@@ -503,7 +503,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             private readonly CommonTermsQueryTest parent;
-            protected override bool LessThan(TermAndFreq a, TermAndFreq b)
+            protected internal override bool LessThan(TermAndFreq a, TermAndFreq b)
             {
                 return a.freq > b.freq;
             }
@@ -518,7 +518,7 @@ namespace Lucene.Net.Tests.Queries
             }
 
             private readonly CommonTermsQueryTest parent;
-            protected override bool LessThan(TermAndFreq a, TermAndFreq b)
+            protected internal override bool LessThan(TermAndFreq a, TermAndFreq b)
             {
                 return a.freq < b.freq;
             }

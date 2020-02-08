@@ -4,39 +4,24 @@ using System.Collections.Generic;
 namespace Lucene.Net.Support
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
-    public static class ListExtensions
+    internal static class ListExtensions
     {
-        public static void AddRange<T>(this IList<T> list, IEnumerable<T> values)
-        {
-            var lt = list as List<T>;
-
-            if (lt != null)
-                lt.AddRange(values);
-            else
-            {
-                foreach (var item in values)
-                {
-                    list.Add(item);
-                }
-            }
-        }
-
         /// <summary>
         /// Performs a binary search for the specified element in the specified
         /// sorted list. The list needs to be already sorted in natural sorting
@@ -44,24 +29,19 @@ namespace Lucene.Net.Support
         /// undefined which element is found if there are multiple occurrences of the
         /// same element.
         /// </summary>
-        /// <typeparam name="T">The element type.</typeparam>
+        /// <typeparam name="T">The element type. Must implement <see cref="IComparable{T}"/>"/>.</typeparam>
         /// <param name="list">The sorted list to search.</param>
         /// <param name="item">The element to find.</param>
         /// <returns>The non-negative index of the element, or a negative index which
         /// is the <c>-index - 1</c> where the element would be inserted.</returns>
-        /// <exception cref="InvalidCastException">
-        /// If an element in the List or the search element does not
-        /// implement <see cref="IComparable{T}"/>, or cannot be compared to each other.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="list"/> is <c>null</c>.</exception>
         public static int BinarySearch<T>(this IList<T> list, T item) where T : IComparable<T>
         {
             if (list == null)
-            {
                 throw new ArgumentNullException(nameof(list));
-            }
+
             if (list.Count == 0)
-            {
                 return -1;
-            }
 
             int low = 0, mid = list.Count, high = mid - 1, result = -1;
             while (low <= high)
@@ -84,22 +64,18 @@ namespace Lucene.Net.Support
         /// has an undefined result. It's also undefined which element is found if
         /// there are multiple occurrences of the same element.
         /// </summary>
-        /// <typeparam name="T">The element type.</typeparam>
+        /// <typeparam name="T">The element type. Must implement <see cref="IComparable{T}"/>"/>.</typeparam>
         /// <param name="list">The sorted <see cref="IList{T}"/> to search.</param>
         /// <param name="item">The element to find.</param>
         /// <param name="comparer">The comparer. If the comparer is <c>null</c> then the
         /// search uses the objects' natural ordering.</param>
         /// <returns>the non-negative index of the element, or a negative index which
         /// is the <c>-index - 1</c> where the element would be inserted.</returns>
-        /// <exception cref="InvalidCastException">
-        /// when an element in the list and the searched element cannot
-        /// be compared to each other using the comparer.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="list"/> is <c>null</c>.</exception>
         public static int BinarySearch<T>(this IList<T> list, T item, IComparer<T> comparer) where T : IComparable<T>
         {
             if (list == null)
-            {
                 throw new ArgumentNullException(nameof(list));
-            }
 
             if (comparer == null)
                 return BinarySearch(list, item);
@@ -130,128 +106,6 @@ namespace Lucene.Net.Support
 
             return new SubList<T>(list, fromIndex, toIndex);
         }
-
-        /// <summary>
-        /// If the underlying type is <see cref="List{T}"/>,
-        /// calls <see cref="List{T}.Sort()"/>. If not, 
-        /// uses <see cref="Util.CollectionUtil.TimSort{T}(IList{T})"/>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list">this <see cref="IList{T}"/></param>
-        public static void Sort<T>(this IList<T> list)
-        {
-            if (list is List<T>)
-            {
-                ((List<T>)list).Sort();
-            }
-            else
-            {
-                Util.CollectionUtil.TimSort(list);
-            }
-        }
-
-        /// <summary>
-        /// If the underlying type is <see cref="List{T}"/>,
-        /// calls <see cref="List{T}.Sort(IComparer{T})"/>. If not, 
-        /// uses <see cref="Util.CollectionUtil.TimSort{T}(IList{T}, IComparer{T})"/>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list">this <see cref="IList{T}"/></param>
-        /// <param name="comparer">the comparer to use for the sort</param>
-        public static void Sort<T>(this IList<T> list, IComparer<T> comparer)
-        {
-            if (list is List<T>)
-            {
-                ((List<T>)list).Sort(comparer);
-            }
-            else
-            {
-                Util.CollectionUtil.TimSort(list, comparer);
-            }
-        }
-
-        /// <summary>
-        /// If the underlying type is <see cref="List{T}"/>,
-        /// calls <see cref="List{T}.Sort(IComparer{T})"/>. If not, 
-        /// uses <see cref="Util.CollectionUtil.TimSort{T}(IList{T}, IComparer{T})"/>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list">this <see cref="IList{T}"/></param>
-        /// <param name="comparison">the comparison function to use for the sort</param>
-        public static void Sort<T>(this IList<T> list, Comparison<T> comparison)
-        {
-            IComparer<T> comparer = new FunctorComparer<T>(comparison);
-            Sort(list, comparer);
-        }
-
-        /// <summary>
-        /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
-        /// This method uses the Tim sort
-        /// algorithm, but falls back to binary sort for small lists.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list">this <see cref="IList{T}"/></param>
-        public static void TimSort<T>(this IList<T> list)
-        {
-            Util.CollectionUtil.TimSort(list);
-        }
-
-        /// <summary>
-        /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
-        /// This method uses the Tim sort
-        /// algorithm, but falls back to binary sort for small lists.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list">this <see cref="IList{T}"/></param>
-        /// <param name="comparer">The <see cref="IComparer{T}"/> to use for the sort.</param>
-        public static void TimSort<T>(this IList<T> list, IComparer<T> comparer)
-        {
-            Util.CollectionUtil.TimSort(list, comparer);
-        }
-
-        /// <summary>
-        /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
-        /// This method uses the intro sort
-        /// algorithm, but falls back to insertion sort for small lists. 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list">this <see cref="IList{T}"/></param>
-        public static void IntroSort<T>(this IList<T> list)
-        {
-            Util.CollectionUtil.IntroSort(list);
-        }
-
-        /// <summary>
-        /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
-        /// This method uses the intro sort
-        /// algorithm, but falls back to insertion sort for small lists. 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list">this <see cref="IList{T}"/></param>
-        /// <param name="comparer">The <see cref="IComparer{T}"/> to use for the sort.</param>
-        public static void IntroSort<T>(this IList<T> list, IComparer<T> comparer)
-        {
-            Util.CollectionUtil.IntroSort(list, comparer);
-        }
-
-        #region Nested Type: FunctorComparer<T>
-
-        private sealed class FunctorComparer<T> : IComparer<T>
-        {
-            private Comparison<T> comparison;
-
-            public FunctorComparer(Comparison<T> comparison)
-            {
-                this.comparison = comparison;
-            }
-
-            public int Compare(T x, T y)
-            {
-                return this.comparison(x, y);
-            }
-        }
-
-        #endregion Nested Type: FunctorComparer<T>
     }
 
     #region SubList<T>
@@ -271,16 +125,16 @@ namespace Lucene.Net.Support
         public SubList(IList<T> list, int fromIndex, int toIndex)
         {
             if (fromIndex < 0)
-                throw new ArgumentOutOfRangeException("fromIndex");
+                throw new ArgumentOutOfRangeException(nameof(fromIndex));
 
             if (toIndex > list.Count)
-                throw new ArgumentOutOfRangeException("toIndex");
+                throw new ArgumentOutOfRangeException(nameof(toIndex));
 
             if (toIndex < fromIndex)
-                throw new ArgumentOutOfRangeException("toIndex");
+                throw new ArgumentOutOfRangeException(nameof(toIndex));
 
             if (list == null)
-                throw new ArgumentNullException("list");
+                throw new ArgumentNullException(nameof(list));
 
             this.list = list;
             this.fromIndex = fromIndex;

@@ -2,6 +2,7 @@
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -166,10 +167,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             /// <summary>
             /// Gets underlying phoneme set. Please don't mutate.
             /// </summary>
-            public IList<Phoneme> Phonemes
-            {
-                get { return this.phonemes; }
-            }
+            public IList<Phoneme> Phonemes => phonemes;
 
             /// <summary>
             /// Stringifies the phoneme set. This produces a single string of the strings of each phoneme,
@@ -231,15 +229,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 this.maxPhonemes = maxPhonemes;
             }
 
-            public int I
-            {
-                get { return this.i; }
-            }
+            public int I => i;
 
-            public PhonemeBuilder PhonemeBuilder
-            {
-                get { return this.phonemeBuilder; }
-            }
+            public PhonemeBuilder PhonemeBuilder => phonemeBuilder;
 
             /// <summary>
             /// Invokes the rules. Loops over the rules list, stopping at the first one that has a matching context
@@ -276,10 +268,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 return this;
             }
 
-            public bool IsFound
-            {
-                get { return this.found; }
-            }
+            public bool IsFound => found;
         }
 
         private static readonly IDictionary<NameType, ISet<string>> NAME_PREFIXES = LoadNamePrefixes();
@@ -319,7 +308,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             return sb.ToString();
         }
 
-        private static readonly int DEFAULT_MAX_PHONEMES = 20;
+        private const int DEFAULT_MAX_PHONEMES = 20;
 
         private readonly Lang lang;
 
@@ -534,44 +523,29 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         /// <summary>
         /// Gets the Lang language guessing rules being used.
         /// </summary>
-        public virtual Lang Lang
-        {
-            get { return this.lang; }
-        }
+        public virtual Lang Lang => lang;
 
         /// <summary>
         /// Gets the <see cref="Bm.NameType"/> being used.
         /// </summary>
-        public virtual NameType NameType
-        {
-            get { return this.nameType; }
-        }
+        public virtual NameType NameType => nameType;
 
         /// <summary>
         /// Gets the <see cref="Bm.RuleType"/> being used.
         /// </summary>
-        public virtual RuleType RuleType
-        {
-            get { return this.ruleType; }
-        }
+        public virtual RuleType RuleType => ruleType;
 
         /// <summary>
         /// Gets if multiple phonetic encodings are concatenated or if just the first one is kept.
         /// Returns <c>true</c> if multiple phonetic encodings are returned, <c>false</c> if just the first is.
         /// </summary>
-        public virtual bool IsConcat
-        {
-            get { return this.concat; }
-        }
+        public virtual bool IsConcat => concat;
 
         /// <summary>
         /// Gets the maximum number of phonemes the engine will calculate for a given input.
         /// <para/>
         /// since 1.7
         /// </summary>
-        public virtual int MaxPhonemes
-        {
-            get { return this.maxPhonemes; }
-        }
+        public virtual int MaxPhonemes => maxPhonemes;
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             if (mapping != null)
             {
-                IList<string> wlist = null;
+                IList<string> wlist;
                 if (File.Exists(mapping))
                 {
                     wlist = new List<string>(GetLines(loader, mapping));
@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.CharFilters
         }
 
         // "source" => "target"
-        private static Regex p = new Regex(@"\""(.*)\""\s*=>\s*\""(.*)\""\s*$", RegexOptions.Compiled);
+        private static readonly Regex p = new Regex(@"\""(.*)\""\s*=>\s*\""(.*)\""\s*$", RegexOptions.Compiled);
 
         protected virtual void ParseRules(IList<string> rules, NormalizeCharMap.Builder builder)
         {

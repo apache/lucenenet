@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
             base.BeforeClass();
 
             Assert.IsFalse(OldFormatImpersonationIsActive, "test infra is broken!");
-            IList<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
+            List<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
             names.AddRange(OldNames);
             names.AddRange(OldSingleSegmentNames);
             OldIndexDirs = new Dictionary<string, Directory>();
@@ -927,7 +927,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestUpgradeOldIndex()
         {
-            IList<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
+            List<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
             names.AddRange(OldNames);
             names.AddRange(OldSingleSegmentNames);
             foreach (string name in names)

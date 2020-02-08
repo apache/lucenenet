@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using Lucene.Net.QueryParsers.Flexible.Core.Processors;
-using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors

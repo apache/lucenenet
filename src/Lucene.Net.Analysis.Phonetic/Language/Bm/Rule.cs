@@ -3,6 +3,7 @@ using J2N;
 using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -87,9 +88,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
     /// </remarks>
     public class Rule
     {
-        private static Regex PIPE = new Regex("[|]", RegexOptions.Compiled);
-        private static Regex WHITESPACE = new Regex("\\s+", RegexOptions.Compiled);
-        private static Regex PLUS = new Regex("[+]", RegexOptions.Compiled);
+        private static readonly Regex PIPE = new Regex("[|]", RegexOptions.Compiled);
+        private static readonly Regex WHITESPACE = new Regex("\\s+", RegexOptions.Compiled);
+        private static readonly Regex PLUS = new Regex("[+]", RegexOptions.Compiled);
 
         private class AllStringsRMatcher : IRPattern
         {
@@ -112,11 +113,11 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         public static readonly IRPattern ALL_STRINGS_RMATCHER = new AllStringsRMatcher();
 
 
-        public static readonly string ALL = "ALL";
+        public const string ALL = "ALL";
 
-        private static readonly string DOUBLE_QUOTE = "\"";
+        private const string DOUBLE_QUOTE = "\"";
 
-        private static readonly string HASH_INCLUDE = "#include";
+        private const string HASH_INCLUDE = "#include";
 
         private static readonly IDictionary<NameType, IDictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>>> RULES = LoadRules();
 
@@ -806,34 +807,22 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         /// <summary>
         /// Gets the left context pattern. This is a regular expression that must match to the left of the pattern.
         /// </summary>
-        public virtual IRPattern LContext
-        {
-            get { return this.lContext; }
-        }
+        public virtual IRPattern LContext => lContext;
 
         /// <summary>
         /// Gets the pattern. This is a string-literal that must exactly match.
         /// </summary>
-        public virtual string Pattern
-        {
-            get { return this.pattern; }
-        }
+        public virtual string Pattern => pattern;
 
         /// <summary>
         /// Gets the phoneme. If the rule matches, this is the phoneme associated with the pattern match.
         /// </summary>
-        public virtual IPhonemeExpr Phoneme
-        {
-            get { return this.phoneme; }
-        }
+        public virtual IPhonemeExpr Phoneme => phoneme;
 
         /// <summary>
         /// Gets the right context pattern. This is a regular expression that must match to the right of the pattern.
         /// </summary>
-        public virtual IRPattern RContext
-        {
-            get { return this.rContext; }
-        }
+        public virtual IRPattern RContext => rContext;
 
         /// <summary>
         /// Decides if the pattern and context match the input starting at a position. It is a match if the
@@ -1018,15 +1007,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             return this;
         }
 
-        public LanguageSet Languages
-        {
-            get { return this.languages; }
-        }
+        public LanguageSet Languages => languages;
 
-        public IList<Phoneme> Phonemes
-        {
-            get { return new Phoneme[] { this }; }
-        }
+        public IList<Phoneme> Phonemes => new Phoneme[] { this };
 
         public string GetPhonemeText()
         {
@@ -1048,17 +1031,12 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
     public sealed class PhonemeList : IPhonemeExpr
     {
-        private readonly IList<Phoneme> phonemes;
-
         public PhonemeList(IList<Phoneme> phonemes)
         {
-            this.phonemes = phonemes;
+            this.Phonemes = phonemes;
         }
 
-        public IList<Phoneme> Phonemes
-        {
-            get { return this.phonemes; }
-        }
+        public IList<Phoneme> Phonemes { get; private set; }
     }
 
     /// <summary>
