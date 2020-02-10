@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
                     for (int i = 0; i < 20; i++)
                     {
                         IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new List<KeyValuePair<BytesRef, TopDocs>>(Answers);
-                        shuffled.Shuffle();
+                        shuffled.Shuffle(Random);
                         foreach (KeyValuePair<BytesRef, TopDocs> ent in shuffled)
                         {
                             TopDocs actual = s.Search(new TermQuery(new Term("body", ent.Key)), 100);

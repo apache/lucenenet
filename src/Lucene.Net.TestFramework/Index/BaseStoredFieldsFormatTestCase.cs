@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
                         if (rand.Next(50) == 17)
                         {
                             // mixup binding of field name -> Number every so often
-                            fieldIDs.Shuffle();
+                            fieldIDs.Shuffle(Random);
                         }
                         if (rand.Next(5) == 3 && i > 0)
                         {

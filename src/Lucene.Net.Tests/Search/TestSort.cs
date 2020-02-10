@@ -1707,7 +1707,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomIntParser()
         {
             IList<string> letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
-            letters.Shuffle();
+            letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(
@@ -1772,7 +1772,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomByteParser()
         {
             IList<string> letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
-            letters.Shuffle();
+            letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(
@@ -1836,7 +1836,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomShortParser()
         {
             IList<string> letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
-            letters.Shuffle();
+            letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(
@@ -1903,7 +1903,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomLongParser()
         {
             IList<string> letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
-            letters.Shuffle();
+            letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(
@@ -1968,7 +1968,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomFloatParser()
         {
             IList<string> letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
-            letters.Shuffle();
+            letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(
@@ -2033,7 +2033,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomDoubleParser()
         {
             IList<string> letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
-            letters.Shuffle();
+            letters.Shuffle(Random);
 
             Directory dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(

@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 i++;
             }
-            shuffled.Shuffle();
+            shuffled.Shuffle(Random);
             foreach (string term in shuffled)
             {
                 sb.Append(term);

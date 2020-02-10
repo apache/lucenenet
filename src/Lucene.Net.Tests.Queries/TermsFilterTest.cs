@@ -259,7 +259,7 @@ namespace Lucene.Net.Tests.Queries
             int numQueries = AtLeast(10);
             for (int i = 0; i < numQueries; i++)
             {
-                terms.Shuffle();
+                terms.Shuffle(Random);
                 int numTerms = 1 + Random.Next(Math.Min(BooleanQuery.MaxClauseCount, terms.Count));
                 BooleanQuery bq = new BooleanQuery();
                 for (int j = 0; j < numTerms; j++)
@@ -325,7 +325,7 @@ namespace Lucene.Net.Tests.Queries
                 terms.Add(new Term(field, @string));
                 uniqueTerms.Add(new Term(field, @string));
                 TermsFilter left = TermsFilter(singleField && Random.NextBoolean(), uniqueTerms);
-                terms.Shuffle();
+                terms.Shuffle(Random);
                 TermsFilter right = TermsFilter(singleField && Random.NextBoolean(), terms);
                 assertEquals(right, left);
                 assertEquals(right.GetHashCode(), left.GetHashCode());

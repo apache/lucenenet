@@ -182,7 +182,7 @@ namespace Lucene.Net.Index.Sorter
                 ids.Add(i * 10);
             }
             // shuffle them for indexing
-            ids.Shuffle();
+            ids.Shuffle(Random);
 
             if (VERBOSE)
             {

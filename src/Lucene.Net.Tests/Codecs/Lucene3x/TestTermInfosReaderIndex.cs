@@ -187,7 +187,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                 }
             }
-            sample.Shuffle();
+            sample.Shuffle(Random);
             return sample;
         }
 

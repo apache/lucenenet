@@ -1154,7 +1154,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 Console.WriteLine("TEST: maxEdits=" + maxEdits + " prefixLen=" + prefixLen + " transpositions=" + transpositions + " num=" + NUM);
             }
 
-            answers.Shuffle();
+            answers.Shuffle(Random);
             suggest.Build(new InputArrayIterator(answers.ToArray()));
 
             int ITERS = AtLeast(100);

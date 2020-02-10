@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
             }
             Expected.Add(max);
 
-            terms.Shuffle();
+            terms.Shuffle(Random);
             return Arrays.ToString(terms.ToArray());
         }
 

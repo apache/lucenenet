@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
                     postingsList.Add(term);
                 }
             }
-            postingsList.Shuffle();
+            postingsList.Shuffle(Random);
 
             ConcurrentQueue<string> postings = new ConcurrentQueue<string>(postingsList);
 

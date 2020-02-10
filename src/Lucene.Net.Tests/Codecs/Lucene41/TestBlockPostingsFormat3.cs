@@ -274,7 +274,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
 
             List<BytesRef> shuffledTests = new List<BytesRef>(tests);
-            shuffledTests.Shuffle();
+            shuffledTests.Shuffle(Random);
 
             foreach (BytesRef b in shuffledTests)
             {

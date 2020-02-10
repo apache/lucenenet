@@ -1502,7 +1502,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 asList.Add(value);
             }
-            asList.Shuffle();
+            asList.Shuffle(Random);
             return asList;
         }
     }
