@@ -294,7 +294,6 @@ namespace Lucene.Net.Index
             internal DeleteSlice(Node currentTail)
             {
                 Debug.Assert(currentTail != null);
-                Debug.Assert(currentTail.next == null);
                 /*
                  * Initially this is a 0 length slice pointing to the 'current' tail of
                  * the queue. Once we update the slice we only need to assign the tail and
