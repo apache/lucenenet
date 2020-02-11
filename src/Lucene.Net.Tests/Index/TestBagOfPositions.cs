@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -72,7 +73,7 @@ namespace Lucene.Net.Index
             }
             for (int i = 0; i < numTerms; i++)
             {
-                string term = Convert.ToString(i);
+                string term = Convert.ToString(i, CultureInfo.InvariantCulture);
                 for (int j = 0; j < i; j++)
                 {
                     postingsList.Add(term);
@@ -141,7 +142,7 @@ namespace Lucene.Net.Index
             BytesRef termBR;
             while ((termBR = termsEnum.Next()) != null)
             {
-                int value = Convert.ToInt32(termBR.Utf8ToString());
+                int value = Convert.ToInt32(termBR.Utf8ToString(), CultureInfo.InvariantCulture);
                 Assert.AreEqual(value, termsEnum.TotalTermFreq);
                 // don't really need to check more than this, as CheckIndex
                 // will verify that totalTermFreq == total number of positions seen

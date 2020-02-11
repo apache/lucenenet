@@ -10,6 +10,7 @@ using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 using J2N.Collections.Generic.Extensions;
+using System.Globalization;
 
 namespace Lucene.Net.Index
 {
@@ -73,7 +74,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < numTerms; i++)
             {
-                string term = Convert.ToString(i);
+                string term = Convert.ToString(i, CultureInfo.InvariantCulture);
                 for (int j = 0; j < i; j++)
                 {
                     postingsList.Add(term);
@@ -124,7 +125,7 @@ namespace Lucene.Net.Index
             BytesRef term_;
             while ((term_ = termsEnum.Next()) != null)
             {
-                int value = Convert.ToInt32(term_.Utf8ToString());
+                int value = Convert.ToInt32(term_.Utf8ToString(), CultureInfo.InvariantCulture);
                 Assert.AreEqual(value, termsEnum.DocFreq);
                 // don't really need to check more than this, as CheckIndex
                 // will verify that docFreq == actual number of documents seen
