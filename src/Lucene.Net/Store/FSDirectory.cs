@@ -468,11 +468,6 @@ namespace Lucene.Net.Store
         protected class FSIndexOutput : BufferedIndexOutput
         {
             // LUCENENET specific: chunk size not needed
-            ///// <summary>
-            ///// The maximum chunk size is 8192 bytes, because <seealso cref="RandomAccessFile"/> mallocs
-            ///// a native buffer outside of stack if the write buffer size is larger.
-            ///// </summary>
-            //private const int CHUNK_SIZE = 8192;
 
             private readonly FSDirectory parent;
             internal readonly string name;
@@ -490,14 +485,7 @@ namespace Lucene.Net.Store
 
             protected internal override void FlushBuffer(byte[] b, int offset, int size)
             {
-                //Debug.Assert(isOpen);
-                //while (size > 0)
-                //{
-                //    int toWrite = Math.Min(CHUNK_SIZE, size);
-                //    file.Write(b, offset, toWrite);
-                //    offset += toWrite;
-                //    size -= toWrite;
-                //}
+                Debug.Assert(isOpen);
 
                 // LUCENENET specific: FileStream is already optimized to write natively
                 // if over the buffer size that is passed through its constructor. So,
@@ -505,6 +493,14 @@ namespace Lucene.Net.Store
                 file.Write(b, offset, size);
 
                 //Debug.Assert(size == 0);
+            }
+
+            public override void Flush()
+            {
+                base.Flush();
+                // LUCENENET specific - writing bytes into the FileStream (in FlushBuffer()) does not immediately
+                // persist them on disk. We need to explicitly call FileStream.Flush() to move them there.
+                file.Flush();
             }
 
             protected override void Dispose(bool disposing)
@@ -518,9 +514,7 @@ namespace Lucene.Net.Store
                         IOException priorE = null;
                         try
                         {
-                            base.Dispose(disposing);
-                            // LUCENENET specific - file.Flush(flushToDisk: true) required in .NET for concurrency
-                            // Part of a solution suggested by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
+                            base.Dispose(disposing); // LUCENENET NOTE: This handles Flush() for us automatically, but we need to call Flush(true) to ensure everything persists
                             file.Flush(flushToDisk: true);
                         }
                         catch (IOException ioe)
@@ -545,10 +539,7 @@ namespace Lucene.Net.Store
                 file.Seek(pos, SeekOrigin.Begin);
             }
 
-            public override long Length
-            {
-                get { return file.Length; }
-            }
+            public override long Length => file.Length;
 
             // LUCENENET NOTE: FileStream doesn't have a way to set length
         }
@@ -558,7 +549,7 @@ namespace Lucene.Net.Store
         // which means we never need it at the point in Java where it is called.
         //protected virtual void Fsync(string name)
         //{
-        //    IOUtils.Fsync(Path.Combine(m_directory.FullName, name), false);            
+        //    IOUtils.Fsync(Path.Combine(m_directory.FullName, name), false);
         //}
     }
 }
