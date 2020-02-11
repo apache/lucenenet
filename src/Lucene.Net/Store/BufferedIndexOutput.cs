@@ -30,10 +30,10 @@ namespace Lucene.Net.Store
         public const int DEFAULT_BUFFER_SIZE = 16384;
 
         private readonly int bufferSize;
-        private readonly byte[] buffer;
+        private byte[] buffer;
         private long bufferStart = 0; // position in file of buffer
         private int bufferPosition = 0; // position in buffer
-        private readonly CRC32 crc = new CRC32();
+        private readonly CRC32 crc;
 
         /// <summary>
         /// Creates a new <see cref="BufferedIndexOutput"/> with the default buffer size
@@ -48,18 +48,24 @@ namespace Lucene.Net.Store
         /// Creates a new <see cref="BufferedIndexOutput"/> with the given buffer size. </summary>
         /// <param name="bufferSize"> the buffer size in bytes used to buffer writes internally. </param>
         /// <exception cref="ArgumentException"> if the given buffer size is less or equal to <c>0</c> </exception>
-        public BufferedIndexOutput(int bufferSize)
+        public BufferedIndexOutput(int bufferSize) : this(bufferSize, new CRC32()) { }
+
+        // LUCENENET specific - added constructor overload so FSDirectory can still subclass BufferedIndexOutput, but
+        // utilize its own buffer, since FileStream is already buffered in .NET.
+        internal BufferedIndexOutput(int bufferSize, CRC32 crc)
         {
             if (bufferSize <= 0)
             {
                 throw new ArgumentException("bufferSize must be greater than 0 (got " + bufferSize + ")");
             }
             this.bufferSize = bufferSize;
-            buffer = new byte[bufferSize];
+            // LUCENENET: We lazy-load the buffer, so we don't force all subclasses to allocate it
+            this.crc = crc;
         }
 
         public override void WriteByte(byte b)
         {
+            if (buffer == null) buffer = new byte[bufferSize]; // LUCENENET: Lazy-load the buffer, so we don't force all subclasses to allocate it
             if (bufferPosition >= bufferSize)
             {
                 Flush();
@@ -69,6 +75,7 @@ namespace Lucene.Net.Store
 
         public override void WriteBytes(byte[] b, int offset, int length)
         {
+            if (buffer == null) buffer = new byte[bufferSize]; // LUCENENET: Lazy-load the buffer, so we don't force all subclasses to allocate it
             int bytesLeft = bufferSize - bufferPosition;
             // is there enough space in the buffer?
             if (bytesLeft >= length)
@@ -120,9 +127,11 @@ namespace Lucene.Net.Store
             }
         }
 
+        /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush()
         {
+            if (buffer == null) return; // LUCENENET: Lazy-load the buffer, so we don't force all subclasses to allocate it
             crc.Update(buffer, 0, bufferPosition);
             FlushBuffer(buffer, bufferPosition);
             bufferStart += bufferPosition;
@@ -147,6 +156,7 @@ namespace Lucene.Net.Store
         /// <param name="len"> the number of bytes to write </param>
         protected internal abstract void FlushBuffer(byte[] b, int offset, int len);
 
+        /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -171,15 +181,8 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns size of the used output buffer in bytes.
-        ///
         /// </summary>
-        public int BufferSize
-        {
-            get
-            {
-                return bufferSize;
-            }
-        }
+        public int BufferSize => bufferSize;
 
         public override long Checksum
         {
