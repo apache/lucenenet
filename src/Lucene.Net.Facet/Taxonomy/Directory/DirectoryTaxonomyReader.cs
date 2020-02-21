@@ -66,6 +66,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         // TODO: test DoubleBarrelLRUCache and consider using it instead
         private LRUHashMap<FacetLabel, Int32Class> ordinalCache;
         private LRUHashMap<int, FacetLabel> categoryCache;
+        
+        // Disable cache
+        public bool CacheDisabled { get; set; }
 
         private volatile TaxonomyIndexArrays taxoArrays;
 
@@ -85,7 +88,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // use the same instance of the cache, note the protective code in getOrdinal and getPath
             this.ordinalCache = ordinalCache ?? new LRUHashMap<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE);
             this.categoryCache = categoryCache ?? new LRUHashMap<int, FacetLabel>(DEFAULT_CACHE_VALUE);
-
+            this.CacheDisabled = false;
             this.taxoArrays = taxoArrays != null ? new TaxonomyIndexArrays(indexReader, taxoArrays) : null;
         }
 
@@ -106,6 +109,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             ordinalCache = new LRUHashMap<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE);
             categoryCache = new LRUHashMap<int, FacetLabel>(DEFAULT_CACHE_VALUE);
+            CacheDisabled = false;
         }
 
         /// <summary>
@@ -126,6 +130,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             ordinalCache = new LRUHashMap<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE);
             categoryCache = new LRUHashMap<int, FacetLabel>(DEFAULT_CACHE_VALUE);
+            CacheDisabled = false;
         }
 
         private void InitTaxoArrays()
@@ -332,7 +337,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
                 // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
                 // and removing the lock seems to make the performance better.
-                ordinalCache.Put(cp, new Int32Class { Value = Convert.ToInt32(ret, CultureInfo.InvariantCulture) });
+                if(!CacheDisabled)
+                    ordinalCache.Put(cp, new Int32Class { Value = Convert.ToInt32(ret, CultureInfo.InvariantCulture) });
             }
 
             return ret;
@@ -367,7 +373,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             res = new FacetLabel(FacetsConfig.StringToPath(doc.Get(Consts.FULL)));
             // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
             // and removing the lock seems to make the performance better.
-            categoryCache.Put(ordinal, res);
+            if(!CacheDisabled)
+                categoryCache.Put(ordinal, res);
 
             return res;
         }
