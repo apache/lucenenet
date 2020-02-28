@@ -14,7 +14,7 @@ _Status:_ __`Beta`__
 _Released:_ __`Pending...`__
 
 <div class="nuget-well" style="text-align:left;">
-    PM> Install-Package Lucene.Net -Version 4.8.0-beta00005
+    PM> Install-Package Lucene.Net -Version 4.8.0-beta00007
 </div>
 
 ### Source code

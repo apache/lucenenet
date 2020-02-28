@@ -463,7 +463,7 @@
       "_appFooter": "Copyright © 2020 Licensed to the Apache Software Foundation (ASF)",
       "_gitContribute": {
         "repo": "https://github.com/apache/lucenenet",
-        "branch": "master",
+        "branch": "docs-4.8.0-beta00007",
         "apiSpecFolder": "websites/apidocs/apiSpec"
       }
     },
