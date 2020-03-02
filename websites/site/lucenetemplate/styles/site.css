@@ -143,6 +143,18 @@ pre.clean {
     padding: 4rem 0 4rem 0;
 }
 
+.home-section.books .row {
+    text-align:center;
+}
+
+.home-section.books img {
+    max-width:90%;
+}
+.home-section.books a {
+    display:block;
+    padding:20px;
+}
+
 @media screen and (min-width: 700px) {
     .project-links {
         margin-top: 4rem;
