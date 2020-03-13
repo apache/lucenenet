@@ -464,7 +464,7 @@ namespace Lucene.Net.Store
             get { return chunkSize; }
         }
 
-        ///// <summary>
+        /// <summary>
         /// Writes output with <see cref="FileStream.Write(byte[], int, int)"/>
         /// </summary>
         // LUCENENET specific: Since FileStream does its own buffering, this class was refactored
