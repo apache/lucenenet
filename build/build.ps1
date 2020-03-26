@@ -94,7 +94,7 @@ task Init -depends InstallSDK, UpdateLocalSDKVersion -description "This task mak
 	#Update TeamCity, MyGet, or Azure Pipelines with packageVersion
 	Write-Output "##teamcity[buildNumber '$packageVersion']"
 	Write-Output "##myget[buildNumber '$packageVersion']"
-	Write-Host "##vso[task.setvariable variable=Build.BuildNumber;]$packageVersion"
+	#Write-Host "##vso[task.setvariable variable=Build.BuildNumber;]$packageVersion"
 	Write-Host "##vso[build.updatebuildnumber]$packageVersion"
 
 	& dotnet.exe --version
