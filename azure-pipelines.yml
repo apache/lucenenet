@@ -333,7 +333,7 @@ stages:
     - powershell: |
         $version = Get-Content '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
         Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
-        Write-Host "##vso[task.setvariable variable=Build.BuildNumber;]$version"
+      # Write-Host "##vso[task.setvariable variable=Build.BuildNumber;]$version"
       displayName: 'Read PackageVersion from File to Build.BuildNumber'
 
     - template: 'build/azure-templates/show-all-environment-variables.yml'
@@ -378,7 +378,7 @@ stages:
         $vcsLabel = 'Lucene.Net_' + $version.Replace('.', '_').Replace('-', '_')
         Write-Host "##vso[task.setvariable variable=VCSLabel;]$vcsLabel"
         Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
-        Write-Host "##vso[task.setvariable variable=Build.BuildNumber;]$version"
+      # Write-Host "##vso[task.setvariable variable=Build.BuildNumber;]$version"
       displayName: 'Build VCS Label and Rehydrate Version Variables'
 
     - powershell: |
