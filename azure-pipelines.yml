@@ -129,7 +129,7 @@ stages:
         if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path "$dir" -Force }
         '$(PackageVersion)' | Out-File -FilePath "$dir/$(PackageVersionFileName)" -Force
         '$(FileVersion)' | Out-File -FilePath "$dir/$(FileVersionFileName)" -Force
-        '$(Build.BuildNumber)' | Out-File -FilePath "$dir/$(BuildNumberFileName)" -Force
+      # '$(Build.BuildNumber)' | Out-File -FilePath "$dir/$(BuildNumberFileName)" -Force
       displayName: 'Write Versions to Files'
 
     # If this is a release pipeline, copy the build.bat and Version.props files as version artifacts, which will 
