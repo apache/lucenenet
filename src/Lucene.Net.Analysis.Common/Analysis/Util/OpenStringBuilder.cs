@@ -78,10 +78,10 @@ namespace Lucene.Net.Analysis.Util
             return Append(csq, 0, csq.Length);
         }
 
-        public virtual OpenStringBuilder Append(ICharSequence csq, int start, int end) // LUCENENET TODO: API - change to startIndex/length to match .NET
+        public virtual OpenStringBuilder Append(ICharSequence csq, int startIndex, int length) // LUCENENET TODO: API - change to startIndex/length to match .NET
         {
-            EnsureCapacity(end - start);
-            for (int i = start; i < end; i++)
+            EnsureCapacity(length - startIndex);
+            for (int i = startIndex; i < length; i++)
             {
                 UnsafeWrite(csq[i]);
             }
@@ -95,10 +95,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         // LUCENENET specific - overload for string (more common in .NET than ICharSequence)
-        public virtual OpenStringBuilder Append(string csq, int start, int end) // LUCENENET TODO: API - change to startIndex/length to match .NET
+        public virtual OpenStringBuilder Append(string csq, int startIndex, int length) // LUCENENET TODO: API - change to startIndex/length to match .NET
         {
-            EnsureCapacity(end - start);
-            for (int i = start; i < end; i++)
+            EnsureCapacity(length - startIndex);
+            for (int i = startIndex; i < length; i++)
             {
                 UnsafeWrite(csq[i]);
             }
@@ -112,10 +112,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         // LUCENENET specific - overload for StringBuilder
-        public virtual OpenStringBuilder Append(StringBuilder csq, int start, int end) // LUCENENET TODO: API - change to startIndex/length to match .NET
+        public virtual OpenStringBuilder Append(StringBuilder csq, int startIndex, int length) // LUCENENET TODO: API - change to startIndex/length to match .NET
         {
-            EnsureCapacity(end - start);
-            for (int i = start; i < end; i++)
+            EnsureCapacity(length - startIndex);
+            for (int i = startIndex; i < length; i++)
             {
                 UnsafeWrite(csq[i]);
             }
