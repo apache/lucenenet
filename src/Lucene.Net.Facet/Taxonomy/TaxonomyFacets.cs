@@ -28,31 +28,22 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
     public abstract class TaxonomyFacets : Facets
     {
-        private static readonly IComparer<FacetResult> BY_VALUE_THEN_DIM = new ComparerAnonymousInnerClassHelper();
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<FacetResult>
+        private static readonly IComparer<FacetResult> BY_VALUE_THEN_DIM = Comparer<FacetResult>.Create((a, b) =>
         {
-            public ComparerAnonymousInnerClassHelper()
+            if (a.Value > b.Value)
             {
+                return -1;
             }
-
-            public virtual int Compare(FacetResult a, FacetResult b)
+            else if (b.Value > a.Value)
             {
-                if (a.Value > b.Value)
-                {
-                    return -1;
-                }
-                else if (b.Value > a.Value)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return a.Dim.CompareToOrdinal(b.Dim);
-                }
+                return 1;
             }
-        }
-
+            else
+            {
+                return a.Dim.CompareToOrdinal(b.Dim);
+            }
+        });
+                
         /// <summary>
         /// Index field name provided to the constructor.
         /// </summary>

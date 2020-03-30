@@ -59,7 +59,29 @@ namespace Lucene.Net.Search.Suggest
             this.source = source;
             this.comparer = comparer;
             this.reader = Sort();
-            this.tieBreakByCostComparer = new ComparerAnonymousInnerClassHelper(this);
+            this.tieBreakByCostComparer = Comparer<BytesRef>.Create((left, right) =>
+            {
+                SortedTermFreqIteratorWrapper outerInstance = this;
+                BytesRef leftScratch = new BytesRef();
+                BytesRef rightScratch = new BytesRef();
+
+                ByteArrayDataInput input = new ByteArrayDataInput();
+                // Make shallow copy in case decode changes the BytesRef:
+                leftScratch.Bytes = left.Bytes;
+                leftScratch.Offset = left.Offset;
+                leftScratch.Length = left.Length;
+                rightScratch.Bytes = right.Bytes;
+                rightScratch.Offset = right.Offset;
+                rightScratch.Length = right.Length;
+                long leftCost = outerInstance.Decode(leftScratch, input);
+                long rightCost = outerInstance.Decode(rightScratch, input);
+                int cmp = outerInstance.comparer.Compare(leftScratch, rightScratch);
+                if (cmp != 0)
+                {
+                    return cmp;
+                }
+                return leftCost.CompareTo(rightCost);
+            });
         }
 
         public virtual IComparer<BytesRef> Comparer
@@ -109,38 +131,6 @@ namespace Lucene.Net.Search.Suggest
         /// Sortes by BytesRef (ascending) then cost (ascending).
         /// </summary>
         private readonly IComparer<BytesRef> tieBreakByCostComparer;
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<BytesRef>
-        {
-            public ComparerAnonymousInnerClassHelper(SortedTermFreqIteratorWrapper outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-            private readonly SortedTermFreqIteratorWrapper outerInstance;
-
-            private readonly BytesRef leftScratch = new BytesRef();
-            private readonly BytesRef rightScratch = new BytesRef();
-            private readonly ByteArrayDataInput input = new ByteArrayDataInput();
-
-            public virtual int Compare(BytesRef left, BytesRef right)
-            {
-                // Make shallow copy in case decode changes the BytesRef:
-                leftScratch.Bytes = left.Bytes;
-                leftScratch.Offset = left.Offset;
-                leftScratch.Length = left.Length;
-                rightScratch.Bytes = right.Bytes;
-                rightScratch.Offset = right.Offset;
-                rightScratch.Length = right.Length;
-                long leftCost = outerInstance.Decode(leftScratch, input);
-                long rightCost = outerInstance.Decode(rightScratch, input);
-                int cmp = outerInstance.comparer.Compare(leftScratch, rightScratch);
-                if (cmp != 0)
-                {
-                    return cmp;
-                }
-                return leftCost.CompareTo(rightCost);
-            }
-        }
 
         private OfflineSorter.ByteSequencesReader Sort()
         {
@@ -204,7 +194,7 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// encodes an entry (bytes+weight) to the provided writer
         /// </summary>
-        protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer, 
+        protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer,
             ByteArrayDataOutput output, byte[] buffer, BytesRef spare, long weight)
         {
             if (spare.Length + 8 >= buffer.Length)

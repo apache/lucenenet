@@ -780,13 +780,28 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             (long)(long.MaxValue * (decimal)backoff * ((decimal)DecodeWeight(completion.Output)) / contextCount));
                         results.Add(result);
                         Debug.Assert(results.Count == seen.Count);
-                        //System.out.println("  add result=" + result);
-                        nextCompletionContinue:;
+                    //System.out.println("  add result=" + result);
+                    nextCompletionContinue:;
                     }
                     backoff *= ALPHA;
                 }
 
-                results.Sort(new ComparerAnonymousInnerClassHelper(this));
+                results.Sort(Comparer<Lookup.LookupResult>.Create((a, b) =>
+                {
+                    if (a.Value > b.Value)
+                    {
+                        return -1;
+                    }
+                    else if (a.Value < b.Value)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        // Tie break by UTF16 sort order:
+                        return a.Key.CompareToOrdinal(b.Key);
+                    }
+                }));
 
                 if (results.Count > num)
                 {
@@ -854,33 +869,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private sealed class ComparerAnonymousInnerClassHelper : IComparer<Lookup.LookupResult>
-        {
-            private readonly FreeTextSuggester outerInstance;
-
-            public ComparerAnonymousInnerClassHelper(FreeTextSuggester outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public int Compare(LookupResult a, LookupResult b)
-            {
-                if (a.Value > b.Value)
-                {
-                    return -1;
-                }
-                else if (a.Value < b.Value)
-                {
-                    return 1;
-                }
-                else
-                {
-                    // Tie break by UTF16 sort order:
-                    return a.Key.CompareToOrdinal(b.Key);
-                }
-            }
-        }
-
         /// <summary>
         /// weight -> cost </summary>
         private long EncodeWeight(long ngramCount)
@@ -923,19 +911,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return output;
         }
 
-        internal static readonly IComparer<long?> weightComparer = new ComparerAnonymousInnerClassHelper2();
-
-        private sealed class ComparerAnonymousInnerClassHelper2 : IComparer<long?>
-        {
-            public ComparerAnonymousInnerClassHelper2()
-            {
-            }
-
-            public int Compare(long? left, long? right)
-            {
-                return Comparer<long?>.Default.Compare(left, right);
-            }
-        }
+        internal static readonly IComparer<long?> weightComparer = Comparer<long?>.Create((left, right) => Comparer<long?>.Default.Compare(left, right));
 
         /// <summary>
         /// Returns the weight associated with an input string,

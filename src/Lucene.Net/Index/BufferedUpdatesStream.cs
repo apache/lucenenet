@@ -140,15 +140,7 @@ namespace Lucene.Net.Index
         }
 
         // Sorts SegmentInfos from smallest to biggest bufferedDelGen:
-        private static readonly IComparer<SegmentCommitInfo> sortSegInfoByDelGen = new ComparerAnonymousInnerClassHelper();
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<SegmentCommitInfo>
-        {
-            public ComparerAnonymousInnerClassHelper()
-            {
-            }
-
-            public virtual int Compare(SegmentCommitInfo si1, SegmentCommitInfo si2)
+        private static readonly IComparer<SegmentCommitInfo> sortSegInfoByDelGen = Comparer<SegmentCommitInfo>.Create((si1, si2) =>
             {
                 long cmp = si1.BufferedDeletesGen - si2.BufferedDeletesGen;
                 if (cmp > 0)
@@ -163,8 +155,7 @@ namespace Lucene.Net.Index
                 {
                     return 0;
                 }
-            }
-        }
+            });
 
         /// <summary>
         /// Resolves the buffered deleted Term/Query/docIDs, into

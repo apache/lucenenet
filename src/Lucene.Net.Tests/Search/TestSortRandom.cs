@@ -224,7 +224,41 @@ namespace Lucene.Net.Search
 
                 // Compute expected results:
                 var expected = f.MatchValues.ToList();
-                expected.Sort(new ComparerAnonymousInnerClassHelper(this, sortMissingLast));
+                
+                expected.Sort(Comparer<BytesRef>.Create((a,b) =>
+                    {
+                        if (a == null)
+                        {
+                            if (b == null)
+                            {
+                                return 0;
+                            }
+                            if (sortMissingLast)
+                            {
+                                return 1;
+                            }
+                            else
+                            {
+                                return -1;
+                            }
+                        }
+                        else if (b == null)
+                        {
+                            if (sortMissingLast)
+                            {
+                                return -1;
+                            }
+                            else
+                            {
+                                return 1;
+                            }
+                        }
+                        else
+                        {
+                            return a.CompareTo(b);
+                        }
+                    }));
+
                 if (reverse)
                 {
                     expected.Reverse();
@@ -286,53 +320,6 @@ namespace Lucene.Net.Search
 
             r.Dispose();
             dir.Dispose();
-        }
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<BytesRef>
-        {
-            private readonly TestSortRandom OuterInstance;
-
-            private bool SortMissingLast;
-
-            public ComparerAnonymousInnerClassHelper(TestSortRandom outerInstance, bool sortMissingLast)
-            {
-                this.OuterInstance = outerInstance;
-                this.SortMissingLast = sortMissingLast;
-            }
-
-            public virtual int Compare(BytesRef a, BytesRef b)
-            {
-                if (a == null)
-                {
-                    if (b == null)
-                    {
-                        return 0;
-                    }
-                    if (SortMissingLast)
-                    {
-                        return 1;
-                    }
-                    else
-                    {
-                        return -1;
-                    }
-                }
-                else if (b == null)
-                {
-                    if (SortMissingLast)
-                    {
-                        return -1;
-                    }
-                    else
-                    {
-                        return 1;
-                    }
-                }
-                else
-                {
-                    return a.CompareTo(b);
-                }
-            }
         }
 
         private class RandomFilter : Filter

@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             Console.WriteLine("  sort...");
 
             // sort by term: we sorted the files already and use a stable sort.
-            lines.Sort(new ComparerAnonymousHelper());
+            lines.Sort(Comparer<string[]>.Create((left, right) => left[0].CompareToOrdinal(right[0])));
 
             Console.WriteLine("  encode...");
 
@@ -159,15 +159,7 @@ namespace Lucene.Net.Analysis.Ja.Util
 
             return dictionary;
         }
-
-        private class ComparerAnonymousHelper : IComparer<string[]>
-        {
-            public int Compare(string[] left, string[] right)
-            {
-                return left[0].CompareToOrdinal(right[0]);
-            }
-        }
-
+        
         /// <summary>
         /// IPADIC features
         /// 

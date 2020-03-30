@@ -434,7 +434,7 @@ namespace Lucene.Net.Search
         private void SortRptGroups(IList<IList<PhrasePositions>> rgs)
         {
             rptGroups = new PhrasePositions[rgs.Count][];
-            IComparer<PhrasePositions> cmprtr = new ComparerAnonymousInnerClassHelper(this);
+            IComparer<PhrasePositions> cmprtr = Comparer<PhrasePositions>.Create((pp1, pp2) => pp1.offset - pp2.offset);
             for (int i = 0; i < rptGroups.Length; i++)
             {
                 PhrasePositions[] rg = rgs[i].ToArray();
@@ -446,22 +446,7 @@ namespace Lucene.Net.Search
                 }
             }
         }
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<PhrasePositions>
-        {
-            private readonly SloppyPhraseScorer outerInstance;
-
-            public ComparerAnonymousInnerClassHelper(SloppyPhraseScorer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public virtual int Compare(PhrasePositions pp1, PhrasePositions pp2)
-            {
-                return pp1.offset - pp2.offset;
-            }
-        }
-
+        
         /// <summary>
         /// Detect repetition groups. Done once - for first doc. </summary>
         private IList<IList<PhrasePositions>> GatherRptGroups(JCG.LinkedDictionary<Term, int?> rptTerms)

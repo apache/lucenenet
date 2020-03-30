@@ -45,36 +45,6 @@ namespace Lucene.Net.Search.Grouping
         private readonly string countField = "publisher";
         //private readonly string dvCountField = "publisher_dv"; // LUCENENET NOTE: Not used in Lucene
 
-        internal class ComparerAnonymousHelper1 : IComparer<AbstractDistinctValuesCollector.IGroupCount<IComparable>>
-        {
-            private readonly DistinctValuesCollectorTest outerInstance;
-
-            public ComparerAnonymousHelper1(DistinctValuesCollectorTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public int Compare(AbstractDistinctValuesCollector.IGroupCount<IComparable> groupCount1, AbstractDistinctValuesCollector.IGroupCount<IComparable> groupCount2)
-            {
-                if (groupCount1.GroupValue == null)
-                {
-                    if (groupCount2.GroupValue == null)
-                    {
-                        return 0;
-                    }
-                    return -1;
-                }
-                else if (groupCount2.GroupValue == null)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return groupCount1.GroupValue.CompareTo(groupCount2.GroupValue);
-                }
-            }
-        }
-
         [Test]
         public virtual void TestSimple()
         {
@@ -150,7 +120,24 @@ namespace Lucene.Net.Search.Grouping
             IndexSearcher indexSearcher = NewSearcher(w.GetReader());
             w.Dispose();
 
-            var cmp = new ComparerAnonymousHelper1(this);
+            var cmp = Comparer<AbstractDistinctValuesCollector.IGroupCount<IComparable>>.Create((groupCount1, groupCount2) => {
+                if (groupCount1.GroupValue == null)
+                {
+                    if (groupCount2.GroupValue == null)
+                    {
+                        return 0;
+                    }
+                    return -1;
+                }
+                else if (groupCount2.GroupValue == null)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return groupCount1.GroupValue.CompareTo(groupCount2.GroupValue);
+                }
+            });
 
             // === Search for content:random
             IAbstractFirstPassGroupingCollector<IComparable> firstCollector = CreateRandomFirstPassCollector(dvType, new Sort(), groupField, 10);

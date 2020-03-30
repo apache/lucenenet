@@ -584,34 +584,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             return highlights;
         }
-
-        internal class HighlightDocComparerAnonymousHelper1 : IComparer<Passage>
-        {
-            public int Compare(Passage left, Passage right)
-            {
-                if (left.score < right.score)
-                {
-                    return -1;
-                }
-                else if (left.score > right.score)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return left.startOffset - right.startOffset;
-                }
-            }
-        }
-
-        internal class HighlightDocComparerAnonymousHelper2 : IComparer<Passage>
-        {
-            public int Compare(Passage left, Passage right)
-            {
-                return left.startOffset - right.startOffset;
-            }
-        }
-
+        
         // algorithm: treat sentence snippets as miniature documents
         // we can intersect these with the postings lists via BreakIterator.preceding(offset),s
         // score each sentence as norm(sentenceStartOffset) * sum(weight * tf(freq))
@@ -668,7 +641,21 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             pq.Add(new OffsetsEnum(EMPTY, int.MaxValue)); // a sentinel for termination
 
-            JCG.PriorityQueue<Passage> passageQueue = new JCG.PriorityQueue<Passage>(n, new HighlightDocComparerAnonymousHelper1());
+            JCG.PriorityQueue<Passage> passageQueue = new JCG.PriorityQueue<Passage>(n, Comparer<Passage>.Create((left, right) =>
+            {
+                if (left.score < right.score)
+                {
+                    return -1;
+                }
+                else if (left.score > right.score)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return left.startOffset - right.startOffset;
+                }
+            }));
             Passage current = new Passage();
 
             while (pq.TryDequeue(out OffsetsEnum off))
@@ -722,7 +709,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                             p.Sort();
                         }
                         // sort in ascending order
-                        ArrayUtil.TimSort(passages, new HighlightDocComparerAnonymousHelper2());
+                        ArrayUtil.TimSort(passages, Comparer<Passage>.Create((left, right) => left.startOffset - right.startOffset));
                         return passages;
                     }
                     // advance breakiterator

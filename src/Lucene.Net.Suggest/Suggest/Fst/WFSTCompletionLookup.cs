@@ -316,20 +316,8 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
         }
 
-        internal static readonly IComparer<long?> weightComparer = new ComparerAnonymousInnerClassHelper();
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<long?>
-        {
-            public ComparerAnonymousInnerClassHelper()
-            {
-            }
-
-            public virtual int Compare(long? left, long? right)
-            {
-                return Comparer<long?>.Default.Compare(left, right);
-            }
-        }
-
+        internal static readonly IComparer<long?> weightComparer = Comparer<long?>.Create((left, right) => Comparer<long?>.Default.Compare(left, right));
+        
         /// <summary>
         /// Returns byte size of the underlying FST. </summary>
         public override long GetSizeInBytes()

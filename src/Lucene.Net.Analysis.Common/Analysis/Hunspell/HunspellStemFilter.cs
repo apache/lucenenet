@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <param name="dictionary"> Hunspell <see cref="Dictionary"/> containing the affix rules and words that will be used to stem the tokens </param>
         /// <param name="dedup"> remove duplicates </param>
         /// <param name="longestOnly"> true if only the longest term should be output. </param>
-        public HunspellStemFilter(TokenStream input, Dictionary dictionary, bool dedup, bool longestOnly) 
+        public HunspellStemFilter(TokenStream input, Dictionary dictionary, bool dedup, bool longestOnly)
             : base(input)
         {
             this.dedup = dedup && longestOnly == false; // don't waste time deduping if longestOnly is set
@@ -145,26 +145,17 @@ namespace Lucene.Net.Analysis.Hunspell
             buffer = null;
         }
 
-        internal static readonly IComparer<CharsRef> lengthComparer = new ComparerAnonymousInnerClassHelper();
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<CharsRef>
+        internal static readonly IComparer<CharsRef> lengthComparer = Comparer<CharsRef>.Create((o1, o2) =>
         {
-            public ComparerAnonymousInnerClassHelper()
+            if (o2.Length == o1.Length)
             {
+                // tie break on text
+                return o2.CompareTo(o1);
             }
-
-            public virtual int Compare(CharsRef o1, CharsRef o2)
+            else
             {
-                if (o2.Length == o1.Length)
-                {
-                    // tie break on text
-                    return o2.CompareTo(o1);
-                }
-                else
-                {
-                    return o2.Length < o1.Length ? -1 : 1;
-                }
+                return o2.Length < o1.Length ? -1 : 1;
             }
-        }
+        });
     }
 }

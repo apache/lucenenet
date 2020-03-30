@@ -342,7 +342,7 @@ namespace Lucene.Net.Search.VectorHighlight
                     WeightedFragInfo weightedFragInfo = new WeightedFragInfo(fragStart, fragEnd, subInfos, boost);
                     fieldNameToFragInfos[field.Name].Add(weightedFragInfo);
                 }
-                fragInfos_continue: { }
+            fragInfos_continue: { }
             }
 
             List<WeightedFragInfo> result = new List<WeightedFragInfo>();
@@ -350,19 +350,11 @@ namespace Lucene.Net.Search.VectorHighlight
             {
                 result.AddRange(weightedFragInfos);
             }
-            CollectionUtil.TimSort(result, new DiscreteMultiValueHighlightingComparerAnonymousHelper());
+            CollectionUtil.TimSort(result, Comparer<WeightedFragInfo>.Create((info1, info2) => info1.StartOffset - info2.StartOffset));
 
             return result;
         }
-
-        internal class DiscreteMultiValueHighlightingComparerAnonymousHelper : IComparer<WeightedFragInfo>
-        {
-            public int Compare(WeightedFragInfo info1, WeightedFragInfo info2)
-            {
-                return info1.StartOffset - info2.StartOffset;
-            }
-        }
-
+        
         public virtual char MultiValuedSeparator
         {
             get { return multiValuedSeparator; }

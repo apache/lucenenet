@@ -508,25 +508,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                 ReadVectors();
                 if (unicodeSortOrder)
                 {
-                    Array.Sort(termAndPostings, new ComparerAnonymousInnerClassHelper(this));
+                    Array.Sort(termAndPostings, Comparer<TermAndPostings>.Create((left, right) => left.Term.CompareTo(right.Term)));
                 }
             }
-
-            private class ComparerAnonymousInnerClassHelper : IComparer<TermAndPostings>
-            {
-                private readonly TVTermsEnum outerInstance;
-
-                public ComparerAnonymousInnerClassHelper(TVTermsEnum outerInstance)
-                {
-                    this.outerInstance = outerInstance;
-                }
-
-                public virtual int Compare(TermAndPostings left, TermAndPostings right)
-                {
-                    return left.Term.CompareTo(right.Term);
-                }
-            }
-
+            
             private void ReadVectors()
             {
                 termAndPostings = new TermAndPostings[numTerms];

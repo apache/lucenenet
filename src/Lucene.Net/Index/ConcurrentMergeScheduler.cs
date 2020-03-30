@@ -191,15 +191,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sorts <see cref="MergeThread"/>s; larger merges come first. </summary>
-        protected internal static readonly IComparer<MergeThread> compareByMergeDocCount = new ComparerAnonymousInnerClassHelper();
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<MergeThread>
-        {
-            public ComparerAnonymousInnerClassHelper()
-            {
-            }
-
-            public virtual int Compare(MergeThread t1, MergeThread t2)
+        protected internal static readonly IComparer<MergeThread> compareByMergeDocCount = Comparer<MergeThread>.Create((t1, t2) =>
             {
                 MergePolicy.OneMerge m1 = t1.CurrentMerge;
                 MergePolicy.OneMerge m2 = t2.CurrentMerge;
@@ -208,8 +200,7 @@ namespace Lucene.Net.Index
                 int c2 = m2 == null ? int.MaxValue : m2.TotalDocCount;
 
                 return c2 - c1;
-            }
-        }
+            });
 
         /// <summary>
         /// Called whenever the running merges have changed, to pause &amp; unpause
@@ -461,7 +452,7 @@ namespace Lucene.Net.Index
                         }
                         //try
                         //{
-                            Monitor.Wait(this);
+                        Monitor.Wait(this);
                         //}
                         //catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
                         //{
@@ -720,13 +711,13 @@ namespace Lucene.Net.Index
         {
             //try
             //{
-                // When an exception is hit during merge, IndexWriter
-                // removes any partial files and then allows another
-                // merge to run.  If whatever caused the error is not
-                // transient then the exception will keep happening,
-                // so, we sleep here to avoid saturating CPU in such
-                // cases:
-                Thread.Sleep(250);
+            // When an exception is hit during merge, IndexWriter
+            // removes any partial files and then allows another
+            // merge to run.  If whatever caused the error is not
+            // transient then the exception will keep happening,
+            // so, we sleep here to avoid saturating CPU in such
+            // cases:
+            Thread.Sleep(250);
             //}
             //catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
             //{

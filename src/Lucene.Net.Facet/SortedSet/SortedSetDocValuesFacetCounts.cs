@@ -303,20 +303,7 @@ namespace Lucene.Net.Facet.SortedSet
             }
 
             // Sort by highest count:
-            results.Sort(new ComparerAnonymousInnerClassHelper(this));
-            return results;
-        }
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<FacetResult>
-        {
-            private readonly SortedSetDocValuesFacetCounts outerInstance;
-
-            public ComparerAnonymousInnerClassHelper(SortedSetDocValuesFacetCounts outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public virtual int Compare(FacetResult a, FacetResult b)
+            results.Sort(Comparer<FacetResult>.Create((a, b) =>
             {
                 if ((int)a.Value > (int)b.Value)
                 {
@@ -330,7 +317,8 @@ namespace Lucene.Net.Facet.SortedSet
                 {
                     return a.Dim.CompareToOrdinal(b.Dim);
                 }
-            }
+            }));
+            return results;
         }
     }
 }

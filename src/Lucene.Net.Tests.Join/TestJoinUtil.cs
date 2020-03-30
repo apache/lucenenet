@@ -990,32 +990,10 @@ namespace Lucene.Net.Tests.Join
                 : context.ToHitsToJoinScore[queryValue];
 
             var hits = new List<KeyValuePair<int, JoinScore>>(hitsToJoinScores);
-            hits.Sort(new ComparerAnonymousInnerClassHelper(this, scoreMode));
-            ScoreDoc[] scoreDocs = new ScoreDoc[Math.Min(10, hits.Count)];
-            for (int i = 0; i < scoreDocs.Length; i++)
+            hits.Sort(Comparer< KeyValuePair<int, JoinScore>>.Create( (hit1, hit2) =>
             {
-                KeyValuePair<int, JoinScore> hit = hits[i];
-                scoreDocs[i] = new ScoreDoc(hit.Key, hit.Value.Score(scoreMode));
-            }
-            return new TopDocs(hits.Count, scoreDocs, hits.Count == 0 ? float.NaN : hits[0].Value.Score(scoreMode));
-        }
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<KeyValuePair<int, JoinScore>>
-        {
-            private readonly TestJoinUtil OuterInstance;
-
-            private ScoreMode ScoreMode;
-
-            public ComparerAnonymousInnerClassHelper(TestJoinUtil outerInstance, ScoreMode scoreMode)
-            {
-                OuterInstance = outerInstance;
-                ScoreMode = scoreMode;
-            }
-
-            public virtual int Compare(KeyValuePair<int, JoinScore> hit1, KeyValuePair<int, JoinScore> hit2)
-            {
-                float score1 = hit1.Value.Score(ScoreMode);
-                float score2 = hit2.Value.Score(ScoreMode);
+                float score1 = hit1.Value.Score(scoreMode);
+                float score2 = hit2.Value.Score(scoreMode);
 
                 int cmp = score2.CompareTo(score1);
                 if (cmp != 0)
@@ -1023,7 +1001,14 @@ namespace Lucene.Net.Tests.Join
                     return cmp;
                 }
                 return hit1.Key - hit2.Key;
+            }));
+            ScoreDoc[] scoreDocs = new ScoreDoc[Math.Min(10, hits.Count)];
+            for (int i = 0; i < scoreDocs.Length; i++)
+            {
+                KeyValuePair<int, JoinScore> hit = hits[i];
+                scoreDocs[i] = new ScoreDoc(hit.Key, hit.Value.Score(scoreMode));
             }
+            return new TopDocs(hits.Count, scoreDocs, hits.Count == 0 ? float.NaN : hits[0].Value.Score(scoreMode));
         }
 
         private FixedBitSet CreateExpectedResult(string queryValue, bool from, IndexReader topLevelReader,

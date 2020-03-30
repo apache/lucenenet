@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
             // TODO: should we allow multiple segmentations per input 'phrase'?
             // the old treemap didn't support this either, and i'm not sure if its needed/useful?
-            featureEntries.Sort(new ComparerAnonymousHelper());
+            featureEntries.Sort(Comparer<string[]>.Create((left, right) => left[0].CompareToOrdinal(right[0])));
 
             List<string> data = new List<string>(featureEntries.Count);
             List<int[]> segmentations = new List<int[]>(featureEntries.Count);
@@ -124,17 +124,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             this.data = data.ToArray(/*new string[data.Count]*/);
             this.segmentations = segmentations.ToArray(/*new int[segmentations.Count][]*/);
         }
-
-        // LUCENENET TODO: Make an AnonymousComparer class in Support and
-        // replace all of these classes.
-        private class ComparerAnonymousHelper : IComparer<string[]>
-        {
-            public int Compare(string[] left, string[] right)
-            {
-                return left[0].CompareToOrdinal(right[0]);
-            }
-        }
-
+        
         /// <summary>
         /// Lookup words in text.
         /// </summary>

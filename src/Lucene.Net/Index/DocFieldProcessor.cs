@@ -284,19 +284,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static readonly IComparer<DocFieldProcessorPerField> fieldsComp = new ComparerAnonymousInnerClassHelper();
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<DocFieldProcessorPerField>
-        {
-            public ComparerAnonymousInnerClassHelper()
-            {
-            }
-
-            public virtual int Compare(DocFieldProcessorPerField o1, DocFieldProcessorPerField o2)
-            {
-                return o1.fieldInfo.Name.CompareToOrdinal(o2.fieldInfo.Name);
-            }
-        }
+        private static readonly IComparer<DocFieldProcessorPerField> fieldsComp = Comparer<DocFieldProcessorPerField>.Create((o1, o2) => o1.fieldInfo.Name.CompareToOrdinal(o2.fieldInfo.Name));
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument()

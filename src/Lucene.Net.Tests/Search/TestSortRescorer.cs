@@ -169,7 +169,24 @@ namespace Lucene.Net.Search
 
             int reverseInt = reverse ? -1 : 1;
 
-            Array.Sort(expected, new ComparerAnonymousInnerClassHelper(this, idToNum, r, reverseInt));
+            Array.Sort(expected, Comparer<int>.Create((a, b) =>
+            {
+                int av = idToNum[Convert.ToInt32(r.Document(a).Get("id"))];
+                int bv = idToNum[Convert.ToInt32(r.Document(b).Get("id"))];
+                if (av < bv)
+                {
+                    return -reverseInt;
+                }
+                else if (bv < av)
+                {
+                    return reverseInt;
+                }
+                else
+                {
+                    // Tie break by docID, ascending
+                    return a - b;
+                }
+            }));
 
             bool fail = false;
             for (int i = 0; i < numHits; i++)
@@ -180,49 +197,6 @@ namespace Lucene.Net.Search
 
             r.Dispose();
             dir.Dispose();
-        }
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<int>
-        {
-            private readonly TestSortRescorer OuterInstance;
-
-            private int[] IdToNum;
-            private IndexReader r;
-            private int ReverseInt;
-
-            public ComparerAnonymousInnerClassHelper(TestSortRescorer outerInstance, int[] idToNum, IndexReader r, int reverseInt)
-            {
-                this.OuterInstance = outerInstance;
-                this.IdToNum = idToNum;
-                this.r = r;
-                this.ReverseInt = reverseInt;
-            }
-
-            public virtual int Compare(int a, int b)
-            {
-                try
-                {
-                    int av = IdToNum[Convert.ToInt32(r.Document(a).Get("id"))];
-                    int bv = IdToNum[Convert.ToInt32(r.Document(b).Get("id"))];
-                    if (av < bv)
-                    {
-                        return -ReverseInt;
-                    }
-                    else if (bv < av)
-                    {
-                        return ReverseInt;
-                    }
-                    else
-                    {
-                        // Tie break by docID
-                        return a - b;
-                    }
-                }
-                catch (IOException ioe)
-                {
-                    throw new Exception(ioe.ToString(), ioe);
-                }
-            }
-        }
+        }               
     }
 }

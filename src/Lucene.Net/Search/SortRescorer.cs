@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
         {
             // Copy ScoreDoc[] and sort by ascending docID:
             ScoreDoc[] hits = (ScoreDoc[])firstPassTopDocs.ScoreDocs.Clone();
-            Array.Sort(hits, new ComparerAnonymousInnerClassHelper(this));
+            Array.Sort(hits, Comparer<ScoreDoc>.Create((a, b) => a.Doc - b.Doc));
 
             IList<AtomicReaderContext> leaves = searcher.IndexReader.Leaves;
 
@@ -86,21 +86,6 @@ namespace Lucene.Net.Search
             }
 
             return collector.GetTopDocs();
-        }
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<ScoreDoc>
-        {
-            private readonly SortRescorer outerInstance;
-
-            public ComparerAnonymousInnerClassHelper(SortRescorer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public virtual int Compare(ScoreDoc a, ScoreDoc b)
-            {
-                return a.Doc - b.Doc;
-            }
         }
 
         public override Explanation Explain(IndexSearcher searcher, Explanation firstPassExplanation, int docID)

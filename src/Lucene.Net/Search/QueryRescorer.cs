@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
         public override TopDocs Rescore(IndexSearcher searcher, TopDocs firstPassTopDocs, int topN)
         {
             ScoreDoc[] hits = (ScoreDoc[])firstPassTopDocs.ScoreDocs.Clone();
-            Array.Sort(hits, new ComparerAnonymousInnerClassHelper(this));
+            Array.Sort(hits, Comparer<ScoreDoc>.Create((a, b) => a.Doc - b.Doc));
 
             IList<AtomicReaderContext> leaves = searcher.IndexReader.Leaves;
 
@@ -111,43 +111,7 @@ namespace Lucene.Net.Search
             // TODO: we should do a partial sort (of only topN)
             // instead, but typically the number of hits is
             // smallish:
-            Array.Sort(hits, new ComparerAnonymousInnerClassHelper2(this));
-
-            if (topN < hits.Length)
-            {
-                ScoreDoc[] subset = new ScoreDoc[topN];
-                Array.Copy(hits, 0, subset, 0, topN);
-                hits = subset;
-            }
-
-            return new TopDocs(firstPassTopDocs.TotalHits, hits, hits[0].Score);
-        }
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<ScoreDoc>
-        {
-            private readonly QueryRescorer outerInstance;
-
-            public ComparerAnonymousInnerClassHelper(QueryRescorer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public virtual int Compare(ScoreDoc a, ScoreDoc b)
-            {
-                return a.Doc - b.Doc;
-            }
-        }
-
-        private class ComparerAnonymousInnerClassHelper2 : IComparer<ScoreDoc>
-        {
-            private readonly QueryRescorer outerInstance;
-
-            public ComparerAnonymousInnerClassHelper2(QueryRescorer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public virtual int Compare(ScoreDoc a, ScoreDoc b)
+            Array.Sort(hits, Comparer<ScoreDoc>.Create((a, b) =>
             {
                 // Sort by score descending, then docID ascending:
                 if (a.Score > b.Score)
@@ -164,7 +128,16 @@ namespace Lucene.Net.Search
                     // because docIDs are >= 0:
                     return a.Doc - b.Doc;
                 }
+            }));
+
+            if (topN < hits.Length)
+            {
+                ScoreDoc[] subset = new ScoreDoc[topN];
+                Array.Copy(hits, 0, subset, 0, topN);
+                hits = subset;
             }
+
+            return new TopDocs(firstPassTopDocs.TotalHits, hits, hits[0].Score);
         }
 
         public override Explanation Explain(IndexSearcher searcher, Explanation firstPassExplanation, int docID)

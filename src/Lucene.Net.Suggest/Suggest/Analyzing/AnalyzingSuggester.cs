@@ -1034,14 +1034,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         internal static readonly IComparer<PairOutputs<long?, BytesRef>.Pair> weightComparer =
-            new ComparerAnonymousInnerClassHelper();
-
-        private sealed class ComparerAnonymousInnerClassHelper : IComparer<PairOutputs<long?, BytesRef>.Pair>
-        {
-            public int Compare(PairOutputs<long?, BytesRef>.Pair left, PairOutputs<long?, BytesRef>.Pair right)
-            {
-                return Comparer<long?>.Default.Compare(left.Output1, right.Output1);
-            }
-        }
+            Comparer<PairOutputs<long?, BytesRef>.Pair>.Create((left, right) => Comparer<long?>.Default.Compare(left.Output1, right.Output1));
     }
 }
