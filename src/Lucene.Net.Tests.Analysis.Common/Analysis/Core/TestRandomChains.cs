@@ -244,7 +244,7 @@ namespace Lucene.Net.Analysis.Core
                 }
             }
 
-            IComparer<ConstructorInfo> ctorComp = new ComparerAnonymousInnerClassHelper();
+            IComparer<ConstructorInfo> ctorComp = Comparer<ConstructorInfo>.Create((arg0, arg1)=> arg0.ToString().CompareToOrdinal(arg1.ToString()));
             tokenizers.Sort(ctorComp);
             tokenfilters.Sort(ctorComp);
             charfilters.Sort(ctorComp);
@@ -255,19 +255,7 @@ namespace Lucene.Net.Analysis.Core
                 Console.WriteLine("charfilters = " + charfilters);
             }
         }
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<ConstructorInfo>
-        {
-            public ComparerAnonymousInnerClassHelper()
-            {
-            }
-
-            public virtual int Compare(ConstructorInfo arg0, ConstructorInfo arg1)
-            {
-                return arg0.ToString().CompareToOrdinal(arg1.ToString());
-            }
-        }
-
+        
         [OneTimeTearDown]
         public override void AfterClass()
         {

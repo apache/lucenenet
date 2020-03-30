@@ -496,29 +496,6 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        internal class ComparerAnonymousHelper1 : IComparer<string>
-        {
-            public int Compare(string a, string b)
-            {
-                if (a == b)
-                {
-                    return 0;
-                }
-                else if (a == null)
-                {
-                    return -1;
-                }
-                else if (b == null)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return a.CompareToOrdinal(b);
-                }
-            }
-        }
-
         private IndexContext CreateIndexContext(bool multipleFacetValuesPerDocument)
         {
             Random random = Random;
@@ -608,8 +585,25 @@ namespace Lucene.Net.Search.Grouping
             docNoFacet.Add(content);
             docNoGroupNoFacet.Add(content);
 
-            ISet<string> uniqueFacetValues = new JCG.SortedSet<string>(new ComparerAnonymousHelper1());
-
+            ISet<string> uniqueFacetValues = new JCG.SortedSet<string>(Comparer<string>.Create((a, b) => {
+                if (a == b)
+                {
+                    return 0;
+                }
+                else if (a == null)
+                {
+                    return -1;
+                }
+                else if (b == null)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return a.CompareToOrdinal(b);
+                }
+            }));
+                
             // LUCENENET NOTE: Need JCG.Dictionary here because of null keys
             IDictionary<string, JCG.Dictionary<string, ISet<string>>> searchTermToFacetToGroups = new Dictionary<string, JCG.Dictionary<string, ISet<string>>>();
             int facetWithMostGroups = 0;
@@ -737,29 +731,6 @@ namespace Lucene.Net.Search.Grouping
             return new IndexContext(searchTermToFacetToGroups, reader, numDocs, dir, facetWithMostGroups, numGroups, contentBrs, uniqueFacetValues, useDv);
         }
 
-        internal class ComparerAnonymousHelper2 : IComparer<TermGroupFacetCollector.FacetEntry>
-        {
-            private readonly bool orderByCount;
-
-            public ComparerAnonymousHelper2(bool orderByCount)
-            {
-                this.orderByCount = orderByCount;
-            }
-
-            public int Compare(AbstractGroupFacetCollector.FacetEntry a, AbstractGroupFacetCollector.FacetEntry b)
-            {
-                if (orderByCount)
-                {
-                    int cmp = b.Count - a.Count;
-                    if (cmp != 0)
-                    {
-                        return cmp;
-                    }
-                }
-                return a.Value.CompareTo(b.Value);
-            }
-        }
-
         private GroupedFacetResult CreateExpectedFacetResult(string searchTerm, IndexContext context, int offset, int limit, int minCount, bool orderByCount, string facetPrefix)
         {
             JCG.Dictionary<string, ISet<string>> facetGroups;
@@ -813,7 +784,17 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
 
-            entries.Sort(new ComparerAnonymousHelper2(orderByCount));
+            entries.Sort(Comparer<TermGroupFacetCollector.FacetEntry>.Create((a, b) => {
+                if (orderByCount)
+                {
+                    int cmp = b.Count - a.Count;
+                    if (cmp != 0)
+                    {
+                        return cmp;
+                    }
+                }
+                return a.Value.CompareTo(b.Value);
+            }));
 
             int endOffset = offset + limit;
             List<TermGroupFacetCollector.FacetEntry> entriesResult;

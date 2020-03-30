@@ -435,17 +435,10 @@ namespace Lucene.Net.Search.Grouping
             return new Sort(sortFields.ToArray(/*new SortField[sortFields.size()]*/));
         }
 
-        internal class ComparerAnonymousHelper : IComparer<GroupDoc>
+        private IComparer<GroupDoc> GetComparer(Sort sort)
         {
-            private readonly TestGrouping outerInstance;
-            private readonly SortField[] sortFields;
-            internal ComparerAnonymousHelper(TestGrouping outerInstance, SortField[] sortFields)
-            {
-                this.outerInstance = outerInstance;
-                this.sortFields = sortFields;
-            }
-
-            public int Compare(GroupDoc d1, GroupDoc d2)
+            SortField[] sortFields = sort.GetSort();
+            return Comparer<GroupDoc>.Create((d1,d2) =>
             {
                 foreach (SortField sf in sortFields)
                 {
@@ -486,13 +479,7 @@ namespace Lucene.Net.Search.Grouping
                 // Our sort always fully tie breaks:
                 fail();
                 return 0;
-            }
-        }
-
-        private IComparer<GroupDoc> GetComparer(Sort sort)
-        {
-            SortField[] sortFields = sort.GetSort();
-            return new ComparerAnonymousHelper(this, sortFields);
+            });
         }
 
         private IComparable[] FillFields(GroupDoc d, Sort sort)

@@ -557,23 +557,10 @@ namespace Lucene.Net.Search.Grouping
             return new Sort(sortFields.ToArray(/*new SortField[sortFields.size()]*/));
         }
 
-        internal class ComparerAnonymousHelper : IComparer<GroupDoc>
+        private IComparer<GroupDoc> GetComparer(Sort sort, bool sortByScoreOnly, int[] fieldIdToDocID)
         {
-            private readonly AllGroupHeadsCollectorTest outerInstance;
-            private readonly SortField[] sortFields;
-            private readonly bool sortByScoreOnly;
-            private readonly int[] fieldIdToDocID;
-
-            public ComparerAnonymousHelper(AllGroupHeadsCollectorTest outerInstance, SortField[] sortFields, bool sortByScoreOnly, int[] fieldIdToDocID)
-            {
-                this.outerInstance = outerInstance;
-                this.sortFields = sortFields;
-                this.sortByScoreOnly = sortByScoreOnly;
-                this.fieldIdToDocID = fieldIdToDocID;
-            }
-
-            public int Compare(GroupDoc d1, GroupDoc d2)
-            {
+            SortField[] sortFields = sort.GetSort();
+            return Comparer<GroupDoc>.Create((d1,d2)=> {
                 foreach (SortField sf in sortFields)
                 {
                     int cmp;
@@ -617,13 +604,7 @@ namespace Lucene.Net.Search.Grouping
                 // Our sort always fully tie breaks:
                 fail();
                 return 0;
-            }
-        }
-
-        private IComparer<GroupDoc> GetComparer(Sort sort, bool sortByScoreOnly, int[] fieldIdToDocID)
-        {
-            SortField[] sortFields = sort.GetSort();
-            return new ComparerAnonymousHelper(this, sortFields, sortByScoreOnly, fieldIdToDocID);
+            });
         }
 
         private AbstractAllGroupHeadsCollector CreateRandomCollector(string groupField, Sort sortWithinGroup, bool canUseIDV, DocValuesType valueType)

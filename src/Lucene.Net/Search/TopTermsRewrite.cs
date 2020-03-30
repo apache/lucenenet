@@ -244,21 +244,12 @@ namespace Lucene.Net.Search
             return false;
         }
 
-        private static readonly IComparer<ScoreTerm> scoreTermSortByTermComp = new ComparerAnonymousInnerClassHelper();
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<ScoreTerm>
+        private static readonly IComparer<ScoreTerm> scoreTermSortByTermComp = Comparer<ScoreTerm>.Create((st1, st2) =>
         {
-            public ComparerAnonymousInnerClassHelper()
-            {
-            }
-
-            public virtual int Compare(ScoreTerm st1, ScoreTerm st2)
-            {
-                Debug.Assert(st1.TermComp == st2.TermComp, "term comparer should not change between segments");
-                return st1.TermComp.Compare(st1.Bytes, st2.Bytes);
-            }
-        }
-
+            Debug.Assert(st1.TermComp == st2.TermComp, "term comparer should not change between segments");
+            return st1.TermComp.Compare(st1.Bytes, st2.Bytes);
+        });
+        
         internal sealed class ScoreTerm : IComparable<ScoreTerm>
         {
             public IComparer<BytesRef> TermComp { get; private set; }

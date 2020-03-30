@@ -61,7 +61,52 @@ namespace Lucene.Net.Search.Suggest
         /// </summary>
         public SortedInputIterator(IInputIterator source, IComparer<BytesRef> comparer)
         {
-            this.tieBreakByCostComparer = new ComparerAnonymousInnerClassHelper(this);
+            this.tieBreakByCostComparer = Comparer<BytesRef>.Create((left, right) =>
+            {
+                SortedInputIterator outerInstance = this;
+
+                BytesRef leftScratch = new BytesRef();
+                BytesRef rightScratch = new BytesRef();
+                ByteArrayDataInput input = new ByteArrayDataInput();
+                // Make shallow copy in case decode changes the BytesRef:
+                leftScratch.Bytes = left.Bytes;
+                leftScratch.Offset = left.Offset;
+                leftScratch.Length = left.Length;
+                rightScratch.Bytes = right.Bytes;
+                rightScratch.Offset = right.Offset;
+                rightScratch.Length = right.Length;
+                long leftCost = outerInstance.Decode(leftScratch, input);
+                long rightCost = outerInstance.Decode(rightScratch, input);
+                if (outerInstance.HasPayloads)
+                {
+                    outerInstance.DecodePayload(leftScratch, input);
+                    outerInstance.DecodePayload(rightScratch, input);
+                }
+                if (outerInstance.HasContexts)
+                {
+                    outerInstance.DecodeContexts(leftScratch, input);
+                    outerInstance.DecodeContexts(rightScratch, input);
+                }
+                // LUCENENET NOTE: outerInstance.Comparer != outerInstance.comparer!!
+                int cmp = outerInstance.comparer.Compare(leftScratch, rightScratch);
+                if (cmp != 0)
+                {
+                    return cmp;
+                }
+                if (leftCost < rightCost)
+                {
+                    return -1;
+                }
+                else if (leftCost > rightCost)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            });
+
             this.hasPayloads = source.HasPayloads;
             this.hasContexts = source.HasContexts;
             this.source = source;
@@ -150,63 +195,7 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// Sortes by BytesRef (ascending) then cost (ascending). </summary>
         private readonly IComparer<BytesRef> tieBreakByCostComparer;
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<BytesRef>
-        {
-            private readonly SortedInputIterator outerInstance;
-            public ComparerAnonymousInnerClassHelper(SortedInputIterator outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-
-            private readonly BytesRef leftScratch = new BytesRef();
-            private readonly BytesRef rightScratch = new BytesRef();
-            private readonly ByteArrayDataInput input = new ByteArrayDataInput();
-
-            public virtual int Compare(BytesRef left, BytesRef right)
-            {
-                // Make shallow copy in case decode changes the BytesRef:
-                leftScratch.Bytes = left.Bytes;
-                leftScratch.Offset = left.Offset;
-                leftScratch.Length = left.Length;
-                rightScratch.Bytes = right.Bytes;
-                rightScratch.Offset = right.Offset;
-                rightScratch.Length = right.Length;
-                long leftCost = outerInstance.Decode(leftScratch, input);
-                long rightCost = outerInstance.Decode(rightScratch, input);
-                if (outerInstance.HasPayloads)
-                {
-                    outerInstance.DecodePayload(leftScratch, input);
-                    outerInstance.DecodePayload(rightScratch, input);
-                }
-                if (outerInstance.HasContexts)
-                {
-                    outerInstance.DecodeContexts(leftScratch, input);
-                    outerInstance.DecodeContexts(rightScratch, input);
-                }
-                // LUCENENET NOTE: outerInstance.Comparer != outerInstance.comparer!!
-                int cmp = outerInstance.comparer.Compare(leftScratch, rightScratch);
-                if (cmp != 0)
-                {
-                    return cmp;
-                }
-                if (leftCost < rightCost)
-                {
-                    return -1;
-                }
-                else if (leftCost > rightCost)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
-
-            }
-        }
-
+                
         private OfflineSorter.ByteSequencesReader Sort()
         {
             string prefix = this.GetType().Name;
@@ -269,8 +258,8 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// encodes an entry (bytes+(contexts)+(payload)+weight) to the provided writer
         /// </summary>
-        protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer, 
-            ByteArrayDataOutput output, byte[] buffer, BytesRef spare, BytesRef payload, 
+        protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer,
+            ByteArrayDataOutput output, byte[] buffer, BytesRef spare, BytesRef payload,
             IEnumerable<BytesRef> contexts, long weight)
         {
             int requiredLength = spare.Length + 8 + ((hasPayloads) ? 2 + payload.Length : 0);
@@ -335,7 +324,7 @@ namespace Lucene.Net.Search.Suggest
                 BytesRef contextSpare = new BytesRef(curContextLength);
                 tmpInput.ReadBytes(contextSpare.Bytes, 0, curContextLength);
                 contextSpare.Length = curContextLength;
-                contextSet.Add(contextSpare); 
+                contextSet.Add(contextSpare);
                 scratch.Length -= curContextLength;
             }
 

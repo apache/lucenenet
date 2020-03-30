@@ -114,28 +114,19 @@ namespace Lucene.Net.Util
             return bytes;
         }
 
-        internal static readonly IComparer<byte[]> unsignedByteOrderComparer = new ComparerAnonymousInnerClassHelper();
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<byte[]>
-        {
-            public ComparerAnonymousInnerClassHelper()
+        internal static readonly IComparer<byte[]> unsignedByteOrderComparer = Comparer<byte[]>.Create((left,right)=> {
+            int max = Math.Min(left.Length, right.Length);
+            for (int i = 0, j = 0; i < max; i++, j++)
             {
-            }
-
-            public virtual int Compare(byte[] left, byte[] right)
-            {
-                int max = Math.Min(left.Length, right.Length);
-                for (int i = 0, j = 0; i < max; i++, j++)
+                int diff = (left[i] & 0xff) - (right[j] & 0xff);
+                if (diff != 0)
                 {
-                    int diff = (left[i] & 0xff) - (right[j] & 0xff);
-                    if (diff != 0)
-                    {
-                        return diff;
-                    }
+                    return diff;
                 }
-                return left.Length - right.Length;
             }
-        }
+            return left.Length - right.Length;
+        });
+
         /// <summary>
         /// Check sorting data on an instance of <seealso cref="OfflineSorter"/>.
         /// </summary>

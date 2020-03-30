@@ -152,7 +152,10 @@ namespace Lucene.Net.Facet
                 {
                     if (numInRow > 1)
                     {
-                        Array.Sort(labelValues, i - numInRow, i - (i - numInRow), new ComparerAnonymousInnerClassHelper(this));
+                        Array.Sort(labelValues, i - numInRow, i - (i - numInRow), Comparer<LabelAndValue>.Create((a,b)=> {
+                            Debug.Assert((double)a.Value == (double)b.Value);
+                            return (new BytesRef(a.Label)).CompareTo(new BytesRef(b.Label));
+                        }));
                     }
                     numInRow = 1;
                     if (i < labelValues.Length)
@@ -163,39 +166,10 @@ namespace Lucene.Net.Facet
                 i++;
             }
         }
-
-        private class ComparerAnonymousInnerClassHelper : IComparer<LabelAndValue>
-        {
-            private readonly FacetTestCase outerInstance;
-
-            public ComparerAnonymousInnerClassHelper(FacetTestCase outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public virtual int Compare(LabelAndValue a, LabelAndValue b)
-            {
-                Debug.Assert((double)a.Value == (double)b.Value);
-                return (new BytesRef(a.Label)).CompareTo(new BytesRef(b.Label));
-            }
-        }
-
+        
         protected internal virtual void SortLabelValues(List<LabelAndValue> labelValues)
         {
-            labelValues.Sort(new ComparerAnonymousInnerClassHelper2(this));
-        }
-
-        private class ComparerAnonymousInnerClassHelper2 : IComparer<LabelAndValue>
-        {
-            private readonly FacetTestCase outerInstance;
-
-            public ComparerAnonymousInnerClassHelper2(FacetTestCase outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public virtual int Compare(LabelAndValue a, LabelAndValue b)
-            {
+            labelValues.Sort(Comparer<LabelAndValue>.Create((a,b)=> {
                 if ((double)a.Value > (double)b.Value)
                 {
                     return -1;
@@ -208,24 +182,13 @@ namespace Lucene.Net.Facet
                 {
                     return (new BytesRef(a.Label)).CompareTo(new BytesRef(b.Label));
                 }
-            }
+            }));
         }
 
+       
         protected internal virtual void SortFacetResults(List<FacetResult> results)
         {
-            results.Sort(new ComparerAnonymousInnerClassHelper3(this));
-        }
-
-        private class ComparerAnonymousInnerClassHelper3 : IComparer<FacetResult>
-        {
-            private readonly FacetTestCase outerInstance;
-
-            public ComparerAnonymousInnerClassHelper3(FacetTestCase outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            public virtual int Compare(FacetResult a, FacetResult b)
+            results.Sort(Comparer<FacetResult>.Create((a, b) =>
             {
                 if ((double)a.Value > (double)b.Value)
                 {
@@ -239,7 +202,7 @@ namespace Lucene.Net.Facet
                 {
                     return 0;
                 }
-            }
+            }));
         }
 
         protected internal virtual void AssertFloatValuesEquals(IList<FacetResult> a, IList<FacetResult> b)

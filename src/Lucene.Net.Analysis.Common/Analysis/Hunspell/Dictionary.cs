@@ -790,7 +790,49 @@ namespace Lucene.Net.Analysis.Hunspell
 
             FileInfo sorted = FileSupport.CreateTempFile("sorted", "dat", tempDir);
 
-            OfflineSorter sorter = new OfflineSorter(new ComparerAnonymousInnerClassHelper(this));
+            // LUCENENET TODO|LUCENE TO-DO MCEdit need to verify. Reference to this in the comparator
+            OfflineSorter sorter = new OfflineSorter(Comparer<BytesRef>.Create((o1, o2) =>
+            {
+                BytesRef scratch1 = new BytesRef();
+                BytesRef scratch2 = new BytesRef();
+
+                scratch1.Bytes = o1.Bytes;
+                scratch1.Offset = o1.Offset;
+                scratch1.Length = o1.Length;
+
+                for (int i = scratch1.Length - 1; i >= 0; i--)
+                {
+                    if (scratch1.Bytes[scratch1.Offset + i] == this.FLAG_SEPARATOR)
+                    {
+                        scratch1.Length = i;
+                        break;
+                    }
+                }
+
+                scratch2.Bytes = o2.Bytes;
+                scratch2.Offset = o2.Offset;
+                scratch2.Length = o2.Length;
+
+                for (int i = scratch2.Length - 1; i >= 0; i--)
+                {
+                    if (scratch2.Bytes[scratch2.Offset + i] == this.FLAG_SEPARATOR)
+                    {
+                        scratch2.Length = i;
+                        break;
+                    }
+                }
+
+                int cmp = scratch1.CompareTo(scratch2);
+                if (cmp == 0)
+                {
+                    // tie break on whole row
+                    return o1.CompareTo(o2);
+                }
+                else
+                {
+                    return cmp;
+                }
+            }));
             sorter.Sort(unsorted, sorted);
             try
             {
@@ -896,7 +938,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 // ignore
             }
         }
-
+        // LUCENENET TODO|LUCENE TO-DO MCEdit need to verify. Reference to this in the comparator
         private class ComparerAnonymousInnerClassHelper : IComparer<BytesRef>
         {
             private readonly Dictionary outerInstance;

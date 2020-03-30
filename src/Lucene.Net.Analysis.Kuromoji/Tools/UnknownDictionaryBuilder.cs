@@ -72,7 +72,12 @@ namespace Lucene.Net.Analysis.Ja.Util
                 }
             }
 
-            lines.Sort(new ComparerAnonymousHelper());
+            lines.Sort(Comparer<string[]>.Create((left, right) =>
+            {
+                int leftId = CharacterDefinition.LookupCharacterClass(left[0]);
+                int rightId = CharacterDefinition.LookupCharacterClass(right[0]);
+                return leftId - rightId;
+            }));
 
             foreach (string[] entry in lines)
             {
@@ -80,15 +85,6 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
 
             return dictionary;
-        }
-        private class ComparerAnonymousHelper : IComparer<string[]>
-        {
-            public int Compare(string[] left, string[] right)
-            {
-                int leftId = CharacterDefinition.LookupCharacterClass(left[0]);
-                int rightId = CharacterDefinition.LookupCharacterClass(right[0]);
-                return leftId - rightId;
-            }
         }
 
         public virtual void ReadCharacterDefinition(string filename, UnknownDictionaryWriter dictionary)

@@ -152,19 +152,8 @@ namespace Lucene.Net.Index
 
         internal static Term IdTerm = new Term("id", "");
         internal IndexingThread[] Threads;
-        internal static IComparer<IIndexableField> fieldNameComparer = new ComparerAnonymousInnerClassHelper();
 
-        private class ComparerAnonymousInnerClassHelper : IComparer<IIndexableField>
-        {
-            public ComparerAnonymousInnerClassHelper()
-            {
-            }
-
-            public virtual int Compare(IIndexableField o1, IIndexableField o2)
-            {
-                return o1.Name.CompareToOrdinal(o2.Name);
-            }
-        }
+        internal static IComparer<IIndexableField> fieldNameComparer = Comparer<IIndexableField>.Create((o1, o2) => o1.Name.CompareToOrdinal(o2.Name));
 
         // this test avoids using any extra synchronization in the multiple
         // indexing threads to test that IndexWriter does correctly synchronize
