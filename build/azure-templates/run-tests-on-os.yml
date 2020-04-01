@@ -21,7 +21,7 @@
 
 parameters:
   osName: 'Windows' # The name of the operating system for display purposes.
-  testTargetFrameworks: '' # A semicolon separated list of target frameworks indicating which frameworks tests will be run on. See: https://docs.microsoft.com/en-us/dotnet/standard/frameworks.
+  framework: '' # The target framework indicating which framework tests will be run on. See: https://docs.microsoft.com/en-us/dotnet/standard/frameworks.
   binaryArtifactName: 'testbinaries' # The name of the Azure DevOps build artifact where the test assemblies will be downloaded from. Default 'testbinaries'.
   testResultsArtifactName: 'testresults' # The name of the Azure DevOps build artifact where the test results will be published. Default 'testresults'.
   vsTestPlatform: 'x64' # Target platform architecture used for test execution. Valid values are x86, x64, and ARM.
@@ -41,7 +41,7 @@ steps:
         }
     }
     EnsureNotNullOrEmpty('${{ parameters.osName }}', 'osName')
-    EnsureNotNullOrEmpty('${{ parameters.testTargetFrameworks }}', 'testTargetFrameworks')
+    EnsureNotNullOrEmpty('${{ parameters.framework }}', 'framework')
     EnsureNotNullOrEmpty('${{ parameters.binaryArtifactName }}', 'binaryArtifactName')
     EnsureNotNullOrEmpty('${{ parameters.testResultsArtifactName }}', 'testResultsArtifactName')
     EnsureNotNullOrEmpty('${{ parameters.vsTestPlatform }}', 'vsTestPlatform')
@@ -56,25 +56,26 @@ steps:
   displayName: 'Use .NET Core sdk 3.1.100'
   inputs:
     version: 3.1.100
-  condition: and(succeeded(), contains('${{ parameters.testTargetFrameworks }}', 'netcoreapp3.'))
+  condition: and(succeeded(), contains('${{ parameters.framework }}', 'netcoreapp3.'))
 
 - task: DownloadBuildArtifacts@0
   displayName: 'Download Build Artifacts: ${{ parameters.binaryArtifactName }}'
   inputs:
     artifactName: ${{ parameters.binaryArtifactName }}
     downloadPath: '$(System.DefaultWorkingDirectory)'
+    itemPattern: '**/${{ parameters.framework }}/*.*'
 
 #- template: 'show-all-files.yml' # Uncomment for debugging
 
 - task: ExtractFiles@1
   displayName: 'Extract files from ${{ parameters.publishedArtifactZipFileName }}'
   inputs:
-    archiveFilePatterns: '${{ parameters.binaryArtifactName }}/${{ parameters.publishedArtifactZipFileName }}'
-    destinationFolder: '$(System.DefaultWorkingDirectory)/${{ parameters.binaryArtifactName }}'
+    archiveFilePatterns: '${{ parameters.binaryArtifactName }}/${{ parameters.framework }}/${{ parameters.publishedArtifactZipFileName }}'
+    destinationFolder: '$(System.DefaultWorkingDirectory)/${{ parameters.binaryArtifactName }}/${{ parameters.framework }}/'
     cleanDestinationFolder: false
 
 - powershell: |
-    $testTargetFrameworksString = '${{ parameters.testTargetFrameworks }}'
+    $framework = '${{ parameters.framework }}'
     $testBinaryRootDirectory = "$(System.DefaultWorkingDirectory)"
     $testResultsArtifactDirectory = "${{ format('$(Build.ArtifactStagingDirectory)/{0}',parameters.testResultsArtifactName) }}"
     $testPlatform = '${{ parameters.vsTestPlatform }}'
@@ -83,7 +84,6 @@ steps:
     $testResultsFileName = '${{ parameters.testResultsFileName }}'
     $maximumParalellJobs = '${{ parameters.maximumParallelJobs }}'
     $where = '${{ parameters.where }}'
-    $testTargetFrameworks = $testTargetFrameworksString.Split([char]',',[char]';')
     
     function SeparateVersionDigits([string]$digits) {
         return (&{ for ($i = 0;$i -lt $digits.Length;$i++) { $digits.Substring($i,1) }}) -join '.'
@@ -144,7 +144,7 @@ steps:
             }
     
             $fwork = ConvertFrameworkName($framework)
-            $testResultDirectory = "$testResultsArtifactDirectory/$testOSName/$framework/$testName"                
+            $testResultDirectory = "$testResultsArtifactDirectory/$testOSName/$framework/$testName"
             if (!(Test-Path "$testResultDirectory")) {
                 New-Item "$testResultDirectory" -ItemType Directory -Force
             }
@@ -178,9 +178,7 @@ steps:
         }
     }
     
-    foreach ($framework in $testTargetFrameworks) {
-        RunTests -Framework "$framework" -FileRegexPattern "$testBinaryFilesPattern"
-    }
+    RunTests -Framework "$framework" -FileRegexPattern "$testBinaryFilesPattern"
     
     if ($maximumParalellJobs -gt 1) {
         # Wait for it all to complete
@@ -201,7 +199,7 @@ steps:
     }
     
     $global:LASTEXITCODE = 0 # Force the script to continue on error
-  displayName: 'dotnet vstest ${{ parameters.testTargetFrameworks }}'
+  displayName: 'dotnet vstest ${{ parameters.framework }}'
   ignoreLASTEXITCODE: true
 
 #- template: 'show-all-files.yml' # Uncomment for debugging
@@ -223,6 +221,7 @@ steps:
 - template: 'publish-test-results-for-test-projects.yml'
   parameters:
     osName: '${{ parameters.osName }}'
+    framework: '${{ parameters.framework }}'
 
 - pwsh: |
     $maximumAllowedFailures = '${{ parameters.maximumAllowedFailures }}'

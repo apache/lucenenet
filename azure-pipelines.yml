@@ -117,11 +117,27 @@ stages:
     - template: 'build/azure-templates/show-all-environment-variables.yml'
 
     - task: ArchiveFiles@2
-      displayName: 'Zip $(PublishTempDirectory)'
+      displayName: 'Zip $(PublishTempDirectory)/netcoreapp3.1'
       inputs:
-        rootFolderOrFile: '$(PublishTempDirectory)'
+        rootFolderOrFile: '$(PublishTempDirectory)/netcoreapp3.1'
         includeRootFolder: false
-        archiveFile: '$(PublishDirectory)/$(PublishedArtifactZipFileName)'
+        archiveFile: '$(PublishDirectory)/netcoreapp3.1/$(PublishedArtifactZipFileName)'
+      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+
+    - task: ArchiveFiles@2
+      displayName: 'Zip $(PublishTempDirectory)/netcoreapp2.2'
+      inputs:
+        rootFolderOrFile: '$(PublishTempDirectory)/netcoreapp2.2'
+        includeRootFolder: false
+        archiveFile: '$(PublishDirectory)/netcoreapp2.2/$(PublishedArtifactZipFileName)'
+      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+
+    - task: ArchiveFiles@2
+      displayName: 'Zip $(PublishTempDirectory)/net48'
+      inputs:
+        rootFolderOrFile: '$(PublishTempDirectory)/net48'
+        includeRootFolder: false
+        archiveFile: '$(PublishDirectory)/net48/$(PublishedArtifactZipFileName)'
       condition: and(succeeded(), ne(variables['RunTests'], 'false'))
 
     - powershell: |
@@ -257,10 +273,10 @@ stages:
     - template: 'build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        testTargetFrameworks: 'netcoreapp3.1'
+        framework: 'netcoreapp3.1'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
-        maximumParallelJobs: 7
+        maximumParallelJobs: 8
         maximumAllowedFailures: $(maximumAllowedFailures)
 
   - job: Test_netcoreapp2_2
@@ -286,10 +302,10 @@ stages:
     - template: 'build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        testTargetFrameworks: 'netcoreapp2.2'
+        framework: 'netcoreapp2.2'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
-        maximumParallelJobs: 7
+        maximumParallelJobs: 8
         maximumAllowedFailures: $(maximumAllowedFailures)
 
   - job: Test_net48_Windows
@@ -301,10 +317,10 @@ stages:
     - template: 'build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: 'Windows'
-        testTargetFrameworks: 'net48'
+        framework: 'net48'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
-        maximumParallelJobs: 8
+        maximumParallelJobs: 9
         maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
 
 
