@@ -19,10 +19,8 @@
  *
 */
 
-using Lucene.Net;
 using System;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -40,8 +38,3 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("8dd11ab2-c5b3-4691-99da-2941f27e0e10")]
-
-// for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Facet, PublicKey=" + AssemblyKeys.PublicKey)]
-
-

@@ -73,4 +73,45 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!--  Note that some of the APIs we use to test Lucene.Net are internal because they are only meant to
+          make porting tests from Java easier. This means that every Lucene.Net test project requires
+          InternalsVisibleTo, now and in the future to keep these APIs from public view. -->
+    
+    <InternalsVisibleTo Include="Lucene.Net.Tests._A-D" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests._E-I" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests._J-S" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests._T-U" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests._U-Z" />
+    
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Common" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Kuromoji" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Morfologik" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.OpenNLP" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Phonetic" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.SmartCn" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Stempel" />
+    
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Benchmark" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Classification" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Cli" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Codecs" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Demo" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Expressions" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Facet" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Grouping" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Highlighter" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Join" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.ICU" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Memory" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Misc" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Queries" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.QueryParser" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Replicator" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Sandbox" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Spatial" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Suggest" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.TestFramework" />
+  </ItemGroup>
+
 </Project>

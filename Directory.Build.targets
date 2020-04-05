@@ -69,4 +69,14 @@
          https://docs.microsoft.com/en-us/nuget/create-packages/symbol-packages-snupkg#nugetorg-symbol-package-constraints -->
     <DebugType Condition=" '$(PortableDebugTypeOnly)' == 'true' ">portable</DebugType>
   </PropertyGroup>
+
+  <Target Name="AddInternalsVisibleTo" BeforeTargets="CoreCompile" Label="Adds InternalsVisibleTo Attribute and PublicKey (if supplied)">
+    <ItemGroup Condition="'@(InternalsVisibleTo->Count())' &gt; 0 ">
+      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+        <_Parameter1>%(InternalsVisibleTo.Identity)</_Parameter1>
+        <_Parameter1 Condition=" '$(SignAssembly)' == 'true' And '$(PublicKey)' != '' ">%(InternalsVisibleTo.Identity), PublicKey=$(PublicKey)</_Parameter1>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
+
 </Project>

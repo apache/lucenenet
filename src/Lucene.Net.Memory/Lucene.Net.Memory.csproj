@@ -44,4 +44,8 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Memory" />
+  </ItemGroup>
+
 </Project>

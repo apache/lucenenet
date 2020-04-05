@@ -15,10 +15,8 @@
  * limitations under the License.
  */
 
-using Lucene.Net;
 using System;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -36,8 +34,3 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("5c8e810f-4bf7-472f-9785-8d80a0de6ea8")]
-
-// for testing
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Spatial, PublicKey=" + AssemblyKeys.PublicKey)]
-
-

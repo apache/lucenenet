@@ -81,6 +81,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Benchmark" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Support\TagSoup\HTMLSchema.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>HTMLSchema.Generated.cs</LastGenOutput>

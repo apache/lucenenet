@@ -49,4 +49,10 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Lucene.Net.ICU" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Highlighter" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests.ICU" />
+  </ItemGroup>
+
 </Project>

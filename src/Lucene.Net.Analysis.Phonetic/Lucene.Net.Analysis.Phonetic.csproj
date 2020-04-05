@@ -50,4 +50,8 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Phonetic" />
+  </ItemGroup>
+
 </Project>
