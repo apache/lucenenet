@@ -138,7 +138,7 @@ If you have a general how-to question or need help from the Lucene.Net community
 
 [user@lucenenet.apache.org](mailto:user@lucenenet.apache.org)
 
-We recommend you join the [user mailing list](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists) to stay looped into all user discussions.
+Note that you need to join the [user mailing list](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists) to see replies.
 
 Alternatively, you can get help via [StackOverflow](https://stackoverflow.com/questions/tagged/lucene.net).
 
@@ -154,13 +154,11 @@ To start a development discussion regarding technical features of Lucene.Net, pl
 
 [dev@lucenenet.apache.org](mailto:dev@lucenenet.apache.org)
 
-We recommend you join both the [user and dev mailing lists](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists) to stay looped in to all user and developer discussions.
+Note that you need to join the [dev mailing lists](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists) to see replies.
 
 ### Submit a Pull Request
 
 Before you start working on a pull request, please read our [Contributing](https://github.com/apache/lucenenet/blob/master/CONTRIBUTING.md) guide.
-
-If you plan to submit multiple pull requests, please submit an [Individual Contributor License](https://cwiki.apache.org/confluence/display/LUCENENET/Individual+Contributor+License), or for individual pull requests, just submit the request and in the description state that the code is your original work and you license it under the [Apache License v2](http://www.apache.org/licenses/LICENSE-2.0).
 
 ## Building and Testing
 
@@ -273,7 +271,7 @@ We have setup our `azure-pipelines.yml` file with logical defaults so anyone wit
    - Click the "Create Pipeline" or "New Pipeline" button, depending on whether any pipelines already exist.
    - Select GitHub as the location to find the YAML file.
    - Select the fork of this repository you created in "Prerequisites". Note that if this is a new Azure DevOps account you may need to [setup extra permissions to access your GitHub account](https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/github?view=azure-devops&tabs=yaml).
-   - Next a "Review your YAML" page is presented showing the contents of `azure-pipelines.yml`. There is documentation near the top of the file indicating the varaibles that can be setup to enable additional options, but note that the default configuration will automatically run the build and all of the tests.
+   - Next a "Review your YAML" page is presented showing the contents of `azure-pipelines.yml`. There is documentation near the top of the file indicating the variables that can be setup to enable additional options, but note that the default configuration will automatically run the build and all of the tests.
    - Click the "Run" button at the top right of the page.
 
 ##### If you already have a pipeline set up:
