@@ -5,16 +5,15 @@ github:
   description: "Apache Lucene.NET"
   homepage: https://lucenenet.apache.org/
   labels:
-    - lucene.net
     - lucenenet
     - lucene
     - text
     - search
-    - information retrieval
+    - information
+    - retrieval
     - analysis
     - index
     - query
-    - full-text search
     - apache
     
   features:
