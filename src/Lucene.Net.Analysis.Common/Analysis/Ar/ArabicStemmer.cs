@@ -1,4 +1,6 @@
 ﻿using Lucene.Net.Analysis.Util;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Ar
 {
@@ -44,22 +46,23 @@ namespace Lucene.Net.Analysis.Ar
         public const char WAW = '\u0648';
         public const char YEH = '\u064A';
 
-        // LUCENENET TODO: API - Make property, change datatype to regular array or collection
-        public static readonly char[][] prefixes = new char[][] // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        public static readonly IList<char[]> prefixes = InitializePrefix();
+        public static readonly IList<char[]> suffixes = InitializeSuffix();
+        
+        private static IList<char[]> InitializePrefix()
         {
-            ("" + ALEF + LAM).ToCharArray(),
+            return new List<char[]>(){ ("" + ALEF + LAM).ToCharArray(),
             ("" + WAW + ALEF + LAM).ToCharArray(),
             ("" + BEH + ALEF + LAM).ToCharArray(),
             ("" + KAF + ALEF + LAM).ToCharArray(),
             ("" + FEH + ALEF + LAM).ToCharArray(),
             ("" + LAM + LAM).ToCharArray(),
-            ("" + WAW).ToCharArray(),
-        };
-
-        // LUCENENET TODO: API - Make property, change datatype to regular array or collection
-        public static readonly char[][] suffixes = new char[][] // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+            ("" + WAW).ToCharArray() };
+        }
+        private static IList<char[]> InitializeSuffix()
         {
-            ("" + HEH + ALEF).ToCharArray(),
+            return new List<char[]>(){ ("" + HEH + ALEF).ToCharArray(),
             ("" + ALEF + NOON).ToCharArray(),
             ("" + ALEF + TEH).ToCharArray(),
             ("" + WAW + NOON).ToCharArray(),
@@ -68,9 +71,9 @@ namespace Lucene.Net.Analysis.Ar
             ("" + YEH + TEH_MARBUTA).ToCharArray(),
             ("" + HEH).ToCharArray(),
             ("" + TEH_MARBUTA).ToCharArray(),
-            ("" + YEH).ToCharArray(),
-        };
-
+            ("" + YEH).ToCharArray() };
+        }
+        
         /// <summary>
         /// Stem an input buffer of Arabic text.
         /// </summary>
@@ -92,7 +95,7 @@ namespace Lucene.Net.Analysis.Ar
         /// <returns> new length of input buffer after stemming. </returns>
         public virtual int StemPrefix(char[] s, int len)
         {
-            for (int i = 0; i < prefixes.Length; i++)
+            for (int i = 0; i < prefixes.Count; i++)
             {
                 if (StartsWithCheckLength(s, len, prefixes[i]))
                 {
@@ -109,7 +112,7 @@ namespace Lucene.Net.Analysis.Ar
         /// <returns> new length of input buffer after stemming </returns>
         public virtual int StemSuffix(char[] s, int len)
         {
-            for (int i = 0; i < suffixes.Length; i++)
+            for (int i = 0; i < suffixes.Count; i++)
             {
                 if (EndsWithCheckLength(s, len, suffixes[i]))
                 {
