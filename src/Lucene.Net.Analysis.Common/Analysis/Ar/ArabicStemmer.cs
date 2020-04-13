@@ -47,9 +47,9 @@ namespace Lucene.Net.Analysis.Ar
         public const char YEH = '\u064A';
 
         // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
-        public static readonly IList<char[]> prefixes = InitializePrefix();
-        public static readonly IList<char[]> suffixes = InitializeSuffix();
-        
+        public static IList<char[]> Prefixes { get { return InitializePrefix(); } }
+        public static IList<char[]> Suffixes { get { return InitializeSuffix(); } }
+
         private static IList<char[]> InitializePrefix()
         {
             return new List<char[]>(){ ("" + ALEF + LAM).ToCharArray(),
@@ -95,11 +95,11 @@ namespace Lucene.Net.Analysis.Ar
         /// <returns> new length of input buffer after stemming. </returns>
         public virtual int StemPrefix(char[] s, int len)
         {
-            for (int i = 0; i < prefixes.Count; i++)
+            for (int i = 0; i < Prefixes.Count; i++)
             {
-                if (StartsWithCheckLength(s, len, prefixes[i]))
+                if (StartsWithCheckLength(s, len, Prefixes[i]))
                 {
-                    return StemmerUtil.DeleteN(s, 0, len, prefixes[i].Length);
+                    return StemmerUtil.DeleteN(s, 0, len, Prefixes[i].Length);
                 }
             }
             return len;
@@ -112,11 +112,11 @@ namespace Lucene.Net.Analysis.Ar
         /// <returns> new length of input buffer after stemming </returns>
         public virtual int StemSuffix(char[] s, int len)
         {
-            for (int i = 0; i < suffixes.Count; i++)
+            for (int i = 0; i < Suffixes.Count; i++)
             {
-                if (EndsWithCheckLength(s, len, suffixes[i]))
+                if (EndsWithCheckLength(s, len, Suffixes[i]))
                 {
-                    len = StemmerUtil.DeleteN(s, len - suffixes[i].Length, len, suffixes[i].Length);
+                    len = StemmerUtil.DeleteN(s, len - Suffixes[i].Length, len, Suffixes[i].Length);
                 }
             }
             return len;
