@@ -9,7 +9,7 @@ Mailing Lists
 
 ### Developers <small>(dev@lucenenet.apache.org)</small>
 
-The developers mailing list is used to discuss the technical future of Lucene.Net. This mailing list also recieves JIRA items and comments and notifications from github
+The developers mailing list is used to discuss the technical future of Lucene.Net. This mailing list also recieves comments and notifications from GitHub
 
 _To subscribe to this mailing lists, send an email to [dev-subscribe@lucenenet.apache.org](mailto:dev-subscribe@lucenenet.apache.org). To unsubscribe, send an email to [dev-unsubscribe@lucenenet.apache.org](mailto:dev-unsubscribe@lucenenet.apache.org)._
 

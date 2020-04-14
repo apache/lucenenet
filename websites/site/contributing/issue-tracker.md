@@ -6,4 +6,4 @@ Issue Tracker
 
 ---------------
 
-Follow what we are working on, help us by submitting patches, or submit your own enhancement or bug requests at our issue tracker: __[Lucene.Net JIRA](https://issues.apache.org/jira/browse/LUCENENET)__
+Follow what we are working on, help us by submitting patches, or submit your own enhancement or bug requests at our issue tracker: __[Lucene.NET GitHub](https://github.com/apache/lucenenet/issues)__

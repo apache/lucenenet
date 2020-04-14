@@ -22,7 +22,7 @@ We recommend you join the [user mailing list](https://cwiki.apache.org/confluenc
 
 Alternatively, you can get help via [StackOverflow](https://stackoverflow.com/questions/tagged/lucene.net).
 
-Please do not submit general how-to questions to JIRA, use JIRA for bug reports/tasks only.
+Please do not submit general how-to questions to GitHub, use GitHub Issues for bug reports and tasks only.
 
 see __[mailing lists](xref:contributing/mailing-lists)__ 
 
@@ -42,7 +42,7 @@ Help with keeping this website and documentation up to date would be a great hel
 
 ### Report a Bug
 
-To report a bug, please use the [JIRA issue tracker](xref:contributing/issue-tracker). You can signup for a JIRA account [here](https://cwiki.apache.org/confluence/signup.action) (it just takes a minute).
+To report a bug, please use the [GitHub issue tracker](xref:contributing/issue-tracker).
 
 ### Submit a Pull Request
 
