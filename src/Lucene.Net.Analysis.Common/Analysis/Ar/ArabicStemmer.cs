@@ -47,8 +47,8 @@ namespace Lucene.Net.Analysis.Ar
         public const char YEH = '\u064A';
 
         // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
-        public static IList<char[]> Prefixes { get { return InitializePrefix(); } }
-        public static IList<char[]> Suffixes { get { return InitializeSuffix(); } }
+        public static IList<char[]> Prefixes { get; } = InitializePrefix();
+        public static IList<char[]> Suffixes { get; } = InitializeSuffix();
 
         private static IList<char[]> InitializePrefix()
         {
