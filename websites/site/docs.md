@@ -11,8 +11,8 @@ Lucene.Net Documentation
 
 The API docs are slightly different between versions, each one is listed below:
 
-* [4.8.0-beta00007](https://lucenenet.apache.org/docs/4.8.0-beta00007/Index.html)
-* [4.8.0-beta00001 -> 4.8.0-beta00006](https://lucenenet.apache.org/docs/4.8.0-beta00005/Index.html)
+* [4.8.0-beta00007](https://lucenenet.apache.org/docs/4.8.0-beta00007/)
+* [4.8.0-beta00001 -> 4.8.0-beta00006](https://lucenenet.apache.org/docs/4.8.0-beta00005/)
 
 ## Lucene 3.0.3
 
