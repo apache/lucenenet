@@ -105,13 +105,13 @@ namespace Lucene.Net.Analysis.Util
             return this;
         }
 
-        // LUCENENET specific - overload for StringBuilder
+        // LUCENENET specific - char sequence overload for StringBuilder
         public virtual OpenStringBuilder Append(StringBuilder csq)
         {
             return Append(csq, 0, csq.Length);
         }
 
-        // LUCENENET specific - overload for StringBuilder
+        // LUCENENET specific - char sequence overload for StringBuilder
         public virtual OpenStringBuilder Append(StringBuilder csq, int startIndex, int count) // LUCENENET TODO: API - change to startIndex/length to match .NET
         {
             EnsureCapacity(count - startIndex);
@@ -122,17 +122,14 @@ namespace Lucene.Net.Analysis.Util
             return this;
         }
 
-        public virtual OpenStringBuilder Append(char c)
-        {
-            Write(c);
-            return this;
-        }
-
+        // LUCENENET specific - char sequence overload for char[]
         public virtual OpenStringBuilder Append(char[] value)
         {
             Write(value);
             return this;
         }
+
+        // LUCENENET specific - char sequence overload for char[]
         public virtual OpenStringBuilder Append(char[] value, int startIndex, int count)
         {
             EnsureCapacity(count - startIndex);
@@ -142,6 +139,14 @@ namespace Lucene.Net.Analysis.Util
             }
             return this;
         }
+
+        public virtual OpenStringBuilder Append(char c)
+        {
+            Write(c);
+            return this;
+        }
+
+        
         // LUCENENET specific - removed (replaced with this[])
         //public virtual char CharAt(int index)
         //{
@@ -285,6 +290,8 @@ namespace Lucene.Net.Analysis.Util
             return new string(m_buf, 0, Length);
         }
 
+        #region IAppendable Members
+
         IAppendable IAppendable.Append(char value)
         {
             return Append(value);
@@ -329,5 +336,7 @@ namespace Lucene.Net.Analysis.Util
         {
             return Append(value, startIndex, count);
         }
+
+        #endregion IAppendable Members
     }
 }
