@@ -78,10 +78,10 @@ namespace Lucene.Net.Analysis.Util
             return Append(csq, 0, csq.Length);
         }
 
-        public virtual OpenStringBuilder Append(ICharSequence csq, int startIndex, int count) // LUCENENET TODO: API - change to startIndex/length to match .NET
+        public virtual OpenStringBuilder Append(ICharSequence csq, int startIndex, int count) // LUCENENET specific: changed to startIndex/length to match .NET
         {
-            EnsureCapacity(count - startIndex);
-            for (int i = startIndex; i < count; i++)
+            EnsureCapacity(count);
+            for (int i = startIndex; i < startIndex + count; i++)
             {
                 UnsafeWrite(csq[i]);
             }
@@ -95,10 +95,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         // LUCENENET specific - overload for string (more common in .NET than ICharSequence)
-        public virtual OpenStringBuilder Append(string csq, int startIndex, int count) // LUCENENET TODO: API - change to startIndex/length to match .NET
+        public virtual OpenStringBuilder Append(string csq, int startIndex, int count) // LUCENENET specific: changed to startIndex/length to match .NET
         {
-            EnsureCapacity(count - startIndex);
-            for (int i = startIndex; i < count; i++)
+            EnsureCapacity(count);
+            for (int i = startIndex; i < startIndex + count; i++)
             {
                 UnsafeWrite(csq[i]);
             }
@@ -112,10 +112,10 @@ namespace Lucene.Net.Analysis.Util
         }
 
         // LUCENENET specific - char sequence overload for StringBuilder
-        public virtual OpenStringBuilder Append(StringBuilder csq, int startIndex, int count) // LUCENENET TODO: API - change to startIndex/length to match .NET
+        public virtual OpenStringBuilder Append(StringBuilder csq, int startIndex, int count) // LUCENENET specific: changed to startIndex/length to match .NET
         {
-            EnsureCapacity(count - startIndex);
-            for (int i = startIndex; i < count; i++)
+            EnsureCapacity(count);
+            for (int i = startIndex; i < startIndex + count; i++)
             {
                 UnsafeWrite(csq[i]);
             }
@@ -132,8 +132,8 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET specific - char sequence overload for char[]
         public virtual OpenStringBuilder Append(char[] value, int startIndex, int count)
         {
-            EnsureCapacity(count - startIndex);
-            for (int i = startIndex; i < count; i++)
+            EnsureCapacity(count);
+            for (int i = startIndex; i < startIndex + count; i++)
             {
                 UnsafeWrite(value[i]);
             }
@@ -146,7 +146,6 @@ namespace Lucene.Net.Analysis.Util
             return this;
         }
 
-        
         // LUCENENET specific - removed (replaced with this[])
         //public virtual char CharAt(int index)
         //{
