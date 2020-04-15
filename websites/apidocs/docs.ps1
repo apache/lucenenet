@@ -27,7 +27,7 @@ param (
     # LogLevel can be: Diagnostic, Verbose, Info, Warning, Error
     [Parameter(Mandatory = $false)]
     [string]
-    $LogLevel = 'Info'
+    $LogLevel = 'Warning'
 )
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -52,7 +52,7 @@ $DocFxExe = "$ToolsFolder\docfx\docfx.exe"
 if (-not (test-path $DocFxExe)) {
     Write-Host "Retrieving docfx..."
     $DocFxZip = "$ToolsFolder\tmp\docfx.zip"	
-    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.47/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
+    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.50/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
 	
     #unzip
     Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
@@ -97,30 +97,12 @@ if (-not (test-path $MSBuild)) {
 }
 
 # Build the plugin solution
-$pluginSln = (Join-Path -Path $RepoRoot "src\docs\LuceneDocsPlugins\LuceneDocsPlugins.sln")
+$pluginSln = (Join-Path -Path $RepoRoot "src\docs\DocumentationTools.sln")
 & $nuget restore $pluginSln
 
 $PluginsFolder = (Join-Path -Path $ApiDocsFolder "lucenetemplate\plugins")
 New-Item $PluginsFolder -type directory -force
-& $msbuild $pluginSln "/p:OutDir=$PluginsFolder"
-
-# Due to a bug with docfx and msbuild, we also need to set environment vars here
-# https://github.com/dotnet/docfx/issues/1969
-# Then it turns out we also need 2017 build tools installed, wat!? 
-# https://www.microsoft.com/en-us/download/details.aspx?id=48159
-# NOTE: There's a ton of Lucene docs that we want to copy and re-format. I'm not sure if we can really automate this 
-# in a great way since the docs seem to be in many places, for example:
-# https://github.com/dotnet/docfx/issues/1969
-# Then it turns out we also need 2017 build tools installed, wat!? 
-# https://www.microsoft.com/en-us/download/details.aspx?id=48159
-# Home page - 	https://github.com/apache/lucene-solr/blob/branch_4x/lucene/site/xsl/index.xsl
-# Wiki docs - 	https://wiki.apache.org/lucene-java/FrontPage?action=show&redirect=FrontPageEN - not sure where the source is for this
-# The only way i can get this building currently is to have the VS2017 build tools installed.
-# UPDATE: Interestingly it now works by passing in the most recent msbuild target...
-# TODO: Need to upgrade to latest docfx and figure out why there are issues.
-
-# [Environment]::SetEnvironmentVariable("VSINSTALLDIR", $msbuild)
-# [Environment]::SetEnvironmentVariable("VisualStudioVersion", "15.0")
+& $msbuild $pluginSln /target:LuceneDocsPlugins "/p:OutDir=$PluginsFolder"
 
 $DocFxJson = Join-Path -Path $ApiDocsFolder "docfx.json"
 $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\docfx.log"

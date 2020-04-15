@@ -1,5 +1,6 @@
 ﻿---
 uid: Lucene.Net
+title: Lucene.Net
 summary: *content
 ---
 

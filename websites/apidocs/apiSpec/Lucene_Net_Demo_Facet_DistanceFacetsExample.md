@@ -4,6 +4,7 @@ example: [*content]
 ---
 
 ```
+using J2N;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Documents;
 using Lucene.Net.Expressions;
@@ -16,7 +17,6 @@ using Lucene.Net.Queries;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;

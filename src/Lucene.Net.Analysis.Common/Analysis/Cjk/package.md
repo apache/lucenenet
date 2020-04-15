@@ -1,4 +1,8 @@
-﻿
+﻿---
+uid: Lucene.Net.Analysis.Cjk
+summary: *content
+---
+
 <!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +19,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
-
 
 Analyzer for Chinese, Japanese, and Korean, which indexes bigrams. 
 This analyzer generates bigram terms, which are overlapping groups of two adjacent Han, Hiragana, Katakana, or Hangul characters.

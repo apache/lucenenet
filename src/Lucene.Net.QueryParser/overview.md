@@ -1,5 +1,6 @@
 ﻿---
-uid: Lucene.Net.Queryparser
+uid: Lucene.Net.QueryParser
+title: Lucene.Net.QueryParser
 summary: *content
 ---
 
@@ -19,8 +20,6 @@ summary: *content
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-
-    
 
   Apache Lucene QueryParsers.
 

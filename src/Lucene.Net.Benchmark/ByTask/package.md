@@ -1,4 +1,8 @@
-﻿
+﻿---
+uid: Lucene.Net.Benchmarks.ByTask
+summary: *content
+---
+
 <!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +19,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
-
 
 Benchmarking Lucene By Tasks.
 <div>
@@ -497,4 +499,3 @@ Example: max.buffered=buf:10:10:100:100 -
 
 </div>
 <div> </div>
-

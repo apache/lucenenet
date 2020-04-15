@@ -1,5 +1,6 @@
 ﻿---
-uid: Lucene.Net.Benchmark
+uid: Lucene.Net.Benchmarks
+title: Lucene.Net.Benchmarks
 summary: *content
 ---
 
@@ -19,7 +20,5 @@ summary: *content
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
-    
 
   benchmark

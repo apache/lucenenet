@@ -17,17 +17,13 @@
  * under the License.
  */
 
-using Html2Markdown.Replacement;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace JavaDocToMarkdownConverter.Formatters
 {
-
     public class DemoCodeFormatter
     {
         public static void ProcessDemoFiles(ConvertedDocument convertedDoc)
@@ -80,46 +76,5 @@ namespace JavaDocToMarkdownConverter.Formatters
 
             return sb.ToString();
         }
-    }
-
-    public class JavaDocFormatters
-    {
-        public static IEnumerable<IReplacer> Replacers => new IReplacer[]
-            {
-                new CodeLinkReplacer(),
-                new RepoLinkReplacer(),
-                new DocTypeReplacer(),
-                new ExtraHtmlElementReplacer(),
-                new NamedAnchorLinkReplacer(),
-                new DivWrapperReplacer()
-            };
-
-        /// <summary>
-        /// A list of custom replacers for specific uid files
-        /// </summary>
-        /// <remarks>The Key is the Namespace</remarks>
-        public static IDictionary<string, IReplacer[]> CustomReplacers => new Dictionary<string, IReplacer[]>(StringComparer.InvariantCultureIgnoreCase)
-        {
-            ["Lucene.Net"] = new IReplacer[]
-            {
-                new PatternReplacer(new Regex("To demonstrate these, try something like:.*$", RegexOptions.Singleline))
-            },
-            ["Lucene.Net.Demo"] = new IReplacer[]
-            {
-                new PatternReplacer(new Regex("(## Setting your CLASSPATH.*?)(##)", RegexOptions.Singleline), "$2"),
-                new PatternReplacer(new Regex(@"\*\s+?\[.+?CLASSPATH\].+?$", RegexOptions.Multiline)),
-                new PatternReplacer(new Regex(@"\[IndexFiles.*?\]\(.+?\)", RegexOptions.Singleline), "[IndexFiles](xref:Lucene.Net.Demo.IndexFiles)"),
-                new PatternReplacer(new Regex(@"\[SearchFiles.*?\]\(.+?\)", RegexOptions.Singleline), "[SearchFiles](xref:Lucene.Net.Demo.SearchFiles)")
-            },
-        };
-
-        /// <summary>
-        /// A list of custom processors for specific uid files
-        /// </summary>
-        /// <remarks>The Key is the Namespace</remarks>
-        public static IDictionary<string, Action<ConvertedDocument>> CustomProcessors => new Dictionary<string, Action<ConvertedDocument>>(StringComparer.InvariantCultureIgnoreCase)
-        {
-            ["Lucene.Net.Demo"] = DemoCodeFormatter.ProcessDemoFiles
-        };
     }
 }

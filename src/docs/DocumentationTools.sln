@@ -1,27 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-# 
-#   http://www.apache.org/licenses/LICENSE-2.0
-# 
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-
-VisualStudioVersion = 15.0.26430.14
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29521.150
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuceneDocsPlugins", "LuceneDocsPlugins\LuceneDocsPlugins.csproj", "{D5D1C256-4A5A-4C57-949D-E9A1FFB6A5D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaDocToMarkdownConverter", "JavaDocToMarkdownConverter\JavaDocToMarkdownConverter.csproj", "{874179E7-FDA4-4E5B-9F86-54917BB6F74F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Info", "Info", "{D0D177C8-D797-4850-AB75-E91E3126761C}"
+	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,8 +22,15 @@ Global
 		{D5D1C256-4A5A-4C57-949D-E9A1FFB6A5D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5D1C256-4A5A-4C57-949D-E9A1FFB6A5D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5D1C256-4A5A-4C57-949D-E9A1FFB6A5D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{874179E7-FDA4-4E5B-9F86-54917BB6F74F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{874179E7-FDA4-4E5B-9F86-54917BB6F74F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{874179E7-FDA4-4E5B-9F86-54917BB6F74F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{874179E7-FDA4-4E5B-9F86-54917BB6F74F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B68751FA-C368-48F4-94F5-FC3568E959C1}
 	EndGlobalSection
 EndGlobal
