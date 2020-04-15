@@ -1,5 +1,6 @@
 ﻿---
 uid: Lucene.Net.Highlighter
+title: Lucene.Net.Highlighter
 summary: *content
 ---
 
@@ -19,8 +20,6 @@ summary: *content
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
-    
 
   The highlight package contains classes to provide "keyword in context" features
   typically used to highlight search terms in the text of results pages.

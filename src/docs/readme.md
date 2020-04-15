@@ -1,8 +1,4 @@
-# Documentation tools
-
-## LuceneDocsPlugins
-
-This is a DocFx custom extension. It is built and executed as part of the docs build process to customize/extend some of the features in DocFx.
+# Documentation Tools
 
 ## JavaDocToMarkdownConverter
 
@@ -12,3 +8,7 @@ use to build the Lucene.Net documentation suite.
 This utility does a lot of edge case work to try to automatically convert as much as possible from the Java Lucene repo into something usable for our project.
 
 The source that this is executed against is this tag: https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.1
+
+## LuceneDocsPlugins
+
+This is a DocFx custom extension. It is built and executed as part of the docs build process to customize/extend some of the features in DocFx.

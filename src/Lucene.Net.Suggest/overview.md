@@ -1,5 +1,6 @@
 ﻿---
 uid: Lucene.Net.Suggest
+title: Lucene.Net.Suggest
 summary: *content
 ---
 
@@ -19,7 +20,5 @@ summary: *content
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
-    
 
   Auto-suggest and spellchecking support.

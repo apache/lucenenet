@@ -20,8 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-    
-
 ## Misc Tools
 
 

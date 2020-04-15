@@ -3,7 +3,6 @@ uid: Lucene.Net.Index.Memory
 summary: *content
 ---
 
-
 <!--
  Licensed to the Apache Software Foundation (ASF) under one or more
  contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +20,4 @@ summary: *content
  limitations under the License.
 -->
 
-
 High-performance single-document main memory Apache Lucene fulltext search index.
-

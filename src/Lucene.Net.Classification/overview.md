@@ -20,6 +20,4 @@ summary: *content
  limitations under the License.
 -->
 
-  
-
 Provides a classification module which leverages Lucene index information.

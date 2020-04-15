@@ -26,7 +26,9 @@ namespace LuceneDocsPlugins
     /// The regex rule to parse out the custom Lucene tokens
     /// </summary>
     public class LuceneNoteBlockRule : IMarkdownRule
-    {       
+    {
+        // TODO: I think there's an issue with this regex and multi-line or something, for example see: DrillDownQuery class
+        // since this isn't matching it's experimental tag (there's lots of others too)
         public virtual Regex LabelRegex { get; } = new Regex("^@lucene\\.(?<notetype>(experimental|internal))$");
 
         public virtual IMarkdownToken TryMatch(IMarkdownParser parser, IMarkdownParsingContext context)

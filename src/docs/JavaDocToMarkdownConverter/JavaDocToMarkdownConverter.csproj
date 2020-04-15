@@ -134,10 +134,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomMarkdownScheme.cs" />
+    <Compile Include="Formatters\AllWhitespacePrefixReplacer.cs" />
     <Compile Include="Formatters\CodeExtractor.cs" />
     <Compile Include="Formatters\CodeLinkReplacer.cs" />
     <Compile Include="DocConverter.cs" />
     <Compile Include="Formatters\ConvertedDocument.cs" />
+    <Compile Include="Formatters\DemoCodeFormatter.cs" />
     <Compile Include="Formatters\DivWrapperReplacer.cs" />
     <Compile Include="Formatters\DocTypeReplacer.cs" />
     <Compile Include="Formatters\ExtraHtmlElementReplacer.cs" />
@@ -145,6 +147,7 @@
     <Compile Include="Formatters\NamedAnchorLinkReplacer.cs" />
     <Compile Include="Formatters\PatternReplacer.cs" />
     <Compile Include="Formatters\RepoLinkReplacer.cs" />
+    <Compile Include="Formatters\ElementWhitespacePrefixReplacer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringExtensions.cs" />

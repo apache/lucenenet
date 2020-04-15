@@ -20,8 +20,6 @@ summary: *content
  limitations under the License.
 -->
 
-    
-
   Kuromoji is a morphological analyzer for Japanese text.  
 
  This module provides support for Japanese text analysis, including features such as part-of-speech tagging, lemmatization, and compound word analysis. 

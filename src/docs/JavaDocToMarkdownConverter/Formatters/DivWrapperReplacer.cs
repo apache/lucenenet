@@ -17,24 +17,24 @@
  * under the License.
  */
 
-using System;
-using System.IO;
+using Html2Markdown.Replacement;
+using System.Text.RegularExpressions;
 
 namespace JavaDocToMarkdownConverter.Formatters
 {
-    public class ConvertedDocument
-    {
-        public ConvertedDocument(FileInfo inputFile, FileInfo outputFile, string @namespace, string markdown)
-        {
-            InputFile = inputFile ?? throw new ArgumentNullException(nameof(inputFile));
-            OutputFile = outputFile ?? throw new ArgumentNullException(nameof(outputFile));
-            Namespace = @namespace ?? throw new ArgumentNullException(nameof(@namespace));
-            Markdown = markdown ?? throw new ArgumentNullException(nameof(markdown));
-        }
 
-        public FileInfo InputFile { get; }
-        public FileInfo OutputFile { get; }
-        public string Namespace { get; }
-        public string Markdown { get; }
+    public class DivWrapperReplacer : IReplacer
+    {
+        private static readonly Regex TocArea = new Regex(@"<div id=""minitoc-area"">(.*?)</div>", RegexOptions.Compiled | RegexOptions.Singleline);
+        private static readonly Regex SectionArea = new Regex(@"<div class=""section"">(.*?)</div>", RegexOptions.Compiled | RegexOptions.Singleline);
+
+        public string Replace(string html)
+        {
+            foreach(var r in new[] { TocArea , SectionArea })
+            {
+                html = r.Replace(html, "$1");
+            }
+            return html;
+        }
     }
 }
