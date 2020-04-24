@@ -59,3 +59,6 @@ websites/**/lucenetemplate/plugins/*
 websites/apidocs/api/**/*.yml
 websites/apidocs/api/**/*.manifest
 !websites/apidocs/api/toc.yml
+
+# Apache Releases on Subversion
+svn-*/

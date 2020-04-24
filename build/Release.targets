@@ -19,6 +19,7 @@
 
 -->
 <Project>
+  
   <PropertyGroup Label="Release Audit Tool Settings">
     <RatDirectory>$(SolutionDir)lib/apache-rat</RatDirectory>
     <RatFile>$(RatDirectory)/apache-rat-0.13.jar</RatFile>
@@ -37,4 +38,85 @@
     <Exec Command="$(RatCommand)" />
     <Message Importance="high" Text="Release Audit Complete"/>
   </Target>
+  
+  <PropertyGroup Label="Apache Subversion Settings">
+    <SvnDevUrl>https://dist.apache.org/repos/dist/dev/lucenenet/</SvnDevUrl>
+    <SvnDevDirectory>$(SolutionDir)svn-dev</SvnDevDirectory>
+    
+    <SvnReleaseUrl>https://dist.apache.org/repos/dist/release/lucenenet/</SvnReleaseUrl>
+    <SvnReleaseDirectory>$(SolutionDir)svn-release</SvnReleaseDirectory>
+  </PropertyGroup>
+
+  <Target Name="CheckoutRelease" Label="Checks out/refreshes the Apache svn release and dev branches to local directories" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
+    <ItemGroup>
+      <_RequiredProperties Include="SvnDevUrl">
+        <Value>$(SvnDevUrl)</Value>
+      </_RequiredProperties>
+
+      <_RequiredProperties Include="SvnDevDirectory">
+        <Value>$(SvnDevDirectory)</Value>
+      </_RequiredProperties>
+
+      <_RequiredProperties Include="SvnReleaseUrl">
+        <Value>$(SvnReleaseUrl)</Value>
+      </_RequiredProperties>
+
+      <_RequiredProperties Include="SvnReleaseDirectory">
+        <Value>$(SvnReleaseDirectory)</Value>
+      </_RequiredProperties>
+    </ItemGroup>
+
+    <Error Condition =" '%(_RequiredProperties.Value)'=='' "
+          Text=" Missing required property [%(_RequiredProperties.Identity)]" />
+
+    <Exec Command="svn co $(SvnDevUrl) $(SvnDevDirectory)" />
+    <Exec Command="svn co $(SvnReleaseUrl) $(SvnReleaseDirectory)" />
+  </Target>
+
+  <PropertyGroup Label="Release Candidate Settings">
+    <ReleaseFileName>Apache-Lucene.Net-$(PackageVersion)</ReleaseFileName>
+  </PropertyGroup>
+
+  <Target Name="SignReleaseCandidate" Label="Uses GnuPG to Sign a Release before [VOTE]" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
+    <ItemGroup>
+      <_RequiredProperties Include="ReleaseFileName">
+        <Value>$(ReleaseFileName)</Value>
+      </_RequiredProperties>
+
+      <_RequiredProperties Include="PackageVersion">
+        <Value>$(PackageVersion)</Value>
+      </_RequiredProperties>
+    </ItemGroup>
+
+    <Error Condition =" '%(_RequiredProperties.Value)'=='' "
+          Text=" Missing required property [%(_RequiredProperties.Identity)]" />
+
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --armor --output $(ReleaseFileName).bin.zip.asc --detach-sig $(ReleaseFileName).bin.zip" />
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --print-md MD5 $(ReleaseFileName).bin.zip &gt; $(ReleaseFileName).bin.zip.md5" />
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --print-md SHA512 $(ReleaseFileName).bin.zip &gt; $(ReleaseFileName).bin.zip.sha512" />
+
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --armor --output $(ReleaseFileName).src.zip.asc --detach-sig $(ReleaseFileName).src.zip" />
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --print-md MD5 $(ReleaseFileName).src.zip &gt; $(ReleaseFileName).src.zip.md5" />
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --print-md SHA512 $(ReleaseFileName).src.zip &gt; $(ReleaseFileName).src.zip.sha512" />
+    
+  </Target>
+
+  <Target Name="CommitReleaseCandidate" Label="Commits a release candidate to Subversion for review before [VOTE]" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
+    <ItemGroup>
+      <_RequiredProperties Include="ReleaseFileName">
+        <Value>$(ReleaseFileName)</Value>
+      </_RequiredProperties>
+
+      <_RequiredProperties Include="PackageVersion">
+        <Value>$(PackageVersion)</Value>
+      </_RequiredProperties>
+    </ItemGroup>
+
+    <Error Condition =" '%(_RequiredProperties.Value)'=='' "
+          Text=" Missing required property [%(_RequiredProperties.Identity)]" />
+
+    <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn add $(PackageVersion)\" />
+    <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn commit -m&quot;Added $(ReleaseFileName) to dev/lucenenet&quot;" />
+  </Target>
+  
 </Project>
