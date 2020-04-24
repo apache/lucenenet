@@ -79,4 +79,6 @@
     </ItemGroup>
   </Target>
 
+  <Import Project="build\Release.targets" Condition="Exists('build\Release.targets')" />
+
 </Project>

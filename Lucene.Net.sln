@@ -42,6 +42,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{4016BDAB
 		build\build.ps1 = build\build.ps1
 		build\Dependencies.props = build\Dependencies.props
 		build\NuGet.props = build\NuGet.props
+		build\Release.targets = build\Release.targets
 		build\TestReferences.Common.targets = build\TestReferences.Common.targets
 		TestTargetFramework.props = TestTargetFramework.props
 	EndProjectSection
