@@ -113,6 +113,17 @@
     <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --verify --status-fd 1 $(ReleaseFileName).src.zip.asc $(ReleaseFileName).src.zip" />
     
   </Target>
+  
+  <PropertyGroup>
+    <SvnDevKeysFile>$(SvnDevDirectory)\KEYS</SvnDevKeysFile>
+    <SvnReleaseKeysFile>$(SvnReleaseDirectory)\KEYS</SvnReleaseKeysFile>
+    <SvnDevDiscardLocalChanges>true</SvnDevDiscardLocalChanges>
+    <SvnReleaseDiscardLocalChanges>true</SvnReleaseDiscardLocalChanges>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SvnDevReleaseFiles Include="$(SvnDevDirectory)\$(PackageVersion)\**\*.*" />
+  </ItemGroup>
 
   <Target Name="CommitReleaseCandidate" Label="Commits a release candidate to Subversion for review before [VOTE]" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
     <ItemGroup>
@@ -127,20 +138,17 @@
 
     <Error Condition =" '%(_RequiredProperties.Value)'=='' "
           Text=" Missing required property [%(_RequiredProperties.Identity)]" />
+    
+    <Error Condition ="!Exists('$(SvnReleaseDirectory)\KEYS')"
+          Text=" Keys file '$(SvnReleaseDirectory)\KEYS' doesn't exist in lucenenet/release" />
+    
+    <!-- Copy KEYS file from release to dev -->
+    <Message Importance="high" Text="Source: $(SvnReleaseKeysFile), Destination: $(SvnDevDirectory)"/>
+    <Copy SourceFiles="$(SvnReleaseKeysFile)" DestinationFolder="$(SvnDevDirectory)" OverwriteReadOnlyFiles="true" />
 
     <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn add $(PackageVersion)\" />
     <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn commit -m&quot;Added $(ReleaseFileName) to dev/lucenenet&quot;" />
   </Target>
-  
-  <PropertyGroup>
-    <SvnDevKeysFile>$(SvnDevDirectory)\KEYS</SvnDevKeysFile>
-    <SvnDevDiscardLocalChanges>true</SvnDevDiscardLocalChanges>
-    <SvnReleaseDiscardLocalChanges>true</SvnReleaseDiscardLocalChanges>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <SvnDevReleaseFiles Include="$(SvnDevDirectory)\$(PackageVersion)\**\*.*" />
-  </ItemGroup>
 
   <Target Name="CommitRelease" Label="Commits a release to Subversion after successful [VOTE]" DependsOnTargets="CheckoutRelease" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
     <ItemGroup>
@@ -167,7 +175,7 @@
     <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn revert --recursive" Condition=" '$(SvnDevDiscardLocalChanges)' == 'true' " />
     <Exec WorkingDirectory="$(SvnReleaseDirectory)" Command="svn revert --recursive" Condition=" '$(SvnReleaseDiscardLocalChanges)' == 'true' " />
     
-    <!-- Copy KEYS file -->
+    <!-- Copy KEYS file from dev to release -->
     <Message Importance="high" Text="Source: $(SvnDevKeysFile), Destination: $(SvnReleaseDirectory)"/>
     <Copy SourceFiles="$(SvnDevKeysFile)" DestinationFolder="$(SvnReleaseDirectory)" OverwriteReadOnlyFiles="true" />
     
