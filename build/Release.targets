@@ -99,6 +99,19 @@
     <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --print-md MD5 $(ReleaseFileName).src.zip &gt; $(ReleaseFileName).src.zip.md5" />
     <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --print-md SHA512 $(ReleaseFileName).src.zip &gt; $(ReleaseFileName).src.zip.sha512" />
     
+    <!-- Verify signatures -->
+    <Message Importance="high" Text=""/>
+    <Message Importance="high" Text="Verifying Signature of $(ReleaseFileName).bin.zip.asc..."/>
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --verify $(ReleaseFileName).bin.zip.asc $(ReleaseFileName).bin.zip" />
+    <Message Importance="high" Text=""/>
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --verify --status-fd 1 $(ReleaseFileName).bin.zip.asc $(ReleaseFileName).bin.zip" />
+
+    <Message Importance="high" Text=""/>
+    <Message Importance="high" Text="Verifying Signature of $(ReleaseFileName).src.zip.asc..."/>
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --verify $(ReleaseFileName).src.zip.asc $(ReleaseFileName).src.zip" />
+    <Message Importance="high" Text=""/>
+    <Exec WorkingDirectory="$(SvnDevDirectory)\$(PackageVersion)" Command="gpg --verify --status-fd 1 $(ReleaseFileName).src.zip.asc $(ReleaseFileName).src.zip" />
+    
   </Target>
 
   <Target Name="CommitReleaseCandidate" Label="Commits a release candidate to Subversion for review before [VOTE]" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
@@ -117,6 +130,60 @@
 
     <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn add $(PackageVersion)\" />
     <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn commit -m&quot;Added $(ReleaseFileName) to dev/lucenenet&quot;" />
+  </Target>
+  
+  <PropertyGroup>
+    <SvnDevKeysFile>$(SvnDevDirectory)\KEYS</SvnDevKeysFile>
+    <SvnDevDiscardLocalChanges>true</SvnDevDiscardLocalChanges>
+    <SvnReleaseDiscardLocalChanges>true</SvnReleaseDiscardLocalChanges>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SvnDevReleaseFiles Include="$(SvnDevDirectory)\$(PackageVersion)\**\*.*" />
+  </ItemGroup>
+
+  <Target Name="CommitRelease" Label="Commits a release to Subversion after successful [VOTE]" DependsOnTargets="CheckoutRelease" Condition="'$(AssemblyName)' == 'Lucene.Net' ">
+    <ItemGroup>
+      <_RequiredProperties Include="ReleaseFileName">
+        <Value>$(ReleaseFileName)</Value>
+      </_RequiredProperties>
+    
+      <_RequiredProperties Include="PackageVersion">
+        <Value>$(PackageVersion)</Value>
+      </_RequiredProperties>
+    </ItemGroup>
+
+    <Error Condition =" '%(_RequiredProperties.Value)'=='' "
+          Text=" Missing required property [%(_RequiredProperties.Identity)]" />
+    
+    <Error Condition ="!Exists('$(SvnDevDirectory)\$(PackageVersion)')"
+          Text=" Directory '$(SvnDevDirectory)\$(PackageVersion)' doesn't exist in lucenenet/dev" />
+    <Error Condition ="!Exists('$(SvnDevDirectory)\KEYS')"
+          Text=" Keys file '$(SvnDevDirectory)\KEYS' doesn't exist in lucenenet/dev" />
+
+    <Message Importance="high" Text="Releasing $(PackageVersion)..."/>
+    
+    <!-- Discard local changes -->
+    <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn revert --recursive" Condition=" '$(SvnDevDiscardLocalChanges)' == 'true' " />
+    <Exec WorkingDirectory="$(SvnReleaseDirectory)" Command="svn revert --recursive" Condition=" '$(SvnReleaseDiscardLocalChanges)' == 'true' " />
+    
+    <!-- Copy KEYS file -->
+    <Message Importance="high" Text="Source: $(SvnDevKeysFile), Destination: $(SvnReleaseDirectory)"/>
+    <Copy SourceFiles="$(SvnDevKeysFile)" DestinationFolder="$(SvnReleaseDirectory)" OverwriteReadOnlyFiles="true" />
+    
+    <!-- Copy release assets -->
+    <Message Importance="high" Text="Source: @(SvnDevReleaseFiles), Destination: $(SvnReleaseDirectory)\$(PackageVersion)"/>
+    <Copy SourceFiles="@(SvnDevReleaseFiles)" DestinationFolder="$(SvnReleaseDirectory)\$(PackageVersion)" OverwriteReadOnlyFiles="true" />
+    
+    <!-- Delete from svn dev -->
+    <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn delete $(PackageVersion)\ --force" />
+    <Exec WorkingDirectory="$(SvnDevDirectory)" Command="svn commit -m &quot;Removed $(ReleaseFileName) from dev/lucenenet&quot;" />
+    
+    <!-- Add to svn release -->
+    <Exec WorkingDirectory="$(SvnReleaseDirectory)" Command="svn add $(PackageVersion)\" />
+    <Exec WorkingDirectory="$(SvnReleaseDirectory)" Command="svn commit -m &quot;Added $(ReleaseFileName) to release/lucenenet&quot;" />
+
+    <Message Importance="high" Text="Release of $(PackageVersion) Complete"/>
   </Target>
   
 </Project>
