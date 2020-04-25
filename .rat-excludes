@@ -24,3 +24,4 @@ RectangularArrays\.cs
 LimitedConcurrencyLevelTaskScheduler\.cs
 Automaton/*
 ConcurrentHashSet\.cs
+NullableAttributes\.cs
