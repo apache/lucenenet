@@ -7,9 +7,15 @@ Download Lucene.Net
 
 ---------------
 
-## Lucene 4.8.0-beta00008
-
 _Status:_ __`Beta`__
+
+## Remaining work
+
+See __[Current Status](xref:contributing/current-status)__ for more details on the remaining work
+
+This version is a direct port of the Java Lucene project at [this release](https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.0)
+
+## Lucene 4.8.0-beta00008
 
 _Released:_ `2020-05-05`
 
@@ -26,12 +32,6 @@ _Released:_ `2020-05-05`
 - [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - .NET Framework 4.5
-
-### Remaining work
-
-See __[Current Status](xref:contributing/current-status)__ for more details on the remaining work
-
-This version is a direct port of the Java Lucene project at [this release](https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.0)
 
 ### All Packages
 
@@ -66,8 +66,6 @@ This version is a direct port of the Java Lucene project at [this release](https
 - [Lucene.Net.Suggest](https://www.nuget.org/packages/Lucene.Net.Suggest/) - Auto-suggest and Spellchecking support
 
 ## Lucene 4.8.0-beta00007
-
-_Status:_ __`Beta`__
 
 _Released:_ `2019-12-29`
 
