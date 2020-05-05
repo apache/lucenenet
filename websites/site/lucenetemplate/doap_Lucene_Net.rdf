@@ -35,8 +35,8 @@
 3. Maximize usability and power when used within the .NET runtime. To that end, it will present a highly idiomatic, carefully tailored API that takes advantage of many of the special features of the .NET runtime.
 </description>
     <bug-database rdf:resource="https://github.com/apache/lucenenet/issues" />
-    <mailing-list rdf:resource="http://lucenenet.apache.org/community.html" />
-    <download-page rdf:resource="http://lucenenet.apache.org/download.cgi" />
+    <mailing-list rdf:resource="https://lucenenet.apache.org/contributing/mailing-lists.html" />
+    <download-page rdf:resource="https://lucenenet.apache.org/download/download.html" />
     <programming-language>C#</programming-language>
     <category rdf:resource="http://projects.apache.org/category/database" />
     <release>

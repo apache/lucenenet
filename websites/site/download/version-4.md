@@ -7,14 +7,14 @@ Download Lucene.Net
 
 ---------------
 
-## Lucene 4.8.0
+## Lucene 4.8.0-beta00008
 
 _Status:_ __`Beta`__
 
-_Released:_ __`Pending...`__
+_Released:_ `2020-05-05`
 
 <div class="nuget-well" style="text-align:left;">
-    PM> Install-Package Lucene.Net -Version 4.8.0-beta00007
+    PM> Install-Package Lucene.Net -Version 4.8.0-beta00008
 </div>
 
 ### Source code
@@ -23,9 +23,15 @@ _Released:_ __`Pending...`__
 
 ### Supported Frameworks
 
+- [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
-- [.NET Standard 1.6](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - .NET Framework 4.5
+
+### Remaining work
+
+See __[Current Status](xref:contributing/current-status)__ for more details on the remaining work
+
+This version is a direct port of the Java Lucene project at [this release](https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.0)
 
 ### All Packages
 
@@ -59,8 +65,60 @@ _Released:_ __`Pending...`__
 - [Lucene.Net.Spatial](https://www.nuget.org/packages/Lucene.Net.Spatial/) - Geospatial search
 - [Lucene.Net.Suggest](https://www.nuget.org/packages/Lucene.Net.Suggest/) - Auto-suggest and Spellchecking support
 
+## Lucene 4.8.0-beta00007
+
+_Status:_ __`Beta`__
+
+_Released:_ `2019-12-29`
+
+<div class="nuget-well" style="text-align:left;">
+    PM> Install-Package Lucene.Net -Version 4.8.0-beta00007
+</div>
+
+### Source code
+
+* [Git Repository](https://github.com/apache/lucenenet)
+
+### Supported Frameworks
+
+- [.NET Standard 2.1](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
+- [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
+- .NET Framework 4.5
+
 ### Remaining work
 
 See __[Current Status](xref:contributing/current-status)__ for more details on the remaining work
 
 This version is a direct port of the Java Lucene project at [this release](https://github.com/apache/lucene-solr/releases/tag/releases%2Flucene-solr%2F4.8.0)
+
+### All Packages
+
+<!--- TO BE ADDED WHEN RELEASED 
+
+- [Lucene.Net.Analysis.UIMA](https://www.nuget.org/packages/Lucene.Net.Analysis.UIMA/) - Analysis integration with Apache UIMA)
+
+-->
+
+- [Lucene.Net](https://www.nuget.org/packages/Lucene.Net/) - Core library
+- [Lucene.Net.Analysis.Common](https://www.nuget.org/packages/Lucene.Net.Analysis.Common/) - Analyzers for indexing content in different languages and domains
+- [Lucene.Net.Analysis.Kuromoji](https://www.nuget.org/packages/Lucene.Net.Analysis.Kuromoji/) - Japanese Morphological Analyzer 
+- [Lucene.Net.Analysis.Phonetic](https://www.nuget.org/packages/Lucene.Net.Analysis.Phonetic/) - Analyzer for indexing phonetic signatures (for sounds-alike search)
+- [Lucene.Net.Analysis.SmartCn](https://www.nuget.org/packages/Lucene.Net.Analysis.SmartCn/) - Analyzer for indexing Chinese
+- [Lucene.Net.Analysis.Stempel](https://www.nuget.org/packages/Lucene.Net.Analysis.Stempel/) - Analyzer for indexing Polish
+- [Lucene.Net.Benchmark](https://www.nuget.org/packages/Lucene.Net.Benchmark/) - System for benchmarking Lucene
+- [Lucene.Net.Classification](https://www.nuget.org/packages/Lucene.Net.Classification/) - Classification module for Lucene
+- [Lucene.Net.Codecs](https://www.nuget.org/packages/Lucene.Net.Codecs/) - Lucene codecs and postings formats
+- [Lucene.Net.Expressions](https://www.nuget.org/packages/Lucene.Net.Expressions/) - Dynamically computed values to sort/facet/search on based on a pluggable grammar
+- [Lucene.Net.Facet](https://www.nuget.org/packages/Lucene.Net.Facet/) - Faceted indexing and search capabilities
+- [Lucene.Net.Grouping](https://www.nuget.org/packages/Lucene.Net.Grouping/) - Collectors for grouping search results
+- [Lucene.Net.Highlighter](https://www.nuget.org/packages/Lucene.Net.Highlighter/) - Highlights search keywords in results
+- [Lucene.Net.ICU](https://www.nuget.org/packages/Lucene.Net.ICU/) - Specialized ICU (International Components for Unicode) Analyzers and Highlighters
+- [Lucene.Net.Join](https://www.nuget.org/packages/Lucene.Net.Join/) - Index-time and Query-time joins for normalized content
+- [Lucene.Net.Memory](https://www.nuget.org/packages/Lucene.Net.Memory/) - Single-document in-memory index implementation
+- [Lucene.Net.Misc](https://www.nuget.org/packages/Lucene.Net.Misc/) - Index tools and other miscellaneous code
+- [Lucene.Net.Queries](https://www.nuget.org/packages/Lucene.Net.Queries/) - Filters and Queries that add to core Lucene
+- [Lucene.Net.QueryParser](https://www.nuget.org/packages/Lucene.Net.QueryParser/) - Text to Query parsers and parsing framework
+- [Lucene.Net.Replicator](https://www.nuget.org/packages/Lucene.Net.Replicator/)  Files replication utility
+- [Lucene.Net.Sandbox](https://www.nuget.org/packages/Lucene.Net.Sandbox/) - Various third party contributions and new ideas
+- [Lucene.Net.Spatial](https://www.nuget.org/packages/Lucene.Net.Spatial/) - Geospatial search
+- [Lucene.Net.Suggest](https://www.nuget.org/packages/Lucene.Net.Suggest/) - Auto-suggest and Spellchecking support
