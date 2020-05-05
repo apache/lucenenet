@@ -17,6 +17,10 @@ _Released:_ `2020-05-05`
     PM> Install-Package Lucene.Net -Version 4.8.0-beta00008
 </div>
 
+## Release notes
+
+[https://github.com/apache/lucenenet/releases/tag/Lucene.Net_4_8_0_beta00008](https://github.com/apache/lucenenet/releases/tag/Lucene.Net_4_8_0_beta00008)
+
 ### Source code
 
 * [Git Repository](https://github.com/apache/lucenenet)
