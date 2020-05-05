@@ -2,7 +2,7 @@
 uid: download/3
 ---
 
-Download Lucene.Net 3.3
+Download Lucene.Net 3.0.3
 ===============
 
 ---------------

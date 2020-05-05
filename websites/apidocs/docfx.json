@@ -455,7 +455,7 @@
       }
     ],   
     "globalMetadata": {
-      "_appTitle": "Apache Lucene.NET 4.8.0 Documentation",      
+      "_appTitle": "Apache Lucene.NET 4.8.0 Documentation",
       "_disableContribution": false,
       "_appFaviconPath": "logo/favicon.ico",
       "_enableSearch": true,

@@ -1,5 +1,7 @@
-- name: Version 4.8
-  href: version-4.md
+- name: Version 4.8.0-beta00008
+  href: version-4.8.0-beta00008.md
+- name: Version 4.8.0-beta00007
+  href: version-4.8.0-beta00007.md
 - name: Version 3.0.3
   href: version-3.md
 - name: Version 2.9.4
