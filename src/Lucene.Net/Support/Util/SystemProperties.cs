@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Configuration;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Security;
 
 namespace Lucene.Net.Util
@@ -131,27 +133,17 @@ namespace Lucene.Net.Util
 
         private static T GetProperty<T>(string key, T defaultValue, Func<string, T> conversionFunction)
         {
-            string setting;
-            if (ignoreSecurityExceptions)
-            {
-                try
-                {
-                    setting = Environment.GetEnvironmentVariable(key);
-                }
-                catch (SecurityException)
-                {
-                    setting = null;
-                }
-            }
-            else
-            {
-                setting = Environment.GetEnvironmentVariable(key);
-            }
+            IConfiguration configuration = ConfigurationSettings.GetConfigurationFactory().CreateConfiguration();
+            string setting = configuration[key];
+
+
+            //string setting = ConfigurationSettings.GetConfigFactory().GetSetting(key);
 
             return string.IsNullOrEmpty(setting)
                 ? defaultValue
                 : conversionFunction(setting);
         }
+
 
         internal static bool ignoreSecurityExceptions = GetPropertyAsBoolean("lucene.ignoreSecurityExceptions", true);
 
