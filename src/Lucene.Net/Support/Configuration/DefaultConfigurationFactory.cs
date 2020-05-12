@@ -14,7 +14,7 @@ namespace Lucene.Net.Configuration
         private bool initialized = false;
         protected object m_initializationLock = new object();
         private object initializationTarget; // Dummy variable required by LazyInitializer.EnsureInitialized
-        private IConfiguration configuration;
+        protected IConfiguration configuration;
 
         public DefaultConfigurationFactory(bool ignoreSecurityExceptionsOnRead)
         {

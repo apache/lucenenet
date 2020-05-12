@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Configuration;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Configuration
 {
@@ -24,17 +25,15 @@ namespace Lucene.Net.Configuration
     public class MicrosoftExtensionsConfigurationFactory : DefaultConfigurationFactory
     {
         private IConfigurationBuilder builder;
-        private IConfiguration configuration;
-
         public MicrosoftExtensionsConfigurationFactory(bool ignoreSecurityExceptionsOnRead, IConfigurationBuilder builder) : base(ignoreSecurityExceptionsOnRead)
         {
             this.builder = builder;
         }
 
-        public override IConfiguration CreateConfiguration()
-        {
-            return configuration;
-        }
+        //public override IConfiguration CreateConfiguration()
+        //{
+        //    return configuration;
+        //}
 
         /// <summary>
         /// Initializes the dependencies of this factory.

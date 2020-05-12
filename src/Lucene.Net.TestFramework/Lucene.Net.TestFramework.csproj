@@ -114,4 +114,10 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests.TestFramework" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="luceneTestSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

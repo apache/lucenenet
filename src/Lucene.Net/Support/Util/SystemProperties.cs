@@ -155,7 +155,17 @@ namespace Lucene.Net.Util
         /// <exception cref="SecurityException">The caller does not have the required permission to perform this operation.</exception>
         public static void SetProperty(string key, string value)
         {
-            Environment.SetEnvironmentVariable(key, value);
+            //Environment.SetEnvironmentVariable(key, value);
+            IConfiguration configuration = ConfigurationSettings.GetConfigurationFactory().CreateConfiguration();
+            string setting;
+            try
+            {
+                configuration[key] = value;
+            }
+            finally
+            {
+            }
+
         }
     }
 }
