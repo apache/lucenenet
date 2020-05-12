@@ -23,16 +23,25 @@ namespace Lucene.Net.Configuration
 
     public class MicrosoftExtensionsConfigurationFactory : DefaultConfigurationFactory
     {
-        public IConfiguration configuration;
+        private IConfigurationBuilder builder;
+        private IConfiguration configuration;
 
-        public MicrosoftExtensionsConfigurationFactory(bool ignoreSecurityExceptionsOnRead, IConfiguration configuration) : base(ignoreSecurityExceptionsOnRead)
+        public MicrosoftExtensionsConfigurationFactory(bool ignoreSecurityExceptionsOnRead, IConfigurationBuilder builder) : base(ignoreSecurityExceptionsOnRead)
         {
-            this.configuration = configuration;
+            this.builder = builder;
         }
 
         public override IConfiguration CreateConfiguration()
         {
             return configuration;
+        }
+
+        /// <summary>
+        /// Initializes the dependencies of this factory.
+        /// </summary>
+        protected override void Initialize()
+        {
+            this.configuration = builder.Build();
         }
     }
 

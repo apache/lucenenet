@@ -10,7 +10,7 @@ namespace Lucene.Net.Configuration
     [TestFixture]
     class TestSystemProperties : LuceneTestCase
     {
-        protected IConfiguration config;
+        protected IConfigurationBuilder builder;
 
         [OneTimeSetUp]
         public override void BeforeClass()
@@ -19,25 +19,22 @@ namespace Lucene.Net.Configuration
             {
 #if NETSTANDARD2_1 || NETSTANDARD
 
-                config = new ConfigurationBuilder()
+                builder = new ConfigurationBuilder()
                   .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                  .AddEnvironmentVariables()
-                  .Build();
+                  .AddEnvironmentVariables();
 
 #elif NET451
             
             
-                config = new ConfigurationBuilder()
-                  .Build();
+                builder = new ConfigurationBuilder();
             
 #else
-                config = new ConfigurationBuilder()
-                  .Build();
+                builder = new ConfigurationBuilder();
 
 #endif
                 // Setup the factories
                 ConfigurationSettings.SetConfigurationFactory(
-                    new MicrosoftExtensionsConfigurationFactory(false, config));
+                    new MicrosoftExtensionsConfigurationFactory(false, builder));
             }
             catch (Exception ex)
             {
@@ -58,7 +55,7 @@ namespace Lucene.Net.Configuration
         public virtual void SetTest()
         {
             Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"), "fr-FR");
-            config["tests:locale"] = "en_EN";
+            Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", "en_EN");
             Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"), "en_EN");
             Assert.AreNotEqual(Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"), "fr-FR");
             Assert.Pass();
