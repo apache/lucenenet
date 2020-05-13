@@ -25,7 +25,8 @@ namespace Lucene.Net.Configuration
     public class MicrosoftExtensionsConfigurationFactory : DefaultConfigurationFactory
     {
         private IConfigurationBuilder builder;
-        public MicrosoftExtensionsConfigurationFactory(bool ignoreSecurityExceptionsOnRead, IConfigurationBuilder builder) : base(ignoreSecurityExceptionsOnRead)
+        [CLSCompliant(false)]
+        public MicrosoftExtensionsConfigurationFactory(IConfigurationBuilder builder) : base(false)
         {
             this.builder = builder;
         }
@@ -38,9 +39,11 @@ namespace Lucene.Net.Configuration
         /// <summary>
         /// Initializes the dependencies of this factory.
         /// </summary>
-        protected override void Initialize()
+        [CLSCompliant(false)]
+        protected override IConfiguration Initialize()
         {
             this.configuration = builder.Build();
+            return this.configuration;
         }
     }
 

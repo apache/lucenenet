@@ -157,7 +157,6 @@ namespace Lucene.Net.Util
         {
             //Environment.SetEnvironmentVariable(key, value);
             IConfiguration configuration = ConfigurationSettings.GetConfigurationFactory().CreateConfiguration();
-            string setting;
             try
             {
                 configuration[key] = value;

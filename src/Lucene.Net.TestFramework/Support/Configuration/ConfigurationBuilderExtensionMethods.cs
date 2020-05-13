@@ -8,18 +8,43 @@ using System.Text;
 
 namespace Lucene.Net.Configuration
 {
-    public static class Extension
+    public static class ConfigurationBuilderExtensions
     {
-        public static void LoadJsonConfigurationFiles(this IConfigurationBuilder builder, string currentPath, string fileName)
+        [CLSCompliant(false)]
+        public static void AddJsonFilesFromRootDirectoryTo(this IConfigurationBuilder builder, string currentPath, string fileName)
         {
             Stack<string> locations = builder.ScanConfigurationFiles(currentPath, fileName);
-            while(locations.Count != 0)
+
+#if NETSTANDARD
+            while (locations.Count != 0)
             {
-                builder.AddJsonFile(locations.Pop(), optional: true, reloadOnChange: true);                
+                builder.AddJsonFile(locations.Pop(), optional: true, reloadOnChange: true);
             }
+#elif NET45
+                // NET45 specific setup for builder
+#else
+                // Not sure if there is a default case that isnt covered?
+#endif
         }
 
-        public static Stack<string> ScanConfigurationFiles(this IConfigurationBuilder builder, string currentPath, string fileName)
+        [CLSCompliant(false)]
+        public static void AddXmlFilesFromRootDirectoryTo(this IConfigurationBuilder builder, string currentPath, string fileName)
+        {
+            Stack<string> locations = builder.ScanConfigurationFiles(currentPath, fileName);
+
+#if NETSTANDARD
+            while (locations.Count != 0)
+            {
+                builder.AddXmlFile(locations.Pop(), optional: true, reloadOnChange: true);
+            }
+#elif NET45
+                // NET45 specific setup for builder
+#else
+                // Not sure if there is a default case that isnt covered?
+#endif
+        }
+
+        private static Stack<string> ScanConfigurationFiles(this IConfigurationBuilder builder, string currentPath, string fileName)
         {
             Stack<string> locations = new Stack<string>();
 

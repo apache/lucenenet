@@ -15,46 +15,6 @@ namespace Lucene.Net.Configuration
     [TestFixture]
     class TestSystemProperties : LuceneTestCase
     {
-        protected IConfigurationBuilder builder;
-
-        [OneTimeSetUp]
-        public override void BeforeClass()
-        {
-            try
-            {
-#if NETSTANDARD2_1 || NETSTANDARD
-
-                builder = new ConfigurationBuilder();
-
-                string ANALYSIS_DATA_DIR = "";
-                string fileName = "luceneTestSettings.json";
-
-#if NETSTANDARD1_6
-            string currentPath = System.AppContext.BaseDirectory;
-#else
-                string currentPath = AppDomain.CurrentDomain.BaseDirectory;
-#endif
-
-                builder.LoadJsonConfigurationFiles(currentPath, fileName);
-                builder.AddEnvironmentVariables();
-
-#elif NET451
-                builder = new ConfigurationBuilder();
-#else
-                builder = new ConfigurationBuilder();
-#endif
-                // Setup the factories
-                ConfigurationSettings.SetConfigurationFactory(
-                    new MicrosoftExtensionsConfigurationFactory(false, builder));
-            }
-            catch (Exception ex)
-            {
-                // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during BeforeClass:\n{ex.ToString()}", ex);
-            }
-            base.BeforeClass();
-        }
-
         [Test]
         public virtual void EnvironmentTest2()
         {
@@ -65,16 +25,16 @@ namespace Lucene.Net.Configuration
         [Test]
         public virtual void SetTest()
         {
-            Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"), "fr-FR");
+            Assert.AreEqual("fr-FR", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
             Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", "en_EN");
-            Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"), "en_EN");
+            Assert.AreEqual("en_EN", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
             Assert.Pass();
         }
         [Test]
         public virtual void TestTimezone()
         {
-            Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty("user.timezone"), "SE Asia Standard Time");
-            Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty("user:timezone"), "SE Asia Standard Time");
+            Assert.AreEqual("SE Asia Standard Time", Lucene.Net.Util.SystemProperties.GetProperty("user.timezone"));
+            Assert.AreEqual("SE Asia Standard Time", Lucene.Net.Util.SystemProperties.GetProperty("user:timezone"));
             Assert.Pass();
         }
 
@@ -89,7 +49,7 @@ namespace Lucene.Net.Configuration
         [Test]
         public virtual void DirectoryCrawlTest()
         {
-            Assert.AreEqual(3, builder.Sources.Count);
+            Assert.AreEqual(3, this.configurationBuilder.Sources.Count);
             Assert.Pass();
         }
     }

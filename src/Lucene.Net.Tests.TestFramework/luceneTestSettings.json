@@ -4,11 +4,10 @@
     "user": {
         "timezone": "SE Asia Standard Time"
     },
-    "lucene:version": "4.8.1",
     "tests": {
-        "locale": "fr-FR",
-        "timezone": "GMT+0",
-        "project": "Lucene.Net.Tests.TestFramework"
+        "project": "Lucene.Net.Tests.TestFramework",
+        "parent": "Lucene.Net.TestFramework",
+        "locale" :  "fr-FR"
     },
     "tests.nightly": "tests.nightly"
 }

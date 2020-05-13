@@ -1,0 +1,91 @@
+{
+    "analysis.data.dir": "",
+    "egothor.stemmer.charset": "UTF-8",
+    "kuromoji.data.dir": "",
+    "lucene:version": "4.8.1",
+    "tests": {
+        "asserts.gracious": "false",
+        "cleanthreads.sysprop": "perMethod",
+        "codec": "random",
+        "directory": "random",
+        "docvaluesformat": "random",
+        "europarl.lines.txt.gz": "",
+        "filterstacks": "true",
+        "infostream": "$verbose}",
+        "jvms": "auto",
+        "jvms.override": "${jvms}",
+        "linedocsfile": "",
+        "locale": "random",
+        "loggingfile": "${common.dir}/tools/junit4/logging.properties",
+        "multiplier": "1",
+        "nightly": "false",
+        "postingsformat": "random",
+        "seed": "",
+        "slow": "true",
+        "timezone": "random",
+        "verbose": "false",
+        "weekly": "false"
+    },
+    "user": {
+        "timezone": "random"
+    },
+    "user.timezone": "random"
+}
+
+/*
+
+ <property name="tests.seed" value="" />
+
+  <!-- This is a hack to be able to override the JVM count for special modules that don't like parallel tests: -->
+  <property name="tests.jvms" value="auto" />
+  <property name="tests.jvms.override" value="${tests.jvms}" />
+
+  <property name="tests.multiplier" value="1" />
+  <property name="tests.codec" value="random" />
+  <property name="tests.postingsformat" value="random" />
+  <property name="tests.docvaluesformat" value="random" />
+  <property name="tests.locale" value="random" />
+  <property name="tests.timezone" value="random" />
+  <property name="tests.directory" value="random" />
+  <property name="tests.linedocsfile" value="europarl.lines.txt.gz" />
+  <property name="tests.loggingfile" location="${common.dir}/tools/junit4/logging.properties"/>
+  <property name="tests.nightly" value="false" />
+  <property name="tests.weekly" value="false" />
+  <property name="tests.slow" value="true" />
+  <property name="tests.cleanthreads.sysprop" value="perMethod"/>
+  <property name="tests.asserts.gracious" value="false"/>
+  <property name="tests.verbose" value="false"/>
+  <property name="tests.infostream" value="${tests.verbose}"/>
+  <property name="tests.filterstacks" value="true"/>
+  <property name="kuromoji.data.dir" value=""/>
+  <property name="analysis.data.dir" value=""/>
+  <property name="egothor.stemmer.charset" value="UTF-8"/>
+    
+    
+    "", 
+    "tests.verbose", true
+    "benchmark.work.dir", "work"
+    "tests.infostream", VERBOSE
+
+
+    "tests.multiplier", 1
+    "tests.multiplier", 1
+    "tests.nightly"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_WEEKLY = "tests.weekly"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_AWAITSFIX = "tests.awaitsfix"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_SLOW = "tests.slow"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_BADAPPLES = "tests.badapples"; // LUCENENET specific - made internal, because not fully implemented
+
+    "tests.maxfailures"
+
+    "tests.failfast"
+
+    
+                "tests.leaveTemporary"
+    "tests.leavetemporary"
+    "tests.leavetmpdir" 
+    "solr.test.leavetmpdir" 
+    "lucene.version", null
+
+
+*/

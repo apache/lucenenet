@@ -32,6 +32,7 @@ namespace Lucene.Net.Configuration
         /// </summary>
         /// <param name="configurationFactory">The new <see cref="IConfigurationFactory"/>.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="configurationFactory"/> parameter is <c>null</c>.</exception>
+        [CLSCompliant(false)]
         public static void SetConfigurationFactory(IConfigurationFactory configurationFactory)
         {
             if (configurationFactory == null)
@@ -43,6 +44,7 @@ namespace Lucene.Net.Configuration
         /// Gets the associated ConfigurationSettings factory.
         /// </summary>
         /// <returns>The ConfigurationSettings factory.</returns>
+        [CLSCompliant(false)]
         public static IConfigurationFactory GetConfigurationFactory()
         {
             return configurationFactory;

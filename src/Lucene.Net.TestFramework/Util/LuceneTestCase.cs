@@ -33,6 +33,8 @@ using FieldInfo = Lucene.Net.Index.FieldInfo;
 using static Lucene.Net.Search.FieldCache;
 using static Lucene.Net.Util.FieldCacheSanityChecker;
 using J2N.Collections.Generic.Extensions;
+using Microsoft.Extensions.Configuration;
+using Lucene.Net.Configuration;
 
 #if TESTFRAMEWORK_MSTEST
 using Before = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
@@ -274,7 +276,7 @@ namespace Lucene.Net.Util
         /// (because they are expensive, for example).
         /// </summary>
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-        
+
         public class SuppressCodecsAttribute : System.Attribute // LUCENENET: API looks better with this nested
         {
             /// <summary>
@@ -692,6 +694,10 @@ namespace Lucene.Net.Util
         public static IDocValuesFormatFactory DocValuesFormatFactory { get; set; } = new TestDocValuesFormatFactory();
         public static IPostingsFormatFactory PostingsFormatFactory { get; set; } = new TestPostingsFormatFactory();
 
+        // Configuration builder for Microsoft Extensions Configuration
+        [CLSCompliant(false)]
+        protected IConfigurationBuilder configurationBuilder;
+
 
 #if TESTFRAMEWORK_MSTEST
         private static readonly IList<string> initalizationLock = new List<string>();
@@ -767,7 +773,29 @@ namespace Lucene.Net.Util
         {
             try
             {
+
+#if NETSTANDARD
+                string currentPath = System.AppContext.BaseDirectory;
+#else
+                string currentPath = AppDomain.CurrentDomain.BaseDirectory;
+#endif
+
+                configurationBuilder = new ConfigurationBuilder();
+
+#if NETSTANDARD
+                string fileName = "luceneTestSettings.json";
+                configurationBuilder.AddJsonFilesFromRootDirectoryTo(currentPath, fileName);
+                configurationBuilder.AddEnvironmentVariables();
+#elif NET45
+                // NET45 specific setup for builder
+#else
+                // Not sure if there is a default case that isnt covered?
+#endif
                 // Setup the factories
+                ConfigurationSettings.SetConfigurationFactory(
+                    new MicrosoftExtensionsConfigurationFactory(configurationBuilder));
+
+                                // Setup the factories
                 Codec.SetCodecFactory(CodecFactory);
                 DocValuesFormat.SetDocValuesFormatFactory(DocValuesFormatFactory);
                 PostingsFormat.SetPostingsFormatFactory(PostingsFormatFactory);
@@ -1755,7 +1783,7 @@ namespace Lucene.Net.Util
 
         public static bool DefaultCodecSupportsDocValues
         {
-            get{ return !Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal); }
+            get { return !Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal); }
         }
 
         private static Directory NewFSDirectoryImpl(Type clazz, DirectoryInfo file)
@@ -2078,7 +2106,7 @@ namespace Lucene.Net.Util
                 TaskScheduler ex;
                 if (random.NextBoolean())
                 {
-                ex = null;
+                    ex = null;
                 }
                 else
                 {

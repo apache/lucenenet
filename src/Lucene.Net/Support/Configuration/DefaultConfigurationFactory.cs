@@ -13,7 +13,7 @@ namespace Lucene.Net.Configuration
         private readonly bool ignoreSecurityExceptionsOnRead;
         private bool initialized = false;
         protected object m_initializationLock = new object();
-        private object initializationTarget; // Dummy variable required by LazyInitializer.EnsureInitialized
+        [CLSCompliant(false)]
         protected IConfiguration configuration;
 
         public DefaultConfigurationFactory(bool ignoreSecurityExceptionsOnRead)
@@ -21,32 +21,33 @@ namespace Lucene.Net.Configuration
             this.ignoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead;
         }
 
+        [CLSCompliant(false)]
         public virtual IConfiguration CreateConfiguration()
         {
-            EnsureInitialized();
-            return configuration;
+            return EnsureInitialized();
         }
 
         /// <summary>
         /// Ensures the <see cref="Initialize"/> method has been called since the
         /// last application start. This method is thread-safe.
         /// </summary>
-        protected void EnsureInitialized()
+        [CLSCompliant(false)]
+        protected IConfiguration EnsureInitialized()
         {
-            LazyInitializer.EnsureInitialized(ref this.initializationTarget, ref this.initialized, ref this.m_initializationLock, () =>
+            return LazyInitializer.EnsureInitialized(ref this.configuration, ref this.initialized, ref this.m_initializationLock, () =>
             {
-                Initialize();
-                return null;
+                return Initialize();
             });
         }
 
         /// <summary>
         /// Initializes the dependencies of this factory.
         /// </summary>
-        protected virtual void Initialize()
+        [CLSCompliant(false)]
+        protected virtual IConfiguration Initialize()
         {
             configuration = new DefaultConfiguration(this.ignoreSecurityExceptionsOnRead);
-
+            return configuration;
         }
     }
 

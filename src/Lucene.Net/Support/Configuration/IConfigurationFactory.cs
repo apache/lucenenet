@@ -25,9 +25,10 @@ namespace Lucene.Net.Configuration
     {
         string GetSetting(string key);
     }
-
+    [CLSCompliant(false)]
     public interface IConfigurationFactory
     {
+        [CLSCompliant(false)]
         IConfiguration CreateConfiguration();
     }
 
