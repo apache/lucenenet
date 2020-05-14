@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Search;
+using Lucene.Net.Util;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic.CompilerServices;
 using NUnit.Framework;
@@ -49,8 +50,18 @@ namespace Lucene.Net.Configuration
         [Test]
         public virtual void DirectoryCrawlTest()
         {
-            Assert.AreEqual(3, this.configurationBuilder.Sources.Count);
+            Assert.AreEqual(4, ((MicrosoftExtensionsConfigurationFactory)ConfigurationFactory).builder.Sources.Count);
             Assert.Pass();
         }
+
+        [Test]
+        public virtual void TestHashCodeReadProperty()
+        {
+            Assert.AreEqual(0xf6a5c420, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("foo"), 0));
+            // Hashes computed using murmur3_32 from https://code.google.com/p/pyfasthash
+            Assert.AreEqual(0xcd018ef6, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("foo"), StringHelper.GOOD_FAST_HASH_SEED));
+        }
+
+
     }
 }

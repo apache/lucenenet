@@ -212,17 +212,17 @@ namespace Lucene.Net.Util
         // Test groups, system properties and other annotations modifying tests
         // --------------------------------------------------------------------
 
-        internal const string SYSPROP_NIGHTLY = "tests.nightly"; // LUCENENET specific - made internal, because not fully implemented
-        internal const string SYSPROP_WEEKLY = "tests.weekly"; // LUCENENET specific - made internal, because not fully implemented
-        internal const string SYSPROP_AWAITSFIX = "tests.awaitsfix"; // LUCENENET specific - made internal, because not fully implemented
-        internal const string SYSPROP_SLOW = "tests.slow"; // LUCENENET specific - made internal, because not fully implemented
-        internal const string SYSPROP_BADAPPLES = "tests.badapples"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_NIGHTLY = "tests:nightly"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_WEEKLY = "tests:weekly"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_AWAITSFIX = "tests:awaitsfix"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_SLOW = "tests:slow"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_BADAPPLES = "tests:badapples"; // LUCENENET specific - made internal, because not fully implemented
 
         ///// <seealso cref="IgnoreAfterMaxFailures"/>
-        internal const string SYSPROP_MAXFAILURES = "tests.maxfailures"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_MAXFAILURES = "tests:maxfailures"; // LUCENENET specific - made internal, because not fully implemented
 
         ///// <seealso cref="IgnoreAfterMaxFailures"/>
-        internal const string SYSPROP_FAILFAST = "tests.failfast"; // LUCENENET specific - made internal, because not fully implemented
+        internal const string SYSPROP_FAILFAST = "tests:failfast"; // LUCENENET specific - made internal, because not fully implemented
 
         // LUCENENET: Not Implemented
         /////// <summary>
@@ -330,7 +330,7 @@ namespace Lucene.Net.Util
         /// True if and only if tests are run in verbose mode. If this flag is false
         /// tests are not expected to print any messages.
         /// </summary>
-        public static readonly bool VERBOSE = SystemProperties.GetPropertyAsBoolean("tests.verbose",
+        public static readonly bool VERBOSE = SystemProperties.GetPropertyAsBoolean("tests:verbose",
 #if DEBUG
             true
 #else
@@ -340,13 +340,13 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static readonly bool INFOSTREAM = SystemProperties.GetPropertyAsBoolean("tests.infostream", VERBOSE);
+        public static readonly bool INFOSTREAM = SystemProperties.GetPropertyAsBoolean("tests:infostream", VERBOSE);
 
         /// <summary>
         /// A random multiplier which you should use when writing random tests:
         /// multiply it by the number of iterations to scale your tests (for nightly builds).
         /// </summary>
-        public static readonly int RANDOM_MULTIPLIER = SystemProperties.GetPropertyAsInt32("tests.multiplier", 1);
+        public static readonly int RANDOM_MULTIPLIER = SystemProperties.GetPropertyAsInt32("tests:multiplier", 1);
 
         /// <summary>
         /// TODO: javadoc? </summary>
@@ -358,23 +358,23 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Gets the codec to run tests with. </summary>
-        public static readonly string TEST_CODEC = SystemProperties.GetProperty("tests.codec", "random");
+        public static readonly string TEST_CODEC = SystemProperties.GetProperty("tests:codec", "random");
 
         /// <summary>
         /// Gets the postingsFormat to run tests with. </summary>
-        public static readonly string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests.postingsformat", "random");
+        public static readonly string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests:postingsformat", "random");
 
         /// <summary>
         /// Gets the docValuesFormat to run tests with </summary>
-        public static readonly string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests.docvaluesformat", "random");
+        public static readonly string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests:docvaluesformat", "random");
 
         /// <summary>
         /// Gets the directory to run tests with </summary>
-        public static readonly string TEST_DIRECTORY = SystemProperties.GetProperty("tests.directory", "random");
+        public static readonly string TEST_DIRECTORY = SystemProperties.GetProperty("tests:directory", "random");
 
         /// <summary>
         /// The line file used by LineFileDocs </summary>
-        public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
+        public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests:linedocsfile", DEFAULT_LINE_DOCS_FILE);
 
         ///// <summary>
         ///// Whether or not <see cref="Nightly"/> tests should run. </summary>
@@ -404,9 +404,9 @@ namespace Lucene.Net.Util
         {
             bool defaultValue = false;
             foreach (string property in new string[] {
-                "tests.leaveTemporary" /* ANT tasks's (junit4) flag. */,
-                "tests.leavetemporary" /* lowercase */,
-                "tests.leavetmpdir" /* default */,
+                "tests:leaveTemporary" /* ANT tasks's (junit4) flag. */,
+                "tests:leavetemporary" /* lowercase */,
+                "tests:leavetmpdir" /* default */,
                 "solr.test.leavetmpdir" /* Solr's legacy */
             })
             {
@@ -698,6 +698,23 @@ namespace Lucene.Net.Util
         [CLSCompliant(false)]
         protected IConfigurationBuilder configurationBuilder;
 
+        public static string TestSettingsFileNameJson = "luceneTestSettings.json";
+        public static string TestSettingsFileNameXml = "luceneTestSettings.xml";
+        public static string[] TestSettingsCommandLineArgs = null;
+        [CLSCompliant(false)]
+        public static IConfigurationFactory ConfigurationFactory { get; set; } = new MicrosoftExtensionsConfigurationFactory(TestSettingsCommandLineArgs, TestSettingsFileNameJson, TestSettingsFileNameXml);
+#if NETSTANDARD
+
+#elif NET45
+        //[CLSCompliant(false)]
+                
+        //public static IConfigurationFactory ConfigurationFactory { get; set; } = new DefaultConfigurationFactory(false);
+#else
+                // Not sure if there is a default case that isnt covered?
+        //[CLSCompliant(false)]
+                
+        //public static IConfigurationFactory ConfigurationFactory { get; set; } = new DefaultConfigurationFactory(false);
+#endif
 
 #if TESTFRAMEWORK_MSTEST
         private static readonly IList<string> initalizationLock = new List<string>();
@@ -774,28 +791,29 @@ namespace Lucene.Net.Util
             try
             {
 
-#if NETSTANDARD
-                string currentPath = System.AppContext.BaseDirectory;
-#else
-                string currentPath = AppDomain.CurrentDomain.BaseDirectory;
-#endif
+                //#if NETSTANDARD
+                //                string currentPath = System.AppContext.BaseDirectory;
+                //#else
+                //                string currentPath = AppDomain.CurrentDomain.BaseDirectory;
+                //#endif
 
-                configurationBuilder = new ConfigurationBuilder();
+                //                configurationBuilder = new ConfigurationBuilder();
 
-#if NETSTANDARD
-                string fileName = "luceneTestSettings.json";
-                configurationBuilder.AddJsonFilesFromRootDirectoryTo(currentPath, fileName);
-                configurationBuilder.AddEnvironmentVariables();
-#elif NET45
-                // NET45 specific setup for builder
-#else
-                // Not sure if there is a default case that isnt covered?
-#endif
+                //#if NETSTANDARD
+                //                string fileName = "luceneTestSettings.json";
+                //                configurationBuilder.AddJsonFilesFromRootDirectoryTo(currentPath, fileName);
+                //                configurationBuilder.AddEnvironmentVariables();
+                //#elif NET45
+                //                // NET45 specific setup for builder
+                //#else
+                //                // Not sure if there is a default case that isnt covered?
+                //#endif
                 // Setup the factories
-                ConfigurationSettings.SetConfigurationFactory(
-                    new MicrosoftExtensionsConfigurationFactory(configurationBuilder));
+                //ConfigurationSettings.SetConfigurationFactory(
+                //    new MicrosoftExtensionsConfigurationFactory(configurationBuilder));
+                ConfigurationSettings.SetConfigurationFactory(ConfigurationFactory);
 
-                                // Setup the factories
+                // Setup the factories
                 Codec.SetCodecFactory(CodecFactory);
                 DocValuesFormat.SetDocValuesFormatFactory(DocValuesFormatFactory);
                 PostingsFormat.SetPostingsFormatFactory(PostingsFormatFactory);

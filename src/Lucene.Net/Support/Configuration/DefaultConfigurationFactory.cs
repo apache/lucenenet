@@ -13,8 +13,7 @@ namespace Lucene.Net.Configuration
         private readonly bool ignoreSecurityExceptionsOnRead;
         private bool initialized = false;
         protected object m_initializationLock = new object();
-        [CLSCompliant(false)]
-        protected IConfiguration configuration;
+        private IConfiguration configuration;
 
         public DefaultConfigurationFactory(bool ignoreSecurityExceptionsOnRead)
         {
@@ -36,7 +35,8 @@ namespace Lucene.Net.Configuration
         {
             return LazyInitializer.EnsureInitialized(ref this.configuration, ref this.initialized, ref this.m_initializationLock, () =>
             {
-                return Initialize();
+                this.configuration = Initialize();
+                return this.configuration;
             });
         }
 
@@ -46,8 +46,7 @@ namespace Lucene.Net.Configuration
         [CLSCompliant(false)]
         protected virtual IConfiguration Initialize()
         {
-            configuration = new DefaultConfiguration(this.ignoreSecurityExceptionsOnRead);
-            return configuration;
+            return new DefaultConfiguration(this.ignoreSecurityExceptionsOnRead);
         }
     }
 

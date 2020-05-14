@@ -136,16 +136,10 @@ namespace Lucene.Net.Util
             IConfiguration configuration = ConfigurationSettings.GetConfigurationFactory().CreateConfiguration();
             string setting = configuration[key];
 
-
-            //string setting = ConfigurationSettings.GetConfigFactory().GetSetting(key);
-
             return string.IsNullOrEmpty(setting)
                 ? defaultValue
                 : conversionFunction(setting);
         }
-
-
-        internal static bool ignoreSecurityExceptions = GetPropertyAsBoolean("lucene.ignoreSecurityExceptions", true);
 
         /// <summary>
         /// Creates, modifies, or deletes an environment variable stored in the current process.
@@ -155,16 +149,8 @@ namespace Lucene.Net.Util
         /// <exception cref="SecurityException">The caller does not have the required permission to perform this operation.</exception>
         public static void SetProperty(string key, string value)
         {
-            //Environment.SetEnvironmentVariable(key, value);
             IConfiguration configuration = ConfigurationSettings.GetConfigurationFactory().CreateConfiguration();
-            try
-            {
-                configuration[key] = value;
-            }
-            finally
-            {
-            }
-
+            configuration[key] = value;
         }
     }
 }

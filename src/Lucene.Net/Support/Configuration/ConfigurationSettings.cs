@@ -35,9 +35,7 @@ namespace Lucene.Net.Configuration
         [CLSCompliant(false)]
         public static void SetConfigurationFactory(IConfigurationFactory configurationFactory)
         {
-            if (configurationFactory == null)
-                throw new ArgumentNullException("configurationFactory");
-            ConfigurationSettings.configurationFactory = configurationFactory;
+            ConfigurationSettings.configurationFactory = configurationFactory ?? throw new ArgumentNullException(nameof(configurationFactory));
         }
 
         /// <summary>
