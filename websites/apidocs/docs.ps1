@@ -18,6 +18,9 @@
 # -----------------------------------------------------------------------------------
 
 param (
+    [Parameter(Mandatory)]
+    [string]
+    $LuceneNetVersion,
     [Parameter(Mandatory = $false)]
     [int]
     $ServeDocs = 1,
@@ -105,6 +108,14 @@ New-Item $PluginsFolder -type directory -force
 & $msbuild $pluginSln /target:LuceneDocsPlugins "/p:OutDir=$PluginsFolder"
 
 $DocFxJson = Join-Path -Path $ApiDocsFolder "docfx.json"
+
+# update the docjx.json file based
+$DocFxJsonContent = Get-Content $DocFxJson | ConvertFrom-Json
+$DocFxJsonContent.build.globalMetadata._appFooter = "Copyright © $((Get-Date).Year) Licensed to the Apache Software Foundation (ASF)"
+$DocFxJsonContent.build.globalMetadata._appTitle = "Apache Lucene.NET $LuceneNetVersion Documentation"
+$DocFxJsonContent.build.globalMetadata._gitContribute.branch = "docs/$LuceneNetVersion"
+$DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxJson
+
 $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\docfx.log"
 
 if ($?) { 

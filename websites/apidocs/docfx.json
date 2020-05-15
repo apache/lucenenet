@@ -6,13 +6,17 @@
           "files": [
             "Lucene.Net/Lucene.Net.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -21,13 +25,17 @@
           "files": [
             "Lucene.Net.Analysis.Common/Lucene.Net.Analysis.Common.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.Common",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -36,13 +44,17 @@
           "files": [
             "Lucene.Net.Analysis.Kuromoji/Lucene.Net.Analysis.Kuromoji.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.Kuromoji",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -51,13 +63,17 @@
           "files": [
             "Lucene.Net.Analysis.Morfologik/Lucene.Net.Analysis.Morfologik.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.Morfologik",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -66,13 +82,17 @@
           "files": [
             "Lucene.Net.Analysis.OpenNLP/Lucene.Net.Analysis.OpenNLP.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.OpenNLP",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -81,13 +101,17 @@
           "files": [
             "Lucene.Net.Analysis.Phonetic/Lucene.Net.Analysis.Phonetic.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.Phonetic",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -96,13 +120,17 @@
           "files": [
             "Lucene.Net.Analysis.SmartCn/Lucene.Net.Analysis.SmartCn.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.SmartCn",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -111,13 +139,17 @@
           "files": [
             "Lucene.Net.Analysis.Stempel/Lucene.Net.Analysis.Stempel.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Analysis.Stempel",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -126,28 +158,36 @@
           "files": [
             "Lucene.Net.Benchmark/Lucene.Net.Benchmark.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Benchmarks",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
-    },    
+    },
     {
       "src": [
         {
           "files": [
             "Lucene.Net.Classification/Lucene.Net.Classification.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Classification",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -156,13 +196,17 @@
           "files": [
             "Lucene.Net.Codecs/Lucene.Net.Codecs.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Codecs",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -171,13 +215,17 @@
           "files": [
             "Lucene.Net.Expressions/Lucene.Net.Expressions.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Expressions",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -186,13 +234,17 @@
           "files": [
             "Lucene.Net.Facet/Lucene.Net.Facet.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Facet",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -201,28 +253,36 @@
           "files": [
             "Lucene.Net.Grouping/Lucene.Net.Grouping.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
-      }
+        }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Grouping",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
-    },   
+    },
     {
       "src": [
         {
           "files": [
             "Lucene.Net.Highlighter/Lucene.Net.Highlighter.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Highlighter",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -231,13 +291,17 @@
           "files": [
             "Lucene.Net.ICU/Lucene.Net.ICU.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src/dotnet"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.ICU",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -246,13 +310,17 @@
           "files": [
             "Lucene.Net.Join/Lucene.Net.Join.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Join",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -261,28 +329,36 @@
           "files": [
             "Lucene.Net.Memory/Lucene.Net.Memory.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Memory",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
-    },    
+    },
     {
       "src": [
         {
           "files": [
-            "Lucene.Net.Misc/Lucene.Net.Misc.csproj"      
+            "Lucene.Net.Misc/Lucene.Net.Misc.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Misc",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -291,13 +367,17 @@
           "files": [
             "Lucene.Net.Queries/Lucene.Net.Queries.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Queries",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -306,13 +386,17 @@
           "files": [
             "Lucene.Net.QueryParser/Lucene.Net.QueryParser.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.QueryParser",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -321,13 +405,17 @@
           "files": [
             "Lucene.Net.Replicator/Lucene.Net.Replicator.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Replicator",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -336,13 +424,17 @@
           "files": [
             "Lucene.Net.Sandbox/Lucene.Net.Sandbox.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Sandbox",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -351,13 +443,17 @@
           "files": [
             "Lucene.Net.Spatial/Lucene.Net.Spatial.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Spatial",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -366,13 +462,17 @@
           "files": [
             "Lucene.Net.Suggest/Lucene.Net.Suggest.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Suggest",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -381,13 +481,16 @@
           "files": [
             "Lucene.Net.TestFramework/Lucene.Net.TestFramework.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.TestFramework",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     },
     {
@@ -396,13 +499,17 @@
           "files": [
             "Lucene.Net.Demo/Lucene.Net.Demo.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "**/Lucene.Net.Test*/**"
+          ],
           "src": "../../src"
         }
       ],
       "dest": "obj/docfx/api/Lucene.Net.Demo",
       "properties": {
-          "TargetFramework": "netstandard2.0"
+        "TargetFramework": "netstandard2.0"
       }
     }
   ],
@@ -413,7 +520,7 @@
           "Lucene.Net/overview.md",
           "Lucene.Net.Analysis.Common/overview.md",
           "Lucene.Net.Analysis.Morfologik/overview.md",
-          "Lucene.Net.Analysis.OpenNLP/overview.md",          
+          "Lucene.Net.Analysis.OpenNLP/overview.md",
           "Lucene.Net.Highlighter/overview.md",
           "Lucene.Net.Grouping/package.md",
           "Lucene.Net.QueryParser/overview.md",
@@ -425,22 +532,35 @@
         "dest": "api"
       },
       {
-        "files": ["**.yml","**.md"],
+        "files": [
+          "**.yml",
+          "**.md"
+        ],
         "src": "obj/docfx/api",
         "dest": "api"
       },
       {
-        "files": ["**.yml","**.md"],
+        "files": [
+          "**.yml",
+          "**.md"
+        ],
         "src": "api",
         "dest": "api"
       },
       {
-        "files": ["**.md", "**.yml"],
+        "files": [
+          "**.md",
+          "**.yml"
+        ],
         "src": "../../src/dotnet/tools/lucene-cli/docs",
         "dest": "cli"
       },
       {
-        "files": ["toc.yml", "*.md", "web.config"]
+        "files": [
+          "toc.yml",
+          "*.md",
+          "web.config"
+        ]
       }
     ],
     "resource": [
@@ -453,9 +573,9 @@
         ],
         "src": "../../branding"
       }
-    ],   
+    ],
     "globalMetadata": {
-      "_appTitle": "Apache Lucene.NET 4.8.0 Documentation",
+      "_appTitle": "Apache Lucene.NET 4.8.0-beta00008 Documentation",
       "_disableContribution": false,
       "_appFaviconPath": "logo/favicon.ico",
       "_enableSearch": true,
@@ -463,13 +583,16 @@
       "_appFooter": "Copyright © 2020 Licensed to the Apache Software Foundation (ASF)",
       "_gitContribute": {
         "repo": "https://github.com/apache/lucenenet",
-        "branch": "docs/4.8.0-beta00007",
+        "branch": "docs/4.8.0-beta00008",
         "apiSpecFolder": "websites/apidocs/apiSpec"
       }
     },
     "overwrite": [
       {
-        "files": ["**/package.md","**/overview.md"],
+        "files": [
+          "**/package.md",
+          "**/overview.md"
+        ],
         "src": "../../src",
         "exclude": [
           "Lucene.Net/overview.md",
@@ -489,7 +612,9 @@
         ]
       },
       {
-        "files": ["apiSpec/**/*.md"]
+        "files": [
+          "apiSpec/**/*.md"
+        ]
       }
     ],
     "dest": "_site",
