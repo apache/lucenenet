@@ -1,0 +1,4 @@
+# this is the git pattern ignore file for the project.
+# Git can be used with svn http://code.google.com/p/msysgit/
+
+tools/*
