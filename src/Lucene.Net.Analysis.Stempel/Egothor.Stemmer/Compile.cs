@@ -114,7 +114,7 @@ namespace Egothor.Stemmer
                 qq++;
             }
 
-            string charset = SystemProperties.GetProperty("egothor.stemmer.charset", "UTF-8");
+            string charset = SystemProperties.GetProperty("egothor:stemmer:charset", "UTF-8");
             var stemmerTables = new List<string>();
 
             // LUCENENET specific

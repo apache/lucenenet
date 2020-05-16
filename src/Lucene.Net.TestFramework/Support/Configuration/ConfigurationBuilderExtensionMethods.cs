@@ -45,7 +45,7 @@ namespace Lucene.Net.Configuration
         
 
         [CLSCompliant(false)]
-        public static IConfigurationBuilder AddNUnitTestRunSettings(this IConfigurationBuilder builder, string currentPath, string fileName)
+        public static IConfigurationBuilder AddNUnitTestRunSettings(this IConfigurationBuilder builder)
         {
             return builder.Add(new TestParameterConfigurationSource(NUnit.Framework.TestContext.Parameters));
         }

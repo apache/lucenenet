@@ -18,7 +18,7 @@
  under the License.
 
 -->
-<Project> 
+<Project>
   <PropertyGroup Label="NuGet Package Reference Versions">
     <Antlr3RuntimePackageVersion>3.5.1</Antlr3RuntimePackageVersion>
     <!-- LUCENENET TODO: When ICU4N is released to production,
@@ -46,7 +46,19 @@
     <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>3.4.0</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
     <MicrosoftCSharpPackageVersion>4.4.0</MicrosoftCSharpPackageVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>2.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
+
+    <MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1>1.1.2</MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1>
+    <MicrosoftExtensionsConfigurationJsonPackageVersion_NET4_5_1>$(MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1)</MicrosoftExtensionsConfigurationJsonPackageVersion_NET4_5_1>
+    <MicrosoftExtensionsConfigurationXmlPackageVersion_NET4_5_1>$(MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1)</MicrosoftExtensionsConfigurationXmlPackageVersion_NET4_5_1>
+    <MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion_NET4_5_1>$(MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1)</MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion_NET4_5_1>
+    <MicrosoftExtensionsConfigurationCommandLinePackageVersion_NET4_5_1>$(MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1)</MicrosoftExtensionsConfigurationCommandLinePackageVersion_NET4_5_1>
+
     <MicrosoftExtensionsConfigurationPackageVersion>3.1.3</MicrosoftExtensionsConfigurationPackageVersion>
+    <MicrosoftExtensionsConfigurationJsonPackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationJsonPackageVersion>
+    <MicrosoftExtensionsConfigurationXmlPackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationXmlPackageVersion>
+    <MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion>
+    <MicrosoftExtensionsConfigurationCommandLinePackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationCommandLinePackageVersion>
+
     <MicrosoftNETTestSdkPackageVersion>16.2.0</MicrosoftNETTestSdkPackageVersion>
     <MorfologikFsaPackageVersion>2.1.6-beta-0005</MorfologikFsaPackageVersion>
     <MorfologikPolishPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikPolishPackageVersion>

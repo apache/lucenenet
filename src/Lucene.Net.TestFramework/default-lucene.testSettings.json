@@ -9,7 +9,6 @@
         "codec": "random",
         "directory": "random",
         "docvaluesformat": "random",
-        "europarl:lines:txt:gz": "",
         "filterstacks": "true",
         "infostream": "$verbose}",
         "jvms": "auto",

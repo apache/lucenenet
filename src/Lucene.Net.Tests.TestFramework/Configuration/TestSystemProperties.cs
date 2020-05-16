@@ -43,7 +43,6 @@ namespace Lucene.Net.Configuration
         [Test]
         public virtual void TestTimezone()
         {
-            Assert.AreEqual("SE Asia Standard Time", Lucene.Net.Util.SystemProperties.GetProperty("user.timezone"));
             Assert.AreEqual("SE Asia Standard Time", Lucene.Net.Util.SystemProperties.GetProperty("user:timezone"));
             Assert.Pass();
         }

@@ -89,7 +89,7 @@ namespace Lucene.Net.Configuration
             foreach (var p in providers)
             {
                 p.Load();
-                //ChangeToken.OnChange(() => p.GetReloadToken(), () => RaiseChanged());
+                ChangeToken.OnChange(() => p.GetReloadToken(), () => RaiseChanged());
             }
         }
 

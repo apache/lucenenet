@@ -17,7 +17,7 @@
         "leaveTemporary": null,
         "leavetmpdir": null,
         "linedocsfile": "",
-        "locale": "random",
+        "locale": "EN",
         "loggingfile": "${common:dir}/tools/junit4/logging.properties",
         "multiplier": "1",
         "nightly": "false",

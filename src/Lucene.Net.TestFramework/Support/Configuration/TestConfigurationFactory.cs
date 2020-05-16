@@ -90,7 +90,6 @@ namespace Lucene.Net.Configuration
 
         public string JsonTestSettingsFileName { get; set; } = "lucene.testsettings.json";
 
-
         [CLSCompliant(false)]
         public IConfigurationBuilder builder { get; }
 
@@ -125,7 +124,7 @@ namespace Lucene.Net.Configuration
                     .AddEnvironmentVariables(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings
                     .AddJsonFilesFromRootDirectoryTo(currentPath: key, JsonTestSettingsFileName)
 #if TESTFRAMEWORK_NUNIT
-                    .AddNUnitTestRunSettings("", "")
+                    .AddNUnitTestRunSettings()
 #endif
                     .Build();
             });

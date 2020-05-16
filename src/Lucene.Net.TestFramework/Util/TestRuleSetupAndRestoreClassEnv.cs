@@ -287,7 +287,7 @@ namespace Lucene.Net.Util
 
             // TimeZone.getDefault will set user.timezone to the default timezone of the user's locale.
             // So store the original property value and restore it at end.
-            restoreProperties["user.timezone"] = SystemProperties.GetProperty("user.timezone");
+            restoreProperties["user:timezone"] = SystemProperties.GetProperty("user:timezone");
             savedTimeZone = TimeZoneInfo.Local;
             TimeZoneInfo randomTimeZone = LuceneTestCase.RandomTimeZone(random);
             timeZone = testTimeZone.Equals("random", StringComparison.Ordinal) ? randomTimeZone : TimeZoneInfo.FindSystemTimeZoneById(testTimeZone);
