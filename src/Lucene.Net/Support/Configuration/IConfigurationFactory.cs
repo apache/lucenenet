@@ -21,10 +21,6 @@ namespace Lucene.Net.Configuration
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    public interface IConfigurationSettingsFactory
-    {
-        string GetSetting(string key);
-    }
     [CLSCompliant(false)]
     public interface IConfigurationFactory
     {

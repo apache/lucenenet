@@ -42,9 +42,16 @@ namespace Lucene.Net.Configuration
             }
             return sourceList;
         }
+        
 
         [CLSCompliant(false)]
-        public static void AddJsonFilesFromRootDirectoryTo(this IConfigurationBuilder builder, string currentPath, string fileName)
+        public static IConfigurationBuilder AddNUnitTestRunSettings(this IConfigurationBuilder builder, string currentPath, string fileName)
+        {
+            return builder.Add(new TestParameterConfigurationSource(NUnit.Framework.TestContext.Parameters));
+        }
+
+        [CLSCompliant(false)]
+        public static IConfigurationBuilder AddJsonFilesFromRootDirectoryTo(this IConfigurationBuilder builder, string currentPath, string fileName)
         {
             Stack<string> locations = ScanConfigurationFiles(currentPath, fileName);
 
@@ -52,23 +59,19 @@ namespace Lucene.Net.Configuration
             {
                 builder.AddJsonFile(locations.Pop(), optional: true, reloadOnChange: true);
             }
+            return builder;
         }
 
         [CLSCompliant(false)]
-        public static void AddXmlFilesFromRootDirectoryTo(this IConfigurationBuilder builder, string currentPath, string fileName)
+        public static IConfigurationBuilder AddXmlFilesFromRootDirectoryTo(this IConfigurationBuilder builder, string currentPath, string fileName)
         {
             Stack<string> locations = ScanConfigurationFiles(currentPath, fileName);
 
-#if NETSTANDARD
             while (locations.Count != 0)
             {
                 builder.AddXmlFile(locations.Pop(), optional: true, reloadOnChange: true);
             }
-#elif NET45
-                // NET45 specific setup for builder
-#else
-                // Not sure if there is a default case that isnt covered?
-#endif
+            return builder;
         }
 
 

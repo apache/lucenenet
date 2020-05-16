@@ -20,15 +20,17 @@ namespace Lucene.Net.Configuration
         [OneTimeSetUp]
         public override void BeforeClass()
         {
-            ConfigurationFactory = new TestConfigurationFactory(TestBaseDirectory, TestSettingsFileNameJson, TestSettingsFileNameXml);
+            ConfigurationFactory = new TestConfigurationFactory();
             base.BeforeClass();
         }
         [Test]
         public virtual void EnvironmentTest2()
         {
-            Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty("windir"), "C:\\WINDOWS");
+            string testKey = "lucene:tests:setting";
+            string testValue = "test.success";
+            Lucene.Net.Util.SystemProperties.SetProperty(testKey, testValue);
+            Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty(testKey), testValue);
             Assert.Pass();
-
         }
         [Test]
         public virtual void SetTest()
@@ -47,17 +49,9 @@ namespace Lucene.Net.Configuration
         }
 
         [Test]
-        public virtual void DirectoryScanTest()
+        public virtual void TestDefaults()
         {
-            Assert.AreEqual("Lucene.Net.Tests.TestFramework", Lucene.Net.Util.SystemProperties.GetProperty("tests:project"));
-            Assert.AreEqual("Lucene.Net.TestFramework", Lucene.Net.Util.SystemProperties.GetProperty("tests:parent"));
-            Assert.Pass();
-        }
-
-        [Test]
-        public virtual void DirectoryCrawlTest()
-        {
-            Assert.AreEqual(6, ((TestConfigurationFactory)ConfigurationFactory).builder.Sources.Count);
+            Assert.AreEqual("perMethod", Lucene.Net.Util.SystemProperties.GetProperty("tests:cleanthreads:sysprop"));
             Assert.Pass();
         }
 

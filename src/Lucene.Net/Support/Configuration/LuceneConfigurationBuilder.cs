@@ -119,8 +119,18 @@ namespace Lucene.Net.Configuration
 
                 return null;
             }
+            set
+            {
+                if (!_providers.Any())
+                {
+                    throw new InvalidOperationException();
+                }
 
-            set => throw new NotImplementedException();
+                foreach (var provider in _providers)
+                {
+                    provider.Set(key, value);
+                }
+            }
         }
 
         /// <summary>

@@ -62,6 +62,7 @@
 using Lucene.Net.Configuration;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Configuration
@@ -85,30 +86,58 @@ namespace Lucene.Net.Configuration
 
     public class TestConfigurationFactory : DefaultConfigurationFactory
     {
+        private readonly ConcurrentDictionary<string, IConfiguration> configurationCache = new ConcurrentDictionary<string, IConfiguration>();
+
+        public string JsonTestSettingsFileName { get; set; } = "lucene.testsettings.json";
+
+
         [CLSCompliant(false)]
         public IConfigurationBuilder builder { get; }
 
         [CLSCompliant(false)]
-        public TestConfigurationFactory(string currentPath = "", string defaultJsonConfigurationFilename = "luceneTestSettings.json", string defaultXmlConfigurationFilename = "luceneTestSettings.xml") : base(false)
+        public TestConfigurationFactory() : base(false)
+        {
+
+            //configurationBuilder.AddEnvironmentVariables();
+            //configurationBuilder.AddXmlFilesFromRootDirectoryTo(currentPath, defaultXmlConfigurationFilename);
+            //configurationBuilder.AddJsonFilesFromRootDirectoryTo(currentPath, defaultJsonConfigurationFilename);
+            //configurationBuilder.Add(new TestParameterConfigurationSource(NUnit.Framework.TestContext.Parameters));
+
+            //this.builder = configurationBuilder;
+        }
+        [CLSCompliant(false)]
+        public override IConfiguration CreateConfiguration()
         {
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
 
-            configurationBuilder.AddEnvironmentVariables();
-            configurationBuilder.AddXmlFilesFromRootDirectoryTo(currentPath, defaultXmlConfigurationFilename);
-            configurationBuilder.AddJsonFilesFromRootDirectoryTo(currentPath, defaultJsonConfigurationFilename);
-            configurationBuilder.Add(new TestParameterConfigurationSource(NUnit.Framework.TestContext.Parameters));
+            string testDirectory =
+#if TESTFRAMEWORK_NUNIT
+                NUnit.Framework.TestContext.CurrentContext.TestDirectory;
+#elif NETSTANDARD
+                System.AppContext.BaseDirectory;
+#else
+                AppDomain.CurrentDomain.BaseDirectory;
+#endif
 
-            this.builder = configurationBuilder;
+            return configurationCache.GetOrAdd(testDirectory, (key) =>
+            {
+                return new ConfigurationBuilder()
+                    .AddEnvironmentVariables(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings
+                    .AddJsonFilesFromRootDirectoryTo(currentPath: key, JsonTestSettingsFileName)
+#if TESTFRAMEWORK_NUNIT
+                    .AddNUnitTestRunSettings("", "")
+#endif
+                    .Build();
+            });
         }
-
-        /// <summary>
-        /// Initializes the dependencies of this factory.
-        /// </summary>
-        [CLSCompliant(false)]
-        protected override IConfiguration Initialize()
-        {
-            return builder.Build();
+            ///// <summary>
+            ///// Initializes the dependencies of this factory.
+            ///// </summary>
+            //[CLSCompliant(false)]
+            //protected override IConfiguration Initialize()
+            //{
+            //    return builder.Build();
+            //}
         }
-    }
 
 }

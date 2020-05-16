@@ -699,18 +699,9 @@ namespace Lucene.Net.Util
         [CLSCompliant(false)]
         protected IConfigurationBuilder configurationBuilder;
 
-        public static string TestSettingsFileNameJson = "luceneTestSettings.json";
-        public static string TestSettingsFileNameXml = "luceneTestSettings.xml";
-
-#if NETSTANDARD
-        public static string TestBaseDirectory = System.AppContext.BaseDirectory;
-#else
-        public static string TestBaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-#endif
-
         [CLSCompliant(false)]
-        //public static IConfigurationFactory ConfigurationFactory { get; set; } = new TestConfigurationFactory(TestBaseDirectory, TestSettingsFileNameJson, TestSettingsFileNameXml);
-        public static IConfigurationFactory ConfigurationFactory { get; set; } = new DefaultConfigurationFactory(false);
+        public static IConfigurationFactory ConfigurationFactory { get; set; } = new TestConfigurationFactory();
+        //public static IConfigurationFactory ConfigurationFactory { get; set; } = new DefaultConfigurationFactory(false);
 
         //public static IConfigurationBuilder ConfigurationBuilder { get; set; } = new LuceneConfigurationBuilder().Add(new LuceneConfigurationSource());
 #if TESTFRAMEWORK_MSTEST
@@ -787,29 +778,8 @@ namespace Lucene.Net.Util
         {
             try
             {
-
-                //#if NETSTANDARD
-                //                string currentPath = System.AppContext.BaseDirectory;
-                //#else
-                //                string currentPath = AppDomain.CurrentDomain.BaseDirectory;
-                //#endif
-
-                //                configurationBuilder = new ConfigurationBuilder();
-
-                //#if NETSTANDARD
-                //                string fileName = "luceneTestSettings.json";
-                //                configurationBuilder.AddJsonFilesFromRootDirectoryTo(currentPath, fileName);
-                //                configurationBuilder.AddEnvironmentVariables();
-                //#elif NET45
-                //                // NET45 specific setup for builder
-                //#else
-                //                // Not sure if there is a default case that isnt covered?
-                //#endif
                 // Setup the factories
                 ConfigurationSettings.SetConfigurationFactory(ConfigurationFactory);
-
-                //IConfigurationBuilder configurationBuilder = new ConfigurationBuilder().Add(new TestParameterConfigurationSource(NUnit.Framework.TestContext.Parameters));
-                //ConfigurationSettings.SetConfiguration(configurationBuilder);
                 // Setup the factories
                 Codec.SetCodecFactory(CodecFactory);
                 DocValuesFormat.SetDocValuesFormatFactory(DocValuesFormatFactory);

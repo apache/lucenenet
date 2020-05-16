@@ -19,7 +19,7 @@ namespace Lucene.Net.Configuration
         public DefaultConfigurationFactory(bool ignoreSecurityExceptionsOnRead)
         {
             this.builder = new LuceneConfigurationBuilder();
-            builder.Add(new LuceneConfigurationSource());
+            builder.Add(new LuceneConfigurationSource() { Prefix = "lucene:" });
             this.ignoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead;
         }
 

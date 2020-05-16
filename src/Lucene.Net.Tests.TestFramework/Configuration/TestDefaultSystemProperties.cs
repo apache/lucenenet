@@ -18,11 +18,14 @@ namespace Lucene.Net.Configuration
             base.BeforeClass();
         }
         [Test]
-        public virtual void EnvironmentTest2()
+        public virtual void SetEnvironmentTest()
         {
-            Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty("windir"), "C:\\WINDOWS");
+            string testKey  = "lucene:tests:setting";
+            string testValue = "test.success";
+            Lucene.Net.Util.SystemProperties.SetProperty(testKey, testValue);
+            Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty(testKey), testValue);
             Assert.Pass();
-
         }
+
     }
 }
