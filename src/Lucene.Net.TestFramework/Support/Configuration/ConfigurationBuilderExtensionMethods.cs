@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
+using Microsoft.Extensions.Configuration.Xml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,26 +13,51 @@ namespace Lucene.Net.Configuration
     public static class ConfigurationBuilderExtensions
     {
         [CLSCompliant(false)]
+        public static List<IConfigurationSource> AddMicrosoftExtensionsConfigurationSource(this List<IConfigurationSource> sourceList , string TestBaseDirectory, string TestSettingsFileNameJson, string TestSettingsFileNameXml)
+        {
+            sourceList.Add(new TestParameterConfigurationSource(NUnit.Framework.TestContext.Parameters));
+
+            Stack<string> locations = ScanConfigurationFiles(TestBaseDirectory, TestSettingsFileNameJson);
+
+            while (locations.Count != 0)
+            {
+                sourceList.Add(new JsonConfigurationSource()
+                {
+                    Path = locations.Pop(),
+                    Optional = true,
+                    ReloadOnChange = true
+                });
+            }
+
+            locations = ScanConfigurationFiles(TestBaseDirectory, TestSettingsFileNameXml);
+
+            while (locations.Count != 0)
+            {
+                sourceList.Add(new XmlConfigurationSource()
+                {
+                    Path = locations.Pop(),
+                    Optional = true,
+                    ReloadOnChange = true
+                });
+            }
+            return sourceList;
+        }
+
+        [CLSCompliant(false)]
         public static void AddJsonFilesFromRootDirectoryTo(this IConfigurationBuilder builder, string currentPath, string fileName)
         {
-            Stack<string> locations = builder.ScanConfigurationFiles(currentPath, fileName);
+            Stack<string> locations = ScanConfigurationFiles(currentPath, fileName);
 
-#if NETSTANDARD
             while (locations.Count != 0)
             {
                 builder.AddJsonFile(locations.Pop(), optional: true, reloadOnChange: true);
             }
-#elif NET45
-                // NET45 specific setup for builder
-#else
-                // Not sure if there is a default case that isnt covered?
-#endif
         }
 
         [CLSCompliant(false)]
         public static void AddXmlFilesFromRootDirectoryTo(this IConfigurationBuilder builder, string currentPath, string fileName)
         {
-            Stack<string> locations = builder.ScanConfigurationFiles(currentPath, fileName);
+            Stack<string> locations = ScanConfigurationFiles(currentPath, fileName);
 
 #if NETSTANDARD
             while (locations.Count != 0)
@@ -44,7 +71,30 @@ namespace Lucene.Net.Configuration
 #endif
         }
 
-        private static Stack<string> ScanConfigurationFiles(this IConfigurationBuilder builder, string currentPath, string fileName)
+
+        private static string FindParent(string currentPath, string fileName)
+        {
+            string candidatePath = System.IO.Path.Combine(currentPath, fileName);
+            try
+            {
+                while (new DirectoryInfo(currentPath).Parent != null)
+                {
+                    candidatePath = System.IO.Path.Combine(new DirectoryInfo(currentPath).Parent.FullName, fileName);
+                    if (File.Exists(candidatePath))
+                    {
+                        return candidatePath;
+                    }
+                    currentPath = new DirectoryInfo(currentPath).Parent.FullName;
+                }
+            }
+            catch (SecurityException)
+            {
+                // ignore security errors
+            }
+            return null;
+        }
+
+        private static Stack<string> ScanConfigurationFiles(string currentPath, string fileName)
         {
             Stack<string> locations = new Stack<string>();
 

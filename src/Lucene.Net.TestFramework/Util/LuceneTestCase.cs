@@ -35,6 +35,7 @@ using static Lucene.Net.Util.FieldCacheSanityChecker;
 using J2N.Collections.Generic.Extensions;
 using Microsoft.Extensions.Configuration;
 using Lucene.Net.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 
 #if TESTFRAMEWORK_MSTEST
 using Before = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
@@ -700,22 +701,18 @@ namespace Lucene.Net.Util
 
         public static string TestSettingsFileNameJson = "luceneTestSettings.json";
         public static string TestSettingsFileNameXml = "luceneTestSettings.xml";
-        public static string[] TestSettingsCommandLineArgs = null;
-        [CLSCompliant(false)]
-        public static IConfigurationFactory ConfigurationFactory { get; set; } = new MicrosoftExtensionsConfigurationFactory(TestSettingsCommandLineArgs, TestSettingsFileNameJson, TestSettingsFileNameXml);
-#if NETSTANDARD
 
-#elif NET45
-        //[CLSCompliant(false)]
-                
-        //public static IConfigurationFactory ConfigurationFactory { get; set; } = new DefaultConfigurationFactory(false);
+#if NETSTANDARD
+        public static string TestBaseDirectory = System.AppContext.BaseDirectory;
 #else
-                // Not sure if there is a default case that isnt covered?
-        //[CLSCompliant(false)]
-                
-        //public static IConfigurationFactory ConfigurationFactory { get; set; } = new DefaultConfigurationFactory(false);
+        public static string TestBaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 #endif
 
+        [CLSCompliant(false)]
+        //public static IConfigurationFactory ConfigurationFactory { get; set; } = new TestConfigurationFactory(TestBaseDirectory, TestSettingsFileNameJson, TestSettingsFileNameXml);
+        public static IConfigurationFactory ConfigurationFactory { get; set; } = new DefaultConfigurationFactory(false);
+
+        //public static IConfigurationBuilder ConfigurationBuilder { get; set; } = new LuceneConfigurationBuilder().Add(new LuceneConfigurationSource());
 #if TESTFRAMEWORK_MSTEST
         private static readonly IList<string> initalizationLock = new List<string>();
         private static string _testClassName = string.Empty;
@@ -809,10 +806,10 @@ namespace Lucene.Net.Util
                 //                // Not sure if there is a default case that isnt covered?
                 //#endif
                 // Setup the factories
-                //ConfigurationSettings.SetConfigurationFactory(
-                //    new MicrosoftExtensionsConfigurationFactory(configurationBuilder));
                 ConfigurationSettings.SetConfigurationFactory(ConfigurationFactory);
 
+                //IConfigurationBuilder configurationBuilder = new ConfigurationBuilder().Add(new TestParameterConfigurationSource(NUnit.Framework.TestContext.Parameters));
+                //ConfigurationSettings.SetConfiguration(configurationBuilder);
                 // Setup the factories
                 Codec.SetCodecFactory(CodecFactory);
                 DocValuesFormat.SetDocValuesFormatFactory(DocValuesFormatFactory);

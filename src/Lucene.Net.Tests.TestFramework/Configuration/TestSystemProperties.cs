@@ -16,6 +16,13 @@ namespace Lucene.Net.Configuration
     [TestFixture]
     class TestSystemProperties : LuceneTestCase
     {
+
+        [OneTimeSetUp]
+        public override void BeforeClass()
+        {
+            ConfigurationFactory = new TestConfigurationFactory(TestBaseDirectory, TestSettingsFileNameJson, TestSettingsFileNameXml);
+            base.BeforeClass();
+        }
         [Test]
         public virtual void EnvironmentTest2()
         {
@@ -50,18 +57,33 @@ namespace Lucene.Net.Configuration
         [Test]
         public virtual void DirectoryCrawlTest()
         {
-            Assert.AreEqual(4, ((MicrosoftExtensionsConfigurationFactory)ConfigurationFactory).builder.Sources.Count);
+            Assert.AreEqual(6, ((TestConfigurationFactory)ConfigurationFactory).builder.Sources.Count);
             Assert.Pass();
         }
 
         [Test]
         public virtual void TestHashCodeReadProperty()
         {
+            
             Assert.AreEqual(0xf6a5c420, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("foo"), 0));
+
+            Assert.AreEqual(16, StringHelper.GOOD_FAST_HASH_SEED);
             // Hashes computed using murmur3_32 from https://code.google.com/p/pyfasthash
             Assert.AreEqual(0xcd018ef6, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("foo"), StringHelper.GOOD_FAST_HASH_SEED));
         }
-
+        [Ignore("not working")]
+        [Test]
+        public virtual void TestXMLConfiguration()
+        {
+            
+            Assert.AreEqual("Title from  MyXMLFile", Lucene.Net.Util.SystemProperties.GetProperty("Position:Title"));
+            Assert.AreEqual("0x00000010", Lucene.Net.Util.SystemProperties.GetProperty("xmlseed"));
+        }
+        [Test]
+        public virtual void TestRunsettingsConfiguration()
+        {
+            Assert.AreEqual("localhost-runsettings", Lucene.Net.Util.SystemProperties.GetProperty("cli"));
+        }
 
     }
 }

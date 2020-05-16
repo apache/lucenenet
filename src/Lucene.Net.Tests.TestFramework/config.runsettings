@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <!-- Parameters used by tests at runtime -->
+  <TestRunParameters>
+    <Parameter name="cli" value="localhost-runsettings" />
+    <Parameter name="lucene.version" value="4.8.3" />
+
+    <Parameter name="tests:locale" value="fr-FR" />
+    <Parameter name="tests:timezone" value="SE Asia Standard Time" />
+    <Parameter name="user.timezone" value="SE Asia Standard Time" />
+    <Parameter name="user:timezone" value="SE Asia Standard Time" />
+    <Parameter name="tests:runseed" value="0x00000010" />
+
+  </TestRunParameters>
+</RunSettings>

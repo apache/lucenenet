@@ -47,5 +47,32 @@ namespace Lucene.Net.Configuration
         {
             return configurationFactory;
         }
+        /*
+         ********
+         * Set IConfigurationBuilder directly instead of going via a factory
+         * 
+        
+        private static IConfigurationBuilder configurationBuilder { get; set; } = new LuceneConfigurationBuilder().Add(new LuceneConfigurationSource());
+        /// <summary>
+        /// Sets the <see cref="IConfigurationFactory"/> instance used to instantiate
+        /// <see cref="ConfigurationSettings"/> subclasses.
+        /// </summary>
+        /// <param name="configurationFactory">The new <see cref="IConfigurationFactory"/>.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="configurationFactory"/> parameter is <c>null</c>.</exception>
+        [CLSCompliant(false)]
+        public static void SetConfiguration(IConfigurationBuilder configurationBuilder)
+        {
+            ConfigurationSettings.configurationBuilder = configurationBuilder ?? throw new ArgumentNullException(nameof(configurationBuilder));
+        }
+        /// <summary>
+        /// Gets the associated ConfigurationSettings factory.
+        /// </summary>
+        /// <returns>The ConfigurationSettings factory.</returns>
+        [CLSCompliant(false)]
+        public static IConfigurationRoot GetConfiguration()
+        {
+            return configurationBuilder.Build();
+        }
+        */
     }
 }

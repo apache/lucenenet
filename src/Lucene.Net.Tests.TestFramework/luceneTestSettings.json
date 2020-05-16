@@ -7,7 +7,8 @@
     "tests": {
         "project": "Lucene.Net.Tests.TestFramework",
         "parent": "Lucene.Net.TestFramework",
-        "locale" :  "fr-FR"
+        "locale": "fr-FR",
+        "seed" :  "0x00000010"
     },
     "tests.nightly": "tests.nightly"
 }

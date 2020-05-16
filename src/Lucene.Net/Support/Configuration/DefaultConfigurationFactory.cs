@@ -13,10 +13,13 @@ namespace Lucene.Net.Configuration
         private readonly bool ignoreSecurityExceptionsOnRead;
         private bool initialized = false;
         protected object m_initializationLock = new object();
+        private IConfigurationBuilder builder { get; }
         private IConfiguration configuration;
 
         public DefaultConfigurationFactory(bool ignoreSecurityExceptionsOnRead)
         {
+            this.builder = new LuceneConfigurationBuilder();
+            builder.Add(new LuceneConfigurationSource());
             this.ignoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead;
         }
 
@@ -46,56 +49,56 @@ namespace Lucene.Net.Configuration
         [CLSCompliant(false)]
         protected virtual IConfiguration Initialize()
         {
-            return new DefaultConfiguration(this.ignoreSecurityExceptionsOnRead);
+            return builder.Build();
         }
     }
 
-    internal class DefaultConfiguration : IConfiguration
-    {
-        private readonly bool ignoreSecurityExceptionsOnRead;
+    //internal class DefaultConfiguration : IConfiguration
+    //{
+    //    private readonly bool ignoreSecurityExceptionsOnRead;
 
-        public DefaultConfiguration(bool ignoreSecurityExceptionsOnRead)
-        {
-            this.ignoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead;
-        }
+    //    public DefaultConfiguration(bool ignoreSecurityExceptionsOnRead)
+    //    {
+    //        this.ignoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead;
+    //    }
 
-        public string this[string key]
-        {
-            get
-            {
-                if (ignoreSecurityExceptionsOnRead)
-                {
-                    try
-                    {
-                        return Environment.GetEnvironmentVariable(key);
-                    }
-                    catch (SecurityException)
-                    {
-                        return null;
-                    }
-                }
-                else
-                {
-                    return Environment.GetEnvironmentVariable(key);
-                }
-            }
-            set => Environment.SetEnvironmentVariable(key, value);
-        }
+    //    public string this[string key]
+    //    {
+    //        get
+    //        {
+    //            if (ignoreSecurityExceptionsOnRead)
+    //            {
+    //                try
+    //                {
+    //                    return Environment.GetEnvironmentVariable(key);
+    //                }
+    //                catch (SecurityException)
+    //                {
+    //                    return null;
+    //                }
+    //            }
+    //            else
+    //            {
+    //                return Environment.GetEnvironmentVariable(key);
+    //            }
+    //        }
+    //        set => Environment.SetEnvironmentVariable(key, value);
+    //    }
 
-        public IEnumerable<IConfigurationSection> GetChildren()
-        {
-            throw new NotImplementedException();
-        }
+    //    public IEnumerable<IConfigurationSection> GetChildren()
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
-        public IChangeToken GetReloadToken()
-        {
-            throw new NotImplementedException();
-        }
+    //    public IChangeToken GetReloadToken()
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
-        public IConfigurationSection GetSection(string key)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    public IConfigurationSection GetSection(string key)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 
 }
