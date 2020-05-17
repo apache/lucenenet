@@ -11,12 +11,12 @@ namespace Lucene.Net.Configuration
     [TestFixture]
     class TestDefaultSystemProperties : LuceneTestCase
     {
-        [OneTimeSetUp]
-        public override void BeforeClass()
-        {
-            ConfigurationFactory = new DefaultConfigurationFactory(false);
-            base.BeforeClass();
-        }
+        //[OneTimeSetUp]
+        //public override void BeforeClass()
+        //{
+        //    //ConfigurationFactory = new DefaultConfigurationFactory(false);
+        //    //base.BeforeClass();
+        //}
         [Test]
         public virtual void SetEnvironmentTest()
         {

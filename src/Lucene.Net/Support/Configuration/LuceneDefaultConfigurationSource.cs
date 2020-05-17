@@ -8,7 +8,7 @@ namespace Lucene.Net.Configuration
     /// <summary>
     /// Represents environment variables as an <see cref="IConfigurationSource"/>.
     /// </summary>
-    public class LuceneConfigurationSource : IConfigurationSource
+    internal class LuceneDefaultConfigurationSource : IConfigurationSource
     {
         /// <summary>
         /// A prefix used to filter environment variables.
@@ -16,13 +16,13 @@ namespace Lucene.Net.Configuration
         public string Prefix { get; set; }
 
         /// <summary>
-        /// Builds the <see cref="LuceneConfigurationProvider"/> for this source.
+        /// Builds the <see cref="LuceneDefaultConfigurationProvider"/> for this source.
         /// </summary>
         /// <param name="builder">The <see cref="IConfigurationBuilder"/>.</param>
-        /// <returns>A <see cref="LuceneConfigurationProvider"/></returns>
+        /// <returns>A <see cref="LuceneDefaultConfigurationProvider"/></returns>
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            return new LuceneConfigurationProvider(Prefix);
+            return new LuceneDefaultConfigurationProvider(Prefix);
         }
     }
 }

@@ -14,8 +14,10 @@ namespace Lucene.Net.Configuration
     /// <summary>
     /// An environment variable based <see cref="ConfigurationProvider"/>.
     /// </summary>
-    public class LuceneConfigurationProvider : IConfigurationProvider
+    internal class LuceneDefaultConfigurationProvider : IConfigurationProvider
     {
+        private readonly bool ignoreSecurityExceptionsOnRead;
+
         private const string MySqlServerPrefix = "MYSQLCONNSTR_";
         private const string SqlAzureServerPrefix = "SQLAZURECONNSTR_";
         private const string SqlServerPrefix = "SQLCONNSTR_";
@@ -29,16 +31,17 @@ namespace Lucene.Net.Configuration
         /// <summary>
         /// Initializes a new instance.
         /// </summary>
-        public LuceneConfigurationProvider() : this(string.Empty)
+        public LuceneDefaultConfigurationProvider() : this(string.Empty)
         { }
 
         /// <summary>
         /// Initializes a new instance with the specified prefix.
         /// </summary>
         /// <param name="prefix">A prefix used to filter the environment variables.</param>
-        public LuceneConfigurationProvider(string prefix)
+        public LuceneDefaultConfigurationProvider(string prefix, bool ignoreSecurityExceptionsOnRead = false)
         {
             _prefix = prefix ?? string.Empty;
+            this.ignoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead;
         }
 
         /// <summary>
@@ -53,6 +56,21 @@ namespace Lucene.Net.Configuration
         {
             Data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
+            //if (ignoreSecurityExceptionsOnRead)
+            //{
+            //    try
+            //    {
+            //        return Environment.GetEnvironmentVariable(key);
+            //    }
+            //    catch (SecurityException)
+            //    {
+            //        return null;
+            //    }
+            //}
+            //else
+            //{
+            //    return Environment.GetEnvironmentVariable(key);
+            //}
             var filteredEnvVariables = envVariables
                 .Cast<DictionaryEntry>()
                 .SelectMany(AzureEnvToAppEnv)
@@ -172,36 +190,5 @@ namespace Lucene.Net.Configuration
         {
             return _reloadToken;
         }
-    }
-    /// <summary>
-    /// Implements <see cref="IChangeToken"/>
-    /// </summary>
-    public class ConfigurationReloadToken : IChangeToken
-    {
-        private CancellationTokenSource _cts = new CancellationTokenSource();
-
-        /// <summary>
-        /// Indicates if this token will proactively raise callbacks. Callbacks are still guaranteed to be invoked, eventually.
-        /// </summary>
-        public bool ActiveChangeCallbacks => true;
-
-        /// <summary>
-        /// Gets a value that indicates if a change has occurred.
-        /// </summary>
-        public bool HasChanged => _cts.IsCancellationRequested;
-
-        /// <summary>
-        /// Registers for a callback that will be invoked when the entry has changed. <see cref="Microsoft.Extensions.Primitives.IChangeToken.HasChanged"/>
-        /// MUST be set before the callback is invoked.
-        /// </summary>
-        /// <param name="callback">The callback to invoke.</param>
-        /// <param name="state">State to be passed into the callback.</param>
-        /// <returns></returns>
-        public IDisposable RegisterChangeCallback(Action<object> callback, object state) => _cts.Token.Register(callback, state);
-
-        /// <summary>
-        /// Used to trigger the change token when a reload occurs.
-        /// </summary>
-        public void OnReload() => _cts.Cancel();
     }
 }

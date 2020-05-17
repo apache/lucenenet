@@ -72,11 +72,23 @@ namespace Lucene.Net.Configuration
             Assert.AreEqual("Title from  MyXMLFile", Lucene.Net.Util.SystemProperties.GetProperty("Position:Title"));
             Assert.AreEqual("0x00000010", Lucene.Net.Util.SystemProperties.GetProperty("xmlseed"));
         }
-        [Test]
-        public virtual void TestRunsettingsConfiguration()
-        {
-            Assert.AreEqual("localhost-runsettings", Lucene.Net.Util.SystemProperties.GetProperty("cli"));
-        }
 
+        [Test]
+        public virtual void TestCommandLineProperty()
+        {
+            TestContext.Progress.WriteLine("TestContext.Parameters ({0})", TestContext.Parameters.Count);
+            foreach (var x in TestContext.Parameters.Names)
+                TestContext.Progress.WriteLine(string.Format("{0}={1}", x, TestContext.Parameters[x]));
+
+        }
+        [Test]
+        public virtual void TestCachedConfigProperty()
+        {
+            Assert.AreEqual("0x00000020", Lucene.Net.Util.SystemProperties.GetProperty("tests:seed"));
+            //Assert.AreEqual(0xf6a5c420, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("foo"), 0));
+            //Assert.AreEqual(16, Lucene.Net.Util.SystemProperties.GetProperty("test.seed"));
+            //// Hashes computed using murmur3_32 from https://code.google.com/p/pyfasthash
+            //Assert.AreEqual(0xcd018ef6, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("foo"), StringHelper.GOOD_FAST_HASH_SEED));
+        }
     }
 }

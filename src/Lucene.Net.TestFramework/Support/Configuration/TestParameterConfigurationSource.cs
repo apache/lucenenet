@@ -1,26 +1,29 @@
-﻿
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.CommandLine;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 
 namespace Lucene.Net.Configuration
 {
-    class TestParameterConfigurationSource
-        : CommandLineConfigurationSource, IConfigurationSource
-
+    /// <summary>
+    /// Represents environment variables as an <see cref="IConfigurationSource"/>.
+    /// </summary>
+    internal class TestParameterConfigurationSource : IConfigurationSource
     {
-        public TestParameterConfigurationSource(TestParameters testParameters)
+        /// <summary>
+        /// A prefix used to filter environment variables.
+        /// </summary>
+        public TestParameters TestParameters { get; set; }
+
+        /// <summary>
+        /// Builds the <see cref="TestParameterConfigurationProvider"/> for this source.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationBuilder"/>.</param>
+        /// <returns>A <see cref="TestParameterConfigurationProvider"/></returns>
+        public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            List<string> args1 = new List<string>();
-            foreach (string x in testParameters.Names)
-            {
-                args1.Add(string.Format("{0}={1}", x, testParameters[x]));
-            }
-            if (args1 != null)
-                Args = args1.ToArray();
+            return new TestParameterConfigurationProvider(TestParameters);
         }
     }
-    
 }

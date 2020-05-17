@@ -41,6 +41,9 @@
 
   <ItemGroup Label="NuGet Package Files">
     <None Include="$(LuceneNetCodeAnalysisDir)tools\*.ps1" Pack="true" PackagePath="tools" />
+    <Compile Remove="Support\NewFolder\**" />
+    <EmbeddedResource Remove="Support\NewFolder\**" />
+    <None Remove="Support\NewFolder\**" />
     <None Include="$(LuceneNetCodeAnalysisAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="$(LuceneNetCodeAnalysisAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/vb" Visible="false" />
   </ItemGroup>
@@ -51,12 +54,12 @@
     
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
     <PackageReference Include="Microsoft.CSharp" Version="$(MicrosoftCSharpPackageVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions"  Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="Microsoft.CSharp" Version="$(MicrosoftCSharpPackageVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions"  Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
   </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
@@ -72,13 +75,13 @@
     <PackageReference Include="System.Net.Sockets" Version="$(SystemNetSocketsPackageVersion)" />
     <PackageReference Include="System.Threading.Thread" Version="$(SystemThreadingThreadPackageVersion)" />
     <PackageReference Include="System.Threading.ThreadPool" Version="$(SystemThreadingThreadPoolPackageVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions"  Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion_NET4_5)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -136,10 +139,6 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests.Replicator" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Spatial" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Suggest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Support\NewFolder\" />
   </ItemGroup>
 
 </Project>

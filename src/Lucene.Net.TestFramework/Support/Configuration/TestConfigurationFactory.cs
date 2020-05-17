@@ -84,16 +84,14 @@ namespace Lucene.Net.Configuration
      * limitations under the License.
      */
 
-    public class TestConfigurationFactory : DefaultConfigurationFactory
+    internal class TestConfigurationFactory : DefaultConfigurationFactory
     {
         private readonly ConcurrentDictionary<string, IConfiguration> configurationCache = new ConcurrentDictionary<string, IConfiguration>();
 
         public string JsonTestSettingsFileName { get; set; } = "lucene.testsettings.json";
 
-        [CLSCompliant(false)]
         public IConfigurationBuilder builder { get; }
 
-        [CLSCompliant(false)]
         public TestConfigurationFactory() : base(false)
         {
 
@@ -104,7 +102,7 @@ namespace Lucene.Net.Configuration
 
             //this.builder = configurationBuilder;
         }
-        [CLSCompliant(false)]
+
         public override IConfiguration CreateConfiguration()
         {
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
@@ -121,7 +119,7 @@ namespace Lucene.Net.Configuration
             return configurationCache.GetOrAdd(testDirectory, (key) =>
             {
                 return new ConfigurationBuilder()
-                    .AddEnvironmentVariables(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings
+                    .AddLuceneDefaultSettings(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings
                     .AddJsonFilesFromRootDirectoryTo(currentPath: key, JsonTestSettingsFileName)
 #if TESTFRAMEWORK_NUNIT
                     .AddNUnitTestRunSettings()
