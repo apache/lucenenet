@@ -18,12 +18,19 @@ namespace Lucene.Net.Configuration
         //    //base.BeforeClass();
         //}
         [Test]
+        public virtual void ReadEnvironmentTest()
+        {
+            string testKey = "lucene:tests:setting";
+            string testValue = "test.success";
+            Assert.AreEqual(testValue, Lucene.Net.Util.SystemProperties.GetProperty(testKey));
+        }
+        [Test]
         public virtual void SetEnvironmentTest()
         {
             string testKey  = "lucene:tests:setting";
             string testValue = "test.success";
             Lucene.Net.Util.SystemProperties.SetProperty(testKey, testValue);
-            Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty(testKey), testValue);
+            Assert.AreEqual(testValue, Lucene.Net.Util.SystemProperties.GetProperty(testKey));
         }
 
     }
