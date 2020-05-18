@@ -40,6 +40,16 @@ namespace Lucene.Net.Configuration
         }
 
         [Test]
+        public virtual void TestSetandUnset()
+        {
+            Assert.AreEqual("fr", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
+            Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", "en");
+            Assert.AreEqual("en", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
+            Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", null);
+            Assert.AreEqual("fr", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
+        }
+
+        [Test]
         public virtual void TestDefaults()
         {
             Assert.AreEqual("perMethod", Lucene.Net.Util.SystemProperties.GetProperty("tests:cleanthreads:sysprop"));
