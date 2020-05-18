@@ -28,7 +28,7 @@ namespace Lucene.Net.Cli
     {
         private static Assembly thisAssembly = typeof(ConfigurationBase).GetTypeInfo().Assembly;
         protected static string HELP_VALUE_NAME = "help";
-        private static IConfigurationFactory ConfigurationFactory { get; set; } = new ConfigurationFactory();
+        private static IConfigurationRootFactory ConfigurationFactory { get; set; } = new ConfigurationRootFactory();
 
         protected ConfigurationBase()
             //: base(throwOnUnexpectedArg: false)

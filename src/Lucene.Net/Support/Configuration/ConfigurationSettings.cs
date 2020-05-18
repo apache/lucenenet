@@ -24,16 +24,16 @@ namespace Lucene.Net.Configuration
 
     public abstract class ConfigurationSettings
     {
-        private static IConfigurationFactory configurationFactory = new DefaultConfigurationFactory(false);
+        private static IConfigurationRootFactory configurationFactory = new DefaultConfigurationRootFactory(false);
 
         /// <summary>
-        /// Sets the <see cref="IConfigurationFactory"/> instance used to instantiate
+        /// Sets the <see cref="IConfigurationRootFactory"/> instance used to instantiate
         /// <see cref="ConfigurationSettings"/> subclasses.
         /// </summary>
-        /// <param name="configurationFactory">The new <see cref="IConfigurationFactory"/>.</param>
+        /// <param name="configurationFactory">The new <see cref="IConfigurationRootFactory"/>.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="configurationFactory"/> parameter is <c>null</c>.</exception>
         [CLSCompliant(false)]
-        public static void SetConfigurationFactory(IConfigurationFactory configurationFactory)
+        public static void SetConfigurationFactory(IConfigurationRootFactory configurationFactory)
         {
             ConfigurationSettings.configurationFactory = configurationFactory ?? throw new ArgumentNullException(nameof(configurationFactory));
         }
@@ -43,9 +43,14 @@ namespace Lucene.Net.Configuration
         /// </summary>
         /// <returns>The ConfigurationSettings factory.</returns>
         [CLSCompliant(false)]
-        public static IConfigurationFactory GetConfigurationFactory()
+        public static IConfigurationRootFactory GetConfigurationFactory()
         {
             return configurationFactory;
+        }
+
+        public static void Reload()
+        {
+            configurationFactory.ReloadConfiguration();
         }
         /*
          ********

@@ -689,6 +689,7 @@ namespace Lucene.Net.Util
             /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
+            ConfigurationSettings.Reload();
         }
 
         // LUCENENET specific constants to scan the test framework for codecs/docvaluesformats/postingsformats only once
@@ -697,7 +698,7 @@ namespace Lucene.Net.Util
         public static IPostingsFormatFactory PostingsFormatFactory { get; set; } = new TestPostingsFormatFactory();
 
         [CLSCompliant(false)]
-        public static IConfigurationFactory ConfigurationFactory { get; set; } = new TestConfigurationFactory();
+        public static IConfigurationRootFactory ConfigurationFactory { get; set; } = new TestConfigurationRootFactory();
         //public static IConfigurationFactory ConfigurationFactory { get; set; } = new DefaultConfigurationFactory(false);
 
 #if TESTFRAMEWORK_MSTEST

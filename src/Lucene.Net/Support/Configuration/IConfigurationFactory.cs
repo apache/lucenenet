@@ -22,9 +22,10 @@ namespace Lucene.Net.Configuration
      * limitations under the License.
      */
     [CLSCompliant(false)]
-    public interface IConfigurationFactory
+    public interface IConfigurationRootFactory
     {
-        IConfiguration CreateConfiguration();
+        IConfigurationRoot CreateConfiguration();
+        void ReloadConfiguration();
     }
 
 }

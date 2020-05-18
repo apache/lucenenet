@@ -47,15 +47,15 @@ namespace Lucene.Net.Configuration
      * limitations under the License.
      */
 
-    internal class ConfigurationFactory : IConfigurationFactory
+    internal class ConfigurationRootFactory : IConfigurationRootFactory
     {
-        private readonly ConcurrentDictionary<string, IConfiguration> configurationCache = new ConcurrentDictionary<string, IConfiguration>();
+        private readonly ConcurrentDictionary<string, IConfigurationRoot> configurationCache = new ConcurrentDictionary<string, IConfigurationRoot>();
 
         public string JsonTestSettingsFileName { get; set; } = "appsettings.json";
 
         public IConfigurationBuilder builder { get; }
 
-        public IConfiguration CreateConfiguration()
+        public IConfigurationRoot CreateConfiguration()
         {
             string testDirectory =
 #if NETSTANDARD
@@ -71,6 +71,11 @@ namespace Lucene.Net.Configuration
                     .AddJsonFile(JsonTestSettingsFileName)
                     .Build();
             });
+        }
+
+        public void ReloadConfiguration()
+        {
+            CreateConfiguration().Reload();
         }
     }
 

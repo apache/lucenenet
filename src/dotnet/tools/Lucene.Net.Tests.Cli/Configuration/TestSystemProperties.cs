@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Search;
+﻿using Lucene.Net.Configuration;
+using Lucene.Net.Search;
 using Lucene.Net.Util;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic.CompilerServices;
@@ -45,7 +46,7 @@ namespace Lucene.Net.Cli.Configuration
             Assert.AreEqual("fr", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
             Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", "en");
             Assert.AreEqual("en", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
-            Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", null);
+            ConfigurationSettings.Reload();
             Assert.AreEqual("fr", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
         }
 

@@ -10,22 +10,22 @@ using Microsoft.Extensions.Primitives;
 
 namespace Lucene.Net.Configuration
 {
-    internal class DefaultConfigurationFactory : IConfigurationFactory
+    internal class DefaultConfigurationRootFactory : IConfigurationRootFactory
     {
         private readonly bool ignoreSecurityExceptionsOnRead;
         private bool initialized = false;
         protected object m_initializationLock = new object();
         private IConfigurationBuilder builder { get; }
-        private IConfiguration configuration;
+        private IConfigurationRoot configuration;
 
-        public DefaultConfigurationFactory(bool ignoreSecurityExceptionsOnRead)
+        public DefaultConfigurationRootFactory(bool ignoreSecurityExceptionsOnRead)
         {
             this.builder = new ConfigurationBuilder();
             builder.Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:" });
             this.ignoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead;
         }
 
-        public virtual IConfiguration CreateConfiguration()
+        public virtual IConfigurationRoot CreateConfiguration()
         {
             return EnsureInitialized();
         }
@@ -34,7 +34,7 @@ namespace Lucene.Net.Configuration
         /// Ensures the <see cref="Initialize"/> method has been called since the
         /// last application start. This method is thread-safe.
         /// </summary>
-        protected IConfiguration EnsureInitialized()
+        protected IConfigurationRoot EnsureInitialized()
         {
             return LazyInitializer.EnsureInitialized(ref this.configuration, ref this.initialized, ref this.m_initializationLock, () =>
             {
@@ -45,9 +45,16 @@ namespace Lucene.Net.Configuration
         /// <summary>
         /// Initializes the dependencies of this factory.
         /// </summary>
-        protected virtual IConfiguration Initialize()
+        protected virtual IConfigurationRoot Initialize()
         {
             return builder.Build();
+        }
+        /// <summary>
+        /// Reloads the dependencies of this factory.
+        /// </summary>
+        public void ReloadConfiguration()
+        {
+            CreateConfiguration().Reload();
         }
     }
     //internal class DefaultConfiguration : IConfiguration

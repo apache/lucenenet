@@ -84,15 +84,15 @@ namespace Lucene.Net.Configuration
      * limitations under the License.
      */
 
-    internal class TestConfigurationFactory : DefaultConfigurationFactory
+    internal class TestConfigurationRootFactory : DefaultConfigurationRootFactory
     {
-        private readonly ConcurrentDictionary<string, IConfiguration> configurationCache = new ConcurrentDictionary<string, IConfiguration>();
+        private readonly ConcurrentDictionary<string, IConfigurationRoot> configurationCache = new ConcurrentDictionary<string, IConfigurationRoot>();
 
         public string JsonTestSettingsFileName { get; set; } = "lucene.testsettings.json";
 
         public IConfigurationBuilder builder { get; }
 
-        public TestConfigurationFactory() : base(false)
+        public TestConfigurationRootFactory() : base(false)
         {
 
             //configurationBuilder.AddEnvironmentVariables();
@@ -103,7 +103,7 @@ namespace Lucene.Net.Configuration
             //this.builder = configurationBuilder;
         }
 
-        public override IConfiguration CreateConfiguration()
+        public override IConfigurationRoot CreateConfiguration()
         {
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
 

@@ -45,7 +45,7 @@ namespace Lucene.Net.Configuration
             Assert.AreEqual("fr", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
             Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", "en");
             Assert.AreEqual("en", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
-            Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", null);
+            ConfigurationSettings.Reload();
             Assert.AreEqual("fr", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
         }
 
