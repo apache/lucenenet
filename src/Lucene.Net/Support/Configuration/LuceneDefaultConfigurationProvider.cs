@@ -5,8 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Threading;
 
 namespace Lucene.Net.Configuration
@@ -49,95 +51,93 @@ namespace Lucene.Net.Configuration
         /// </summary>
         public void Load()
         {
-            Load(Environment.GetEnvironmentVariables());
+            Data = new ConcurrentDictionary<string, string>();
+            
+            //Load(Environment.GetEnvironmentVariables());
         }
+        //public bool TryGetEnvironmentVariable(string name, out string value)
+        //{
+        //    try
+        //    {
+        //        value = Environment.GetEnvironmentVariable(name);
+        //        return !string.IsNullOrEmpty(value);
+        //    }
+        //    catch (SecurityException)
+        //    {
+        //    }
+        //}
 
-        internal void Load(IDictionary envVariables)
-        {
-            Data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        //internal void Load(IDictionary envVariables)
+        //{
+        //    Data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            //if (ignoreSecurityExceptionsOnRead)
-            //{
-            //    try
-            //    {
-            //        return Environment.GetEnvironmentVariable(key);
-            //    }
-            //    catch (SecurityException)
-            //    {
-            //        return null;
-            //    }
-            //}
-            //else
-            //{
-            //    return Environment.GetEnvironmentVariable(key);
-            //}
-            var filteredEnvVariables = envVariables
-                .Cast<DictionaryEntry>()
-                .SelectMany(AzureEnvToAppEnv)
-                .Where(entry => ((string)entry.Key).StartsWith(_prefix, StringComparison.OrdinalIgnoreCase));
+        //    var filteredEnvVariables = envVariables
+        //        .Cast<DictionaryEntry>()
+        //        .SelectMany(AzureEnvToAppEnv)
+        //        .Where(entry => ((string)entry.Key).StartsWith(_prefix, StringComparison.OrdinalIgnoreCase));
 
-            foreach (var envVariable in filteredEnvVariables)
-            {
-                var key = ((string)envVariable.Key).Substring(_prefix.Length);
-                Data[key] = (string)envVariable.Value;
-            }
-        }
+        //    foreach (var envVariable in filteredEnvVariables)
+        //    {
+        //        var key = ((string)envVariable.Key).Substring(_prefix.Length);
+        //        Data[key] = (string)envVariable.Value;
+        //    }
+        //}
 
-        private static string NormalizeKey(string key)
-        {
-            return key.Replace("__", ConfigurationPath.KeyDelimiter);
-        }
+        //private static string NormalizeKey(string key)
+        //{
+        //    return key.Replace("__", ConfigurationPath.KeyDelimiter);
+        //}
 
-        private static IEnumerable<DictionaryEntry> AzureEnvToAppEnv(DictionaryEntry entry)
-        {
-            var key = (string)entry.Key;
-            var prefix = string.Empty;
-            var provider = string.Empty;
+        //private static IEnumerable<DictionaryEntry> AzureEnvToAppEnv(DictionaryEntry entry)
+        //{
+        //    var key = (string)entry.Key;
+        //    var prefix = string.Empty;
+        //    var provider = string.Empty;
 
-            if (key.StartsWith(MySqlServerPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                prefix = MySqlServerPrefix;
-                provider = "MySql.Data.MySqlClient";
-            }
-            else if (key.StartsWith(SqlAzureServerPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                prefix = SqlAzureServerPrefix;
-                provider = "System.Data.SqlClient";
-            }
-            else if (key.StartsWith(SqlServerPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                prefix = SqlServerPrefix;
-                provider = "System.Data.SqlClient";
-            }
-            else if (key.StartsWith(CustomPrefix, StringComparison.OrdinalIgnoreCase))
-            {
-                prefix = CustomPrefix;
-            }
-            else
-            {
-                entry.Key = NormalizeKey(key);
-                yield return entry;
-                yield break;
-            }
+        //    if (key.StartsWith(MySqlServerPrefix, StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        prefix = MySqlServerPrefix;
+        //        provider = "MySql.Data.MySqlClient";
+        //    }
+        //    else if (key.StartsWith(SqlAzureServerPrefix, StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        prefix = SqlAzureServerPrefix;
+        //        provider = "System.Data.SqlClient";
+        //    }
+        //    else if (key.StartsWith(SqlServerPrefix, StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        prefix = SqlServerPrefix;
+        //        provider = "System.Data.SqlClient";
+        //    }
+        //    else if (key.StartsWith(CustomPrefix, StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        prefix = CustomPrefix;
+        //    }
+        //    else
+        //    {
+        //        entry.Key = NormalizeKey(key);
+        //        yield return entry;
+        //        yield break;
+        //    }
 
-            // Return the key-value pair for connection string
-            yield return new DictionaryEntry(
-                string.Format(ConnStrKeyFormat, NormalizeKey(key.Substring(prefix.Length))),
-                entry.Value);
+        //    // Return the key-value pair for connection string
+        //    yield return new DictionaryEntry(
+        //        string.Format(ConnStrKeyFormat, NormalizeKey(key.Substring(prefix.Length))),
+        //        entry.Value);
 
-            if (!string.IsNullOrEmpty(provider))
-            {
-                // Return the key-value pair for provider name
-                yield return new DictionaryEntry(
-                    string.Format(ProviderKeyFormat, NormalizeKey(key.Substring(prefix.Length))),
-                    provider);
-            }
-        }
+        //    if (!string.IsNullOrEmpty(provider))
+        //    {
+        //        // Return the key-value pair for provider name
+        //        yield return new DictionaryEntry(
+        //            string.Format(ProviderKeyFormat, NormalizeKey(key.Substring(prefix.Length))),
+        //            provider);
+        //    }
+        //}
 
         /// <summary>
         /// The configuration key value pairs for this provider.
         /// </summary>
-        protected IDictionary<string, string> Data { get; set; }
+        protected ConcurrentDictionary<string, string> Data { get; set; }
 
         /// <summary>
         /// Attempts to find a value with the given key, returns true if one is found, false otherwise.
@@ -145,8 +145,31 @@ namespace Lucene.Net.Configuration
         /// <param name="key">The key to lookup.</param>
         /// <param name="value">The value found at key if one is found.</param>
         /// <returns>True if key has a value, false otherwise.</returns>
+        //public virtual bool TryGet(string key, out string value)             => Data.TryGetValue(key, out value);
+
         public virtual bool TryGet(string key, out string value)
-            => Data.TryGetValue(key, out value);
+        {
+            value = Data.GetOrAdd(key, (x) =>
+            {
+                if (ignoreSecurityExceptionsOnRead)
+                {
+                    try
+                    {
+                        return Environment.GetEnvironmentVariable(key);
+                    }
+                    catch (SecurityException)
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return Environment.GetEnvironmentVariable(key);
+                }
+            });
+            return (!string.IsNullOrEmpty(value));
+        }
+
 
         /// <summary>
         /// Sets a value for a given key.
