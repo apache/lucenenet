@@ -113,7 +113,7 @@ namespace Egothor.Stemmer
             {
                 qq++;
             }
-
+            // LUCENENET specific - reformatted with :
             string charset = SystemProperties.GetProperty("egothor:stemmer:charset", "UTF-8");
             var stemmerTables = new List<string>();
 

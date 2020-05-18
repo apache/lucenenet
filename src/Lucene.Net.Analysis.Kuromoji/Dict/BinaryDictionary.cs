@@ -54,6 +54,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         static BinaryDictionary()
         {
+            // LUCENENET specific - reformatted with :
             string currentPath = SystemProperties.GetProperty("kuromoji:data:dir",
 #if NETSTANDARD1_6
                 System.AppContext.BaseDirectory

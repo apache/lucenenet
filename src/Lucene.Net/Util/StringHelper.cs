@@ -44,6 +44,7 @@ namespace Lucene.Net.Util
         // instances:
         private static int InitializeHashSeed()
         {
+            // LUCENENET specific - reformatted with :
             string prop = SystemProperties.GetProperty("tests:seed", null);
 
             if (prop != null)

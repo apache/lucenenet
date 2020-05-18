@@ -69,6 +69,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
 
             // Try the system property：-Danalysis.data.dir=/path/to/analysis-data
             //ANALYSIS_DATA_DIR = System.getProperty("analysis.data.dir", "");
+            // LUCENENET specific - reformatted with :
             ANALYSIS_DATA_DIR = SystemProperties.GetProperty("analysis:data:dir", "");
             if (ANALYSIS_DATA_DIR.Length != 0)
                 return;

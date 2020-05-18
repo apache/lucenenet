@@ -272,8 +272,8 @@ namespace Lucene.Net.Util
             Codec.Default = codec;
 
             // Initialize locale/ timezone.
-            string testLocale = SystemProperties.GetProperty("tests:locale", "random");
-            string testTimeZone = SystemProperties.GetProperty("tests:timezone", "random");
+            string testLocale = SystemProperties.GetProperty("tests:locale", "random");  // LUCENENET specific - reformatted with :
+            string testTimeZone = SystemProperties.GetProperty("tests:timezone", "random");  // LUCENENET specific - reformatted with :
 
             // Always pick a random one for consistency (whether tests.locale was specified or not).
             savedLocale = CultureInfo.CurrentCulture;
@@ -287,6 +287,7 @@ namespace Lucene.Net.Util
 
             // TimeZone.getDefault will set user.timezone to the default timezone of the user's locale.
             // So store the original property value and restore it at end.
+            // LUCENENET specific - commented
             //restoreProperties["user:timezone"] = SystemProperties.GetProperty("user:timezone");
             savedTimeZone = TimeZoneInfo.Local;
             TimeZoneInfo randomTimeZone = LuceneTestCase.RandomTimeZone(random);

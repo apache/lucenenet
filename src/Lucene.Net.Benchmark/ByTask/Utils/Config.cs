@@ -46,6 +46,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
     public class Config
     {
         // For tests, if verbose is not turned on, don't print the props.
+        // LUCENENET specific - reformatted with :
         private static readonly bool DEFAULT_PRINT_PROPS = SystemProperties.GetPropertyAsBoolean("tests:verbose", true);
         private static readonly string NEW_LINE = Environment.NewLine;
 
@@ -92,6 +93,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             string temp;
             if (!props.TryGetValue("work.dir", out temp) || temp == null)
             {
+                // LUCENENET specific - reformatted with :
                 props["work.dir"] = SystemProperties.GetProperty("benchmark:work:dir", "work");
             }
 

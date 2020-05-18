@@ -337,17 +337,17 @@ namespace Lucene.Net.Util
 #else
             false
 #endif
-);
+); // LUCENENET specific - reformatted with :
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static readonly bool INFOSTREAM = SystemProperties.GetPropertyAsBoolean("tests:infostream", VERBOSE);
+        public static readonly bool INFOSTREAM = SystemProperties.GetPropertyAsBoolean("tests:infostream", VERBOSE); // LUCENENET specific - reformatted with :
 
         /// <summary>
         /// A random multiplier which you should use when writing random tests:
         /// multiply it by the number of iterations to scale your tests (for nightly builds).
         /// </summary>
-        public static readonly int RANDOM_MULTIPLIER = SystemProperties.GetPropertyAsInt32("tests:multiplier", 1);
+        public static readonly int RANDOM_MULTIPLIER = SystemProperties.GetPropertyAsInt32("tests:multiplier", 1); // LUCENENET specific - reformatted with :
 
         /// <summary>
         /// TODO: javadoc? </summary>
@@ -359,23 +359,23 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Gets the codec to run tests with. </summary>
-        public static readonly string TEST_CODEC = SystemProperties.GetProperty("tests:codec", "random");
+        public static readonly string TEST_CODEC = SystemProperties.GetProperty("tests:codec", "random");// LUCENENET specific - reformatted with :
 
         /// <summary>
         /// Gets the postingsFormat to run tests with. </summary>
-        public static readonly string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests:postingsformat", "random");
+        public static readonly string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests:postingsformat", "random"); // LUCENENET specific - reformatted with :
 
         /// <summary>
         /// Gets the docValuesFormat to run tests with </summary>
-        public static readonly string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests:docvaluesformat", "random");
+        public static readonly string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests:docvaluesformat", "random"); // LUCENENET specific - reformatted with :
 
         /// <summary>
         /// Gets the directory to run tests with </summary>
-        public static readonly string TEST_DIRECTORY = SystemProperties.GetProperty("tests:directory", "random");
+        public static readonly string TEST_DIRECTORY = SystemProperties.GetProperty("tests:directory", "random"); // LUCENENET specific - reformatted with :
 
         /// <summary>
         /// The line file used by LineFileDocs </summary>
-        public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests:linedocsfile", DEFAULT_LINE_DOCS_FILE);
+        public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests:linedocsfile", DEFAULT_LINE_DOCS_FILE); // LUCENENET specific - reformatted with :
 
         ///// <summary>
         ///// Whether or not <see cref="Nightly"/> tests should run. </summary>
@@ -404,11 +404,12 @@ namespace Lucene.Net.Util
         private static bool LoadLeaveTemorary()
         {
             bool defaultValue = false;
+            // LUCENENET specific - reformatted with :
             foreach (string property in new string[] {
                 "tests:leaveTemporary" /* ANT tasks's (junit4) flag. */,
                 "tests:leavetemporary" /* lowercase */,
                 "tests:leavetmpdir" /* default */,
-                "solr.test.leavetmpdir" /* Solr's legacy */
+                "solr:test:leavetmpdir" /* Solr's legacy */
             })
             {
                 defaultValue |= SystemProperties.GetPropertyAsBoolean(property, false);

@@ -44,7 +44,8 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestBuildSetup()
         {
-            // common-build.xml sets lucene.version, if not, we skip this test!
+            // common-build.xml sets lucene.version, if not, we skip this test
+            // LUCENENET specific - reformatted with :
             string version = SystemProperties.GetProperty("lucene:version", null);
             if (version == null)
             {

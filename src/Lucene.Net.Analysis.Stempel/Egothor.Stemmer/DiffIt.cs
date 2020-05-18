@@ -101,7 +101,7 @@ namespace Egothor.Stemmer
             int del = Get(1, args[0]);
             int rep = Get(2, args[0]);
             int nop = Get(3, args[0]);
-
+            // LUCENENET specific - reformatted with :
             string charset = SystemProperties.GetProperty("egothor:stemmer:charset", "UTF-8");
             var stemmerTables = new List<string>();
 
