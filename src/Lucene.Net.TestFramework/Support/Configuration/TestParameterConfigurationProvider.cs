@@ -30,8 +30,7 @@ namespace Lucene.Net.Configuration
         /// <summary>
         /// Initializes a new instance.
         /// </summary>
-        /// <param name="args">The command line args.</param>
-        /// <param name="switchMappings">The switch mappings.</param>
+        /// <param name="testParameters">The Test Parameter args.</param>
         public TestParameterConfigurationProvider(TestParameters testParameters)
         {
             List<string> args1 = new List<string>();
@@ -47,7 +46,7 @@ namespace Lucene.Net.Configuration
         {
             return _instance.GetChildKeys(earlierKeys, parentPath);
         }
-
+        [CLSCompliant(false)]
         public IChangeToken GetReloadToken()
         {
             return _instance.GetReloadToken();

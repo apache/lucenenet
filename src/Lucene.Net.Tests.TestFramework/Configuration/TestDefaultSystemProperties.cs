@@ -24,7 +24,6 @@ namespace Lucene.Net.Configuration
             string testValue = "test.success";
             Lucene.Net.Util.SystemProperties.SetProperty(testKey, testValue);
             Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty(testKey), testValue);
-            Assert.Pass();
         }
 
     }

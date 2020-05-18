@@ -17,12 +17,12 @@ namespace Lucene.Net.Configuration
     class TestSystemProperties : LuceneTestCase
     {
 
-        [OneTimeSetUp]
-        public override void BeforeClass()
-        {
-            ConfigurationFactory = new TestConfigurationFactory();
-            base.BeforeClass();
-        }
+        //[OneTimeSetUp]
+        //public override void BeforeClass()
+        //{
+        //    ConfigurationFactory = new TestConfigurationFactory();
+        //    base.BeforeClass();
+        //}
         [Test]
         public virtual void EnvironmentTest2()
         {
@@ -30,28 +30,19 @@ namespace Lucene.Net.Configuration
             string testValue = "test.success";
             Lucene.Net.Util.SystemProperties.SetProperty(testKey, testValue);
             Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty(testKey), testValue);
-            Assert.Pass();
         }
         [Test]
         public virtual void SetTest()
         {
-            Assert.AreEqual("fr-FR", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
-            Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", "en_EN");
-            Assert.AreEqual("en_EN", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
-            Assert.Pass();
-        }
-        [Test]
-        public virtual void TestTimezone()
-        {
-            Assert.AreEqual("SE Asia Standard Time", Lucene.Net.Util.SystemProperties.GetProperty("user:timezone"));
-            Assert.Pass();
+            Assert.AreEqual("fr", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
+            Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", "en");
+            Assert.AreEqual("en", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
         }
 
         [Test]
         public virtual void TestDefaults()
         {
             Assert.AreEqual("perMethod", Lucene.Net.Util.SystemProperties.GetProperty("tests:cleanthreads:sysprop"));
-            Assert.Pass();
         }
 
         [Test]

@@ -38,8 +38,7 @@ namespace Lucene.Net.Configuration
         {
             return LazyInitializer.EnsureInitialized(ref this.configuration, ref this.initialized, ref this.m_initializationLock, () =>
             {
-                this.configuration = Initialize();
-                return this.configuration;
+                return Initialize();
             });
         }
 

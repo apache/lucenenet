@@ -81,9 +81,9 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion_NET4_5)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion_NET4_5_1)" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <InternalsVisibleTo Include="Lucene.Net.Analysis.Common" />
     <InternalsVisibleTo Include="Lucene.Net.Analysis.Kuromoji" />

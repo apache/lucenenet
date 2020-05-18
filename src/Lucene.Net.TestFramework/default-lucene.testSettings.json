@@ -26,6 +26,5 @@
         "timezone": "random",
         "verbose": "false",
         "weekly": "false"
-    },
-    "user:timezone": "random"
+    }
 }

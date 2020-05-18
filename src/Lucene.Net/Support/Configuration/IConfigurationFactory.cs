@@ -24,7 +24,6 @@ namespace Lucene.Net.Configuration
     [CLSCompliant(false)]
     public interface IConfigurationFactory
     {
-        [CLSCompliant(false)]
         IConfiguration CreateConfiguration();
     }
 

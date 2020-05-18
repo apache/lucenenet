@@ -695,15 +695,10 @@ namespace Lucene.Net.Util
         public static IDocValuesFormatFactory DocValuesFormatFactory { get; set; } = new TestDocValuesFormatFactory();
         public static IPostingsFormatFactory PostingsFormatFactory { get; set; } = new TestPostingsFormatFactory();
 
-        // Configuration builder for Microsoft Extensions Configuration
-        [CLSCompliant(false)]
-        protected IConfigurationBuilder configurationBuilder;
-
         [CLSCompliant(false)]
         public static IConfigurationFactory ConfigurationFactory { get; set; } = new TestConfigurationFactory();
         //public static IConfigurationFactory ConfigurationFactory { get; set; } = new DefaultConfigurationFactory(false);
 
-        //public static IConfigurationBuilder ConfigurationBuilder { get; set; } = new LuceneConfigurationBuilder().Add(new LuceneConfigurationSource());
 #if TESTFRAMEWORK_MSTEST
         private static readonly IList<string> initalizationLock = new List<string>();
         private static string _testClassName = string.Empty;
