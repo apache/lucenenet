@@ -1,0 +1,9 @@
+{
+    "tests": {
+        "locale": "fr",
+        "seed": "0x00000020",
+        "timezone": "SE Asia Standard Time",
+        "verbose": "false",
+        "weekly": "false"
+    }
+}

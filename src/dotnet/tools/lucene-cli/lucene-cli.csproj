@@ -56,6 +56,16 @@
     <ProjectReference Include="..\..\..\Lucene.Net.Facet\Lucene.Net.Facet.csproj" />
     <ProjectReference Include="..\..\..\Lucene.Net.Misc\Lucene.Net.Misc.csproj" />
     <ProjectReference Include="..\..\..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="$(MicrosoftExtensionsConfigurationXmlPackageVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

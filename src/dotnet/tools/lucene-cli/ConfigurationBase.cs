@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Cli.CommandLine;
+using Lucene.Net.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,7 @@ namespace Lucene.Net.Cli
     {
         private static Assembly thisAssembly = typeof(ConfigurationBase).GetTypeInfo().Assembly;
         protected static string HELP_VALUE_NAME = "help";
+        private static IConfigurationFactory ConfigurationFactory { get; set; } = new ConfigurationFactory();
 
         protected ConfigurationBase()
             //: base(throwOnUnexpectedArg: false)
@@ -46,6 +48,9 @@ namespace Lucene.Net.Cli
             {
                 return ShortVersionGetter();
             };
+
+            // Setup the factories
+            ConfigurationSettings.SetConfigurationFactory(ConfigurationFactory);
         }
 
         public override void OnExecute(Func<int> invoke)
