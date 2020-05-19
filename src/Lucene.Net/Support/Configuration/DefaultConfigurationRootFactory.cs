@@ -15,7 +15,7 @@ namespace Lucene.Net.Configuration
         private readonly bool ignoreSecurityExceptionsOnRead;
         private bool initialized = false;
         protected object m_initializationLock = new object();
-        private IConfigurationBuilder builder { get; }
+        private readonly IConfigurationBuilder builder;
         private IConfigurationRoot configuration;
 
         public DefaultConfigurationRootFactory(bool ignoreSecurityExceptionsOnRead)
@@ -49,60 +49,5 @@ namespace Lucene.Net.Configuration
         {
             return builder.Build();
         }
-        /// <summary>
-        /// Reloads the dependencies of this factory.
-        /// </summary>
-        public void ReloadConfiguration()
-        {
-            CreateConfiguration().Reload();
-        }
     }
-    //internal class DefaultConfiguration : IConfiguration
-    //{
-    //    private readonly bool ignoreSecurityExceptionsOnRead;
-
-    //    public DefaultConfiguration(bool ignoreSecurityExceptionsOnRead)
-    //    {
-    //        this.ignoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead;
-    //    }
-
-    //    public string this[string key]
-    //    {
-    //        get
-    //        {
-    //            if (ignoreSecurityExceptionsOnRead)
-    //            {
-    //                try
-    //                {
-    //                    return Environment.GetEnvironmentVariable(key);
-    //                }
-    //                catch (SecurityException)
-    //                {
-    //                    return null;
-    //                }
-    //            }
-    //            else
-    //            {
-    //                return Environment.GetEnvironmentVariable(key);
-    //            }
-    //        }
-    //        set => Environment.SetEnvironmentVariable(key, value);
-    //    }
-
-    //    public IEnumerable<IConfigurationSection> GetChildren()
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    public IChangeToken GetReloadToken()
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    public IConfigurationSection GetSection(string key)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
-
 }

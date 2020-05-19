@@ -53,8 +53,6 @@ namespace Lucene.Net.Configuration
 
         public string JsonTestSettingsFileName { get; set; } = "appsettings.json";
 
-        public IConfigurationBuilder builder { get; }
-
         public IConfigurationRoot CreateConfiguration()
         {
             string testDirectory =
@@ -71,11 +69,6 @@ namespace Lucene.Net.Configuration
                     .AddJsonFile(JsonTestSettingsFileName)
                     .Build();
             });
-        }
-
-        public void ReloadConfiguration()
-        {
-            CreateConfiguration().Reload();
         }
     }
 

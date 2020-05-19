@@ -50,7 +50,7 @@ namespace Lucene.Net.Cli
             };
 
             // Setup the factories
-            ConfigurationSettings.SetConfigurationFactory(ConfigurationFactory);
+            ConfigurationSettings.SetConfigurationRootFactory(ConfigurationFactory);
         }
 
         public override void OnExecute(Func<int> invoke)

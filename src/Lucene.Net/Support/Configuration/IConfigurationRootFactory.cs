@@ -25,7 +25,6 @@ namespace Lucene.Net.Configuration
     public interface IConfigurationRootFactory
     {
         IConfigurationRoot CreateConfiguration();
-        void ReloadConfiguration();
     }
 
 }
