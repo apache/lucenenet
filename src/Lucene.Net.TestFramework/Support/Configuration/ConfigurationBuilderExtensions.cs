@@ -16,14 +16,12 @@ namespace Lucene.Net.Configuration
         [CLSCompliant(false)]
         public static IConfigurationBuilder AddLuceneDefaultSettings(this IConfigurationBuilder configurationBuilder, string prefix)
         {
-            configurationBuilder.Add(new LuceneDefaultConfigurationSource() { Prefix = prefix });
-            return configurationBuilder;
+            return configurationBuilder.Add(new LuceneDefaultConfigurationSource() { Prefix = prefix });
         }
         [CLSCompliant(false)]
         public static IConfigurationBuilder AddNUnitTestRunSettings(this IConfigurationBuilder configurationBuilder)
         {
-            configurationBuilder.Add(new TestParameterConfigurationSource() { TestParameters = NUnit.Framework.TestContext.Parameters });
-            return configurationBuilder;
+            return configurationBuilder.Add(new TestParameterConfigurationSource() { TestParameters = NUnit.Framework.TestContext.Parameters });
         }
 
         [CLSCompliant(false)]

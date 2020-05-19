@@ -699,7 +699,6 @@ namespace Lucene.Net.Util
 
         [CLSCompliant(false)]
         public static IConfigurationRootFactory ConfigurationFactory { get; set; } = new TestConfigurationRootFactory();
-        //public static IConfigurationFactory ConfigurationFactory { get; set; } = new DefaultConfigurationFactory(false);
 
 #if TESTFRAMEWORK_MSTEST
         private static readonly IList<string> initalizationLock = new List<string>();
@@ -777,7 +776,6 @@ namespace Lucene.Net.Util
             {
                 // Setup the factories
                 ConfigurationSettings.SetConfigurationFactory(ConfigurationFactory);
-                // Setup the factories
                 Codec.SetCodecFactory(CodecFactory);
                 DocValuesFormat.SetDocValuesFormatFactory(DocValuesFormatFactory);
                 PostingsFormat.SetPostingsFormatFactory(PostingsFormatFactory);

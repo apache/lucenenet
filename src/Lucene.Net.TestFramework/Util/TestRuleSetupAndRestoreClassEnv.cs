@@ -364,11 +364,12 @@ namespace Lucene.Net.Util
         /// </summary>
         public override void After(LuceneTestCase testInstance)
         {
-            foreach (KeyValuePair<string, string> e in restoreProperties)
-            {
-                SystemProperties.SetProperty(e.Key, e.Value);
-            }
-            restoreProperties.Clear();
+            // LUCENENT specific - Not used in .NET
+            //foreach (KeyValuePair<string, string> e in restoreProperties)
+            //{
+            //    SystemProperties.SetProperty(e.Key, e.Value);
+            //}
+            //restoreProperties.Clear();
 
             Codec.Default = savedCodec;
             InfoStream.Default = savedInfoStream;

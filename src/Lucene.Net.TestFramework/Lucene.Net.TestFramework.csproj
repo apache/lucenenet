@@ -98,15 +98,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="$(MicrosoftExtensionsConfigurationCommandLinePackageVersion_NET4_5_1)" />
   </ItemGroup>
   
-  <!--<ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.0.0" />
-  </ItemGroup>-->
-
   <ItemGroup>
     <!--  Note that some of the APIs we use to test Lucene.Net are internal because they are only meant to
           make porting tests from Java easier. This means that every Lucene.Net test project requires
