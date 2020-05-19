@@ -22,15 +22,15 @@ namespace Lucene.Net.Configuration
         {
             string testKey = "lucene:tests:setting";
             string testValue = "test.success";
-            Assert.AreEqual(testValue, Lucene.Net.Util.SystemProperties.GetProperty(testKey));
+            Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
         }
         [Test]
         public virtual void SetEnvironmentTest()
         {
             string testKey  = "lucene:tests:setting";
             string testValue = "test.success";
-            Lucene.Net.Util.SystemProperties.SetProperty(testKey, testValue);
-            Assert.AreEqual(testValue, Lucene.Net.Util.SystemProperties.GetProperty(testKey));
+            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
+            Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
         }
 
     }

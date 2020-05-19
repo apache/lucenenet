@@ -29,37 +29,37 @@ namespace Lucene.Net.Cli.Configuration
         {
             string testKey = "lucene:tests:setting";
             string testValue = "test.success";
-            Lucene.Net.Util.SystemProperties.SetProperty(testKey, testValue);
-            Assert.AreEqual(Lucene.Net.Util.SystemProperties.GetProperty(testKey), testValue);
+            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
+            Assert.AreEqual(Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey], testValue);
         }
         [Test]
         public virtual void SetTest()
         {
-            Assert.AreEqual("fr", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
+            Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
             Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", "en");
-            Assert.AreEqual("en", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
+            Assert.AreEqual("en", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
         }
 
         [Test]
         public virtual void TestSetandUnset()
         {
-            Assert.AreEqual("fr", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
+            Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
             Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", "en");
-            Assert.AreEqual("en", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
-            ConfigurationSettings.Reload();
-            Assert.AreEqual("fr", Lucene.Net.Util.SystemProperties.GetProperty("tests:locale"));
+            Assert.AreEqual("en", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
+            ConfigurationSettings.CurrentConfiguration.Reload();
+            Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
         }
 
         [Test]
         public virtual void TestDefaults()
         {
-            Assert.AreEqual("perMethod", Lucene.Net.Util.SystemProperties.GetProperty("tests:cleanthreads:sysprop"));
+            Assert.AreEqual("perMethod", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:cleanthreads:sysprop"]);
         }
 
         [Test]
         public virtual void TestHashCodeReadProperty()
         {
-            
+
             Assert.AreEqual(0xf6a5c420, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("foo"), 0));
 
             Assert.AreEqual(16, StringHelper.GOOD_FAST_HASH_SEED);
@@ -70,9 +70,9 @@ namespace Lucene.Net.Cli.Configuration
         [Test]
         public virtual void TestXMLConfiguration()
         {
-            
-            Assert.AreEqual("Title from  MyXMLFile", Lucene.Net.Util.SystemProperties.GetProperty("Position:Title"));
-            Assert.AreEqual("0x00000010", Lucene.Net.Util.SystemProperties.GetProperty("xmlseed"));
+
+            Assert.AreEqual("Title from  MyXMLFile", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["Position:Title"]);
+            Assert.AreEqual("0x00000010", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["xmlseed"]);
         }
 
         [Test]
@@ -86,9 +86,9 @@ namespace Lucene.Net.Cli.Configuration
         [Test]
         public virtual void TestCachedConfigProperty()
         {
-            Assert.AreEqual("0x00000020", Lucene.Net.Util.SystemProperties.GetProperty("tests:seed"));
+            Assert.AreEqual("0x00000020", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:seed"]);
             //Assert.AreEqual(0xf6a5c420, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("foo"), 0));
-            //Assert.AreEqual(16, Lucene.Net.Util.SystemProperties.GetProperty("test.seed"));
+            //Assert.AreEqual(16, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["test.seed"));
             //// Hashes computed using murmur3_32 from https://code.google.com/p/pyfasthash
             //Assert.AreEqual(0xcd018ef6, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("foo"), StringHelper.GOOD_FAST_HASH_SEED));
         }

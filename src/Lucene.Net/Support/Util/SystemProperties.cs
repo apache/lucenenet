@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
     /// to change the read behavior of these methods to throw the underlying exception 
     /// instead of returning the default value.
     /// </summary>
-    public static class SystemProperties
+    internal static class SystemProperties
     {
         /// <summary>
         /// Retrieves the value of an environment variable from the current process.
