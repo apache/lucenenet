@@ -41,9 +41,6 @@
 
   <ItemGroup Label="NuGet Package Files">
     <None Include="$(LuceneNetCodeAnalysisDir)tools\*.ps1" Pack="true" PackagePath="tools" />
-    <Compile Remove="Support\NewFolder\**" />
-    <EmbeddedResource Remove="Support\NewFolder\**" />
-    <None Remove="Support\NewFolder\**" />
     <None Include="$(LuceneNetCodeAnalysisAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="$(LuceneNetCodeAnalysisAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/vb" Visible="false" />
   </ItemGroup>
