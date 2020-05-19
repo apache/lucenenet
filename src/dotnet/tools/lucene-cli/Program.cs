@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Configuration;
+using System;
 
 namespace Lucene.Net.Cli
 {
@@ -23,6 +24,8 @@ namespace Lucene.Net.Cli
     {
         public static int Main(string[] args)
         {
+            ConfigurationSettings.SetConfigurationRootFactory(new ConfigurationRootFactory());
+
             int result = CommandLineOptions.Parse(args);
 
 #if DEBUG

@@ -55,12 +55,7 @@ namespace Lucene.Net.Configuration
 
         public IConfigurationRoot CreateConfiguration()
         {
-            string testDirectory =
-#if NETSTANDARD
-                System.AppContext.BaseDirectory;
-#else
-                AppDomain.CurrentDomain.BaseDirectory;
-#endif
+            string testDirectory = System.AppContext.BaseDirectory;
 
             return configurationCache.GetOrAdd(testDirectory, (key) =>
             {
