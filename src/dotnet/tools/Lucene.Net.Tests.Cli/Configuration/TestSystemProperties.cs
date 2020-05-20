@@ -37,7 +37,7 @@ namespace Lucene.Net.Cli.Configuration
         public virtual void SetTest()
         {
             Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
-            Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", "en");
+            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"] = "en";
             Assert.AreEqual("en", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
         }
 
@@ -45,7 +45,7 @@ namespace Lucene.Net.Cli.Configuration
         public virtual void TestSetandUnset()
         {
             Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
-            Lucene.Net.Util.SystemProperties.SetProperty("tests:locale", "en");
+            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"] =  "en";
             Assert.AreEqual("en", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
             ConfigurationSettings.CurrentConfiguration.Reload();
             Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);

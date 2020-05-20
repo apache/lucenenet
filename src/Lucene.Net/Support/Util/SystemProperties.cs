@@ -32,7 +32,7 @@ namespace Lucene.Net.Util
     /// <para/>
     /// Note that if you want to load any of these settings for your application from a
     /// configuration file, it is recommended your application load them at startup and
-    /// call <see cref="SystemProperties.SetProperty(string, string)"/> to set them.
+    /// call SystemProperties.SetProperty(string, string) (removed) to set them.
     /// <para/>
     /// Set the environment variable <c>lucene.ignoreSecurityExceptions</c> to <c>false</c>
     /// to change the read behavior of these methods to throw the underlying exception 
@@ -141,16 +141,5 @@ namespace Lucene.Net.Util
                 : conversionFunction(setting);
         }
 
-        /// <summary>
-        /// Creates, modifies, or deletes an environment variable stored in the current process.
-        /// </summary>
-        /// <param name="key">The name of the environment variable.</param>
-        /// <param name="value">The new environment variable value.</param>
-        /// <exception cref="SecurityException">The caller does not have the required permission to perform this operation.</exception>
-        public static void SetProperty(string key, string value)
-        {
-            IConfiguration configuration = ConfigurationSettings.GetConfigurationFactory().CreateConfiguration();
-            configuration[key] = value;
-        }
     }
 }
