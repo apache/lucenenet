@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Util;
 using NUnit.Framework;
+using After = NUnit.Framework.TearDownAttribute;
 
 namespace Lucene.Net.Configuration
 {
@@ -23,6 +24,18 @@ namespace Lucene.Net.Configuration
     [TestFixture]
     class TestSystemProperties : LuceneTestCase
     {
+        /// <summary>
+        /// For subclasses to override. Overrides must call <c>base.TearDown()</c>.
+        /// </summary>
+        [After]
+#pragma warning disable xUnit1013
+        public virtual void TearDown()
+#pragma warning restore xUnit1013
+        {
+            ConfigurationSettings.CurrentConfiguration.Reload();
+            base.TearDown();
+        }
+
         [Test]
         public virtual void EnvironmentTest2()
         {
@@ -30,19 +43,23 @@ namespace Lucene.Net.Configuration
             string testValue = "test.success";
             Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
             Assert.AreEqual(Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey], testValue);
+            Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
         }
         [Test]
         public virtual void SetTest()
         {
             Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
+            Assert.AreEqual("fr", SystemProperties.GetProperty("tests:locale"));
             Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"] = "en";
             Assert.AreEqual("en", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
+            Assert.AreEqual("en", SystemProperties.GetProperty("tests:locale"));
         }
 
         [Test]
         public virtual void TestDefaults()
         {
             Assert.AreEqual("perMethod", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:cleanthreads:sysprop"]);
+            Assert.AreEqual("perMethod", SystemProperties.GetProperty("tests:cleanthreads:sysprop"));
         }
 
         [Test]
@@ -61,6 +78,7 @@ namespace Lucene.Net.Configuration
         {
             // TODO - not working with XML.
             Assert.AreEqual("0x00000010", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:seed"]);
+            Assert.AreEqual("0x00000010", SystemProperties.GetProperty("tests:seed"));
         }
 
         [Test]

@@ -28,10 +28,13 @@ namespace Lucene.Net.Configuration
         public virtual void TestSetandUnset()
         {
             Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
+            Assert.AreEqual("fr", SystemProperties.GetProperty("tests:locale"));
             Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"] = "en";
             Assert.AreEqual("en", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
+            Assert.AreEqual("en", SystemProperties.GetProperty("tests:locale"));
             ConfigurationSettings.CurrentConfiguration.Reload();
             Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
+            Assert.AreEqual("fr", SystemProperties.GetProperty("tests:locale"));
         }
 
     }

@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Util;
 using NUnit.Framework;
+using After = NUnit.Framework.TearDownAttribute;
 
 namespace Lucene.Net.Configuration
 {
@@ -22,13 +23,24 @@ namespace Lucene.Net.Configuration
 
     [TestFixture]
     class TestDefaultSystemProperties : LuceneTestCase
-    {
+    {        /// <summary>
+             /// For subclasses to override. Overrides must call <c>base.TearDown()</c>.
+             /// </summary>
+        [After]
+#pragma warning disable xUnit1013
+        public virtual void TearDown()
+#pragma warning restore xUnit1013
+        {
+            ConfigurationSettings.CurrentConfiguration.Reload();
+            base.TearDown();
+        }
         [Test]
         public virtual void ReadEnvironmentTest()
         {
             string testKey = "lucene:tests:setting";
             string testValue = "test.success";
             Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
         }
         [Test]
         public virtual void SetEnvironmentTest()
@@ -37,6 +49,7 @@ namespace Lucene.Net.Configuration
             string testValue = "test.success";
             Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
             Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
         }
 
     }
