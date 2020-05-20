@@ -21,22 +21,17 @@ namespace Lucene.Net.Configuration
      */
 
     [TestFixture]
-    class TestDefaultSystemProperties : LuceneTestCase
+    class TestConfigurationSettings : LuceneTestCase
     {
+
         [Test]
-        public virtual void ReadEnvironmentTest()
+        public virtual void TestSetandUnset()
         {
-            string testKey = "lucene:tests:setting";
-            string testValue = "test.success";
-            Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
-        }
-        [Test]
-        public virtual void SetEnvironmentTest()
-        {
-            string testKey  = "lucene:tests:setting";
-            string testValue = "test.success";
-            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
-            Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
+            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"] = "en";
+            Assert.AreEqual("en", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
+            ConfigurationSettings.CurrentConfiguration.Reload();
+            Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
         }
 
     }

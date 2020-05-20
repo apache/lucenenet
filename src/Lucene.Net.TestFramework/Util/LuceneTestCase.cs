@@ -689,7 +689,6 @@ namespace Lucene.Net.Util
             /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
-            ConfigurationSettings.CurrentConfiguration.Reload();
         }
 
         // LUCENENET specific constants to scan the test framework for codecs/docvaluesformats/postingsformats only once

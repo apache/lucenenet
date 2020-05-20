@@ -23,13 +23,6 @@ namespace Lucene.Net.Configuration
     [TestFixture]
     class TestSystemProperties : LuceneTestCase
     {
-
-        //[OneTimeSetUp]
-        //public override void BeforeClass()
-        //{
-        //    ConfigurationFactory = new TestConfigurationFactory();
-        //    base.BeforeClass();
-        //}
         [Test]
         public virtual void EnvironmentTest2()
         {
@@ -44,16 +37,6 @@ namespace Lucene.Net.Configuration
             Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
             Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"] = "en";
             Assert.AreEqual("en", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
-        }
-
-        [Test]
-        public virtual void TestSetandUnset()
-        {
-            Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
-            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"] = "en";
-            Assert.AreEqual("en", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
-            ConfigurationSettings.CurrentConfiguration.Reload();
-            Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
         }
 
         [Test]

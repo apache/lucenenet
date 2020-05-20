@@ -58,18 +58,6 @@
     <PackageReference Include="NUnit" Version="$(NUnitPackageVersion)" />
   </ItemGroup>
 
-  <!--<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <PackageReference Include="System.Diagnostics.StackTrace" Version="$(SystemDiagnosticsStackTracePackageVersion)" />
-    <PackageReference Include="System.Diagnostics.TraceSource" Version="$(SystemDiagnosticsTraceSourcePackageVersion)" />
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
-    <PackageReference Include="System.Threading.Thread" Version="$(SystemThreadingThreadPackageVersion)" />
-  </ItemGroup>-->
-
-
-  <ItemGroup>
-  </ItemGroup>
-
-
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonPackageVersion)" />
