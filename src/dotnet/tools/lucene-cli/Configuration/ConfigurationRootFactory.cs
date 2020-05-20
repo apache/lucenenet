@@ -43,25 +43,21 @@ namespace Lucene.Net.Configuration
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
     internal class ConfigurationRootFactory : IConfigurationRootFactory
     {
-        private readonly ConcurrentDictionary<string, IConfigurationRoot> configurationCache = new ConcurrentDictionary<string, IConfigurationRoot>();
+        private readonly IConfigurationRoot configurationRoot;
 
-        public string JsonTestSettingsFileName { get; set; } = "appsettings.json";
+        public ConfigurationRootFactory()
+        {
+            configurationRoot = new ConfigurationBuilder()
+                .AddEnvironmentVariables(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings
+                .AddJsonFile("appsettings.json")
+                .Build();
+        }
 
         public IConfigurationRoot CreateConfiguration()
         {
-            string testDirectory = System.AppContext.BaseDirectory;
-
-            return configurationCache.GetOrAdd(testDirectory, (key) =>
-            {
-                return new ConfigurationBuilder()
-                    .AddEnvironmentVariables(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings
-                    .AddJsonFile(JsonTestSettingsFileName)
-                    .Build();
-            });
+            return configurationRoot;
         }
     }
-
 }
