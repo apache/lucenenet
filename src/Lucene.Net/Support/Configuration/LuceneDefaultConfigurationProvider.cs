@@ -31,15 +31,6 @@ namespace Lucene.Net.Configuration
     internal class LuceneDefaultConfigurationProvider : IConfigurationProvider
     {
         private readonly bool ignoreSecurityExceptionsOnRead;
-
-        private const string MySqlServerPrefix = "MYSQLCONNSTR_";
-        private const string SqlAzureServerPrefix = "SQLAZURECONNSTR_";
-        private const string SqlServerPrefix = "SQLCONNSTR_";
-        private const string CustomPrefix = "CUSTOMCONNSTR_";
-
-        private const string ConnStrKeyFormat = "ConnectionStrings:{0}";
-        private const string ProviderKeyFormat = "ConnectionStrings:{0}_ProviderName";
-
         private readonly string _prefix;
 
         /// <summary>
@@ -70,14 +61,6 @@ namespace Lucene.Net.Configuration
         /// The configuration key value pairs for this provider.
         /// </summary>
         protected ConcurrentDictionary<string, string> Data { get; set; }
-
-        /// <summary>
-        /// Attempts to find a value with the given key, returns true if one is found, false otherwise.
-        /// </summary>
-        /// <param name="key">The key to lookup.</param>
-        /// <param name="value">The value found at key if one is found.</param>
-        /// <returns>True if key has a value, false otherwise.</returns>
-        //public virtual bool TryGet(string key, out string value)             => Data.TryGetValue(key, out value);
 
         public virtual bool TryGet(string key, out string value)
         {
