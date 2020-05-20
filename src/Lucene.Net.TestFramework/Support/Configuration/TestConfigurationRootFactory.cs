@@ -28,7 +28,7 @@ namespace Lucene.Net.Configuration
 
         public IConfigurationBuilder builder { get; }
 
-        public TestConfigurationRootFactory() : base(false)
+        public TestConfigurationRootFactory() : base()
         {
         }
 

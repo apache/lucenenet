@@ -22,7 +22,7 @@ namespace Lucene.Net.Configuration
 
     public static class ConfigurationSettings
     {
-        private static IConfigurationRootFactory configurationRootFactory = new DefaultConfigurationRootFactory(false);
+        private static IConfigurationRootFactory configurationRootFactory = new DefaultConfigurationRootFactory();
 
         /// <summary>
         /// Sets the <see cref="IConfigurationRootFactory"/> instance used to instantiate

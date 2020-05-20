@@ -52,7 +52,7 @@ namespace Lucene.Net.Configuration
         /// Initializes a new instance with the specified prefix.
         /// </summary>
         /// <param name="prefix">A prefix used to filter the environment variables.</param>
-        public LuceneDefaultConfigurationProvider(string prefix, bool ignoreSecurityExceptionsOnRead = false)
+        public LuceneDefaultConfigurationProvider(string prefix, bool ignoreSecurityExceptionsOnRead = true)
         {
             _prefix = prefix ?? string.Empty;
             this.ignoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead;

@@ -26,7 +26,7 @@ namespace Lucene.Net.Configuration
         private readonly IConfigurationBuilder builder;
         private IConfigurationRoot configuration;
 
-        public DefaultConfigurationRootFactory(bool ignoreSecurityExceptionsOnRead)
+        public DefaultConfigurationRootFactory(bool ignoreSecurityExceptionsOnRead = true)
         {
             this.builder = new ConfigurationBuilder();
             builder.Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead });
