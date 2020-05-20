@@ -22,11 +22,8 @@
 //     * limitations under the License.
 //     */
 
-using Lucene.Net.Configuration;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace Lucene.Net.Configuration
 {
