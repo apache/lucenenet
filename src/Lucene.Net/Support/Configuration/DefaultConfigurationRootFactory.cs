@@ -21,7 +21,6 @@ namespace Lucene.Net.Configuration
      */
     internal class DefaultConfigurationRootFactory : IConfigurationRootFactory
     {
-        private readonly bool ignoreSecurityExceptionsOnRead;
         private bool initialized = false;
         protected object m_initializationLock = new object();
         private readonly IConfigurationBuilder builder;
@@ -30,8 +29,7 @@ namespace Lucene.Net.Configuration
         public DefaultConfigurationRootFactory(bool ignoreSecurityExceptionsOnRead)
         {
             this.builder = new ConfigurationBuilder();
-            builder.Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:" });
-            this.ignoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead;
+            builder.Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead });
         }
 
         public virtual IConfigurationRoot CreateConfiguration()

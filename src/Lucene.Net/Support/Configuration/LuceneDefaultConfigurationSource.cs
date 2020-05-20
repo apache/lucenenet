@@ -28,6 +28,7 @@ namespace Lucene.Net.Configuration
         /// A prefix used to filter environment variables.
         /// </summary>
         public string Prefix { get; set; }
+        public bool IgnoreSecurityExceptionsOnRead { get; set; }
 
         /// <summary>
         /// Builds the <see cref="LuceneDefaultConfigurationProvider"/> for this source.
@@ -36,7 +37,7 @@ namespace Lucene.Net.Configuration
         /// <returns>A <see cref="LuceneDefaultConfigurationProvider"/></returns>
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            return new LuceneDefaultConfigurationProvider(Prefix);
+            return new LuceneDefaultConfigurationProvider(Prefix, IgnoreSecurityExceptionsOnRead);
         }
     }
 }

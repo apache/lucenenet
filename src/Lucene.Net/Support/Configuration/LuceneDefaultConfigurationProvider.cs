@@ -45,7 +45,7 @@ namespace Lucene.Net.Configuration
         /// <summary>
         /// Initializes a new instance.
         /// </summary>
-        public LuceneDefaultConfigurationProvider() : this(string.Empty)
+        public LuceneDefaultConfigurationProvider(bool ignoreSecurityExceptionsOnRead) : this(string.Empty, ignoreSecurityExceptionsOnRead)
         { }
 
         /// <summary>
@@ -64,87 +64,7 @@ namespace Lucene.Net.Configuration
         public void Load()
         {
             Data = new ConcurrentDictionary<string, string>();
-
-            //Load(Environment.GetEnvironmentVariables());
         }
-        //public bool TryGetEnvironmentVariable(string name, out string value)
-        //{
-        //    try
-        //    {
-        //        value = Environment.GetEnvironmentVariable(name);
-        //        return !string.IsNullOrEmpty(value);
-        //    }
-        //    catch (SecurityException)
-        //    {
-        //    }
-        //}
-
-        //internal void Load(IDictionary envVariables)
-        //{
-        //    Data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-        //    var filteredEnvVariables = envVariables
-        //        .Cast<DictionaryEntry>()
-        //        .SelectMany(AzureEnvToAppEnv)
-        //        .Where(entry => ((string)entry.Key).StartsWith(_prefix, StringComparison.OrdinalIgnoreCase));
-
-        //    foreach (var envVariable in filteredEnvVariables)
-        //    {
-        //        var key = ((string)envVariable.Key).Substring(_prefix.Length);
-        //        Data[key] = (string)envVariable.Value;
-        //    }
-        //}
-
-        //private static string NormalizeKey(string key)
-        //{
-        //    return key.Replace("__", ConfigurationPath.KeyDelimiter);
-        //}
-
-        //private static IEnumerable<DictionaryEntry> AzureEnvToAppEnv(DictionaryEntry entry)
-        //{
-        //    var key = (string)entry.Key;
-        //    var prefix = string.Empty;
-        //    var provider = string.Empty;
-
-        //    if (key.StartsWith(MySqlServerPrefix, StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        prefix = MySqlServerPrefix;
-        //        provider = "MySql.Data.MySqlClient";
-        //    }
-        //    else if (key.StartsWith(SqlAzureServerPrefix, StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        prefix = SqlAzureServerPrefix;
-        //        provider = "System.Data.SqlClient";
-        //    }
-        //    else if (key.StartsWith(SqlServerPrefix, StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        prefix = SqlServerPrefix;
-        //        provider = "System.Data.SqlClient";
-        //    }
-        //    else if (key.StartsWith(CustomPrefix, StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        prefix = CustomPrefix;
-        //    }
-        //    else
-        //    {
-        //        entry.Key = NormalizeKey(key);
-        //        yield return entry;
-        //        yield break;
-        //    }
-
-        //    // Return the key-value pair for connection string
-        //    yield return new DictionaryEntry(
-        //        string.Format(ConnStrKeyFormat, NormalizeKey(key.Substring(prefix.Length))),
-        //        entry.Value);
-
-        //    if (!string.IsNullOrEmpty(provider))
-        //    {
-        //        // Return the key-value pair for provider name
-        //        yield return new DictionaryEntry(
-        //            string.Format(ProviderKeyFormat, NormalizeKey(key.Substring(prefix.Length))),
-        //            provider);
-        //    }
-        //}
 
         /// <summary>
         /// The configuration key value pairs for this provider.
