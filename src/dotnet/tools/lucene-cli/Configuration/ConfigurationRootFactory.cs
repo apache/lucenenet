@@ -47,6 +47,9 @@ namespace Lucene.Net.Configuration
     {
         private readonly IConfigurationRoot configurationRoot;
 
+        /// <summary>
+        /// Initialises a EnvironmentVariables and a Json Configuration provider by default
+        /// </summary>
         public ConfigurationRootFactory()
         {
             configurationRoot = new ConfigurationBuilder()
@@ -55,6 +58,10 @@ namespace Lucene.Net.Configuration
                 .Build();
         }
 
+        /// <summary>
+        /// Returns the current configuration root object
+        /// </summary>
+        /// <returns></returns>
         public IConfigurationRoot CreateConfiguration()
         {
             return configurationRoot;

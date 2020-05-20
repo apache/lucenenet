@@ -24,14 +24,20 @@ namespace Lucene.Net.Configuration
     {
         private readonly ConcurrentDictionary<string, IConfigurationRoot> configurationCache = new ConcurrentDictionary<string, IConfigurationRoot>();
 
+        /// <summary>
+        /// Filename to be used for configuration settings
+        /// </summary>
         public string JsonTestSettingsFileName { get; set; } = "lucene.testsettings.json";
-
-        public IConfigurationBuilder builder { get; }
 
         public TestConfigurationRootFactory() : base()
         {
         }
 
+        /// <summary>
+        /// Initialises a cache containing a LuceneDefaultConfigurationSource and a Json Source by default. 
+        /// Uses the supplied JsonTestSettingsFileName
+        /// </summary>
+        /// <returns>A ConfigurationRoot object</returns>
         public override IConfigurationRoot CreateConfiguration()
         {
             IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();

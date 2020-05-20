@@ -26,6 +26,9 @@ namespace Lucene.Net.Configuration
         private readonly IConfigurationBuilder builder;
         private IConfigurationRoot configuration;
 
+        /// <summary>
+        /// Creates a new LuceneDefaultConfigurationSource to read environment variables
+        /// </summary>
         public DefaultConfigurationRootFactory(bool ignoreSecurityExceptionsOnRead = true)
         {
             this.builder = new ConfigurationBuilder();

@@ -28,6 +28,9 @@ namespace Lucene.Net.Configuration
         /// A prefix used to filter environment variables.
         /// </summary>
         public string Prefix { get; set; }
+        /// <summary>
+        /// Set to true by default - used to prevent any security exceptions thrown when reading environment variables
+        /// </summary>
         public bool IgnoreSecurityExceptionsOnRead { get; set; }
 
         /// <summary>

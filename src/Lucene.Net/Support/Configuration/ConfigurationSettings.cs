@@ -45,6 +45,9 @@ namespace Lucene.Net.Configuration
         {
             return configurationRootFactory;
         }
+        /// <summary>
+        /// Returns the current configuration
+        /// </summary>
         [CLSCompliant(false)]
         public static IConfigurationRoot CurrentConfiguration => configurationRootFactory.CreateConfiguration();
     }
