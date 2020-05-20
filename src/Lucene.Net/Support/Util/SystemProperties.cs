@@ -23,42 +23,31 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Helper for environment variables. This class helps to convert the environment
-    /// variables to int or bool data types and also silently handles read permission
-    /// errors.
-    /// <para/>
-    /// For instructions how to set environment variables for your OS, see 
-    /// <a href="https://www.schrodinger.com/kb/1842">https://www.schrodinger.com/kb/1842</a>.
-    /// <para/>
-    /// Note that if you want to load any of these settings for your application from a
-    /// configuration file, it is recommended your application load them at startup and
-    /// call SystemProperties.SetProperty(string, string) (removed) to set them.
-    /// <para/>
-    /// Set the environment variable <c>lucene.ignoreSecurityExceptions</c> to <c>false</c>
-    /// to change the read behavior of these methods to throw the underlying exception 
-    /// instead of returning the default value.
+    /// Reads properties from an IConfiguration(Root) object returned by a ConfigurationFactory.
+    /// The ConfigurationFactory is set using ConfigurationSettings.SetConfigurationRootFactory().
+    /// This can be supplied a user implemented factory (IConfigurationRootFactory) 
     /// </summary>
     internal static class SystemProperties
     {
         /// <summary>
-        /// Retrieves the value of an environment variable from the current process.
+        /// Retrieves the value of an property from the current process.
         /// </summary>
-        /// <param name="key">The name of the environment variable.</param>
-        /// <returns>The environment variable value.</returns>
+        /// <param name="key">The name of the property.</param>
+        /// <returns>The property value.</returns>
         public static string GetProperty(string key)
         {
             return GetProperty(key, null);
         }
 
         /// <summary>
-        /// Retrieves the value of an environment variable from the current process, 
+        /// Retrieves the value of an property from the current process, 
         /// with a default value if it doens't exist or the caller doesn't have 
         /// permission to read the value.
         /// </summary>
-        /// <param name="key">The name of the environment variable.</param>
-        /// <param name="defaultValue">The value to use if the environment variable does not exist 
+        /// <param name="key">The name of the property.</param>
+        /// <param name="defaultValue">The value to use if the property does not exist 
         /// or the caller doesn't have permission to read the value.</param>
-        /// <returns>The environment variable value.</returns>
+        /// <returns>The property value.</returns>
         public static string GetProperty(string key, string defaultValue)
         {
             return GetProperty<string>(key, defaultValue,
@@ -70,25 +59,25 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Retrieves the value of an environment variable from the current process
+        /// Retrieves the value of an property from the current process
         /// as <see cref="bool"/>. If the value cannot be cast to <see cref="bool"/>, returns <c>false</c>.
         /// </summary>
-        /// <param name="key">The name of the environment variable.</param>
-        /// <returns>The environment variable value.</returns>
+        /// <param name="key">The name of the property.</param>
+        /// <returns>The property value.</returns>
         public static bool GetPropertyAsBoolean(string key)
         {
             return GetPropertyAsBoolean(key, false);
         }
 
         /// <summary>
-        /// Retrieves the value of an environment variable from the current process as <see cref="bool"/>, 
+        /// Retrieves the value of an property from the current process as <see cref="bool"/>, 
         /// with a default value if it doens't exist, the caller doesn't have permission to read the value, 
         /// or the value cannot be cast to a <see cref="bool"/>.
         /// </summary>
-        /// <param name="key">The name of the environment variable.</param>
-        /// <param name="defaultValue">The value to use if the environment variable does not exist,
+        /// <param name="key">The name of the property.</param>
+        /// <param name="defaultValue">The value to use if the property does not exist,
         /// the caller doesn't have permission to read the value, or the value cannot be cast to <see cref="bool"/>.</param>
-        /// <returns>The environment variable value.</returns>
+        /// <returns>The property value.</returns>
         public static bool GetPropertyAsBoolean(string key, bool defaultValue)
         {
             return GetProperty<bool>(key, defaultValue,
@@ -101,25 +90,25 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Retrieves the value of an environment variable from the current process
+        /// Retrieves the value of an property from the current process
         /// as <see cref="int"/>. If the value cannot be cast to <see cref="int"/>, returns <c>0</c>.
         /// </summary>
-        /// <param name="key">The name of the environment variable.</param>
-        /// <returns>The environment variable value.</returns>
+        /// <param name="key">The name of the property.</param>
+        /// <returns>The property value.</returns>
         public static int GetPropertyAsInt32(string key)
         {
             return GetPropertyAsInt32(key, 0);
         }
 
         /// <summary>
-        /// Retrieves the value of an environment variable from the current process as <see cref="int"/>, 
+        /// Retrieves the value of an property from the current process as <see cref="int"/>, 
         /// with a default value if it doens't exist, the caller doesn't have permission to read the value, 
         /// or the value cannot be cast to a <see cref="int"/>.
         /// </summary>
-        /// <param name="key">The name of the environment variable.</param>
-        /// <param name="defaultValue">The value to use if the environment variable does not exist,
+        /// <param name="key">The name of the property.</param>
+        /// <param name="defaultValue">The value to use if the property does not exist,
         /// the caller doesn't have permission to read the value, or the value cannot be cast to <see cref="int"/>.</param>
-        /// <returns>The environment variable value.</returns>
+        /// <returns>The property value.</returns>
         public static int GetPropertyAsInt32(string key, int defaultValue)
         {
             return GetProperty<int>(key, defaultValue,
