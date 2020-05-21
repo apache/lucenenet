@@ -31,11 +31,5 @@ namespace Lucene.Net.Util
             Assert.AreEqual(0x111e7435, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("You want weapons? We're in a library! Books! The best weapons in the world!"), 0));
             Assert.AreEqual(0x2c628cd0, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("You want weapons? We're in a library! Books! The best weapons in the world!"), 3476));
         }
-
-        [Test]
-        public virtual void TestHashCodeReadProperty()
-        {
-            Assert.AreEqual("0x00000010", Lucene.Net.Util.SystemProperties.GetProperty("tests:seed"));
-        }
     }
 }
