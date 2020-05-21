@@ -54,9 +54,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="lucene.TestSettings.json">
+    <None Update="Configuration\lucene.Test.Settings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>
