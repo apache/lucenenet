@@ -55,9 +55,6 @@
 
   <ItemGroup>
     <None Update="lucene.TestSettings.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="luceneTestSettings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

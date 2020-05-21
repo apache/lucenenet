@@ -22,7 +22,7 @@ namespace Lucene.Net.Configuration
      */
 
     [TestFixture]
-    class TestSystemProperties : LuceneTestCase
+    public class TestSystemProperties : LuceneTestCase
     {
         /// <summary>
         /// For subclasses to override. Overrides must call <c>base.TearDown()</c>.

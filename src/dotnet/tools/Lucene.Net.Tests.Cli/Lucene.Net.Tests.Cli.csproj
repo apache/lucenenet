@@ -48,6 +48,12 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftExtensionsConfigurationEnvironmentVariablesPackageVersion)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="lucene.TestSettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
 
 </Project>
