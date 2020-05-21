@@ -1,7 +1,7 @@
 {
     "tests": {
         "locale": "fr",
-        "seed": "0x00000020",
+        "seed": "0x00000010",
         "timezone": "SE Asia Standard Time",
         "verbose": "false",
         "weekly": "false"

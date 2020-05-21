@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Configuration;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using After = NUnit.Framework.TearDownAttribute;
 
 namespace Lucene.Net.Cli.Configuration
 {
@@ -24,6 +25,17 @@ namespace Lucene.Net.Cli.Configuration
     [TestFixture]
     class TestSystemProperties : LuceneTestCase
     {
+        /// <summary>
+        /// For subclasses to override. Overrides must call <c>base.TearDown()</c>.
+        /// </summary>
+        [After]
+#pragma warning disable xUnit1013
+        public virtual void TearDown()
+#pragma warning restore xUnit1013
+        {
+            ConfigurationSettings.CurrentConfiguration.Reload();
+            base.TearDown();
+        }
 
         [Test]
         public virtual void EnvironmentTest2()
@@ -87,7 +99,7 @@ namespace Lucene.Net.Cli.Configuration
         [Test]
         public virtual void TestCachedConfigProperty()
         {
-            Assert.AreEqual("0x00000020", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:seed"]);
+            Assert.AreEqual("0x00000010", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:seed"]);
             //Assert.AreEqual(0xf6a5c420, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("foo"), 0));
             //Assert.AreEqual(16, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["test.seed"));
             //// Hashes computed using murmur3_32 from https://code.google.com/p/pyfasthash
