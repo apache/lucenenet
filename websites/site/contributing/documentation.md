@@ -70,7 +70,7 @@ The process overview is:
 
 * Use the `JavaDocToMarkdownConverter` project within the `DocumentationTools.sln` solution to run the conversion of the Java Lucene projects docs into a useable format for DocFx. This tool takes uses a release tag output of the Java Lucene project as it's source to convert against the Lucene.Net's source. 
 * Run the documentation build script to produce the documentation site
-* Publish the output to the [`lucenenet-site`](https://github.com/apache/lucenenet-site) repository into a correpsonding named version directory and branch
+* Publish the output to the [`lucenenet-site`](https://github.com/apache/lucenenet-site) repository into a correpsonding named version directory
 
 We don't want to manually change the converted resulting markdown files (`.md`) because they would get overwritten again when the conversion process is re-executed. Therefor to fix any formatting issues or customized output of the project docs, these customizations/fixes/tweaks are built directly in to the conversion process itself in the `JavaDocToMarkdownConverter.csproj` project.
 
@@ -84,10 +84,10 @@ We don't want to manually change the converted resulting markdown files (`.md`) 
   * Many times there will just be whitespace changes in the files especially if this process has been executed before for the same source/destination version.
   * If this is a new source/destination version there will be a **lot** of file changes, at least one file per folder.
   * If there are formatting issues or irregularities in the converted output then these will need to be addressed by making changes to the conversion tool itself `JavaDocToMarkdownConverter.csproj` (generally only needed for new major version releases)
-* Execute the `./websites/apidocs/docs.ps1` script to build and serve the api docs website locally for testing 
+* Execute the `./websites/apidocs/docs.ps1` script to build and serve the api docs website locally for testing.
+  * Example: `./websites/apidocs/docs.ps1 -LuceneNetVersion 4.8.0-beta00008`
   * will serve a website on [http://localhost:8080](http://localhost:8080)
   * It will take quite a while (approx 10 minutes) to build
-  * Example: `./websites/apidocs/docs.ps1 -LuceneNetVersion 4.8.0-beta00008`
   
 
 ### Publishing the docs
@@ -97,3 +97,4 @@ We don't want to manually change the converted resulting markdown files (`.md`) 
 * Copy the build output of the documentation site to this new folder. The build output will be all of the files in the `/websites/apidocs/_site` in your main lucene.net checked out Git repository. 
 * Commit and push these changes
 * The new version documentation will be live. Due to the amount of new files committed, the new files may take up to 20 minutes to become live. 
+* Create a named branch on the main [`lucenenet`](https://github.com/apache/lucenenet) repository with the same name: `docs/[Version]`, for example `docs/4.8.0-beta00008` based on commit of the latest (if any) changes made to the docs in the `lucenenet` repository. This branch is used for linking to on the API docs "Improve this Doc" button.
