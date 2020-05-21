@@ -1,5 +1,6 @@
 ---
 uid: download/4.8.0-beta00008
+version: 4.8.0-beta00008
 ---
 
 Download Lucene.Net 4.8.0-beta00008
@@ -13,13 +14,23 @@ _Status:_ __`Beta`__
 
 _Released:_ `2020-05-05`
 
+* Source release: []()
+
+* Source release: <a href="https://www.apache.org/dyn/closer.lua/lucene/solr/{{ LUCENE_LATEST_RELEASE }}/solr-{{ LUCENE_LATEST_RELEASE }}-src.tgz">solr-{{ LUCENE_LATEST_RELEASE }}-src.tgz</a>
+      [<a href="https://downloads.apache.org/lucene/solr/{{ LUCENE_LATEST_RELEASE }}/solr-{{ LUCENE_LATEST_RELEASE }}-src.tgz.asc">PGP</a>]
+      [<a href="https://downloads.apache.org/lucene/solr/{{ LUCENE_LATEST_RELEASE }}/solr-{{ LUCENE_LATEST_RELEASE }}-src.tgz.sha512">SHA512</a>]
+* Binary releases: <a href="https://www.apache.org/dyn/closer.lua/lucene/solr/{{ LUCENE_LATEST_RELEASE }}/solr-{{ LUCENE_LATEST_RELEASE }}.tgz">solr-{{ LUCENE_LATEST_RELEASE }}.tgz</a>
+      [<a href="https://downloads.apache.org/lucene/solr/{{ LUCENE_LATEST_RELEASE }}/solr-{{ LUCENE_LATEST_RELEASE }}.tgz.asc">PGP</a>]
+      [<a href="https://downloads.apache.org/lucene/solr/{{ LUCENE_LATEST_RELEASE }}/solr-{{ LUCENE_LATEST_RELEASE }}.tgz.sha512">SHA512</a>]
+      /
+      <a href="https://www.apache.org/dyn/closer.lua/lucene/solr/{{ LUCENE_LATEST_RELEASE }}/solr-{{ LUCENE_LATEST_RELEASE }}.zip">solr-{{ LUCENE_LATEST_RELEASE }}.zip</a>
+      [<a href="https://downloads.apache.org/lucene/solr/{{ LUCENE_LATEST_RELEASE }}/solr-{{ LUCENE_LATEST_RELEASE }}.zip.asc">PGP</a>]
+      [<a href="https://downloads.apache.org/lucene/solr/{{ LUCENE_LATEST_RELEASE }}/solr-{{ LUCENE_LATEST_RELEASE }}.zip.sha512">SHA512</a>]
+*  [Change log](https://github.com/apache/lucenenet/releases/tag/Lucene.Net_4_8_0_beta00008)
+
 <div class="nuget-well" style="text-align:left;">
     PM> Install-Package Lucene.Net -Version 4.8.0-beta00008
 </div>
-
-## Release notes
-
-[https://github.com/apache/lucenenet/releases/tag/Lucene.Net_4_8_0_beta00008](https://github.com/apache/lucenenet/releases/tag/Lucene.Net_4_8_0_beta00008)
 
 ### Source code
 

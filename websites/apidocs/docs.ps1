@@ -20,7 +20,7 @@
 param (
     [Parameter(Mandatory)]
     [string]
-    $LuceneNetVersion,
+    $LuceneNetVersion, # TODO: Validate this with regex
     [Parameter(Mandatory = $false)]
     [int]
     $ServeDocs = 1,
