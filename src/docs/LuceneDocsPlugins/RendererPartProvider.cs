@@ -27,11 +27,13 @@ namespace LuceneDocsPlugins
     /// Exports our custom renderer via MEF to DocFx
     /// </summary>
     [Export(typeof(IDfmCustomizedRendererPartProvider))]
-    public class LuceneRendererPartProvider : IDfmCustomizedRendererPartProvider
+    public class RendererPartProvider : IDfmCustomizedRendererPartProvider
     {
         public IEnumerable<IDfmCustomizedRendererPart> CreateParts(IReadOnlyDictionary<string, object> parameters)
         {
-            yield return new LuceneTokenRendererPart();
+            yield return new LuceneNoteTokenRendererPart();
+            //yield return new EnvironmentVariableRendererPart();
         }
     }
+
 }

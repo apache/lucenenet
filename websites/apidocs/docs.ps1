@@ -116,6 +116,9 @@ $DocFxJsonContent.build.globalMetadata._appTitle = "Apache Lucene.NET $LuceneNet
 $DocFxJsonContent.build.globalMetadata._gitContribute.branch = "docs/$LuceneNetVersion"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxJson
 
+# set env vars that will be replaced in Markdown
+$env:LuceneNetVersion = $LuceneNetVersion
+
 $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\docfx.log"
 
 if ($?) { 

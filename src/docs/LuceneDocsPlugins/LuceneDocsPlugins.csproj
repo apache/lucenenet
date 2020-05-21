@@ -61,11 +61,13 @@ under the License.
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnvironmentVariableInlineRule.cs" />
+    <Compile Include="EnvironmentVariableRendererPart.cs" />
     <Compile Include="LuceneDfmEngineCustomizer.cs" />
     <Compile Include="LuceneNoteBlockRule.cs" />
     <Compile Include="LuceneNoteBlockToken.cs" />
-    <Compile Include="LuceneRendererPartProvider.cs" />
-    <Compile Include="LuceneTokenRendererPart.cs" />
+    <Compile Include="RendererPartProvider.cs" />
+    <Compile Include="LuceneNoteTokenRendererPart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

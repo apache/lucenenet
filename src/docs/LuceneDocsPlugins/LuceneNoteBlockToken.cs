@@ -42,4 +42,13 @@ namespace LuceneDocsPlugins
 
         public SourceInfo SourceInfo { get; }
     }
+
+    public class EnvironmentVariableBlockToken : IMarkdownToken
+    {
+        public IMarkdownRule Rule { get; }
+
+        public IMarkdownContext Context { get; }
+
+        public SourceInfo SourceInfo { get; }
+    }
 }
