@@ -28,8 +28,8 @@ namespace Lucene.Net.Configuration
         [OneTimeSetUp]
         public override void BeforeClass()
         {
-            ConfigurationSettings.SetConfigurationRootFactory(new DefaultConfigurationRootFactory() { IgnoreSecurityExceptionsOnRead = false });
             base.BeforeClass();
+            ConfigurationSettings.SetConfigurationRootFactory(new DefaultConfigurationRootFactory() { IgnoreSecurityExceptionsOnRead = false });
         }
 
         /// <summary>
@@ -54,9 +54,10 @@ namespace Lucene.Net.Configuration
         [Test]
         public virtual void SetEnvironmentTest()
         {
-            string testKey = "lucene:tests:setting";
+            string setKey = "lucene:tests:setting";
+            string testKey = "tests:setting";
             string testValue = "test.success";
-            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
+            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[setKey] = testValue;
             Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
             Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
         }

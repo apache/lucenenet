@@ -24,13 +24,6 @@ namespace Lucene.Net.Configuration
     [TestFixture]
     public class TestSystemProperties : LuceneTestCase
     {
-
-        [OneTimeSetUp]
-        public override void BeforeClass()
-        {
-            ConfigurationSettings.SetConfigurationRootFactory(new TestConfigurationRootFactory());
-            base.BeforeClass();
-        }
         /// <summary>
         /// For subclasses to override. Overrides must call <c>base.TearDown()</c>.
         /// </summary>
