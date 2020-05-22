@@ -23,26 +23,23 @@ namespace Lucene.Net.Cli.Configuration
     [TestFixture]
     class TestDefaultSystemProperties : LuceneTestCase
     {
-        //[OneTimeSetUp]
-        //public override void BeforeClass()
-        //{
-        //    //ConfigurationFactory = new DefaultConfigurationFactory(false);
-        //    //base.BeforeClass();
-        //}
         [Test]
         public virtual void ReadEnvironmentTest()
         {
-            string testKey = "lucene:tests:setting";
+            string testKey = "tests:setting";
             string testValue = "test.success";
             Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
         }
         [Test]
         public virtual void SetEnvironmentTest()
         {
-            string testKey  = "lucene:tests:setting";
+            string setKey = "tests:setting";
+            string testKey = "tests:setting";
             string testValue = "test.success";
-            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
+            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[setKey] = testValue;
             Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
         }
 
     }

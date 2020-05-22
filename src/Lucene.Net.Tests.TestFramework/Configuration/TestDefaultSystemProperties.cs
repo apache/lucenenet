@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 using After = NUnit.Framework.TearDownAttribute;
 
 namespace Lucene.Net.Configuration
@@ -28,6 +29,9 @@ namespace Lucene.Net.Configuration
         [OneTimeSetUp]
         public override void BeforeClass()
         {
+            string testKey = "lucene:tests:setting";
+            string testValue = "test.success";
+            Environment.SetEnvironmentVariable(testKey, testValue);
             base.BeforeClass();
             ConfigurationSettings.SetConfigurationRootFactory(new DefaultConfigurationRootFactory() { IgnoreSecurityExceptionsOnRead = false });
         }
@@ -54,7 +58,7 @@ namespace Lucene.Net.Configuration
         [Test]
         public virtual void SetEnvironmentTest()
         {
-            string setKey = "lucene:tests:setting";
+            string setKey = "tests:setting";
             string testKey = "tests:setting";
             string testValue = "test.success";
             Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[setKey] = testValue;
