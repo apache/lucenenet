@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace Lucene.Net.Configuration
 {
@@ -31,9 +32,13 @@ namespace Lucene.Net.Configuration
         {
             public bool IgnoreSecurityExceptionsOnRead { get; set; }
             /// <summary>
+            /// PAth to be used for configuration settings
+            /// </summary>
+            public static string JsonTestSettingsFolderName { get; set; } = @"Configuration";
+            /// <summary>
             /// Filename to be used for configuration settings
             /// </summary>
-            public static string JsonTestSettingsFileName { get; set; } = "Configuration\\lucene.testsettings.json";
+            public static string JsonTestSettingsFileName { get; set; } = @"lucene.testsettings.json";
 
             static string JsonTestPath =
 #if TESTFRAMEWORK_NUNIT
@@ -46,7 +51,7 @@ namespace Lucene.Net.Configuration
             }
 
             protected IConfigurationRoot configuration = new ConfigurationBuilder().Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = false }
-            ).AddJsonFile(Path.Combine(JsonTestPath, JsonTestSettingsFileName)).Build();
+            ).AddJsonFile(Path.Combine(new string[] { JsonTestPath, JsonTestSettingsFolderName, JsonTestSettingsFileName })).Build();
 
             public virtual IConfigurationRoot CurrentConfiguration
             {
