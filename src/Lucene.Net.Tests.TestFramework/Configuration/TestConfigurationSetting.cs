@@ -1,9 +1,11 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Configuration;
+using Lucene.Net.Util;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
 using NUnit.Framework;
 using System;
 using System.IO;
-using System.Reflection;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Configuration
 {
@@ -111,5 +113,66 @@ namespace Lucene.Net.Configuration
             Assert.AreEqual(testValue_fr, SystemProperties.GetProperty(testKey));
         }
 
+
+        
+    }
+}
+
+public class MyFrameworkInitializer : LuceneTestFrameworkInitializer
+{
+    public override void TestFrameworkSetUp()
+    {
+        ConfigurationFactory = new MyConfigurationRootFactory();
+    }
+
+    private class MyConfigurationRootFactory : TestConfigurationRootFactory
+    {
+        public override IConfigurationRoot CreateConfiguration()
+        {
+            return new MyConfigurationRoot(base.CreateConfiguration());
+        }
+    }
+
+    private class MyConfigurationRoot : IConfigurationRoot
+    {
+        private readonly IConfigurationRoot inner;
+
+        public MyConfigurationRoot(IConfigurationRoot inner)
+        {
+            this.inner = inner ?? throw new ArgumentNullException(nameof(inner));
+        }
+
+        public string this[string key]
+        {
+            get
+            {
+                if (key == "foo")
+                    return "bar";
+                return inner[key];
+            }
+            set => inner[key] = value;
+        }
+
+        public IEnumerable<IConfigurationProvider> Providers => inner.Providers;
+
+        public IEnumerable<IConfigurationSection> GetChildren()
+        {
+            return inner.GetChildren();
+        }
+
+        public IChangeToken GetReloadToken()
+        {
+            return inner.GetReloadToken();
+        }
+
+        public IConfigurationSection GetSection(string key)
+        {
+            return inner.GetSection(key);
+        }
+
+        public void Reload()
+        {
+            inner.Reload();
+        }
     }
 }
