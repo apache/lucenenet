@@ -21,12 +21,9 @@ namespace Lucene.Net.Configuration
      */
     public abstract class NamedConfigurationRootFactory
     {
-        protected readonly IConfigurationBuilder builder;
-        private IConfigurationRoot configuration;
-
         private bool initialized = false;
         protected object m_initializationLock = new object();
-        private IConfigurationRoot initializationTarget; // Dummy variable required by LazyInitializer.EnsureInitialized
+        private object initializationTarget; // Dummy variable required by LazyInitializer.EnsureInitialized
 
         /// <summary>
         /// Ensures the <see cref="Initialize"/> method has been called since the
