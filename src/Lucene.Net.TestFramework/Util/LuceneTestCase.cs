@@ -691,14 +691,6 @@ namespace Lucene.Net.Util
                 */
         }
 
-        // LUCENENET specific constants to scan the test framework for codecs/docvaluesformats/postingsformats only once
-        public static ICodecFactory CodecFactory { get; set; } = new TestCodecFactory();
-        public static IDocValuesFormatFactory DocValuesFormatFactory { get; set; } = new TestDocValuesFormatFactory();
-        public static IPostingsFormatFactory PostingsFormatFactory { get; set; } = new TestPostingsFormatFactory();
-
-        [CLSCompliant(false)]
-        public static IConfigurationRootFactory ConfigurationFactory { get; set; } = new TestConfigurationRootFactory();
-
 #if TESTFRAMEWORK_MSTEST
         private static readonly IList<string> initalizationLock = new List<string>();
         private static string _testClassName = string.Empty;
@@ -773,12 +765,6 @@ namespace Lucene.Net.Util
         {
             try
             {
-                // Setup the factories
-                ConfigurationSettings.SetConfigurationRootFactory(ConfigurationFactory);
-                Codec.SetCodecFactory(CodecFactory);
-                DocValuesFormat.SetDocValuesFormatFactory(DocValuesFormatFactory);
-                PostingsFormat.SetPostingsFormatFactory(PostingsFormatFactory);
-
                 ClassEnvRule.Before(this);
             }
             catch (Exception ex)
