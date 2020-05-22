@@ -70,7 +70,7 @@ namespace Lucene.Net.Configuration
                 {
                     try
                     {
-                        return Environment.GetEnvironmentVariable(key);
+                        return Environment.GetEnvironmentVariable(_prefix + key);
                     }
                     catch (SecurityException)
                     {
@@ -79,7 +79,7 @@ namespace Lucene.Net.Configuration
                 }
                 else
                 {
-                    return Environment.GetEnvironmentVariable(key);
+                    return Environment.GetEnvironmentVariable(_prefix + key);
                 }
             });
             return (!string.IsNullOrEmpty(value));

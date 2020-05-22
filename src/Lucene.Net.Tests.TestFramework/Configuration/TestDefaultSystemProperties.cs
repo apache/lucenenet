@@ -46,7 +46,7 @@ namespace Lucene.Net.Configuration
         [Test]
         public virtual void ReadEnvironmentTest()
         {
-            string testKey = "lucene:tests:setting";
+            string testKey = "tests:setting";
             string testValue = "test.success";
             Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
             Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
