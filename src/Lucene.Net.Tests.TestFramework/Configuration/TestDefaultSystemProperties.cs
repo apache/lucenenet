@@ -23,9 +23,18 @@ namespace Lucene.Net.Configuration
 
     [TestFixture]
     class TestDefaultSystemProperties : LuceneTestCase
-    {        /// <summary>
-             /// For subclasses to override. Overrides must call <c>base.TearDown()</c>.
-             /// </summary>
+    {
+
+        [OneTimeSetUp]
+        public override void BeforeClass()
+        {
+            ConfigurationSettings.SetConfigurationRootFactory(new DefaultConfigurationRootFactory() { IgnoreSecurityExceptionsOnRead = false });
+            base.BeforeClass();
+        }
+
+        /// <summary>
+        /// For subclasses to override. Overrides must call <c>base.TearDown()</c>.
+        /// </summary>
         [After]
 #pragma warning disable xUnit1013
         public virtual void TearDown()
@@ -45,7 +54,7 @@ namespace Lucene.Net.Configuration
         [Test]
         public virtual void SetEnvironmentTest()
         {
-            string testKey  = "lucene:tests:setting";
+            string testKey = "lucene:tests:setting";
             string testValue = "test.success";
             Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
             Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);

@@ -24,6 +24,13 @@ namespace Lucene.Net.Configuration
     [TestFixture]
     public class TestSystemProperties : LuceneTestCase
     {
+
+        [OneTimeSetUp]
+        public override void BeforeClass()
+        {
+            ConfigurationSettings.SetConfigurationRootFactory(new TestConfigurationRootFactory());
+            base.BeforeClass();
+        }
         /// <summary>
         /// For subclasses to override. Overrides must call <c>base.TearDown()</c>.
         /// </summary>
@@ -34,6 +41,33 @@ namespace Lucene.Net.Configuration
         {
             ConfigurationSettings.CurrentConfiguration.Reload();
             base.TearDown();
+        }
+
+        //private JsonConfigurationProvider LoadProvider(string json)
+        //{
+        //    var p = new JsonConfigurationProvider(new JsonConfigurationSource { Optional = true });
+        //    p.Load(TestStreamHelpers.StringToStream(json));
+        //    return p;
+        //}
+
+        [Test]
+        public void LoadKeyValuePairsFromValidJson()
+        {
+            var json = @"
+{
+    'firstname': 'test',
+    'test.last.name': 'last.name',
+        'residential.address': {
+            'street.name': 'Something street',
+            'zipcode': '12345'
+        }
+}";
+            //var jsonConfigSrc = LoadProvider(json);
+
+            //Assert.AreEqual("test", jsonConfigSrc.Get("firstname"));
+            //Assert.AreEqual("last.name", jsonConfigSrc.Get("test.last.name"));
+            //Assert.AreEqual("Something street", jsonConfigSrc.Get("residential.address:STREET.name"));
+            //Assert.AreEqual("12345", jsonConfigSrc.Get("residential.address:zipcode"));
         }
 
         [Test]

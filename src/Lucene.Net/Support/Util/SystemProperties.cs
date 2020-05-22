@@ -122,7 +122,7 @@ namespace Lucene.Net.Util
 
         private static T GetProperty<T>(string key, T defaultValue, Func<string, T> conversionFunction)
         {
-            IConfiguration configuration = ConfigurationSettings.GetConfigurationFactory().CreateConfiguration();
+            IConfiguration configuration = ConfigurationSettings.CurrentConfiguration;
             string setting = configuration[key];
 
             return string.IsNullOrEmpty(setting)

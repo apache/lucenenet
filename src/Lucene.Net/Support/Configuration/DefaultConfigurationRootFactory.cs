@@ -19,45 +19,28 @@ namespace Lucene.Net.Configuration
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    internal class DefaultConfigurationRootFactory : IConfigurationRootFactory
+    internal class DefaultConfigurationRootFactory : NamedConfigurationRootFactory, IConfigurationRootFactory
     {
-        private bool initialized = false;
-        protected object m_initializationLock = new object();
-        private readonly IConfigurationBuilder builder;
-        private IConfigurationRoot configuration;
+        public bool IgnoreSecurityExceptionsOnRead { get; set; }
+        protected IConfigurationRoot configuration;
 
-        /// <summary>
-        /// Creates a new LuceneDefaultConfigurationSource to read environment variables
-        /// </summary>
-        public DefaultConfigurationRootFactory(bool ignoreSecurityExceptionsOnRead = true)
+        public virtual IConfigurationRoot CurrentConfiguration
         {
-            this.builder = new ConfigurationBuilder();
-            builder.Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead });
-        }
-
-        public virtual IConfigurationRoot CreateConfiguration()
-        {
-            return EnsureInitialized();
-        }
-
-        /// <summary>
-        /// Ensures the <see cref="Initialize"/> method has been called since the
-        /// last application start. This method is thread-safe.
-        /// </summary>
-        protected IConfigurationRoot EnsureInitialized()
-        {
-            return LazyInitializer.EnsureInitialized(ref this.configuration, ref this.initialized, ref this.m_initializationLock, () =>
+            get
             {
-                return Initialize();
-            });
+                EnsureInitialized();
+                return configuration;
+            }
         }
 
         /// <summary>
         /// Initializes the dependencies of this factory.
         /// </summary>
-        protected virtual IConfigurationRoot Initialize()
+        protected override void Initialize()
         {
-            return builder.Build();
+            IConfigurationBuilder builder = new ConfigurationBuilder();
+            builder.Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = IgnoreSecurityExceptionsOnRead });
+            configuration = builder.Build();
         }
     }
 }

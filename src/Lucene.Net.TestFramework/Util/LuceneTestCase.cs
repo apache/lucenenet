@@ -774,7 +774,7 @@ namespace Lucene.Net.Util
             try
             {
                 // Setup the factories
-                ConfigurationSettings.SetConfigurationRootFactory(ConfigurationFactory);
+                //ConfigurationSettings.SetConfigurationRootFactory(ConfigurationFactory);
                 Codec.SetCodecFactory(CodecFactory);
                 DocValuesFormat.SetDocValuesFormatFactory(DocValuesFormatFactory);
                 PostingsFormat.SetPostingsFormatFactory(PostingsFormatFactory);

@@ -20,7 +20,7 @@ namespace Lucene.Net.Configuration
      * limitations under the License.
      */
 
-    internal class TestConfigurationRootFactory : DefaultConfigurationRootFactory
+    internal class TestConfigurationRootFactory : DefaultConfigurationRootFactory, IConfigurationRootFactory
     {
         private readonly ConcurrentDictionary<string, IConfigurationRoot> configurationCache = new ConcurrentDictionary<string, IConfigurationRoot>();
 
@@ -29,35 +29,49 @@ namespace Lucene.Net.Configuration
         /// </summary>
         public string JsonTestSettingsFileName { get; set; } = "lucene.testsettings.json";
 
-        public TestConfigurationRootFactory() : base()
-        {
-        }
-
         /// <summary>
         /// Initialises a cache containing a LuceneDefaultConfigurationSource and a Json Source by default. 
         /// Uses the supplied JsonTestSettingsFileName
         /// </summary>
         /// <returns>A ConfigurationRoot object</returns>
-        public override IConfigurationRoot CreateConfiguration()
+
+        public override IConfigurationRoot CurrentConfiguration
         {
-            IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            get
+            {
+                EnsureInitialized();
+                string testDirectory =
+#if TESTFRAMEWORK_NUNIT
+            NUnit.Framework.TestContext.CurrentContext.TestDirectory;
+#else
+                            AppDomain.CurrentDomain.BaseDirectory;
+#endif
+
+                return configurationCache.GetOrAdd(testDirectory, (key) => { return null; });
+            }
+        }
+
+        /// <summary>
+        /// Initializes the dependencies of this factory.
+        /// </summary>
+        protected override void Initialize()
+        {
 
             string testDirectory =
 #if TESTFRAMEWORK_NUNIT
-                NUnit.Framework.TestContext.CurrentContext.TestDirectory;
+            NUnit.Framework.TestContext.CurrentContext.TestDirectory;
 #else
-                AppDomain.CurrentDomain.BaseDirectory;
+                            AppDomain.CurrentDomain.BaseDirectory;
 #endif
-
-            return configurationCache.GetOrAdd(testDirectory, (key) =>
+            configurationCache.GetOrAdd(testDirectory, (key) =>
             {
                 return new ConfigurationBuilder()
                     .AddLuceneDefaultSettings(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings
                     .AddJsonFilesFromRootDirectoryTo(currentPath: key, JsonTestSettingsFileName)
 #if TESTFRAMEWORK_NUNIT
-                    .AddNUnitTestRunSettings()
+                                .AddNUnitTestRunSettings()
 #endif
-                    .Build();
+                                .Build();
             });
         }
     }

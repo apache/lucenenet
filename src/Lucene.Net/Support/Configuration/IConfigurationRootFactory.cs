@@ -22,7 +22,7 @@ namespace Lucene.Net.Configuration
     [CLSCompliant(false)]
     public interface IConfigurationRootFactory
     {
-        IConfigurationRoot CreateConfiguration();
+        IConfigurationRoot CurrentConfiguration { get; }
     }
 
 }

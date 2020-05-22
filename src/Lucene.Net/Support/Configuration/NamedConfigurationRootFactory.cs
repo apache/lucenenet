@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
+using System.Threading;
 
 namespace Lucene.Net.Configuration
 {
@@ -19,27 +19,31 @@ namespace Lucene.Net.Configuration
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    public static class ConfigurationSettings
+    public abstract class NamedConfigurationRootFactory
     {
-        private static IConfigurationRootFactory configurationRootFactory = new DefaultConfigurationRootFactory();
+        protected readonly IConfigurationBuilder builder;
+        private IConfigurationRoot configuration;
+
+        private bool initialized = false;
+        protected object m_initializationLock = new object();
+        private IConfigurationRoot initializationTarget; // Dummy variable required by LazyInitializer.EnsureInitialized
 
         /// <summary>
-        /// Sets the <see cref="IConfigurationRootFactory"/> instance used to instantiate
-        /// <see cref="ConfigurationSettings"/> subclasses.
+        /// Ensures the <see cref="Initialize"/> method has been called since the
+        /// last application start. This method is thread-safe.
         /// </summary>
-        /// <param name="configurationRootFactory">The new <see cref="IConfigurationRootFactory"/>.</param>
-        /// <exception cref="ArgumentNullException">The <paramref name="configurationRootFactory"/> parameter is <c>null</c>.</exception>
-        [CLSCompliant(false)]
-        public static void SetConfigurationRootFactory(IConfigurationRootFactory configurationRootFactory)
+        protected void EnsureInitialized()
         {
-            ConfigurationSettings.configurationRootFactory = configurationRootFactory ?? throw new ArgumentNullException(nameof(configurationRootFactory));
+            LazyInitializer.EnsureInitialized(ref this.initializationTarget, ref this.initialized, ref this.m_initializationLock, () =>
+            {
+                Initialize();
+                return null;
+            });
         }
 
         /// <summary>
-        /// Returns the current configuration
+        /// Initializes the dependencies of this factory.
         /// </summary>
-        [CLSCompliant(false)]
-        public static IConfigurationRoot CurrentConfiguration => configurationRootFactory.CurrentConfiguration;
+        protected abstract void Initialize();
     }
 }

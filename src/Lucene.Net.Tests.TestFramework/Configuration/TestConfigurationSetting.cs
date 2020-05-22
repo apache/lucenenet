@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Util;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 
 namespace Lucene.Net.Configuration
@@ -24,17 +25,91 @@ namespace Lucene.Net.Configuration
     class TestConfigurationSettings : LuceneTestCase
     {
 
+        internal class UnitTestConfigurationRootFactory : IConfigurationRootFactory
+        {
+            public bool IgnoreSecurityExceptionsOnRead { get; set; }
+            protected IConfigurationRoot configuration = new ConfigurationBuilder().Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = false }).Build();
+            public UnitTestConfigurationRootFactory()
+            {
+
+            }
+            public virtual IConfigurationRoot CurrentConfiguration
+            {
+                get
+                {
+                    return configuration;
+                }
+            }
+        }
+
+        public static IConfigurationRootFactory TestConfigurationFactory;
+
+        [OneTimeSetUp]
+        public override void BeforeClass()
+        {
+            ConfigurationSettings.SetConfigurationRootFactory(new UnitTestConfigurationRootFactory());
+            base.BeforeClass();
+        }
+        //private JsonConfigurationProvider LoadProvider(string json)
+        //{
+        //    var p = new JsonConfigurationProvider(new JsonConfigurationSource { Optional = true });
+        //    p.Load(TestStreamHelpers.StringToStream(json));
+        //    return p;
+        //}
+
+        [Test]
+        public void LoadKeyValuePairsFromValidJson()
+        {
+            var json = @"
+{
+    'firstname': 'test',
+    'test.last.name': 'last.name',
+        'residential.address': {
+            'street.name': 'Something street',
+            'zipcode': '12345'
+        }
+}";
+            //var jsonConfigSrc = LoadProvider(json);
+
+            //Assert.AreEqual("test", jsonConfigSrc.Get("firstname"));
+            //Assert.AreEqual("last.name", jsonConfigSrc.Get("test.last.name"));
+            //Assert.AreEqual("Something street", jsonConfigSrc.Get("residential.address:STREET.name"));
+            //Assert.AreEqual("12345", jsonConfigSrc.Get("residential.address:zipcode"));
+        }
+
+        [Test]
+        public virtual void ReadEnvironmentTest()
+        {
+            string testKey = "lucene:tests:setting";
+            string testValue = "test.success";
+            Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
+        }
+        [Test]
+        public virtual void SetEnvironmentTest()
+        {
+            string testKey = "lucene:tests:setting";
+            string testValue = "test.success";
+            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
+            Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
+        }
+
         [Test]
         public virtual void TestSetandUnset()
         {
-            Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
-            Assert.AreEqual("fr", SystemProperties.GetProperty("tests:locale"));
-            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"] = "en";
-            Assert.AreEqual("en", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
-            Assert.AreEqual("en", SystemProperties.GetProperty("tests:locale"));
+            string testKey = "lucene:tests:locale";
+            string testValue_fr = "fr";
+            string testValue_en = "en";
+            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue_fr;
+            Assert.AreEqual(testValue_fr, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual(testValue_fr, SystemProperties.GetProperty(testKey));
+            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue_en;
+            Assert.AreEqual(testValue_en, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual(testValue_en, SystemProperties.GetProperty(testKey));
             ConfigurationSettings.CurrentConfiguration.Reload();
-            Assert.AreEqual("fr", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
-            Assert.AreEqual("fr", SystemProperties.GetProperty("tests:locale"));
+            Assert.AreEqual(null, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual(null, SystemProperties.GetProperty(testKey));
         }
 
     }
