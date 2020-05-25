@@ -19,7 +19,7 @@ namespace Lucene.Net.Configuration
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    internal class DefaultConfigurationRootFactory : NamedConfigurationRootFactory, IConfigurationRootFactory
+    internal class DefaultConfigurationRootFactory : IConfigurationRootFactory
     {
         public bool IgnoreSecurityExceptionsOnRead { get; set; }
         protected IConfigurationRoot m_configuration;
@@ -32,20 +32,10 @@ namespace Lucene.Net.Configuration
             }
         }
 
-        /// <summary>
-        /// Initializes the dependencies of this factory.
-        /// </summary>
-        protected override void Initialize()
+        public virtual IConfigurationRoot CreateConfiguration()
         {
-            IConfigurationBuilder builder = new ConfigurationBuilder();
-            builder.Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = IgnoreSecurityExceptionsOnRead });
-            m_configuration = builder.Build();
-        }
-
-        private IConfigurationRoot CreateConfiguration()
-        {
-            EnsureInitialized();
-            return m_configuration;
+            IConfigurationBuilder builder = new ConfigurationBuilder().Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = IgnoreSecurityExceptionsOnRead });
+            return builder.Build();
         }
     }
 }

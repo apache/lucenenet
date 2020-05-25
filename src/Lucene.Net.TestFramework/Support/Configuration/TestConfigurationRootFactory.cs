@@ -44,34 +44,22 @@ namespace Lucene.Net.Configuration
         }
 
         /// <summary>
-        /// Build and return the configuration
+        /// Initialises a cache containing a LuceneDefaultConfigurationSource and a Json Source by default. 
+        /// Uses the supplied JsonTestSettingsFileName
         /// </summary>
-        private IConfigurationRoot CreateConfiguration()
+        /// <returns>A ConfigurationRoot object</returns>
+        public override IConfigurationRoot CreateConfiguration()
         {
-            EnsureInitialized();
+            IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
 
             string testDirectory =
 #if TESTFRAMEWORK_NUNIT
-            NUnit.Framework.TestContext.CurrentContext.TestDirectory;
+                NUnit.Framework.TestContext.CurrentContext.TestDirectory;
 #else
-                            AppDomain.CurrentDomain.BaseDirectory;
+                AppDomain.CurrentDomain.BaseDirectory;
 #endif
 
-            return configurationCache.GetOrAdd(testDirectory, (key) => { return null; });
-        }
-        /// <summary>
-        /// Initializes the dependencies of this factory.
-        /// </summary>
-        protected override void Initialize()
-        {
-
-            string testDirectory =
-#if TESTFRAMEWORK_NUNIT
-            NUnit.Framework.TestContext.CurrentContext.TestDirectory;
-#else
-                            AppDomain.CurrentDomain.BaseDirectory;
-#endif
-            configurationCache.GetOrAdd(testDirectory, (key) =>
+            return configurationCache.GetOrAdd(testDirectory, (key) =>
             {
                 return new ConfigurationBuilder()
                     .AddLuceneDefaultSettings(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings

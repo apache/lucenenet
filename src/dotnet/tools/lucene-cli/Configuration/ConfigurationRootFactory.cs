@@ -43,28 +43,25 @@ namespace Lucene.Net.Configuration
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    internal class ConfigurationRootFactory : NamedConfigurationRootFactory, IConfigurationRootFactory
+    internal class ConfigurationRootFactory : IConfigurationRootFactory
     {
-        protected IConfigurationRoot configuration;
-
         public IConfigurationRoot CurrentConfiguration
         {
             get
             {
-                EnsureInitialized();
-                return configuration;
+                return CreateConfiguration();
             }
         }
 
         /// <summary>
         /// Initializes the dependencies of this factory.
         /// </summary>
-        protected override void Initialize()
+        public virtual IConfigurationRoot CreateConfiguration()
         {
             IConfigurationBuilder builder = new ConfigurationBuilder()
                 .AddEnvironmentVariables(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings
                 .AddJsonFile("appsettings.json");
-            this.configuration = builder.Build();
+            return builder.Build();
         }
     }
 }

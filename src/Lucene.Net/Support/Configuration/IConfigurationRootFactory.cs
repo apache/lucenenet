@@ -23,6 +23,7 @@ namespace Lucene.Net.Configuration
     public interface IConfigurationRootFactory
     {
         IConfigurationRoot CurrentConfiguration { get; }
+        IConfigurationRoot CreateConfiguration();
     }
 
 }
