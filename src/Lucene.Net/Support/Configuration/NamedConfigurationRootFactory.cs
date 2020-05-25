@@ -31,11 +31,7 @@ namespace Lucene.Net.Configuration
         /// </summary>
         protected void EnsureInitialized()
         {
-            LazyInitializer.EnsureInitialized(ref this.initializationTarget, ref this.initialized, ref this.m_initializationLock, () =>
-            {
-                Initialize();
-                return null;
-            });
+            Initialize();
         }
 
         /// <summary>
