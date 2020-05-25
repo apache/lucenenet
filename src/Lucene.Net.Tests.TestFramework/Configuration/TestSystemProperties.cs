@@ -56,13 +56,6 @@ namespace Lucene.Net.Configuration
         }
 
         [Test]
-        public virtual void TestDefaults()
-        {
-            Assert.AreEqual("perMethod", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:cleanthreads:sysprop"]);
-            Assert.AreEqual("perMethod", SystemProperties.GetProperty("tests:cleanthreads:sysprop"));
-        }
-
-        [Test]
         public virtual void TestHashCodeReadProperty()
         {
 

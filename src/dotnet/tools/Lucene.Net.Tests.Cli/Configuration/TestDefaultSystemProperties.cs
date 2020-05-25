@@ -1,5 +1,7 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Configuration;
+using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Cli.Configuration
 {
@@ -23,6 +25,16 @@ namespace Lucene.Net.Cli.Configuration
     [TestFixture]
     class TestDefaultSystemProperties : LuceneTestCase
     {
+        [OneTimeSetUp]
+        public override void BeforeClass()
+        {
+            string testKey = "lucene:tests:setting";
+            string testValue = "test.success";
+            Environment.SetEnvironmentVariable(testKey, testValue);
+            base.BeforeClass();
+            ConfigurationSettings.SetConfigurationRootFactory(new DefaultConfigurationRootFactory() { IgnoreSecurityExceptionsOnRead = false });
+        }
+
         [Test]
         public virtual void ReadEnvironmentTest()
         {
