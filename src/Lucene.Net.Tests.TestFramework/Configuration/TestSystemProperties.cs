@@ -39,7 +39,7 @@ namespace Lucene.Net.Configuration
         [Test]
         public virtual void EnvironmentTest2()
         {
-            string testKey = "lucene:tests:setting";
+            string testKey = "tests:setting";
             string testValue = "test.success";
             Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
             Assert.AreEqual(Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey], testValue);

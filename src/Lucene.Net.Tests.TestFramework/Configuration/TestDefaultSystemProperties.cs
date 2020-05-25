@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Util;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using System;
 using After = NUnit.Framework.TearDownAttribute;
@@ -25,6 +26,15 @@ namespace Lucene.Net.Configuration
     [TestFixture]
     class TestDefaultSystemProperties : LuceneTestCase
     {
+        internal IProperties SystemProperties { get; private set; }
+        public IConfigurationSettings ConfigurationSettings { get; private set; }
+
+        public static IConfigurationRootFactory TestConfigurationFactory;
+
+        protected IConfigurationRoot LoadConfiguration()
+        {
+            return new DefaultConfigurationRootFactory() { IgnoreSecurityExceptionsOnRead = false }.CurrentConfiguration;
+        }
 
         [OneTimeSetUp]
         public override void BeforeClass()
@@ -32,8 +42,13 @@ namespace Lucene.Net.Configuration
             string testKey = "lucene:tests:setting";
             string testValue = "test.success";
             Environment.SetEnvironmentVariable(testKey, testValue);
+
             base.BeforeClass();
-            ConfigurationSettings.SetConfigurationRootFactory(new DefaultConfigurationRootFactory() { IgnoreSecurityExceptionsOnRead = false });
+
+            var configurationRoot = LoadConfiguration();
+            // Set up mocks for ConfigurationSettings and SystemProperties
+            ConfigurationSettings = new MockConfigurationSettings(configurationRoot);
+            SystemProperties = new Properties(configurationRoot);
         }
 
         /// <summary>
@@ -52,7 +67,7 @@ namespace Lucene.Net.Configuration
         {
             string testKey = "tests:setting";
             string testValue = "test.success";
-            Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual(testValue, ConfigurationSettings.CurrentConfiguration[testKey]);
             Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
         }
         [Test]
@@ -61,8 +76,8 @@ namespace Lucene.Net.Configuration
             string setKey = "tests:setting";
             string testKey = "tests:setting";
             string testValue = "test.success";
-            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[setKey] = testValue;
-            Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            ConfigurationSettings.CurrentConfiguration[setKey] = testValue;
+            Assert.AreEqual(testValue, ConfigurationSettings.CurrentConfiguration[testKey]);
             Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
         }
 

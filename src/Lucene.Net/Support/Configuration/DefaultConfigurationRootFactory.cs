@@ -28,8 +28,7 @@ namespace Lucene.Net.Configuration
         {
             get
             {
-                EnsureInitialized();
-                return m_configuration;
+            return CreateConfiguration();
             }
         }
 
@@ -41,6 +40,12 @@ namespace Lucene.Net.Configuration
             IConfigurationBuilder builder = new ConfigurationBuilder();
             builder.Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = IgnoreSecurityExceptionsOnRead });
             m_configuration = builder.Build();
+        }
+
+        private IConfigurationRoot CreateConfiguration()
+        {
+            EnsureInitialized();
+            return m_configuration;
         }
     }
 }

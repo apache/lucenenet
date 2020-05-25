@@ -30,51 +30,37 @@ namespace Lucene.Net.Configuration
     class TestConfigurationSettings : LuceneTestCase
     {
 
-        internal class UnitTestConfigurationRootFactory : IConfigurationRootFactory
-        {
-            public bool IgnoreSecurityExceptionsOnRead { get; set; }
-            /// <summary>
-            /// PAth to be used for configuration settings
-            /// </summary>
-            public static string JsonTestSettingsFolderName { get; set; } = @"Configuration";
-            /// <summary>
-            /// Filename to be used for configuration settings
-            /// </summary>
-            public static string JsonTestSettingsFileName { get; set; } = @"lucene.testsettings.json";
+        internal IProperties SystemProperties { get; private set; }
 
-            static string JsonTestPath =
+        public IConfigurationSettings ConfigurationSettings { get; private set; }
+
+        protected IConfigurationRoot LoadConfiguration()
+        {
+            string JsonTestPath =
 #if TESTFRAMEWORK_NUNIT
             NUnit.Framework.TestContext.CurrentContext.TestDirectory;
 #else
-                            AppDomain.CurrentDomain.BaseDirectory;
+            AppDomain.CurrentDomain.BaseDirectory;
 #endif
-            public UnitTestConfigurationRootFactory()
-            {
-            }
-
-            protected IConfigurationRoot configuration = new ConfigurationBuilder().Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = false }
+            string JsonTestSettingsFolderName = @"Configuration";
+            string JsonTestSettingsFileName = @"lucene.testsettings.json";
+            return new ConfigurationBuilder().Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = false }
             ).AddJsonFile(Path.Combine(new string[] { JsonTestPath, JsonTestSettingsFolderName, JsonTestSettingsFileName })).Build();
-
-            public virtual IConfigurationRoot CurrentConfiguration
-            {
-                get
-                {
-                    return configuration;
-                }
-            }
         }
-
-        public static IConfigurationRootFactory TestConfigurationFactory;
 
         [OneTimeSetUp]
         public override void BeforeClass()
         {
-            base.BeforeClass();
             // set an Enviroment variable used in the test
             string testKey = "lucene:tests:setup";
             string testValue = "setup";
             Environment.SetEnvironmentVariable(testKey, testValue);
-            ConfigurationSettings.SetConfigurationRootFactory(new UnitTestConfigurationRootFactory());
+
+            base.BeforeClass();
+            var configurationRoot = LoadConfiguration();
+            // Set up mocks for ConfigurationSettings and SystemProperties
+            ConfigurationSettings = new MockConfigurationSettings(configurationRoot);
+            SystemProperties = new Properties(configurationRoot);
         }
 
         [Test]
@@ -82,7 +68,7 @@ namespace Lucene.Net.Configuration
         {
             string testKey = "tests:setup";
             string testValue = "setup";
-            Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual(testValue, ConfigurationSettings.CurrentConfiguration[testKey]);
             Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
         }
         [Test]
@@ -90,8 +76,8 @@ namespace Lucene.Net.Configuration
         {
             string testKey = "lucene:tests:setting";
             string testValue = "test.success";
-            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
-            Assert.AreEqual(testValue, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
+            Assert.AreEqual(testValue, ConfigurationSettings.CurrentConfiguration[testKey]);
             Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
         }
 
@@ -101,78 +87,19 @@ namespace Lucene.Net.Configuration
             string testKey = "tests:locale";
             string testValue_fr = "fr";
             string testValue_en = "en";
-            //Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue_fr;
-            Assert.AreEqual(testValue_fr, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:locale"]);
-            Assert.AreEqual(testValue_fr, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            //ConfigurationSettings.CurrentConfiguration[testKey] = testValue_fr;
+            Assert.AreEqual(testValue_fr, ConfigurationSettings.CurrentConfiguration["tests:locale"]);
+            Assert.AreEqual(testValue_fr, ConfigurationSettings.CurrentConfiguration[testKey]);
             Assert.AreEqual(testValue_fr, SystemProperties.GetProperty(testKey));
-            Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey] = testValue_en;
-            Assert.AreEqual(testValue_en, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            ConfigurationSettings.CurrentConfiguration[testKey] = testValue_en;
+            Assert.AreEqual(testValue_en, ConfigurationSettings.CurrentConfiguration[testKey]);
             Assert.AreEqual(testValue_en, SystemProperties.GetProperty(testKey));
             ConfigurationSettings.CurrentConfiguration.Reload();
-            Assert.AreEqual(testValue_fr, Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration[testKey]);
+            Assert.AreEqual(testValue_fr, ConfigurationSettings.CurrentConfiguration[testKey]);
             Assert.AreEqual(testValue_fr, SystemProperties.GetProperty(testKey));
         }
 
 
-        
-    }
-}
 
-public class MyFrameworkInitializer : LuceneTestFrameworkInitializer
-{
-    public override void TestFrameworkSetUp()
-    {
-        ConfigurationFactory = new MyConfigurationRootFactory();
-    }
-
-    private class MyConfigurationRootFactory : TestConfigurationRootFactory
-    {
-        public override IConfigurationRoot CreateConfiguration()
-        {
-            return new MyConfigurationRoot(base.CreateConfiguration());
-        }
-    }
-
-    private class MyConfigurationRoot : IConfigurationRoot
-    {
-        private readonly IConfigurationRoot inner;
-
-        public MyConfigurationRoot(IConfigurationRoot inner)
-        {
-            this.inner = inner ?? throw new ArgumentNullException(nameof(inner));
-        }
-
-        public string this[string key]
-        {
-            get
-            {
-                if (key == "foo")
-                    return "bar";
-                return inner[key];
-            }
-            set => inner[key] = value;
-        }
-
-        public IEnumerable<IConfigurationProvider> Providers => inner.Providers;
-
-        public IEnumerable<IConfigurationSection> GetChildren()
-        {
-            return inner.GetChildren();
-        }
-
-        public IChangeToken GetReloadToken()
-        {
-            return inner.GetReloadToken();
-        }
-
-        public IConfigurationSection GetSection(string key)
-        {
-            return inner.GetSection(key);
-        }
-
-        public void Reload()
-        {
-            inner.Reload();
-        }
     }
 }

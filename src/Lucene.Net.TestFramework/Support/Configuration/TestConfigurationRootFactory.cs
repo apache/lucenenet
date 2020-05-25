@@ -39,18 +39,26 @@ namespace Lucene.Net.Configuration
         {
             get
             {
-                EnsureInitialized();
-                string testDirectory =
+                return CreateConfiguration();
+            }
+        }
+
+        /// <summary>
+        /// Build and return the configuration
+        /// </summary>
+        private IConfigurationRoot CreateConfiguration()
+        {
+            EnsureInitialized();
+
+            string testDirectory =
 #if TESTFRAMEWORK_NUNIT
             NUnit.Framework.TestContext.CurrentContext.TestDirectory;
 #else
                             AppDomain.CurrentDomain.BaseDirectory;
 #endif
 
-                return configurationCache.GetOrAdd(testDirectory, (key) => { return null; });
-            }
+            return configurationCache.GetOrAdd(testDirectory, (key) => { return null; });
         }
-
         /// <summary>
         /// Initializes the dependencies of this factory.
         /// </summary>
