@@ -22,14 +22,14 @@ namespace Lucene.Net.Configuration
     internal class DefaultConfigurationRootFactory : NamedConfigurationRootFactory, IConfigurationRootFactory
     {
         public bool IgnoreSecurityExceptionsOnRead { get; set; }
-        protected IConfigurationRoot configuration;
+        protected IConfigurationRoot m_configuration;
 
         public virtual IConfigurationRoot CurrentConfiguration
         {
             get
             {
                 EnsureInitialized();
-                return configuration;
+                return m_configuration;
             }
         }
 
@@ -40,7 +40,7 @@ namespace Lucene.Net.Configuration
         {
             IConfigurationBuilder builder = new ConfigurationBuilder();
             builder.Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = IgnoreSecurityExceptionsOnRead });
-            configuration = builder.Build();
+            m_configuration = builder.Build();
         }
     }
 }
