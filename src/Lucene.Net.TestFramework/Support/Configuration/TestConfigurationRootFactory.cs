@@ -27,7 +27,7 @@ namespace Lucene.Net.Configuration
         /// <summary>
         /// Filename to be used for configuration settings
         /// </summary>
-        public string JsonTestSettingsFileName { get; set; } = "lucene.testsettings.json";
+        public string JsonTestSettingsFileName { get; set; } = "lucene.TestSettings.json";
 
         /// <summary>
         /// Initialises a cache containing a LuceneDefaultConfigurationSource and a Json Source by default. 

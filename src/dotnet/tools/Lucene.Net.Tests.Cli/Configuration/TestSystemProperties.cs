@@ -68,19 +68,12 @@ namespace Lucene.Net.Cli.Configuration
         public virtual void TestHashCodeReadProperty()
         {
 
+            Assert.AreEqual("0x00000010", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:seed"]);
             Assert.AreEqual(0xf6a5c420, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("foo"), 0));
 
             Assert.AreEqual(16, StringHelper.GOOD_FAST_HASH_SEED);
             // Hashes computed using murmur3_32 from https://code.google.com/p/pyfasthash
             Assert.AreEqual(0xcd018ef6, (uint)StringHelper.Murmurhash3_x86_32(new BytesRef("foo"), StringHelper.GOOD_FAST_HASH_SEED));
-        }
-
-        [Test]
-        public virtual void TestXMLConfiguration()
-        {
-            // TODO - not working with XML.
-            Assert.AreEqual("0x00000010", Lucene.Net.Configuration.ConfigurationSettings.CurrentConfiguration["tests:seed"]);
-            Assert.AreEqual("0x00000010", SystemProperties.GetProperty("tests:seed"));
         }
 
         [Test]
