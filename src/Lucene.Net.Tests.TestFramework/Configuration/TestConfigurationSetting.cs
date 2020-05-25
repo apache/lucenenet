@@ -43,7 +43,7 @@ namespace Lucene.Net.Configuration
             AppDomain.CurrentDomain.BaseDirectory;
 #endif
             string JsonTestSettingsFolderName = @"Configuration";
-            string JsonTestSettingsFileName = @"lucene.testsettings.json";
+            string JsonTestSettingsFileName = @"lucene.TestSettings.json";
             return new ConfigurationBuilder().Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = false }
             ).AddJsonFile(Path.Combine(new string[] { JsonTestPath, JsonTestSettingsFolderName, JsonTestSettingsFileName })).Build();
         }
@@ -98,8 +98,5 @@ namespace Lucene.Net.Configuration
             Assert.AreEqual(testValue_fr, ConfigurationSettings.CurrentConfiguration[testKey]);
             Assert.AreEqual(testValue_fr, SystemProperties.GetProperty(testKey));
         }
-
-
-
     }
 }
