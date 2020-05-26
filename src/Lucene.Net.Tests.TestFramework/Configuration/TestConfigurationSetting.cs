@@ -39,7 +39,7 @@ namespace Lucene.Net.Configuration
             /// <summary>
             /// Filename to be used for configuration settings
             /// </summary>
-            public static string JsonTestSettingsFileName { get; set; } = @"lucene.testsettings.json";
+            public static string JsonTestSettingsFileName { get; set; } = @"lucene.TestSettings.json";
 
             static string JsonTestPath =
 #if TESTFRAMEWORK_NUNIT
