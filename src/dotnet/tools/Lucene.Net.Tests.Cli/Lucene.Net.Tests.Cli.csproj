@@ -30,6 +30,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Configuration\TestDefaultSystemProperties.cs" />
+    <Compile Remove="Configuration\TestSystemProperties.cs" />
     <Compile Remove="SourceCode\TestInputForParser.cs" />
     <EmbeddedResource Include="SourceCode\TestInputForParser.cs" />
   </ItemGroup>
@@ -52,6 +54,10 @@
     <None Update="lucene.TestSettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Configuration\" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />

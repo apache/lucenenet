@@ -1,11 +1,8 @@
-﻿using Lucene.Net.Configuration;
-using Lucene.Net.Util;
+﻿using Lucene.Net.Util;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Primitives;
 using NUnit.Framework;
 using System;
 using System.IO;
-using System.Collections.Generic;
 
 namespace Lucene.Net.Configuration
 {
@@ -27,44 +24,67 @@ namespace Lucene.Net.Configuration
      */
 
     [TestFixture]
-    class TestConfigurationSettings : LuceneTestCase
+    internal class TestConfigurationSettings : ConfigurationSettingsTestCase
     {
+        // This variable must be unique in all of the tests
+        private const string EnvironmentVariablePrefix = "lucenetest:";
 
-        internal IProperties SystemProperties { get; private set; }
-
-        public IConfigurationSettings ConfigurationSettings { get; private set; }
-
-        protected IConfigurationRoot LoadConfiguration()
+        internal class UnitTestConfigurationRootFactory : IConfigurationRootFactory
         {
-            string JsonTestPath =
+            public bool IgnoreSecurityExceptionsOnRead { get; set; }
+            /// <summary>
+            /// PAth to be used for configuration settings
+            /// </summary>
+            public static string JsonTestSettingsFolderName { get; set; } = @"Configuration";
+            /// <summary>
+            /// Filename to be used for configuration settings
+            /// </summary>
+            public static string JsonTestSettingsFileName { get; set; } = @"lucene.testsettings.json";
+
+            static string JsonTestPath =
 #if TESTFRAMEWORK_NUNIT
             NUnit.Framework.TestContext.CurrentContext.TestDirectory;
 #else
-            AppDomain.CurrentDomain.BaseDirectory;
+                            AppDomain.CurrentDomain.BaseDirectory;
 #endif
-            string JsonTestSettingsFolderName = @"Configuration";
-            string JsonTestSettingsFileName = @"lucene.TestSettings.json";
-            return new ConfigurationBuilder().Add(new LuceneDefaultConfigurationSource() { Prefix = "lucene:", IgnoreSecurityExceptionsOnRead = false }
+            public UnitTestConfigurationRootFactory()
+            {
+            }
+
+            protected IConfigurationRoot configuration = new ConfigurationBuilder().Add(new LuceneDefaultConfigurationSource() { Prefix = EnvironmentVariablePrefix, IgnoreSecurityExceptionsOnRead = false }
             ).AddJsonFile(Path.Combine(new string[] { JsonTestPath, JsonTestSettingsFolderName, JsonTestSettingsFileName })).Build();
+
+            public virtual IConfigurationRoot CurrentConfiguration
+            {
+                get
+                {
+                    return configuration;
+                }
+            }
+
+            public IConfigurationRoot CreateConfiguration()
+            {
+                return CurrentConfiguration;
+            }
+        }
+
+        protected override IConfigurationRoot LoadConfiguration()
+        {
+            return new UnitTestConfigurationRootFactory().CurrentConfiguration;
         }
 
         [OneTimeSetUp]
         public override void BeforeClass()
         {
+            base.BeforeClass();
             // set an Enviroment variable used in the test
-            string testKey = "lucene:tests:setup";
+            string testKey = EnvironmentVariablePrefix + "tests:setup";
             string testValue = "setup";
             Environment.SetEnvironmentVariable(testKey, testValue);
-
-            base.BeforeClass();
-            var configurationRoot = LoadConfiguration();
-            // Set up mocks for ConfigurationSettings and SystemProperties
-            ConfigurationSettings = new MockConfigurationSettings(configurationRoot);
-            SystemProperties = new Properties(configurationRoot);
         }
 
         [Test]
-        public virtual void ReadEnvironmentTest()
+        public virtual void ReadPreconfiguredEnvironmentTest()
         {
             string testKey = "tests:setup";
             string testValue = "setup";
@@ -72,9 +92,9 @@ namespace Lucene.Net.Configuration
             Assert.AreEqual(testValue, SystemProperties.GetProperty(testKey));
         }
         [Test]
-        public virtual void SetEnvironmentTest()
+        public virtual void SetRuntimeEnvironmentTest()
         {
-            string testKey = "lucene:tests:setting";
+            string testKey = "tests:setting";
             string testValue = "test.success";
             ConfigurationSettings.CurrentConfiguration[testKey] = testValue;
             Assert.AreEqual(testValue, ConfigurationSettings.CurrentConfiguration[testKey]);

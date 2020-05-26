@@ -29,8 +29,6 @@ namespace Lucene.Net.Configuration
         internal IProperties SystemProperties { get; private set; }
         public IConfigurationSettings ConfigurationSettings { get; private set; }
 
-        public static IConfigurationRootFactory TestConfigurationFactory;
-
         protected IConfigurationRoot LoadConfiguration()
         {
             return new DefaultConfigurationRootFactory() { IgnoreSecurityExceptionsOnRead = false }.CurrentConfiguration;

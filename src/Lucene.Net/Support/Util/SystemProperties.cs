@@ -23,24 +23,32 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Reads properties from an IConfiguration(Root) object returned by a ConfigurationFactory.
-    /// The ConfigurationFactory is set using ConfigurationSettings.SetConfigurationRootFactory().
-    /// This can be supplied a user implemented factory (IConfigurationRootFactory) 
+    /// Reads properties from an <see cref="IProperties"/> instance. The default configuration reads
+    /// the property valies from an <see cref="IConfigurationRoot"/> instance returned by a
+    /// <see cref="IConfigurationRootFactory"/> implementation.
+    /// The <see cref="IConfigurationRootFactory"/> is set using
+    /// <see cref="ConfigurationSettings.SetConfigurationRootFactory(IConfigurationRootFactory)"/>.
+    /// This can be supplied a user implemented <see cref="IConfigurationRootFactory"/> to customize
+    /// the property sources.
     /// </summary>
     internal static class SystemProperties
     {
+        // Calls ConfigurationSettings.GetConfigurationRootFactory internally to
+        // get the currently set instance of IConfigurationRootFactory
+        private readonly static IProperties properties = new Properties(ConfigurationSettings.GetConfigurationRootFactory().CreateConfiguration);
+
         /// <summary>
-        /// Retrieves the value of an property from the current process.
+        /// Retrieves the value of a property from the current process.
         /// </summary>
         /// <param name="key">The name of the property.</param>
         /// <returns>The property value.</returns>
         public static string GetProperty(string key)
         {
-            return GetProperty(key, null);
+            return properties.GetProperty(key);
         }
 
         /// <summary>
-        /// Retrieves the value of an property from the current process, 
+        /// Retrieves the value of a property from the current process, 
         /// with a default value if it doens't exist or the caller doesn't have 
         /// permission to read the value.
         /// </summary>
@@ -50,27 +58,22 @@ namespace Lucene.Net.Util
         /// <returns>The property value.</returns>
         public static string GetProperty(string key, string defaultValue)
         {
-            return GetProperty<string>(key, defaultValue,
-                (str) =>
-                {
-                    return str;
-                }
-            );
+            return properties.GetProperty(key, defaultValue);
         }
 
         /// <summary>
-        /// Retrieves the value of an property from the current process
+        /// Retrieves the value of a property from the current process
         /// as <see cref="bool"/>. If the value cannot be cast to <see cref="bool"/>, returns <c>false</c>.
         /// </summary>
         /// <param name="key">The name of the property.</param>
         /// <returns>The property value.</returns>
         public static bool GetPropertyAsBoolean(string key)
         {
-            return GetPropertyAsBoolean(key, false);
+            return properties.GetPropertyAsBoolean(key);
         }
 
         /// <summary>
-        /// Retrieves the value of an property from the current process as <see cref="bool"/>, 
+        /// Retrieves the value of a property from the current process as <see cref="bool"/>, 
         /// with a default value if it doens't exist, the caller doesn't have permission to read the value, 
         /// or the value cannot be cast to a <see cref="bool"/>.
         /// </summary>
@@ -80,28 +83,22 @@ namespace Lucene.Net.Util
         /// <returns>The property value.</returns>
         public static bool GetPropertyAsBoolean(string key, bool defaultValue)
         {
-            return GetProperty<bool>(key, defaultValue,
-                (str) =>
-                {
-                    bool value;
-                    return bool.TryParse(str, out value) ? value : defaultValue;
-                }
-            );
+            return properties.GetPropertyAsBoolean(key, defaultValue);
         }
 
         /// <summary>
-        /// Retrieves the value of an property from the current process
+        /// Retrieves the value of a property from the current process
         /// as <see cref="int"/>. If the value cannot be cast to <see cref="int"/>, returns <c>0</c>.
         /// </summary>
         /// <param name="key">The name of the property.</param>
         /// <returns>The property value.</returns>
         public static int GetPropertyAsInt32(string key)
         {
-            return GetPropertyAsInt32(key, 0);
+            return properties.GetPropertyAsInt32(key);
         }
 
         /// <summary>
-        /// Retrieves the value of an property from the current process as <see cref="int"/>, 
+        /// Retrieves the value of a property from the current process as <see cref="int"/>, 
         /// with a default value if it doens't exist, the caller doesn't have permission to read the value, 
         /// or the value cannot be cast to a <see cref="int"/>.
         /// </summary>
@@ -111,24 +108,7 @@ namespace Lucene.Net.Util
         /// <returns>The property value.</returns>
         public static int GetPropertyAsInt32(string key, int defaultValue)
         {
-            return GetProperty<int>(key, defaultValue,
-                (str) =>
-                {
-                    int value;
-                    return int.TryParse(str, out value) ? value : defaultValue;
-                }
-            );
+            return properties.GetPropertyAsInt32(key, defaultValue);
         }
-
-        private static T GetProperty<T>(string key, T defaultValue, Func<string, T> conversionFunction)
-        {
-            IConfiguration configuration = ConfigurationSettings.CurrentConfiguration;
-            string setting = configuration[key];
-
-            return string.IsNullOrEmpty(setting)
-                ? defaultValue
-                : conversionFunction(setting);
-        }
-
     }
 }

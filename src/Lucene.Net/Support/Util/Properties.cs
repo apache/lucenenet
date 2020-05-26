@@ -32,17 +32,6 @@ namespace Lucene.Net.Util
         private readonly Func<IConfigurationRoot> createConfiguration;
 
         /// <summary>
-        /// Initaializes a new instance of <see cref="Properties"/> with the specified <see cref="IConfigurationRoot"/>.
-        /// </summary>
-        /// <param name="configuration">The <see cref="IConfigurationRoot"/>.</param>
-        public Properties(IConfigurationRoot configuration)
-        {
-            if (configuration == null)
-                throw new ArgumentNullException(nameof(configuration));
-            this.createConfiguration = () => configuration;
-        }
-
-        /// <summary>
         /// Initializes a new instance of <see cref="Properties"/> with the specified <see cref="Func{IConfigurationRoot}"/>.
         /// The delegate method ensures the current instance of <see cref="IConfigurationRoot"/> is used.
         /// </summary>
