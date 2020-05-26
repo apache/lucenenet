@@ -68,4 +68,7 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Cli" />
+  </ItemGroup>
 </Project>

@@ -1,5 +1,8 @@
 {
     "tests": {
-        "locale": "fr"
+        "locale": "fr",
+        "seed": "0x00000010",
+        "verbose": "false",
+        "weekly": "false"
     }
 }

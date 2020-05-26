@@ -20,11 +20,11 @@ namespace Lucene.Net.Configuration
      * limitations under the License.
      */
 
-    internal class ConfigurationRootFactory : IConfigurationRootFactory
+    internal class CliConfigurationRootFactory : IConfigurationRootFactory
     {
         private readonly IConfigurationRoot configuration;
 
-        public ConfigurationRootFactory(IConfigurationRoot configuration)
+        public CliConfigurationRootFactory(IConfigurationRoot configuration)
         {
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }

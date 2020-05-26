@@ -56,10 +56,6 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Configuration\" />
-  </ItemGroup>
-
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
 
 </Project>

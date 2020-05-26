@@ -45,26 +45,6 @@ namespace Lucene.Net.Configuration
         }
 
         [Test]
-        public virtual void TestConfigurationEnvironment()
-        {
-            string[] providers = new string[3] { "Lucene.Net.Configuration.LuceneDefaultConfigurationProvider", "Microsoft.Extensions.Configuration.Json.JsonConfigurationProvider", "Lucene.Net.Configuration.TestParameterConfigurationProvider" };
-            Assert.AreEqual(3, ConfigurationSettings.CurrentConfiguration.Providers.Count());
-            for (int x = 0; x < ConfigurationSettings.CurrentConfiguration.Providers.Count(); x++)
-            {
-                string fullName = ConfigurationSettings.CurrentConfiguration.Providers.ElementAt(x).GetType().FullName;
-
-                TestContext.Progress.WriteLine("CurrentConfiguration ({0})", fullName);
-                Assert.AreEqual(providers[x], fullName);
-                if (fullName == "Microsoft.Extensions.Configuration.Json.JsonConfigurationProvider")
-                {
-                    string source = ((Microsoft.Extensions.Configuration.Json.JsonConfigurationProvider)ConfigurationSettings.CurrentConfiguration.Providers.ElementAt(x)).Source.Path;
-
-                    Assert.AreEqual("lucene.TestSettings.json", source);
-                }
-            }
-        }
-
-        [Test]
         public virtual void TestRuntimeEnviromentSetting()
         {
             string testKey = "tests:setting";
