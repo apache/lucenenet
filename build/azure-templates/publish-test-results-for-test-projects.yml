@@ -367,3 +367,11 @@ steps:
     testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
     testResultsFileName: '${{ parameters.testResultsFileName }}'
 
+- template: publish-test-results.yml
+  parameters:
+    testProjectName: 'Lucene.Net.Tests.TestFramework.DependencyInjection'
+    osName: '${{ parameters.osName }}'
+    framework: '${{ parameters.framework }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'

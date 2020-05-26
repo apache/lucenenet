@@ -35,18 +35,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Configuration\TestDefaultSystemProperties.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Configuration\lucene.testsettings.mock.json" />
+    <None Remove="Configuration\parent.lucene.testsettings.mock.json" />
+    <EmbeddedResource Include="Configuration\lucene.testsettings.mock.json" />
+    <EmbeddedResource Include="Configuration\parent.lucene.testsettings.mock.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
   </ItemGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
 
+  
+    
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)"/>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
+    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
+  </ItemGroup>
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationPackageVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsConfigurationAbstractionsPackageVersion_NET4_5_1)" />
   </ItemGroup>
 
 </Project>

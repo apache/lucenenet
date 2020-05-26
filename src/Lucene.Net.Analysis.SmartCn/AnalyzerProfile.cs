@@ -29,9 +29,9 @@ namespace Lucene.Net.Analysis.Cn.Smart
     /// <see cref="SmartChineseAnalyzer"/> has a built-in dictionary and stopword list out-of-box.
     /// <para/>
     /// NOTE: To use an alternate dicationary than the built-in one, put the "bigramdict.dct" and
-    /// "coredict.dct" files in a subdirectory of your application named "analysis-data". This subdirectory
+    /// "coredict.dct" files in a subdirectory of your application named "smartcn-data". This subdirectory
     /// can be placed in any directory up to and including the root directory (if the OS permission allows).
-    /// To place the files in an alternate location, set an environment variable named "analysis.data.dir"
+    /// To place the files in an alternate location, set an environment variable named "smartcn.data.dir"
     /// with the name of the directory the "bigramdict.dct" and "coredict.dct" files can be located within.
     /// <para/>
     /// The default "bigramdict.dct" and "coredict.dct" files can be found at: 
@@ -64,12 +64,13 @@ namespace Lucene.Net.Analysis.Cn.Smart
             System.Text.Encoding.RegisterProvider(encodingProvider);
 #endif
 
-            string dirName = "analysis-data";
+            string dirName = "smartcn-data";
             //string propName = "analysis.properties";
 
             // Try the system property：-Danalysis.data.dir=/path/to/analysis-data
             //ANALYSIS_DATA_DIR = System.getProperty("analysis.data.dir", "");
-            ANALYSIS_DATA_DIR = SystemProperties.GetProperty("analysis.data.dir", "");
+            // LUCENENET specific - reformatted with :, renamed from "analysis.data.dir"
+            ANALYSIS_DATA_DIR = SystemProperties.GetProperty("smartcn:data:dir", "");
             if (ANALYSIS_DATA_DIR.Length != 0)
                 return;
 

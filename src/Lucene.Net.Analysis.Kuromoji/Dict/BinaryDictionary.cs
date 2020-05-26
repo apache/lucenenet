@@ -2,7 +2,6 @@
 using J2N.IO;
 using Lucene.Net.Codecs;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -29,6 +28,12 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
     /// <summary>
     /// Base class for a binary-encoded in-memory dictionary.
+    /// <para/>
+    /// NOTE: To use an alternate dicationary than the built-in one, put the data files in a subdirectory of
+    /// your application named "kuromoji-data". This subdirectory
+    /// can be placed in any directory up to and including the root directory (if the OS permission allows).
+    /// To place the files in an alternate location, set an environment variable named "kuromoji.data.dir"
+    /// with the name of the directory the data files can be located within.
     /// </summary>
     public abstract class BinaryDictionary : IDictionary
     {
@@ -54,7 +59,8 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         static BinaryDictionary()
         {
-            string currentPath = SystemProperties.GetProperty("kuromoji.data.dir",
+            // LUCENENET specific - reformatted with :, renamed from "analysis.data.dir"
+            string currentPath = SystemProperties.GetProperty("kuromoji:data:dir",
 #if NETSTANDARD1_6
                 System.AppContext.BaseDirectory
 #else

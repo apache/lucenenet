@@ -116,16 +116,26 @@ namespace Lucene.Net.Util
             // if verbose: print some debugging stuff about which codecs are loaded.
             if (LuceneTestCase.VERBOSE)
             {
-                ICollection<string> codecs = Codec.AvailableCodecs;
-                foreach (string codec in codecs)
+                // LUCENENET: Only list the services if the underlying ICodecFactory
+                // implements IServiceListable
+                if (Codec.GetCodecFactory() is IServiceListable)
                 {
-                    Console.WriteLine("Loaded codec: '" + codec + "': " + Codec.ForName(codec).GetType().Name);
+                    ICollection<string> codecs = Codec.AvailableCodecs;
+                    foreach (string codec in codecs)
+                    {
+                        Console.WriteLine("Loaded codec: '" + codec + "': " + Codec.ForName(codec).GetType().Name);
+                    }
                 }
 
-                ICollection<string> postingsFormats = PostingsFormat.AvailablePostingsFormats;
-                foreach (string postingsFormat in postingsFormats)
+                // LUCENENET: Only list the services if the underlying IPostingsFormatFactory
+                // implements IServiceListable
+                if (PostingsFormat.GetPostingsFormatFactory() is IServiceListable)
                 {
-                    Console.WriteLine("Loaded postingsFormat: '" + postingsFormat + "': " + PostingsFormat.ForName(postingsFormat).GetType().Name);
+                    ICollection<string> postingsFormats = PostingsFormat.AvailablePostingsFormats;
+                    foreach (string postingsFormat in postingsFormats)
+                    {
+                        Console.WriteLine("Loaded postingsFormat: '" + postingsFormat + "': " + PostingsFormat.ForName(postingsFormat).GetType().Name);
+                    }
                 }
             }
 
@@ -272,8 +282,8 @@ namespace Lucene.Net.Util
             Codec.Default = codec;
 
             // Initialize locale/ timezone.
-            string testLocale = SystemProperties.GetProperty("tests.locale", "random");
-            string testTimeZone = SystemProperties.GetProperty("tests.timezone", "random");
+            string testLocale = SystemProperties.GetProperty("tests:locale", "random");  // LUCENENET specific - reformatted with :
+            string testTimeZone = SystemProperties.GetProperty("tests:timezone", "random");  // LUCENENET specific - reformatted with :
 
             // Always pick a random one for consistency (whether tests.locale was specified or not).
             savedLocale = CultureInfo.CurrentCulture;
@@ -287,7 +297,8 @@ namespace Lucene.Net.Util
 
             // TimeZone.getDefault will set user.timezone to the default timezone of the user's locale.
             // So store the original property value and restore it at end.
-            restoreProperties["user.timezone"] = SystemProperties.GetProperty("user.timezone");
+            // LUCENENET specific - commented
+            //restoreProperties["user:timezone"] = SystemProperties.GetProperty("user:timezone");
             savedTimeZone = TimeZoneInfo.Local;
             TimeZoneInfo randomTimeZone = LuceneTestCase.RandomTimeZone(random);
             timeZone = testTimeZone.Equals("random", StringComparison.Ordinal) ? randomTimeZone : TimeZoneInfo.FindSystemTimeZoneById(testTimeZone);
@@ -363,11 +374,12 @@ namespace Lucene.Net.Util
         /// </summary>
         public override void After(LuceneTestCase testInstance)
         {
-            foreach (KeyValuePair<string, string> e in restoreProperties)
-            {
-                SystemProperties.SetProperty(e.Key, e.Value);
-            }
-            restoreProperties.Clear();
+            // LUCENENT specific - Not used in .NET
+            //foreach (KeyValuePair<string, string> e in restoreProperties)
+            //{
+            //    SystemProperties.SetProperty(e.Key, e.Value);
+            //}
+            //restoreProperties.Clear();
 
             Codec.Default = savedCodec;
             InfoStream.Default = savedInfoStream;
