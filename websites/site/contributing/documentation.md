@@ -105,8 +105,7 @@ We don't want to manually change the converted resulting markdown files (`.md`) 
 * Copy the build output of the documentation site to this new folder. The build output will be all of the files in the `/websites/apidocs/_site` in your main lucene.net checked out Git repository. 
 * Commit and push these changes
 * The new version documentation will be live. Due to the amount of new files committed, the new files may take up to 60 minutes to become live. 
-* Create a named branch on the main [`lucenenet`](https://github.com/apache/lucenenet) repository with the same name: `docs/[Version]`, for example `docs/4.8.0-beta00008` based on commit of the latest (if any) changes made to the docs in the `lucenenet` repository. This branch is used for linking to on the API docs "Improve this Doc" button.
-* The last step is to update the website which is manual process currently. 
+* Next the website needs updating which is a manual process currently:
   * In the `/websites/site/download` folder there should be a document per release. It's normally fine to copy the document of the latest release for the same major version. For a new major version some modifications may be needed. 
   * Ensure the correct version number is listed in the header and the nuget download snippet.
   * Update the `Status` and `Released` heading information. 
@@ -114,4 +113,5 @@ We don't want to manually change the converted resulting markdown files (`.md`) 
   * Update the `/websites/site/download/toc.yml` file to include a reference to the new page which should maintain descending version order.
   * Update the `/websites/site/docs.md` file and add a link to the new documentation for the current version which should maintain descending version order.
   * [Build the website](#website) and test locally, then deploy the changes
+* Once the website is committed/pushed, the last step is to create a named branch on the main [`lucenenet`](https://github.com/apache/lucenenet) repository with the name: `docs/[Version]`, for example `docs/4.8.0-beta00008` based on commit of the latest (if any) changes made to the docs in the `lucenenet` repository on the main branch. This branch is used for linking to on the API docs "Improve this Doc" button.  
   
