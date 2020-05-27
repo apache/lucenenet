@@ -38,6 +38,14 @@ The file/folder structure is within `/websites/site`:
 * `tools/*` - during the build process some tools will be downloaded which are stored here
 * `_site` - this is the exported static site that is generated
 
+### Deploy the website
+
+* The website is deployed via git
+* Checkout the Git repo that hosts the documentation: https://github.com/apache/lucenenet-site/tree/asf-site _(ensure you have `asf-site` branch checked out, not `master`)_
+* Copy the build output of the website to the root. The build output will be all of the files in the `/websites/site/_site` in your main lucene.net checked out Git repository. 
+* Commit and push these changes
+* The new version of the website will be live. If the amount of new files committed is large, the new files may take some time to become live. 
+
 ## API Docs
 
 ### Build script
@@ -74,7 +82,7 @@ The process overview is:
 
 We don't want to manually change the converted resulting markdown files (`.md`) because they would get overwritten again when the conversion process is re-executed. Therefor to fix any formatting issues or customized output of the project docs, these customizations/fixes/tweaks are built directly in to the conversion process itself in the `JavaDocToMarkdownConverter.csproj` project.
 
-### Step by step
+### Building the docs
 
 * Checkout the Lucene.Net release tag to build the docs against
 * Execute the `./src/docs/convert.ps1` script and enter the current Lucene version to convert from. 
@@ -96,5 +104,14 @@ We don't want to manually change the converted resulting markdown files (`.md`) 
 * Create a new folder in this repo: `/docs/[Version]`, for example: `/docs/4.8.0-beta00008`
 * Copy the build output of the documentation site to this new folder. The build output will be all of the files in the `/websites/apidocs/_site` in your main lucene.net checked out Git repository. 
 * Commit and push these changes
-* The new version documentation will be live. Due to the amount of new files committed, the new files may take up to 20 minutes to become live. 
+* The new version documentation will be live. Due to the amount of new files committed, the new files may take up to 60 minutes to become live. 
 * Create a named branch on the main [`lucenenet`](https://github.com/apache/lucenenet) repository with the same name: `docs/[Version]`, for example `docs/4.8.0-beta00008` based on commit of the latest (if any) changes made to the docs in the `lucenenet` repository. This branch is used for linking to on the API docs "Improve this Doc" button.
+* The last step is to update the website which is manual process currently. 
+  * In the `/websites/site/download` folder there should be a document per release. It's normally fine to copy the document of the latest release for the same major version. For a new major version some modifications may be needed. 
+  * Ensure the correct version number is listed in the header and the nuget download snippet.
+  * Update the `Status` and `Released` heading information. 
+  * Ensure the download links are correct.
+  * Update the `/websites/site/download/toc.yml` file to include a reference to the new page which should maintain descending version order.
+  * Update the `/websites/site/docs.md` file and add a link to the new documentation for the current version which should maintain descending version order.
+  * [Build the website](#website) and test locally, then deploy the changes
+  

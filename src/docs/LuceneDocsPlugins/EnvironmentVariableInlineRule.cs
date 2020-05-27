@@ -24,41 +24,33 @@ using Microsoft.DocAsCode.MarkdownLite;
 
 namespace LuceneDocsPlugins
 {
-    internal static class RegexExtentions
-    {
-        public static string NotEmpty(this Match match, int index1, int index2)
-        {
-            if (match.Groups.Count > index1 && !string.IsNullOrEmpty(match.Groups[index1].Value))
-            {
-                return match.Groups[index1].Value;
-            }
-            return match.Groups[index2].Value;
-        }
-    }
-
     public class EnvironmentVariableInlineRule : IMarkdownRule
     {
+        // give it a name
         public string Name => "EnvVarToken";
+
+        // define my regex to match
         private static readonly Regex _envVarRegex = new Regex(@"^\[EnvVar:(\w+?)\]", RegexOptions.Compiled);
 
+        // process the match
         public IMarkdownToken TryMatch(IMarkdownParser parser, IMarkdownParsingContext context)
-        {           
+        {
+            // TODO: This does not process this token from within a code block like
+
+            // ```
+            // dotnet tool install lucene-cli -g --version [EnvVar: LuceneNetVersion]
+            // ```
+
             var match = _envVarRegex.Match(context.CurrentMarkdown);
-            if (match.Length == 0)
-            {
-                return null;
-            }
+            if (match.Length == 0) return null;
+
             var envVar = match.Groups[1].Value;
             var text = Environment.GetEnvironmentVariable(envVar);
-            if (text == null)
-            {
-                return null;
-            }
-            else
-            {
-                var sourceInfo = context.Consume(match.Length);
-                return new MarkdownTextToken(this, parser.Context, text, sourceInfo);
-            }
+            if (text == null) return null;
+
+            // 'eat' the characters of the current markdown token so they anr
+            var sourceInfo = context.Consume(match.Length);
+            return new MarkdownTextToken(this, parser.Context, text, sourceInfo);
         }
     }
 }
