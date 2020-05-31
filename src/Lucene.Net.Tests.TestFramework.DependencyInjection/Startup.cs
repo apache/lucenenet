@@ -17,7 +17,6 @@
 
 using Lucene.Net.Codecs;
 using Lucene.Net.Configuration;
-using Lucene.Net.DependencyInjection;
 using Lucene.Net.Util;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -71,7 +70,8 @@ public class Startup : LuceneTestFrameworkInitializer
     {
         serviceCollection.AddSingleton<IConfiguration>(configurationBuilder.Build());
 
-        serviceCollection.AddSingleton<Codec, Lucene.Net.Codecs.Lucene46.Lucene46Codec>("Lucene46");
-        serviceCollection.AddSingleton<Codec, MyCodec>("MyCodec");
+        serviceCollection.AddSingleton<Lucene.Net.Codecs.Lucene46.Lucene46Codec>();
+        serviceCollection.AddSingleton<MyCodec>();
+        serviceCollection.AddSingleton<IServiceCollection>(serviceCollection);
     }
 }

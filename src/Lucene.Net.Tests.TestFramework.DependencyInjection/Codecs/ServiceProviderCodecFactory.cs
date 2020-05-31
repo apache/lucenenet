@@ -1,6 +1,8 @@
-﻿using Lucene.Net.DependencyInjection;
+﻿using Lucene.Net.Util;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Codecs
 {
@@ -22,21 +24,39 @@ namespace Lucene.Net.Codecs
      */
 
     /// <summary>
-    /// An example of the most basic implementation of <see cref="ICodecFactory"/>
-    /// to retrieve a codec from a <see cref="IServiceProvider"/>.
+    /// An example of a basic implementation of <see cref="ICodecFactory"/>
+    /// to retrieve a codec from a <see cref="IServiceProvider"/> lazily.
     /// </summary>
-    internal class ServiceProviderCodecFactory : ICodecFactory
+    internal class ServiceProviderCodecFactory : ICodecFactory, IServiceListable
     {
         private readonly IServiceProvider serviceProvider;
+        private readonly IDictionary<string, Type> codecTypes;
 
         public ServiceProviderCodecFactory(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+
+            // Get the registered service collection, which can be used to get a list of registered types
+            var serviceCollection = serviceProvider.GetService<IServiceCollection>();
+
+            // Retrieve a list of registered types that subclass Codec. Codecs must be registered by
+            // their concrete type so we can differentiate between them later when calling GetService().
+            this.codecTypes = serviceCollection
+                .Where(t => typeof(Codec).IsAssignableFrom(t.ServiceType))
+                .ToDictionary(
+                    t => NamedServiceFactory<Codec>.GetServiceName(t.ImplementationType),
+                    t => t.ImplementationType
+                );
         }
+
+        public ICollection<string> AvailableServices => codecTypes.Keys;
 
         public Codec GetCodec(string name)
         {
-            return serviceProvider.GetService<Codec>(name);
+            if (codecTypes.TryGetValue(name, out Type implementationType))
+                return (Codec)serviceProvider.GetService(implementationType);
+
+            throw new ArgumentException($"The codec {name} is not registered.", nameof(name));
         }
     }
 }
