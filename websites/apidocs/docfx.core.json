@@ -25,35 +25,27 @@
         "files": [
           "overview.md"
         ],
-        "src": "../../src/Lucene.Net",
-        "dest": "docs"
+        "src": "../../src/Lucene.Net"
       },
       {
         "files": [
           "**.yml",
           "**.md"
         ],
-        "src": "obj/docfx/api/core",
-        "dest": "docs"
+        "src": "obj/docfx/api/core"
       },
       {
         "files": [
           "toc/core/toc.yml"
-        ],
-        "dest": "docs"
-      }
-    ],
-    "resource": [
+        ]
+      },
       {
         "files": [
-          "logo/favicon.ico",
-          "logo/lucene-net-icon-64x64.png",
-          "logo/lucene-net-color.png",
-          "logo/lucene-net-reverse-color.png"
+          "toc.yml"
         ],
-        "src": "../../branding"
+        "src": "toc/subsite"
       }
-    ],
+    ],    
     "overwrite": [     
       {
         "files": [
@@ -63,11 +55,12 @@
     ],
     "dest": "_site/api/core",
     "globalMetadataFiles": [
-      "docfx.global.json"
+      "docfx.global.json",
+      "docfx.global.subsite.json"
     ],
     "template": [
-      "default",
-      "lucenetemplate"
+      "DefaultTemplateNoAssets",
+      "LuceneTemplate"
     ],
     "postProcessors": [],
     "markdownEngineName": "dfm",

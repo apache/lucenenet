@@ -1,0 +1,36 @@
+{  
+  "build": {
+    "content": [
+      {
+        "files": [
+          "toc.yml",
+          "*.md"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "logo/favicon.ico",
+          "logo/lucene-net-icon-64x64.png",
+          "logo/lucene-net-color.png",
+          "logo/lucene-net-reverse-color.png"
+        ],
+        "src": "../../branding"
+      }
+    ],
+    "dest": "_site",
+    "globalMetadataFiles": ["docfx.global.json"],
+    "template": [
+      "default",
+      "LuceneTemplate",
+      "LuceneTemplateAssets"
+    ],
+    "postProcessors": [],
+    "markdownEngineName": "dfm",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}

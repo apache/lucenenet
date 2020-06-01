@@ -622,7 +622,7 @@
     "fileMetadataFiles": [],
     "template": [
       "default",
-      "lucenetemplate"
+      "LuceneTemplate"      
     ],
     "postProcessors": [],
     "markdownEngineName": "dfm",

@@ -119,8 +119,7 @@ $DocFxJsonMeta = @(
     "docfx.core.json",
     "docfx.test-framework.json"
 )
-# $DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
-$DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.core.json"
+$DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
 
 # set env vars that will be replaced in Markdown
 $env:LuceneNetVersion = $LuceneNetVersion
@@ -143,21 +142,21 @@ if ($?) {
     }
 }
 
-# if ($?) { 
-#     foreach ($proj in $DocFxJsonMeta) {
-#         $projFile = Join-Path -Path $ApiDocsFolder $proj
-# 
-#         # build the output		
-#         Write-Host "Building site output for $projFile..."
-# 
-#         if ($Clean -eq 1) {
-#             & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --force
-#         }
-#         else {
-#             & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel
-#         }
-#     }
-# }
+if ($?) { 
+    foreach ($proj in $DocFxJsonMeta) {
+        $projFile = Join-Path -Path $ApiDocsFolder $proj
+
+        # build the output		
+        Write-Host "Building site output for $projFile..."
+
+        if ($Clean -eq 1) {
+            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --force --debug
+        }
+        else {
+            & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --debug
+        }
+    }
+}
 
 if ($?) { 
     if ($ServeDocs -eq 0) {
@@ -166,16 +165,16 @@ if ($?) {
         Write-Host "Building docs..."
 
         if ($Clean -eq 1) {
-            & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --force
+            & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --force --debug
         }
         else {
-            & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel
+            & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --debug
         }
     }
     else {
         # build + serve (for testing)
         Write-Host "starting website..."
-        & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --serve
+        & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --serve --debug
     }
 }
 
