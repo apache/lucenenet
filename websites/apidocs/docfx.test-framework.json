@@ -1,0 +1,79 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.TestFramework/Lucene.Net.TestFramework.csproj"
+          ],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**"
+          ],
+          "src": "../../src"
+        }
+      ],
+      "dest": "obj/docfx/api/test-framework",
+      "properties": {
+        "TargetFramework": "netstandard2.0"
+      }
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "overview.md"
+        ],
+        "src": "../../src/Lucene.Net.TestFramework",
+        "dest": "docs"
+      },
+      {
+        "files": [
+          "**.yml",
+          "**.md"
+        ],
+        "src": "obj/docfx/api/test-framework",
+        "dest": "docs"
+      },
+      {
+        "files": [
+          "toc/test-framework/toc.yml"
+        ],
+        "dest": "docs"
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "logo/favicon.ico",
+          "logo/lucene-net-icon-64x64.png",
+          "logo/lucene-net-color.png",
+          "logo/lucene-net-reverse-color.png"
+        ],
+        "src": "../../branding"
+      }
+    ],
+    "overwrite": [     
+      {
+        "files": [
+          "apiSpec/test-framework/**/*.md"
+        ]
+      }
+    ],
+    "dest": "_site/api/test-framework",
+    "globalMetadataFiles": [
+      "docfx.global.json"
+    ],
+    "template": [
+      "default",
+      "lucenetemplate"
+    ],
+    "postProcessors": [],
+    "markdownEngineName": "dfm",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}
