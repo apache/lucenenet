@@ -36,10 +36,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
         }
 
-        protected override string Name
-        {
-            get { return "def"; }
-        }
+        protected override string Name => "def";
 
         public override FunctionValues GetValues(IDictionary fcontext, AtomicReaderContext readerContext)
         {

@@ -83,7 +83,7 @@ namespace Lucene.Net.Queries
                 if (iter.MoveNext())
                 {
                     var next = iter.Current;
-                    m_field = next.Field;
+                    Field = next.Field;
                     return next.Bytes;
                 }
                 return null;
@@ -384,7 +384,7 @@ namespace Lucene.Net.Queries
 
         private abstract class FieldAndTermEnum
         {
-            protected string m_field;
+            // LUCENENET specific - removed field and changed Field property to protected set
 
             public abstract BytesRef Next();
 
@@ -394,13 +394,10 @@ namespace Lucene.Net.Queries
 
             public FieldAndTermEnum(string field)
             {
-                this.m_field = field;
+                this.Field = field;
             }
 
-            public virtual string Field
-            {
-                get { return m_field; }
-            }
+            public virtual string Field { get; protected set; }
         }
     }
 }

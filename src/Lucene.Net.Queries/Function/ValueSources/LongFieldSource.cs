@@ -152,8 +152,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            var other = o as Int64FieldSource;
-            if (other == null)
+            if (!(o is Int64FieldSource other))
                 return false;
             return base.Equals(other) && (this.m_parser == null ? other.m_parser == null : this.m_parser.GetType() == other.m_parser.GetType());
         }

@@ -31,10 +31,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
         }
 
-        protected override string Name
-        {
-            get { return "max"; }
-        }
+        protected override string Name => "max";
 
         protected override float Func(int doc, FunctionValues[] valsArr)
         {

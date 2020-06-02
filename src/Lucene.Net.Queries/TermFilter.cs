@@ -43,13 +43,7 @@ namespace Lucene.Net.Queries
         }
 
         /// <summary> Gets the term this filter includes documents with. </summary>
-        public Term Term
-        {
-            get
-            {
-                return term;
-            }
-        }
+        public Term Term => term;
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {

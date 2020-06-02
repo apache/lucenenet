@@ -51,11 +51,11 @@ namespace Lucene.Net.Queries
         /// <summary>
         /// The filter chain
         /// </summary>
-        private Filter[] chain = null;
+        private readonly Filter[] chain = null;
 
-        private int[] logicArray;
+        private readonly int[] logicArray;
 
-        private int logic = -1;
+        private readonly int logic = -1;
 
         /// <summary>
         /// Ctor.

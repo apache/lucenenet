@@ -137,10 +137,7 @@ namespace Lucene.Net.Queries
         /// <summary>
         /// Gets the list of clauses
         /// </summary>
-        public virtual IList<FilterClause> Clauses
-        {
-            get { return clauses; }
-        }
+        public virtual IList<FilterClause> Clauses => clauses;
 
         /// <summary>
         /// Returns an iterator on the clauses in this query. It implements the <see cref="IEnumerable{T}"/> interface to

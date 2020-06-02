@@ -99,8 +99,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as SingleFieldSource;
-            if (other == null)
+            if (!(o is SingleFieldSource other))
                 return false;
             return base.Equals(other) && (this.m_parser == null ? other.m_parser == null : this.m_parser.GetType() == other.m_parser.GetType());
         }

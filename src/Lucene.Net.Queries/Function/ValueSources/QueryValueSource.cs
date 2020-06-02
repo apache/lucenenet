@@ -40,20 +40,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.defVal = defVal;
         }
 
-        public virtual Query Query
-        {
-            get
-            {
-                return q;
-            }
-        }
-        public virtual float DefaultValue
-        {
-            get
-            {
-                return defVal;
-            }
-        }
+        public virtual Query Query => q;
+
+        public virtual float DefaultValue => defVal;
+
 
         public override string GetDescription()
         {
@@ -72,12 +62,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (typeof(QueryValueSource) != o.GetType())
-            {
-                return false;
-            }
-            var other = o as QueryValueSource;
-            if (other == null)
+            if (!(o is QueryValueSource other))
                 return false;
             return this.q.Equals(other.q) && this.defVal == other.defVal;
         }

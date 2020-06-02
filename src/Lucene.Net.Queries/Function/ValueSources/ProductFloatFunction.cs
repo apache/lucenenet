@@ -31,10 +31,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
         }
 
-        protected override string Name
-        {
-            get { return "product"; }
-        }
+        protected override string Name => "product";
 
         protected override float Func(int doc, FunctionValues[] valsArr)
         {

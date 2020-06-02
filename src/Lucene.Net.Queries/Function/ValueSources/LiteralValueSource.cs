@@ -39,13 +39,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         /// <summary>
         /// returns the literal value </summary>
-        public virtual string Value
-        {
-            get
-            {
-                return m_str;
-            }
-        }
+        public virtual string Value => m_str;
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
@@ -91,8 +85,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return true;
             }
-            var that = o as LiteralValueSource;
-            if (that == null)
+            if (!(o is LiteralValueSource that))
                 return false;
             return m_str.Equals(that.m_str, StringComparison.Ordinal);
 

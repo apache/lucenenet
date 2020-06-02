@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,20 +40,9 @@ namespace Lucene.Net.Queries.Function
             this.boostVal = boostVal;
         }
 
-        public virtual Query Query
-        {
-            get
-            {
-                return q;
-            }
-        }
-        public virtual ValueSource ValueSource
-        {
-            get
-            {
-                return boostVal;
-            }
-        }
+        public virtual Query Query => q;
+
+        public virtual ValueSource ValueSource => boostVal;
     
         public override Query Rewrite(IndexReader reader)
         {
@@ -95,13 +83,7 @@ namespace Lucene.Net.Queries.Function
                 outerInstance.boostVal.CreateWeight(fcontext, searcher);
             }
 
-            public override Query Query
-            {
-                get
-                {
-                    return outerInstance;
-                }
-            }
+            public override Query Query => outerInstance;
 
             public override float GetValueForNormalization()
             {
@@ -163,10 +145,7 @@ namespace Lucene.Net.Queries.Function
                 this.vals = vs.GetValues(weight.fcontext, readerContext);
             }
 
-            public override int DocID
-            {
-                get { return scorer.DocID; }
-            }
+            public override int DocID => scorer.DocID;
 
             public override int Advance(int target)
             {
@@ -188,10 +167,7 @@ namespace Lucene.Net.Queries.Function
                 return score > float.NegativeInfinity ? score : -float.MaxValue;
             }
 
-            public override int Freq
-            {
-                get { return scorer.Freq; }
-            }
+            public override int Freq => scorer.Freq;
 
             public override ICollection<ChildScorer> GetChildren()
             {

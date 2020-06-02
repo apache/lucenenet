@@ -83,8 +83,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as SimpleBoolFunction;
-            if (other == null)
+            if (!(o is SimpleBoolFunction other))
                 return false;
             return this.m_source.Equals(other.m_source);
         }

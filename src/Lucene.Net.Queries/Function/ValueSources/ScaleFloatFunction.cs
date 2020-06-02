@@ -168,8 +168,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as ScaleSingleFunction;
-            if (other == null)
+            if (!(o is ScaleSingleFunction other))
                 return false;
             return this.m_min == other.m_min 
                 && this.m_max == other.m_max 

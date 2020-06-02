@@ -33,10 +33,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
         }
 
-        protected override string Name
-        {
-            get { return "pow"; }
-        }
+        protected override string Name => "pow";
 
         protected override float Func(int doc, FunctionValues aVals, FunctionValues bVals)
         {

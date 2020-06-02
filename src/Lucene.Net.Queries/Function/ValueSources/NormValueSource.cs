@@ -41,10 +41,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.m_field = field;
         }
 
-        public virtual string Name
-        {
-            get { return "norm"; }
-        }
+        public virtual string Name => "norm";
 
         public override string GetDescription()
         {

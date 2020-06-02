@@ -156,8 +156,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as IfFunction;
-            if (other == null)
+            if (!(o is IfFunction other))
                 return false;
             return ifSource.Equals(other.ifSource) && trueSource.Equals(other.trueSource) && falseSource.Equals(other.falseSource);
         }

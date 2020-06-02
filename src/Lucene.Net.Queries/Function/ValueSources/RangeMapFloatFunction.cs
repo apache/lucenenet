@@ -118,12 +118,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (typeof(RangeMapSingleFunction) != o.GetType())
-            {
-                return false;
-            }
-            var other = o as RangeMapSingleFunction;
-            if (other == null)
+            if (!(o is RangeMapSingleFunction other))
                 return false;
             return this.m_min == other.m_min 
                 && this.m_max == other.m_max 

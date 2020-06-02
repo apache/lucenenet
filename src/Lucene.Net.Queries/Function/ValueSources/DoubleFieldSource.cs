@@ -89,9 +89,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as
-                DoubleFieldSource;
-            if (other == null)
+            if (!(o is DoubleFieldSource other))
             {
                 return false;
             }

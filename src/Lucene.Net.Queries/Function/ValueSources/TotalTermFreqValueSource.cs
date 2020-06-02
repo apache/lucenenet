@@ -46,10 +46,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.m_indexedBytes = indexedBytes;
         }
 
-        public virtual string Name
-        {
-            get { return "totaltermfreq"; }
-        }
+        public virtual string Name => "totaltermfreq";
 
         public override string GetDescription()
         {
@@ -110,11 +107,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (this.GetType() != o.GetType())
-            {
+            if (!(o is TotalTermFreqValueSource other))
                 return false;
-            }
-            var other = (TotalTermFreqValueSource)o;
             return this.m_indexedField.Equals(other.m_indexedField, StringComparison.Ordinal) && this.m_indexedBytes.Equals(other.m_indexedBytes);
         }
     }

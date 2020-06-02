@@ -28,10 +28,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class MaxDocValueSource : ValueSource
     {
-        public virtual string Name
-        {
-            get { return "maxdoc"; }
-        }
+        public virtual string Name => "maxdoc";
 
         public override string GetDescription()
         {
