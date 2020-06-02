@@ -3,6 +3,7 @@ using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -82,9 +83,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return outerInstance.m_a / (outerInstance.m_m * vals.SingleVal(doc) + outerInstance.m_b);
             }
-            public override string ToString(int doc) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+
+            public override string ToString(int doc)
             {
-                return Convert.ToString(outerInstance.m_a) + "/(" + outerInstance.m_m + "*float(" + vals.ToString(doc) + ')' + '+' + outerInstance.m_b + ')';
+                // LUCENENET specific - changed formatting to ensure the same culture is used for each value.
+                return string.Format(CultureInfo.InvariantCulture, "{0}/({1}*float({2})+{3})",
+                    outerInstance.m_a,
+                    outerInstance.m_m,
+                    vals.ToString(doc),
+                    outerInstance.m_b);
             }
         }
 
@@ -93,9 +100,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
             m_source.CreateWeight(context, searcher);
         }
 
-        public override string GetDescription() // LUCENENET TODO: API - Add overload to include CultureInfo ?
+        public override string GetDescription()
         {
-            return Convert.ToString(m_a) + "/(" + m_m + "*float(" + m_source.GetDescription() + ")" + "+" + m_b + ')';
+            return m_a.ToString(CultureInfo.InvariantCulture) + 
+                "/(" + m_m.ToString(CultureInfo.InvariantCulture) + 
+                "*float(" + m_source.GetDescription() + ")" + "+" + m_b.ToString(CultureInfo.InvariantCulture) + ')';
         }
 
         public override int GetHashCode()

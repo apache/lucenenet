@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Mutable;
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -106,9 +107,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return (double)arr.Get(doc);
             }
 
-            public override string StrVal(int doc) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+            public override string StrVal(int doc)
             {
-                return Convert.ToString(arr.Get(doc));
+                return Convert.ToString(arr.Get(doc), CultureInfo.InvariantCulture);
             }
 
             public override object ObjectVal(int doc)

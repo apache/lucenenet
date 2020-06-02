@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Util.Mutable;
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Queries.Function.DocValues
 {
@@ -74,9 +75,9 @@ namespace Lucene.Net.Queries.Function.DocValues
             return (double)SingleVal(doc);
         }
 
-        public override string StrVal(int doc) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+        public override string StrVal(int doc)
         {
-            return Convert.ToString(SingleVal(doc));
+            return SingleVal(doc).ToString("R", CultureInfo.InvariantCulture);
         }
 
         public override object ObjectVal(int doc)

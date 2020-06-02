@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -230,7 +231,7 @@ namespace Lucene.Net.Queries.Function
         }
 
         // TODO: should we make a termVal, fills BytesRef[]?
-        public virtual void StrVal(int doc, string[] vals) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+        public virtual void StrVal(int doc, string[] vals)
         {
             throw new System.NotSupportedException();
         }
@@ -250,7 +251,7 @@ namespace Lucene.Net.Queries.Function
         // a setup cost - parsing and normalizing params, and doing a binary search on the StringIndex.
         // TODO: change "reader" to AtomicReaderContext
         public virtual ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal,
-            bool includeLower, bool includeUpper) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+            bool includeLower, bool includeUpper)
         {
             float lower;
             float upper;
@@ -261,7 +262,7 @@ namespace Lucene.Net.Queries.Function
             }
             else
             {
-                lower = Convert.ToSingle(lowerVal);
+                lower = Convert.ToSingle(lowerVal, CultureInfo.InvariantCulture);
             }
             if (upperVal == null)
             {
@@ -269,7 +270,7 @@ namespace Lucene.Net.Queries.Function
             }
             else
             {
-                upper = Convert.ToSingle(upperVal);
+                upper = Convert.ToSingle(upperVal, CultureInfo.InvariantCulture);
             }
 
             float l = lower;
