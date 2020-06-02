@@ -2,6 +2,7 @@
 using Lucene.Net.Queries.Function.DocValues;
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -87,9 +88,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return outerInstance.constant;
             }
 
-            public override string StrVal(int doc) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+            public override string StrVal(int doc)
             {
-                return Convert.ToString(outerInstance.constant);
+                return outerInstance.constant.ToString("R", CultureInfo.InvariantCulture);
             }
 
             public override object ObjectVal(int doc)

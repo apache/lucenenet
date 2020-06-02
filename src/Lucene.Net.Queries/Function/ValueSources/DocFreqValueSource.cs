@@ -4,6 +4,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -36,14 +37,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
         internal readonly string sval;
         internal readonly ValueSource parent;
 
-        internal ConstInt32DocValues(int val, ValueSource parent) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+        internal ConstInt32DocValues(int val, ValueSource parent)
             : base(parent)
         {
             ival = val;
             fval = val;
             dval = val;
             lval = val;
-            sval = Convert.ToString(val);
+            sval = Convert.ToString(val, CultureInfo.InvariantCulture);
             this.parent = parent;
         }
 
@@ -93,14 +94,14 @@ namespace Lucene.Net.Queries.Function.ValueSources
         internal readonly string sval;
         internal readonly ValueSource parent;
 
-        internal ConstDoubleDocValues(double val, ValueSource parent) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+        internal ConstDoubleDocValues(double val, ValueSource parent)
             : base(parent)
         {
             ival = (int)val;
             fval = (float)val;
             dval = val;
             lval = (long)val;
-            sval = Convert.ToString(val);
+            sval = val.ToString("R", CultureInfo.InvariantCulture);
             this.parent = parent;
         }
 

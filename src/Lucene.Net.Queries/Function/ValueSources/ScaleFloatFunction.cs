@@ -2,6 +2,7 @@
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
 using System.Collections;
+using System.Globalization;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -145,9 +146,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return (vals.SingleVal(doc) - minSource) * scale + outerInstance.m_min;
             }
-            public override string ToString(int doc) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+
+            public override string ToString(int doc)
             {
-                return "scale(" + vals.ToString(doc) + ",toMin=" + outerInstance.m_min + ",toMax=" + outerInstance.m_max + ",fromMin=" + minSource + ",fromMax=" + maxSource + ")";
+                // LUCENENET specific - changed formatting to ensure the same culture is used for each value.
+                return string.Format(CultureInfo.InvariantCulture, "scale({0},toMin={1},toMax={2},fromMin={3})", 
+                    vals.ToString(doc),
+                    outerInstance.m_min,
+                    outerInstance.m_max,
+                    maxSource);
             }
         }
 

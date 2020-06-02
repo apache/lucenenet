@@ -48,20 +48,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.enumStringToIntMap = enumStringToIntMap;
         }
 
-        /// <summary>
-        /// NOTE: This was tryParseInt() in Lucene
-        /// </summary>
-        private static int? TryParseInt32(string valueStr) // LUCENENET TODO: API - Add overload to include CultureInfo ?
-        {
-            if (int.TryParse(valueStr, out int intValue))
-                return intValue;
-            return null;
-        }
+        // LUCENENET specific - removed TryParseInt in favor of int.TryParse()
 
         /// <summary>
         /// NOTE: This was intValueToStringValue() in Lucene
         /// </summary>
-        private string Int32ValueToStringValue(int? intVal) // LUCENENET TODO: API - Add overload to include CultureInfo
+        private string Int32ValueToStringValue(int? intVal)
         {
             if (intVal == null)
             {
@@ -80,14 +72,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
         /// <summary>
         /// NOTE: This was stringValueToIntValue() in Lucene
         /// </summary>
-        private int? StringValueToInt32Value(string stringVal) // LUCENENET TODO: API - Add overload to include CultureInfo
+        private int? StringValueToInt32Value(string stringVal)
         {
             if (stringVal == null)
             {
                 return null;
             }
 
-            int? intValue;
             int? enumInt = enumStringToIntMap[stringVal];
             if (enumInt != null) //enum int found for str
             {
@@ -95,8 +86,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
 
             //enum int not found for str
-            intValue = TryParseInt32(stringVal);
-            if (intValue == null) //not Integer
+            if (!int.TryParse(stringVal, NumberStyles.Integer, CultureInfo.InvariantCulture, out int intValue)) //not Integer
             {
                 intValue = DEFAULT_VALUE;
             }
@@ -192,7 +182,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             }
 
 
-            public override ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+            public override ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
             {
                 int? lower = outerInstance.StringValueToInt32Value(lowerVal);
                 int? upper = outerInstance.StringValueToInt32Value(upperVal);
@@ -291,6 +281,4 @@ namespace Lucene.Net.Queries.Function.ValueSources
             return result;
         }
     }
-
-
 }
