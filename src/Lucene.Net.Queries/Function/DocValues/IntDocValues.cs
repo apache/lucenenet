@@ -125,63 +125,22 @@ namespace Lucene.Net.Queries.Function.DocValues
             int ll = lower;
             int uu = upper;
 
-            return new ValueSourceScorerAnonymousInnerClassHelper(this, reader, this, ll, uu);
-        }
-
-        private class ValueSourceScorerAnonymousInnerClassHelper : ValueSourceScorer
-        {
-            private readonly Int32DocValues outerInstance;
-
-            private int ll;
-            private int uu;
-
-            public ValueSourceScorerAnonymousInnerClassHelper(Int32DocValues outerInstance, IndexReader reader, Int32DocValues @this, int ll, int uu)
-                : base(reader, @this)
+            return new ValueSourceScorer.AnonymousValueSourceScorer(reader, this, matchesValue: (doc) =>
             {
-                this.outerInstance = outerInstance;
-                this.ll = ll;
-                this.uu = uu;
-            }
-
-            public override bool MatchesValue(int doc)
-            {
-                int val = outerInstance.Int32Val(doc);
+                int val = Int32Val(doc);
                 // only check for deleted if it's the default value
                 // if (val==0 && reader.isDeleted(doc)) return false;
                 return val >= ll && val <= uu;
-            }
+            });
         }
 
         public override ValueFiller GetValueFiller()
         {
-            return new ValueFillerAnonymousInnerClassHelper(this);
-        }
-
-        private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-        {
-            private readonly Int32DocValues outerInstance;
-
-            public ValueFillerAnonymousInnerClassHelper(Int32DocValues outerInstance)
+            return new ValueFiller.AnonymousValueFiller<MutableValueInt32>(new MutableValueInt32(), fillValue: (doc, mutableValue) =>
             {
-                this.outerInstance = outerInstance;
-                mval = new MutableValueInt32();
-            }
-
-            private readonly MutableValueInt32 mval;
-
-            public override MutableValue Value
-            {
-                get
-                {
-                    return mval;
-                }
-            }
-
-            public override void FillValue(int doc)
-            {
-                mval.Value = outerInstance.Int32Val(doc);
-                mval.Exists = outerInstance.Exists(doc);
-            }
+                mutableValue.Value = Int32Val(doc);
+                mutableValue.Exists = Exists(doc);
+            });
         }
     }
 }

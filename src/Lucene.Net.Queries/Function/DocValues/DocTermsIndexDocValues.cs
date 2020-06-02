@@ -128,30 +128,11 @@ namespace Lucene.Net.Queries.Function.DocValues
             int ll = lower;
             int uu = upper;
 
-            return new ValueSourceScorerAnonymousInnerClassHelper(this, reader, this, ll, uu);
-        }
-
-        private class ValueSourceScorerAnonymousInnerClassHelper : ValueSourceScorer
-        {
-            private readonly DocTermsIndexDocValues outerInstance;
-
-            private int ll;
-            private int uu;
-
-            public ValueSourceScorerAnonymousInnerClassHelper(DocTermsIndexDocValues outerInstance, IndexReader reader,
-                DocTermsIndexDocValues @this, int ll, int uu)
-                : base(reader, @this)
+            return new ValueSourceScorer.AnonymousValueSourceScorer(reader, this, matchesValue: (doc) =>
             {
-                this.outerInstance = outerInstance;
-                this.ll = ll;
-                this.uu = uu;
-            }
-
-            public override bool MatchesValue(int doc)
-            {
-                int ord = outerInstance.m_termsIndex.GetOrd(doc);
+                int ord = m_termsIndex.GetOrd(doc);
                 return ord >= ll && ord <= uu;
-            }
+            });
         }
 
         public override string ToString(int doc)
@@ -161,45 +142,22 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override ValueFiller GetValueFiller()
         {
-            return new ValueFillerAnonymousInnerClassHelper(this);
-        }
-
-        private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-        {
-            private readonly DocTermsIndexDocValues outerInstance;
-
-            public ValueFillerAnonymousInnerClassHelper(DocTermsIndexDocValues outerInstance)
+            return new ValueFiller.AnonymousValueFiller<MutableValueStr>(new MutableValueStr(), fillValue: (doc, mutableValue) =>
             {
-                this.outerInstance = outerInstance;
-                mval = new MutableValueStr();
-            }
-
-            private readonly MutableValueStr mval;
-
-            public override MutableValue Value
-            {
-                get
-                {
-                    return mval;
-                }
-            }
-
-            public override void FillValue(int doc)
-            {
-                int ord = outerInstance.m_termsIndex.GetOrd(doc);
+                int ord = m_termsIndex.GetOrd(doc);
                 if (ord == -1)
                 {
-                    mval.Value.Bytes = BytesRef.EMPTY_BYTES;
-                    mval.Value.Offset = 0;
-                    mval.Value.Length = 0;
-                    mval.Exists = false;
+                    mutableValue.Value.Bytes = BytesRef.EMPTY_BYTES;
+                    mutableValue.Value.Offset = 0;
+                    mutableValue.Value.Length = 0;
+                    mutableValue.Exists = false;
                 }
                 else
                 {
-                    outerInstance.m_termsIndex.LookupOrd(ord, mval.Value);
-                    mval.Exists = true;
+                    m_termsIndex.LookupOrd(ord, mutableValue.Value);
+                    mutableValue.Exists = true;
                 }
-            }
+            });
         }
 
         /// <summary>

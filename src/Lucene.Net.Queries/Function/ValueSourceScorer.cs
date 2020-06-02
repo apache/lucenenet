@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Queries.Function
 {
@@ -44,13 +45,7 @@ namespace Lucene.Net.Queries.Function
             this.liveDocs = MultiFields.GetLiveDocs(reader);
         }
 
-        public virtual IndexReader Reader
-        {
-            get
-            {
-                return m_reader;
-            }
-        }
+        public virtual IndexReader Reader => m_reader;
 
         public virtual void SetCheckDeletes(bool checkDeletes)
         {
@@ -67,10 +62,7 @@ namespace Lucene.Net.Queries.Function
             return true;
         }
 
-        public override int DocID
-        {
-            get { return doc; }
-        }
+        public override int DocID => doc;
 
         public override int NextDoc()
         {
@@ -100,14 +92,31 @@ namespace Lucene.Net.Queries.Function
             return m_values.SingleVal(doc);
         }
 
-        public override int Freq
-        {
-            get { return 1; }
-        }
+        public override int Freq => 1;
 
         public override long GetCost()
         {
             return m_maxDoc;
+        }
+
+        /// <summary>
+        /// This class may be used to create <see cref="ValueSourceScorer"/> instances anonymously.
+        /// </summary>
+        // LUCENENET specific - used to mimick the inline class behavior in Java.
+        internal class AnonymousValueSourceScorer : ValueSourceScorer
+        {
+            private readonly Func<int, bool> matchesValue;
+
+            public AnonymousValueSourceScorer(IndexReader reader, FunctionValues functionValues, Func<int, bool> matchesValue)
+                : base(reader, functionValues)
+            {
+                this.matchesValue = matchesValue ?? throw new ArgumentNullException(nameof(matchesValue));
+            }
+
+            public override bool MatchesValue(int doc)
+            {
+                return matchesValue == null ? base.MatchesValue(doc) : matchesValue(doc);
+            }
         }
     }
 }

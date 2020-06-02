@@ -120,141 +120,45 @@ namespace Lucene.Net.Queries.Function.DocValues
             double u = upper;
             if (includeLower && includeUpper)
             {
-                return new ValueSourceScorerAnonymousInnerClassHelper(this, reader, this, l, u);
+                return new ValueSourceScorer.AnonymousValueSourceScorer(reader, this, matchesValue: (doc) =>
+                {
+                    double docVal = DoubleVal(doc);
+                    return docVal >= l && docVal <= u;
+                });
             }
             else if (includeLower && !includeUpper)
             {
-                return new ValueSourceScorerAnonymousInnerClassHelper2(this, reader, this, l, u);
+                return new ValueSourceScorer.AnonymousValueSourceScorer(reader, this, matchesValue: (doc) =>
+                {
+                    double docVal = DoubleVal(doc);
+                    return docVal >= l && docVal < u;
+                });
             }
             else if (!includeLower && includeUpper)
             {
-                return new ValueSourceScorerAnonymousInnerClassHelper3(this, reader, this, l, u);
+                return new ValueSourceScorer.AnonymousValueSourceScorer(reader, this, matchesValue: (doc) =>
+                {
+                    double docVal = DoubleVal(doc);
+                    return docVal > l && docVal <= u;
+                });
             }
             else
             {
-                return new ValueSourceScorerAnonymousInnerClassHelper4(this, reader, this, l, u);
-            }
-        }
-
-        private class ValueSourceScorerAnonymousInnerClassHelper : ValueSourceScorer
-        {
-            private readonly DoubleDocValues outerInstance;
-
-            private double l;
-            private double u;
-
-            public ValueSourceScorerAnonymousInnerClassHelper(DoubleDocValues outerInstance, IndexReader reader, DoubleDocValues @this, double l, double u)
-                : base(reader, @this)
-            {
-                this.outerInstance = outerInstance;
-                this.l = l;
-                this.u = u;
-            }
-
-            public override bool MatchesValue(int doc)
-            {
-                double docVal = outerInstance.DoubleVal(doc);
-                return docVal >= l && docVal <= u;
-            }
-        }
-
-        private class ValueSourceScorerAnonymousInnerClassHelper2 : ValueSourceScorer
-        {
-            private readonly DoubleDocValues outerInstance;
-
-            private double l;
-            private double u;
-
-            public ValueSourceScorerAnonymousInnerClassHelper2(DoubleDocValues outerInstance, IndexReader reader, DoubleDocValues @this, double l, double u)
-                : base(reader, @this)
-            {
-                this.outerInstance = outerInstance;
-                this.l = l;
-                this.u = u;
-            }
-
-            public override bool MatchesValue(int doc)
-            {
-                double docVal = outerInstance.DoubleVal(doc);
-                return docVal >= l && docVal < u;
-            }
-        }
-
-        private class ValueSourceScorerAnonymousInnerClassHelper3 : ValueSourceScorer
-        {
-            private readonly DoubleDocValues outerInstance;
-
-            private double l;
-            private double u;
-
-            public ValueSourceScorerAnonymousInnerClassHelper3(DoubleDocValues outerInstance, IndexReader reader, DoubleDocValues @this, double l, double u)
-                : base(reader, @this)
-            {
-                this.outerInstance = outerInstance;
-                this.l = l;
-                this.u = u;
-            }
-
-            public override bool MatchesValue(int doc)
-            {
-                double docVal = outerInstance.DoubleVal(doc);
-                return docVal > l && docVal <= u;
-            }
-        }
-
-        private class ValueSourceScorerAnonymousInnerClassHelper4 : ValueSourceScorer
-        {
-            private readonly DoubleDocValues outerInstance;
-
-            private double l;
-            private double u;
-
-            public ValueSourceScorerAnonymousInnerClassHelper4(DoubleDocValues outerInstance, IndexReader reader,
-                DoubleDocValues @this, double l, double u)
-                : base(reader, @this)
-            {
-                this.outerInstance = outerInstance;
-                this.l = l;
-                this.u = u;
-            }
-
-            public override bool MatchesValue(int doc)
-            {
-                double docVal = outerInstance.DoubleVal(doc);
-                return docVal > l && docVal < u;
+                return new ValueSourceScorer.AnonymousValueSourceScorer(reader, this, matchesValue: (doc) =>
+                {
+                    double docVal = DoubleVal(doc);
+                    return docVal > l && docVal < u;
+                });
             }
         }
 
         public override ValueFiller GetValueFiller()
         {
-            return new ValueFillerAnonymousInnerClassHelper(this);
-        }
-
-        private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-        {
-            private readonly DoubleDocValues outerInstance;
-
-            public ValueFillerAnonymousInnerClassHelper(DoubleDocValues outerInstance)
+            return new ValueFiller.AnonymousValueFiller<MutableValueDouble>(new MutableValueDouble(), fillValue: (doc, mutableValue) =>
             {
-                this.outerInstance = outerInstance;
-                mval = new MutableValueDouble();
-            }
-
-            private readonly MutableValueDouble mval;
-
-            public override MutableValue Value
-            {
-                get
-                {
-                    return mval;
-                }
-            }
-
-            public override void FillValue(int doc)
-            {
-                mval.Value = outerInstance.DoubleVal(doc);
-                mval.Exists = outerInstance.Exists(doc);
-            }
+                mutableValue.Value = DoubleVal(doc);
+                mutableValue.Exists = Exists(doc);
+            });
         }
     }
 }

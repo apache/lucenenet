@@ -135,63 +135,22 @@ namespace Lucene.Net.Queries.Function.DocValues
             long ll = lower;
             long uu = upper;
 
-            return new ValueSourceScorerAnonymousInnerClassHelper(this, reader, this, ll, uu);
-        }
-
-        private class ValueSourceScorerAnonymousInnerClassHelper : ValueSourceScorer
-        {
-            private readonly Int64DocValues outerInstance;
-
-            private readonly long ll;
-            private readonly long uu;
-
-            public ValueSourceScorerAnonymousInnerClassHelper(Int64DocValues outerInstance, IndexReader reader, Int64DocValues @this, long ll, long uu)
-                : base(reader, @this)
+            return new ValueSourceScorer.AnonymousValueSourceScorer(reader, this, matchesValue: (doc) =>
             {
-                this.outerInstance = outerInstance;
-                this.ll = ll;
-                this.uu = uu;
-            }
-
-            public override bool MatchesValue(int doc)
-            {
-                long val = outerInstance.Int64Val(doc);
+                long val = Int64Val(doc);
                 // only check for deleted if it's the default value
                 // if (val==0 && reader.isDeleted(doc)) return false;
                 return val >= ll && val <= uu;
-            }
+            });
         }
 
         public override ValueFiller GetValueFiller()
         {
-            return new ValueFillerAnonymousInnerClassHelper(this);
-        }
-
-        private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-        {
-            private readonly Int64DocValues outerInstance;
-
-            public ValueFillerAnonymousInnerClassHelper(Int64DocValues outerInstance)
+            return new ValueFiller.AnonymousValueFiller<MutableValueInt64>(new MutableValueInt64(), fillValue: (doc, mutableValue) =>
             {
-                this.outerInstance = outerInstance;
-                mval = new MutableValueInt64();
-            }
-
-            private readonly MutableValueInt64 mval;
-
-            public override MutableValue Value
-            {
-                get
-                {
-                    return mval;
-                }
-            }
-
-            public override void FillValue(int doc)
-            {
-                mval.Value = outerInstance.Int64Val(doc);
-                mval.Exists = outerInstance.Exists(doc);
-            }
+                mutableValue.Value = Int64Val(doc);
+                mutableValue.Exists = Exists(doc);
+            });
         }
     }
 }

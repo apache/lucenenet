@@ -243,73 +243,50 @@ namespace Lucene.Net.Queries.Function.ValueSources
             // the FunctionValues, then members like "scorer" should be per ValueFiller instance.
             // Or we can say that the user should just instantiate multiple FunctionValues.
             //
-            return new ValueFillerAnonymousInnerClassHelper(this);
-        }
-
-        private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-        {
-            private readonly QueryDocValues outerInstance;
-
-            public ValueFillerAnonymousInnerClassHelper(QueryDocValues outerInstance)
-            {
-                this.outerInstance = outerInstance;
-                mval = new MutableValueSingle();
-            }
-
-            private readonly MutableValueSingle mval;
-
-            public override MutableValue Value
-            {
-                get
-                {
-                    return mval;
-                }
-            }
-
-            public override void FillValue(int doc)
+            return new ValueFiller.AnonymousValueFiller<MutableValueSingle>(new MutableValueSingle(), fillValue: (doc, mutableValue) =>
             {
                 try
                 {
-                    if (outerInstance.noMatches)
+                    if (noMatches)
                     {
-                        mval.Value = outerInstance.defVal;
-                        mval.Exists = false;
+                        mutableValue.Value = defVal;
+                        mutableValue.Exists = false;
                         return;
                     }
-                    outerInstance.scorer = outerInstance.weight.GetScorer(outerInstance.readerContext, outerInstance.acceptDocs);
-                    outerInstance.scorerDoc = -1;
-                    if (outerInstance.scorer == null)
+                    scorer = weight.GetScorer(readerContext, acceptDocs);
+                    scorerDoc = -1;
+                    if (scorer == null)
                     {
-                        outerInstance.noMatches = true;
-                        mval.Value = outerInstance.defVal;
-                        mval.Exists = false;
+                        noMatches = true;
+                        mutableValue.Value = defVal;
+                        mutableValue.Exists = false;
                         return;
                     }
-                    outerInstance.lastDocRequested = doc;
+                    lastDocRequested = doc;
 
-                    if (outerInstance.scorerDoc < doc)
+                    if (scorerDoc < doc)
                     {
-                        outerInstance.scorerDoc = outerInstance.scorer.Advance(doc);
+                        scorerDoc = scorer.Advance(doc);
                     }
 
-                    if (outerInstance.scorerDoc > doc)
+                    if (scorerDoc > doc)
                     {
                         // query doesn't match this document... either because we hit the
                         // end, or because the next doc is after this doc.
-                        mval.Value = outerInstance.defVal;
-                        mval.Exists = false;
+                        mutableValue.Value = defVal;
+                        mutableValue.Exists = false;
                         return;
                     }
 
                     // a match!
-                    mval.Value = outerInstance.scorer.GetScore();
-                    mval.Exists = true;
+                    mutableValue.Value = scorer.GetScore();
+                    mutableValue.Exists = true;
                 }
                 catch (IOException e)
                 {
-                    throw new Exception("caught exception in QueryDocVals(" + outerInstance.q + ") doc=" + doc, e);
+                    throw new Exception("caught exception in QueryDocVals(" + q + ") doc=" + doc, e);
                 }
-            }
+            });
         }
 
         public override string ToString(int doc)
