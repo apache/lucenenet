@@ -80,7 +80,7 @@
     <DebugType Condition=" '$(PortableDebugTypeOnly)' == 'true' ">portable</DebugType>
   </PropertyGroup>
 
-  <Target Name="AddInternalsVisibleTo" BeforeTargets="CoreCompile" Label="Adds InternalsVisibleTo Attribute and PublicKey (if supplied)">
+  <Target Name="AddInternalsVisibleTo" BeforeTargets="BeforeCompile" Label="Adds InternalsVisibleTo Attribute and PublicKey (if supplied)">
     <ItemGroup Condition="'@(InternalsVisibleTo->Count())' &gt; 0 ">
       <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
         <_Parameter1>%(InternalsVisibleTo.Identity)</_Parameter1>
