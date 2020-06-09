@@ -20,4 +20,4 @@ The documentation website for Lucene 3.0.3 is here [http://lucenenet.apache.org/
 
 ## Lucene 2.9.4.1
 
-The documentation website for Lucene 3.0.3 is here [http://lucenenet.apache.org/docs/2.9.4/Index.html](https://lucenenet.apache.org/docs/2.9.4/Index.html)
+The documentation website for Lucene 2.9.4 is here [http://lucenenet.apache.org/docs/2.9.4/Index.html](https://lucenenet.apache.org/docs/2.9.4/Index.html)
