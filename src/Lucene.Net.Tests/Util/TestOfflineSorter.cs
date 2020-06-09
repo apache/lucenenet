@@ -93,7 +93,7 @@ namespace Lucene.Net.Util
             Assert.AreEqual(1, sortInfo.MergeRounds);
         }
 
-        [Test, LongRunningTest]
+        [Test, LongRunningTest, Explicit] // LUCENENET specific - This was marked Nightly in Java, so we are marking explicit to keep this from running automatically
         public virtual void TestLargerRandom()
         {
             // Sort 100MB worth of data with 15mb buffer.
