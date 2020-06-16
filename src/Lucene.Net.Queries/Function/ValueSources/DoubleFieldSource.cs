@@ -79,42 +79,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override ValueFiller GetValueFiller()
             {
-                return new ValueFillerAnonymousInnerClassHelper(this);
-            }
-
-            private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-            {
-                private readonly DoubleDocValuesAnonymousInnerClassHelper outerInstance;
-
-                public ValueFillerAnonymousInnerClassHelper(DoubleDocValuesAnonymousInnerClassHelper outerInstance)
+                return new ValueFiller.AnonymousValueFiller<MutableValueDouble>(new MutableValueDouble(), fillValue: (doc, mutableValue) =>
                 {
-                    this.outerInstance = outerInstance;
-                    mval = new MutableValueDouble();
-                }
-
-                private readonly MutableValueDouble mval;
-
-                public override MutableValue Value
-                {
-                    get
-                    {
-                        return mval;
-                    }
-                }
-
-                public override void FillValue(int doc)
-                {
-                    mval.Value = outerInstance.arr.Get(doc);
-                    mval.Exists = mval.Value != 0 || outerInstance.valid.Get(doc);
-                }
+                    mutableValue.Value = arr.Get(doc);
+                    mutableValue.Exists = mutableValue.Value != 0 || valid.Get(doc);
+                });
             }
         }
 
         public override bool Equals(object o)
         {
-            var other = o as
-                DoubleFieldSource;
-            if (other == null)
+            if (!(o is DoubleFieldSource other))
             {
                 return false;
             }

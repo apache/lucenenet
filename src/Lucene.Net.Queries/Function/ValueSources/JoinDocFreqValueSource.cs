@@ -101,11 +101,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (o.GetType() != typeof(JoinDocFreqValueSource))
-            {
+            if (!(o is JoinDocFreqValueSource other))
                 return false;
-            }
-            var other = (JoinDocFreqValueSource)o;
             if (!m_qfield.Equals(other.m_qfield, StringComparison.Ordinal))
             {
                 return false;

@@ -323,8 +323,8 @@ namespace Lucene.Net.Queries
         /// </summary>
         public virtual float LowFreqMinimumNumberShouldMatch
         {
-            get { return m_lowFreqMinNrShouldMatch; }
-            set { m_lowFreqMinNrShouldMatch = value; }
+            get => m_lowFreqMinNrShouldMatch;
+            set => m_lowFreqMinNrShouldMatch = value;
         }
 
 
@@ -343,8 +343,8 @@ namespace Lucene.Net.Queries
         /// </summary>
         public virtual float HighFreqMinimumNumberShouldMatch
         {
-            get { return m_highFreqMinNrShouldMatch; }
-            set { m_highFreqMinNrShouldMatch = value; }
+            get => m_highFreqMinNrShouldMatch;
+            set => m_highFreqMinNrShouldMatch = value;
         }
 
 

@@ -282,15 +282,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override bool Equals(object o)
         {
             if (this == o)
-            {
                 return true;
-            }
-            if (!(o is VectorValueSource))
-            {
-                return false;
-            }
 
-            var that = (VectorValueSource)o;
+            if (!(o is VectorValueSource that))
+                return false;
 
             // LUCENENET specific: use structural equality comparison
             return JCG.ListEqualityComparer<ValueSource>.Default.Equals(m_sources, that.m_sources);

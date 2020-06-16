@@ -47,10 +47,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     {
         // LUCENENET NOTE: Made private and added public property for reading
         private readonly string field;
-        public string Field
-        {
-            get { return field; }
-        }
+        public string Field => field;
 
         public ReverseOrdFieldSource(string field)
         {
@@ -103,12 +100,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (o == null || (o.GetType() != typeof(ReverseOrdFieldSource)))
-            {
-                return false;
-            }
-            var other = o as ReverseOrdFieldSource;
-            if (other == null)
+            if (!(o is ReverseOrdFieldSource other))
                 return false;
             return this.field.Equals(other.field, StringComparison.Ordinal);
         }

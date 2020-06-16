@@ -161,10 +161,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.m_indexedBytes = indexedBytes;
         }
 
-        public virtual string Name
-        {
-            get { return "docfreq"; }
-        }
+        public virtual string Name => "docfreq";
 
         public override string GetDescription()
         {

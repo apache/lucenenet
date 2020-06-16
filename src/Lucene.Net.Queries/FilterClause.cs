@@ -43,24 +43,12 @@ namespace Lucene.Net.Queries
         /// <summary>
         /// Returns this <see cref="FilterClause"/>'s filter </summary>
         /// <returns> A <see cref="Search.Filter"/> object </returns>
-        public Filter Filter
-        {
-            get
-            {
-                return filter;
-            }
-        }
+        public Filter Filter => filter;
 
         /// <summary>
         /// Returns this <see cref="FilterClause"/>'s occur parameter </summary>
         /// <returns> An <see cref="Search.Occur"/> object </returns>
-        public Occur Occur
-        {
-            get
-            {
-                return occur;
-            }
-        }
+        public Occur Occur => occur;
 
         public override bool Equals(object o)
         {
@@ -69,8 +57,7 @@ namespace Lucene.Net.Queries
                 return true;
             }
 
-            var other = o as FilterClause;
-            if (other == null)
+            if (!(o is FilterClause other))
             {
                 return false;
             }

@@ -94,34 +94,11 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override ValueFiller GetValueFiller()
         {
-            return new ValueFillerAnonymousInnerClassHelper(this);
-        }
-
-        private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-        {
-            private readonly BoolDocValues outerInstance;
-
-            public ValueFillerAnonymousInnerClassHelper(BoolDocValues outerInstance)
+            return new ValueFiller.AnonymousValueFiller<MutableValueBool>(new MutableValueBool(), fillValue: (doc, mutableValue) =>
             {
-                this.outerInstance = outerInstance;
-                mval = new MutableValueBool();
-            }
-
-            private readonly MutableValueBool mval;
-
-            public override MutableValue Value
-            {
-                get
-                {
-                    return mval;
-                }
-            }
-
-            public override void FillValue(int doc)
-            {
-                mval.Value = outerInstance.BoolVal(doc);
-                mval.Exists = outerInstance.Exists(doc);
-            }
+                mutableValue.Value = BoolVal(doc);
+                mutableValue.Exists = Exists(doc);
+            });
         }
     }
 }

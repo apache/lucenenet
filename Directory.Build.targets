@@ -30,9 +30,19 @@
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE</DefineConstants>
     
+    
   </PropertyGroup>
 
-  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, and .NET Core 3.x -->
+  <!-- Features in .NET Standard 2.x, .NET Core 2.x, and .NET Core 3.x -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) ">
+
+    <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONROOT_PROVIDERS</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONBUILDER_PROPERTIES_AS_IDICTIONARY</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONBUILDER_SOURCES_AS_ILIST</DefineConstants>
+
+  </PropertyGroup>
+
+    <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, and .NET Core 3.x -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) ">
     
     <DefineConstants>$(DefineConstants);FEATURE_CONCURRENTMERGESCHEDULER</DefineConstants>
@@ -70,7 +80,7 @@
     <DebugType Condition=" '$(PortableDebugTypeOnly)' == 'true' ">portable</DebugType>
   </PropertyGroup>
 
-  <Target Name="AddInternalsVisibleTo" BeforeTargets="CoreCompile" Label="Adds InternalsVisibleTo Attribute and PublicKey (if supplied)">
+  <Target Name="AddInternalsVisibleTo" BeforeTargets="BeforeCompile" Label="Adds InternalsVisibleTo Attribute and PublicKey (if supplied)">
     <ItemGroup Condition="'@(InternalsVisibleTo->Count())' &gt; 0 ">
       <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
         <_Parameter1>%(InternalsVisibleTo.Identity)</_Parameter1>

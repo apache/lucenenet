@@ -27,10 +27,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public class NumDocsValueSource : ValueSource
     {
-        public virtual string Name
-        {
-            get { return "numdocs"; }
-        }
+        public virtual string Name => "numdocs";
 
         public override string GetDescription()
         {

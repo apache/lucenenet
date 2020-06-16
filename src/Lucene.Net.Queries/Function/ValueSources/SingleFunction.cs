@@ -49,8 +49,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as SingularFunction;
-            if (other == null)
+            if (!(o is SingularFunction other))
                 return false;
             return Name.Equals(other.Name, StringComparison.Ordinal) 
                 && m_source.Equals(other.m_source);

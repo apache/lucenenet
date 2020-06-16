@@ -31,10 +31,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
         }
 
-        protected override string Name
-        {
-            get { return "sum"; }
-        }
+        protected override string Name => "sum";
 
         protected override float Func(int doc, FunctionValues[] valsArr)
         {

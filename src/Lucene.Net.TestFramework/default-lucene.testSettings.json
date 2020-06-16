@@ -1,0 +1,30 @@
+{
+    "analysis:data:dir": "",
+    "egothor:stemmer:charset": "UTF-8",
+    "kuromoji:data:dir": "",
+    "solr:test:leavetmpdir": null,
+    "tests": {
+        "asserts:gracious": "false",
+        "cleanthreads:sysprop": "perMethod",
+        "codec": "random",
+        "directory": "random",
+        "docvaluesformat": "random",
+        "filterstacks": "true",
+        "infostream": "$verbose}",
+        "jvms": "auto",
+        "jvms:override": "${jvms}",
+        "leaveTemporary": null,
+        "leavetmpdir": null,
+        "linedocsfile": "",
+        "locale": "random",
+        "loggingfile": "${common:dir}/tools/junit4/logging.properties",
+        "multiplier": "1",
+        "nightly": "false",
+        "postingsformat": "random",
+        "seed": "",
+        "slow": "true",
+        "timezone": "random",
+        "verbose": "false",
+        "weekly": "false"
+    }
+}

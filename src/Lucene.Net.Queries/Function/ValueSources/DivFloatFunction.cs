@@ -31,10 +31,7 @@
         {
         }
 
-        protected override string Name
-        {
-            get { return "div"; }
-        }
+        protected override string Name => "div";
 
         protected override float Func(int doc, FunctionValues aVals, FunctionValues bVals)
         {

@@ -111,8 +111,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as DoubleConstValueSource;
-            if (other == null)
+            if (!(o is DoubleConstValueSource other))
             {
                 return false;
             }
@@ -122,52 +121,22 @@ namespace Lucene.Net.Queries.Function.ValueSources
         /// <summary>
         /// NOTE: This was getInt() in Lucene
         /// </summary>
-        public override int Int32
-        {
-            get
-            {
-                return (int)lv;
-            }
-        }
+        public override int Int32 => (int)lv;
 
         /// <summary>
         /// NOTE: This was getLong() in Lucene
         /// </summary>
-        public override long Int64
-        {
-            get
-            {
-                return lv;
-            }
-        }
+        public override long Int64 => lv;
 
         /// <summary>
         /// NOTE: This was getFloat() in Lucene
         /// </summary>
-        public override float Single
-        {
-            get
-            {
-                return fv;
-            }
-        }
+        public override float Single => fv;
 
-        public override double Double
-        {
-            get
-            {
-                return constant;
-            }
-        }
+        public override double Double => constant;
 
         // LUCENENET NOTE: getNumber() not supported
 
-        public override bool Bool
-        {
-            get
-            {
-                return constant != 0;
-            }
-        }
+        public override bool Bool => constant != 0;
     }
 }

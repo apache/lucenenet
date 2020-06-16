@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Configuration;
+using Microsoft.Extensions.Configuration;
+using System;
 
 namespace Lucene.Net.Cli
 {
@@ -18,11 +20,16 @@ namespace Lucene.Net.Cli
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
     public class Program
     {
         public static int Main(string[] args)
         {
+            var configuration = new ConfigurationBuilder()
+                .AddEnvironmentVariables(prefix: "lucene:") // Use a custom prefix to only load Lucene.NET settings 
+                .AddJsonFile("appsettings.json")
+                .Build();
+            ConfigurationSettings.SetConfigurationFactory(new ConfigurationFactory(configuration));
+
             int result = CommandLineOptions.Parse(args);
 
 #if DEBUG

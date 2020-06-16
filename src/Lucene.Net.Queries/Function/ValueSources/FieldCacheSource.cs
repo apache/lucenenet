@@ -34,21 +34,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.m_field = field;
         }
 
-        public virtual IFieldCache FieldCache
-        {
-            get
-            {
-                return m_cache;
-            }
-        }
+        public virtual IFieldCache FieldCache => m_cache;
 
-        public virtual string Field
-        {
-            get
-            {
-                return m_field;
-            }
-        }
+        public virtual string Field => m_field;
 
         public override string GetDescription()
         {

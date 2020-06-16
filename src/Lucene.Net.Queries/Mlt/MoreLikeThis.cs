@@ -208,14 +208,8 @@ namespace Lucene.Net.Queries.Mlt
         /// </summary>
         public float BoostFactor
         {
-            get
-            {
-                return boostFactor;
-            }
-            set
-            {
-                this.boostFactor = value;
-            }
+            get => boostFactor;
+            set => this.boostFactor = value;
         }
 
 

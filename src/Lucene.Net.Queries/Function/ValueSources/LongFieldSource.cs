@@ -130,34 +130,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override ValueFiller GetValueFiller()
             {
-                return new ValueFillerAnonymousInnerClassHelper(this);
-            }
-
-            private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-            {
-                private readonly Int64DocValuesAnonymousInnerClassHelper outerInstance;
-
-                public ValueFillerAnonymousInnerClassHelper(Int64DocValuesAnonymousInnerClassHelper outerInstance)
+                return new ValueFiller.AnonymousValueFiller<MutableValueInt64>(outerInstance.NewMutableValueInt64(), fillValue: (doc, mutableValue) =>
                 {
-                    this.outerInstance = outerInstance;
-                    mval = outerInstance.outerInstance.NewMutableValueInt64();
-                }
-
-                private readonly MutableValueInt64 mval;
-
-                public override MutableValue Value
-                {
-                    get
-                    {
-                        return mval;
-                    }
-                }
-
-                public override void FillValue(int doc)
-                {
-                    mval.Value = outerInstance.arr.Get(doc);
-                    mval.Exists = mval.Value != 0 || outerInstance.valid.Get(doc);
-                }
+                    mutableValue.Value = arr.Get(doc);
+                    mutableValue.Exists = mutableValue.Value != 0 || valid.Get(doc);
+                });
             }
         }
 
@@ -175,8 +152,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            var other = o as Int64FieldSource;
-            if (other == null)
+            if (!(o is Int64FieldSource other))
                 return false;
             return base.Equals(other) && (this.m_parser == null ? other.m_parser == null : this.m_parser.GetType() == other.m_parser.GetType());
         }

@@ -39,10 +39,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.m_indexedField = indexedField;
         }
 
-        public virtual string Name
-        {
-            get { return "sumtotaltermfreq"; }
-        }
+        public virtual string Name => "sumtotaltermfreq";
 
         public override string GetDescription()
         {
@@ -113,8 +110,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as SumTotalTermFreqValueSource;
-            if (other == null)
+            if (!(o is SumTotalTermFreqValueSource other))
                 return false;
             return this.m_indexedField.Equals(other.m_indexedField, StringComparison.Ordinal);
         }

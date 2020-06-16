@@ -50,9 +50,9 @@ namespace Lucene.Net.Queries.Mlt
         /// <param name="moreLikeFields"> fields used for similarity measure </param>
         public MoreLikeThisQuery(string likeText, string[] moreLikeFields, Analyzer analyzer, string fieldName)
         {
-            this.LikeText = likeText;
-            this.MoreLikeFields = moreLikeFields;
-            this.Analyzer = analyzer;
+            this.likeText = likeText;
+            this.moreLikeFields = moreLikeFields;
+            this.analyzer = analyzer;
             this.fieldName = fieldName;
         }
 
@@ -88,52 +88,52 @@ namespace Lucene.Net.Queries.Mlt
 
         public virtual float PercentTermsToMatch
         {
-            get { return percentTermsToMatch; }
-            set { percentTermsToMatch = value; }
+            get => percentTermsToMatch;
+            set => percentTermsToMatch = value;
         }
 
         public virtual Analyzer Analyzer
         {
-            get { return analyzer; }
-            set { analyzer = value; }
+            get => analyzer;
+            set => analyzer = value;
         }
 
         public virtual string LikeText
         {
-            get { return likeText; }
-            set { likeText = value; }
+            get => likeText;
+            set => likeText = value;
         }
 
         public virtual int MaxQueryTerms
         {
-            get { return maxQueryTerms; }
-            set { maxQueryTerms = value; }
+            get => maxQueryTerms;
+            set => maxQueryTerms = value;
         }
 
         public virtual int MinTermFrequency
         {
-            get { return minTermFrequency; }
-            set { minTermFrequency = value; }
+            get => minTermFrequency;
+            set => minTermFrequency = value;
         }
 
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public virtual string[] MoreLikeFields
         {
-            get { return moreLikeFields; }
-            set { moreLikeFields = value; }
+            get => moreLikeFields;
+            set => moreLikeFields = value;
         }
 
         public virtual ISet<string> StopWords
         {
-            get { return stopWords; }
-            set { stopWords = value; }
+            get => stopWords;
+            set => stopWords = value;
         }
 
         public virtual int MinDocFreq
         {
-            get { return minDocFreq; }
-            set { minDocFreq = value; }
+            get => minDocFreq;
+            set => minDocFreq = value;
         }
 
         public override int GetHashCode()

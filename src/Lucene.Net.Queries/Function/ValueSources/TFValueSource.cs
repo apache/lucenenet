@@ -41,15 +41,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
         }
 
-        public override string Name
-        {
-            get
-            {
-                {
-                    return "tf";
-                }
-            }
-        }
+        public override string Name => "tf";
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
@@ -123,15 +115,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     this.outerInstance = outerInstance;
                 }
 
-                public override int Freq
-                {
-                    get { return 0; }
-                }
+                public override int Freq => 0;
 
-                public override int DocID
-                {
-                    get { return DocIdSetIterator.NO_MORE_DOCS; }
-                }
+                public override int DocID => DocIdSetIterator.NO_MORE_DOCS;
 
                 public override int NextDoc()
                 {

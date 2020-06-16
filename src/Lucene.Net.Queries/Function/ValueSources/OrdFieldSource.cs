@@ -112,34 +112,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override ValueFiller GetValueFiller()
             {
-                return new ValueFillerAnonymousInnerClassHelper(this);
-            }
-
-            private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-            {
-                private readonly Int32DocValuesAnonymousInnerClassHelper outerInstance;
-
-                public ValueFillerAnonymousInnerClassHelper(Int32DocValuesAnonymousInnerClassHelper outerInstance)
+                return new ValueFiller.AnonymousValueFiller<MutableValueInt32>(new MutableValueInt32(), fillValue: (doc, mutableValue) =>
                 {
-                    this.outerInstance = outerInstance;
-                    mval = new MutableValueInt32();
-                }
-
-                private readonly MutableValueInt32 mval;
-
-                public override MutableValue Value
-                {
-                    get
-                    {
-                        return mval;
-                    }
-                }
-
-                public override void FillValue(int doc)
-                {
-                    mval.Value = outerInstance.sindex.GetOrd(doc);
-                    mval.Exists = mval.Value != 0;
-                }
+                    mutableValue.Value = sindex.GetOrd(doc);
+                    mutableValue.Exists = mutableValue.Value != 0;
+                });
             }
         }
 

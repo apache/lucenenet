@@ -1,0 +1,9 @@
+{
+  "tests": {
+    "locale": "fr",
+    "seed": "0x00000010",
+    "verbose": "false",
+    "weekly": "false",
+    "overridden": "the-override"
+  }
+}

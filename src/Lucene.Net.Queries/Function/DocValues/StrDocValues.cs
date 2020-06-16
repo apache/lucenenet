@@ -51,33 +51,10 @@ namespace Lucene.Net.Queries.Function.DocValues
 
         public override ValueFiller GetValueFiller()
         {
-            return new ValueFillerAnonymousInnerClassHelper(this);
-        }
-
-        private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-        {
-            private readonly StrDocValues outerInstance;
-
-            public ValueFillerAnonymousInnerClassHelper(StrDocValues outerInstance)
+            return new ValueFiller.AnonymousValueFiller<MutableValueStr>(new MutableValueStr(), fillValue: (doc, mutableValue) =>
             {
-                this.outerInstance = outerInstance;
-                mval = new MutableValueStr();
-            }
-
-            private readonly MutableValueStr mval;
-
-            public override MutableValue Value
-            {
-                get
-                {
-                    return mval;
-                }
-            }
-
-            public override void FillValue(int doc)
-            {
-                mval.Exists = outerInstance.BytesVal(doc, mval.Value);
-            }
+                mutableValue.Exists = BytesVal(doc, mutableValue.Value);
+            });
         }
     }
 }

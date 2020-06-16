@@ -226,63 +226,22 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 int ll = lower.Value;
                 int uu = upper.Value;
 
-                return new ValueSourceScorerAnonymousInnerClassHelper(this, reader, outerInstance, ll, uu);
-            }
-
-            private class ValueSourceScorerAnonymousInnerClassHelper : ValueSourceScorer
-            {
-                private readonly Int32DocValuesAnonymousInnerClassHelper outerInstance;
-
-                private readonly int ll;
-                private readonly int uu;
-
-                public ValueSourceScorerAnonymousInnerClassHelper(Int32DocValuesAnonymousInnerClassHelper outerInstance, IndexReader reader, EnumFieldSource @this, int ll, int uu)
-                    : base(reader, outerInstance)
+                return new ValueSourceScorer.AnonymousValueSourceScorer(reader, this, matchesValue: (doc) =>
                 {
-                    this.outerInstance = outerInstance;
-                    this.ll = ll;
-                    this.uu = uu;
-                }
-
-                public override bool MatchesValue(int doc)
-                {
-                    int val = outerInstance.arr.Get(doc);
+                    int val = arr.Get(doc);
                     // only check for deleted if it's the default value
                     // if (val==0 && reader.isDeleted(doc)) return false;
                     return val >= ll && val <= uu;
-                }
+                });
             }
 
             public override ValueFiller GetValueFiller()
             {
-                return new ValueFillerAnonymousInnerClassHelper(this);
-            }
-
-            private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-            {
-                private readonly Int32DocValuesAnonymousInnerClassHelper outerInstance;
-
-                public ValueFillerAnonymousInnerClassHelper(Int32DocValuesAnonymousInnerClassHelper outerInstance)
+                return new ValueFiller.AnonymousValueFiller<MutableValueInt32>(new MutableValueInt32(), fillValue: (doc, mutableValue) =>
                 {
-                    this.outerInstance = outerInstance;
-                    mval = new MutableValueInt32();
-                }
-
-                private readonly MutableValueInt32 mval;
-
-                public override MutableValue Value
-                {
-                    get
-                    {
-                        return mval;
-                    }
-                }
-
-                public override void FillValue(int doc)
-                {
-                    mval.Value = outerInstance.arr.Get(doc);
-                    mval.Exists = outerInstance.valid.Get(doc);
-                }
+                    mutableValue.Value = arr.Get(doc);
+                    mutableValue.Exists = valid.Get(doc);
+                });
             }
         }
 

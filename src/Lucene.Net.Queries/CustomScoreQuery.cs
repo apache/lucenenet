@@ -217,12 +217,9 @@ namespace Lucene.Net.Queries
             }
 
             /// <summary>
-            /// <seealso cref="Weight.Query"/>
+            /// <see cref="Weight.Query"/>
             /// </summary>
-            public override Query Query
-            {
-                get { return outerInstance; }
-            }
+            public override Query Query => outerInstance;
 
             public override float GetValueForNormalization()
             {
@@ -243,7 +240,7 @@ namespace Lucene.Net.Queries
             }
 
             /// <summary>
-            /// <seealso cref="Weight.Normalize(float, float)"/>
+            /// <see cref="Weight.Normalize(float, float)"/>
             /// </summary>
             public override void Normalize(float norm, float topLevelBoost)
             {
@@ -312,11 +309,7 @@ namespace Lucene.Net.Queries
                 return res;
             }
 
-            public override bool ScoresDocsOutOfOrder
-            {
-                get { return false; }
-            }
-
+            public override bool ScoresDocsOutOfOrder => false;
         }
 
         //=========================== S C O R E R ============================
@@ -360,10 +353,7 @@ namespace Lucene.Net.Queries
                 return doc;
             }
 
-            public override int DocID
-            {
-                get { return subQueryScorer.DocID; }
-            }
+            public override int DocID => subQueryScorer.DocID;
 
             /// <summary>
             /// <seealso cref="Scorer.GetScore"/>
@@ -377,10 +367,7 @@ namespace Lucene.Net.Queries
                 return qWeight * provider.CustomScore(subQueryScorer.DocID, subQueryScorer.GetScore(), vScores);
             }
 
-            public override int Freq
-            {
-                get { return subQueryScorer.Freq; }
-            }
+            public override int Freq => subQueryScorer.Freq;
 
             public override ICollection<ChildScorer> GetChildren()
             {
@@ -422,33 +409,24 @@ namespace Lucene.Net.Queries
         /// </summary>
         public virtual bool IsStrict
         {
-            get { return strict; }
-            set { strict = value; }
+            get => strict;
+            set => strict = value;
         }
 
 
         /// <summary>
         /// The sub-query that <see cref="CustomScoreQuery"/> wraps, affecting both the score and which documents match. </summary>
-        public virtual Query SubQuery
-        {
-            get { return subQuery; }
-        }
+        public virtual Query SubQuery => subQuery;
 
         /// <summary>
         /// The scoring queries that only affect the score of <see cref="CustomScoreQuery"/>. </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual Query[] ScoringQueries
-        {
-            get { return scoringQueries; }
-        }
+        public virtual Query[] ScoringQueries => scoringQueries;
 
         /// <summary>
         /// A short name of this query, used in <see cref="ToString(string)"/>.
         /// </summary>
-        public virtual string Name
-        {
-            get { return "custom"; }
-        }
+        public virtual string Name => "custom";
     }
 }

@@ -151,36 +151,39 @@ namespace Lucene.Net.Queries.Function
             /// <summary>
             /// <see cref="MutableValue"/> will be reused across calls.  Returns <c>true</c> if the value exists. </summary>
             public abstract void FillValue(int doc);
+
+            /// <summary>
+            /// This class may be used to create <see cref="ValueFiller"/> instances anonymously.
+            /// </summary>
+            // LUCENENET specific - used to mimick the inline class behavior in Java.
+            internal class AnonymousValueFiller<T> : ValueFiller where T : MutableValue
+            {
+                private readonly T mutableValue;
+                private readonly Action<int, T> fillValue;
+
+                public AnonymousValueFiller(T mutableValue, Action<int, T> fillValue)
+                {
+                    this.mutableValue = mutableValue ?? throw new ArgumentNullException(nameof(mutableValue));
+                    this.fillValue = fillValue ?? throw new ArgumentNullException(nameof(fillValue));
+                }
+
+                public override MutableValue Value => mutableValue;
+
+                public override void FillValue(int doc)
+                {
+                    fillValue(doc, mutableValue);
+                }
+            }
         }
 
         /// <summary>
         /// @lucene.experimental </summary>
         public virtual ValueFiller GetValueFiller()
         {
-            return new ValueFillerAnonymousInnerClassHelper(this);
-        }
-
-        private class ValueFillerAnonymousInnerClassHelper : ValueFiller
-        {
-            private readonly FunctionValues outerInstance;
-
-            public ValueFillerAnonymousInnerClassHelper(FunctionValues outerInstance)
+            return new ValueFiller.AnonymousValueFiller<MutableValueSingle>(new MutableValueSingle(), fillValue: (doc, mutableValue) =>
             {
-                this.outerInstance = outerInstance;
-                mval = new MutableValueSingle();
-            }
-
-            private readonly MutableValueSingle mval;
-
-            public override MutableValue Value
-            {
-                get { return mval; }
-            }
-
-            public override void FillValue(int doc)
-            {
-                mval.Value = outerInstance.SingleVal(doc);
-            }
+                mutableValue.Value = SingleVal(doc);
+            });
         }
 
         //For Functions that can work with multiple values from the same document.  This does not apply to all functions
@@ -274,111 +277,35 @@ namespace Lucene.Net.Queries.Function
 
             if (includeLower && includeUpper)
             {
-                return new ValueSourceScorerAnonymousInnerClassHelper(this, reader, this, l, u);
+                return new ValueSourceScorer.AnonymousValueSourceScorer(reader, this, matchesValue: (doc) =>
+                {
+                    float docVal = SingleVal(doc);
+                    return docVal >= l && docVal <= u;
+                });
             }
             else if (includeLower && !includeUpper)
             {
-                return new ValueSourceScorerAnonymousInnerClassHelper2(this, reader, this, l, u);
+                return new ValueSourceScorer.AnonymousValueSourceScorer(reader, this, matchesValue: (doc) =>
+                {
+                    float docVal = SingleVal(doc);
+                    return docVal >= l && docVal < u;
+                });
             }
             else if (!includeLower && includeUpper)
             {
-                return new ValueSourceScorerAnonymousInnerClassHelper3(this, reader, this, l, u);
+                return new ValueSourceScorer.AnonymousValueSourceScorer(reader, this, matchesValue: (doc) =>
+                {
+                    float docVal = SingleVal(doc);
+                    return docVal > l && docVal <= u;
+                });
             }
             else
             {
-                return new ValueSourceScorerAnonymousInnerClassHelper4(this, reader, this, l, u);
-            }
-        }
-
-        private class ValueSourceScorerAnonymousInnerClassHelper : ValueSourceScorer
-        {
-            private readonly FunctionValues outerInstance;
-
-            private readonly float l;
-            private readonly float u;
-
-            public ValueSourceScorerAnonymousInnerClassHelper(FunctionValues outerInstance, IndexReader reader,
-                FunctionValues @this, float l, float u)
-                : base(reader, @this)
-            {
-                this.outerInstance = outerInstance;
-                this.l = l;
-                this.u = u;
-            }
-
-            public override bool MatchesValue(int doc)
-            {
-                float docVal = outerInstance.SingleVal(doc);
-                return docVal >= l && docVal <= u;
-            }
-        }
-
-        private class ValueSourceScorerAnonymousInnerClassHelper2 : ValueSourceScorer
-        {
-            private readonly FunctionValues outerInstance;
-
-            private readonly float l;
-            private readonly float u;
-
-            public ValueSourceScorerAnonymousInnerClassHelper2(FunctionValues outerInstance, IndexReader reader,
-                FunctionValues @this, float l, float u)
-                : base(reader, @this)
-            {
-                this.outerInstance = outerInstance;
-                this.l = l;
-                this.u = u;
-            }
-
-            public override bool MatchesValue(int doc)
-            {
-                float docVal = outerInstance.SingleVal(doc);
-                return docVal >= l && docVal < u;
-            }
-        }
-
-        private class ValueSourceScorerAnonymousInnerClassHelper3 : ValueSourceScorer
-        {
-            private readonly FunctionValues outerInstance;
-
-            private readonly float l;
-            private readonly float u;
-
-            public ValueSourceScorerAnonymousInnerClassHelper3(FunctionValues outerInstance, IndexReader reader,
-                FunctionValues @this, float l, float u)
-                : base(reader, @this)
-            {
-                this.outerInstance = outerInstance;
-                this.l = l;
-                this.u = u;
-            }
-
-            public override bool MatchesValue(int doc)
-            {
-                float docVal = outerInstance.SingleVal(doc);
-                return docVal > l && docVal <= u;
-            }
-        }
-
-        private class ValueSourceScorerAnonymousInnerClassHelper4 : ValueSourceScorer
-        {
-            private readonly FunctionValues outerInstance;
-
-            private readonly float l;
-            private readonly float u;
-
-            public ValueSourceScorerAnonymousInnerClassHelper4(FunctionValues outerInstance, IndexReader reader,
-                FunctionValues @this, float l, float u)
-                : base(reader, @this)
-            {
-                this.outerInstance = outerInstance;
-                this.l = l;
-                this.u = u;
-            }
-
-            public override bool MatchesValue(int doc)
-            {
-                float docVal = outerInstance.SingleVal(doc);
-                return docVal > l && docVal < u;
+                return new ValueSourceScorer.AnonymousValueSourceScorer(reader, this, matchesValue: (doc) =>
+                {
+                    float docVal = SingleVal(doc);
+                    return docVal > l && docVal < u;
+                });
             }
         }
     }

@@ -107,12 +107,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (typeof(ReciprocalSingleFunction) != o.GetType())
-            {
-                return false;
-            }
-            var other = o as ReciprocalSingleFunction;
-            if (other == null)
+            if (!(o is ReciprocalSingleFunction other))
                 return false;
             return this.m_m == other.m_m && this.m_a == other.m_a && this.m_b == other.m_b && this.m_source.Equals(other.m_source);
         }

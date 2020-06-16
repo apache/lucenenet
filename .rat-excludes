@@ -25,3 +25,8 @@ LimitedConcurrencyLevelTaskScheduler\.cs
 Automaton/*
 ConcurrentHashSet\.cs
 NullableAttributes\.cs
+ConfigurationBuilder\.cs
+ConfigurationProvider\.cs
+ConfigurationReloadToken\.cs
+ConfigurationRoot\.cs
+ConfigurationSection\.cs
