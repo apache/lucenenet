@@ -19,6 +19,9 @@
         "src": "../../branding"
       }
     ],
+    "xref": [
+      "_site/api/core/xrefmap.yml"
+    ],
     "dest": "_site",
     "globalMetadataFiles": ["docfx.global.json"],
     "template": [

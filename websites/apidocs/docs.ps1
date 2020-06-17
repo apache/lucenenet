@@ -30,7 +30,10 @@ param (
     # LogLevel can be: Diagnostic, Verbose, Info, Warning, Error
     [Parameter(Mandatory = $false)]
     [string]
-    $LogLevel = 'Warning'
+    $LogLevel = 'Warning',
+    [Parameter(Mandatory = $false)]
+    [string]
+    $BaseUrl = 'http://localhost:8080'
 )
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -107,6 +110,11 @@ $PluginsFolder = (Join-Path -Path $ApiDocsFolder "lucenetemplate\plugins")
 New-Item $PluginsFolder -type directory -force
 & $msbuild $pluginSln /target:LuceneDocsPlugins "/p:OutDir=$PluginsFolder"
 
+# Set the DocFx MSBuild path manually, for some reason it borks if using the default
+# [Environment]::SetEnvironmentVariable("MSBUILD_EXE_PATH", $msbuild)
+# [Environment]::SetEnvironmentVariable("MSBUILD_EXE_PATH", "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe")
+# [Environment]::SetEnvironmentVariable("VisualStudioVersion", "15.0")
+
 # update the docjx.global.json file based
 $DocFxGlobalJson = Join-Path -Path $ApiDocsFolder "docfx.global.json"
 $DocFxJsonContent = Get-Content $DocFxGlobalJson | ConvertFrom-Json
@@ -116,8 +124,8 @@ $DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
 
 $DocFxJsonMeta = @(
-    "docfx.core.json",
-    "docfx.test-framework.json"
+    "docfx.core.json"
+    #"docfx.test-framework.json"
 )
 $DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
 
@@ -155,6 +163,21 @@ if ($?) {
         else {
             & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --debug
         }
+
+        # Add the baseUrl to the output xrefmap, see https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
+        $projFileJson = Get-Content $projFile | ConvertFrom-Json
+        $projBuildDest = $projFileJson.build.dest
+        $buildOutputFolder = Join-Path -Path ((Get-Item $projFile).DirectoryName) $projBuildDest
+        $xrefFile = Join-Path $buildOutputFolder "xrefmap.yml"
+        $xrefMap = Get-Content $xrefFile -Raw
+        $xrefMap = $xrefMap.Replace("### YamlMime:XRefMap", "").Trim()
+        $projBaseUrl = $BaseUrl + $projBuildDest.Substring(5, $projBuildDest.Length - 5) # trim the _site part of the string
+        $xrefMap = "### YamlMime:XRefMap" + [Environment]::NewLine + "baseUrl: " + $projBaseUrl + "/" + [Environment]::NewLine + $xrefMap
+        Set-Content -Path $xrefFile -Value $xrefMap
+
+        # TODO: Figure out why this doesn't work as expected, the absolute path isn't quite right.
+        # // baseUrl: https://xxxx.azurewebsites.net/, https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
+        # TODO: We want to make the breadcrumb like microsofts so that the first segment of it is the home page.
     }
 }
 

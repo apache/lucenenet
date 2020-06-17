@@ -33,17 +33,13 @@
           "**.md"
         ],
         "src": "obj/docfx/api/core"
-      },
+      },   
       {
         "files": [
-          "toc/core/toc.yml"
-        ]
-      },
-      {
-        "files": [
-          "toc.yml"
+          "toc.yml",
+          "core/toc.yml"
         ],
-        "src": "toc/subsite"
+        "src": "toc"
       }
     ],    
     "overwrite": [     

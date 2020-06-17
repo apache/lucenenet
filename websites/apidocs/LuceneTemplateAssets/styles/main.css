@@ -91,3 +91,13 @@ body .toc {
 .sidefilter {
     background-color: rgb(247, 247, 247);
 }
+
+.level1.breadcrumb {
+    display: inline;
+}
+
+.level0.breadcrumb .level1.breadcrumb > li:before {
+    content: "\00a0/";
+    padding: 0 5px;
+    color: #ccc;
+}
