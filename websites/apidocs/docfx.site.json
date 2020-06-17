@@ -26,8 +26,8 @@
     "globalMetadataFiles": ["docfx.global.json"],
     "template": [
       "default",
-      "LuceneTemplate",
-      "LuceneTemplateAssets"
+      "Templates/LuceneTemplate",
+      "Templates/LuceneTemplateAssets"
     ],
     "postProcessors": [],
     "markdownEngineName": "dfm",

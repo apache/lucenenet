@@ -55,8 +55,9 @@
       "docfx.global.subsite.json"
     ],
     "template": [
-      "DefaultTemplateNoAssets",
-      "LuceneTemplate"
+      "Templates/DefaultTemplateNoAssets",
+      "Templates/LuceneTemplate",
+      "Templates/LuceneApiDocs"
     ],
     "postProcessors": [],
     "markdownEngineName": "dfm",
