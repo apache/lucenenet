@@ -47,8 +47,6 @@
     <MicrosoftCSharpPackageVersion>4.4.0</MicrosoftCSharpPackageVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>2.0.0</MicrosoftExtensionsDependencyModelPackageVersion>
 
-    <MicrosoftExtensionsConfigurationAbstractionsPackageVersion_NET4_5>1.0.0</MicrosoftExtensionsConfigurationAbstractionsPackageVersion_NET4_5>
-
     <MicrosoftExtensionsConfigurationAbstractionsPackageVersion_NET4_5_1>1.1.2</MicrosoftExtensionsConfigurationAbstractionsPackageVersion_NET4_5_1>
     <MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1>1.1.2</MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1>
     <MicrosoftExtensionsConfigurationJsonPackageVersion_NET4_5_1>$(MicrosoftExtensionsConfigurationPackageVersion_NET4_5_1)</MicrosoftExtensionsConfigurationJsonPackageVersion_NET4_5_1>
