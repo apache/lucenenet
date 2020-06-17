@@ -77,6 +77,46 @@ namespace Lucene.Net.TestFramework
         {
             Xunit.Assert.True(object.Equals(expected, actual), FormatMessage(message, args));
         }
+		//
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   actual:
+        //     The actual value
+        public static void AreEqual(bool expected, bool actual)
+        {
+            Xunit.Assert.True(expected.Equals(actual));
+        }
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   actual:
+        //     The actual value
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   args:
+        //     Array of objects to be used in formatting the message
+        public static void AreEqual(bool expected, bool actual, string message, params object[] args)
+        {
+            Xunit.Assert.True(expected.Equals(actual), FormatMessage(message, args));
+        }
         //
         // Summary:
         //     Verifies that two doubles are equal considering a delta. If the expected value

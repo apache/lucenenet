@@ -78,6 +78,16 @@ namespace Lucene.Net.Util
             Assert.AreEqual(expected, actual, message);
         }
 
+        internal static void assertEquals(bool expected, bool actual)
+        {
+            Assert.AreEqual(expected, actual);
+        }
+
+        internal static void assertEquals(string message, bool expected, bool actual)
+        {
+            Assert.AreEqual(expected, actual, message);
+        }
+
         internal static void assertEquals(long expected, long actual)
         {
             Assert.AreEqual(expected, actual);
