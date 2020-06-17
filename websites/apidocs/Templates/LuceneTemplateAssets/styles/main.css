@@ -92,7 +92,7 @@ body .toc {
     background-color: rgb(247, 247, 247);
 }
 
-.level1.breadcrumb {
+.level0.breadcrumb .level1.breadcrumb {
     display: inline;
 }
 

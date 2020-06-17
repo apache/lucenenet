@@ -110,11 +110,6 @@ $PluginsFolder = (Join-Path -Path $ApiDocsFolder "lucenetemplate\plugins")
 New-Item $PluginsFolder -type directory -force
 & $msbuild $pluginSln /target:LuceneDocsPlugins "/p:OutDir=$PluginsFolder"
 
-# Set the DocFx MSBuild path manually, for some reason it borks if using the default
-# [Environment]::SetEnvironmentVariable("MSBUILD_EXE_PATH", $msbuild)
-# [Environment]::SetEnvironmentVariable("MSBUILD_EXE_PATH", "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe")
-# [Environment]::SetEnvironmentVariable("VisualStudioVersion", "15.0")
-
 # update the docjx.global.json file based
 $DocFxGlobalJson = Join-Path -Path $ApiDocsFolder "docfx.global.json"
 $DocFxJsonContent = Get-Content $DocFxGlobalJson | ConvertFrom-Json
@@ -124,8 +119,8 @@ $DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
 
 $DocFxJsonMeta = @(
-    "docfx.core.json"
-    #"docfx.test-framework.json"
+    "docfx.core.json",
+    "docfx.test-framework.json"
 )
 $DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
 
@@ -176,8 +171,9 @@ if ($?) {
         Set-Content -Path $xrefFile -Value $xrefMap
 
         # TODO: Figure out why this doesn't work as expected, the absolute path isn't quite right.
+        # ... It does work now but we'll see if it breaks with overlapping uids
         # // baseUrl: https://xxxx.azurewebsites.net/, https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
-        # TODO: We want to make the breadcrumb like microsofts so that the first segment of it is the home page.
+
     }
 }
 

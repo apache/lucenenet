@@ -36,14 +36,10 @@
       },
       {
         "files": [
-          "toc/test-framework/toc.yml"
-        ]
-      },
-      {
-        "files": [
-          "toc.yml"
+          "toc.yml",
+          "test-framework/toc.yml"
         ],
-        "src": "toc/subsite"
+        "src": "toc"
       }
     ],   
     "overwrite": [     
@@ -59,8 +55,9 @@
       "docfx.global.subsite.json"
     ],
     "template": [
-      "DefaultTemplateNoAssets",
-      "LuceneTemplate"
+      "Templates/DefaultTemplateNoAssets",
+      "Templates/LuceneTemplate",
+      "Templates/LuceneApiDocs"
     ],
     "postProcessors": [],
     "markdownEngineName": "dfm",
