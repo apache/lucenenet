@@ -111,6 +111,7 @@ task Init -depends InstallSDK, UpdateLocalSDKVersion -description "This task mak
 	Write-Host "Configuration: $configuration"
 	Write-Host "Platform: $platform"
 	Write-Host "MaximumParallelJobs: $($maximumParalellJobs.ToString())"
+	Write-Host "Powershell Version: $($PSVersionTable.PSVersion)"
 
 	Ensure-Directory-Exists "$release_directory"
 }
