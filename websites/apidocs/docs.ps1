@@ -120,7 +120,10 @@ $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
 
 $DocFxJsonMeta = @(
     "docfx.core.json",
-    "docfx.test-framework.json"
+    "docfx.analysis-common.json",
+    "docfx.analysis-kuromoji.json",
+    "docfx.analysis-morfologik.json",
+    "docfx.test-framework.json"    
 )
 $DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
 
@@ -172,8 +175,13 @@ if ($?) {
 
         # TODO: Figure out why this doesn't work as expected, the absolute path isn't quite right.
         # ... It does work now but we'll see if it breaks with overlapping uids
+        # ... it seems to work 'sometimes' but not others, very strange, like the analysis-common package has the xref map of 'core' but it doesn't resolve
+        #       which seems a bit strange. Might be time to try to debug in DocFx
         # // baseUrl: https://xxxx.azurewebsites.net/, https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
-
+        # TODO: Look into uidPrefix which is part of the xrefmap (see XRefMapRedirection)
+        # NOTE: With Info logs, we should see this output when resolving xrefmap: external references found in 
+        # NOTE: THere's a field ThrowIfNotResolved on XRefDetails that might help, as it turns out it looks like via code that the resolved external Xref's
+        #       Don't have an Href field?
     }
 }
 
