@@ -20,7 +20,9 @@
       }
     ],
     "xref": [
-      "_site/api/core/xrefmap.yml"
+      "_site/api/core/xrefmap.yml",
+      "_site/api/analysis-common/xrefmap.yml",
+      "_site/api/test-framework/xrefmap.yml"
     ],
     "dest": "_site",
     "globalMetadataFiles": ["docfx.global.json"],

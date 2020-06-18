@@ -1,0 +1,3 @@
+- name: Analysis Common
+  href: ../../obj/docfx/api/analysis-common/toc.yml
+  topicUid: Lucene.Net.Analysis.Common
