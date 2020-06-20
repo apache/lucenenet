@@ -32,7 +32,8 @@ namespace Lucene.Net.Randomized.Generators
         /// </summary>
         public static int RandomInt32Between(Random random, int min, int max)
         {
-            Debug.Assert(min <= max, String.Format("Min must be less than or equal max int. min: {0}, max: {1}", min, max));
+            Debug.Assert(min <= max,
+                $"Min must be less than or equal max int. min: {min.ToString()}, max: {max.ToString()}");
             var range = max - min;
             if (range < Int32.MaxValue)
                 return min + random.Next(1 + range);
