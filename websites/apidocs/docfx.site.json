@@ -19,11 +19,16 @@
         "src": "../../branding"
       }
     ],
-    "xref": [
-      "_site/api/core/xrefmap.yml",
-      "_site/api/analysis-common/xrefmap.yml",
+    "xref": [            
       "_site/api/analysis-kuromoji/xrefmap.yml",
       "_site/api/analysis-morfologik/xrefmap.yml",
+      "_site/api/analysis-opennlp/xrefmap.yml",
+      "_site/api/analysis-phonetic/xrefmap.yml",
+      "_site/api/analysis-smartcn/xrefmap.yml",
+      "_site/api/analysis-stempel/xrefmap.yml",
+      "_site/api/analysis-common/xrefmap.yml",
+      "_site/api/benchmark/xrefmap.yml",
+      "_site/api/core/xrefmap.yml",
       "_site/api/test-framework/xrefmap.yml"      
     ],
     "dest": "_site",

@@ -4,7 +4,7 @@
       "src": [
         {
           "files": [
-            "Lucene.Net.Analysis.Kuromoji/Lucene.Net.Analysis.Kuromoji.csproj"
+            "Lucene.Net.Analysis.OpenNLP/Lucene.Net.Analysis.OpenNLP.csproj"
           ],
           "exclude": [
             "**/obj/**",
@@ -13,7 +13,7 @@
           "src": "../../src"
         }
       ],
-      "dest": "obj/docfx/api/analysis-kuromoji",
+      "dest": "obj/docfx/api/analysis-opennlp",
       "properties": {
         "TargetFramework": "netstandard2.0"
       }
@@ -26,12 +26,12 @@
           "**.yml",
           "**.md"
         ],
-        "src": "obj/docfx/api/analysis-kuromoji"
+        "src": "obj/docfx/api/analysis-opennlp"
       },   
       {
         "files": [
           "toc.yml",
-          "analysis-kuromoji/toc.yml"
+          "analysis-opennlp/toc.yml"
         ],
         "src": "toc"
       }
@@ -41,18 +41,18 @@
         "files": [
           "overview.md"
         ],
-        "src": "../../src/Lucene.Net.Analysis.Kuromoji"
-      },    
+        "src": "../../src/Lucene.Net.Analysis.OpenNLP"
+      },  
       {
         "files": [
-          "apiSpec/analysis-kuromoji/**/*.md"
+          "apiSpec/analysis-opennlp/**/*.md"
         ]
       }
     ],
     "xref": [
       "_site/api/core/xrefmap.yml"
     ],
-    "dest": "_site/api/analysis-kuromoji",
+    "dest": "_site/api/analysis-opennlp",
     "globalMetadataFiles": [
       "docfx.global.json",
       "docfx.global.subsite.json"

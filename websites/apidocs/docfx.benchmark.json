@@ -4,7 +4,7 @@
       "src": [
         {
           "files": [
-            "Lucene.Net.Analysis.Kuromoji/Lucene.Net.Analysis.Kuromoji.csproj"
+            "Lucene.Net.Benchmark/Lucene.Net.Benchmark.csproj"
           ],
           "exclude": [
             "**/obj/**",
@@ -13,7 +13,7 @@
           "src": "../../src"
         }
       ],
-      "dest": "obj/docfx/api/analysis-kuromoji",
+      "dest": "obj/docfx/api/benchmark",
       "properties": {
         "TargetFramework": "netstandard2.0"
       }
@@ -26,33 +26,33 @@
           "**.yml",
           "**.md"
         ],
-        "src": "obj/docfx/api/analysis-kuromoji"
+        "src": "obj/docfx/api/benchmark"
       },   
       {
         "files": [
           "toc.yml",
-          "analysis-kuromoji/toc.yml"
+          "benchmark/toc.yml"
         ],
         "src": "toc"
       }
     ],    
-    "overwrite": [   
+    "overwrite": [
       {
         "files": [
-          "overview.md"
+          "package.md"
         ],
-        "src": "../../src/Lucene.Net.Analysis.Kuromoji"
-      },    
+        "src": "../../src/Lucene.Net.Benchmark"
+      },
       {
         "files": [
-          "apiSpec/analysis-kuromoji/**/*.md"
+          "apiSpec/benchmark/**/*.md"
         ]
       }
     ],
     "xref": [
       "_site/api/core/xrefmap.yml"
     ],
-    "dest": "_site/api/analysis-kuromoji",
+    "dest": "_site/api/benchmark",
     "globalMetadataFiles": [
       "docfx.global.json",
       "docfx.global.subsite.json"

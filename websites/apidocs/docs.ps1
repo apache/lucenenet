@@ -123,6 +123,12 @@ $DocFxJsonMeta = @(
     "docfx.analysis-common.json",
     "docfx.analysis-kuromoji.json",
     "docfx.analysis-morfologik.json",
+    "docfx.analysis-opennlp.json",
+    "docfx.analysis-phonetic.json",
+    "docfx.analysis-smartcn.json",
+    "docfx.analysis-stempel.json",
+    "docfx.benchmark.json",
+    "docfx.classification.json",
     "docfx.test-framework.json"    
 )
 $DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
