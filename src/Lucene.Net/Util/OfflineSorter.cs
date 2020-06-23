@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -396,13 +395,13 @@ namespace Lucene.Net.Util
 
             var @out = new ByteSequencesWriter(outputFile);
 
-            PriorityQueue<FileAndTop> queue = new PriorityQueueAnonymousInnerClassHelper(this, merges.Count());
+            PriorityQueue<FileAndTop> queue = new PriorityQueueAnonymousInnerClassHelper(this, merges.Count);
 
-            var streams = new ByteSequencesReader[merges.Count()];
+            var streams = new ByteSequencesReader[merges.Count];
             try
             {
                 // Open streams and read the top for each file
-                for (int i = 0; i < merges.Count(); i++)
+                for (int i = 0; i < merges.Count; i++)
                 {
                     streams[i] = new ByteSequencesReader(merges[i]);
                     byte[] line = streams[i].Read();

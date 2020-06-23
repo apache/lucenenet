@@ -1,9 +1,9 @@
+using J2N.Text;
+using Lucene.Net.Attributes;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using NUnit.Framework;
-using Lucene.Net.Attributes;
-using J2N.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -157,23 +157,18 @@ namespace Lucene.Net.Util
             byte[] buf1 = new byte[64 * 1024];
             byte[] buf2 = new byte[64 * 1024];
             int len;
-            //DataInputStream is1 = new DataInputStream(new FileInputStream(golden));
-            //DataInputStream is2 = new DataInputStream(new FileInputStream(sorted));
             using (Stream is1 = golden.Open(FileMode.Open, FileAccess.Read, FileShare.Delete))
+            using (Stream is2 = sorted.Open(FileMode.Open, FileAccess.Read, FileShare.Delete))
             {
-                using (Stream is2 = sorted.Open(FileMode.Open, FileAccess.Read, FileShare.Delete))
+                while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
                 {
-                    while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
-                    {
-                        is2.Read(buf2, 0, len);
-                        // Refactored test to let NUnit test the byte array rather than iterate each byte
-                        //for (int i = 0; i < len; i++)
-                        //{
-                        //    Assert.AreEqual(buf1[i], buf2[i]);
-                        //}
-                        Assert.AreEqual(buf1, buf2);
-                    }
-                    //IOUtils.Close(is1, is2);
+                    is2.Read(buf2, 0, len);
+                    // Refactored test to let NUnit test the byte array rather than iterate each byte
+                    //for (int i = 0; i < len; i++)
+                    //{
+                    //    Assert.AreEqual(buf1[i], buf2[i]);
+                    //}
+                    Assert.AreEqual(buf1, buf2);
                 }
             }
         }
