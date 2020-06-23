@@ -65,6 +65,7 @@ namespace Lucene.Net.Index
     using Token = Lucene.Net.Analysis.Token;
     using TokenFilter = Lucene.Net.Analysis.TokenFilter;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
+    using Assert = Lucene.Net.TestFramework.Assert;
 
     [TestFixture]
     public class TestIndexWriterExceptions : LuceneTestCase

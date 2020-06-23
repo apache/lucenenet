@@ -39,7 +39,8 @@ namespace Lucene.Net.Index
     using Store = Field.Store;
     using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    
+    using Assert = Lucene.Net.TestFramework.Assert;
+
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

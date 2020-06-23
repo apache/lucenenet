@@ -36,6 +36,7 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
+    using Assert = Lucene.Net.TestFramework.Assert;
 
     [TestFixture]
     public class TestIndexWriterUnicode : LuceneTestCase
