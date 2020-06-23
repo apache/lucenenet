@@ -284,13 +284,23 @@ namespace Lucene.Net.TestFramework
         // From CollectionAssert
         public static void AreEqual<T>(T[] expected, T[] actual)
         {
-            _NUnit.CollectionAssert.AreEqual(expected, actual);
+            // LUCENENET: Do the initial check with the (fast) J2N array comparison. If it fails,
+            // then use CollectionAssert to re-do the check in a slower way and generate the assert message.
+            if (!J2N.Collections.ArrayEqualityComparer<T>.OneDimensional.Equals(expected, actual))
+            {
+                _NUnit.CollectionAssert.AreEqual(expected, actual);
+            }
         }
 
         // From CollectionAssert
         public static void AreEqual<T>(T[] expected, T[] actual, string message, params object[] args)
         {
-            _NUnit.CollectionAssert.AreEqual(expected, actual, message, args);
+            // LUCENENET: Do the initial check with the (fast) J2N array comparison. If it fails,
+            // then use CollectionAssert to re-do the check in a slower way and generate the assert message.
+            if (!J2N.Collections.ArrayEqualityComparer<T>.OneDimensional.Equals(expected, actual))
+            {
+                _NUnit.CollectionAssert.AreEqual(expected, actual, message, args);
+            }
         }
 
         public static void AreEqual<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
