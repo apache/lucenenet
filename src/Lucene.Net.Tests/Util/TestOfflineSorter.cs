@@ -4,6 +4,7 @@ using System.IO;
 using NUnit.Framework;
 using Lucene.Net.Attributes;
 using J2N.Text;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {
@@ -165,10 +166,12 @@ namespace Lucene.Net.Util
                     while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
                     {
                         is2.Read(buf2, 0, len);
-                        for (int i = 0; i < len; i++)
-                        {
-                            Assert.AreEqual(buf1[i], buf2[i]);
-                        }
+                        // Refactored test to let NUnit test the byte array rather than iterate each byte
+                        //for (int i = 0; i < len; i++)
+                        //{
+                        //    Assert.AreEqual(buf1[i], buf2[i]);
+                        //}
+                        Assert.AreEqual(buf1, buf2);
                     }
                     //IOUtils.Close(is1, is2);
                 }

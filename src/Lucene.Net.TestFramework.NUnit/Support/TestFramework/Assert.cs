@@ -216,10 +216,10 @@ namespace Lucene.Net.TestFramework
         //
         //   actual:
         //     The actual value
-        public static void AreEqual(byte expected, byte actual)
-        {
-            _NUnit.Assert.True(expected == actual);
-        }
+        //public static void AreEqual(byte expected, byte actual)
+        //{
+        //    _NUnit.Assert.True(expected == actual);
+        //}
 
         // From CollectionAssert
         public static void AreEqual<T>(T[] expected, T[] actual)

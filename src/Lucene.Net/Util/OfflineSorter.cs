@@ -390,7 +390,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Merge a list of sorted temporary files (partitions) into an output file. </summary>
-        internal void MergePartitions(IEnumerable<FileInfo> merges, FileInfo outputFile)
+        internal void MergePartitions(IList<FileInfo> merges, FileInfo outputFile)
         {
             long start = Environment.TickCount;
 
@@ -404,7 +404,7 @@ namespace Lucene.Net.Util
                 // Open streams and read the top for each file
                 for (int i = 0; i < merges.Count(); i++)
                 {
-                    streams[i] = new ByteSequencesReader(merges.ElementAt(i));
+                    streams[i] = new ByteSequencesReader(merges[i]);
                     byte[] line = streams[i].Read();
                     if (line != null)
                     {
