@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {
@@ -43,6 +44,7 @@ namespace Lucene.Net.Util
         }
 
         [Test]
+        [Seed(1249648971)]
         public virtual void TestUnion()
         {
             int numBits = TestUtil.NextInt32(Random, 100, 1 << 20);
@@ -71,6 +73,7 @@ namespace Lucene.Net.Util
         }
 
         [Test]
+        [Seed(1249648971)]
         public virtual void TestIntersection()
         {
             int numBits = TestUtil.NextInt32(Random, 100, 1 << 20);
