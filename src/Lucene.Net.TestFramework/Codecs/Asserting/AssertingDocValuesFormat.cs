@@ -243,15 +243,17 @@ namespace Lucene.Net.Codecs.Asserting
                     Debug.Assert(hasNext);
                     T v = iterator.Current;
                     Debug.Assert(allowNull || v != null);
-                    try
-                    {
-                        iterator.Reset();
-                        throw new InvalidOperationException("broken iterator (supports remove): " + iterator);
-                    }
-                    catch (System.NotSupportedException)
-                    {
-                        // ok
-                    }
+
+                    // LUCENE.NET specific. removed call to Reset().
+                    //try
+                    //{
+                    //    iterator.Reset();
+                    //    throw new InvalidOperationException("broken iterator (supports remove): " + iterator);
+                    //}
+                    //catch (System.NotSupportedException)
+                    //{
+                    //    // ok
+                    //}
                 }
                 Debug.Assert(!iterator.MoveNext());
                 /*try
