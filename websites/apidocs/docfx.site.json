@@ -28,6 +28,8 @@
       "_site/api/analysis-stempel/xrefmap.yml",
       "_site/api/analysis-common/xrefmap.yml",
       "_site/api/benchmark/xrefmap.yml",
+      "_site/api/classification/xrefmap.yml",
+      "_site/api/codecs/xrefmap.yml",
       "_site/api/core/xrefmap.yml",
       "_site/api/test-framework/xrefmap.yml"      
     ],

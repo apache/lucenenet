@@ -1,0 +1,3 @@
+- name: Codecs
+  href: ../../obj/docfx/api/codecs/toc.yml
+  topicUid: Lucene.Net.Codecs
