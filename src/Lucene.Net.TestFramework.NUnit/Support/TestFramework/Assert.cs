@@ -177,9 +177,48 @@ namespace Lucene.Net.TestFramework
         //
         //   actual:
         //     The actual value
+        public static void AreEqual(int expected, int actual)
+        {
+            _NUnit.Assert.True(expected.Equals(actual));
+        }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   actual:
+        //     The actual value
+        public static void AreEqual(int expected, int actual, string message)
+        {
+            _NUnit.Assert.True(expected.Equals(actual), message);
+        }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   actual:
+        //     The actual value
         public static void AreEqual(long expected, long actual)
         {
-            _NUnit.Assert.True(expected == actual);
+            _NUnit.Assert.True(expected.Equals(actual));
         }
 
         //
@@ -200,7 +239,7 @@ namespace Lucene.Net.TestFramework
         //     The actual value
         public static void AreEqual(long expected, long actual, string message)
         {
-            _NUnit.Assert.True(expected == actual, message);
+            _NUnit.Assert.True(expected.Equals(actual), message);
         }
 
         //
@@ -216,10 +255,31 @@ namespace Lucene.Net.TestFramework
         //
         //   actual:
         //     The actual value
-        //public static void AreEqual(byte expected, byte actual)
-        //{
-        //    _NUnit.Assert.True(expected == actual);
-        //}
+        public static void AreEqual(byte expected, byte actual)
+        {
+            _NUnit.Assert.True(expected.Equals(actual));
+        }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   actual:
+        //     The actual value
+        public static void AreEqual(byte expected, byte actual, string message)
+        {
+            _NUnit.Assert.True(expected.Equals(actual), message);
+        }
 
         // From CollectionAssert
         public static void AreEqual<T>(T[] expected, T[] actual)

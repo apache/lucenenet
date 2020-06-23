@@ -102,6 +102,26 @@ namespace Lucene.Net.Util
             //Assert.AreEqual(expected, actual, message);
         }
 
+        internal static void assertEquals(int expected, int actual)
+        {
+            Assert.AreEqual(expected, actual);
+        }
+
+        internal static void assertEquals(string message, int expected, int actual)
+        {
+            Assert.AreEqual(expected, actual, message);
+        }
+
+        internal static void assertEquals(byte expected, byte actual)
+        {
+            Assert.AreEqual(expected, actual);
+        }
+
+        internal static void assertEquals(string message, byte expected, byte actual)
+        {
+            Assert.AreEqual(expected, actual, message);
+        }
+
         internal static void assertEquals<T>(ISet<T> expected, ISet<T> actual)
         {
             Assert.True(JCG.SetEqualityComparer<T>.Default.Equals(expected, actual));

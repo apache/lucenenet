@@ -1882,7 +1882,7 @@ namespace Lucene.Net.Util.Fst
                 Assert.AreEqual(result.Bytes[result.Offset], arc);
                 for (int byteIDX = 1; byteIDX < result.Length; byteIDX++)
                 {
-                    Assert.AreEqual(0, result.Bytes[result.Offset + byteIDX]);
+                    Assert.AreEqual((byte)0, result.Bytes[result.Offset + byteIDX]);
                 }
             }
         }
