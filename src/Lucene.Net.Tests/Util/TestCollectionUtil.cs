@@ -1,8 +1,6 @@
-using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Util
@@ -46,21 +44,21 @@ namespace Lucene.Net.Util
                 IList<int> list1 = CreateRandomList(2000), list2 = new List<int>(list1);
                 CollectionUtil.IntroSort(list1);
                 list2.Sort();
-                Assert.AreEqual(list2, list1);
+                assertEquals(list2, list1);
 
                 list1 = CreateRandomList(2000);
                 list2 = new List<int>(list1);
                 CollectionUtil.IntroSort(list1, Collections.ReverseOrder<int>());
                 list2.Sort(Collections.ReverseOrder<int>());
-                Assert.AreEqual(list2, list1);
+                assertEquals(list2, list1);
                 // reverse back, so we can test that completely backwards sorted array (worst case) is working:
                 CollectionUtil.IntroSort(list1);
                 list2.Sort();
-                Assert.AreEqual(list2, list1);
+                assertEquals(list2, list1);
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestTimSort()
         {
             for (int i = 0, c = AtLeast(500); i < c; i++)
@@ -68,17 +66,17 @@ namespace Lucene.Net.Util
                 IList<int> list1 = CreateRandomList(2000), list2 = new List<int>(list1);
                 CollectionUtil.TimSort(list1);
                 list2.Sort();
-                Assert.AreEqual(list2, list1);
+                assertEquals(list2, list1);
 
                 list1 = CreateRandomList(2000);
                 list2 = new List<int>(list1);
                 CollectionUtil.TimSort(list1, Collections.ReverseOrder<int>());
                 list2.Sort(Collections.ReverseOrder<int>());
-                Assert.AreEqual(list2, list1);
+                assertEquals(list2, list1);
                 // reverse back, so we can test that completely backwards sorted array (worst case) is working:
                 CollectionUtil.TimSort(list1);
                 list2.Sort();
-                Assert.AreEqual(list2, list1);
+                assertEquals(list2, list1);
             }
         }
 

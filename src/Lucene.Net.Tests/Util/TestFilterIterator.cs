@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
@@ -26,7 +26,7 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestFilterIterator : LuceneTestCase
     {
-        private static readonly ISet<string> set = new JCG.SortedSet<string> { "a", "b", "c" };
+        private static readonly ISet<string> set = new JCG.SortedSet<string>(StringComparer.Ordinal) { "a", "b", "c" };
 
         private static void AssertNoMore<T1>(IEnumerator<T1> it)
         {
