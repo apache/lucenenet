@@ -30,6 +30,7 @@
       "_site/api/benchmark/xrefmap.yml",
       "_site/api/classification/xrefmap.yml",
       "_site/api/codecs/xrefmap.yml",
+      "_site/api/facet/xrefmap.yml",
       "_site/api/core/xrefmap.yml",
       "_site/api/test-framework/xrefmap.yml"      
     ],
