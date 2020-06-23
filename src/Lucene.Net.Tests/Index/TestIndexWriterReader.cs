@@ -51,6 +51,7 @@ namespace Lucene.Net.Index
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
     using TopDocs = Lucene.Net.Search.TopDocs;
+    using Assert = Lucene.Net.TestFramework.Assert;
 
     [TestFixture]
     public class TestIndexWriterReader : LuceneTestCase

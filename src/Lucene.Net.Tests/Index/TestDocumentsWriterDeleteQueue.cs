@@ -34,6 +34,7 @@ namespace Lucene.Net.Index
     using DeleteSlice = Lucene.Net.Index.DocumentsWriterDeleteQueue.DeleteSlice;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TermQuery = Lucene.Net.Search.TermQuery;
+    using Assert = Lucene.Net.TestFramework.Assert;
 
     /// <summary>
     /// Unit test for <seealso cref="DocumentsWriterDeleteQueue"/>
