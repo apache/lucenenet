@@ -3,6 +3,7 @@ using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {
@@ -358,8 +359,8 @@ namespace Lucene.Net.Util
             AssertLongRangeSplit(long.MinValue, long.MinValue + 0xfL, 4, true, new long[] { 0x000000000000000L, 0x000000000000000L }, new int[] { 4 });
             AssertLongRangeSplit(long.MinValue, long.MinValue + 0x10L, 4, true, new long[] { 0x0000000000000010L, 0x0000000000000010L, 0x000000000000000L, 0x000000000000000L }, new int[] { 0, 4 });
         }
-
         [Test, LongRunningTest]
+        [Seed(1249648971)]
         public virtual void TestRandomSplit()
         {
             long num = (long)AtLeast(10);

@@ -21,6 +21,9 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
+using System.Collections;
+using System.Runtime.InteropServices;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {
@@ -35,11 +38,11 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestPagedBytes : LuceneTestCase
     {
-
         // Writes random byte/s to "normal" file in dir, then
         // copies into PagedBytes and verifies with
         // PagedBytes.Reader:
         [Test, LongRunningTest]
+        [Seed(1249648971)]
         public virtual void TestDataInputOutput()
         {
             Random random = Random;
@@ -180,7 +183,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        [Ignore("// memory hole")] 
+        [Ignore("// memory hole")]
         [Test, LongRunningTest]
         public virtual void TestOverflow()
         {
@@ -199,7 +202,7 @@ namespace Lucene.Net.Util
             long numBytes = (1L << 31) + TestUtil.NextInt32(Random, 1, blockSize * 3);
             var p = new PagedBytes(blockBits);
             var @out = dir.CreateOutput("foo", IOContext.DEFAULT);
-            for (long i = 0; i < numBytes; )
+            for (long i = 0; i < numBytes;)
             {
                 Assert.AreEqual(i, @out.GetFilePointer());
                 int len = (int)Math.Min(arr.Length, numBytes - i);

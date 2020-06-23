@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {
@@ -28,6 +29,7 @@ namespace Lucene.Net.Util
     {
 
         [Test]
+        [Seed(1249648971)]
         public virtual void TestCheck()
         {
             Random rnd = Random;

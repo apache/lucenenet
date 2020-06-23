@@ -14,6 +14,7 @@ using System.Text;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 using J2N.Collections.Generic.Extensions;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -272,6 +273,7 @@ namespace Lucene.Net.Util.Fst
 
 
         [Test, LongRunningTest] // Can take up to 15 minutes
+        [Seed(1249648971)]
         public virtual void TestRandomWords()
         {
             // LUCENENET specific: NUnit will crash with an OOM if we do the full test
