@@ -1568,7 +1568,7 @@ namespace Lucene.Net.Index
             b = f3.GetBinaryValue().Bytes;
             Assert.IsTrue(b != null);
             Assert.AreEqual(17, b.Length, 17);
-            Assert.AreEqual(87, b[0]);
+            Assert.AreEqual((byte)87, b[0]);
 
             Assert.IsTrue(ir.Document(0).GetField("binary").GetBinaryValue() != null);
             Assert.IsTrue(ir.Document(1).GetField("binary").GetBinaryValue() != null);
