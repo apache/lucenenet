@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.IO;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Util

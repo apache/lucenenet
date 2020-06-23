@@ -1,12 +1,12 @@
+using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
+using FlagsAttribute = Lucene.Net.Analysis.TokenAttributes.FlagsAttribute;
 
 namespace Lucene.Net.Util
 {
-    using Lucene.Net.Analysis.TokenAttributes;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
