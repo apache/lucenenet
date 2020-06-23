@@ -132,12 +132,17 @@ namespace Lucene.Net.Util
             Assert.True(JCG.SetEqualityComparer<T>.Default.Equals(expected, actual), message);
         }
 
-        internal static void assertEquals<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
+        internal static void assertEquals<T>(IList<T> expected, IList<T> actual)
         {
-            Assert.AreEqual(expected, actual);
+            Assert.True(JCG.ListEqualityComparer<T>.Aggressive.Equals(expected, actual));
         }
 
-        internal static void assertEquals(ICollection expected, ICollection actual)
+        internal static void assertEquals<T>(string message, IList<T> expected, IList<T> actual)
+        {
+            Assert.True(JCG.SetEqualityComparer<T>.Aggressive.Equals(expected, actual), message);
+        }
+
+        internal static void assertEquals<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
         {
             Assert.AreEqual(expected, actual);
         }
