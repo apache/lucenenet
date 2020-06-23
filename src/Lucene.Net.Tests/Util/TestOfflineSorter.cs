@@ -163,12 +163,12 @@ namespace Lucene.Net.Util
                 while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
                 {
                     is2.Read(buf2, 0, len);
-                    // Refactored test to let NUnit test the byte array rather than iterate each byte
+                    // LUCENENET: Refactored test to let J2N test the byte array rather than iterate each byte
                     //for (int i = 0; i < len; i++)
                     //{
                     //    Assert.AreEqual(buf1[i], buf2[i]);
                     //}
-                    Assert.AreEqual(buf1, buf2);
+                    Assert.IsTrue(J2N.Collections.ArrayEqualityComparer<byte>.OneDimensional.Equals(buf1, buf2));
                 }
             }
         }
