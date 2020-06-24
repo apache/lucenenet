@@ -1,9 +1,9 @@
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Store
@@ -35,7 +35,6 @@ namespace Lucene.Net.Store
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestIndexWriterReader = Lucene.Net.Index.TestIndexWriterReader;
-    using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
     public class TestFileSwitchDirectory : LuceneTestCase

@@ -1,16 +1,15 @@
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Documents;
+using System.Threading.Tasks;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
-    using Index;
-    using NUnit.Framework;
-    using Support;
-    using System.Threading.Tasks;
-    using Util;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -40,6 +39,7 @@ namespace Lucene.Net.Search
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MultiReader = Lucene.Net.Index.MultiReader;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SpanQuery = Lucene.Net.Search.Spans.SpanQuery;
     using SpanTermQuery = Lucene.Net.Search.Spans.SpanTermQuery;

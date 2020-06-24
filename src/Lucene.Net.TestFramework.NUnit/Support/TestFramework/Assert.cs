@@ -713,6 +713,16 @@ namespace Lucene.Net.TestFramework
         }
 
 
+        public static void LessOrEqual(int arg1, int arg2)
+        {
+            _NUnit.Assert.LessOrEqual(arg1, arg2);
+        }
+
+        public static void Greater(int arg1, int arg2)
+        {
+            _NUnit.Assert.Greater(arg1, arg2);
+        }
+
         public static Exception Throws<TException>(Action action)
         {
             return Throws(typeof(TException), action);

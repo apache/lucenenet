@@ -1,8 +1,13 @@
 using J2N.Text;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System.Collections.Generic;
+using System.IO;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -23,10 +28,7 @@ namespace Lucene.Net.Search.Spans
      * limitations under the License.
      */
 
-    using Lucene.Net.Analysis;
-    using Lucene.Net.Util;
-    using NUnit.Framework;
-    using System.IO;
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;

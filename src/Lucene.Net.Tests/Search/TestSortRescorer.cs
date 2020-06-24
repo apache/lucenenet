@@ -1,13 +1,12 @@
-using System;
-using System.Text;
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using System.Collections.Generic;
-    using System.IO;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
 

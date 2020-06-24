@@ -1,17 +1,15 @@
-using Lucene.Net.Util.Automaton;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
-    using IAutomatonProvider = Lucene.Net.Util.Automaton.IAutomatonProvider;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
     using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
     using Directory = Lucene.Net.Store.Directory;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -31,10 +29,10 @@ namespace Lucene.Net.Search
 
     using Document = Documents.Document;
     using Field = Field;
+    using IAutomatonProvider = Lucene.Net.Util.Automaton.IAutomatonProvider;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using RegExp = Lucene.Net.Util.Automaton.RegExp;
     using Term = Lucene.Net.Index.Term;
 
     /// <summary>
