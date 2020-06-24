@@ -1,9 +1,9 @@
 using J2N.Text;
-//using Lucene.Net.Support;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {

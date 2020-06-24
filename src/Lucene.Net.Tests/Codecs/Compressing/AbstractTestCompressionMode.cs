@@ -1,12 +1,11 @@
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
-using Lucene.Net.Util;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-
     /*
                  * Licensed to the Apache Software Foundation (ASF) under one or more
                  * contributor license agreements.  See the NOTICE file distributed with

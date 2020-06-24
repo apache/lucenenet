@@ -1,14 +1,13 @@
-using System;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using NUnit.Framework;
+using System;
+using System.IO;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.IO;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;

@@ -1,9 +1,9 @@
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-    using Attributes;
-    using NUnit.Framework;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BaseTermVectorsFormatTestCase = Lucene.Net.Index.BaseTermVectorsFormatTestCase;
     using BytesRef = Lucene.Net.Util.BytesRef;

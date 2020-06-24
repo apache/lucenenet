@@ -1,10 +1,10 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using NUnit.Framework;
+using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis
 {
-    using NUnit.Framework;
-    using System;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with

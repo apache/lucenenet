@@ -4,13 +4,13 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene41
@@ -36,7 +36,6 @@ namespace Lucene.Net.Codecs.Lucene41
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
     using Directory = Lucene.Net.Store.Directory;
@@ -49,6 +48,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using Field = Field;
     using FieldType = FieldType;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
