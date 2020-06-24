@@ -29,7 +29,6 @@ namespace Lucene.Net.Util
     {
 
         [Test]
-        [Seed(1249648971)]
         public virtual void TestCheck()
         {
             Random rnd = Random;

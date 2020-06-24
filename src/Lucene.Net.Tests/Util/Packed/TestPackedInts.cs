@@ -1128,7 +1128,6 @@ namespace Lucene.Net.Util.Packed
 
 
         [Test, LongRunningTest]
-        [Seed(1249648971)]
         public virtual void TestAppendingLongBuffer()
         {
 
