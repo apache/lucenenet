@@ -91,9 +91,9 @@ stages:
       displayName: 'Setup Default Variable Values'
 
     - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk 3.1.100'
+      displayName: 'Use .NET Core sdk 3.1.301'
       inputs:
-        version: 3.1.100
+        version: 3.1.301
 
     - powershell: |
         Import-Module "$(BuildDirectory)/psake.psm1"
