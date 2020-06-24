@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -26,7 +27,6 @@ namespace Lucene.Net.Index
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using Assert = Lucene.Net.TestFramework.Assert;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more

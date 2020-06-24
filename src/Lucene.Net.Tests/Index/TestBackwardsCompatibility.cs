@@ -1,7 +1,6 @@
 using J2N;
 using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -9,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index

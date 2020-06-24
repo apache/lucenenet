@@ -1,20 +1,20 @@
+using Lucene.Net.Documents;
+using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Reflection;
-using Lucene.Net.Documents;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
     using Field = Field;
+    using IBits = Lucene.Net.Util.IBits;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with

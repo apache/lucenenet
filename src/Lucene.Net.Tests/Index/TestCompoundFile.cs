@@ -1,11 +1,12 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
+using NUnit.Framework;
 using System;
+using System.IO;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
-    using System.IO;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using Directory = Lucene.Net.Store.Directory;
 

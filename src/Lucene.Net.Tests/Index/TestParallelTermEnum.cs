@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
