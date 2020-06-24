@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Facet.Range

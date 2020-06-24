@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System.IO;
 using System.Text;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
