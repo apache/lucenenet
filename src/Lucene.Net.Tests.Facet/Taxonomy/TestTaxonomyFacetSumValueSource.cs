@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using Lucene.Net.Randomized.Generators;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -28,40 +27,38 @@ namespace Lucene.Net.Facet.Taxonomy
      */
 
 
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Documents.Document;
-    using Field = Lucene.Net.Documents.Field;
-    using SingleDocValuesField = Lucene.Net.Documents.SingleDocValuesField;
-    using Int32Field = Lucene.Net.Documents.Int32Field;
-    using NumericDocValuesField = Lucene.Net.Documents.NumericDocValuesField;
-    using StringField = Lucene.Net.Documents.StringField;
+    using NUnit.Framework;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using ConstantScoreQuery = Lucene.Net.Search.ConstantScoreQuery;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
+    using Document = Lucene.Net.Documents.Document;
+    using DoubleDocValues = Lucene.Net.Queries.Function.DocValues.DoubleDocValues;
+    using Field = Lucene.Net.Documents.Field;
     using FunctionQuery = Lucene.Net.Queries.Function.FunctionQuery;
     using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
-    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
-    using DoubleDocValues = Lucene.Net.Queries.Function.DocValues.DoubleDocValues;
-    using SingleFieldSource = Lucene.Net.Queries.Function.ValueSources.SingleFieldSource;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using Int32Field = Lucene.Net.Documents.Int32Field;
     using Int32FieldSource = Lucene.Net.Queries.Function.ValueSources.Int32FieldSource;
     using Int64FieldSource = Lucene.Net.Queries.Function.ValueSources.Int64FieldSource;
-    using ConstantScoreQuery = Lucene.Net.Search.ConstantScoreQuery;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
-    using Query = Lucene.Net.Search.Query;
-    using Scorer = Lucene.Net.Search.Scorer;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-    using Directory = Lucene.Net.Store.Directory;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using TestUtil = Lucene.Net.Util.TestUtil;
+    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using NumericDocValuesField = Lucene.Net.Documents.NumericDocValuesField;
     using OpenMode = Lucene.Net.Index.OpenMode;
-    using NUnit.Framework;
+    using Query = Lucene.Net.Search.Query;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Scorer = Lucene.Net.Search.Scorer;
+    using SingleDocValuesField = Lucene.Net.Documents.SingleDocValuesField;
+    using SingleFieldSource = Lucene.Net.Queries.Function.ValueSources.SingleFieldSource;
+    using StringField = Lucene.Net.Documents.StringField;
+    using Term = Lucene.Net.Index.Term;
+    using TermQuery = Lucene.Net.Search.TermQuery;
+    using TestUtil = Lucene.Net.Util.TestUtil;
+    using TopDocs = Lucene.Net.Search.TopDocs;
+    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
     [TestFixture]
     public class TestTaxonomyFacetSumValueSource : FacetTestCase
     {

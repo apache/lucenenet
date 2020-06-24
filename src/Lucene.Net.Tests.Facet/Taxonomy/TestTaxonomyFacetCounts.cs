@@ -4,6 +4,8 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
@@ -27,8 +29,6 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-
-    using System.Text;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
