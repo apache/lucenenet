@@ -1,13 +1,13 @@
+using Lucene.Net.Documents;
+using NUnit.Framework;
 using System;
 using System.Diagnostics;
-using Lucene.Net.Documents;
+using System.Runtime.CompilerServices;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
-    using System.Runtime.CompilerServices;
-    using Util;
     using AttributeSource = Lucene.Net.Util.AttributeSource;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;

@@ -1,12 +1,12 @@
 using System;
 using System.Globalization;
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;

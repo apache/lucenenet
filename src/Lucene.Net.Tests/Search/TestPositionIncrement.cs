@@ -1,8 +1,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Lucene.Net.Documents;
+using System;
+using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search

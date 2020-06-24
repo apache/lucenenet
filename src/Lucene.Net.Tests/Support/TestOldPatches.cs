@@ -19,17 +19,14 @@
  *
 */
 
-using System;
-using System.IO;
 using Lucene.Net.Analysis;
-using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Store;
-using NUnit.Framework;
-using Version = Lucene.Net.Util.LuceneVersion;
-using Lucene.Net.Codecs;
 using Lucene.Net.Util;
+using NUnit.Framework;
+using System.IO;
+using Assert = Lucene.Net.TestFramework.Assert;
+using Version = Lucene.Net.Util.LuceneVersion;
 
 #pragma warning disable 612, 618
 namespace Lucene.Net.Support

@@ -1,10 +1,10 @@
 using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {

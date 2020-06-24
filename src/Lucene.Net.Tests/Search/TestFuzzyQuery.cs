@@ -1,11 +1,10 @@
-using System.Collections.Generic;
 using Lucene.Net.Documents;
-using Lucene.Net.Util;
+using NUnit.Framework;
+using System.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;

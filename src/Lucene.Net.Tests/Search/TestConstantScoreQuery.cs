@@ -1,9 +1,10 @@
-using System.Diagnostics;
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using System.Diagnostics;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;

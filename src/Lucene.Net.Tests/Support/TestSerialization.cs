@@ -20,14 +20,12 @@
  *
 */
 
-using System;
-using System.Linq;
-using System.Reflection;
-using Lucene.Net.Search;
-using NUnit.Framework;
-using Lucene.Net.Index;
-using Lucene.Net.Util;
 using Lucene.Net.Attributes;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 #pragma warning disable 612, 618
 namespace Lucene.Net.Support

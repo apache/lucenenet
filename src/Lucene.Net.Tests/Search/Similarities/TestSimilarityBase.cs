@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Similarities
 {
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*

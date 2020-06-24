@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -49,11 +50,6 @@ namespace Lucene.Net.Search
         // methods and not doing so makes them cross runner threads.
         internal /*static*/ Directory Small;
         internal /*static*/ IndexReader Reader;
-
-        public static void AssertEquals(string m, int e, int a)
-        {
-            Assert.AreEqual(e, a, m);
-        }
 
         /// <summary>
         /// LUCENENET specific
@@ -167,7 +163,7 @@ namespace Lucene.Net.Search
 
             result = search.Search(Csrq("data", "1", "6", T, T), null, 1000).ScoreDocs;
             int numHits = result.Length;
-            AssertEquals("wrong number of results", 6, numHits);
+            assertEquals("wrong number of results", 6, numHits);
             float score = result[0].Score;
             for (int i = 1; i < numHits; i++)
             {
@@ -176,7 +172,7 @@ namespace Lucene.Net.Search
 
             result = search.Search(Csrq("data", "1", "6", T, T, MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE), null, 1000).ScoreDocs;
             numHits = result.Length;
-            AssertEquals("wrong number of results", 6, numHits);
+            assertEquals("wrong number of results", 6, numHits);
             for (int i = 0; i < numHits; i++)
             {
                 Assert.AreEqual(score, result[i].Score, SCORE_COMP_THRESH, "score for " + i + " was not the same");
@@ -184,7 +180,7 @@ namespace Lucene.Net.Search
 
             result = search.Search(Csrq("data", "1", "6", T, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, 1000).ScoreDocs;
             numHits = result.Length;
-            AssertEquals("wrong number of results", 6, numHits);
+            assertEquals("wrong number of results", 6, numHits);
             for (int i = 0; i < numHits; i++)
             {
                 Assert.AreEqual(score, result[i].Score, SCORE_COMP_THRESH, "score for " + i + " was not the same");
@@ -207,7 +203,7 @@ namespace Lucene.Net.Search
             bq.Add(Csrq("data", "#", "#", T, T), Occur.SHOULD); // hits no docs
             result = search.Search(bq, null, 1000).ScoreDocs;
             int numHits = result.Length;
-            AssertEquals("wrong number of results", 1, numHits);
+            assertEquals("wrong number of results", 1, numHits);
             float score = result[0].Score;
             for (int i = 1; i < numHits; i++)
             {
@@ -219,7 +215,7 @@ namespace Lucene.Net.Search
             bq.Add(Csrq("data", "#", "#", T, T, MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE), Occur.SHOULD); // hits no docs
             result = search.Search(bq, null, 1000).ScoreDocs;
             numHits = result.Length;
-            AssertEquals("wrong number of results", 1, numHits);
+            assertEquals("wrong number of results", 1, numHits);
             for (int i = 0; i < numHits; i++)
             {
                 Assert.AreEqual(score, result[i].Score, SCORE_COMP_THRESH, "score for " + i + " was not the same");
@@ -230,7 +226,7 @@ namespace Lucene.Net.Search
             bq.Add(Csrq("data", "#", "#", T, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), Occur.SHOULD); // hits no docs
             result = search.Search(bq, null, 1000).ScoreDocs;
             numHits = result.Length;
-            AssertEquals("wrong number of results", 1, numHits);
+            assertEquals("wrong number of results", 1, numHits);
             for (int i = 0; i < numHits; i++)
             {
                 Assert.AreEqual(score, result[i].Score, SCORE_COMP_THRESH, "score for " + i + " was not the same");
@@ -351,10 +347,10 @@ namespace Lucene.Net.Search
 
             ScoreDoc[] actual = search.Search(q, null, 1000).ScoreDocs;
 
-            AssertEquals("wrong numebr of hits", numHits, actual.Length);
+            assertEquals("wrong numebr of hits", numHits, actual.Length);
             for (int i = 0; i < numHits; i++)
             {
-                AssertEquals("mismatch in docid for hit#" + i, expected[i].Doc, actual[i].Doc);
+                assertEquals("mismatch in docid for hit#" + i, expected[i].Doc, actual[i].Doc);
             }
         }
 
@@ -379,117 +375,117 @@ namespace Lucene.Net.Search
 
             int numDocs = reader.NumDocs;
 
-            AssertEquals("num of docs", numDocs, 1 + MaxId - MinId);
+            assertEquals("num of docs", numDocs, 1 + MaxId - MinId);
 
             ScoreDoc[] result;
 
             // test id, bounded on both ends
 
             result = search.Search(Csrq("id", minIP, maxIP, T, T), null, numDocs).ScoreDocs;
-            AssertEquals("find all", numDocs, result.Length);
+            assertEquals("find all", numDocs, result.Length);
 
             result = search.Search(Csrq("id", minIP, maxIP, T, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("find all", numDocs, result.Length);
+            assertEquals("find all", numDocs, result.Length);
 
             result = search.Search(Csrq("id", minIP, maxIP, T, F), null, numDocs).ScoreDocs;
-            AssertEquals("all but last", numDocs - 1, result.Length);
+            assertEquals("all but last", numDocs - 1, result.Length);
 
             result = search.Search(Csrq("id", minIP, maxIP, T, F, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("all but last", numDocs - 1, result.Length);
+            assertEquals("all but last", numDocs - 1, result.Length);
 
             result = search.Search(Csrq("id", minIP, maxIP, F, T), null, numDocs).ScoreDocs;
-            AssertEquals("all but first", numDocs - 1, result.Length);
+            assertEquals("all but first", numDocs - 1, result.Length);
 
             result = search.Search(Csrq("id", minIP, maxIP, F, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("all but first", numDocs - 1, result.Length);
+            assertEquals("all but first", numDocs - 1, result.Length);
 
             result = search.Search(Csrq("id", minIP, maxIP, F, F), null, numDocs).ScoreDocs;
-            AssertEquals("all but ends", numDocs - 2, result.Length);
+            assertEquals("all but ends", numDocs - 2, result.Length);
 
             result = search.Search(Csrq("id", minIP, maxIP, F, F, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("all but ends", numDocs - 2, result.Length);
+            assertEquals("all but ends", numDocs - 2, result.Length);
 
             result = search.Search(Csrq("id", medIP, maxIP, T, T), null, numDocs).ScoreDocs;
-            AssertEquals("med and up", 1 + MaxId - medId, result.Length);
+            assertEquals("med and up", 1 + MaxId - medId, result.Length);
 
             result = search.Search(Csrq("id", medIP, maxIP, T, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("med and up", 1 + MaxId - medId, result.Length);
+            assertEquals("med and up", 1 + MaxId - medId, result.Length);
 
             result = search.Search(Csrq("id", minIP, medIP, T, T), null, numDocs).ScoreDocs;
-            AssertEquals("up to med", 1 + medId - MinId, result.Length);
+            assertEquals("up to med", 1 + medId - MinId, result.Length);
 
             result = search.Search(Csrq("id", minIP, medIP, T, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("up to med", 1 + medId - MinId, result.Length);
+            assertEquals("up to med", 1 + medId - MinId, result.Length);
 
             // unbounded id
 
             result = search.Search(Csrq("id", minIP, null, T, F), null, numDocs).ScoreDocs;
-            AssertEquals("min and up", numDocs, result.Length);
+            assertEquals("min and up", numDocs, result.Length);
 
             result = search.Search(Csrq("id", null, maxIP, F, T), null, numDocs).ScoreDocs;
-            AssertEquals("max and down", numDocs, result.Length);
+            assertEquals("max and down", numDocs, result.Length);
 
             result = search.Search(Csrq("id", minIP, null, F, F), null, numDocs).ScoreDocs;
-            AssertEquals("not min, but up", numDocs - 1, result.Length);
+            assertEquals("not min, but up", numDocs - 1, result.Length);
 
             result = search.Search(Csrq("id", null, maxIP, F, F), null, numDocs).ScoreDocs;
-            AssertEquals("not max, but down", numDocs - 1, result.Length);
+            assertEquals("not max, but down", numDocs - 1, result.Length);
 
             result = search.Search(Csrq("id", medIP, maxIP, T, F), null, numDocs).ScoreDocs;
-            AssertEquals("med and up, not max", MaxId - medId, result.Length);
+            assertEquals("med and up, not max", MaxId - medId, result.Length);
 
             result = search.Search(Csrq("id", minIP, medIP, F, T), null, numDocs).ScoreDocs;
-            AssertEquals("not min, up to med", medId - MinId, result.Length);
+            assertEquals("not min, up to med", medId - MinId, result.Length);
 
             // very small sets
 
             result = search.Search(Csrq("id", minIP, minIP, F, F), null, numDocs).ScoreDocs;
-            AssertEquals("min,min,F,F", 0, result.Length);
+            assertEquals("min,min,F,F", 0, result.Length);
 
             result = search.Search(Csrq("id", minIP, minIP, F, F, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("min,min,F,F", 0, result.Length);
+            assertEquals("min,min,F,F", 0, result.Length);
 
             result = search.Search(Csrq("id", medIP, medIP, F, F), null, numDocs).ScoreDocs;
-            AssertEquals("med,med,F,F", 0, result.Length);
+            assertEquals("med,med,F,F", 0, result.Length);
 
             result = search.Search(Csrq("id", medIP, medIP, F, F, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("med,med,F,F", 0, result.Length);
+            assertEquals("med,med,F,F", 0, result.Length);
 
             result = search.Search(Csrq("id", maxIP, maxIP, F, F), null, numDocs).ScoreDocs;
-            AssertEquals("max,max,F,F", 0, result.Length);
+            assertEquals("max,max,F,F", 0, result.Length);
 
             result = search.Search(Csrq("id", maxIP, maxIP, F, F, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("max,max,F,F", 0, result.Length);
+            assertEquals("max,max,F,F", 0, result.Length);
 
             result = search.Search(Csrq("id", minIP, minIP, T, T), null, numDocs).ScoreDocs;
-            AssertEquals("min,min,T,T", 1, result.Length);
+            assertEquals("min,min,T,T", 1, result.Length);
 
             result = search.Search(Csrq("id", minIP, minIP, T, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("min,min,T,T", 1, result.Length);
+            assertEquals("min,min,T,T", 1, result.Length);
 
             result = search.Search(Csrq("id", null, minIP, F, T), null, numDocs).ScoreDocs;
-            AssertEquals("nul,min,F,T", 1, result.Length);
+            assertEquals("nul,min,F,T", 1, result.Length);
 
             result = search.Search(Csrq("id", null, minIP, F, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("nul,min,F,T", 1, result.Length);
+            assertEquals("nul,min,F,T", 1, result.Length);
 
             result = search.Search(Csrq("id", maxIP, maxIP, T, T), null, numDocs).ScoreDocs;
-            AssertEquals("max,max,T,T", 1, result.Length);
+            assertEquals("max,max,T,T", 1, result.Length);
 
             result = search.Search(Csrq("id", maxIP, maxIP, T, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("max,max,T,T", 1, result.Length);
+            assertEquals("max,max,T,T", 1, result.Length);
 
             result = search.Search(Csrq("id", maxIP, null, T, F), null, numDocs).ScoreDocs;
-            AssertEquals("max,nul,T,T", 1, result.Length);
+            assertEquals("max,nul,T,T", 1, result.Length);
 
             result = search.Search(Csrq("id", maxIP, null, T, F, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("max,nul,T,T", 1, result.Length);
+            assertEquals("max,nul,T,T", 1, result.Length);
 
             result = search.Search(Csrq("id", medIP, medIP, T, T), null, numDocs).ScoreDocs;
-            AssertEquals("med,med,T,T", 1, result.Length);
+            assertEquals("med,med,T,T", 1, result.Length);
 
             result = search.Search(Csrq("id", medIP, medIP, T, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            AssertEquals("med,med,T,T", 1, result.Length);
+            assertEquals("med,med,T,T", 1, result.Length);
         }
 
         [Test]
@@ -505,54 +501,54 @@ namespace Lucene.Net.Search
 
             int numDocs = reader.NumDocs;
 
-            AssertEquals("num of docs", numDocs, 1 + MaxId - MinId);
+            assertEquals("num of docs", numDocs, 1 + MaxId - MinId);
 
             ScoreDoc[] result;
 
             // test extremes, bounded on both ends
 
             result = search.Search(Csrq("rand", minRP, maxRP, T, T), null, numDocs).ScoreDocs;
-            AssertEquals("find all", numDocs, result.Length);
+            assertEquals("find all", numDocs, result.Length);
 
             result = search.Search(Csrq("rand", minRP, maxRP, T, F), null, numDocs).ScoreDocs;
-            AssertEquals("all but biggest", numDocs - 1, result.Length);
+            assertEquals("all but biggest", numDocs - 1, result.Length);
 
             result = search.Search(Csrq("rand", minRP, maxRP, F, T), null, numDocs).ScoreDocs;
-            AssertEquals("all but smallest", numDocs - 1, result.Length);
+            assertEquals("all but smallest", numDocs - 1, result.Length);
 
             result = search.Search(Csrq("rand", minRP, maxRP, F, F), null, numDocs).ScoreDocs;
-            AssertEquals("all but extremes", numDocs - 2, result.Length);
+            assertEquals("all but extremes", numDocs - 2, result.Length);
 
             // unbounded
 
             result = search.Search(Csrq("rand", minRP, null, T, F), null, numDocs).ScoreDocs;
-            AssertEquals("smallest and up", numDocs, result.Length);
+            assertEquals("smallest and up", numDocs, result.Length);
 
             result = search.Search(Csrq("rand", null, maxRP, F, T), null, numDocs).ScoreDocs;
-            AssertEquals("biggest and down", numDocs, result.Length);
+            assertEquals("biggest and down", numDocs, result.Length);
 
             result = search.Search(Csrq("rand", minRP, null, F, F), null, numDocs).ScoreDocs;
-            AssertEquals("not smallest, but up", numDocs - 1, result.Length);
+            assertEquals("not smallest, but up", numDocs - 1, result.Length);
 
             result = search.Search(Csrq("rand", null, maxRP, F, F), null, numDocs).ScoreDocs;
-            AssertEquals("not biggest, but down", numDocs - 1, result.Length);
+            assertEquals("not biggest, but down", numDocs - 1, result.Length);
 
             // very small sets
 
             result = search.Search(Csrq("rand", minRP, minRP, F, F), null, numDocs).ScoreDocs;
-            AssertEquals("min,min,F,F", 0, result.Length);
+            assertEquals("min,min,F,F", 0, result.Length);
             result = search.Search(Csrq("rand", maxRP, maxRP, F, F), null, numDocs).ScoreDocs;
-            AssertEquals("max,max,F,F", 0, result.Length);
+            assertEquals("max,max,F,F", 0, result.Length);
 
             result = search.Search(Csrq("rand", minRP, minRP, T, T), null, numDocs).ScoreDocs;
-            AssertEquals("min,min,T,T", 1, result.Length);
+            assertEquals("min,min,T,T", 1, result.Length);
             result = search.Search(Csrq("rand", null, minRP, F, T), null, numDocs).ScoreDocs;
-            AssertEquals("nul,min,F,T", 1, result.Length);
+            assertEquals("nul,min,F,T", 1, result.Length);
 
             result = search.Search(Csrq("rand", maxRP, maxRP, T, T), null, numDocs).ScoreDocs;
-            AssertEquals("max,max,T,T", 1, result.Length);
+            assertEquals("max,max,T,T", 1, result.Length);
             result = search.Search(Csrq("rand", maxRP, null, T, F), null, numDocs).ScoreDocs;
-            AssertEquals("max,nul,T,T", 1, result.Length);
+            assertEquals("max,nul,T,T", 1, result.Length);
         }
     }
 }
