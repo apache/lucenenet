@@ -44,7 +44,6 @@ namespace Lucene.Net.Util
         }
 
         [Test]
-        [Seed(1249648971)]
         public virtual void TestUnion()
         {
             int numBits = TestUtil.NextInt32(Random, 100, 1 << 20);
@@ -73,7 +72,6 @@ namespace Lucene.Net.Util
         }
 
         [Test]
-        [Seed(1249648971)]
         public virtual void TestIntersection()
         {
             int numBits = TestUtil.NextInt32(Random, 100, 1 << 20);

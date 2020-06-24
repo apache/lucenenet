@@ -273,7 +273,6 @@ namespace Lucene.Net.Util.Fst
 
 
         [Test, LongRunningTest] // Can take up to 15 minutes
-        [Seed(1249648971)]
         public virtual void TestRandomWords()
         {
             // LUCENENET specific: NUnit will crash with an OOM if we do the full test

@@ -42,7 +42,6 @@ namespace Lucene.Net.Util
         // copies into PagedBytes and verifies with
         // PagedBytes.Reader:
         [Test, LongRunningTest]
-        [Seed(1249648971)]
         public virtual void TestDataInputOutput()
         {
             Random random = Random;

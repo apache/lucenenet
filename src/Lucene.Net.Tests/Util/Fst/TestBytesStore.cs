@@ -35,7 +35,6 @@ namespace Lucene.Net.Util.Fst
     {
 
         [Test, LongRunningTest]
-        [Seed(1249648971)]
         public virtual void TestRandom()
         {
 
