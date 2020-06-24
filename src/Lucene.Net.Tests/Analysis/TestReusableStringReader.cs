@@ -1,8 +1,9 @@
 using System.Text;
+using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis
 {
-    using NUnit.Framework;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /*

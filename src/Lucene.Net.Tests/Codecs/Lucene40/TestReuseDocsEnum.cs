@@ -1,27 +1,26 @@
 using J2N.Runtime.CompilerServices;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MatchNoBits = Lucene.Net.Util.Bits.MatchNoBits;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with

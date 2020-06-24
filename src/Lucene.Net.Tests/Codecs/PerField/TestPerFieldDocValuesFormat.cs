@@ -4,6 +4,7 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
+using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.PerField
