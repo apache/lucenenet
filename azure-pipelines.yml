@@ -125,11 +125,11 @@ stages:
       condition: and(succeeded(), ne(variables['RunTests'], 'false'))
 
     - task: ArchiveFiles@2
-      displayName: 'Zip $(PublishTempDirectory)/netcoreapp2.2'
+      displayName: 'Zip $(PublishTempDirectory)/netcoreapp2.1'
       inputs:
-        rootFolderOrFile: '$(PublishTempDirectory)/netcoreapp2.2'
+        rootFolderOrFile: '$(PublishTempDirectory)/netcoreapp2.1'
         includeRootFolder: false
-        archiveFile: '$(PublishDirectory)/netcoreapp2.2/$(PublishedArtifactZipFileName)'
+        archiveFile: '$(PublishDirectory)/netcoreapp2.1/$(PublishedArtifactZipFileName)'
       condition: and(succeeded(), ne(variables['RunTests'], 'false'))
 
     - task: ArchiveFiles@2
@@ -295,14 +295,14 @@ stages:
           osName: 'macOS'
           imageName: 'macOS-10.14'
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-    displayName: 'Test netcoreapp2.2 on'
+    displayName: 'Test netcoreapp2.1 on'
     pool:
       vmImage: $(imageName)
     steps:
     - template: 'build/azure-templates/run-tests-on-os.yml'
       parameters:
         osName: $(osName)
-        framework: 'netcoreapp2.2'
+        framework: 'netcoreapp2.1'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
         maximumParallelJobs: 8
