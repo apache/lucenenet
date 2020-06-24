@@ -163,7 +163,56 @@ namespace Lucene.Net.TestFramework
         {
             _NUnit.Assert.AreEqual(expected, actual, delta);
         }
-
+        //
+        // Summary:
+        //     Verifies that two doubles are equal considering a delta. If the expected value
+        //     is infinity then the delta value is ignored. If they are not equal then an NUnit.Framework.AssertionException
+        //     is thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The expected value
+        //
+        //   actual:
+        //     The actual value
+        //
+        //   delta:
+        //     The maximum acceptable difference between the the expected and the actual
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   args:
+        //     Array of objects to be used in formatting the message
+        public static void AreEqual(float expected, float actual, float delta, string message, params object[] args)
+        {
+            if (Math.Abs(expected - actual) > delta)
+            {
+                _NUnit.Assert.AreEqual(expected, actual, delta, message, args);
+            }
+        }
+        //
+        // Summary:
+        //     Verifies that two doubles are equal considering a delta. If the expected value
+        //     is infinity then the delta value is ignored. If they are not equal then an NUnit.Framework.AssertionException
+        //     is thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The expected value
+        //
+        //   actual:
+        //     The actual value
+        //
+        //   delta:
+        //     The maximum acceptable difference between the the expected and the actual
+        public static void AreEqual(float expected, float actual, float delta)
+        {
+            if (Math.Abs(expected - actual) > delta)
+            {
+                _NUnit.Assert.AreEqual(expected, actual, delta);
+            }
+        }
         //
         // Summary:
         //     Verifies that two objects are equal. Two objects are considered equal if both
