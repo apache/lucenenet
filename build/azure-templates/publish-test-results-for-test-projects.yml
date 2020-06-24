@@ -69,7 +69,7 @@ steps:
 # Special case: Only supports .NET Standard 2.0
 - template: publish-test-results.yml
   parameters:
-    framework: 'netcoreapp2.2' # Since condtions are not supported for templates, we check for the file existence within publish-test-results.yml
+    framework: 'netcoreapp2.1' # Since condtions are not supported for templates, we check for the file existence within publish-test-results.yml
     testProjectName: 'Lucene.Net.Tests.CodeAnalysis'
     osName: '${{ parameters.osName }}'
     testResultsFormat: '${{ parameters.testResultsFormat }}'

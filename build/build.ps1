@@ -48,7 +48,7 @@ properties {
 	[int]$maximumParalellJobs = 8
 	
 	#test paramters
-	[string]$frameworks_to_test = "netcoreapp3.1,netcoreapp2.2,net48"
+	[string]$frameworks_to_test = "netcoreapp3.1,netcoreapp2.1,net48"
 	[string]$where = ""
 }
 
