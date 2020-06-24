@@ -1,16 +1,16 @@
+using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading;
-using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
-using J2N.Collections.Generic.Extensions;
-using System.Globalization;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {

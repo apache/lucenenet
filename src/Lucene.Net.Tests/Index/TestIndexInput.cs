@@ -1,10 +1,10 @@
+using NUnit.Framework;
 using System;
+using System.IO;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
-    using System.IO;
-    using System.Reflection;
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
     using ByteArrayDataOutput = Lucene.Net.Store.ByteArrayDataOutput;
     using DataInput = Lucene.Net.Store.DataInput;

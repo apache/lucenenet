@@ -6,16 +6,15 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -38,12 +37,12 @@ namespace Lucene.Net.Index
          */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
+    using Assert = Lucene.Net.TestFramework.Assert;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
@@ -54,7 +53,6 @@ namespace Lucene.Net.Index
     using StringField = StringField;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Assert = Lucene.Net.TestFramework.Assert;
 
     [TestFixture]
     public class TestIndexWriterDelete : LuceneTestCase

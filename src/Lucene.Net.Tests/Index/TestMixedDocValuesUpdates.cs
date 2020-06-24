@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -26,7 +27,6 @@ namespace Lucene.Net.Index
     using Store = Field.Store;
     using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Assert = Lucene.Net.TestFramework.Assert;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

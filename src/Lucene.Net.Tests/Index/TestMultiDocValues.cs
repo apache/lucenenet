@@ -1,11 +1,11 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
 using System.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -24,11 +24,11 @@ namespace Lucene.Net.Index
          */
 
     using BinaryDocValuesField = BinaryDocValuesField;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
+    using IBits = Lucene.Net.Util.IBits;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NumericDocValuesField = NumericDocValuesField;
     using SortedDocValuesField = SortedDocValuesField;

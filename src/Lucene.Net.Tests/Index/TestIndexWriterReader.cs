@@ -4,13 +4,12 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -42,7 +41,6 @@ namespace Lucene.Net.Index
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using Query = Lucene.Net.Search.Query;
@@ -51,7 +49,6 @@ namespace Lucene.Net.Index
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
     using TopDocs = Lucene.Net.Search.TopDocs;
-    using Assert = Lucene.Net.TestFramework.Assert;
 
     [TestFixture]
     public class TestIndexWriterReader : LuceneTestCase

@@ -14,12 +14,12 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
-using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -40,7 +40,8 @@ namespace Lucene.Net.Index
     * limitations under the License.
     */
 
-    
+
+    using Assert = Lucene.Net.TestFramework.Assert;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
@@ -48,7 +49,6 @@ namespace Lucene.Net.Index
     using BinaryDocValuesField = BinaryDocValuesField;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
-    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
     using Constants = Lucene.Net.Util.Constants;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -81,7 +81,6 @@ namespace Lucene.Net.Index
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
-    using Assert = Lucene.Net.TestFramework.Assert;
 
     [TestFixture]
     public class TestIndexWriter : LuceneTestCase
