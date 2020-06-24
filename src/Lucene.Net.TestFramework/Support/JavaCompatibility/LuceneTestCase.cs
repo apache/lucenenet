@@ -118,6 +118,26 @@ namespace Lucene.Net.Util
             Assert.AreEqual(expected, actual, message);
         }
 
+        internal static void assertEquals(double d1, double d2, double delta)
+        {
+            Assert.AreEqual(d1, d2, delta);
+        }
+
+        internal static void assertEquals(string msg, float d1, float d2, float delta)
+        {
+            Assert.AreEqual(d1, d2, delta, msg);
+        }
+
+        internal static void assertEquals(float d1, float d2, float delta)
+        {
+            Assert.AreEqual(d1, d2, delta);
+        }
+
+        internal static void assertEquals(string msg, double d1, double d2, double delta)
+        {
+            Assert.AreEqual(d1, d2, delta, msg);
+        }
+
         internal static void assertEquals<T>(ISet<T> expected, ISet<T> actual)
         {
             Assert.True(JCG.SetEqualityComparer<T>.Default.Equals(expected, actual));
@@ -161,16 +181,6 @@ namespace Lucene.Net.Util
         internal static void assertNotSame(string message, object unexpected, object actual)
         {
             Assert.AreNotSame(unexpected, actual, message);
-        }
-
-        internal static void assertEquals(double d1, double d2, double delta)
-        {
-            Assert.AreEqual(d1, d2, delta);
-        }
-
-        internal static void assertEquals(string msg, double d1, double d2, double delta)
-        {
-            Assert.AreEqual(d1, d2, delta, msg);
         }
 
         internal static void assertNotNull(object o)
