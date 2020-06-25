@@ -42,12 +42,25 @@
         "src": "toc"
       }
     ],    
-    "overwrite": [     
+    "overwrite": [  
+      {
+        "files": [
+          "**/package.md",
+          "**/overview.md"
+        ],
+        "src": "../../src/Lucene.Net",
+        "exclude": [
+          "overview.md"
+        ]
+      },    
       {
         "files": [
           "apiSpec/core/**/*.md"
         ]
       }
+    ],
+    "xref": [
+      "_site/api/codecs/xrefmap.yml"
     ],
     "dest": "_site/api/core",
     "globalMetadataFiles": [

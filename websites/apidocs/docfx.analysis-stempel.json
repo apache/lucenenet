@@ -39,10 +39,14 @@
     "overwrite": [
       {
         "files": [
-          "overview.md"
+          "**/package.md",
+          "**/overview.md"
         ],
-        "src": "../../src/Lucene.Net.Analysis.Stempel"
-      },
+        "src": "../../src/Lucene.Net.Analysis.Stempel",
+        "exclude": [
+          "package.md"
+        ]
+      }, 
       {
         "files": [
           "apiSpec/analysis-stempel/**/*.md"

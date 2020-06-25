@@ -1,0 +1,3 @@
+- name: Highlighter
+  href: ../../obj/docfx/api/highlighter/toc.yml
+  topicUid: Lucene.Net.Highlighter

@@ -42,7 +42,17 @@
         "src": "toc"
       }
     ],    
-    "overwrite": [     
+    "overwrite": [
+      {
+        "files": [
+          "**/package.md",
+          "**/overview.md"
+        ],
+        "src": "../../src/Lucene.Net.Analysis.Common",
+        "exclude": [
+          "overview.md"
+        ]
+      },
       {
         "files": [
           "apiSpec/analysis-common/**/*.md"

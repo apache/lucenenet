@@ -39,10 +39,14 @@
     "overwrite": [
       {
         "files": [
-          "package.md"
+          "**/package.md",
+          "**/overview.md"
         ],
-        "src": "../../src/Lucene.Net.Analysis.SmartCn"
-      },  
+        "src": "../../src/Lucene.Net.Analysis.SmartCn",
+        "exclude": [
+          "overview.md"
+        ]
+      },     
       {
         "files": [
           "apiSpec/analysis-smartcn/**/*.md"

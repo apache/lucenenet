@@ -36,13 +36,17 @@
         "src": "toc"
       }
     ],    
-    "overwrite": [   
+    "overwrite": [  
       {
         "files": [
-          "overview.md"
+          "**/package.md",
+          "**/overview.md"
         ],
-        "src": "../../src/Lucene.Net.Analysis.Morfologik"
-      },  
+        "src": "../../src/Lucene.Net.Analysis.Morfologik",
+        "exclude": [
+          "package.md"
+        ]
+      },
       {
         "files": [
           "apiSpec/analysis-morfologik/**/*.md"

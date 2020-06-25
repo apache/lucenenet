@@ -4,7 +4,7 @@
       "src": [
         {
           "files": [
-            "Lucene.Net.Analysis.Kuromoji/Lucene.Net.Analysis.Kuromoji.csproj"
+            "Lucene.Net.Highlighter/Lucene.Net.Highlighter.csproj"
           ],
           "exclude": [
             "**/obj/**",
@@ -13,50 +13,50 @@
           "src": "../../src"
         }
       ],
-      "dest": "obj/docfx/api/analysis-kuromoji",
+      "dest": "obj/docfx/api/Highlighter",
       "properties": {
         "TargetFramework": "netstandard2.0"
       }
     }
   ],
   "build": {
-    "content": [      
+    "content": [        
       {
         "files": [
           "**.yml",
           "**.md"
         ],
-        "src": "obj/docfx/api/analysis-kuromoji"
+        "src": "obj/docfx/api/highlighter"
       },   
       {
         "files": [
           "toc.yml",
-          "analysis-kuromoji/toc.yml"
+          "highlighter/toc.yml"
         ],
         "src": "toc"
       }
     ],    
-    "overwrite": [
+    "overwrite": [   
       {
         "files": [
           "**/package.md",
           "**/overview.md"
         ],
-        "src": "../../src/Lucene.Net.Analysis.Kuromoji",
+        "src": "../../src/Lucene.Net.Highlighter",
         "exclude": [
           "package.md"
         ]
-      },
+      },        
       {
         "files": [
-          "apiSpec/analysis-kuromoji/**/*.md"
+          "apiSpec/highlighter/**/*.md"
         ]
       }
     ],
     "xref": [
       "_site/api/core/xrefmap.yml"
     ],
-    "dest": "_site/api/analysis-kuromoji",
+    "dest": "_site/api/highlighter",
     "globalMetadataFiles": [
       "docfx.global.json",
       "docfx.global.subsite.json"

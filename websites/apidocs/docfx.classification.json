@@ -39,10 +39,14 @@
     "overwrite": [
       {
         "files": [
-          "package.md"
+          "**/package.md",
+          "**/overview.md"
         ],
-        "src": "../../src/Lucene.Net.Classification"
-      },
+        "src": "../../src/Lucene.Net.Classification",
+        "exclude": [
+          "overview.md"
+        ]
+      },      
       {
         "files": [
           "apiSpec/classification/**/*.md"

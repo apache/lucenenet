@@ -36,13 +36,17 @@
         "src": "toc"
       }
     ],    
-    "overwrite": [   
+    "overwrite": [
       {
         "files": [
-          "overview.md"
+          "**/package.md",
+          "**/overview.md"
         ],
-        "src": "../../src/Lucene.Net.Analysis.OpenNLP"
-      },  
+        "src": "../../src/Lucene.Net.Analysis.OpenNLP",
+        "exclude": [
+          "package.md"
+        ]
+      },
       {
         "files": [
           "apiSpec/analysis-opennlp/**/*.md"

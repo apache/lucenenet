@@ -39,10 +39,14 @@
     "overwrite": [
       {
         "files": [
-          "overview.md"
+          "**/package.md",
+          "**/overview.md"
         ],
-        "src": "../../src/Lucene.Net.Analysis.Phonetic"
-      },
+        "src": "../../src/Lucene.Net.Analysis.Phonetic",
+        "exclude": [
+          "package.md"
+        ]
+      },      
       {
         "files": [
           "apiSpec/analysis-phonetic/**/*.md"
