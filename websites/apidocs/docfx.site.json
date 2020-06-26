@@ -19,7 +19,8 @@
         "src": "../../branding"
       }
     ],
-    "xref": [            
+    "xref": [
+      "_site/api/core/xrefmap.yml",
       "_site/api/analysis-kuromoji/xrefmap.yml",
       "_site/api/analysis-morfologik/xrefmap.yml",
       "_site/api/analysis-opennlp/xrefmap.yml",
@@ -34,7 +35,9 @@
       "_site/api/grouping/xrefmap.yml",
       "_site/api/highlighter/xrefmap.yml",
       "_site/api/icu/xrefmap.yml",
-      "_site/api/core/xrefmap.yml",
+      "_site/api/join/xrefmap.yml",      
+      "_site/api/memory/xrefmap.yml",
+      "_site/api/misc/xrefmap.yml",
       "_site/api/test-framework/xrefmap.yml"      
     ],
     "dest": "_site",

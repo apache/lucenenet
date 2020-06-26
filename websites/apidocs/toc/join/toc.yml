@@ -1,0 +1,3 @@
+- name: Join
+  href: ../../obj/docfx/api/join/toc.yml
+  topicUid: Lucene.Net.Join
