@@ -23,6 +23,12 @@
     "content": [        
       {
         "files": [
+          "overview.md"
+        ],
+        "src": "../../src/Lucene.Net.highlighter"
+      },
+      {
+        "files": [
           "**.yml",
           "**.md"
         ],
@@ -44,7 +50,7 @@
         ],
         "src": "../../src/Lucene.Net.Highlighter",
         "exclude": [
-          "package.md"
+          "overview.md"
         ]
       },        
       {
