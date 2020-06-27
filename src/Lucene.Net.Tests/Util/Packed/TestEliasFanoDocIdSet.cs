@@ -1,7 +1,6 @@
 using Lucene.Net.Support;
-using NUnit.Framework;
-using System.Collections;
 using System.Diagnostics;
+using BitSet = J2N.Collections.BitSet;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -26,9 +25,9 @@ namespace Lucene.Net.Util.Packed
 
     public class TestEliasFanoDocIdSet : BaseDocIdSetTestCase<EliasFanoDocIdSet>
     {
-        public override EliasFanoDocIdSet CopyOf(BitArray bs, int numBits)
+        public override EliasFanoDocIdSet CopyOf(BitSet bs, int numBits)
         {
-            EliasFanoDocIdSet set = new EliasFanoDocIdSet(bs.Cardinality(), numBits - 1);
+            EliasFanoDocIdSet set = new EliasFanoDocIdSet((int)bs.Cardinality, numBits - 1);
             set.EncodeFromDisi(new DocIdSetIteratorAnonymousInnerClassHelper(this, bs, numBits));
             return set;
         }
@@ -37,10 +36,10 @@ namespace Lucene.Net.Util.Packed
         {
             private readonly TestEliasFanoDocIdSet OuterInstance;
 
-            private BitArray Bs;
+            private BitSet Bs;
             private int NumBits;
 
-            public DocIdSetIteratorAnonymousInnerClassHelper(TestEliasFanoDocIdSet outerInstance, BitArray bs, int numBits)
+            public DocIdSetIteratorAnonymousInnerClassHelper(TestEliasFanoDocIdSet outerInstance, BitSet bs, int numBits)
             {
                 this.OuterInstance = outerInstance;
                 this.Bs = bs;
@@ -68,7 +67,7 @@ namespace Lucene.Net.Util.Packed
 
             public override long GetCost()
             {
-                return Bs.Cardinality();
+                return Bs.Cardinality;
             }
 
             public override int Advance(int target)

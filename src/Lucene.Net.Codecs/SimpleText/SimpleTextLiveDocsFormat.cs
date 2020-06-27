@@ -1,9 +1,8 @@
-﻿using Lucene.Net.Support;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using BitSet = Lucene.Net.Util.OpenBitSet;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
@@ -62,7 +61,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override IMutableBits NewLiveDocs(IBits existing)
         {
             var bits = (SimpleTextBits) existing;
-            return new SimpleTextMutableBits(new BitArray(bits.bits), bits.Length);
+            return new SimpleTextMutableBits((BitSet)bits.bits.Clone(), bits.Length);
         }
 
         public override IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
@@ -83,14 +82,14 @@ namespace Lucene.Net.Codecs.SimpleText
                 Debug.Assert(StringHelper.StartsWith(scratch, SIZE));
                 var size = ParseInt32At(scratch, SIZE.Length, scratchUtf16);
 
-                var bits = new BitArray(size);
+                var bits = new BitSet(size);
 
                 SimpleTextUtil.ReadLine(input, scratch);
                 while (!scratch.Equals(END))
                 {
                     Debug.Assert(StringHelper.StartsWith(scratch, DOC));
                     var docid = ParseInt32At(scratch, DOC.Length, scratchUtf16);
-                    bits.SafeSet(docid, true);
+                    bits.Set(docid);
                     SimpleTextUtil.ReadLine(input, scratch);
                 }
 
@@ -174,10 +173,10 @@ namespace Lucene.Net.Codecs.SimpleText
         // read-only
         internal class SimpleTextBits : IBits
         {
-            internal readonly BitArray bits;
+            internal readonly BitSet bits;
             private readonly int size;
 
-            internal SimpleTextBits(BitArray bits, int size)
+            internal SimpleTextBits(BitSet bits, int size)
             {
                 this.bits = bits;
                 this.size = size;
@@ -185,7 +184,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public virtual bool Get(int index)
             {
-                return bits.SafeGet(index);
+                return bits.Get(index);
             }
 
             public virtual int Length
@@ -199,19 +198,19 @@ namespace Lucene.Net.Codecs.SimpleText
         {
 
             internal SimpleTextMutableBits(int size) 
-                : this(new BitArray(size), size)
+                : this(new BitSet(size), size)
             {
                 bits.Set(0, size);
             }
 
-            internal SimpleTextMutableBits(BitArray bits, int size) 
+            internal SimpleTextMutableBits(BitSet bits, int size) 
                 : base(bits, size)
             {
             }
 
             public virtual void Clear(int bit)
             {
-                bits.SafeSet(bit, false);
+                bits.Clear(bit);
             }
         }
     }

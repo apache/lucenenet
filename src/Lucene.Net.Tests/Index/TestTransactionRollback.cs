@@ -1,12 +1,11 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
+using BitSet = Lucene.Net.Util.OpenBitSet;
 
 namespace Lucene.Net.Index
 {
@@ -88,13 +87,13 @@ namespace Lucene.Net.Index
                 expectedLastRecordId -= 10;
                 RollBackLast(expectedLastRecordId);
 
-                BitArray expecteds = new BitArray(100);
-                expecteds.Set(1, (expectedLastRecordId + 1), true);
+                BitSet expecteds = new BitSet(100);
+                expecteds.Set(1, (expectedLastRecordId + 1));
                 CheckExpecteds(expecteds);
             }
         }
 
-        private void CheckExpecteds(BitArray expecteds)
+        private void CheckExpecteds(BitSet expecteds)
         {
             IndexReader r = DirectoryReader.Open(Dir);
 
@@ -108,9 +107,9 @@ namespace Lucene.Net.Index
                     string sval = r.Document(i).Get(FIELD_RECORD_ID);
                     if (sval != null)
                     {
-                        int val = Convert.ToInt32(sval);
-                        Assert.IsTrue(expecteds.SafeGet(val), "Did not expect document #" + val);
-                        expecteds.SafeSet(val, false);
+                        int val = Convert.ToInt32(sval, CultureInfo.InvariantCulture);
+                        Assert.IsTrue(expecteds.FastGet(val), "Did not expect document #" + val);
+                        expecteds.FastClear(val);
                     }
                 }
             }

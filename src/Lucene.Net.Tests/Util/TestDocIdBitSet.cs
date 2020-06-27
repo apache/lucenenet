@@ -1,6 +1,4 @@
-using Lucene.Net.Attributes;
-using NUnit.Framework;
-using System.Collections;
+using BitSet = J2N.Collections.BitSet;
 
 namespace Lucene.Net.Util
 {
@@ -23,9 +21,9 @@ namespace Lucene.Net.Util
 
     public class TestDocIdBitSet : BaseDocIdSetTestCase<DocIdBitSet>
     {
-        public override DocIdBitSet CopyOf(BitArray bs, int length)
+        public override DocIdBitSet CopyOf(BitSet bs, int length)
         {
-            return new DocIdBitSet(new BitArray(bs));
+            return new DocIdBitSet((BitSet)bs.Clone());
         }
     }
 }
