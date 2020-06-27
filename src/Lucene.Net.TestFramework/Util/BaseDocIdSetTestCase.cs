@@ -1,10 +1,8 @@
 using Lucene.Net.Search;
-using Lucene.Net.Support;
-using Lucene.Net.TestFramework;
 using System;
-using System.Collections;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
+using BitSet = J2N.Collections.BitSet;
 
 
 #if TESTFRAMEWORK_MSTEST
@@ -51,19 +49,19 @@ namespace Lucene.Net.Util
     {
 #endif
         /// <summary>
-        /// Create a copy of the given <see cref="BitArray"/> which has <paramref name="length"/> bits. </summary>
-        public abstract T CopyOf(BitArray bs, int length);
+        /// Create a copy of the given <see cref="BitSet"/> which has <paramref name="length"/> bits. </summary>
+        public abstract T CopyOf(BitSet bs, int length);
 
         /// <summary>
         /// Create a random set which has <paramref name="numBitsSet"/> of its <paramref name="numBits"/> bits set. </summary>
-        protected static BitArray RandomSet(int numBits, int numBitsSet)
+        protected static BitSet RandomSet(int numBits, int numBitsSet)
         {
             Debug.Assert(numBitsSet <= numBits);
-            BitArray set = new BitArray(numBits);
+            BitSet set = new BitSet(numBits);
             Random random = Random;
             if (numBitsSet == numBits)
             {
-                set.SafeSet(0, numBits != 0); //convert int to boolean
+                set.Set(0, numBits);
             }
             else
             {
@@ -72,9 +70,9 @@ namespace Lucene.Net.Util
                     while (true)
                     {
                         int o = random.Next(numBits);
-                        if (!set.SafeGet(o))
+                        if (!set.Get(o))
                         {
-                            set.SafeSet(o, true);
+                            set.Set(o);
                             break;
                         }
                     }
@@ -85,7 +83,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Same as <see cref="RandomSet(int, int)"/> but given a load factor. </summary>
-        protected static BitArray RandomSet(int numBits, float percentSet)
+        protected static BitSet RandomSet(int numBits, float percentSet)
         {
             return RandomSet(numBits, (int)(percentSet * numBits));
         }
@@ -96,7 +94,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestNoBit()
         {
-            BitArray bs = new BitArray(1);
+            BitSet bs = new BitSet(1);
             T copy = CopyOf(bs, 0);
             AssertEquals(0, bs, copy);
         }
@@ -107,10 +105,10 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void Test1Bit()
         {
-            BitArray bs = new BitArray(1);
+            BitSet bs = new BitSet(1);
             if (Random.NextBoolean())
             {
-                bs.SafeSet(0, true);
+                bs.Set(0);
             }
             T copy = CopyOf(bs, 1);
             AssertEquals(1, bs, copy);
@@ -122,21 +120,21 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void Test2Bits()
         {
-            BitArray bs = new BitArray(2);
+            BitSet bs = new BitSet(2);
             if (Random.NextBoolean())
             {
-                bs.SafeSet(0, true);
+                bs.Set(0);
             }
             if (Random.NextBoolean())
             {
-                bs.SafeSet(1, true);
+                bs.Set(1);
             }
             T copy = CopyOf(bs, 2);
             AssertEquals(2, bs, copy);
         }
 
         /// <summary>
-        /// Compare the content of the set against a <see cref="BitArray"/>.
+        /// Compare the content of the set against a <see cref="BitSet"/>.
         /// </summary>
         [Test]
         public virtual void TestAgainstBitSet()
@@ -145,26 +143,26 @@ namespace Lucene.Net.Util
             // test various random sets with various load factors
             foreach (float percentSet in new float[] { 0f, 0.0001f, (float)Random.NextDouble() / 2, 0.9f, 1f })
             {
-                BitArray set = RandomSet(numBits, percentSet);
+                BitSet set = RandomSet(numBits, percentSet);
                 T copy = CopyOf(set, numBits);
                 AssertEquals(numBits, set, copy);
             }
             // test one doc
-            BitArray set_ = new BitArray(numBits);
-            set_.SafeSet(0, true); // 0 first
+            BitSet set_ = new BitSet(numBits);
+            set_.Set(0); // 0 first
             T copy_ = CopyOf(set_, numBits);
             AssertEquals(numBits, set_, copy_);
-            set_.SafeSet(0, false);
-            set_.SafeSet(Random.Next(numBits), true);
+            set_.Clear(0);
+            set_.Set(Random.Next(numBits));
             copy_ = CopyOf(set_, numBits); // then random index
             AssertEquals(numBits, set_, copy_);
             // test regular increments
             for (int inc = 2; inc < 1000; inc += TestUtil.NextInt32(Random, 1, 100))
             {
-                set_ = new BitArray(numBits);
+                set_ = new BitSet(numBits);
                 for (int d = Random.Next(10); d < numBits; d += inc)
                 {
-                    set_.SafeSet(d, true);
+                    set_.Set(d);
                 }
                 copy_ = CopyOf(set_, numBits);
                 AssertEquals(numBits, set_, copy_);
@@ -172,10 +170,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Assert that the content of the <see cref="DocIdSet"/> is the same as the content of the <see cref="BitArray"/>.
+        /// Assert that the content of the <see cref="DocIdSet"/> is the same as the content of the <see cref="BitSet"/>.
         /// </summary>
 #pragma warning disable xUnit1013
-        public virtual void AssertEquals(int numBits, BitArray ds1, T ds2)
+        public virtual void AssertEquals(int numBits, BitSet ds1, T ds2)
 #pragma warning restore xUnit1013
         {
             // nextDoc

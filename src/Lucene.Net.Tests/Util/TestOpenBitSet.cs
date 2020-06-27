@@ -15,12 +15,10 @@
  * limitations under the License.
  */
 
-using System;
+using J2N.Collections;
 using Lucene.Net.Attributes;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
 using NUnit.Framework;
-using System.Collections;
+using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -30,7 +28,7 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestOpenBitSet : BaseDocIdSetTestCase<OpenBitSet>
     {
-        public override OpenBitSet CopyOf(BitArray bs, int length)
+        public override OpenBitSet CopyOf(BitSet bs, int length)
         {
             OpenBitSet set = new OpenBitSet(length);
             for (int doc = bs.NextSetBit(0); doc != -1; doc = bs.NextSetBit(doc + 1))
@@ -40,38 +38,38 @@ namespace Lucene.Net.Util
             return set;
         }
 
-        internal virtual void DoGet(BitArray a, OpenBitSet b)
+        internal virtual void DoGet(BitSet a, OpenBitSet b)
         {
             int max = a.Length;
             for (int i = 0; i < max; i++)
             {
-                if (a.SafeGet(i) != b.Get(i))
+                if (a.Get(i) != b.Get(i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
                 }
-                if (a.SafeGet(i) != b.Get((long)i))
+                if (a.Get(i) != b.Get((long)i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
                 }
             }
         }
 
-        internal virtual void DoGetFast(BitArray a, OpenBitSet b, int max)
+        internal virtual void DoGetFast(BitSet a, OpenBitSet b, int max)
         {
             for (int i = 0; i < max; i++)
             {
-                if (a.SafeGet(i) != b.FastGet(i))
+                if (a.Get(i) != b.FastGet(i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
                 }
-                if (a.SafeGet(i) != b.FastGet((long)i))
+                if (a.Get(i) != b.FastGet((long)i))
                 {
-                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.SafeGet(i));
+                    Assert.Fail("mismatch: BitSet=[" + i + "]=" + a.Get(i));
                 }
             }
         }
 
-        internal virtual void DoNextSetBit(BitArray a, OpenBitSet b)
+        internal virtual void DoNextSetBit(BitSet a, OpenBitSet b)
         {
             int aa = -1, bb = -1;
             do
@@ -82,7 +80,7 @@ namespace Lucene.Net.Util
             } while (aa >= 0);
         }
 
-        internal virtual void DoNextSetBitLong(BitArray a, OpenBitSet b)
+        internal virtual void DoNextSetBitLong(BitSet a, OpenBitSet b)
         {
             int aa = -1, bb = -1;
             do
@@ -93,7 +91,7 @@ namespace Lucene.Net.Util
             } while (aa >= 0);
         }
 
-        internal virtual void DoPrevSetBit(BitArray a, OpenBitSet b)
+        internal virtual void DoPrevSetBit(BitSet a, OpenBitSet b)
         {
             int aa = a.Length + Random.Next(100);
             int bb = aa;
@@ -101,7 +99,7 @@ namespace Lucene.Net.Util
             {
                 // aa = a.PrevSetBit(aa-1);
                 aa--;
-                while ((aa >= 0) && (!a.SafeGet(aa)))
+                while ((aa >= 0) && (!a.Get(aa)))
                 {
                     aa--;
                 }
@@ -110,7 +108,7 @@ namespace Lucene.Net.Util
             } while (aa >= 0);
         }
 
-        internal virtual void DoPrevSetBitLong(BitArray a, OpenBitSet b)
+        internal virtual void DoPrevSetBitLong(BitSet a, OpenBitSet b)
         {
             int aa = a.Length + Random.Next(100);
             int bb = aa;
@@ -118,7 +116,7 @@ namespace Lucene.Net.Util
             {
                 // aa = a.PrevSetBit(aa-1);
                 aa--;
-                while ((aa >= 0) && (!a.SafeGet(aa)))
+                while ((aa >= 0) && (!a.Get(aa)))
                 {
                     aa--;
                 }
@@ -128,7 +126,7 @@ namespace Lucene.Net.Util
         }
 
         // test interleaving different OpenBitSetIterator.Next()/skipTo()
-        internal virtual void DoIterate(BitArray a, OpenBitSet b, int mode)
+        internal virtual void DoIterate(BitSet a, OpenBitSet b, int mode)
         {
             if (mode == 1)
             {
@@ -140,7 +138,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        internal virtual void DoIterate1(BitArray a, OpenBitSet b)
+        internal virtual void DoIterate1(BitSet a, OpenBitSet b)
         {
             int aa = -1, bb = -1;
             OpenBitSetIterator iterator = new OpenBitSetIterator(b);
@@ -152,7 +150,7 @@ namespace Lucene.Net.Util
             } while (aa >= 0);
         }
 
-        internal virtual void DoIterate2(BitArray a, OpenBitSet b)
+        internal virtual void DoIterate2(BitSet a, OpenBitSet b)
         {
             int aa = -1, bb = -1;
             OpenBitSetIterator iterator = new OpenBitSetIterator(b);
@@ -166,13 +164,13 @@ namespace Lucene.Net.Util
 
         internal virtual void DoRandomSets(int maxSize, int iter, int mode)
         {
-            BitArray a0 = null;
+            BitSet a0 = null;
             OpenBitSet b0 = null;
 
             for (int i = 0; i < iter; i++)
             {
                 int sz = Random.Next(maxSize);
-                BitArray a = new BitArray(sz);
+                BitSet a = new BitSet(sz);
                 OpenBitSet b = new OpenBitSet(sz);
 
                 // test the various ways of setting bits
@@ -184,23 +182,23 @@ namespace Lucene.Net.Util
                         int idx;
 
                         idx = Random.Next(sz);
-                        a.SafeSet(idx, true);
+                        a.Set(idx, true);
                         b.FastSet(idx);
 
                         idx = Random.Next(sz);
-                        a.SafeSet(idx, true);
+                        a.Set(idx, true);
                         b.FastSet((long)idx);
 
                         idx = Random.Next(sz);
-                        a.SafeSet(idx, false);
+                        a.Set(idx, false);
                         b.FastClear(idx);
 
                         idx = Random.Next(sz);
-                        a.SafeSet(idx, false);
+                        a.Set(idx, false);
                         b.FastClear((long)idx);
 
                         idx = Random.Next(sz);
-                        a.SafeSet(idx, !a.SafeGet(idx));
+                        a.Set(idx, !a.Get(idx));
                         b.FastFlip(idx);
 
                         bool val = b.FlipAndGet(idx);
@@ -208,7 +206,7 @@ namespace Lucene.Net.Util
                         Assert.IsTrue(val != val2);
 
                         idx = Random.Next(sz);
-                        a.SafeSet(idx, !a.SafeGet(idx));
+                        a.Set(idx, !a.Get(idx));
                         b.FastFlip((long)idx);
 
                         val = b.FlipAndGet((long)idx);
@@ -236,13 +234,7 @@ namespace Lucene.Net.Util
                 fromIndex = Random.Next(sz + 80);
                 toIndex = fromIndex + Random.Next((sz >> 1) + 1);
 
-                BitArray aa = new BitArray(a);
-                // C# BitArray class does not support dynamic sizing.
-                // We have to explicitly change its size using the Length attribute.
-                if (toIndex > aa.Length)
-                {
-                    aa.Length = toIndex;
-                }
+                BitSet aa = (BitSet)a.Clone();
                 aa.Flip(fromIndex, toIndex);
                 OpenBitSet bb = (OpenBitSet)b.Clone();
                 bb.Flip(fromIndex, toIndex);
@@ -251,11 +243,7 @@ namespace Lucene.Net.Util
 
                 fromIndex = Random.Next(sz + 80);
                 toIndex = fromIndex + Random.Next((sz >> 1) + 1);
-                aa = new BitArray(a);
-                if (toIndex > aa.Length)
-                {
-                    aa.Length = toIndex;
-                }
+                aa = (BitSet)a.Clone();
                 aa.Clear(fromIndex, toIndex);
                 bb = (OpenBitSet)b.Clone();
                 bb.Clear(fromIndex, toIndex);
@@ -268,11 +256,7 @@ namespace Lucene.Net.Util
 
                 fromIndex = Random.Next(sz + 80);
                 toIndex = fromIndex + Random.Next((sz >> 1) + 1);
-                aa = new BitArray(a);
-                if (toIndex > aa.Length)
-                {
-                    aa.Length = toIndex;
-                }
+                aa = (BitSet)a.Clone();
                 aa.Set(fromIndex, toIndex);
                 bb = (OpenBitSet)b.Clone();
                 bb.Set(fromIndex, toIndex);
@@ -285,24 +269,17 @@ namespace Lucene.Net.Util
 
                 if (a0 != null)
                 {
-                    aa = new BitArray(a);
-                    BitArray aa0 = new BitArray(a0);
-                    int largest = Math.Max(a.Length, a0.Length);
-                    aa.Length = aa0.Length = largest;
-                    // BitWiseEquals needs both arrays to be the same size for succeeding.
-                    // We could enlarge the smallest of a and a0, but then the tests below
-                    // won't test "UnequalLengths" operations.
-                    Assert.AreEqual(aa.BitWiseEquals(aa0), b.Equals(b0));
+                    Assert.AreEqual(a.Equals(a0), b.Equals(b0));
 
-                    Assert.AreEqual(a.Cardinality(), b.Cardinality());
+                    Assert.AreEqual(a.Cardinality, b.Cardinality());
 
-                    BitArray a_and = new BitArray(a);
-                    a_and = a_and.And_UnequalLengths(a0);
-                    BitArray a_or = new BitArray(a);
-                    a_or = a_or.Or_UnequalLengths(a0);
-                    BitArray a_xor = new BitArray(a);
-                    a_xor = a_xor.Xor_UnequalLengths(a0);
-                    BitArray a_andn = new BitArray(a);
+                    BitSet a_and = (BitSet)a.Clone();
+                    a_and.And(a0);
+                    BitSet a_or = (BitSet)a.Clone();
+                    a_or.Or(a0);
+                    BitSet a_xor = (BitSet)a.Clone();
+                    a_xor.Xor(a0);
+                    BitSet a_andn = (BitSet)a.Clone();
                     a_andn.AndNot(a0);
 
                     OpenBitSet b_and = (OpenBitSet)b.Clone();
@@ -320,10 +297,10 @@ namespace Lucene.Net.Util
                     DoIterate(a_xor, b_xor, mode);
                     DoIterate(a_andn, b_andn, mode);
 
-                    Assert.AreEqual(a_and.Cardinality(), b_and.Cardinality());
-                    Assert.AreEqual(a_or.Cardinality(), b_or.Cardinality());
-                    Assert.AreEqual(a_xor.Cardinality(), b_xor.Cardinality());
-                    Assert.AreEqual(a_andn.Cardinality(), b_andn.Cardinality());
+                    Assert.AreEqual(a_and.Cardinality, b_and.Cardinality());
+                    Assert.AreEqual(a_or.Cardinality, b_or.Cardinality());
+                    Assert.AreEqual(a_xor.Cardinality, b_xor.Cardinality());
+                    Assert.AreEqual(a_andn.Cardinality, b_andn.Cardinality());
 
                     // test non-mutating popcounts
                     Assert.AreEqual(b_and.Cardinality(), OpenBitSet.IntersectionCount(b, b0));
@@ -457,12 +434,12 @@ namespace Lucene.Net.Util
             return bs;
         }
 
-        private BitArray MakeBitSet(int[] a)
+        private BitSet MakeBitSet(int[] a)
         {
-            BitArray bs = new BitArray(a.Length);
+            BitSet bs = new BitSet(a.Length);
             foreach (int e in a)
             {
-                bs.SafeSet(e, true);
+                bs.Set(e);
             }
             return bs;
         }
@@ -470,7 +447,7 @@ namespace Lucene.Net.Util
         private void CheckPrevSetBitArray(int[] a)
         {
             OpenBitSet obs = MakeOpenBitSet(a);
-            BitArray bs = MakeBitSet(a);
+            BitSet bs = MakeBitSet(a);
             DoPrevSetBit(bs, obs);
         }
 

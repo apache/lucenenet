@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using Assert = Lucene.Net.TestFramework.Assert;
+using BitSet = J2N.Collections.BitSet;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
@@ -45,7 +46,7 @@ namespace Lucene.Net.Search
     {
         internal bool Validate = true; // set to false when doing performance testing
 
-        internal BitArray[] Sets;
+        internal BitSet[] Sets;
         internal Term[] Terms;
         internal IndexSearcher s;
         internal IndexReader r;
@@ -93,19 +94,19 @@ namespace Lucene.Net.Search
             iw.Dispose();
         }
 
-        public virtual BitArray RandBitSet(int sz, int numBitsToSet)
+        public virtual BitSet RandBitSet(int sz, int numBitsToSet)
         {
-            BitArray set = new BitArray(sz);
+            BitSet set = new BitSet(sz);
             for (int i = 0; i < numBitsToSet; i++)
             {
-                set.SafeSet(Random.Next(sz), true);
+                set.Set(Random.Next(sz));
             }
             return set;
         }
 
-        public virtual BitArray[] RandBitSets(int numSets, int setSize)
+        public virtual BitSet[] RandBitSets(int numSets, int setSize)
         {
-            BitArray[] sets = new BitArray[numSets];
+            BitSet[] sets = new BitSet[numSets];
             for (int i = 0; i < sets.Length; i++)
             {
                 sets[i] = RandBitSet(setSize, Random.Next(setSize));
@@ -158,10 +159,10 @@ namespace Lucene.Net.Search
 
         public class MatchingHitCollector : CountingHitCollector
         {
-            internal BitArray Answer;
+            internal BitSet Answer;
             internal int Pos = -1;
 
-            public MatchingHitCollector(BitArray answer)
+            public MatchingHitCollector(BitSet answer)
             {
                 this.Answer = answer;
             }
@@ -177,20 +178,20 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal virtual BitArray AddClause(BooleanQuery bq, BitArray result)
+        internal virtual BitSet AddClause(BooleanQuery bq, BitSet result)
         {
-            BitArray rnd = Sets[Random.Next(Sets.Length)];
+            BitSet rnd = Sets[Random.Next(Sets.Length)];
             Query q = new ConstantScoreQuery(new FilterAnonymousInnerClassHelper(this, rnd));
             bq.Add(q, Occur.MUST);
             if (Validate)
             {
                 if (result == null)
                 {
-                    result =  new BitArray(rnd);
+                    result =  (BitSet)rnd.Clone();
                 }
                 else
                 {
-                    result = result.And(rnd);
+                    result.And(rnd);
                 }
             }
             return result;
@@ -200,9 +201,9 @@ namespace Lucene.Net.Search
         {
             private readonly TestScorerPerf OuterInstance;
 
-            private BitArray Rnd;
+            private BitSet Rnd;
 
-            public FilterAnonymousInnerClassHelper(TestScorerPerf outerInstance, BitArray rnd)
+            public FilterAnonymousInnerClassHelper(TestScorerPerf outerInstance, BitSet rnd)
             {
                 this.OuterInstance = outerInstance;
                 this.Rnd = rnd;
@@ -223,7 +224,7 @@ namespace Lucene.Net.Search
             {
                 int nClauses = Random.Next(maxClauses - 1) + 2; // min 2 clauses
                 BooleanQuery bq = new BooleanQuery();
-                BitArray result = null;
+                BitSet result = null;
                 for (int j = 0; j < nClauses; j++)
                 {
                     result = AddClause(bq, result);
@@ -235,7 +236,7 @@ namespace Lucene.Net.Search
 
                 if (Validate)
                 {
-                    Assert.AreEqual(result.Cardinality(), hc.Count);
+                    Assert.AreEqual(result.Cardinality, hc.Count);
                 }
                 // System.out.println(hc.getCount());
             }
@@ -252,7 +253,7 @@ namespace Lucene.Net.Search
             {
                 int oClauses = Random.Next(maxOuterClauses - 1) + 2;
                 BooleanQuery oq = new BooleanQuery();
-                BitArray result = null;
+                BitSet result = null;
 
                 for (int o = 0; o < oClauses; o++)
                 {
@@ -272,7 +273,7 @@ namespace Lucene.Net.Search
                 ret += hc.Sum;
                 if (Validate)
                 {
-                    Assert.AreEqual(result.Cardinality(), hc.Count);
+                    Assert.AreEqual(result.Cardinality, hc.Count);
                 }
                 // System.out.println(hc.getCount());
             }

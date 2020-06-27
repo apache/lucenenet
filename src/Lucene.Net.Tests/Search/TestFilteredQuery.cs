@@ -1,27 +1,25 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Collections;
 using Assert = Lucene.Net.TestFramework.Assert;
+using BitSet = J2N.Collections.BitSet;
 
 namespace Lucene.Net.Search
 {
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using Document = Documents.Document;
     using Field = Field;
     using FilterStrategy = Lucene.Net.Search.FilteredQuery.FilterStrategy;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -120,14 +118,14 @@ namespace Lucene.Net.Search
                 {
                     acceptDocs = new Bits.MatchAllBits(5);
                 }
-                BitArray bitset = new BitArray(5);
+                BitSet bitset = new BitSet(5);
                 if (acceptDocs.Get(1))
                 {
-                    bitset.SafeSet(1, true);
+                    bitset.Set(1);
                 }
                 if (acceptDocs.Get(3))
                 {
-                    bitset.SafeSet(3, true);
+                    bitset.Set(3);
                 }
                 return new DocIdBitSet(bitset);
             }
@@ -240,7 +238,8 @@ namespace Lucene.Net.Search
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 Assert.IsNull(acceptDocs, "acceptDocs should be null, as we have an index without deletions");
-                BitArray bitset = new BitArray(5, true);
+                BitSet bitset = new BitSet(5);
+                bitset.Set(0, 5);
                 return new DocIdBitSet(bitset);
             }
         }
@@ -573,11 +572,11 @@ namespace Lucene.Net.Search
                 {
                     return null; // no docs -- return null
                 }
-                BitArray bitSet = new BitArray(reader.MaxDoc);
+                BitSet bitSet = new BitSet(reader.MaxDoc);
                 int d;
                 while ((d = termDocsEnum.NextDoc()) != DocsEnum.NO_MORE_DOCS)
                 {
-                    bitSet.SafeSet(d, true);
+                    bitSet.Set(d);
                 }
                 return new DocIdSetAnonymousInnerClassHelper(this, nullBitset, reader, bitSet);
             }
@@ -588,9 +587,9 @@ namespace Lucene.Net.Search
 
                 private bool NullBitset;
                 private AtomicReader Reader;
-                private BitArray BitSet;
+                private BitSet BitSet;
 
-                public DocIdSetAnonymousInnerClassHelper(FilterAnonymousInnerClassHelper3 outerInstance, bool nullBitset, AtomicReader reader, BitArray bitSet)
+                public DocIdSetAnonymousInnerClassHelper(FilterAnonymousInnerClassHelper3 outerInstance, bool nullBitset, AtomicReader reader, BitSet bitSet)
                 {
                     this.OuterInstance = outerInstance;
                     this.NullBitset = nullBitset;
@@ -621,8 +620,8 @@ namespace Lucene.Net.Search
 
                     public bool Get(int index)
                     {
-                        Assert.IsTrue(OuterInstance.BitSet.SafeGet(index), "filter was called for a non-matching doc");
-                        return OuterInstance.BitSet.SafeGet(index);
+                        Assert.IsTrue(OuterInstance.BitSet.Get(index), "filter was called for a non-matching doc");
+                        return OuterInstance.BitSet.Get(index);
                     }
 
                     public int Length
