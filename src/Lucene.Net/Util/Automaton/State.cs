@@ -48,11 +48,15 @@ namespace Lucene.Net.Util.Automaton
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public Transition[] TransitionsArray
         {
-            get { return transitionsArray; }
+            get => transitionsArray;
             // LUCENENET NOTE: Setter removed because it is apparently not in use outside of this class
         }
-        private Transition[] transitionsArray;
-        internal int numTransitions; // LUCENENET NOTE: Made internal because we already have a public property for access
+#if FEATURE_ARRAYEMPTY
+        private Transition[] transitionsArray = Array.Empty<Transition>();
+#else
+        private Transition[] transitionsArray = new Transition[0];
+#endif
+        internal int numTransitions = 0;// LUCENENET NOTE: Made internal because we already have a public property for access
 
         internal int number;
 
@@ -64,7 +68,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public State()
         {
-            ResetTransitions();
+            //ResetTransitions(); // LUCENENET: Let class initializer set these
             id = next_id++;
         }
 
@@ -73,7 +77,11 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         internal void ResetTransitions()
         {
+#if FEATURE_ARRAYEMPTY
+            transitionsArray = Array.Empty<Transition>();
+#else
             transitionsArray = new Transition[0];
+#endif
             numTransitions = 0;
         }
 
@@ -242,9 +250,7 @@ namespace Lucene.Net.Util.Automaton
         {
             if (numTransitions < transitionsArray.Length)
             {
-                Transition[] newArray = new Transition[numTransitions];
-                Array.Copy(transitionsArray, 0, newArray, 0, numTransitions);
-                transitionsArray = newArray;
+                Array.Resize(ref transitionsArray, numTransitions); // LUCENENET: Resize rather than copy
             }
         }
 
