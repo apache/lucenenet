@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using J2N.Numerics;
 
 namespace Lucene.Net
 {
@@ -68,6 +69,36 @@ namespace Lucene.Net
         public static long NextInt64(this Random random, long start, long end)
         {
             return TestUtil.NextInt64(random, start, end);
+        }
+
+        /// <summary>
+        /// Generates a random <see cref="long"/> between <c>0</c> (inclusive)
+        /// and <paramref name="n"/> (exclusive).
+        /// </summary>
+        /// <param name="random">This <see cref="Random"/>.</param>
+        /// <param name="n">The bound on the random number to be returned. Must be positive.</param>
+        /// <returns>A random <see cref="long"/> between 0 and <paramref name="n"/>-1.</returns>
+        public static long NextInt64(this Random random, long n)
+        {
+            if (n <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(n), $"{n} <= 0: " + n);
+            }
+
+            long value = NextInt64(random);
+            long range = n - 1;
+            if ((n & range) == 0L)
+            {
+                value &= range;
+            }
+            else
+            {
+                for (long u = value.TripleShift(1); u + range - (value = u % n) < 0L;)
+                {
+                    u = NextInt64(random).TripleShift(1);
+                }
+            }
+            return value;
         }
 
         /// <summary>
