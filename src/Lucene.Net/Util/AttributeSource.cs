@@ -137,16 +137,34 @@ namespace Lucene.Net.Util
                 }
 
                 // LUCENENET specific - factored this out so we can reuse
-                private static WeakReference<Type> CreateAttributeWeakReference(Type attClass, out Type clazz)
+                private static WeakReference<Type> CreateAttributeWeakReference(Type attributeInterfaceType, out Type clazz)
                 {
                     try
                     {
-                        string name = attClass.FullName.Replace(attClass.Name, attClass.Name.Substring(1)) + ", " + attClass.GetTypeInfo().Assembly.FullName;
-                        return new WeakReference<Type>(clazz = Type.GetType(name, true));
+                        string name = ConvertAttributeInterfaceToClassName(attributeInterfaceType);
+                        return new WeakReference<Type>(clazz = attributeInterfaceType.Assembly.GetType(name, true));
                     }
                     catch (Exception e)
                     {
-                        throw new ArgumentException("Could not find implementing class for " + attClass.Name, e);
+                        throw new ArgumentException("Could not find implementing class for " + attributeInterfaceType.Name, e);
+                    }
+                }
+
+                private static string ConvertAttributeInterfaceToClassName(Type attributeInterfaceType)
+                {
+                    int lastPlus = attributeInterfaceType.FullName.LastIndexOf('+');
+                    if (lastPlus == -1)
+                    {
+                        return string.Concat(
+                            attributeInterfaceType.Namespace,
+                            ".",
+                            attributeInterfaceType.Name.Substring(1));
+                    }
+                    else
+                    {
+                        return string.Concat(
+                            attributeInterfaceType.FullName.Substring(0, lastPlus + 1),
+                            attributeInterfaceType.Name.Substring(1));
                     }
                 }
             }
