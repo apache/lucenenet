@@ -4,7 +4,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using J2N.Text;
 using NUnit.Framework.Constraints;
+using JCG = J2N.Collections.Generic;
 using _NUnit = NUnit.Framework;
 
 namespace Lucene.Net.TestFramework
@@ -330,6 +332,84 @@ namespace Lucene.Net.TestFramework
             _NUnit.Assert.True(expected.Equals(actual), message);
         }
 
+
+        private static JCG.SetEqualityComparer<T> GetSetComparer<T>(bool aggressive)
+        {
+            return aggressive
+                ? JCG.SetEqualityComparer<T>.Aggressive
+                : JCG.SetEqualityComparer<T>.Default;
+        }
+
+        private static JCG.ListEqualityComparer<T> GetListComparer<T>(bool aggressive)
+        {
+            return aggressive
+                ? JCG.ListEqualityComparer<T>.Aggressive
+                : JCG.ListEqualityComparer<T>.Default;
+        }
+
+        private static JCG.DictionaryEqualityComparer<TKey, TValue> GetDictionaryComparer<TKey, TValue>(bool aggressive)
+        {
+            return aggressive
+                ? JCG.DictionaryEqualityComparer<TKey, TValue>.Aggressive
+                : JCG.DictionaryEqualityComparer<TKey, TValue>.Default;
+        }
+
+        public static string FormatCollection(object collection)
+        {
+            return string.Format(StringFormatter.CurrentCulture, "{0}", collection);
+        }
+
+        public static void AreEqual<T>(ISet<T> expected, ISet<T> actual, bool aggressive = true)
+        {
+            if (!GetSetComparer<T>(aggressive).Equals(expected, actual))
+            {
+                _NUnit.Assert.Fail("Expected: '{0}', Actual: '{1}'", FormatCollection(expected), FormatCollection(actual));
+            }
+        }
+
+        public static void AreEqual<T>(ISet<T> expected, ISet<T> actual, bool aggressive, string message, params object[] args)
+        {
+            if (!GetSetComparer<T>(aggressive).Equals(expected, actual))
+            {
+                _NUnit.Assert.Fail(message, args);
+            }
+        }
+
+        public static void AreEqual<T>(IList<T> expected, IList<T> actual, bool aggressive = true)
+        {
+            if (!GetListComparer<T>(aggressive).Equals(expected, actual))
+            {
+                _NUnit.Assert.Fail("Expected: '{0}', Actual: '{1}'", FormatCollection(expected), FormatCollection(actual));
+            }
+
+        }
+
+        public static void AreEqual<T>(IList<T> expected, IList<T> actual, bool aggressive, string message, params object[] args)
+        {
+            if (!GetListComparer<T>(aggressive).Equals(expected, actual))
+            {
+                _NUnit.Assert.Fail(message, args);
+            }
+        }
+
+        public static void AreEqual<TKey, TValue>(IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive = true)
+        {
+            if (!GetDictionaryComparer<TKey, TValue>(aggressive).Equals(expected, actual))
+            {
+                _NUnit.Assert.Fail("Expected: '{0}', Actual: '{1}'", FormatCollection(expected), FormatCollection(actual));
+            }
+
+        } 
+
+        public static void AreEqual<TKey, TValue>(IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive, string message, params object[] args)
+        {
+            if (!GetDictionaryComparer<TKey, TValue>(aggressive).Equals(expected, actual))
+            {
+                _NUnit.Assert.Fail(message, args);
+            }
+        }
+
+
         // From CollectionAssert
         public static void AreEqual<T>(T[] expected, T[] actual)
         {
@@ -349,15 +429,6 @@ namespace Lucene.Net.TestFramework
             if (!J2N.Collections.ArrayEqualityComparer<T>.OneDimensional.Equals(expected, actual))
             {
                 _NUnit.CollectionAssert.AreEqual(expected, actual, message, args);
-            }
-        }
-
-        public static void AreEqual<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
-        {
-            AreEqual(expected.Count, actual.Count);
-            foreach (var key in expected.Keys)
-            {
-                AreEqual(expected[key], actual[key]);
             }
         }
 
