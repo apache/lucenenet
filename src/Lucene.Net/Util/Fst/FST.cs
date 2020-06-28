@@ -452,12 +452,12 @@ namespace Lucene.Net.Util.Fst
                     // LUCENENET NOTE: In .NET, IEnumerable will not equal another identical IEnumerable
                     // because it checks for reference equality, not that the list contents
                     // are the same. StructuralEqualityComparer.Default.Equals() will make that check.
-                    Debug.Assert(typeof(T).GetTypeInfo().IsValueType 
+                    Debug.Assert(typeof(T).IsValueType 
                         ? JCG.EqualityComparer<T>.Default.Equals(root.NextFinalOutput, asserting.NextFinalOutput)
                         : StructuralEqualityComparer.Default.Equals(root.NextFinalOutput, asserting.NextFinalOutput));
                     Debug.Assert(root.Node == asserting.Node);
                     Debug.Assert(root.NumArcs == asserting.NumArcs);
-                    Debug.Assert(typeof(T).GetTypeInfo().IsValueType
+                    Debug.Assert(typeof(T).IsValueType
                         ? JCG.EqualityComparer<T>.Default.Equals(root.Output, asserting.Output)
                         : StructuralEqualityComparer.Default.Equals(root.Output, asserting.Output));
                     Debug.Assert(root.PosArcsStart == asserting.PosArcsStart);

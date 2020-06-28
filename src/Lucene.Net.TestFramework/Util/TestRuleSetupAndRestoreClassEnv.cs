@@ -153,7 +153,7 @@ namespace Lucene.Net.Util
 
             Type targetClass = testInstance?.GetType() ?? LuceneTestCase.GetTestClass();
             avoidCodecs = new JCG.HashSet<string>();
-            var suppressCodecsAttribute = targetClass.GetTypeInfo().GetCustomAttribute<LuceneTestCase.SuppressCodecsAttribute>();
+            var suppressCodecsAttribute = targetClass.GetCustomAttribute<LuceneTestCase.SuppressCodecsAttribute>();
             if (suppressCodecsAttribute != null)
             {
                 avoidCodecs.UnionWith(suppressCodecsAttribute.Value);

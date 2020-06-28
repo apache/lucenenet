@@ -198,7 +198,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             string col = "                  ";
             StringBuilder sb = new StringBuilder();
             string newline = Environment.NewLine;
-            sb.Append("------------> ").Append(GetType().GetTypeInfo().Name).Append(" statistics (").Append(printNum).Append("): ").Append(newline);
+            sb.Append("------------> ").Append(GetType().Name).Append(" statistics (").Append(printNum).Append("): ").Append(newline);
             int nut = TotalItemsCount;
             if (nut > lastPrintedNumUniqueTexts)
             {

@@ -179,7 +179,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             if (closed)
             {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this FieldsReader is closed");
+                throw new ObjectDisposedException(this.GetType().FullName, "this FieldsReader is closed");
             }
         }
 

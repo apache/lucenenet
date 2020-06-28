@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestFinalSingleton()
 	    {
-		    assertTrue(typeof(NoMergePolicy).GetTypeInfo().IsSealed);
+		    assertTrue(typeof(NoMergePolicy).IsSealed);
 		    ConstructorInfo[] ctors = typeof(NoMergePolicy).GetConstructors(BindingFlags.Instance |
                     BindingFlags.NonPublic |
                     BindingFlags.Public |

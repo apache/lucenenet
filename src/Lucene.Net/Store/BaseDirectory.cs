@@ -84,7 +84,7 @@ namespace Lucene.Net.Store
         {
             if (!IsOpen)
             {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this Directory is closed");
+                throw new ObjectDisposedException(this.GetType().FullName, "this Directory is closed");
             }
         }
     }

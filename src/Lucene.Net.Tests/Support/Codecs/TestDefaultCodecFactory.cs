@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs
             protected override void Initialize()
             {
                 base.Initialize();
-                base.ScanForCodecs(this.GetType().GetTypeInfo().Assembly);
+                base.ScanForCodecs(this.GetType().Assembly);
             }
         }
 

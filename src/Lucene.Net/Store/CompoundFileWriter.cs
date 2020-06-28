@@ -203,7 +203,7 @@ namespace Lucene.Net.Store
         {
             if (closed)
             {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "CFS Directory is already closed");
+                throw new ObjectDisposedException(this.GetType().FullName, "CFS Directory is already closed");
             }
         }
 

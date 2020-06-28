@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
         {
             StringBuilder buffer = new StringBuilder();
             // walk up through class hierarchy to get a non-empty simple name (anonymous classes have no name):
-            for (Type clazz = this.GetType(); clazz != null; clazz = clazz.GetTypeInfo().BaseType)
+            for (Type clazz = this.GetType(); clazz != null; clazz = clazz.BaseType)
             {
                 if (clazz.Name != null)
                 {

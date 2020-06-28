@@ -165,7 +165,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             if (RefCount <= 0)
             {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this TaxonomyReader is closed");
+                throw new ObjectDisposedException(this.GetType().FullName, "this TaxonomyReader is closed");
             }
         }
 

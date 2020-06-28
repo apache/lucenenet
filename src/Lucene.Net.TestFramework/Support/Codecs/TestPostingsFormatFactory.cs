@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs
         protected override void Initialize()
         {
             base.Initialize();
-            base.ScanForPostingsFormats(this.GetType().GetTypeInfo().Assembly);
+            base.ScanForPostingsFormats(this.GetType().Assembly);
         }
     }
 }

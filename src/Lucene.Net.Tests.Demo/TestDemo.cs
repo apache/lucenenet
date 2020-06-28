@@ -63,7 +63,7 @@ namespace Lucene.Net.Demo
             // file location, we first extract the files to the disk
             // from embedded resources. Then we know the exact location
             // where they are and it can't fail.
-            var thisAssembly = this.GetType().GetTypeInfo().Assembly;
+            var thisAssembly = this.GetType().Assembly;
             string embeddedDocsLocation = "Test_Files.Docs.";
             foreach (var file in thisAssembly.GetManifestResourceNames())
             {

@@ -241,7 +241,7 @@ namespace Lucene.Net.Store
             }
             catch (NullReferenceException)
             {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
+                throw new ObjectDisposedException(this.GetType().FullName, "Already closed: " + this);
             }
         }
 
@@ -292,7 +292,7 @@ namespace Lucene.Net.Store
         {
             if (buffers == null)
             {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
+                throw new ObjectDisposedException(this.GetType().FullName, "Already closed: " + this);
             }
             if (offset < 0 || length < 0 || offset + length > this.length)
             {
@@ -358,7 +358,7 @@ namespace Lucene.Net.Store
         {
             if (buffers == null || curBuf == null)
             {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
+                throw new ObjectDisposedException(this.GetType().FullName, "Already closed: " + this);
             }
         }
 

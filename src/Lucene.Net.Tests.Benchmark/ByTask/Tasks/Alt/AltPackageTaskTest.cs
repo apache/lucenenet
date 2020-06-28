@@ -58,7 +58,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks.Alt
             if (allowAlt)
             {
                 return new String[] {
-                    "alt.tasks.packages = " +this.GetType().GetTypeInfo().Assembly.GetName().Name,
+                    "alt.tasks.packages = " +this.GetType().Assembly.GetName().Name,
                     altTask
                 };
             }

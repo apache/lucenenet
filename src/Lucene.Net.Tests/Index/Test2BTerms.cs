@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
                     {
                         return new MyTermAttributeImpl();
                     }
-                    if (attClass.GetTypeInfo().IsSubclassOf(typeof(CharTermAttribute)))
+                    if (attClass.IsSubclassOf(typeof(CharTermAttribute)))
                     {
                         throw new System.ArgumentException("no");
                     }

@@ -34,7 +34,7 @@ namespace Lucene.Net.Codecs
     /// <list type="number">
     ///     <item><description>Subclass this class.</description></item>
     ///     <item><description>Subclass <see cref="DefaultPostingsFormatFactory"/>, override <see cref="DefaultPostingsFormatFactory.Initialize()"/>,
-    ///         and add the line <c>base.ScanForPostingsFormats(typeof(YourPostingsFormat).GetTypeInfo().Assembly)</c>. 
+    ///         and add the line <c>base.ScanForPostingsFormats(typeof(YourPostingsFormat).Assembly)</c>. 
     ///         If you have any format classes in your assembly 
     ///         that are not meant for reading, you can add the <see cref="ExcludePostingsFormatFromScanAttribute"/> 
     ///         to them so they are ignored by the scan.</description></item>

@@ -187,7 +187,7 @@ namespace Lucene.Net.Analysis.Synonym
             object delegator = synFac.Delegator;
 #pragma warning restore 612, 618
             assertNotNull(delegator);
-            assertTrue("delegator not expected class: " + delegator.GetType(), delegatorClass.GetTypeInfo().IsInstanceOfType(delegator));
+            assertTrue("delegator not expected class: " + delegator.GetType(), delegatorClass.IsInstanceOfType(delegator));
 
         }
     }

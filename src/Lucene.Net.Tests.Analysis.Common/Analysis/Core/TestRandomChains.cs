@@ -196,9 +196,9 @@ namespace Lucene.Net.Analysis.Core
         {
             base.BeforeClass();
 
-            IEnumerable<Type> analysisClasses = typeof(StandardAnalyzer).GetTypeInfo().Assembly.GetTypes()
+            IEnumerable<Type> analysisClasses = typeof(StandardAnalyzer).Assembly.GetTypes()
                 .Where(c => {
-                    var typeInfo = c.GetTypeInfo();
+                    var typeInfo = c;
 
                     return !typeInfo.IsAbstract && typeInfo.IsPublic && !typeInfo.IsInterface 
                         && typeInfo.IsClass && (typeInfo.GetCustomAttribute<ObsoleteAttribute>() == null)
@@ -217,7 +217,7 @@ namespace Lucene.Net.Analysis.Core
                         continue;
                     }
 
-                    var typeInfo = c.GetTypeInfo();
+                    var typeInfo = c;
 
                     if (typeInfo.IsSubclassOf(typeof(Tokenizer)))
                     {

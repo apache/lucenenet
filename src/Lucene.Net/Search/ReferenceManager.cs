@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
         {
             if (current == null)
             {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
+                throw new ObjectDisposedException(this.GetType().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
             }
         }
 
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
             {
                 if ((@ref = current) == null)
                 {
-                    throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
+                    throw new ObjectDisposedException(this.GetType().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
                 }
                 if (TryIncRef(@ref))
                 {

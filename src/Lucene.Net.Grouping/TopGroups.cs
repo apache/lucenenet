@@ -148,7 +148,7 @@ namespace Lucene.Net.Search.Grouping
 
             // LUCENENET specific - store whether T is value type
             // for optimization of GetHashCode() and Equals()
-            bool shardGroupsIsValueType = typeof(T).GetTypeInfo().IsValueType;
+            bool shardGroupsIsValueType = typeof(T).IsValueType;
 
             int totalHitCount = 0;
             int totalGroupedHitCount = 0;

@@ -927,7 +927,7 @@ namespace Lucene.Net.Util
                 return _testName;
 #else
                 //return ThreadAndTestNameRule.TestMethodName;
-                return this.GetType().GetTypeInfo().Name; // LUCENENET TODO: return the current test method name if the test framework supports such a thing.
+                return this.GetType().Name; // LUCENENET TODO: return the current test method name if the test framework supports such a thing.
 #endif
             }
         }
@@ -1250,8 +1250,8 @@ namespace Lucene.Net.Util
                 {
                     //// Retrieve the package-private setIndexerThreadPool
                     //// method:
-                    ////MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetTypeInfo().GetMethod("SetIndexerThreadPool", new Type[] { typeof(DocumentsWriterPerThreadPool) });
-                    //MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetTypeInfo().GetMethod(
+                    ////MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetMethod("SetIndexerThreadPool", new Type[] { typeof(DocumentsWriterPerThreadPool) });
+                    //MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetMethod(
                     //    "SetIndexerThreadPool", 
                     //    BindingFlags.NonPublic | BindingFlags.Instance, 
                     //    null, 
@@ -1259,7 +1259,7 @@ namespace Lucene.Net.Util
                     //    null);
                     ////setIndexerThreadPoolMethod.setAccessible(true);
                     //Type clazz = typeof(RandomDocumentsWriterPerThreadPool);
-                    //ConstructorInfo ctor = clazz.GetTypeInfo().GetConstructor(new[] { typeof(int), typeof(Random) });
+                    //ConstructorInfo ctor = clazz.GetConstructor(new[] { typeof(int), typeof(Random) });
                     ////ctor.Accessible = true;
                     //// random thread pool
                     //setIndexerThreadPoolMethod.Invoke(c, new[] { ctor.Invoke(new object[] { maxNumThreadStates, r }) });

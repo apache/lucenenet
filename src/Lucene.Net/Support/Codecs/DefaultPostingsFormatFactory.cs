@@ -149,7 +149,7 @@ namespace Lucene.Net.Codecs
         {
             if (postingsFormat == null)
                 throw new ArgumentNullException(nameof(postingsFormat));
-            if (!typeof(PostingsFormat).GetTypeInfo().IsAssignableFrom(postingsFormat))
+            if (!typeof(PostingsFormat).IsAssignableFrom(postingsFormat))
                 throw new ArgumentException($"The supplied type {postingsFormat.AssemblyQualifiedName} does not subclass {nameof(PostingsFormat)}.");
 
             PutPostingsFormatTypeImpl(postingsFormat);

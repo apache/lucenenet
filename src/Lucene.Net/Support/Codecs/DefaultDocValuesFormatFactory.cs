@@ -149,7 +149,7 @@ namespace Lucene.Net.Codecs
         {
             if (docValuesFormat == null)
                 throw new ArgumentNullException(nameof(docValuesFormat));
-            if (!typeof(DocValuesFormat).GetTypeInfo().IsAssignableFrom(docValuesFormat))
+            if (!typeof(DocValuesFormat).IsAssignableFrom(docValuesFormat))
                 throw new ArgumentException($"The supplied type {docValuesFormat.AssemblyQualifiedName} does not subclass {nameof(DocValuesFormat)}.");
 
             PutDocValuesFormatTypeImpl(docValuesFormat);

@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
         {
             if (_closed)
             {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this SearcherLifetimeManager instance is closed");
+                throw new ObjectDisposedException(this.GetType().FullName, "this SearcherLifetimeManager instance is closed");
             }
         }
 
