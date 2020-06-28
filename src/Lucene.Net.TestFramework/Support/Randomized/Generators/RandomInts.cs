@@ -1,6 +1,9 @@
 using Lucene.Net.Support;
 using System;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
+using System.Diagnostics;
+using System.Globalization;
+// LUCENENET NOTE: The asserts here need to be from System.Diagnostics, since they are not meant for end users.
+//using Debug = Lucene.Net.Diagnostics.Debug;
 
 namespace Lucene.Net.Randomized.Generators
 {
@@ -33,9 +36,9 @@ namespace Lucene.Net.Randomized.Generators
         public static int RandomInt32Between(Random random, int min, int max)
         {
             Debug.Assert(min <= max,
-                $"Min must be less than or equal max int. min: {min.ToString()}, max: {max.ToString()}");
+                $"Min must be less than or equal max int. min: {min.ToString(CultureInfo.InvariantCulture)}, max: {max.ToString(CultureInfo.InvariantCulture)}");
             var range = max - min;
-            if (range < Int32.MaxValue)
+            if (range < int.MaxValue)
                 return min + random.Next(1 + range);
 
             return min + (int)Math.Round(random.NextDouble() * range);
