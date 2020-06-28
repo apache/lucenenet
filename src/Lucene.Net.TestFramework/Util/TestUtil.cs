@@ -1031,12 +1031,12 @@ namespace Lucene.Net.Util
         /// <param name="reflectedValues"> Contains a <see cref="IDictionary{String, Object}"/> with "AttributeSubclassType/key" as values.</param>
         public static void AssertAttributeReflection(Attribute att, IDictionary<string, object> reflectedValues)
         {
-            IDictionary<string, object> map = new Dictionary<string, object>();
+            IDictionary<string, object> map = new JCG.Dictionary<string, object>();
             att.ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(map));
-            IDictionary<string, object> newReflectedObjects = new Dictionary<string, object>();
+            IDictionary<string, object> newReflectedObjects = new JCG.Dictionary<string, object>();
             foreach (KeyValuePair<string, object> de in reflectedValues)
                 newReflectedObjects.Add(de.Key, (object)de.Value);
-            Assert.AreEqual((ICollection)newReflectedObjects, (ICollection)map, "Reflection does not produce same map");
+            Assert.AreEqual(newReflectedObjects, map, aggressive: false, "Reflection does not produce same map");
         }
 
         private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector

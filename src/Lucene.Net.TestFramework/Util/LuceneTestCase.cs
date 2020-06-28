@@ -2951,7 +2951,7 @@ namespace Lucene.Net.Util
                 right.Add(fi.Name);
             }
 
-            Assert.AreEqual(left, right, info);
+            Assert.AreEqual(left, right, aggressive: false, info);
         }
 
         /// <summary>

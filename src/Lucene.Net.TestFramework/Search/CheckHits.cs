@@ -119,17 +119,17 @@ namespace Lucene.Net.Search
 
             Trace.TraceInformation("Checked");
 
-            JCG.SortedSet<int?> correct = new JCG.SortedSet<int?>();
+            JCG.SortedSet<int> correct = new JCG.SortedSet<int>();
             for (int i = 0; i < results.Length; i++)
             {
                 correct.Add(Convert.ToInt32(results[i], CultureInfo.InvariantCulture));
             }
-            JCG.SortedSet<int?> actual = new JCG.SortedSet<int?>();
+            JCG.SortedSet<int> actual = new JCG.SortedSet<int>();
             ICollector c = new SetCollector(actual);
 
             searcher.Search(query, c);
 
-            Assert.AreEqual(correct, actual, "Simple: " + query.ToString(defaultFieldName));
+            Assert.AreEqual(correct, actual, aggressive: false, "Simple: " + query.ToString(defaultFieldName));
 
             for (int i = -1; i < 2; i++)
             {
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
 #endif
                     random, searcher, i);
                 s.Search(query, c);
-                Assert.AreEqual(correct, actual, "Wrap Reader " + i + ": " + query.ToString(defaultFieldName));
+                Assert.AreEqual(correct, actual, aggressive: false, "Wrap Reader " + i + ": " + query.ToString(defaultFieldName));
             }
         }
 
@@ -181,19 +181,19 @@ namespace Lucene.Net.Search
         {
             ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
 
-            SortedSet<int?> correct = new SortedSet<int?>();
+            JCG.SortedSet<int> correct = new JCG.SortedSet<int>();
             for (int i = 0; i < results.Length; i++)
             {
                 correct.Add(Convert.ToInt32(results[i], CultureInfo.InvariantCulture));
             }
 
-            SortedSet<int?> actual = new SortedSet<int?>();
+            JCG.SortedSet<int> actual = new JCG.SortedSet<int>();
             for (int i = 0; i < hits.Length; i++)
             {
                 actual.Add(Convert.ToInt32(hits[i].Doc, CultureInfo.InvariantCulture));
             }
 
-            Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
+            Assert.AreEqual(correct, actual, aggressive: false, query.ToString(defaultFieldName));
 
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
@@ -466,9 +466,9 @@ namespace Lucene.Net.Search
     /// </summary>
     public class SetCollector : ICollector
     {
-        internal readonly ISet<int?> bag;
+        internal readonly ISet<int> bag;
 
-        public SetCollector(ISet<int?> bag)
+        public SetCollector(ISet<int> bag)
         {
             this.bag = bag;
         }
