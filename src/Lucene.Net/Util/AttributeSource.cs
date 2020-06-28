@@ -1,3 +1,4 @@
+using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,6 +6,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using FlagsAttribute = Lucene.Net.Analysis.TokenAttributes.FlagsAttribute;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
@@ -68,12 +70,37 @@ namespace Lucene.Net.Util
                 {
                     try
                     {
-                        return (Attribute)Activator.CreateInstance(GetClassForInterface<S>());
+                        Type attributeType = GetClassForInterface<S>();
+
+                        // LUCENENET: Optimize for creating instances of the most common attributes
+                        // directly rather than using Activator.CreateInstance()
+                        return CreateInstance(attributeType) ?? (Attribute)Activator.CreateInstance(attributeType);
                     }
                     catch (Exception e)
                     {
                         throw new ArgumentException("Could not instantiate implementing class for " + typeof(S).FullName, e);
                     }
+                }
+
+                // LUCENENET: optimize known creation of built-in types
+                private Attribute CreateInstance(Type attributeType)
+                {
+                    if (ReferenceEquals(typeof(CharTermAttribute), attributeType))
+                        return new CharTermAttribute();
+                    if (ReferenceEquals(typeof(FlagsAttribute), attributeType))
+                        return new FlagsAttribute();
+                    if (ReferenceEquals(typeof(OffsetAttribute), attributeType))
+                        return new OffsetAttribute();
+                    if (ReferenceEquals(typeof(PayloadAttribute), attributeType))
+                        return new PayloadAttribute();
+                    if (ReferenceEquals(typeof(PositionIncrementAttribute), attributeType))
+                        return new PositionIncrementAttribute();
+                    if (ReferenceEquals(typeof(PositionLengthAttribute), attributeType))
+                        return new PositionLengthAttribute();
+                    if (ReferenceEquals(typeof(TypeAttribute), attributeType))
+                        return new TypeAttribute();
+
+                    return null;
                 }
 
                 internal static Type GetClassForInterface<T>() where T : IAttribute
@@ -91,10 +118,8 @@ namespace Lucene.Net.Util
                     lock (attClassImplMap)
 #endif
                     {
-                        var @ref = attClassImplMap.GetValue(attClass, (key) =>
-                        {
-                            return CreateAttributeWeakReference(key, out clazz);
-                        });
+                        var @ref = attClassImplMap.GetValue(attClass, createValueCallback: (key) =>
+                            CreateAttributeWeakReference(key, out clazz));
 
                         if (!@ref.TryGetTarget(out clazz))
                         {
