@@ -281,9 +281,8 @@ namespace Lucene.Net.Util.Automaton
                             t.to.number = upto;
                             if (upto == states.Length)
                             {
-                                State[] newArray = new State[ArrayUtil.Oversize(1 + upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                                Array.Copy(states, 0, newArray, 0, upto);
-                                states = newArray;
+                                // LUCENENET: Resize rather than copy
+                                Array.Resize(ref states, ArrayUtil.Oversize(1 + upto, RamUsageEstimator.NUM_BYTES_OBJECT_REF));
                             }
                             states[upto] = t.to;
                             upto++;
@@ -292,9 +291,8 @@ namespace Lucene.Net.Util.Automaton
                 }
                 if (states.Length != upto)
                 {
-                    State[] newArray = new State[upto];
-                    Array.Copy(states, 0, newArray, 0, upto);
-                    states = newArray;
+                    // LUCENENET: Resize rather than copy
+                    Array.Resize(ref states, upto);
                 }
                 numberedStates = states;
             }

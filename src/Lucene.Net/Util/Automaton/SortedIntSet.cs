@@ -59,8 +59,7 @@ namespace Lucene.Net.Util.Automaton
             if (useTreeMap)
             {
                 int key = num;
-                int val;
-                if (!map.TryGetValue(key, out val))
+                if (!map.TryGetValue(key, out int val))
                 {
                     map[key] = 1;
                 }

@@ -631,9 +631,8 @@ namespace Lucene.Net.Util.Automaton
             {
                 if (transitions.Length == count)
                 {
-                    Transition[] newArray = new Transition[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                    Array.Copy(transitions, 0, newArray, 0, count);
-                    transitions = newArray;
+                    // LUCENENET: Resize rather than copy
+                    Array.Resize(ref transitions, ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_OBJECT_REF));
                 }
                 transitions[count++] = t;
             }
@@ -684,9 +683,8 @@ namespace Lucene.Net.Util.Automaton
                 // 1st time we are seeing this point
                 if (count == points.Length)
                 {
-                    PointTransitions[] newArray = new PointTransitions[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                    Array.Copy(points, 0, newArray, 0, count);
-                    points = newArray;
+                    // LUCENENET: Resize rather than copy
+                    Array.Resize(ref points, ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_OBJECT_REF));
                 }
                 PointTransitions points0 = points[count];
                 if (points0 == null)
@@ -703,8 +701,7 @@ namespace Lucene.Net.Util.Automaton
                 if (useHash)
                 {
                     int? pi = point;
-                    PointTransitions p;
-                    if (!map.TryGetValue(pi, out p))
+                    if (!map.TryGetValue(pi, out PointTransitions p))
                     {
                         p = Next(point);
                         map[pi] = p;
@@ -856,8 +853,7 @@ namespace Lucene.Net.Util.Automaton
 
                         statesSet.ComputeHash();
 
-                        State q;
-                        if (!newstate.TryGetValue(statesSet.ToFrozenInt32Set(), out q) || q == null)
+                        if (!newstate.TryGetValue(statesSet.ToFrozenInt32Set(), out State q) || q == null)
                         {
                             q = new State();
 
@@ -865,9 +861,8 @@ namespace Lucene.Net.Util.Automaton
                             worklist.AddLast(p);
                             if (newStateUpto == newStatesArray.Length)
                             {
-                                State[] newArray = new State[ArrayUtil.Oversize(1 + newStateUpto, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                                Array.Copy(newStatesArray, 0, newArray, 0, newStateUpto);
-                                newStatesArray = newArray;
+                                // LUCENENET: Resize rather than copy
+                                Array.Resize(ref newStatesArray, ArrayUtil.Oversize(1 + newStateUpto, RamUsageEstimator.NUM_BYTES_OBJECT_REF));
                             }
                             newStatesArray[newStateUpto] = q;
                             q.number = newStateUpto;
