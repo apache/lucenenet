@@ -184,7 +184,7 @@ namespace Lucene.Net.Search.Grouping
 
             // LUCENENET specific - store whether T is value type
             // for optimization of GetHashCode() and Equals()
-            private readonly static bool groupValueIsValueType = typeof(T).GetTypeInfo().IsValueType;
+            private readonly static bool groupValueIsValueType = typeof(T).IsValueType;
 
             public MergedGroup(T groupValue)
             {

@@ -336,7 +336,7 @@ namespace Lucene.Net.Index
         {
             if (writer == null)
             {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this IndexWriter is closed");
+                throw new ObjectDisposedException(this.GetType().FullName, "this IndexWriter is closed");
             }
             else
             {

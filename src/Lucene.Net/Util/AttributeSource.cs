@@ -310,7 +310,7 @@ namespace Lucene.Net.Util
                             foundInterfaces.AddLast(new WeakReference<Type>(curInterface));
                         }
                     }
-                    actClazz = actClazz.GetTypeInfo().BaseType;
+                    actClazz = actClazz.BaseType;
                 } while (actClazz != null);
 
                 return foundInterfaces;
@@ -367,7 +367,7 @@ namespace Lucene.Net.Util
             var attClass = typeof(T);
             if (!attributes.ContainsKey(attClass))
             {
-                if (!(attClass.GetTypeInfo().IsInterface && typeof(IAttribute).IsAssignableFrom(attClass)))
+                if (!(attClass.IsInterface && typeof(IAttribute).IsAssignableFrom(attClass)))
                 {
                     throw new ArgumentException("AddAttribute() only accepts an interface that extends IAttribute, but " + attClass.FullName + " does not fulfil this contract.");
                 }

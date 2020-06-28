@@ -660,7 +660,7 @@ namespace Lucene.Net.Expressions.JS
 #if NETSTANDARD
             var settings = new Dictionary<string, string>();
             var type = typeof(JavascriptCompiler);
-            using (var reader = new StreamReader(type.FindAndGetManifestResourceStream(type.GetTypeInfo().Name + ".properties")))
+            using (var reader = new StreamReader(type.FindAndGetManifestResourceStream(type.Name + ".properties")))
             {
                 string line;
                 while(!string.IsNullOrWhiteSpace(line = reader.ReadLine()))
@@ -695,10 +695,10 @@ namespace Lucene.Net.Expressions.JS
             {
                 throw new ArgumentException(method + " is not public.");
             }
-            if (!method.DeclaringType.GetTypeInfo().IsPublic)
+            if (!method.DeclaringType.IsPublic)
             {
                 //.NET Port. Inner class is being returned as not public even when declared public
-                if (method.DeclaringType.GetTypeInfo().IsNestedAssembly)
+                if (method.DeclaringType.IsNestedAssembly)
                 {
                     throw new ArgumentException(method.DeclaringType.FullName + " is not public.");
                 }

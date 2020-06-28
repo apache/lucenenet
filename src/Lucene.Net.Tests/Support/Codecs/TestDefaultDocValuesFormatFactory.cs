@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs
             protected override void Initialize()
             {
                 base.Initialize();
-                base.ScanForDocValuesFormats(this.GetType().GetTypeInfo().Assembly);
+                base.ScanForDocValuesFormats(this.GetType().Assembly);
             }
         }
 

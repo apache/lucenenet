@@ -632,7 +632,7 @@ namespace Lucene.Net.Analysis
         {
             if (analyzer.storedValue == null)
             {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this Analyzer is closed");
+                throw new ObjectDisposedException(this.GetType().FullName, "this Analyzer is closed");
             }
             return analyzer.storedValue.Get();
         }

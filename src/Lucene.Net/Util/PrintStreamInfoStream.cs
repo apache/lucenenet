@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
             // after calling Dispose(), we need to determine whether it is a system stream
             // here instead of on demand.
             this.isSystemStream = stream == Console.Out || stream == Console.Error;
-            this.m_stream = typeof(SafeTextWriterWrapper).GetTypeInfo().IsAssignableFrom(stream.GetType()) ? stream : new SafeTextWriterWrapper(stream);
+            this.m_stream = typeof(SafeTextWriterWrapper).IsAssignableFrom(stream.GetType()) ? stream : new SafeTextWriterWrapper(stream);
             this.m_messageID = messageID;
         }
 

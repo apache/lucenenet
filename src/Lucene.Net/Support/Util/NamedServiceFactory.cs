@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
                     Type simpleTextType = Type.GetType("Lucene.Net.Codecs.SimpleText.SimpleTextCodec, Lucene.Net.Codecs");
                     if (simpleTextType != null)
                     {
-                        codecsAssembly = simpleTextType.GetTypeInfo().Assembly;
+                        codecsAssembly = simpleTextType.Assembly;
                     }
                 }
 
@@ -85,10 +85,10 @@ namespace Lucene.Net.Util
         {
             return
                 type != null &&
-                type.GetTypeInfo().IsPublic &&
-                !type.GetTypeInfo().IsAbstract &&
-                typeof(TService).GetTypeInfo().IsAssignableFrom(type) &&
-                type.GetTypeInfo().GetCustomAttribute<ExcludeServiceAttribute>(inherit: true) == null;
+                type.IsPublic &&
+                !type.IsAbstract &&
+                typeof(TService).IsAssignableFrom(type) &&
+                type.GetCustomAttribute<ExcludeServiceAttribute>(inherit: true) == null;
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Lucene.Net.Util
         public static string GetServiceName(Type type)
         {
             // Check for ServiceName attribute
-            var nameAttributes = type.GetTypeInfo().GetCustomAttributes(typeof(ServiceNameAttribute), inherit: true);
+            var nameAttributes = type.GetCustomAttributes(typeof(ServiceNameAttribute), inherit: true);
             if (nameAttributes.Any())
             {
                 ServiceNameAttribute nameAttribute = nameAttributes.FirstOrDefault() as ServiceNameAttribute;
@@ -131,7 +131,7 @@ namespace Lucene.Net.Util
                 genericSuffix = "Generic" + name.Substring(genericIndex + 1);
                 name = name.Substring(0, genericIndex);
             }
-            string serviceName = typeof(TService).GetTypeInfo().Name;
+            string serviceName = typeof(TService).Name;
             if (name.EndsWith(serviceName, StringComparison.Ordinal))
             {
                 name = name.Substring(0, name.Length - serviceName.Length);

@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Util
             // Stream stream = this.clazz.FindAndGetManifestResourceStream(resource);
             // causes TestMappingCharFilter.TestRandomMaps2 to run 2-3 times slower.
             // So, we are using the long-hand syntax in this one place.
-            Stream stream = this.clazz.GetTypeInfo().Assembly.FindAndGetManifestResourceStream(clazz, resource);
+            Stream stream = this.clazz.Assembly.FindAndGetManifestResourceStream(clazz, resource);
             if (stream == null)
             {
                 throw new IOException("Resource not found: " + resource);
@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Util
                     return Type.GetType(cname);
                 }
 
-                return this.clazz.GetTypeInfo().Assembly.GetType(cname, true);
+                return this.clazz.Assembly.GetType(cname, true);
             }
             catch (Exception e)
             {

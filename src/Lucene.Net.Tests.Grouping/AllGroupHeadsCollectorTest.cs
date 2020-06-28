@@ -326,7 +326,7 @@ namespace Lucene.Net.Search.Grouping
                 try
                 {
                     IndexSearcher s = NewSearcher(r);
-                    if (typeof(SlowCompositeReaderWrapper).GetTypeInfo().IsAssignableFrom(s.IndexReader.GetType()))
+                    if (typeof(SlowCompositeReaderWrapper).IsAssignableFrom(s.IndexReader.GetType()))
                     {
                         canUseIDV = false;
                     }

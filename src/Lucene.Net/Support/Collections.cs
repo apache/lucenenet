@@ -82,7 +82,7 @@ namespace Lucene.Net.Support
                 return "[]";
             }
 
-            bool isValueType = typeof(T).GetTypeInfo().IsValueType;
+            bool isValueType = typeof(T).IsValueType;
             using (var it = collection.GetEnumerator())
             {
                 StringBuilder sb = new StringBuilder();
@@ -126,8 +126,8 @@ namespace Lucene.Net.Support
                 return "{}";
             }
 
-            bool keyIsValueType = typeof(TKey).GetTypeInfo().IsValueType;
-            bool valueIsValueType = typeof(TValue).GetTypeInfo().IsValueType;
+            bool keyIsValueType = typeof(TKey).IsValueType;
+            bool valueIsValueType = typeof(TValue).IsValueType;
             using (var i = dictionary.GetEnumerator())
             {
                 StringBuilder sb = new StringBuilder();
@@ -171,7 +171,7 @@ namespace Lucene.Net.Support
         public static string ToString(object obj)
         {
             Type t = obj.GetType();
-            if (t.GetTypeInfo().IsGenericType
+            if (t.IsGenericType
                 && (t.ImplementsGenericInterface(typeof(ICollection<>)))
                 || t.ImplementsGenericInterface(typeof(IDictionary<,>)))
             {

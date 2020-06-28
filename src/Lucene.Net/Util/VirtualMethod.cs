@@ -169,13 +169,13 @@ namespace Lucene.Net.Util
 
         private int ReflectImplementationDistance(Type subclazz)
         {
-            if (!baseClass.GetTypeInfo().IsAssignableFrom(subclazz))
+            if (!baseClass.IsAssignableFrom(subclazz))
             {
                 throw new System.ArgumentException(subclazz.Name + " is not a subclass of " + baseClass.Name);
             }
             bool overridden = false;
             int distance = 0;
-            for (Type clazz = subclazz; clazz != baseClass && clazz != null; clazz = clazz.GetTypeInfo().BaseType)
+            for (Type clazz = subclazz; clazz != baseClass && clazz != null; clazz = clazz.BaseType)
             {
                 // lookup method, if success mark as overridden
                 if (!overridden)

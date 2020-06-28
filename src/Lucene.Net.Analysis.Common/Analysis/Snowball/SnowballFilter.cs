@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.Snowball
             try
             {
                 string className = typeof(SnowballProgram).Namespace + ".Ext." +
-                    name + "Stemmer, " + this.GetType().GetTypeInfo().Assembly.GetName().Name;
+                    name + "Stemmer, " + this.GetType().Assembly.GetName().Name;
                 Type stemClass = Type.GetType(className);
 
                 stemmer = (SnowballProgram)Activator.CreateInstance(stemClass);

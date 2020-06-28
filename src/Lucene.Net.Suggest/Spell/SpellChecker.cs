@@ -668,7 +668,7 @@ namespace Lucene.Net.Search.Spell
         {
             if (disposed)
             {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Spellchecker has been closed");
+                throw new ObjectDisposedException(this.GetType().FullName, "Spellchecker has been closed");
             }
         }
 
@@ -705,7 +705,7 @@ namespace Lucene.Net.Search.Spell
                 if (disposed)
                 {
                     indexSearcher.IndexReader.Dispose();
-                    throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Spellchecker has been closed");
+                    throw new ObjectDisposedException(this.GetType().FullName, "Spellchecker has been closed");
                 }
                 if (searcher != null)
                 {

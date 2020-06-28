@@ -39,7 +39,7 @@ namespace Lucene.Net.Util.Fst
 
         // LUCENENET specific - optimize the Hash methods
         // by only calling StructuralEqualityComparer.GetHashCode() if the value is a reference type
-        private readonly static bool tIsValueType = typeof(T).GetTypeInfo().IsValueType;
+        private readonly static bool tIsValueType = typeof(T).IsValueType;
 
         public NodeHash(FST<T> fst, FST.BytesReader input)
         {

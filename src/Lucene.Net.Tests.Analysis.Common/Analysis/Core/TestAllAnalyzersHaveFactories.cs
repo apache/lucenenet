@@ -98,10 +98,10 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void Test()
         {
-            IList<Type> analysisClasses = typeof(StandardAnalyzer).GetTypeInfo().Assembly.GetTypes()
+            IList<Type> analysisClasses = typeof(StandardAnalyzer).Assembly.GetTypes()
                     .Where(c =>
                     {
-                        var typeInfo = c.GetTypeInfo();
+                        var typeInfo = c;
 
                         return !typeInfo.IsAbstract && typeInfo.IsPublic && !typeInfo.IsInterface && typeInfo.IsClass && (typeInfo.GetCustomAttribute<ObsoleteAttribute>() == null)
                             && !testComponents.Contains(c) && !crazyComponents.Contains(c) && !oddlyNamedComponents.Contains(c) && !deprecatedDuplicatedComponents.Contains(c)
@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.Core
                 IDictionary<string, string> args = new Dictionary<string, string>();
                 args["luceneMatchVersion"] = TEST_VERSION_CURRENT.ToString();
 
-                if (c.GetTypeInfo().IsSubclassOf(typeof(Tokenizer)))
+                if (c.IsSubclassOf(typeof(Tokenizer)))
                 {
                     string clazzName = c.Name;
                     assertTrue(clazzName.EndsWith("Tokenizer", StringComparison.Ordinal));
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Core
                         // TODO: For now pass because some factories have not yet a default config that always works
                     }
                 }
-                else if (c.GetTypeInfo().IsSubclassOf(typeof(TokenFilter)))
+                else if (c.IsSubclassOf(typeof(TokenFilter)))
                 {
                     string clazzName = c.Name;
                     assertTrue(clazzName.EndsWith("Filter", StringComparison.Ordinal));
@@ -175,7 +175,7 @@ namespace Lucene.Net.Analysis.Core
                         // TODO: For now pass because some factories have not yet a default config that always works
                     }
                 }
-                else if (c.GetTypeInfo().IsSubclassOf(typeof(CharFilter)))
+                else if (c.IsSubclassOf(typeof(CharFilter)))
                 {
                     string clazzName = c.Name;
                     assertTrue(clazzName.EndsWith("CharFilter", StringComparison.Ordinal));

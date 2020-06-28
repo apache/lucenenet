@@ -36,7 +36,7 @@ namespace Lucene.Net.Randomized.Attributes
 
             foreach (Type item in decorators)
             {
-                if (item.GetTypeInfo().ImplementedInterfaces.Contains(typeof(ISeedDecorator)))
+                if (item.ImplementedInterfaces.Contains(typeof(ISeedDecorator)))
                     this.Decorators.Add(item);
             }
         }

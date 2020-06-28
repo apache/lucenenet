@@ -486,15 +486,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     DirectoryInfo baseDir = new DirectoryInfo(RunData.Config.Get("work.dir", "work"));
                     ((IResourceLoaderAware)instance).Inform(new FilesystemResourceLoader(baseDir));
                 }
-                if (typeof(CharFilterFactory).GetTypeInfo().IsAssignableFrom(clazz))
+                if (typeof(CharFilterFactory).IsAssignableFrom(clazz))
                 {
                     charFilterFactories.Add((CharFilterFactory)instance);
                 }
-                else if (typeof(TokenizerFactory).GetTypeInfo().IsAssignableFrom(clazz))
+                else if (typeof(TokenizerFactory).IsAssignableFrom(clazz))
                 {
                     tokenizerFactory = (TokenizerFactory)instance;
                 }
-                else if (typeof(TokenFilterFactory).GetTypeInfo().IsAssignableFrom(clazz))
+                else if (typeof(TokenFilterFactory).IsAssignableFrom(clazz))
                 {
                     tokenFilterFactories.Add((TokenFilterFactory)instance);
                 }
@@ -551,15 +551,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
             // No dot - use analysis SPI lookup
             string analysisComponentName = ANALYSIS_COMPONENT_SUFFIX_PATTERN.Replace(className, "", 1);
-            if (typeof(CharFilterFactory).GetTypeInfo().IsAssignableFrom(expectedType))
+            if (typeof(CharFilterFactory).IsAssignableFrom(expectedType))
             {
                 return CharFilterFactory.LookupClass(analysisComponentName);
             }
-            else if (typeof(TokenizerFactory).GetTypeInfo().IsAssignableFrom(expectedType))
+            else if (typeof(TokenizerFactory).IsAssignableFrom(expectedType))
             {
                 return TokenizerFactory.LookupClass(analysisComponentName);
             }
-            else if (typeof(TokenFilterFactory).GetTypeInfo().IsAssignableFrom(expectedType))
+            else if (typeof(TokenFilterFactory).IsAssignableFrom(expectedType))
             {
                 return TokenFilterFactory.LookupClass(analysisComponentName);
             }

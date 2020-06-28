@@ -427,7 +427,7 @@ namespace Lucene.Net.Util
             {
                 throw new System.ArgumentException("this method does not work with array classes.");
             }
-            if (clazz.GetTypeInfo().IsPrimitive)
+            if (clazz.IsPrimitive)
             {
                 return primitiveSizes[clazz];
             }
@@ -435,7 +435,7 @@ namespace Lucene.Net.Util
             long size = NUM_BYTES_OBJECT_HEADER;
 
             // Walk type hierarchy
-            for (; clazz != null; clazz = clazz.GetTypeInfo().BaseType)
+            for (; clazz != null; clazz = clazz.BaseType)
             {
                 FieldInfo[] fields = clazz.GetFields(
                     BindingFlags.Instance | 
@@ -464,7 +464,7 @@ namespace Lucene.Net.Util
             if (len > 0)
             {
                 Type arrayElementClazz = array.GetType().GetElementType();
-                if (arrayElementClazz.GetTypeInfo().IsPrimitive)
+                if (arrayElementClazz.IsPrimitive)
                 {
                     size += (long)len * primitiveSizes[arrayElementClazz];
                 }
@@ -525,7 +525,7 @@ namespace Lucene.Net.Util
                     if (len > 0)
                     {
                         Type componentClazz = obClazz.GetElementType();
-                        if (componentClazz.GetTypeInfo().IsPrimitive)
+                        if (componentClazz.IsPrimitive)
                         {
                             size += (long)len * primitiveSizes[componentClazz];
                         }
@@ -596,7 +596,7 @@ namespace Lucene.Net.Util
             ClassCache cachedInfo;
             long shallowInstanceSize = NUM_BYTES_OBJECT_HEADER;
             List<FieldInfo> referenceFields = new List<FieldInfo>(32);
-            for (Type c = clazz; c != null; c = c.GetTypeInfo().BaseType)
+            for (Type c = clazz; c != null; c = c.BaseType)
             {
                 FieldInfo[] fields = c.GetFields(
                     BindingFlags.Instance | 
@@ -610,7 +610,7 @@ namespace Lucene.Net.Util
                     {
                         shallowInstanceSize = AdjustForField(shallowInstanceSize, f);
 
-                        if (!f.FieldType.GetTypeInfo().IsPrimitive)
+                        if (!f.FieldType.IsPrimitive)
                         {
                             referenceFields.Add(f);
                         }
@@ -635,7 +635,7 @@ namespace Lucene.Net.Util
             int fsize = 0;
             
             if (!typeof(IntPtr).Equals(type) && !typeof(UIntPtr).Equals(type))
-                fsize = type.GetTypeInfo().IsPrimitive ? primitiveSizes[type] : NUM_BYTES_OBJECT_REF;
+                fsize = type.IsPrimitive ? primitiveSizes[type] : NUM_BYTES_OBJECT_REF;
 
             // LUCENENET NOTE: I dont think this will ever not be null
             //if (ObjectFieldOffsetMethod != null)

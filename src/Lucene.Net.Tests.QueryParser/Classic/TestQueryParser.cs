@@ -145,7 +145,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             try
             {
-                typeof(QueryParser).GetTypeInfo().GetConstructor(new Type[] { typeof(ICharStream) });
+                typeof(QueryParser).GetConstructor(new Type[] { typeof(ICharStream) });
                 fail("please switch public QueryParser(CharStream) to be protected");
             }
             catch (Exception /*nsme*/)
@@ -154,7 +154,7 @@ namespace Lucene.Net.QueryParsers.Classic
             }
             try
             {
-                typeof(QueryParser).GetTypeInfo().GetConstructor(new Type[] { typeof(QueryParserTokenManager) });
+                typeof(QueryParser).GetConstructor(new Type[] { typeof(QueryParserTokenManager) });
                 fail("please switch public QueryParser(QueryParserTokenManager) to be protected");
             }
             catch (Exception /*nsme*/)

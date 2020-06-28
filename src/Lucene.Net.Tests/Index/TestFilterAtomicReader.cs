@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
 
         private static void CheckOverrideMethods(Type clazz)
         {
-            Type superClazz = clazz.GetTypeInfo().BaseType;
+            Type superClazz = clazz.BaseType;
             foreach (MethodInfo m in superClazz.GetMethods())
             {
                 // LUCENENET specific - since we changed to using a property for Attributes rather than a method,

@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs
         {
             if (codec == null)
                 throw new ArgumentNullException(nameof(codec));
-            if (!typeof(Codec).GetTypeInfo().IsAssignableFrom(codec))
+            if (!typeof(Codec).IsAssignableFrom(codec))
                 throw new ArgumentException($"The supplied type {codec.AssemblyQualifiedName} does not subclass {nameof(Codec)}.");
 
             PutCodecTypeImpl(codec);

@@ -38,7 +38,7 @@ namespace Lucene.Net.Randomized
             this.suiteClass = testClass;
 
             var list = new List<ISeedDecorator>();
-            var attrs = this.suiteClass.GetTypeInfo().GetCustomAttributes<SeedDecoratorAttribute>(true);
+            var attrs = this.suiteClass.GetCustomAttributes<SeedDecoratorAttribute>(true);
             foreach (var attr in attrs)
             {
                 foreach (var decoratorType in attr.Decorators)

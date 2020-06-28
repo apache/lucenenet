@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
         /// <returns>A new <see cref="ResourceManager"/> instance.</returns>
         public virtual ResourceManager Create(Type resourceSource)
         {
-            return new ResourceManager(GetResourceName(resourceSource), resourceSource.GetTypeInfo().Assembly);
+            return new ResourceManager(GetResourceName(resourceSource), resourceSource.Assembly);
         }
 
         /// <summary>
