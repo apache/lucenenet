@@ -172,9 +172,8 @@ namespace Lucene.Net.Util.Automaton
         {
             if (numTransitions == transitionsArray.Length)
             {
-                Transition[] newArray = new Transition[ArrayUtil.Oversize(1 + numTransitions, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                Array.Copy(transitionsArray, 0, newArray, 0, numTransitions);
-                transitionsArray = newArray;
+                // LUCENENET: Resize rather than copy
+                Array.Resize(ref transitionsArray, ArrayUtil.Oversize(1 + numTransitions, RamUsageEstimator.NUM_BYTES_OBJECT_REF));
             }
             transitionsArray[numTransitions++] = t;
         }
