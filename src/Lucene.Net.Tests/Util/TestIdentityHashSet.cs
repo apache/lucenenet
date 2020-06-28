@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Util
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Util
             for (int i = 0; i < max; i++)
             {
                 // some of these will be interned and some will not so there will be collisions.
-                int? v = rnd.Next(threshold);
+                int v = rnd.Next(threshold);
 
                 bool e1 = jdk.Contains(v);
                 bool e2 = us.Contains(v);
@@ -53,12 +54,13 @@ namespace Lucene.Net.Util
             }
 
             ISet<object> collected = new JCG.HashSet<object>(IdentityEqualityComparer<object>.Default);
-            foreach (object o in us)
+            foreach (var o in us)
             {
                 collected.Add(o);
             }
 
-            assertEquals(collected, jdk);
+            // LUCENENET: We have 2 J2N hashsets, so no need to use aggressive mode
+            assertEquals(collected, jdk, aggressive: false);
         }
     }
 }
