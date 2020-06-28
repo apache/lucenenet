@@ -138,24 +138,24 @@ namespace Lucene.Net.Util
             Assert.AreEqual(d1, d2, delta, msg);
         }
 
-        internal static void assertEquals<T>(ISet<T> expected, ISet<T> actual)
+        internal static void assertEquals<T>(ISet<T> expected, ISet<T> actual, bool aggressive = true)
         {
-            Assert.True(JCG.SetEqualityComparer<T>.Aggressive.Equals(expected, actual));
+            Assert.AreEqual(expected, actual, aggressive);
         }
 
-        internal static void assertEquals<T>(string message, ISet<T> expected, ISet<T> actual)
+        internal static void assertEquals<T>(string message, ISet<T> expected, ISet<T> actual, bool aggressive = true)
         {
-            Assert.True(JCG.SetEqualityComparer<T>.Aggressive.Equals(expected, actual), message);
+            Assert.AreEqual(expected, actual, aggressive, message);
         }
 
-        internal static void assertEquals<T>(IList<T> expected, IList<T> actual)
+        internal static void assertEquals<T>(IList<T> expected, IList<T> actual, bool aggressive = true)
         {
-            Assert.True(JCG.ListEqualityComparer<T>.Aggressive.Equals(expected, actual));
+            Assert.AreEqual(expected, actual, aggressive);
         }
 
-        internal static void assertEquals<T>(string message, IList<T> expected, IList<T> actual)
+        internal static void assertEquals<T>(string message, IList<T> expected, IList<T> actual, bool aggressive = true)
         {
-            Assert.True(JCG.SetEqualityComparer<T>.Aggressive.Equals(expected, actual), message);
+            Assert.AreEqual(expected, actual, aggressive, message);
         }
 
         internal static void assertEquals<T>(T[] expected, T[] actual)
@@ -168,9 +168,14 @@ namespace Lucene.Net.Util
             Assert.AreEqual(expected, actual, message);
         }
 
-        internal static void assertEquals<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
+        internal static void assertEquals<TKey, TValue>(IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive = true)
         {
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(expected, actual, aggressive);
+        }
+
+        internal static void assertEquals<TKey, TValue>(string message, IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive = true)
+        {
+            Assert.AreEqual(expected, actual, aggressive, message);
         }
 
         internal static void assertNotSame(object unexpected, object actual)
