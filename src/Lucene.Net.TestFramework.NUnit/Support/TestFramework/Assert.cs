@@ -1,13 +1,11 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Text;
+using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using J2N.Text;
-using NUnit.Framework.Constraints;
-using JCG = J2N.Collections.Generic;
 using _NUnit = NUnit.Framework;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.TestFramework
 {
@@ -413,35 +411,19 @@ namespace Lucene.Net.TestFramework
         // From CollectionAssert
         public static void AreEqual<T>(T[] expected, T[] actual)
         {
-            // LUCENENET: Do the initial check with the (fast) J2N array comparison. If it fails,
-            // then use CollectionAssert to re-do the check in a slower way and generate the assert message.
             if (!J2N.Collections.ArrayEqualityComparer<T>.OneDimensional.Equals(expected, actual))
             {
-                _NUnit.CollectionAssert.AreEqual(expected, actual);
+                _NUnit.Assert.Fail("Expected: '{0}', Actual: '{1}'", FormatCollection(expected), FormatCollection(actual));
             }
         }
 
         // From CollectionAssert
         public static void AreEqual<T>(T[] expected, T[] actual, string message, params object[] args)
         {
-            // LUCENENET: Do the initial check with the (fast) J2N array comparison. If it fails,
-            // then use CollectionAssert to re-do the check in a slower way and generate the assert message.
             if (!J2N.Collections.ArrayEqualityComparer<T>.OneDimensional.Equals(expected, actual))
             {
-                _NUnit.CollectionAssert.AreEqual(expected, actual, message, args);
+                _NUnit.Assert.Fail(message, args);
             }
-        }
-
-        // From CollectionAssert
-        public static void AreEqual(ICollection expected, ICollection actual)
-        {
-            _NUnit.CollectionAssert.AreEqual(expected, actual);
-        }
-
-        // From CollectionAssert
-        public static void AreEqual(ICollection expected, ICollection actual, string message, params object[] args)
-        {
-            _NUnit.CollectionAssert.AreEqual(expected, actual, message, args);
         }
 
         //
