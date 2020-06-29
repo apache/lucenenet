@@ -44,17 +44,17 @@ namespace Lucene.Net.Util
                 IList<int> list1 = CreateRandomList(2000), list2 = new List<int>(list1);
                 CollectionUtil.IntroSort(list1);
                 list2.Sort();
-                assertEquals(list2, list1);
+                assertEquals(list2, list1, aggressive: false);
 
                 list1 = CreateRandomList(2000);
                 list2 = new List<int>(list1);
                 CollectionUtil.IntroSort(list1, Collections.ReverseOrder<int>());
                 list2.Sort(Collections.ReverseOrder<int>());
-                assertEquals(list2, list1);
+                assertEquals(list2, list1, aggressive: false);
                 // reverse back, so we can test that completely backwards sorted array (worst case) is working:
                 CollectionUtil.IntroSort(list1);
                 list2.Sort();
-                assertEquals(list2, list1);
+                assertEquals(list2, list1, aggressive: false);
             }
         }
 
@@ -66,17 +66,17 @@ namespace Lucene.Net.Util
                 IList<int> list1 = CreateRandomList(2000), list2 = new List<int>(list1);
                 CollectionUtil.TimSort(list1);
                 list2.Sort();
-                assertEquals(list2, list1);
+                assertEquals(list2, list1, aggressive: false);
 
                 list1 = CreateRandomList(2000);
                 list2 = new List<int>(list1);
                 CollectionUtil.TimSort(list1, Collections.ReverseOrder<int>());
                 list2.Sort(Collections.ReverseOrder<int>());
-                assertEquals(list2, list1);
+                assertEquals(list2, list1, aggressive: false);
                 // reverse back, so we can test that completely backwards sorted array (worst case) is working:
                 CollectionUtil.TimSort(list1);
                 list2.Sort();
-                assertEquals(list2, list1);
+                assertEquals(list2, list1, aggressive: false);
             }
         }
 

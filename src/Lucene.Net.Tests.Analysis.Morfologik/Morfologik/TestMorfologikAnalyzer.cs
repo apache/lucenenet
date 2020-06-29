@@ -147,19 +147,20 @@ namespace Lucene.Net.Analysis.Morfologik
             SCG.ISet<String> expected = new JCG.SortedSet<String>(StringComparer.Ordinal);
             foreach (StringBuilder b in ts.GetAttribute<IMorphosyntacticTagsAttribute>().Tags)
             {
-                actual.add(b.toString());
+                actual.Add(b.ToString());
             }
             foreach (String s in tags)
             {
-                expected.add(s);
+                expected.Add(s);
             }
 
-            if (!expected.equals(actual))
-            {
-                Console.WriteLine("Expected:\n" + expected);
-                Console.WriteLine("Actual:\n" + actual);
-                assertEquals(expected, actual);
-            }
+            // LUCENENET: Commented out unnecessary extra check
+            //if (!expected.Equals(actual))
+            //{
+            //    Console.WriteLine("Expected:\n" + expected);
+            //    Console.WriteLine("Actual:\n" + actual);
+                assertEquals(expected, actual, aggressive: false);
+            //}
         }
 
         /** Test morphosyntactic annotations. */

@@ -275,7 +275,10 @@ namespace Lucene.Net.Tests.Queries
                 assertEquals(search.TotalHits, 3);
                 assertEquals(search.ScoreDocs[1].Score, search.ScoreDocs[2].Score, 0F);
                 assertEquals(@"0", r.Document(search.ScoreDocs[0].Doc).Get(@"id"));
-                assertEquals(new JCG.HashSet<string> { @"2", @"3" }, new JCG.HashSet<string> { r.Document(search.ScoreDocs[1].Doc).Get(@"id"), r.Document(search.ScoreDocs[2].Doc).Get(@"id") });
+                assertEquals(
+                    new JCG.HashSet<string> { @"2", @"3" },
+                    new JCG.HashSet<string> { r.Document(search.ScoreDocs[1].Doc).Get(@"id"), r.Document(search.ScoreDocs[2].Doc).Get(@"id") },
+                    aggressive: false);
             }
 
             {
@@ -298,7 +301,10 @@ namespace Lucene.Net.Tests.Queries
                 query.HighFreqMinimumNumberShouldMatch = 2F;
                 TopDocs search = s.Search(query, 10);
                 assertEquals(search.TotalHits, 2);
-                assertEquals(new JCG.HashSet<string> { @"0", @"2" }, new JCG.HashSet<string> { r.Document(search.ScoreDocs[0].Doc).Get(@"id"), r.Document(search.ScoreDocs[1].Doc).Get(@"id") });
+                assertEquals(
+                    new JCG.HashSet<string> { @"0", @"2" },
+                    new JCG.HashSet<string> { r.Document(search.ScoreDocs[0].Doc).Get(@"id"), r.Document(search.ScoreDocs[1].Doc).Get(@"id") },
+                    aggressive: false);
             }
 
             r.Dispose();

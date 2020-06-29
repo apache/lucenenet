@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Core
 
             // defaults
             factory = (StopFilterFactory)TokenFilterFactory("Stop");
-            assertEquals(StopAnalyzer.ENGLISH_STOP_WORDS_SET, factory.StopWords);
+            assertEquals(StopAnalyzer.ENGLISH_STOP_WORDS_SET, factory.StopWords, aggressive: false);
             assertEquals(false, factory.IgnoreCase);
         }
 

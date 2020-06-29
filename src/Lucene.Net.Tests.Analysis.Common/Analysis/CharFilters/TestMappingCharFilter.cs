@@ -550,7 +550,7 @@ namespace Lucene.Net.Analysis.CharFilters
 
                     // Verify:
                     assertEquals(expected, actual);
-                    assertEquals(inputOffsets, actualInputOffsets);
+                    assertEquals(inputOffsets, actualInputOffsets, aggressive: false);
                 }
             }
         }
