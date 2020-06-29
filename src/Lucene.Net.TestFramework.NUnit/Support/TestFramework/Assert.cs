@@ -373,6 +373,14 @@ namespace Lucene.Net.TestFramework
             }
         }
 
+        public static void AreEqual<T>(ISet<T> expected, ISet<T> actual, bool aggressive, Func<string> getMessage)
+        {
+            if (!GetSetComparer<T>(aggressive).Equals(expected, actual))
+            {
+                _NUnit.Assert.Fail(getMessage());
+            }
+        }
+
         public static void AreEqual<T>(IList<T> expected, IList<T> actual, bool aggressive = true)
         {
             if (!GetListComparer<T>(aggressive).Equals(expected, actual))
@@ -390,13 +398,20 @@ namespace Lucene.Net.TestFramework
             }
         }
 
+        public static void AreEqual<T>(IList<T> expected, IList<T> actual, bool aggressive, Func<string> getMessage)
+        {
+            if (!GetListComparer<T>(aggressive).Equals(expected, actual))
+            {
+                _NUnit.Assert.Fail(getMessage());
+            }
+        }
+
         public static void AreEqual<TKey, TValue>(IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive = true)
         {
             if (!GetDictionaryComparer<TKey, TValue>(aggressive).Equals(expected, actual))
             {
                 _NUnit.Assert.Fail("Expected: '{0}', Actual: '{1}'", FormatCollection(expected), FormatCollection(actual));
             }
-
         } 
 
         public static void AreEqual<TKey, TValue>(IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive, string message, params object[] args)
@@ -404,6 +419,14 @@ namespace Lucene.Net.TestFramework
             if (!GetDictionaryComparer<TKey, TValue>(aggressive).Equals(expected, actual))
             {
                 _NUnit.Assert.Fail(message, args);
+            }
+        }
+
+        public static void AreEqual<TKey, TValue>(IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive, Func<string> getMessage)
+        {
+            if (!GetDictionaryComparer<TKey, TValue>(aggressive).Equals(expected, actual))
+            {
+                _NUnit.Assert.Fail(getMessage());
             }
         }
 
