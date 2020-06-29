@@ -883,7 +883,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 // Messy: fixup ties
                 SortTies(actual);
 
-                Assert.AreEqual(expected, actual);
+                Assert.AreEqual(expected, actual, aggressive: false);
             }
 
             IOUtils.Dispose(w, tw, searcher.IndexReader, tr, indexDir, taxoDir);

@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Suggest
                 BytesRef payload = wrapper.Payload;
                 actual.Put(BytesRef.DeepCopyOf(key), new KeyValuePair<long, BytesRef>(value, BytesRef.DeepCopyOf(payload)));
             }
-            assertEquals(sorted, actual);
+            assertEquals(sorted, actual, aggressive: false);
 
             // test the sorted iterator wrapper without payloads
             IInputIterator wrapperWithoutPayload = new SortedInputIterator(new InputArrayIterator(unsortedWithoutPayload), comparer);
@@ -155,7 +155,7 @@ namespace Lucene.Net.Search.Suggest
                 assertNull(wrapperWithoutPayload.Payload);
                 actualWithoutPayload.Put(BytesRef.DeepCopyOf(key), value);
             }
-            assertEquals(sortedWithoutPayload, actualWithoutPayload);
+            assertEquals(sortedWithoutPayload, actualWithoutPayload, aggressive: false);
         }
 
         public static long AsLong(BytesRef b)

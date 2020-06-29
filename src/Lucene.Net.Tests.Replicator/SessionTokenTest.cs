@@ -54,7 +54,7 @@ namespace Lucene.Net.Replicator
             assertEquals(session1.SourceFiles.Keys, session2.SourceFiles.Keys);
             IList<RevisionFile> files1 = session1.SourceFiles.Values.First();
             IList<RevisionFile> files2 = session2.SourceFiles.Values.First();
-            assertEquals(files1, files2);
+            assertEquals(files1, files2, aggressive: false);
 
             IOUtils.Dispose(writer, directory);
         }
