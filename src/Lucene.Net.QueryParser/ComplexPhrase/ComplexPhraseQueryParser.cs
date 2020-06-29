@@ -289,7 +289,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                         AddComplexPhraseClause(sc, (BooleanQuery)qc);
                         if (sc.Count > 0)
                         {
-                            allSpanClauses[i] = sc.ElementAt(0);
+                            allSpanClauses[i] = sc[0];
                         }
                         else
                         {
