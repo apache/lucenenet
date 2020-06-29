@@ -63,7 +63,7 @@
 
     <MicrosoftExtensionsDependencyInjectionPackageVersion>3.1.4</MicrosoftExtensionsDependencyInjectionPackageVersion>
     
-    <MicrosoftNETTestSdkPackageVersion>16.2.0</MicrosoftNETTestSdkPackageVersion>
+    <MicrosoftNETTestSdkPackageVersion>16.6.1</MicrosoftNETTestSdkPackageVersion>
     <MorfologikFsaPackageVersion>2.1.6-beta-0005</MorfologikFsaPackageVersion>
     <MorfologikPolishPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikPolishPackageVersion>
     <MorfologikStemmingPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikStemmingPackageVersion>
@@ -72,8 +72,8 @@
     <NETStandardLibrary16PackageVersion>1.6.1</NETStandardLibrary16PackageVersion>
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
     <NewtonsoftJsonPackageVersion>10.0.3</NewtonsoftJsonPackageVersion>
-    <NUnit3TestAdapterPackageVersion>3.13.0</NUnit3TestAdapterPackageVersion>
-    <NUnitPackageVersion>3.9.0</NUnitPackageVersion>
+    <NUnit3TestAdapterPackageVersion>3.16.1</NUnit3TestAdapterPackageVersion>
+    <NUnitPackageVersion>3.12.0</NUnitPackageVersion>
     <OpenNLPNETPackageVersion>1.9.1</OpenNLPNETPackageVersion>
     <SharpZipLibPackageVersion>1.1.0</SharpZipLibPackageVersion>
     <SharpZipLibNETStandardPackageVersion>0.86.0.1</SharpZipLibNETStandardPackageVersion>
