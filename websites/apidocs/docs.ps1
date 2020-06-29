@@ -142,7 +142,10 @@ $DocFxJsonMeta = @(
     "docfx.queryparser.json",
     "docfx.replicator.json",
     "docfx.sandbox.json",
-    "docfx.test-framework.json"    
+    "docfx.spatial.json",
+    "docfx.suggest.json",
+    "docfx.test-framework.json",
+    "docfx.demo.json"
 )
 $DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
 

@@ -1,0 +1,3 @@
+- name: Spatial
+  href: ../../obj/docfx/api/spatial/toc.yml
+  topicUid: Lucene.Net.Spatial

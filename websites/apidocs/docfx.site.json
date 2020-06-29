@@ -42,7 +42,10 @@
       "_site/api/queryparser/xrefmap.yml",
       "_site/api/replicator/xrefmap.yml",
       "_site/api/sandbox/xrefmap.yml",
-      "_site/api/test-framework/xrefmap.yml"      
+      "_site/api/spatial/xrefmap.yml",
+      "_site/api/suggest/xrefmap.yml",      
+      "_site/api/test-framework/xrefmap.yml",
+      "_site/api/demo/xrefmap.yml"
     ],
     "dest": "_site",
     "globalMetadataFiles": ["docfx.global.json"],
