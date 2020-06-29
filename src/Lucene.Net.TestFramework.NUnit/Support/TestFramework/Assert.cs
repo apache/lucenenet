@@ -592,7 +592,7 @@ namespace Lucene.Net.TestFramework
         //     The evaluated condition
         public static void False(bool condition)
         {
-            _NUnit.Assert.That(condition, _NUnit.Is.False);
+            _NUnit.Assert.False(condition);
         }
 
         //
@@ -605,7 +605,7 @@ namespace Lucene.Net.TestFramework
         //     The evaluated condition
         public static void IsFalse(bool condition)
         {
-            _NUnit.Assert.That(condition, _NUnit.Is.False);
+            _NUnit.Assert.IsFalse(condition);
         }
 
         //
@@ -624,7 +624,7 @@ namespace Lucene.Net.TestFramework
         //     Array of objects to be used in formatting the message
         public static void IsFalse(bool condition, string message, params object[] args)
         {
-            _NUnit.Assert.That(condition, _NUnit.Is.False, message, args);
+            _NUnit.Assert.IsFalse(condition, message, args);
         }
 
         //
