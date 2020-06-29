@@ -1,0 +1,3 @@
+- name: Query Parser
+  href: ../../obj/docfx/api/queryparser/toc.yml
+  topicUid: Lucene.Net.QueryParser
