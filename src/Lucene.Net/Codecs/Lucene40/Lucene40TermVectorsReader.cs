@@ -808,11 +808,16 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override int NextPosition()
             {
-                // LUCENENET TODO: BUG - Need to investigate why this assert sometimes fails
-                // which will cause the test runner to crash on .NET Core 2.0
-#if !NETSTANDARD2_0 && !NETSTANDARD2_1
-                Debug.Assert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
-#endif
+                //Debug.Assert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
+
+                // LUCENENET: The above assertion was for control flow when testing. In Java, it would throw an AssertionError, which is
+                // caught by the BaseTermVectorsFormatTestCase.assertEquals(RandomTokenStream tk, FieldType ft, Terms terms) method in the
+                // part that is checking for an error after reading to the end of the enumerator.
+
+                // Since there is no way to turn on assertions in a release build in .NET, we are throwing an InvalidOperationException
+                // in this case, which matches the behavior of Lucene 8. See #267.
+                if (((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length) == false)
+                    throw new InvalidOperationException("Read past last position");
 
                 if (positions != null)
                 {

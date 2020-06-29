@@ -1071,11 +1071,11 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 if (doc == NO_MORE_DOCS)
                 {
-                    throw new Exception("DocsEnum exhausted");
+                    throw new InvalidOperationException("DocsEnum exhausted");
                 }
                 else if (doc == -1)
                 {
-                    throw new Exception("DocsEnum not started");
+                    throw new InvalidOperationException("DocsEnum not started");
                 }
             }
 
@@ -1084,11 +1084,11 @@ namespace Lucene.Net.Codecs.Compressing
                 CheckDoc();
                 if (i < 0)
                 {
-                    throw new Exception("Position enum not started");
+                    throw new InvalidOperationException("Position enum not started");
                 }
                 else if (i >= termFreq)
                 {
-                    throw new Exception("Read past last position");
+                    throw new InvalidOperationException("Read past last position");
                 }
             }
 
@@ -1096,11 +1096,11 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 if (doc != 0)
                 {
-                    throw new Exception();
+                    throw new InvalidOperationException();
                 }
                 else if (i >= termFreq - 1)
                 {
-                    throw new Exception("Read past last position");
+                    throw new InvalidOperationException("Read past last position");
                 }
 
                 ++i;

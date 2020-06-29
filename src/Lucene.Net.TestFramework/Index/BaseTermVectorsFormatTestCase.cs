@@ -16,6 +16,7 @@ using System.Threading;
 using JCG = J2N.Collections.Generic;
 using static Lucene.Net.Index.TermsEnum;
 using Assert = Lucene.Net.TestFramework.Assert;
+using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Attribute = Lucene.Net.Util.Attribute;
 
 #if TESTFRAMEWORK_MSTEST
@@ -634,17 +635,28 @@ namespace Lucene.Net.Index
                                 Assert.IsTrue(foundPayload);
                             }
                         }
-                        try
-                        {
-                            docsAndPositionsEnum.NextPosition();
-                            Assert.Fail();
-                        }
-#pragma warning disable 168
-                        catch (Exception e)
-#pragma warning restore 168
-                        {
-                            // ok
-                        }
+
+                        // LUCENENET specific - In Lucene, there were assertions set up inside TVReaders which throw AssertionError
+                        // (provided assertions are enabled), which in turn signaled this class to skip the check by catching AssertionError.
+                        // In .NET, assertions are not included in the release and cannot be enabled, so there is nothing to catch.
+                        // We have to explicitly exclude the types that rely on this behavior from the check. Otherwise, they would fall
+                        // through to Assert.Fail().
+                        //
+                        // We also have a fake AssertionException for testing mocks. We cannot throw InvalidOperationException in those
+                        // cases because that exception is expected in other contexts.
+                        Assert.ThrowsAnyOf<InvalidOperationException, AssertionError>(() => docsAndPositionsEnum.NextPosition());
+
+//                        try
+//                        {
+//                            docsAndPositionsEnum.NextPosition();
+//                            Assert.Fail();
+//                        }
+//#pragma warning disable 168
+//                        catch (Exception e)
+//#pragma warning restore 168
+//                        {
+//                            // ok
+//                        }
                     }
                     Assert.AreEqual(DocsEnum.NO_MORE_DOCS, docsAndPositionsEnum.NextDoc());
                 }

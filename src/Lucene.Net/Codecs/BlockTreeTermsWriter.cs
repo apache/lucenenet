@@ -4,6 +4,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 namespace Lucene.Net.Codecs
 {
@@ -433,11 +434,54 @@ namespace Lucene.Net.Codecs
                 return "BLOCK: " + Prefix.Utf8ToString();
             }
 
+            // LUCENENET specific - to keep the Debug.Assert statement from throwing exceptions
+            // because of invalid UTF8 code in Prefix, we have a wrapper method that falls back
+            // to using PendingBlock.Prefix.ToString() if PendingBlock.ToString()
+            private string ToString(IList<PendingBlock> blocks) // For assert
+            {
+                if (blocks == null)
+                    return "null";
+
+
+                if (blocks.Count == 0)
+                    return "[]";
+
+                using (var it = blocks.GetEnumerator())
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append('[');
+                    it.MoveNext();
+                    while (true)
+                    {
+                        var e = it.Current;
+                        // There is a chance that the Prefix will contain invalid UTF8,
+                        // so we catch that and use the alternative way of displaying it
+                        try
+                        {
+                            sb.Append(e.ToString());
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            sb.Append("BLOCK: ");
+                            sb.Append(e.Prefix.ToString());
+                        }
+                        if (!it.MoveNext())
+                        {
+                            return sb.Append(']').ToString();
+                        }
+                        sb.Append(',').Append(' ');
+                    }
+                }
+            }
+
             public void CompileIndex(IList<PendingBlock> floorBlocks, RAMOutputStream scratchBytes)
             {
-                // LUCENENET TODO: floorBlocks cannot be converted using Arrays.ToString() here.
-                // It generates an IndexOutOfRangeException()
-                Debug.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor=" + IsFloor + " floorBlocks=" + floorBlocks /*Arrays.ToString(floorBlocks)*/); 
+                // LUCENENET specific - we use a custom wrapper function to display floorBlocks, since
+                // it might contain garbage that cannot be converted into text. This is compiled out
+                // of the relese, though.
+                Debug.Assert(
+                    (IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null),
+                    "isFloor=" + IsFloor + " floorBlocks=" + ToString(floorBlocks));
 
                 Debug.Assert(scratchBytes.GetFilePointer() == 0);
 
