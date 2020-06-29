@@ -6,6 +6,14 @@
           "toc.yml",
           "*.md"
         ]
+      },
+      {
+        "files": [
+          "**.md",
+          "**.yml"
+        ],
+        "src": "../../src/dotnet/tools/lucene-cli/docs",
+        "dest": "cli"
       }
     ],
     "resource": [

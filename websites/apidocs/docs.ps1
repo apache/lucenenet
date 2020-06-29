@@ -19,21 +19,16 @@
 
 param (
     [Parameter(Mandatory)]
-    [string]
-    $LuceneNetVersion, # TODO: Validate this with regex
-    [Parameter(Mandatory = $false)]
-    [int]
-    $ServeDocs = 1,
-    [Parameter(Mandatory = $false)]
-    [int]
-    $Clean = 0,
+    [string] $LuceneNetVersion, # TODO: Validate this with regex
+    [switch] $ServeDocs = $false,
+    [switch] $Clean = $false,
+    [switch] $DisableMetaData = $false,
+    [switch] $DisableBuild = $false,
     # LogLevel can be: Diagnostic, Verbose, Info, Warning, Error
     [Parameter(Mandatory = $false)]
-    [string]
-    $LogLevel = 'Warning',
+    [string] $LogLevel = 'Warning',
     [Parameter(Mandatory = $false)]
-    [string]
-    $BaseUrl = 'http://localhost:8080'
+    [string] $BaseUrl = 'http://localhost:8080'
 )
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -45,7 +40,7 @@ $ToolsFolder = Join-Path -Path $ApiDocsFolder -ChildPath "tools";
 #ensure the /build/tools folder
 New-Item $ToolsFolder -type directory -force
 
-if ($Clean -eq 1) {
+if ($Clean) {
     Write-Host "Cleaning tools..."
     Remove-Item (Join-Path -Path $ToolsFolder "\*") -recurse -force -ErrorAction SilentlyContinue
 }
@@ -87,7 +82,7 @@ if (-not (test-path $vswhere)) {
 Remove-Item  -Recurse -Force "$ToolsFolder\tmp"
 
 # delete anything that already exists
-if ($Clean -eq 1) {
+if ($Clean) {
     Write-Host "Cleaning..."
     Remove-Item (Join-Path -Path $ApiDocsFolder "_site\*") -recurse -force -ErrorAction SilentlyContinue
     Remove-Item (Join-Path -Path $ApiDocsFolder "_site") -force -ErrorAction SilentlyContinue
@@ -152,16 +147,16 @@ $DocFxJsonSite = Join-Path -Path $ApiDocsFolder "docfx.site.json"
 # set env vars that will be replaced in Markdown
 $env:LuceneNetVersion = $LuceneNetVersion
 
-$DocFxLog = Join-Path -Path $ApiDocsFolder "obj\docfx.log"
-
-if ($?) { 
+if ($? -and $DisableMetaData -eq $false) { 
     foreach ($proj in $DocFxJsonMeta) {
         $projFile = Join-Path -Path $ApiDocsFolder $proj
+
+        $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\${proj}.meta.log"
 
         # build the output		
         Write-Host "Building api metadata for $projFile..."
 
-        if ($Clean -eq 1) {
+        if ($Clean) {
             & $DocFxExe metadata $projFile --log "$DocFxLog" --loglevel $LogLevel --force
         }
         else {
@@ -170,14 +165,16 @@ if ($?) {
     }
 }
 
-if ($?) { 
+if ($? -and $DisableBuild -eq $false) { 
     foreach ($proj in $DocFxJsonMeta) {
         $projFile = Join-Path -Path $ApiDocsFolder $proj
+
+        $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\${proj}.build.log"
 
         # build the output		
         Write-Host "Building site output for $projFile..."
 
-        if ($Clean -eq 1) {
+        if ($Clean) {
             & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --force --debug
         }
         else {
@@ -207,13 +204,16 @@ if ($?) {
     }
 }
 
-if ($?) { 
-    if ($ServeDocs -eq 0) {
+if ($?) {
+
+    $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\docfx.site.json.log"
+
+    if ($ServeDocs -eq $false) {
 
         # build the output		
         Write-Host "Building docs..."
 
-        if ($Clean -eq 1) {
+        if ($Clean) {
             & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --force --debug
         }
         else {
