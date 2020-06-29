@@ -704,7 +704,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         Update update = new Update();
                         update.index = Random.nextInt(inputs.size());
                         update.weight = weight;
-                        Input input = inputs.ElementAt(update.index);
+                        Input input = inputs[update.index];
                         pendingUpdates.Add(update);
                         if (VERBOSE)
                         {
@@ -735,7 +735,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         visibleUpto = inputs.size();
                         foreach (Update update in pendingUpdates)
                         {
-                            Input oldInput = inputs.ElementAt(update.index);
+                            Input oldInput = inputs[update.index];
                             Input newInput = new Input(oldInput.term, update.weight, oldInput.payload);
                             inputs[update.index] = newInput;
                         }
@@ -760,7 +760,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         visibleUpto = inputs.size();
                         foreach (Update update in pendingUpdates)
                         {
-                            Input oldInput = inputs.ElementAt(update.index);
+                            Input oldInput = inputs[update.index];
                             Input newInput = new Input(oldInput.term, update.weight, oldInput.payload);
                             inputs[update.index] = newInput;
                         }
@@ -789,7 +789,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         List<Input> expected = new List<Input>();
                         for (int i = 0; i < visibleUpto; i++)
                         {
-                            Input input = inputs.ElementAt(i);
+                            Input input = inputs[i];
                             string[] inputTerms = Regex.Split(input.term.Utf8ToString(), "\\s", RegexOptions.Compiled).TrimEnd();
                             bool match = false;
                             for (int j = 0; j < queryTerms.Length; j++)
@@ -849,7 +849,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                         expected.Sort(new TestRandomNRTComparer());
 
-                        if (expected.Any())
+                        if (expected.Count > 0)
                         {
 
                             int topN = TestUtil.NextInt32(Random, 1, expected.size());
@@ -863,7 +863,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                                 Console.WriteLine("  expected:");
                                 for (int i = 0; i < expectedCount; i++)
                                 {
-                                    Input x = expected.ElementAt(i);
+                                    Input x = expected[i];
                                     Console.WriteLine("    " + x.term.Utf8ToString() + "/" + x.v);
                                 }
                                 Console.WriteLine("  actual:");
@@ -876,9 +876,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             assertEquals(expectedCount, actual.size());
                             for (int i = 0; i < expectedCount; i++)
                             {
-                                assertEquals(expected.ElementAt(i).term.Utf8ToString(), actual.ElementAt(i).Key.toString());
-                                assertEquals(expected.ElementAt(i).v, actual.ElementAt(i).Value);
-                                assertEquals(expected.ElementAt(i).payload, actual.ElementAt(i).Payload);
+                                assertEquals(expected[i].term.Utf8ToString(), actual[i].Key.toString());
+                                assertEquals(expected[i].v, actual[i].Value);
+                                assertEquals(expected[i].payload, actual[i].Payload);
                             }
                         }
                         else
@@ -966,9 +966,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
                 assertEquals(1, results.size());
-                assertEquals("lend me your <b>ear</b>", results.ElementAt(0).Key);
-                assertEquals(8, results.ElementAt(0).Value);
-                assertEquals(new BytesRef("foobar"), results.ElementAt(0).Payload);
+                assertEquals("lend me your <b>ear</b>", results[0].Key);
+                assertEquals(8, results[0].Value);
+                assertEquals(new BytesRef("foobar"), results[0].Payload);
 
                 // Add a new suggestion:
                 suggester.Add(new BytesRef("a penny saved is a penny earned"), null, 10, new BytesRef("foobaz"));
@@ -978,31 +978,31 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
                 assertEquals(2, results.size());
-                assertEquals("a penny saved is a penny <b>ear</b>ned", results.ElementAt(0).Key);
-                assertEquals(10, results.ElementAt(0).Value);
-                assertEquals(new BytesRef("foobaz"), results.ElementAt(0).Payload);
+                assertEquals("a penny saved is a penny <b>ear</b>ned", results[0].Key);
+                assertEquals(10, results[0].Value);
+                assertEquals(new BytesRef("foobaz"), results[0].Payload);
 
-                assertEquals("lend me your <b>ear</b>", results.ElementAt(1).Key);
-                assertEquals(8, results.ElementAt(1).Value);
-                assertEquals(new BytesRef("foobar"), results.ElementAt(1).Payload);
+                assertEquals("lend me your <b>ear</b>", results[1].Key);
+                assertEquals(8, results[1].Value);
+                assertEquals(new BytesRef("foobar"), results[1].Payload);
 
                 results = suggester.DoLookup(TestUtil.StringToCharSequence("ear ", Random).ToString(), 10, true, true);
                 assertEquals(1, results.size());
-                assertEquals("lend me your <b>ear</b>", results.ElementAt(0).Key);
-                assertEquals(8, results.ElementAt(0).Value);
-                assertEquals(new BytesRef("foobar"), results.ElementAt(0).Payload);
+                assertEquals("lend me your <b>ear</b>", results[0].Key);
+                assertEquals(8, results[0].Value);
+                assertEquals(new BytesRef("foobar"), results[0].Payload);
 
                 results = suggester.DoLookup(TestUtil.StringToCharSequence("pen", Random).ToString(), 10, true, true);
                 assertEquals(1, results.size());
-                assertEquals("a <b>pen</b>ny saved is a <b>pen</b>ny earned", results.ElementAt(0).Key);
-                assertEquals(10, results.ElementAt(0).Value);
-                assertEquals(new BytesRef("foobaz"), results.ElementAt(0).Payload);
+                assertEquals("a <b>pen</b>ny saved is a <b>pen</b>ny earned", results[0].Key);
+                assertEquals(10, results[0].Value);
+                assertEquals(new BytesRef("foobaz"), results[0].Payload);
 
                 results = suggester.DoLookup(TestUtil.StringToCharSequence("p", Random).ToString(), 10, true, true);
                 assertEquals(1, results.size());
-                assertEquals("a <b>p</b>enny saved is a <b>p</b>enny earned", results.ElementAt(0).Key);
-                assertEquals(10, results.ElementAt(0).Value);
-                assertEquals(new BytesRef("foobaz"), results.ElementAt(0).Payload);
+                assertEquals("a <b>p</b>enny saved is a <b>p</b>enny earned", results[0].Key);
+                assertEquals(10, results[0].Value);
+                assertEquals(new BytesRef("foobaz"), results[0].Payload);
 
                 // Change the weight:
                 suggester.Update(new BytesRef("lend me your ear"), null, 12, new BytesRef("foobox"));
@@ -1012,12 +1012,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
                 assertEquals(2, results.size());
-                assertEquals("lend me your <b>ear</b>", results.ElementAt(0).Key);
-                assertEquals(12, results.ElementAt(0).Value);
-                assertEquals(new BytesRef("foobox"), results.ElementAt(0).Payload);
-                assertEquals("a penny saved is a penny <b>ear</b>ned", results.ElementAt(1).Key);
-                assertEquals(10, results.ElementAt(1).Value);
-                assertEquals(new BytesRef("foobaz"), results.ElementAt(1).Payload);
+                assertEquals("lend me your <b>ear</b>", results[0].Key);
+                assertEquals(12, results[0].Value);
+                assertEquals(new BytesRef("foobox"), results[0].Payload);
+                assertEquals("a penny saved is a penny <b>ear</b>ned", results[1].Key);
+                assertEquals(10, results[1].Value);
+                assertEquals(new BytesRef("foobaz"), results[1].Payload);
             }
         }
 
@@ -1063,7 +1063,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // No context provided, all results returned
                     IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), 10, true, true);
                     assertEquals(2, results.size());
-                    Lookup.LookupResult result = results.ElementAt(0);
+                    Lookup.LookupResult result = results[0];
                     assertEquals("a penny saved is a penny <b>ear</b>ned", result.Key);
                     assertEquals(10, result.Value);
                     assertEquals(new BytesRef("foobaz"), result.Payload);
@@ -1072,7 +1072,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     assertTrue(result.Contexts.Contains(new BytesRef("foo")));
                     assertTrue(result.Contexts.Contains(new BytesRef("baz")));
 
-                    result = results.ElementAt(1);
+                    result = results[1];
                     assertEquals("lend me your <b>ear</b>", result.Key);
                     assertEquals(8, result.Value);
                     assertEquals(new BytesRef("foobar"), result.Payload);
@@ -1085,7 +1085,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), AsSet("foo"), 10, true, true);
                     assertEquals(2, results.size());
 
-                    result = results.ElementAt(0);
+                    result = results[0];
                     assertEquals("a penny saved is a penny <b>ear</b>ned", result.Key);
                     assertEquals(10, result.Value);
                     assertEquals(new BytesRef("foobaz"), result.Payload);
@@ -1094,7 +1094,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     assertTrue(result.Contexts.Contains(new BytesRef("foo")));
                     assertTrue(result.Contexts.Contains(new BytesRef("baz")));
 
-                    result = results.ElementAt(1);
+                    result = results[1];
                     assertEquals("lend me your <b>ear</b>", result.Key);
                     assertEquals(8, result.Value);
                     assertEquals(new BytesRef("foobar"), result.Payload);
@@ -1107,7 +1107,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), AsSet("bar"), 10, true, true);
                     assertEquals(1, results.size());
 
-                    result = results.ElementAt(0);
+                    result = results[0];
                     assertEquals("lend me your <b>ear</b>", result.Key);
                     assertEquals(8, result.Value);
                     assertEquals(new BytesRef("foobar"), result.Payload);
@@ -1120,7 +1120,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), AsSet("baz"), 10, true, true);
                     assertEquals(1, results.size());
 
-                    result = results.ElementAt(0);
+                    result = results[0];
                     assertEquals("a penny saved is a penny <b>ear</b>ned", result.Key);
                     assertEquals(10, result.Value);
                     assertEquals(new BytesRef("foobaz"), result.Payload);
@@ -1133,7 +1133,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     results = suggester.DoLookup(TestUtil.StringToCharSequence("ear", Random).ToString(), AsSet("foo", "bar"), 10, true, true);
                     assertEquals(2, results.size());
 
-                    result = results.ElementAt(0);
+                    result = results[0];
                     assertEquals("a penny saved is a penny <b>ear</b>ned", result.Key);
                     assertEquals(10, result.Value);
                     assertEquals(new BytesRef("foobaz"), result.Payload);
@@ -1142,7 +1142,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     assertTrue(result.Contexts.Contains(new BytesRef("foo")));
                     assertTrue(result.Contexts.Contains(new BytesRef("baz")));
 
-                    result = results.ElementAt(1);
+                    result = results[1];
                     assertEquals("lend me your <b>ear</b>", result.Key);
                     assertEquals(8, result.Value);
                     assertEquals(new BytesRef("foobar"), result.Payload);
