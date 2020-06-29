@@ -1217,13 +1217,13 @@ namespace Lucene.Net.Util
 #if !FEATURE_CONCURRENTMERGESCHEDULER
                 mergeScheduler = new TaskMergeScheduler();
 #else
-                if (random.NextBoolean())
+                if (Rarely(random))
                 {
-                    mergeScheduler = new ConcurrentMergeScheduler();
+                    mergeScheduler = new TaskMergeScheduler();
                 }
                 else
                 {
-                    mergeScheduler = new TaskMergeScheduler();
+                    mergeScheduler = new ConcurrentMergeScheduler();
                 }
 #endif
                 mergeScheduler.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
@@ -3230,20 +3230,31 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Contains a list of all the Func&lt;IConcurrentMergeSchedulers&gt; to be tested.
+        /// Contains a list of the Func&lt;IConcurrentMergeSchedulers&gt; to be tested.
         /// Delegate method allows them to be created on their target thread instead of the test thread
         /// and also ensures a separate instance is created in each case (which can affect the result of the test).
+        /// <para/>
+        /// The <see cref="TaskMergeScheduler"/> is only rarely included.
         /// <para/>
         /// LUCENENET specific for injection into tests (i.e. using NUnit.Framework.ValueSourceAttribute)
         /// </summary>
         public static class ConcurrentMergeSchedulerFactories
         {
-            public static readonly Func<IConcurrentMergeScheduler>[] Values = new Func<IConcurrentMergeScheduler>[] {
+            public static IList<Func<IConcurrentMergeScheduler>> Values
+            {
+                get
+                {
+                    var schedulerFactories = new List<Func<IConcurrentMergeScheduler>>();
 #if FEATURE_CONCURRENTMERGESCHEDULER
-                () => new ConcurrentMergeScheduler(),
+                    schedulerFactories.Add(() => new ConcurrentMergeScheduler());
+                    if (Rarely())
+                        schedulerFactories.Add(() => new TaskMergeScheduler());
+#else
+                    schedulerFactories.Add(() => new TaskMergeScheduler());
 #endif
-                () => new TaskMergeScheduler()
-            };
+                    return schedulerFactories;
+                }
+            }
         }
 
         private double nextNextGaussian; // LUCENENET specific
