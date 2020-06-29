@@ -40,6 +40,8 @@
       "_site/api/misc/xrefmap.yml",
       "_site/api/queries/xrefmap.yml",
       "_site/api/queryparser/xrefmap.yml",
+      "_site/api/replicator/xrefmap.yml",
+      "_site/api/sandbox/xrefmap.yml",
       "_site/api/test-framework/xrefmap.yml"      
     ],
     "dest": "_site",
