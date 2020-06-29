@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {
@@ -145,7 +144,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             try
             {
-                IList<FST.Arc<object>> rootArcs = new List<FST.Arc<object>>();
+                List<FST.Arc<object>> rootArcs = new List<FST.Arc<object>>();
                 FST.Arc<object> arc = automaton.GetFirstArc(new FST.Arc<object>());
                 FST.BytesReader fstReader = automaton.GetBytesReader();
                 automaton.ReadFirstTargetArc(arc, arc, fstReader);
@@ -160,7 +159,8 @@ namespace Lucene.Net.Search.Suggest.Fst
                 }
 
                 // we want highest weights first.
-                return rootArcs.Reverse().ToArray();
+                rootArcs.Reverse();
+                return rootArcs.ToArray();
             }
             catch (IOException e)
             {
@@ -355,7 +355,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                     {
                         if (key.Equals(list[i].Utf8))
                         {
-                            var element = list.ElementAt(i);
+                            var element = list[i];
                             list.Remove(element);
                             list.Insert(0, element);
                         }
