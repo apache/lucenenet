@@ -129,7 +129,7 @@ namespace Lucene.Net.Search
 
             searcher.Search(query, c);
 
-            Assert.AreEqual(correct, actual, aggressive: false, "Simple: " + query.ToString(defaultFieldName));
+            Assert.AreEqual(correct, actual, aggressive: false, () => "Simple: " + query.ToString(defaultFieldName));
 
             for (int i = -1; i < 2; i++)
             {
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
 #endif
                     random, searcher, i);
                 s.Search(query, c);
-                Assert.AreEqual(correct, actual, aggressive: false, "Wrap Reader " + i + ": " + query.ToString(defaultFieldName));
+                Assert.AreEqual(correct, actual, aggressive: false, () => "Wrap Reader " + i + ": " + query.ToString(defaultFieldName));
             }
         }
 
@@ -193,7 +193,7 @@ namespace Lucene.Net.Search
                 actual.Add(Convert.ToInt32(hits[i].Doc, CultureInfo.InvariantCulture));
             }
 
-            Assert.AreEqual(correct, actual, aggressive: false, query.ToString(defaultFieldName));
+            Assert.AreEqual(correct, actual, aggressive: false, () => query.ToString(defaultFieldName));
 
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
