@@ -71,9 +71,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
             {
                 // Not big enough; create a new array with slight
                 // over allocation and preserve content
-                char[] newCharBuffer = new char[ArrayUtil.Oversize(newSize, RamUsageEstimator.NUM_BYTES_CHAR)];
-                Array.Copy(termBuffer, 0, newCharBuffer, 0, termBuffer.Length);
-                termBuffer = newCharBuffer;
+                
+                // LUCENENET: Resize rather than copy
+                Array.Resize(ref termBuffer, ArrayUtil.Oversize(newSize, RamUsageEstimator.NUM_BYTES_CHAR));
             }
             return termBuffer;
         }
