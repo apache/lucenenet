@@ -82,8 +82,8 @@ namespace Lucene.Net.Index
                 }
                 Assert.AreEqual(j + 1, queue.NumGlobalTermDeletes);
             }
-            assertEquals(uniqueValues, new JCG.HashSet<Term>(bd1.terms.Keys));
-            assertEquals(uniqueValues, new JCG.HashSet<Term>(bd2.terms.Keys));
+            assertEquals(uniqueValues, bd1.terms.Keys);
+            assertEquals(uniqueValues, bd2.terms.Keys);
             var frozenSet = new JCG.HashSet<Term>();
             foreach (Term t in queue.FreezeGlobalBuffer(null).GetTermsEnumerable())
             {
@@ -92,7 +92,47 @@ namespace Lucene.Net.Index
                 frozenSet.Add(new Term(t.Field, bytesRef));
             }
             assertEquals(uniqueValues, frozenSet);
-            Assert.AreEqual(0, queue.NumGlobalTermDeletes, "num deletes must be 0 after freeze");
+            assertEquals("num deletes must be 0 after freeze", 0, queue.NumGlobalTermDeletes);
+        }
+
+        // LUCENENET specific: Since the keys of a dictionary do not implement ISet<T>, we
+        // re-implement the comparison rather than reallocate the entire collection
+        internal void assertEquals(ISet<Term> expected, ICollection<Term> uniqueActual)
+        {
+            if (!SetEqualsCollection(expected, uniqueActual))
+                fail();
+        }
+
+        private bool SetEqualsCollection(ISet<Term> setA, ICollection<Term> setB)
+        {
+            if (ReferenceEquals(setA, setB))
+                return true;
+
+            if (setA is null)
+                return setB is null;
+            else if (setB is null)
+                return false;
+
+            if (setA.Count != setB.Count)
+                return false;
+
+            // same operation as containsAll()
+            foreach (var eB in setB)
+            {
+                bool contains = false;
+                foreach (var eA in setA)
+                {
+                    if (eA.Equals(eB))
+                    {
+                        contains = true;
+                        break;
+                    }
+                }
+                if (!contains)
+                    return false;
+            }
+
+            return true;
         }
 
         private void AssertAllBetween(int start, int end, BufferedUpdates deletes, int?[] ids)
@@ -241,7 +281,7 @@ namespace Lucene.Net.Index
                 queue.UpdateSlice(slice);
                 BufferedUpdates deletes = updateThread.Deletes;
                 slice.Apply(deletes, BufferedUpdates.MAX_INT32);
-                assertEquals(uniqueValues, new JCG.HashSet<Term>(deletes.terms.Keys));
+                assertEquals(uniqueValues, deletes.terms.Keys);
             }
             queue.TryApplyGlobalSlice();
             ISet<Term> frozenSet = new JCG.HashSet<Term>();
