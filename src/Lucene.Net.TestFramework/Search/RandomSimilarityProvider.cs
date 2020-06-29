@@ -1,8 +1,8 @@
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Search.Similarities;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Search
@@ -140,21 +140,21 @@ namespace Lucene.Net.Search
         {
             lock (this)
             {
-                string coordMethod;
+                // LUCENENET: Use StringBuilder for better efficiency
+                var sb = new StringBuilder();
+                sb.Append(nameof(RandomSimilarityProvider));
+                sb.Append("(queryNorm=");
+                sb.Append(shouldQueryNorm);
+                sb.Append(",coord=");
                 if (coordType == 0)
-                {
-                    coordMethod = "no";
-                }
+                    sb.Append("no");
                 else if (coordType == 1)
-                {
-                    coordMethod = "yes";
-                }
+                    sb.Append("yes");
                 else
-                {
-                    coordMethod = "crazy";
-                }
-                return "RandomSimilarityProvider(queryNorm=" + shouldQueryNorm + ",coord=" + coordMethod + "): " + 
-                    string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", previousMappings);
+                    sb.Append("crazy");
+                sb.Append("): ");
+                sb.AppendFormat(J2N.Text.StringFormatter.InvariantCulture, "{0}", previousMappings);
+                return sb.ToString();
             }
         }
     }
