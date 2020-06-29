@@ -114,8 +114,9 @@ namespace Lucene.Net.Index
 
         public override bool Equals(object obj)
         {
-            Term t = obj as Term;
-            return this.Equals(t);
+            if (obj is Term other)
+                return Equals(other);
+            return false;
         }
 
         public override int GetHashCode()
@@ -162,21 +163,15 @@ namespace Lucene.Net.Index
 
         public bool Equals(Term other)
         {
-            if (object.ReferenceEquals(null, other))
-            {
-                return object.ReferenceEquals(null, this);
-            }
-            if (object.ReferenceEquals(this, other))
-            {
+            if (other is null)
+                return false;
+            if (ReferenceEquals(this, other))
                 return true;
-            }
 
             if (this.GetType() != other.GetType())
-            {
                 return false;
-            }
 
-            if (string.Compare(this.Field, other.Field, StringComparison.Ordinal) != 0)
+            if (!StringComparer.Ordinal.Equals(Field, other.Field))
             {
                 return false;
             }
@@ -188,7 +183,7 @@ namespace Lucene.Net.Index
                     return false;
                 }
             }
-            else if (!Bytes.Equals(other.Bytes))
+            else if (!Bytes.BytesEquals(other.Bytes))
             {
                 return false;
             }
