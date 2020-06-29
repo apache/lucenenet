@@ -34,7 +34,7 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public sealed class CharsRef : IComparable<CharsRef>, ICharSequence
+    public sealed class CharsRef : IComparable<CharsRef>, ICharSequence, IEquatable<CharsRef> // LUCENENET specific - implemented IEquatable<CharsRef>
 #if FEATURE_CLONEABLE
         , System.ICloneable
 #endif
@@ -148,6 +148,9 @@ namespace Lucene.Net.Util
             }
             return false;
         }
+
+        bool IEquatable<CharsRef>.Equals(CharsRef other) // LUCENENET specific - implemented IEquatable<CharsRef>
+            => CharsEquals(other);
 
         public bool CharsEquals(CharsRef other)
         {
