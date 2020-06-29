@@ -648,6 +648,12 @@ namespace Lucene.Net.Util
         // Suite and test case setup/ cleanup.
         // -----------------------------------------------------------------
 
+        // LUCENENET specific: Temporary storage for random selections so they
+        // can be set once per OneTimeSetUp and reused multiple times in SetUp
+        // where they are written to the output.
+        private string codecType;
+        private string similarityName;
+
         /// <summary>
         /// For subclasses to override. Overrides must call <c>base.SetUp()</c>.
         /// </summary>
@@ -671,11 +677,11 @@ namespace Lucene.Net.Util
             Console.Write("Default Codec: ");
             Console.Write(ClassEnvRule.codec.Name);
             Console.Write(" (");
-            Console.Write(ClassEnvRule.codec.GetType().ToString());
+            Console.Write(codecType);
             Console.WriteLine(")");
 
             Console.Write("Default Similarity: ");
-            Console.WriteLine(ClassEnvRule.similarity.ToString());
+            Console.WriteLine(similarityName);
         }
 
         /// <summary>
@@ -736,6 +742,9 @@ namespace Lucene.Net.Util
 
                 ClassEnvRule.Before(null);
 
+                // LUCENENET: Generate the info once so it can be printed out for each test
+                codecType = ClassEnvRule.codec.GetType().Name;
+                similarityName = ClassEnvRule.similarity.ToString();
 
                 // LUCENENET TODO: Scan for a custom attribute and setup ordering to
                 // initialize data from this class to the top class
@@ -767,6 +776,10 @@ namespace Lucene.Net.Util
                 LuceneTestFrameworkInitializer.EnsureInitialized();
 
                 ClassEnvRule.Before(this);
+
+                // LUCENENET: Generate the info once so it can be printed out for each test
+                codecType = ClassEnvRule.codec.GetType().Name;
+                similarityName = ClassEnvRule.similarity.ToString();
             }
             catch (Exception ex)
             {
