@@ -591,12 +591,19 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override int NextPosition()
             {
-                // LUCENENET NOTE: In Java, the assertion is being caught in the test (as an AssertionException).
-                // Technically, a "possible" (in fact "probable") scenario like this one, we should be throwing
-                // an exception, however doing that causes the checkIndex test to fail. The only logical thing we
-                // can do to make this compatible is to remove the assert.
                 //Debug.Assert((_positions != null && _nextPos < _positions.Length) ||
                 //             _startOffsets != null && _nextPos < _startOffsets.Length);
+
+                // LUCENENET: The above assertion was for control flow when testing. In Java, it would throw an AssertionError, which is
+                // caught by the BaseTermVectorsFormatTestCase.assertEquals(RandomTokenStream tk, FieldType ft, Terms terms) method in the
+                // part that is checking for an error after reading to the end of the enumerator.
+
+                // Since there is no way to turn on assertions in a release build in .NET, we are throwing an InvalidOperationException
+                // in this case, which matches the behavior of Lucene 8. See #267.
+
+                if (((_positions != null && _nextPos < _positions.Length) || _startOffsets != null && _nextPos < _startOffsets.Length) == false)
+                    throw new InvalidOperationException("Read past last position");
+
                 if (_positions != null)
                 {
                     return _positions[_nextPos++];
