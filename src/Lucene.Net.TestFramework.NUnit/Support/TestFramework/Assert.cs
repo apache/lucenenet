@@ -848,6 +848,11 @@ namespace Lucene.Net.TestFramework
             _NUnit.Assert.Greater(arg1, arg2);
         }
 
+        public static Exception Throws<TException>(Action action, string message, params string[] args)
+        {
+            return Throws(typeof(TException), action, message, args);
+        }
+
         public static Exception Throws<TException>(Action action)
         {
             return Throws(typeof(TException), action);
@@ -856,6 +861,11 @@ namespace Lucene.Net.TestFramework
         public static Exception Throws(Type expectedExceptionType, Action action)
         {
             return _NUnit.Assert.Throws(expectedExceptionType, () => action());
+        }
+
+        public static Exception Throws(Type expectedExceptionType, Action action, string message, params string[] args)
+        {
+            return _NUnit.Assert.Throws(expectedExceptionType, () => action(), message, args);
         }
 
         public static Exception ThrowsFileAlreadyExistsException(string filePath, Action action)
@@ -888,7 +898,6 @@ namespace Lucene.Net.TestFramework
 
         public static Exception ThrowsAnyOf(IEnumerable<Type> expectedExceptionTypes, Action action)
         {
-            var messagePrefix = $"Expected one of: {Collections.ToString(expectedExceptionTypes.Select(ex => ex.FullName).ToArray())}\nBut was:";
             Exception exception = null;
             try
             {
@@ -903,7 +912,7 @@ namespace Lucene.Net.TestFramework
                 return ex; // Success
             }
             string exString = exception == null ? "<null>" : exception.GetType().FullName;
-            throw new _NUnit.AssertionException($"{messagePrefix} {exString}");
+            throw new _NUnit.AssertionException($"Expected one of: {Collections.ToString(expectedExceptionTypes.Select(ex => ex.FullName).ToArray())}\nBut was: {exString}");
         }
     }
 }
