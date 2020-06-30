@@ -134,7 +134,7 @@ namespace Lucene.Net.Util.Packed
         ///  <returns> The low value for the current decoding index. </returns>
         private long CurrentLowValue()
         {
-            Debug.Assert(((efIndex >= 0) && (efIndex < numEncoded)), "efIndex " + efIndex);
+            Debug.Assert(((efIndex >= 0) && (efIndex < numEncoded)), $"efIndex {efIndex.ToString()}");
             return UnPackValue(efEncoder.lowerLongs, efEncoder.numLowBits, efIndex, efEncoder.lowerBitsMask);
         }
 

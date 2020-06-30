@@ -1,6 +1,6 @@
 ﻿// lucene version compatibility level: 4.8.1
+using ICU4N.Globalization;
 using ICU4N.Text;
-using ICU4N.Util;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
@@ -208,7 +208,7 @@ namespace Lucene.Net.Collation
         /// <returns>The appropriate collator for the locale.</returns>
         private Collator CreateFromLocale(string localeID)
         {
-            return Collator.GetInstance(new ULocale(localeID));
+            return Collator.GetInstance(new UCultureInfo(localeID));
         }
 
         /// <summary>

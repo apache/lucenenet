@@ -78,6 +78,16 @@ namespace Lucene.Net.Util
             Assert.AreEqual(expected, actual, message);
         }
 
+        internal static void assertEquals(bool expected, bool actual)
+        {
+            Assert.AreEqual(expected, actual);
+        }
+
+        internal static void assertEquals(string message, bool expected, bool actual)
+        {
+            Assert.AreEqual(expected, actual, message);
+        }
+
         internal static void assertEquals(long expected, long actual)
         {
             Assert.AreEqual(expected, actual);
@@ -86,6 +96,46 @@ namespace Lucene.Net.Util
         internal static void assertEquals(string message, long expected, long actual)
         {
             Assert.AreEqual(expected, actual, message);
+        }
+
+        internal static void assertEquals(int expected, int actual)
+        {
+            Assert.AreEqual(expected, actual);
+        }
+
+        internal static void assertEquals(string message, int expected, int actual)
+        {
+            Assert.AreEqual(expected, actual, message);
+        }
+
+        internal static void assertEquals(byte expected, byte actual)
+        {
+            Assert.AreEqual(expected, actual);
+        }
+
+        internal static void assertEquals(string message, byte expected, byte actual)
+        {
+            Assert.AreEqual(expected, actual, message);
+        }
+
+        internal static void assertEquals(double d1, double d2, double delta)
+        {
+            Assert.AreEqual(d1, d2, delta);
+        }
+
+        internal static void assertEquals(string msg, float d1, float d2, float delta)
+        {
+            Assert.AreEqual(d1, d2, delta, msg);
+        }
+
+        internal static void assertEquals(float d1, float d2, float delta)
+        {
+            Assert.AreEqual(d1, d2, delta);
+        }
+
+        internal static void assertEquals(string msg, double d1, double d2, double delta)
+        {
+            Assert.AreEqual(d1, d2, delta, msg);
         }
 
         internal static void assertEquals<T>(ISet<T> expected, ISet<T> actual)
@@ -98,12 +148,27 @@ namespace Lucene.Net.Util
             Assert.True(JCG.SetEqualityComparer<T>.Aggressive.Equals(expected, actual), message);
         }
 
-        internal static void assertEquals<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
+        internal static void assertEquals<T>(IList<T> expected, IList<T> actual)
+        {
+            Assert.True(JCG.ListEqualityComparer<T>.Aggressive.Equals(expected, actual));
+        }
+
+        internal static void assertEquals<T>(string message, IList<T> expected, IList<T> actual)
+        {
+            Assert.True(JCG.SetEqualityComparer<T>.Aggressive.Equals(expected, actual), message);
+        }
+
+        internal static void assertEquals<T>(T[] expected, T[] actual)
         {
             Assert.AreEqual(expected, actual);
         }
 
-        internal static void assertEquals(ICollection expected, ICollection actual)
+        internal static void assertEquals<T>(string message, T[] expected, T[] actual)
+        {
+            Assert.AreEqual(expected, actual, message);
+        }
+
+        internal static void assertEquals<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
         {
             Assert.AreEqual(expected, actual);
         }
@@ -116,16 +181,6 @@ namespace Lucene.Net.Util
         internal static void assertNotSame(string message, object unexpected, object actual)
         {
             Assert.AreNotSame(unexpected, actual, message);
-        }
-
-        internal static void assertEquals(double d1, double d2, double delta)
-        {
-            Assert.AreEqual(d1, d2, delta);
-        }
-
-        internal static void assertEquals(string msg, double d1, double d2, double delta)
-        {
-            Assert.AreEqual(d1, d2, delta, msg);
         }
 
         internal static void assertNotNull(object o)
@@ -150,7 +205,7 @@ namespace Lucene.Net.Util
 
         internal static void assertArrayEquals<T>(T[] a1, T[] a2)
         {
-            CollectionAssert.AreEqual(a1, a2);
+            Assert.AreEqual(a1, a2);
         }
 
         internal static void assertSame(Object expected, Object actual)

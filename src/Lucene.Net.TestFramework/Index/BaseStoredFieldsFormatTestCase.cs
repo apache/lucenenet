@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
                     b = f2.GetBinaryValue().Bytes;
                     Assert.IsTrue(b != null);
                     Assert.AreEqual(17, b.Length, 17);
-                    Assert.AreEqual(87, b[0]);
+                    Assert.AreEqual((byte)87, b[0]);
                 } // ir.Dispose();
             } // dir.Dispose();
         }

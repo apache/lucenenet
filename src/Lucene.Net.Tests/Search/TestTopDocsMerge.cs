@@ -1,18 +1,16 @@
+using Lucene.Net.Documents;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Lucene.Net.Documents;
-using Lucene.Net.Util;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using CompositeReaderContext = Lucene.Net.Index.CompositeReaderContext;
     using Directory = Lucene.Net.Store.Directory;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -32,13 +30,13 @@ namespace Lucene.Net.Search
 
     using Document = Documents.Document;
     using Field = Field;
-    using SingleField = SingleField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
     using Int32Field = Int32Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using ReaderUtil = Lucene.Net.Index.ReaderUtil;
+    using SingleField = SingleField;
     using Term = Lucene.Net.Index.Term;
     using TestUtil = Lucene.Net.Util.TestUtil;
 

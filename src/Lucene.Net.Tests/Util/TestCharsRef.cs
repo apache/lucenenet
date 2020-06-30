@@ -1,9 +1,9 @@
 using J2N.Text;
 using Lucene.Net.Attributes;
-//using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Text;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {

@@ -2,6 +2,7 @@ using System;
 using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
 using Console = Lucene.Net.Util.SystemConsole;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util.Fst
 {

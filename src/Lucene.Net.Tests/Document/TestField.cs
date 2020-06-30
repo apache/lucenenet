@@ -10,6 +10,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System.IO;
 using System.Text;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Documents

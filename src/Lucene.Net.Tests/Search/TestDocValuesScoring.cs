@@ -1,13 +1,13 @@
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Index;
-    using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -28,14 +28,13 @@ namespace Lucene.Net.Search
     using Document = Documents.Document;
     using Field = Field;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
-    using SingleDocValuesField = SingleDocValuesField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using PerFieldSimilarityWrapper = Lucene.Net.Search.Similarities.PerFieldSimilarityWrapper;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
+    using SingleDocValuesField = SingleDocValuesField;
     using Term = Lucene.Net.Index.Term;
-    using System;
 
     /// <summary>
     /// Tests the use of indexdocvalues in scoring.

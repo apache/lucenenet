@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System.IO;
 using System.Text;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
@@ -25,7 +26,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     [TestFixture]
     public class TestCharBlockArray : FacetTestCase
     {
-
         [Test, LongRunningTest]
         public virtual void TestArray()
         {
@@ -110,10 +110,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private static void AssertEqualsInternal(string msg, StringBuilder expected, CharBlockArray actual)
         {
-            Assert.AreEqual(expected.Length, actual.Length, msg);
-            for (int i = 0; i < expected.Length; i++)
+            // LUCENENET specific - Indexing a string is much faster than StringBuilder (#295)
+            var expected2 = expected.ToString();
+            var expected2Len = expected2.Length;
+            Assert.AreEqual(expected2Len, actual.Length, msg);
+            for (int i = 0; i < expected2Len; i++)
             {
-                Assert.AreEqual(expected[i], actual[i], msg);
+                Assert.AreEqual(expected2[i], actual[i], msg);
             }
         }
     }

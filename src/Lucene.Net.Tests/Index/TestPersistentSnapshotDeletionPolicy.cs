@@ -1,12 +1,12 @@
-using System.Diagnostics;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.IO;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Store;
-    using NUnit.Framework;
-    using System;
-    using System.IO;
-    using Util;
     using Directory = Lucene.Net.Store.Directory;
 
     /*

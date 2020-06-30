@@ -9,10 +9,11 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
-using System.Linq;
 
 namespace Lucene.Net.Search
 {
@@ -847,7 +848,7 @@ namespace Lucene.Net.Search
 
 #pragma warning disable 612, 618
             Bytes bytes = cache.GetBytes(ar, "bogusbytes", true);
-            Assert.AreEqual(0, bytes.Get(0));
+            Assert.AreEqual((byte)0, bytes.Get(0));
 
             Int16s shorts = cache.GetInt16s(ar, "bogusshorts", true);
             Assert.AreEqual(0, shorts.Get(0));
@@ -920,7 +921,7 @@ namespace Lucene.Net.Search
 
 #pragma warning disable 612, 618
             Bytes bytes = cache.GetBytes(ar, "bogusbytes", true);
-            Assert.AreEqual(0, bytes.Get(0));
+            Assert.AreEqual((byte)0, bytes.Get(0));
 
             Int16s shorts = cache.GetInt16s(ar, "bogusshorts", true);
             Assert.AreEqual(0, shorts.Get(0));

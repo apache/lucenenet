@@ -38,6 +38,7 @@ namespace Lucene.Net.Util.Packed
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     //using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
     using Reader = Lucene.Net.Util.Packed.PackedInt32s.Reader;
+    using Assert = Lucene.Net.TestFramework.Assert;
     using Attributes;
 
     [TestFixture]

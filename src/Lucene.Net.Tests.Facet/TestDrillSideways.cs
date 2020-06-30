@@ -1,11 +1,14 @@
 ﻿using J2N.Text;
+using Lucene.Net.Search;
 using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
@@ -28,44 +31,43 @@ namespace Lucene.Net.Facet
      */
 
 
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Documents.Document;
-    using Field = Lucene.Net.Documents.Field;
-    using StringField = Lucene.Net.Documents.StringField;
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using DefaultSortedSetDocValuesReaderState = Lucene.Net.Facet.SortedSet.DefaultSortedSetDocValuesReaderState;
-    using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
-    using SortedSetDocValuesReaderState = Lucene.Net.Facet.SortedSet.SortedSetDocValuesReaderState;
-    using TaxonomyReader = Lucene.Net.Facet.Taxonomy.TaxonomyReader;
+    using Directory = Lucene.Net.Store.Directory;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using OpenMode = Lucene.Net.Index.OpenMode;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
-    using ICollector = Lucene.Net.Search.ICollector;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
+    using Document = Lucene.Net.Documents.Document;
+    using Field = Lucene.Net.Documents.Field;
     using Filter = Lucene.Net.Search.Filter;
+    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using IBits = Lucene.Net.Util.IBits;
+    using ICollector = Lucene.Net.Search.ICollector;
+    using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using InfoStream = Lucene.Net.Util.InfoStream;
+    using InPlaceMergeSorter = Lucene.Net.Util.InPlaceMergeSorter;
+    using IOUtils = Lucene.Net.Util.IOUtils;
     using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode = Lucene.Net.Index.OpenMode;
     using Query = Lucene.Net.Search.Query;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using Scorer = Lucene.Net.Search.Scorer;
     using Sort = Lucene.Net.Search.Sort;
+    using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
+    using SortedSetDocValuesReaderState = Lucene.Net.Facet.SortedSet.SortedSetDocValuesReaderState;
     using SortField = Lucene.Net.Search.SortField;
+    using StringField = Lucene.Net.Documents.StringField;
+    using TaxonomyReader = Lucene.Net.Facet.Taxonomy.TaxonomyReader;
+    using Term = Lucene.Net.Index.Term;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-    using Directory = Lucene.Net.Store.Directory;
-    using IBits = Lucene.Net.Util.IBits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using FixedBitSet = Lucene.Net.Util.FixedBitSet;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using InPlaceMergeSorter = Lucene.Net.Util.InPlaceMergeSorter;
-    using InfoStream = Lucene.Net.Util.InfoStream;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using NUnit.Framework;
-    using Search;
+    using TopDocs = Lucene.Net.Search.TopDocs;
+
 
     [TestFixture]
     public class TestDrillSideways : FacetTestCase

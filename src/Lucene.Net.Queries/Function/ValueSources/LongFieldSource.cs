@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Mutable;
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -54,9 +55,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         /// <summary>
         /// NOTE: This was externalToLong() in Lucene
         /// </summary>
-        public virtual long ExternalToInt64(string extVal) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+        public virtual long ExternalToInt64(string extVal)
         {
-            return Convert.ToInt64(extVal);
+            return Convert.ToInt64(extVal, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -70,9 +71,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         /// <summary>
         /// NOTE: This was longToString() in Lucene
         /// </summary>
-        public virtual string Int64ToString(long val) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+        public virtual string Int64ToString(long val)
         {
-            return Int64ToObject(val).ToString();
+            return string.Format(CultureInfo.InvariantCulture, "{0}", Int64ToObject(val));
         }
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
@@ -115,7 +116,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return valid.Get(doc) ? outerInstance.Int64ToObject(arr.Get(doc)) : null;
             }
 
-            public override string StrVal(int doc) // LUCENENET TODO: API - Add overload to include CultureInfo ?
+            public override string StrVal(int doc)
             {
                 return valid.Get(doc) ? outerInstance.Int64ToString(arr.Get(doc)) : null;
             }

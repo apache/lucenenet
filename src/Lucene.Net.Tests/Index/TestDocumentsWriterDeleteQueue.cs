@@ -4,16 +4,15 @@ using Lucene.Net.Search;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
     using BytesRef = Lucene.Net.Util.BytesRef;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements. See the NOTICE file distributed with this

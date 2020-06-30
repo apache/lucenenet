@@ -1,8 +1,9 @@
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using Directory = Lucene.Net.Store.Directory;
 

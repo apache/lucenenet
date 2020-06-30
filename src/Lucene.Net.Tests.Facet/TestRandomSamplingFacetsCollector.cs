@@ -1,26 +1,24 @@
-﻿using System;
-using System.Diagnostics;
-using Lucene.Net.Randomized.Generators;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet
 {
 
-    using Document = Lucene.Net.Documents.Document;
-    using Store = Lucene.Net.Documents.Field.Store;
-    using StringField = Lucene.Net.Documents.StringField;
-    using MatchingDocs = Lucene.Net.Facet.FacetsCollector.MatchingDocs;
-    using FastTaxonomyFacetCounts = Lucene.Net.Facet.Taxonomy.FastTaxonomyFacetCounts;
-    using TaxonomyReader = Lucene.Net.Facet.Taxonomy.TaxonomyReader;
+    using Directory = Lucene.Net.Store.Directory;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
+    using Document = Lucene.Net.Documents.Document;
+    using FastTaxonomyFacetCounts = Lucene.Net.Facet.Taxonomy.FastTaxonomyFacetCounts;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using MultiCollector = Lucene.Net.Search.MultiCollector;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using Directory = Lucene.Net.Store.Directory;
     using IOUtils = Lucene.Net.Util.IOUtils;
+    using MatchingDocs = Lucene.Net.Facet.FacetsCollector.MatchingDocs;
+    using MultiCollector = Lucene.Net.Search.MultiCollector;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Store = Lucene.Net.Documents.Field.Store;
+    using StringField = Lucene.Net.Documents.StringField;
+    using Term = Lucene.Net.Index.Term;
+    using TermQuery = Lucene.Net.Search.TermQuery;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

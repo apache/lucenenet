@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -390,21 +389,21 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Merge a list of sorted temporary files (partitions) into an output file. </summary>
-        internal void MergePartitions(IEnumerable<FileInfo> merges, FileInfo outputFile)
+        internal void MergePartitions(IList<FileInfo> merges, FileInfo outputFile)
         {
             long start = Environment.TickCount;
 
             var @out = new ByteSequencesWriter(outputFile);
 
-            PriorityQueue<FileAndTop> queue = new PriorityQueueAnonymousInnerClassHelper(this, merges.Count());
+            PriorityQueue<FileAndTop> queue = new PriorityQueueAnonymousInnerClassHelper(this, merges.Count);
 
-            var streams = new ByteSequencesReader[merges.Count()];
+            var streams = new ByteSequencesReader[merges.Count];
             try
             {
                 // Open streams and read the top for each file
-                for (int i = 0; i < merges.Count(); i++)
+                for (int i = 0; i < merges.Count; i++)
                 {
-                    streams[i] = new ByteSequencesReader(merges.ElementAt(i));
+                    streams[i] = new ByteSequencesReader(merges[i]);
                     byte[] line = streams[i].Read();
                     if (line != null)
                     {

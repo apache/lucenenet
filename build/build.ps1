@@ -48,7 +48,7 @@ properties {
 	[int]$maximumParalellJobs = 8
 	
 	#test paramters
-	[string]$frameworks_to_test = "netcoreapp3.1,netcoreapp2.2,net48"
+	[string]$frameworks_to_test = "netcoreapp3.1,netcoreapp2.1,net48"
 	[string]$where = ""
 }
 
@@ -111,6 +111,7 @@ task Init -depends InstallSDK, UpdateLocalSDKVersion -description "This task mak
 	Write-Host "Configuration: $configuration"
 	Write-Host "Platform: $platform"
 	Write-Host "MaximumParallelJobs: $($maximumParalellJobs.ToString())"
+	Write-Host "Powershell Version: $($PSVersionTable.PSVersion)"
 
 	Ensure-Directory-Exists "$release_directory"
 }

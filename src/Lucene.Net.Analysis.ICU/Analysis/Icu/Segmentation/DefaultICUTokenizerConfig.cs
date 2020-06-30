@@ -1,7 +1,6 @@
 ﻿// Lucene version compatibility level 7.1.0
 using ICU4N.Globalization;
 using ICU4N.Text;
-using ICU4N.Util;
 using J2N;
 using Lucene.Net.Analysis.Standard;
 using System;
@@ -61,7 +60,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         /// </summary>
         // we keep the cjk breaking separate, thats because it cannot be customized (because dictionary
         // is only triggered when kind = WORD, but kind = LINE by default and we have no non-evil way to change it)
-        private static readonly BreakIterator cjkBreakIterator = BreakIterator.GetWordInstance(ULocale.ROOT);
+        private static readonly BreakIterator cjkBreakIterator = BreakIterator.GetWordInstance(UCultureInfo.InvariantCulture);
 
         // TODO: if the wrong version of the ICU jar is used, loading these data files may give a strange error.
         // maybe add an explicit check? http://icu-project.org/apiref/icu4j/com/ibm/icu/util/VersionInfo.html

@@ -14,12 +14,12 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
-using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -40,7 +40,8 @@ namespace Lucene.Net.Index
     * limitations under the License.
     */
 
-    
+
+    using Assert = Lucene.Net.TestFramework.Assert;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
@@ -48,7 +49,6 @@ namespace Lucene.Net.Index
     using BinaryDocValuesField = BinaryDocValuesField;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
-    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
     using Constants = Lucene.Net.Util.Constants;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -1567,7 +1567,7 @@ namespace Lucene.Net.Index
             b = f3.GetBinaryValue().Bytes;
             Assert.IsTrue(b != null);
             Assert.AreEqual(17, b.Length, 17);
-            Assert.AreEqual(87, b[0]);
+            Assert.AreEqual((byte)87, b[0]);
 
             Assert.IsTrue(ir.Document(0).GetField("binary").GetBinaryValue() != null);
             Assert.IsTrue(ir.Document(1).GetField("binary").GetBinaryValue() != null);

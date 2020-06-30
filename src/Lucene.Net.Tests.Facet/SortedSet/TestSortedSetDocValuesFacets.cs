@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Lucene.Net.Randomized;
-using Lucene.Net.Randomized.Generators;
-using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Facet.SortedSet
@@ -28,20 +25,20 @@ namespace Lucene.Net.Facet.SortedSet
      */
 
 
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Lucene.Net.Documents.Document;
     using Field = Lucene.Net.Documents.Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
     using Term = Lucene.Net.Index.Term;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using TopDocs = Lucene.Net.Search.TopDocs;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOUtils = Lucene.Net.Util.IOUtils;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    
+    using TopDocs = Lucene.Net.Search.TopDocs;
+
     [TestFixture]
     public class TestSortedSetDocValuesFacets : FacetTestCase
     {

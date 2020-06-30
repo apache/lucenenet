@@ -5,7 +5,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -173,8 +172,8 @@ namespace Lucene.Net.Search.Suggest.Fst
             builder.Add(new BytesRef(key), 0);
 
             FSTCompletion lookup = builder.Build();
-            IEnumerable<FSTCompletion.Completion> result = lookup.DoLookup(StringToCharSequence(key).ToString(), 1);
-            assertEquals(1, result.Count());
+            IList<FSTCompletion.Completion> result = lookup.DoLookup(StringToCharSequence(key).ToString(), 1);
+            assertEquals(1, result.Count);
         }
 
         [Test]
@@ -265,12 +264,12 @@ namespace Lucene.Net.Search.Suggest.Fst
             return TestUtil.StringToCharSequence(prefix, Random);
         }
 
-        private void AssertMatchEquals(IEnumerable<FSTCompletion.Completion> res, params string[] expected)
+        private void AssertMatchEquals(IList<FSTCompletion.Completion> res, params string[] expected)
         {
-            string[] result = new string[res.Count()];
-            for (int i = 0; i < res.Count(); i++)
+            string[] result = new string[res.Count];
+            for (int i = 0; i < res.Count; i++)
             {
-                result[i] = res.ElementAt(i).toString();
+                result[i] = res[i].ToString();
             }
 
             if (!ArrayEqualityComparer<string>.OneDimensional.Equals(StripScore(expected), StripScore(result)))
@@ -279,25 +278,27 @@ namespace Lucene.Net.Search.Suggest.Fst
 
                 StringBuilder b = new StringBuilder();
                 string format = "{0," + colLen + "}  {1," + colLen + "}\n";
-                b.append(string.Format(CultureInfo.InvariantCulture, format, "Expected", "Result"));
+                b.Append(string.Format(CultureInfo.InvariantCulture, format, "Expected", "Result"));
                 for (int i = 0; i < Math.Max(result.Length, expected.Length); i++)
                 {
-                    b.append(string.Format(CultureInfo.InvariantCulture, format,
+                    b.Append(string.Format(CultureInfo.InvariantCulture, format,
                         i < expected.Length ? expected[i] : "--",
                         i < result.Length ? result[i] : "--"));
                 }
 
-                Console.WriteLine(b.toString());
-                fail("Expected different output:\n" + b.toString());
+                Console.WriteLine(b.ToString());
+                fail("Expected different output:\n" + b.ToString());
             }
         }
+
+        private static readonly Regex Score = new Regex("\\/[0-9\\.]+", RegexOptions.Compiled);
 
         private string[] StripScore(string[] expected)
         {
             string[] result = new string[expected.Length];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = Regex.Replace(expected[i], "\\/[0-9\\.]+", "");
+                result[i] = Score.Replace(expected[i], string.Empty);
             }
             return result;
         }

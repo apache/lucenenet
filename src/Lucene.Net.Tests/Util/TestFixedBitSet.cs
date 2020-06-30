@@ -1,9 +1,10 @@
-using System;
 using Lucene.Net.Attributes;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 using System.Collections;
+using System.Linq;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -21,8 +22,6 @@ using System.Collections;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-using System.Linq;
 
 namespace Lucene.Net.Util
 {

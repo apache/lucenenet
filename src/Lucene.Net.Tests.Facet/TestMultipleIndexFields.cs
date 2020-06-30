@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet
 {
@@ -272,7 +273,7 @@ namespace Lucene.Net.Facet
         
         private void AssertCorrectResults(Facets facets)
         {
-            Assert.AreEqual(5, facets.GetSpecificValue("Band"));
+            Assert.AreEqual(5, facets.GetSpecificValue("Band"), 0);
             Assert.AreEqual("dim=Band path=[] value=5 childCount=2\n  Rock & Pop (4)\n  Punk (1)\n", facets.GetTopChildren(10, "Band").ToString());
             Assert.AreEqual("dim=Band path=[Rock & Pop] value=4 childCount=4\n  The Beatles (1)\n  U2 (1)\n  REM (1)\n  Dave Matthews Band (1)\n", facets.GetTopChildren(10, "Band", "Rock & Pop").ToString());
             Assert.AreEqual("dim=Author path=[] value=3 childCount=3\n  Mark Twain (1)\n  Stephen King (1)\n  Kurt Vonnegut (1)\n", facets.GetTopChildren(10, "Author").ToString());

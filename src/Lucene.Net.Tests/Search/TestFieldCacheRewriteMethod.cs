@@ -1,11 +1,9 @@
-using Lucene.Net.Attributes;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
-    using RegExp = Lucene.Net.Util.Automaton.RegExp;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with

@@ -1,5 +1,5 @@
-﻿using ICU4N.Text;
-using ICU4N.Util;
+﻿using ICU4N.Globalization;
+using ICU4N.Text;
 using J2N;
 using J2N.Text;
 using Lucene.Net.Analysis;
@@ -227,7 +227,7 @@ namespace Lucene.Net.Collation
         [Test]
         public void TestCustomRules()
         {
-            RuleBasedCollator baseCollator = (RuleBasedCollator)Collator.GetInstance(new ULocale("de_DE"));
+            RuleBasedCollator baseCollator = (RuleBasedCollator)Collator.GetInstance(new UCultureInfo("de_DE"));
 
             String DIN5007_2_tailorings =
               "& ae , a\u0308 & AE , A\u0308" +

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using Lucene.Net.Randomized.Generators;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet
 {
@@ -24,26 +23,26 @@ namespace Lucene.Net.Facet
      */
 
 
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using Document = Lucene.Net.Documents.Document;
-    using Field = Lucene.Net.Documents.Field;
-    using TextField = Lucene.Net.Documents.TextField;
-    using ITaxonomyWriter = Lucene.Net.Facet.Taxonomy.ITaxonomyWriter;
+    using Directory = Lucene.Net.Store.Directory;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
+    using Document = Lucene.Net.Documents.Document;
+    using Field = Lucene.Net.Documents.Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using ITaxonomyWriter = Lucene.Net.Facet.Taxonomy.ITaxonomyWriter;
     using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using Query = Lucene.Net.Search.Query;
     using QueryUtils = Lucene.Net.Search.QueryUtils;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+    using Term = Lucene.Net.Index.Term;
     using TermQuery = Lucene.Net.Search.TermQuery;
+    using TextField = Lucene.Net.Documents.TextField;
     using TopDocs = Lucene.Net.Search.TopDocs;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOUtils = Lucene.Net.Util.IOUtils;
 
     [TestFixture]
     public class TestDrillDownQuery : FacetTestCase

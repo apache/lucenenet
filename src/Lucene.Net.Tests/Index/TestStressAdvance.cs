@@ -1,14 +1,15 @@
+using Lucene.Net.Documents;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Documents;
-using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-    
-    using Lucene.Net.Store;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -26,8 +27,7 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using Lucene.Net.Util;
-    using NUnit.Framework;
+
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
     [TestFixture]

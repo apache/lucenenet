@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework.Constraints;
 using _NUnit = NUnit.Framework;
 
 namespace Lucene.Net.TestFramework
@@ -80,6 +81,46 @@ namespace Lucene.Net.TestFramework
         }
         //
         // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   actual:
+        //     The actual value
+        public static void AreEqual(bool expected, bool actual)
+        {
+            _NUnit.Assert.IsTrue(expected.Equals(actual));
+        }
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   actual:
+        //     The actual value
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   args:
+        //     Array of objects to be used in formatting the message
+        public static void AreEqual(bool expected, bool actual, string message, params object[] args)
+        {
+            _NUnit.Assert.IsTrue(expected.Equals(actual), message, args);
+        }
+        //
+        // Summary:
         //     Verifies that two doubles are equal considering a delta. If the expected value
         //     is infinity then the delta value is ignored. If they are not equal then an NUnit.Framework.AssertionException
         //     is thrown.
@@ -122,17 +163,193 @@ namespace Lucene.Net.TestFramework
         {
             _NUnit.Assert.AreEqual(expected, actual, delta);
         }
+        //
+        // Summary:
+        //     Verifies that two doubles are equal considering a delta. If the expected value
+        //     is infinity then the delta value is ignored. If they are not equal then an NUnit.Framework.AssertionException
+        //     is thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The expected value
+        //
+        //   actual:
+        //     The actual value
+        //
+        //   delta:
+        //     The maximum acceptable difference between the the expected and the actual
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   args:
+        //     Array of objects to be used in formatting the message
+        public static void AreEqual(float expected, float actual, float delta, string message, params object[] args)
+        {
+            if (Math.Abs(expected - actual) > delta)
+            {
+                _NUnit.Assert.AreEqual(expected, actual, delta, message, args);
+            }
+        }
+        //
+        // Summary:
+        //     Verifies that two doubles are equal considering a delta. If the expected value
+        //     is infinity then the delta value is ignored. If they are not equal then an NUnit.Framework.AssertionException
+        //     is thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The expected value
+        //
+        //   actual:
+        //     The actual value
+        //
+        //   delta:
+        //     The maximum acceptable difference between the the expected and the actual
+        public static void AreEqual(float expected, float actual, float delta)
+        {
+            if (Math.Abs(expected - actual) > delta)
+            {
+                _NUnit.Assert.AreEqual(expected, actual, delta);
+            }
+        }
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   actual:
+        //     The actual value
+        public static void AreEqual(int expected, int actual)
+        {
+            _NUnit.Assert.True(expected.Equals(actual));
+        }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   actual:
+        //     The actual value
+        public static void AreEqual(int expected, int actual, string message)
+        {
+            _NUnit.Assert.True(expected.Equals(actual), message);
+        }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   actual:
+        //     The actual value
+        public static void AreEqual(long expected, long actual)
+        {
+            _NUnit.Assert.True(expected.Equals(actual));
+        }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   actual:
+        //     The actual value
+        public static void AreEqual(long expected, long actual, string message)
+        {
+            _NUnit.Assert.True(expected.Equals(actual), message);
+        }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   actual:
+        //     The actual value
+        public static void AreEqual(byte expected, byte actual)
+        {
+            _NUnit.Assert.True(expected.Equals(actual));
+        }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   actual:
+        //     The actual value
+        public static void AreEqual(byte expected, byte actual, string message)
+        {
+            _NUnit.Assert.True(expected.Equals(actual), message);
+        }
 
         // From CollectionAssert
         public static void AreEqual<T>(T[] expected, T[] actual)
         {
-            _NUnit.CollectionAssert.AreEqual(expected, actual);
+            // LUCENENET: Do the initial check with the (fast) J2N array comparison. If it fails,
+            // then use CollectionAssert to re-do the check in a slower way and generate the assert message.
+            if (!J2N.Collections.ArrayEqualityComparer<T>.OneDimensional.Equals(expected, actual))
+            {
+                _NUnit.CollectionAssert.AreEqual(expected, actual);
+            }
         }
 
         // From CollectionAssert
         public static void AreEqual<T>(T[] expected, T[] actual, string message, params object[] args)
         {
-            _NUnit.CollectionAssert.AreEqual(expected, actual, message, args);
+            // LUCENENET: Do the initial check with the (fast) J2N array comparison. If it fails,
+            // then use CollectionAssert to re-do the check in a slower way and generate the assert message.
+            if (!J2N.Collections.ArrayEqualityComparer<T>.OneDimensional.Equals(expected, actual))
+            {
+                _NUnit.CollectionAssert.AreEqual(expected, actual, message, args);
+            }
         }
 
         public static void AreEqual<T, S>(IDictionary<T, S> expected, IDictionary<T, S> actual)
@@ -322,7 +539,7 @@ namespace Lucene.Net.TestFramework
         //     The evaluated condition
         public static void False(bool condition)
         {
-            _NUnit.Assert.False(condition);
+            _NUnit.Assert.That(condition, _NUnit.Is.False);
         }
 
         //
@@ -335,7 +552,7 @@ namespace Lucene.Net.TestFramework
         //     The evaluated condition
         public static void IsFalse(bool condition)
         {
-            _NUnit.Assert.IsFalse(condition);
+            _NUnit.Assert.That(condition, _NUnit.Is.False);
         }
 
         //
@@ -354,7 +571,7 @@ namespace Lucene.Net.TestFramework
         //     Array of objects to be used in formatting the message
         public static void IsFalse(bool condition, string message, params object[] args)
         {
-            _NUnit.Assert.IsFalse(condition, message, args);
+            _NUnit.Assert.That(condition, _NUnit.Is.False, message, args);
         }
 
         //
@@ -544,6 +761,16 @@ namespace Lucene.Net.TestFramework
             _NUnit.Assert.True(condition);
         }
 
+
+        public static void LessOrEqual(int arg1, int arg2)
+        {
+            _NUnit.Assert.LessOrEqual(arg1, arg2);
+        }
+
+        public static void Greater(int arg1, int arg2)
+        {
+            _NUnit.Assert.Greater(arg1, arg2);
+        }
 
         public static Exception Throws<TException>(Action action)
         {
