@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis
                 throw new InvalidOperationException("TokenStream contract violation: Close() call missing");
             }
             this.inputPending = input;
-            Debug.Assert(SetReaderTestPoint());
+            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) SetReaderTestPoint();
         }
 
         public override void Reset()
