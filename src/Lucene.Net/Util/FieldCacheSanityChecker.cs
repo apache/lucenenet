@@ -105,7 +105,11 @@ namespace Lucene.Net.Util
         {
             if (null == cacheEntries || 0 == cacheEntries.Length)
             {
+#if FEATURE_ARRAYEMPTY
+                return Array.Empty<Insanity>();
+#else
                 return new Insanity[0];
+#endif
             }
 
             if (estimateRam)

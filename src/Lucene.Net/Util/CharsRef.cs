@@ -41,8 +41,12 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// An empty character array for convenience </summary>
-        public static readonly char[] EMPTY_CHARS = new char[0];
-
+        public static readonly char[] EMPTY_CHARS =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<char>();
+#else
+            new char[0];
+#endif
         bool ICharSequence.HasValue => true;
 
         /// <summary>

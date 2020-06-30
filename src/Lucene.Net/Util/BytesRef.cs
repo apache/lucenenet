@@ -47,7 +47,12 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// An empty byte array for convenience </summary>
-        public static readonly byte[] EMPTY_BYTES = new byte[0];
+        public static readonly byte[] EMPTY_BYTES =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<byte>();
+#else
+            new byte[0];
+#endif
 
         /// <summary>
         /// The contents of the BytesRef. Should never be <c>null</c>.
