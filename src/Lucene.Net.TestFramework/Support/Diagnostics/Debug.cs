@@ -28,7 +28,7 @@
         /// <param name="condition">The conditional expression to evaluate. If the condition is <c>true</c>, no exception is thrown.</param>
         public static void Assert(bool condition)
         {
-            if (!condition)
+            if (Debugging.AssertsEnabled && !condition)
                 throw new AssertionException();
         }
 
@@ -39,7 +39,7 @@
         /// <param name="message">The message to use </param>
         public static void Assert(bool condition, string message)
         {
-            if (!condition)
+            if (Debugging.AssertsEnabled && !condition)
                 throw new AssertionException(message);
         }
     }

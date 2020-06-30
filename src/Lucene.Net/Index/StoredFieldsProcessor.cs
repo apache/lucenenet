@@ -139,7 +139,8 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument()
         {
-            Debug.Assert(docWriter.TestPoint("StoredFieldsWriter.finishDocument start"));
+            // LUCENENET: .NET doesn't support asserts in release mode
+            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) docWriter.TestPoint("StoredFieldsWriter.finishDocument start");
 
             InitFieldsWriter(IOContext.DEFAULT);
             Fill(docState.docID);
@@ -156,7 +157,8 @@ namespace Lucene.Net.Index
             }
 
             Reset();
-            Debug.Assert(docWriter.TestPoint("StoredFieldsWriter.finishDocument end"));
+            // LUCENENET: .NET doesn't support asserts in release mode
+            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) docWriter.TestPoint("StoredFieldsWriter.finishDocument end");
         }
 
         public override void AddField(int docID, IIndexableField field, FieldInfo fieldInfo)
@@ -179,7 +181,8 @@ namespace Lucene.Net.Index
                 fieldInfos[numStoredFields] = fieldInfo;
                 numStoredFields++;
 
-                Debug.Assert(docState.TestPoint("StoredFieldsWriterPerThread.processFields.writeField"));
+                // LUCENENET: .NET doesn't support asserts in release mode
+                if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) docState.TestPoint("StoredFieldsWriterPerThread.processFields.writeField");
             }
         }
     }

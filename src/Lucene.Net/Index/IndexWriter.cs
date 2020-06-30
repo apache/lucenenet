@@ -2573,8 +2573,8 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "rollback: infos=" + SegString(segmentInfos.Segments));
                     }
 
-                    var tpResult = TestPoint("rollback before checkpoint");
-                    Debug.Assert(tpResult);
+                    // LUCENENET: .NET doesn't support asserts in release mode
+                    if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("rollback before checkpoint");
 
                     // Ask deleter to locate unreferenced files & remove
                     // them:
@@ -3541,8 +3541,8 @@ namespace Lucene.Net.Index
                 }
 
                 DoBeforeFlush();
-                var tpResult = TestPoint("startDoFlush");
-                Debug.Assert(tpResult);
+                // LUCENENET: .NET doesn't support asserts in release mode
+                if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("startDoFlush");
                 SegmentInfos toCommit = null;
                 bool anySegmentsFlushed = false;
 
@@ -3858,8 +3858,8 @@ namespace Lucene.Net.Index
             }
 
             DoBeforeFlush();
-            var tpResult = TestPoint("startDoFlush");
-            Debug.Assert(tpResult);
+            // LUCENENET: .NET doesn't support asserts in release mode
+            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("startDoFlush");
             bool success = false;
             try
             {
@@ -4101,8 +4101,8 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                var tpResult = TestPoint("startCommitMergeDeletes");
-                Debug.Assert(tpResult);
+                // LUCENENET: .NET doesn't support asserts in release mode
+                if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("startCommitMergeDeletes");
 
                 IList<SegmentCommitInfo> sourceSegments = merge.Segments;
 
@@ -4338,8 +4338,8 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                var tpResult = TestPoint("startCommitMerge");
-                Debug.Assert(tpResult);
+                // LUCENENET: .NET doesn't support asserts in release mode
+                if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("startCommitMerge");
 
                 if (hitOOM)
                 {
@@ -4759,8 +4759,8 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                var testPointResult = TestPoint("startMergeInit");
-                Debug.Assert(testPointResult);
+                // LUCENENET: .NET doesn't support asserts in release mode
+                if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("startMergeInit");
 
                 Debug.Assert(merge.registerDone);
                 Debug.Assert(merge.MaxNumSegments == -1 || merge.MaxNumSegments > 0);
@@ -5446,8 +5446,8 @@ namespace Lucene.Net.Index
         /// </summary>
         private void StartCommit(SegmentInfos toSync)
         {
-            var tpResult = TestPoint("startStartCommit");
-            Debug.Assert(tpResult);
+            // LUCENENET: .NET doesn't support asserts in release mode
+            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("startStartCommit");
             Debug.Assert(pendingCommit == null);
 
             if (hitOOM)
@@ -5485,15 +5485,15 @@ namespace Lucene.Net.Index
                     Debug.Assert(FilesExist(toSync));
                 }
 
-                tpResult = TestPoint("midStartCommit");
-                Debug.Assert(tpResult);
+                // LUCENENET: .NET doesn't support asserts in release mode
+                if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("midStartCommit");
 
                 bool pendingCommitSet = false;
 
                 try
                 {
-                    tpResult = TestPoint("midStartCommit2");
-                    Debug.Assert(tpResult);
+                    // LUCENENET: .NET doesn't support asserts in release mode
+                    if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("midStartCommit2");
 
                     lock (this)
                     {
@@ -5536,8 +5536,8 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "done all syncs: " + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", filesToSync));
                     }
 
-                    tpResult = TestPoint("midStartCommitSuccess");
-                    Debug.Assert(tpResult);
+                    // LUCENENET: .NET doesn't support asserts in release mode
+                    if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("midStartCommitSuccess");
                 }
                 finally
                 {
@@ -5567,8 +5567,8 @@ namespace Lucene.Net.Index
             {
                 HandleOOM(oom, "startCommit");
             }
-            tpResult = TestPoint("finishStartCommit");
-            Debug.Assert(tpResult);
+            // LUCENENET: .NET doesn't support asserts in release mode
+            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("finishStartCommit");
         }
 
         /// <summary>

@@ -201,6 +201,12 @@ namespace Lucene.Net.Util
                 DocValuesFormat.SetDocValuesFormatFactory(DocValuesFormatFactory);
                 PostingsFormat.SetPostingsFormatFactory(PostingsFormatFactory);
 
+                // Enable "asserts" for tests. In Java, these were actual asserts,
+                // but in .NET we simply mock this as a boolean static setting that can be
+                // toggled on and off, even in release mode. Note this must be done after
+                // the ConfigurationFactory is set.
+                Lucene.Net.Diagnostics.Debugging.AssertsEnabled = SystemProperties.GetPropertyAsBoolean("assert", true);
+
                 IncrementInitalizationCount(); // For testing
 
                 return new object(); // Placeholder to indicate our initializer has been run already

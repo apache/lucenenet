@@ -172,7 +172,8 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal void FinishDocument()
         {
-            Debug.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.finish start"));
+            // LUCENENET: .NET doesn't support asserts in release mode
+            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) docState.TestPoint("TermVectorsTermsWriterPerField.finish start");
 
             int numPostings = termsHashPerField.bytesHash.Count;
 
@@ -301,7 +302,8 @@ namespace Lucene.Net.Index
 
         internal override void NewTerm(int termID)
         {
-            Debug.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.newTerm start"));
+            // LUCENENET: .NET doesn't support asserts in release mode
+            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) docState.TestPoint("TermVectorsTermsWriterPerField.newTerm start");
             TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
 
             postings.freqs[termID] = 1;
@@ -313,7 +315,8 @@ namespace Lucene.Net.Index
 
         internal override void AddTerm(int termID)
         {
-            Debug.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.addTerm start"));
+            // LUCENENET: .NET doesn't support asserts in release mode
+            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) docState.TestPoint("TermVectorsTermsWriterPerField.addTerm start");
             TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
 
             postings.freqs[termID]++;
