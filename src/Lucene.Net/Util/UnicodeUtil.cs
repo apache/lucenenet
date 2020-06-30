@@ -2,6 +2,7 @@ using J2N;
 using J2N.Text;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -571,6 +572,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <exception cref="ArgumentException"> If invalid codepoint header byte occurs or the
         ///    content is prematurely truncated. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int CodePointCount(BytesRef utf8)
         {
             int pos = utf8.Offset;
@@ -696,6 +698,7 @@ namespace Lucene.Net.Util
         /// <returns> a String representing the code points between offset and count. </returns>
         /// <exception cref="ArgumentException"> If an invalid code point is encountered. </exception>
         /// <exception cref="IndexOutOfRangeException"> If the offset or count are out of bounds. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string NewString(int[] codePoints, int offset, int count)
         {
             char[] chars = ToCharArray(codePoints, offset, count);
@@ -862,6 +865,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Utility method for <see cref="UTF8toUTF16(byte[], int, int, CharsRef)"/> </summary>
         /// <seealso cref="UTF8toUTF16(byte[], int, int, CharsRef)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void UTF8toUTF16(BytesRef bytesRef, CharsRef chars)
         {
             UTF8toUTF16(bytesRef.Bytes, bytesRef.Offset, bytesRef.Length, chars);

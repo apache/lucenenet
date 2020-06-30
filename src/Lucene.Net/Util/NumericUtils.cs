@@ -1,5 +1,6 @@
 using J2N.Numerics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -60,12 +61,8 @@ namespace Lucene.Net.Util
     /// @lucene.internal
     /// @since 2.9, API changed non backwards-compliant in 4.0
     /// </summary>
-    public sealed class NumericUtils
+    public static class NumericUtils // LUCENENET specific - changed to static
     {
-        private NumericUtils() // no instance!
-        {
-        }
-
         /// <summary>
         /// The default precision step used by <see cref="Documents.Int32Field"/>,
         /// <see cref="Documents.SingleField"/>, <see cref="Documents.Int64Field"/>, 
@@ -118,6 +115,7 @@ namespace Lucene.Net.Util
         /// <param name="val"> The numeric value </param>
         /// <param name="shift"> How many bits to strip from the right </param>
         /// <param name="bytes"> Will contain the encoded value </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Int64ToPrefixCoded(long val, int shift, BytesRef bytes)
         {
             Int64ToPrefixCodedBytes(val, shift, bytes);
@@ -133,6 +131,7 @@ namespace Lucene.Net.Util
         /// <param name="val"> The numeric value </param>
         /// <param name="shift"> How many bits to strip from the right </param>
         /// <param name="bytes"> Will contain the encoded value </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Int32ToPrefixCoded(int val, int shift, BytesRef bytes)
         {
             Int32ToPrefixCodedBytes(val, shift, bytes);
@@ -215,6 +214,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <exception cref="FormatException"> if the supplied <see cref="BytesRef"/> is
         /// not correctly prefix encoded. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetPrefixCodedInt64Shift(BytesRef val)
         {
             int shift = val.Bytes[val.Offset] - SHIFT_START_INT64;
@@ -232,6 +232,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <exception cref="FormatException"> if the supplied <see cref="BytesRef"/> is
         /// not correctly prefix encoded. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetPrefixCodedInt32Shift(BytesRef val)
         {
             int shift = val.Bytes[val.Offset] - SHIFT_START_INT32;
@@ -305,6 +306,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was doubleToSortableLong() in Lucene
         /// </summary>
         /// <seealso cref="SortableInt64ToDouble(long)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long DoubleToSortableInt64(double val)
         {
             long f = J2N.BitConversion.DoubleToInt64Bits(val);
@@ -321,6 +323,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was sortableLongToDouble() in Lucene
         /// </summary>
         /// <seealso cref="DoubleToSortableInt64(double)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double SortableInt64ToDouble(long val)
         {
             if (val < 0)
@@ -341,6 +344,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was floatToSortableInt() in Lucene
         /// </summary>
         /// <seealso cref="SortableInt32ToSingle(int)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int SingleToSortableInt32(float val)
         {
             int f = J2N.BitConversion.SingleToInt32Bits(val);
@@ -357,6 +361,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was sortableIntToFloat() in Lucene
         /// </summary>
         /// <seealso cref="SingleToSortableInt32"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float SortableInt32ToSingle(int val)
         {
             if (val < 0)
@@ -377,6 +382,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// NOTE: This was splitLongRange() in Lucene
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SplitInt64Range(Int64RangeBuilder builder, int precisionStep, long minBound, long maxBound)
         {
             SplitRange(builder, 64, precisionStep, minBound, maxBound);
@@ -393,6 +399,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// NOTE: This was splitIntRange() in Lucene
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SplitInt32Range(Int32RangeBuilder builder, int precisionStep, int minBound, int maxBound)
         {
             SplitRange(builder, 32, precisionStep, minBound, maxBound);
