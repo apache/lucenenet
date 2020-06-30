@@ -56,7 +56,7 @@ namespace Lucene.Net.Configuration
             return configurationCache.GetOrAdd(testDirectory, (key) =>
             {
                 return new ConfigurationBuilder()
-                    .AddLuceneDefaultSettings(EnvironmentVariablePrefix) // Use a custom prefix to only load Lucene.NET settings
+                    .AddEnvironmentVariables(EnvironmentVariablePrefix) // Use a custom prefix to only load Lucene.NET settings
                     .AddJsonFilesFromRootDirectoryTo(currentPath: key, JsonTestSettingsFileName)
 #if TESTFRAMEWORK_NUNIT
                     .AddNUnitTestRunSettings()

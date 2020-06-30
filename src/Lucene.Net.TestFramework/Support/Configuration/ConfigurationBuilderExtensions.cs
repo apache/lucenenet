@@ -28,40 +28,35 @@ namespace Lucene.Net.Configuration
     /// </summary>
     public static class ConfigurationBuilderExtensions
     {
+        /// <summary>
+        /// Helper Extension method to add a <see cref="TestParameterConfigurationSource"/>
+        /// Uses the <see cref="NUnit.Framework.TestContext.Parameters"/> to build provider.
+        /// </summary>
+        /// <param name="builder">This <see cref="IConfigurationBuilder"/>.</param>
+        /// <returns>This <see cref="IConfigurationBuilder"/>.</returns>
+        [CLSCompliant(false)]
+        public static IConfigurationBuilder AddNUnitTestRunSettings(this IConfigurationBuilder builder)
+        {
+            if (builder == null)
+                throw new ArgumentNullException(nameof(builder));
 
-        /// <summary>
-        /// Helper Extension method to add a LuceneDefaultConfigurationSource
-        /// </summary>
-        /// <param name="configurationBuilder"></param>
-        /// <param name="prefix">A prefix used to filter the environment variables.</param>
-        /// <returns></returns>
-        [CLSCompliant(false)]
-        public static IConfigurationBuilder AddLuceneDefaultSettings(this IConfigurationBuilder configurationBuilder, string prefix)
-        {
-            return configurationBuilder.Add(new LuceneDefaultConfigurationSource() { Prefix = prefix });
-        }
-        /// <summary>
-        /// Helper Extension method to add a TestParameterConfigurationSource
-        /// Uses the NUnit.Framework.TestContext.Parameters to build provider
-        /// </summary>
-        /// <param name="configurationBuilder"></param>
-        /// <returns></returns>
-        [CLSCompliant(false)]
-        public static IConfigurationBuilder AddNUnitTestRunSettings(this IConfigurationBuilder configurationBuilder)
-        {
-            return configurationBuilder.Add(new TestParameterConfigurationSource() { TestParameters = NUnit.Framework.TestContext.Parameters });
+            return builder.Add(new TestParameterConfigurationSource() { TestParameters = NUnit.Framework.TestContext.Parameters });
         }
 
         /// <summary>
-        /// Scans from currentPath to the root directory looking for fileName configuration settings. This loads a Json Configuration provider in ascending hierarchy.
+        /// Scans from <paramref name="currentPath"/> to the root directory looking for <paramref name="fileName"/> configuration settings.
+        /// This loads a Json Configuration provider in ascending hierarchy.
         /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="currentPath">The current path to start in</param>
-        /// <param name="fileName">The filename to be searched for</param>
-        /// <returns></returns>
+        /// <param name="builder">This <see cref="IConfigurationBuilder"/>.</param>
+        /// <param name="currentPath">The current path to start in.</param>
+        /// <param name="fileName">The filename to be searched for.</param>
+        /// <returns>This <see cref="IConfigurationBuilder"/>.</returns>
         [CLSCompliant(false)]
         public static IConfigurationBuilder AddJsonFilesFromRootDirectoryTo(this IConfigurationBuilder builder, string currentPath, string fileName)
         {
+            if (builder == null)
+                throw new ArgumentNullException(nameof(builder));
+
             Stack<string> locations = ScanConfigurationFiles(currentPath, fileName);
 
             while (locations.Count != 0)
@@ -72,15 +67,19 @@ namespace Lucene.Net.Configuration
         }
 
         /// <summary>
-        /// Scans from currentPath to the root directory looking for fileName configuration settings. This loads a XML Configuration provider in ascending hierarchy.
+        /// Scans from <paramref name="currentPath"/> to the root directory looking for <paramref name="fileName"/> configuration settings.
+        /// This loads a XML Configuration provider in ascending hierarchy.
         /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="currentPath">The current path to start in</param>
-        /// <param name="fileName">The filename to be searched for</param>
-        /// <returns></returns>
+        /// <param name="builder">This <see cref="IConfigurationBuilder"/>.</param>
+        /// <param name="currentPath">The current path to start in.</param>
+        /// <param name="fileName">The filename to be searched for.</param>
+        /// <returns>This <see cref="IConfigurationBuilder"/>.</returns>
         [CLSCompliant(false)]
         public static IConfigurationBuilder AddXmlFilesFromRootDirectoryTo(this IConfigurationBuilder builder, string currentPath, string fileName)
         {
+            if (builder == null)
+                throw new ArgumentNullException(nameof(builder));
+
             Stack<string> locations = ScanConfigurationFiles(currentPath, fileName);
 
             while (locations.Count != 0)
