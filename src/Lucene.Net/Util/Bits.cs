@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Util
 {
     /*
@@ -40,8 +42,12 @@ namespace Lucene.Net.Util
 
     public static class Bits
     {
-        public static readonly IBits[] EMPTY_ARRAY = new IBits[0];
-
+        public static readonly IBits[] EMPTY_ARRAY =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<IBits>();
+#else
+            new IBits[0];
+#endif
         /// <summary>
         /// Bits impl of the specified length with all bits set.
         /// </summary>
