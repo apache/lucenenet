@@ -31,8 +31,10 @@ parameters:
   maximumParallelJobs: 8
   maximumAllowedFailures: 0
   where: '' # A test filter expression, as defined by dotnet vstest
-
+  
 steps:
+- checkout: none # self represents the repo where the initial Pipelines YAML file was found
+
 - powershell: |
     function EnsureNotNullOrEmpty([string]$param, [string]$nameOfParam) {
         if ([string]::IsNullOrEmpty($param)) {
@@ -52,6 +54,15 @@ steps:
     EnsureNotNullOrEmpty('${{ parameters.maximumAllowedFailures }}', 'maximumAllowedFailures')
   displayName: 'Validate Template Parameters'
 
+
+- task:  DownloadPipelineArtifact@2
+  displayName: 'Download Build Artifacts: ${{ parameters.binaryArtifactName }} to $(System.DefaultWorkingDirectory)\$(parameters.framework)'
+  inputs:
+    artifactName: '${{ parameters.binaryArtifactName }}_${{ parameters.framework }}'
+    targetPath: ${{ parameters.framework }}
+
+- powershell: | 
+    Get-ChildItem -Path $(System.DefaultWorkingDirectory)
 - task: UseDotNet@2
   displayName: 'Use .NET Core sdk 3.1.301'
   inputs:
@@ -64,21 +75,7 @@ steps:
     version: 2.1.807
   condition: and(succeeded(), contains('${{ parameters.framework }}', 'netcoreapp2.'))
 
-- task: DownloadBuildArtifacts@0
-  displayName: 'Download Build Artifacts: ${{ parameters.binaryArtifactName }}'
-  inputs:
-    artifactName: ${{ parameters.binaryArtifactName }}
-    downloadPath: '$(System.DefaultWorkingDirectory)'
-    itemPattern: '**/${{ parameters.framework }}/*.*'
-
 #- template: 'show-all-files.yml' # Uncomment for debugging
-
-- task: ExtractFiles@1
-  displayName: 'Extract files from ${{ parameters.publishedArtifactZipFileName }}'
-  inputs:
-    archiveFilePatterns: '${{ parameters.binaryArtifactName }}/${{ parameters.framework }}/${{ parameters.publishedArtifactZipFileName }}'
-    destinationFolder: '$(System.DefaultWorkingDirectory)/${{ parameters.binaryArtifactName }}/${{ parameters.framework }}/'
-    cleanDestinationFolder: false
 
 - powershell: |
     $framework = '${{ parameters.framework }}'
@@ -210,11 +207,11 @@ steps:
 
 #- template: 'show-all-files.yml' # Uncomment for debugging
 
-- task: PublishBuildArtifacts@1
+- task: PublishPipelineArtifact@1
   displayName: 'Publish Artifact: ${{ parameters.testResultsArtifactName }}'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}'
-    ArtifactName: '${{ parameters.testResultsArtifactName }}'
+    targetPath: '$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}'
+    ArtifactName: '${{ parameters.testResultsArtifactName }}_${{ parameters.osName }}_${{ parameters.framework }}'
   condition: succeededOrFailed()
 
 # Due to the fact that it is not possible to loop a task and

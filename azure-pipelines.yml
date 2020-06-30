@@ -70,7 +70,9 @@ variables:
 - name: NuGetArtifactDirectory # NuGet binaries directory
   value: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
 - name: PublishedArtifactZipFileName
-  value: 'published.zip'
+  value: 'published.zip'  
+- name: NUGET_PACKAGES
+  value: $(Build.SourcesDirectory)\.nuget\packages
 
 stages:
 - stage: Build_Stage
@@ -81,19 +83,28 @@ stages:
     pool:
       vmImage: 'windows-2019'
 
+
     variables:
       PublishTempDirectory: '$(Build.BinariesDirectory)/publish'
 
     steps:
-    - powershell: |
-        $configuration = if ($env:BUILDCONFIGURATION) { $env:BUILDCONFIGURATION } else { "Release" }
-        Write-Host "##vso[task.setvariable variable=BuildConfiguration;]$configuration"
-      displayName: 'Setup Default Variable Values'
+    
+    - checkout: self # self represents the repo where the initial Pipelines YAML file was found
+      fetchDepth: 1  # the depth of commits to ask Git to fetch
 
     - task: UseDotNet@2
       displayName: 'Use .NET Core sdk 3.1.301'
       inputs:
         version: 3.1.301
+    
+    - task: Cache@2
+      displayName: 'Cache NuGet packages'
+      inputs:
+        key: 'nuget | "$(Agent.OS)" | **/*.csproj'
+        restoreKeys: |
+            nuget | "$(Agent.OS)"
+            nuget
+        path: $(NUGET_PACKAGES)
 
     - powershell: |
         Import-Module "$(BuildDirectory)/psake.psm1"
@@ -113,33 +124,8 @@ stages:
         Invoke-psake $(BuildDirectory)/build.ps1 -Task $tasks -properties $properties -parameters $parameters
         exit !($psake.build_success)
       displayName: 'PSake Build, Pack, and Publish'
-
     - template: 'build/azure-templates/show-all-environment-variables.yml'
-
-    - task: ArchiveFiles@2
-      displayName: 'Zip $(PublishTempDirectory)/netcoreapp3.1'
-      inputs:
-        rootFolderOrFile: '$(PublishTempDirectory)/netcoreapp3.1'
-        includeRootFolder: false
-        archiveFile: '$(PublishDirectory)/netcoreapp3.1/$(PublishedArtifactZipFileName)'
-      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
-
-    - task: ArchiveFiles@2
-      displayName: 'Zip $(PublishTempDirectory)/netcoreapp2.1'
-      inputs:
-        rootFolderOrFile: '$(PublishTempDirectory)/netcoreapp2.1'
-        includeRootFolder: false
-        archiveFile: '$(PublishDirectory)/netcoreapp2.1/$(PublishedArtifactZipFileName)'
-      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
-
-    - task: ArchiveFiles@2
-      displayName: 'Zip $(PublishTempDirectory)/net48'
-      inputs:
-        rootFolderOrFile: '$(PublishTempDirectory)/net48'
-        includeRootFolder: false
-        archiveFile: '$(PublishDirectory)/net48/$(PublishedArtifactZipFileName)'
-      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
-
+        
     - powershell: |
         $dir = '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
         if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path "$dir" -Force }
@@ -147,7 +133,6 @@ stages:
         '$(FileVersion)' | Out-File -FilePath "$dir/$(FileVersionFileName)" -Force
         '$(Build.BuildNumber)' | Out-File -FilePath "$dir/$(BuildNumberFileName)" -Force
       displayName: 'Write Versions to Files'
-
     # If this is a release pipeline, copy the build.bat and Version.props files as version artifacts, which will 
     # overwrite the build.bat and Version.props files of the release.
     - task: CopyFiles@2
@@ -159,41 +144,47 @@ stages:
           Version.props
         TargetFolder: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
       condition: and(succeeded(), eq(variables['IsRelease'], 'true'))
-
-    - task: PublishBuildArtifacts@1
+            
+    - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(VersionArtifactName)'
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
-        ArtifactName: '$(VersionArtifactName)'
-
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
+        artifact: '$(VersionArtifactName)'
+        publishLocation: 'pipeline'
+    
     # Copy the .pdb files as build artifacts, which will 
     # later be used to push to the Azure Artifacts symbol server.
     - task: CopyFiles@2
       displayName: 'Copy .pdb Files to: /$(DebugArtifactName)'
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)'
-        Contents: '**/bin/$(BuildConfiguration)/**/*.pdb'
+        Contents: |
+         **\**\bin\**\*.pdb
         TargetFolder: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
-
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish Artifact: $(BinaryArtifactName)'
+        
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact: $(BinaryArtifactName)_netcoreapp3.1'
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(BinaryArtifactName)'
-        ArtifactName: '$(BinaryArtifactName)'
+        targetPath: '$(PublishTempDirectory)\netcoreapp3.1'
+        artifact: '$(BinaryArtifactName)_netcoreapp3.1'
+        publishLocation: 'pipeline'
       condition: and(succeeded(), ne(variables['RunTests'], 'false'))
-
-    - task: PublishBuildArtifacts@1
+      
+      
+    - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(NuGetArtifactName)'
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
-        ArtifactName: '$(NuGetArtifactName)'
-
-    - task: PublishBuildArtifacts@1
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+        artifact: '$(NuGetArtifactName)'
+        publishLocation: 'pipeline'
+    
+    - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(DebugArtifactName)'
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
-        ArtifactName: '$(DebugArtifactName)'
-
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
+        artifact: '$(DebugArtifactName)'
+        publishLocation: 'pipeline'
+        
   - job: Docs
     condition: and(succeeded(), eq(variables['GenerateDocs'], 'true'))
     pool:
@@ -323,7 +314,6 @@ stages:
         maximumParallelJobs: 9
         maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
 
-
 - stage: Publish_Stage
   displayName: 'Publish Stage:'
   jobs:
@@ -336,22 +326,27 @@ stages:
       vmImage: 'windows-2019'
 
     steps:
+    - checkout: none # self represents the repo where the initial Pipelines YAML file was found
     - template: 'build/azure-templates/show-all-environment-variables.yml'
 
-    - task: DownloadBuildArtifacts@0
+    - task: DownloadPipelineArtifact@0
       displayName: 'Download Build Artifacts: $(VersionArtifactName)'
       inputs:
         artifactName: '$(VersionArtifactName)'
-        downloadPath: '$(Build.ArtifactStagingDirectory)'
+        targetPath: version
 
+        
+    - powershell: | 
+        Get-ChildItem -Path $(System.DefaultWorkingDirectory)
+    - powershell: | 
+        Get-ChildItem -Path version
       # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
       # the version cannot be passed to the Index Sources & Publish Symbols task.
     - powershell: |
-        $version = Get-Content '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
+        $version = Get-Content '$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
         Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
         Write-Host "##vso[build.updatebuildnumber]$version"
       displayName: 'Read PackageVersion from File to Build.BuildNumber'
-
     - template: 'build/azure-templates/show-all-environment-variables.yml'
 
     - template: 'build/azure-templates/publish-nuget-packages.yml'
@@ -359,7 +354,6 @@ stages:
         artifactFeedID: '$(ArtifactFeedID)'
         nugetArtifactName: '$(NuGetArtifactName)'
         debugArtifactName: '$(DebugArtifactName)'
-
 
 - stage: Release_Stage
   displayName: 'Release Stage:'
@@ -371,39 +365,40 @@ stages:
       vmImage: 'windows-2019'
 
     steps:
+    - checkout: none # self represents the repo where the initial Pipelines YAML file was found
     - template: 'build/azure-templates/show-all-environment-variables.yml'
 
-    - task: DownloadBuildArtifacts@0
+
+    - task: DownloadPipelineArtifact@0
       displayName: 'Download Build Artifacts: $(NuGetArtifactName)'
       inputs:
         artifactName: '$(NuGetArtifactName)'
-        downloadPath: '$(Build.ArtifactStagingDirectory)'
+        targetPath: nuget
 
-    - task: DownloadBuildArtifacts@0
+
+    - task: DownloadPipelineArtifact@0
       displayName: 'Download Build Artifacts: $(VersionArtifactName)'
       inputs:
         artifactName: '$(VersionArtifactName)'
-        downloadPath: '$(Build.ArtifactStagingDirectory)'
-
+        targetPath: version
+        
     - template: 'build/azure-templates/show-all-files.yml' # Uncomment for debugging
 
       # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
       # the version cannot be passed to the Index Sources & Publish Symbols task.
     - powershell: |
-        $version = Get-Content '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
+        $version = Get-Content '$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
         $vcsLabel = 'Lucene.Net_' + $version.Replace('.', '_').Replace('-', '_')
         Write-Host "##vso[task.setvariable variable=VCSLabel;]$vcsLabel"
         Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
         Write-Host "##vso[build.updatebuildnumber]$version"
       displayName: 'Build VCS Label and Rehydrate Version Variables'
-
     - powershell: |
         $files = 'build.bat','Version.props'
         foreach ($file in $files) {
-            Copy-Item -Path "$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$file" -Destination "$(Build.SourcesDirectory)/$file" -Force -ErrorAction Continue
+            Copy-Item -Path "$(VersionArtifactName)/$file" -Destination "$(Build.SourcesDirectory)/$file" -Force -ErrorAction Continue
         }
       displayName: 'Update build.bat and Version.props to build only version $(PackageVersion)'
-
     - template: 'build/azure-templates/show-all-environment-variables.yml'
 
     - task: CopyFiles@2
@@ -428,18 +423,18 @@ stages:
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)/Apache-Lucene.Net-$(PackageVersion).src.zip'
 
     - task: CopyFiles@2
-      displayName: 'Copy License/Notice Files to: $(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+      displayName: 'Copy License/Notice Files to: $(NuGetArtifactName)'
       inputs:
         SourceFolder: '$(Build.SourcesDirectory)'
         Contents: |
          LICENSE.txt
          NOTICE.txt
-        TargetFolder: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+        TargetFolder: '$(NuGetArtifactName)'
 
     - task: ArchiveFiles@2
       displayName: 'Archive Binary Files'
       inputs:
-        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+        rootFolderOrFile: '$(NuGetArtifactName)'
         includeRootFolder: false
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)/Apache-Lucene.Net-$(PackageVersion).bin.zip'
 
@@ -455,11 +450,11 @@ stages:
         "TODO: Push release artifacts to dev (https://dist.apache.org/repos/dist/dev/lucenenet/)" + $nl + `
         "TODO: Start release [VOTE] (see https://www.apache.org/foundation/voting.html)" + $nl | Out-File -FilePath "$dir/RELEASE-TODO.txt" -Force
       displayName: 'Write RELEASE-TODO.txt'
-
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(ReleaseArtifactName)'
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)'
-        ArtifactName: '$(ReleaseArtifactName)'
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)'
+        artifact:  '$(ReleaseArtifactName)'
+        publishLocation: 'pipeline'
 
 # LUCENENET TODO: Write VCS Label (git tag) automatically

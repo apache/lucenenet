@@ -27,7 +27,7 @@ properties {
 	[string]$publish_directory = "$release_directory/Publish"
 	[string]$solutionFile = "$base_directory/Lucene.Net.sln"
 	[string]$sdkPath = "$env:programfiles/dotnet/sdk"
-	[string]$sdkVersion = "3.1.100"
+	[string]$sdkVersion = "3.1.301"
 	[string]$globalJsonFile = "$base_directory/global.json"
 	[string]$versionPropsFile = "$base_directory/Version.props"
 	[string]$build_bat = "$base_directory/build.bat"
@@ -235,7 +235,7 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
 					param([string]$testProject, [string]$outputPath, [string]$logPath, [string]$framework, [string]$configuration, [string]$projectName)
 					Write-Host "Publishing '$testProject' on '$framework' to '$outputPath'..."
 					# Note: Cannot use Psake Exec in background
-					dotnet publish "$testProject" --output "$outputPath" --framework "$framework" --configuration "$configuration" --no-build --verbosity Detailed /p:TestFrameworks=true /p:Platform="$platform" > "$logPath/$projectName-dotnet-publish.log" 2> "$logPath/$projectName-dotnet-publish-error.log"
+					dotnet publish "$testProject" --output "$outputPath" --framework "$framework" --configuration "$configuration" --no-build --no-restore --verbosity Detailed /p:TestFrameworks=true /p:Platform="$platform" > "$logPath/$projectName-dotnet-publish.log" 2> "$logPath/$projectName-dotnet-publish-error.log"
 				}
 
 				# Execute the jobs in parallel
@@ -550,7 +550,6 @@ param(
 )
 
 $fileText = "<!--
-
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
  distributed with this work for additional information
@@ -558,16 +557,13 @@ $fileText = "<!--
  to you under the Apache License, Version 2.0 (the
  ""License""); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
-
    http://www.apache.org/licenses/LICENSE-2.0
-
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  ""AS IS"" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  KIND, either express or implied.  See the License for the
  specific language governing permissions and limitations
  under the License.
-
 -->
 <Project>
   <PropertyGroup Label=""Version Override Properties"">
@@ -626,10 +622,8 @@ GOTO endcommentblock
 :: -----------------------------------------------------------------------------------
 :endcommentblock
 setlocal enabledelayedexpansion enableextensions
-
 set runtests=false
 set maximumParallelJobs=8
-
 FOR %%a IN (%*) DO (
 	FOR /f ""useback tokens=*"" %%a in ('%%a') do (
 		set value=%%~a
@@ -638,31 +632,25 @@ FOR %%a IN (%*) DO (
 		IF /I !test!==-t (
 			set runtests=true
 		)
-
 		set test=!value:~0,6!
 		IF /I !test!==--test (
 			set runtests=true
 		)
-
 		set test=!value:~0,4!
 		IF /I !test!==-mp: (
 			set maximumParallelJobs=!value:~4!
 		)
-
 		set test=!value:~0,22!
 		IF /I !test!==--maximumparalleljobs: (
 			set maximumParallelJobs=!value:~22!
 		)
 	)
 )
-
 set tasks=""Default""
 if ""!runtests!""==""true"" (
 	set tasks=""Default,Test""
 )
-
 powershell -ExecutionPolicy Bypass -Command ""& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -Task %tasks% -properties @{prepareForBuild='false';backup_files='false';maximumParalellJobs=%maximumParallelJobs%} }""
-
 endlocal
 "
 	$dir = [System.IO.Path]::GetDirectoryName($file)
