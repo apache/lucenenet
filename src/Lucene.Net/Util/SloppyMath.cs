@@ -1,5 +1,6 @@
 using J2N;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -34,7 +35,7 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Math functions that trade off accuracy for speed. </summary>
-    public class SloppyMath
+    public static class SloppyMath // LUCENENET: Changed to static
     {
         /// <summary>
         /// Returns the distance in kilometers between two points
@@ -158,6 +159,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Return an approximate value of the diameter of the earth at the given latitude, in kilometers. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double EarthDiameter(double latitude)
         {
             if(double.IsNaN(latitude)) 

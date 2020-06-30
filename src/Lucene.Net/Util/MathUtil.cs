@@ -1,5 +1,6 @@
 using J2N.Numerics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -23,16 +24,12 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Math static utility methods.
     /// </summary>
-    public sealed class MathUtil
+    public static class MathUtil // LUCENENET: Changed to static
     {
-        // No instance:
-        private MathUtil()
-        {
-        }
-
         /// <summary>
         /// Returns <c>x &lt;= 0 ? 0 : Math.Floor(Math.Log(x) / Math.Log(base))</c>. </summary>
         /// <param name="base"> Must be <c>&gt; 1</c>.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Log(long x, int @base)
         {
             if (@base <= 1)
@@ -51,6 +48,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Calculates logarithm in a given <paramref name="base"/> with doubles.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Log(double @base, double x)
         {
             return Math.Log(x) / Math.Log(@base);
@@ -113,6 +111,7 @@ namespace Lucene.Net.Util
         ///    <item><description>If the argument is infinite, then the result is infinity with the same sign as the argument.</description></item>
         /// </list>
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Asinh(double a)
         {
             double sign;
@@ -141,6 +140,7 @@ namespace Lucene.Net.Util
         ///    <item><description>If the argument is less than 1, then the result is NaN.</description></item>
         /// </list>
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Acosh(double a)
         {
             return Math.Log(Math.Sqrt(a * a - 1.0d) + a);
@@ -158,6 +158,7 @@ namespace Lucene.Net.Util
         ///    <item><description>If the argument's absolute value is greater than 1, then the result is NaN.</description></item>
         /// </list>
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Atanh(double a)
         {
             double mult;
