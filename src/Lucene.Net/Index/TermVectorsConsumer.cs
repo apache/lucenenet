@@ -114,7 +114,8 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument(TermsHash termsHash)
         {
-            Debug.Assert(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument start"));
+            // LUCENENET: .NET doesn't support asserts in release mode
+            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) docWriter.TestPoint("TermVectorsTermsWriter.finishDocument start");
 
             if (!hasVectors)
             {
@@ -139,7 +140,8 @@ namespace Lucene.Net.Index
 
             termsHash.Reset();
             Reset();
-            Debug.Assert(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument end"));
+            // LUCENENET: .NET doesn't support asserts in release mode
+            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) docWriter.TestPoint("TermVectorsTermsWriter.finishDocument end");
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
