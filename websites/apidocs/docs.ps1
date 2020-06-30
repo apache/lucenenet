@@ -116,7 +116,9 @@ $DocFxJsonContent._appTitle = "Apache Lucene.NET $LuceneNetVersion Documentation
 $DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
 
+# NOTE: The order of these depends on if one of the projects requries the xref map of another, normally all require the core xref map
 $DocFxJsonMeta = @(
+    "docfx.codecs.json",
     "docfx.core.json",
     "docfx.analysis-common.json",
     "docfx.analysis-kuromoji.json",
@@ -126,8 +128,7 @@ $DocFxJsonMeta = @(
     "docfx.analysis-smartcn.json",
     "docfx.analysis-stempel.json",
     "docfx.benchmark.json",
-    "docfx.classification.json",
-    "docfx.codecs.json",
+    "docfx.classification.json",    
     "docfx.expressions.json",
     "docfx.facet.json",
     "docfx.grouping.json",

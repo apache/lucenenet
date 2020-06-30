@@ -20,13 +20,7 @@
     }
   ],
   "build": {
-    "content": [     
-      {
-        "files": [
-          "overview.md"
-        ],
-        "src": "../../src/Lucene.Net.Spatial"
-      },             
+    "content": [          
       {
         "files": [
           "**.yml",
@@ -50,7 +44,7 @@
         ],
         "src": "../../src/Lucene.Net.Spatial",
         "exclude": [
-          "overview.md"
+          "package.md"
         ]
       },     
       {
