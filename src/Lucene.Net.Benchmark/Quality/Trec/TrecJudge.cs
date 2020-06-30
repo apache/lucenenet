@@ -72,7 +72,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
                     st.MoveNext();
                     bool relevant = !zero.Equals(st.Current, StringComparison.Ordinal);
                     // LUCENENET: don't call st.NextToken() unless the condition fails.
-                    Debug.Assert(st.RemainingTokens != 0, "wrong format: " + line + "  next: " + (st.MoveNext() ? st.Current : ""));
+                    Debug.Assert(st.RemainingTokens == 0, "wrong format: " + line + "  next: " + (st.MoveNext() ? st.Current : ""));
                     if (relevant)
                     { // only keep relevant docs
                         if (curr == null || !curr.queryID.Equals(queryID, StringComparison.Ordinal))
