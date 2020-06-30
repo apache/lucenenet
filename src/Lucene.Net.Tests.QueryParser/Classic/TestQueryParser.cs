@@ -143,24 +143,29 @@ namespace Lucene.Net.QueryParsers.Classic
         [Test]
         public virtual void TestProtectedCtors()
         {
-            try
-            {
-                typeof(QueryParser).GetConstructor(new Type[] { typeof(ICharStream) });
-                fail("please switch public QueryParser(CharStream) to be protected");
-            }
-            catch (Exception /*nsme*/)
-            {
-                // expected
-            }
-            try
-            {
-                typeof(QueryParser).GetConstructor(new Type[] { typeof(QueryParserTokenManager) });
-                fail("please switch public QueryParser(QueryParserTokenManager) to be protected");
-            }
-            catch (Exception /*nsme*/)
-            {
-                // expected
-            }
+            // LUCENENET: .NET doesn't throw exceptions when public constructors don't exist, it simply returns null.
+
+            assertNull("please switch public QueryParser(ICharStream) to be protected", typeof(QueryParser).GetConstructor(new Type[] { typeof(ICharStream) }));
+            assertNull("please switch public QueryParser(QueryParserTokenManager) to be protected", typeof(QueryParser).GetConstructor(new Type[] { typeof(QueryParserTokenManager) }));
+
+            //try
+            //{
+            //    typeof(QueryParser).GetConstructor(new Type[] { typeof(ICharStream) });
+            //    fail("please switch public QueryParser(CharStream) to be protected");
+            //}
+            //catch (Exception /*nsme*/)
+            //{
+            //    // expected
+            //}
+            //try
+            //{
+            //    typeof(QueryParser).GetConstructor(new Type[] { typeof(QueryParserTokenManager) });
+            //    fail("please switch public QueryParser(QueryParserTokenManager) to be protected");
+            //}
+            //catch (Exception /*nsme*/)
+            //{
+            //    // expected
+            //}
         }
 
         private class TestFuzzySlopeExtendabilityQueryParser : QueryParser
