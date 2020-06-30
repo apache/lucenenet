@@ -13,7 +13,7 @@
           "src": "../../src"
         }
       ],
-      "dest": "obj/docfx/api/Suggest",
+      "dest": "obj/docfx/api/suggest",
       "properties": {
         "TargetFramework": "netstandard2.0"
       }

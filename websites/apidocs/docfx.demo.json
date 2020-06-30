@@ -13,7 +13,7 @@
           "src": "../../src"
         }
       ],
-      "dest": "obj/docfx/api/Demo",
+      "dest": "obj/docfx/api/demo",
       "properties": {
         "TargetFramework": "netstandard2.0"
       }

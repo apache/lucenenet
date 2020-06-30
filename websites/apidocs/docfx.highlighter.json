@@ -13,7 +13,7 @@
           "src": "../../src"
         }
       ],
-      "dest": "obj/docfx/api/Highlighter",
+      "dest": "obj/docfx/api/highlighter",
       "properties": {
         "TargetFramework": "netstandard2.0"
       }

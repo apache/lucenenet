@@ -50,8 +50,8 @@ on some of the conceptual or inner details of Lucene:
 * [Lucene.Net.Benchmark](xref:Lucene.Net.Benchmarks) - System for benchmarking Lucene
 * <xref:Lucene.Net.Classification> - Classification module for Lucene
 * <xref:Lucene.Net.Codecs> - Lucene codecs and postings formats
-* <xref:Lucene.Net.Expressions> - Dynamically computed values to sort/facet/search on based on a pluggable grammar
-* <xref:Lucene.Net.Facet> - Faceted indexing and search capabilities
+* [Lucene.Net.Expressions](xref:Lucene.Net.Expressions) - Dynamically computed values to sort/facet/search on based on a pluggable grammar
+* [Lucene.Net.Facet](xref:Lucene.Net.Facet) - Faceted indexing and search capabilities
 * <xref:Lucene.Net.Grouping> - Collectors for grouping search results
 * <xref:Lucene.Net.Search.Highlight> - Highlights search keywords in results
 * <xref:Lucene.Net.Analysis.Icu> - Specialized ICU (International Components for Unicode) Analyzers and Highlighters
@@ -62,7 +62,7 @@ on some of the conceptual or inner details of Lucene:
 * <xref:Lucene.Net.QueryParser> - Text to Query parsers and parsing framework
 * <xref:Lucene.Net.Replicator>  Files replication utility
 * <xref:Lucene.Net.Sandbox> - Various third party contributions and new ideas
-* <xref:Lucene.Net.Spatial> - Geospatial search
+* [Lucene.Net.Spatial](xref:Lucene.Net.Spatial) - Geospatial search
 * <xref:Lucene.Net.Suggest> - Auto-suggest and Spell-checking support
 * <xref:Lucene.Net.TestFramework> - Framework for testing Lucene-based applications
 

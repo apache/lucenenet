@@ -13,7 +13,7 @@
           "src": "../../src"
         }
       ],
-      "dest": "obj/docfx/api/Grouping",
+      "dest": "obj/docfx/api/grouping",
       "properties": {
         "TargetFramework": "netstandard2.0"
       }
