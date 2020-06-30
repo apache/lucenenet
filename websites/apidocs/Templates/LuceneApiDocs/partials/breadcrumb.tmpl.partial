@@ -4,7 +4,7 @@
   <div class="container hide-when-search">
     <ul class="level0 breadcrumb">
         <li>
-            <a href="/">API</a>
+            <a href="{{_rel}}">API</a>
              <span id="breadcrumb">
                 <ul class="breadcrumb">
                   <li>{{_tocTitle}}</li>

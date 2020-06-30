@@ -1,5 +1,5 @@
 - name: Lucene.Net API
-  topicHref: /
+  topicHref: https://lucenenet.apache.org/docs/4.8.0-beta00009/
 - name: Lucene.Net CLI
   href: ../../src/dotnet/tools/lucene-cli/docs/
   topicHref: ../../src/dotnet/tools/lucene-cli/docs/index.md
