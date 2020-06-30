@@ -40,30 +40,30 @@ steps:
     EnsureNotNullOrEmpty('${{ parameters.testSymbolFilesConvention }}', 'testSymbolFilesConvention')
   displayName: 'Validate Template Parameters'
 
-- task: DownloadBuildArtifacts@0
+- task: DownloadPipelineArtifact@0
   displayName: 'Download Build Artifacts: ${{ parameters.nugetArtifactName }}'
   inputs:
-    artifactName: ${{ parameters.nugetArtifactName }}
-    downloadPath: '$(Build.ArtifactStagingDirectory)'
+    artifactName: '${{ parameters.nugetArtifactName }}'
+    targetPath: nuget
 
-- task: DownloadBuildArtifacts@0
+- task: DownloadPipelineArtifact@0
   displayName: 'Download Build Artifacts: ${{ parameters.debugArtifactName }}'
   inputs:
-    artifactName: ${{ parameters.debugArtifactName }}
-    downloadPath: '$(Build.ArtifactStagingDirectory)'
+    artifactName: '${{ parameters.debugArtifactName }}'
+    targetPath: debug
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
   inputs:
     command: push
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/${{ parameters.nugetArtifactName }}/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/${{ parameters.nugetArtifactName }}/**/*.symbols.nupkg'
+    packagesToPush: '${{ parameters.nugetArtifactName }}/*.nupkg;!${{ parameters.nugetArtifactName }}/*.symbols.nupkg'
     publishVstsFeed: '/${{ parameters.artifactFeedID }}'
     allowPackageConflicts: true
 
 - task: PublishSymbols@2
   displayName: 'Publish symbols path'
   inputs:
-    SymbolsFolder: '$(Build.ArtifactStagingDirectory)/${{ parameters.debugArtifactName }}'
+    SymbolsFolder: '${{ parameters.debugArtifactName }}'
     SearchPattern: |
       **/bin/**/*.pdb
       !${{ parameters.testSymbolFilesConvention }}
