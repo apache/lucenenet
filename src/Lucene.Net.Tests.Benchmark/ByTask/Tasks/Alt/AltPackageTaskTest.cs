@@ -28,6 +28,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks.Alt
     {
         /** Benchmark should fail loading the algorithm when alt is not specified */
         [Test]
+        [Ignore("In LUCENENET, we use all referenced assemblies by default. Currently, we don't support a scenario that loads external assemblies.")]
         public void TestWithoutAlt()
         {
             try
