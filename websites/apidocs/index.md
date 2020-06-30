@@ -3,7 +3,7 @@ title: Lucene.Net Docs - The documentation website for Lucene.Net
 description: The documentation website for Lucene.Net
 ---
 
-Apache Lucene.Net [EnvVar:LuceneNetVersion] Documentation
+Apache Lucene.Net 4.8.0-beta00009 Documentation
 ===============
 
 ---------------
@@ -12,7 +12,7 @@ Lucene is a _.NET full-text search engine_. Lucene.NET is not a complete applica
 but rather a code library and API that can easily be used to add search capabilities
 to applications.
 
-This is the official API documentation for __Apache Lucene.NET [EnvVar:LuceneNetVersion]__.
+This is the official API documentation for __Apache Lucene.NET 4.8.0-beta00009__.
 
 ## Getting Started
 

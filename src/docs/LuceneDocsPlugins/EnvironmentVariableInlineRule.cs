@@ -17,40 +17,40 @@
  * under the License.
  */
 
-using System;
-using System.Collections.Immutable;
-using System.Text.RegularExpressions;
-using Microsoft.DocAsCode.MarkdownLite;
+//using System;
+//using System.Collections.Immutable;
+//using System.Text.RegularExpressions;
+//using Microsoft.DocAsCode.MarkdownLite;
 
-namespace LuceneDocsPlugins
-{
-    public class EnvironmentVariableInlineRule : IMarkdownRule
-    {
-        // give it a name
-        public string Name => "EnvVarToken";
+//namespace LuceneDocsPlugins
+//{
+//    public class EnvironmentVariableInlineRule : IMarkdownRule
+//    {
+//        // give it a name
+//        public string Name => "EnvVarToken";
 
-        // define my regex to match
-        private static readonly Regex _envVarRegex = new Regex(@"^\[EnvVar:(\w+?)\]", RegexOptions.Compiled);
+//        // define my regex to match
+//        private static readonly Regex _envVarRegex = new Regex(@"^\[EnvVar:(\w+?)\]", RegexOptions.Compiled);
 
-        // process the match
-        public IMarkdownToken TryMatch(IMarkdownParser parser, IMarkdownParsingContext context)
-        {
-            // TODO: This does not process this token from within a code block like
+//        // process the match
+//        public IMarkdownToken TryMatch(IMarkdownParser parser, IMarkdownParsingContext context)
+//        {
+//            // TODO: This does not process this token from within a code block like
 
-            // ```
-            // dotnet tool install lucene-cli -g --version [EnvVar: LuceneNetVersion]
-            // ```
+//            // ```
+//            // dotnet tool install lucene-cli -g --version [EnvVar: LuceneNetVersion]
+//            // ```
 
-            var match = _envVarRegex.Match(context.CurrentMarkdown);
-            if (match.Length == 0) return null;
+//            var match = _envVarRegex.Match(context.CurrentMarkdown);
+//            if (match.Length == 0) return null;
 
-            var envVar = match.Groups[1].Value;
-            var text = Environment.GetEnvironmentVariable(envVar);
-            if (text == null) return null;
+//            var envVar = match.Groups[1].Value;
+//            var text = Environment.GetEnvironmentVariable(envVar);
+//            if (text == null) return null;
 
-            // 'eat' the characters of the current markdown token so they anr
-            var sourceInfo = context.Consume(match.Length);
-            return new MarkdownTextToken(this, parser.Context, text, sourceInfo);
-        }
-    }
-}
+//            // 'eat' the characters of the current markdown token so they anr
+//            var sourceInfo = context.Consume(match.Length);
+//            return new MarkdownTextToken(this, parser.Context, text, sourceInfo);
+//        }
+//    }
+//}

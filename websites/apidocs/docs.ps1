@@ -24,6 +24,7 @@ param (
     [switch] $Clean = $false,
     [switch] $DisableMetaData = $false,
     [switch] $DisableBuild = $false,
+    [switch] $DisablePlugins = $false,
     # LogLevel can be: Diagnostic, Verbose, Info, Warning, Error
     [Parameter(Mandatory = $false)]
     [string] $LogLevel = 'Warning',
@@ -53,7 +54,7 @@ $DocFxExe = "$ToolsFolder\docfx\docfx.exe"
 if (-not (test-path $DocFxExe)) {
     Write-Host "Retrieving docfx..."
     $DocFxZip = "$ToolsFolder\tmp\docfx.zip"	
-    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.54/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
+    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.56/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
 	
     #unzip
     Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
@@ -74,9 +75,9 @@ if (-not (test-path $vswhere)) {
     Write-Host "Download VsWhere..."
     $path = "$ToolsFolder\tmp"
     &$nuget install vswhere -OutputDirectory $path
-    $dir = ls "$path\vswhere.*" | sort -property Name -descending | select -first 1
-    $file = ls -path "$dir" -name vswhere.exe -recurse
-    mv "$dir\$file" $vswhere   
+    $dir = Get-ChildItem "$path\vswhere.*" | Sort-Object -property Name -descending | Select-Object -first 1
+    $file = Get-ChildItem -path "$dir" -name vswhere.exe -recurse
+    Move-Item "$dir\$file" $vswhere   
 }
 
 Remove-Item  -Recurse -Force "$ToolsFolder\tmp"
@@ -92,18 +93,20 @@ if ($Clean) {
 
 # Build our custom docfx tools
 
-$MSBuild = &$vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | select-object -first 1
-if (-not (test-path $MSBuild)) {
-    throw "MSBuild not found!"
+if ($DisablePlugins -eq $false) {
+    $MSBuild = &$vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | select-object -first 1
+    if (-not (test-path $MSBuild)) {
+        throw "MSBuild not found!"
+    }
+    
+    # Build the plugin solution
+    $pluginSln = (Join-Path -Path $RepoRoot "src\docs\DocumentationTools.sln")
+    & $nuget restore $pluginSln
+    
+    $PluginsFolder = (Join-Path -Path $ApiDocsFolder "Templates\LuceneTemplate\plugins")
+    New-Item $PluginsFolder -type directory -force
+    & $msbuild $pluginSln /target:LuceneDocsPlugins "/p:OutDir=$PluginsFolder"
 }
-
-# Build the plugin solution
-$pluginSln = (Join-Path -Path $RepoRoot "src\docs\DocumentationTools.sln")
-& $nuget restore $pluginSln
-
-$PluginsFolder = (Join-Path -Path $ApiDocsFolder "lucenetemplate\plugins")
-New-Item $PluginsFolder -type directory -force
-& $msbuild $pluginSln /target:LuceneDocsPlugins "/p:OutDir=$PluginsFolder"
 
 # update the docjx.global.json file based
 $DocFxGlobalJson = Join-Path -Path $ApiDocsFolder "docfx.global.json"
@@ -174,6 +177,10 @@ if ($? -and $DisableBuild -eq $false) {
         # build the output		
         Write-Host "Building site output for $projFile..."
 
+        # Before we build the site we have to clear the frickin docfx cache!
+        # else the xref links don't work on the home page. That is crazy.
+        Remove-Item (Join-Path -Path $ApiDocsFolder "obj\.cache") -recurse -force -ErrorAction SilentlyContinue
+
         if ($Clean) {
             & $DocFxExe build $projFile --log "$DocFxLog" --loglevel $LogLevel --force --debug
         }
@@ -191,20 +198,14 @@ if ($? -and $DisableBuild -eq $false) {
         $projBaseUrl = $BaseUrl + $projBuildDest.Substring(5, $projBuildDest.Length - 5) # trim the _site part of the string
         $xrefMap = "### YamlMime:XRefMap" + [Environment]::NewLine + "baseUrl: " + $projBaseUrl + "/" + [Environment]::NewLine + $xrefMap
         Set-Content -Path $xrefFile -Value $xrefMap
-
-        # TODO: Figure out why this doesn't work as expected, the absolute path isn't quite right.
-        # ... It does work now but we'll see if it breaks with overlapping uids
-        # ... it seems to work 'sometimes' but not others, very strange, like the analysis-common package has the xref map of 'core' but it doesn't resolve
-        #       which seems a bit strange. Might be time to try to debug in DocFx
-        # // baseUrl: https://xxxx.azurewebsites.net/, https://github.com/dotnet/docfx/issues/2346#issuecomment-356054027
-        # TODO: Look into uidPrefix which is part of the xrefmap (see XRefMapRedirection)
-        # NOTE: With Info logs, we should see this output when resolving xrefmap: external references found in 
-        # NOTE: THere's a field ThrowIfNotResolved on XRefDetails that might help, as it turns out it looks like via code that the resolved external Xref's
-        #       Don't have an Href field?
     }
 }
 
 if ($?) {
+
+    # Before we build the site we have to clear the frickin docfx cache!
+    # else the xref links don't work on the home page. That is crazy.
+    Remove-Item (Join-Path -Path $ApiDocsFolder "obj\.cache") -recurse -force -ErrorAction SilentlyContinue
 
     $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\docfx.site.json.log"
 

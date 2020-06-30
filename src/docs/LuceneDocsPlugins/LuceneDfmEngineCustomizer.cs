@@ -32,8 +32,8 @@ namespace LuceneDocsPlugins
     {
         public void Customize(DfmEngineBuilder builder, IReadOnlyDictionary<string, object> parameters)
          {
-            // insert inline rule at the top
-            builder.InlineRules = builder.InlineRules.Insert(0, new EnvironmentVariableInlineRule());
+            //// insert inline rule at the top
+            //builder.InlineRules = builder.InlineRules.Insert(0, new EnvironmentVariableInlineRule());
 
             // insert block rule above header rule. Why? I dunno, that's what the docs say: 
             // https://dotnet.github.io/docfx/tutorial/intro_markdown_lite.html#select-token-kind
