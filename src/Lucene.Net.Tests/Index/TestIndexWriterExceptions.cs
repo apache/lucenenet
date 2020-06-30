@@ -503,17 +503,20 @@ namespace Lucene.Net.Index
             doc.Add(NewTextField("field", "a field", Field.Store.YES));
             w.AddDocument(doc);
             testPoint.DoFail = true;
-            try
-            {
-                w.AddDocument(doc);
-                Assert.Fail("did not hit exception");
-            }
-#pragma warning disable 168
-            catch (Exception re)
-#pragma warning restore 168
-            {
-                // expected
-            }
+
+            // LUCENENET: Don't swallow NUnit's assert exception
+            Assert.Throws<Exception>(() => w.AddDocument(doc), "did not hit exception");
+//            try
+//            {
+//                w.AddDocument(doc);
+//                Assert.Fail("did not hit exception");
+//            }
+//#pragma warning disable 168
+//            catch (Exception re)
+//#pragma warning restore 168
+//            {
+//                // expected
+//            }
             w.Dispose();
             dir.Dispose();
         }
