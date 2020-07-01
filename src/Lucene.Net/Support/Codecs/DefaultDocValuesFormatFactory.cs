@@ -23,29 +23,85 @@ namespace Lucene.Net.Codecs
      */
 
     /// <summary>
-    /// LUCENENET specific class that implements the default functionality for the 
-    /// <see cref="IDocValuesFormatFactory"/>.
+    /// Implements the default functionality of <see cref="IDocValuesFormatFactory"/>.
     /// <para/>
-    /// The most common use cases are:
-    /// <list type="bullet">
-    ///     <item><description>Initialize <see cref="DefaultDocValuesFormatFactory"/> with a set of <see cref="CustomDocValuesFormatTypes"/>.</description></item>
-    ///     <item><description>Subclass <see cref="DefaultDocValuesFormatFactory"/> and override
-    ///         <see cref="DefaultDocValuesFormatFactory.GetDocValuesFormat(Type)"/> so an external dependency injection
-    ///         container can be used to supply the instances (lifetime should be singleton). Note that you could 
-    ///         alternately use the "named type" feature that many DI containers have to supply the type based on name by 
-    ///         overriding <see cref="GetDocValuesFormat(string)"/>.</description></item>
-    ///     <item><description>Subclass <see cref="DefaultDocValuesFormatFactory"/> and override
-    ///         <see cref="DefaultDocValuesFormatFactory.GetDocValuesFormatType(string)"/> so a type new type can be
-    ///         supplied that is not in the <see cref="DefaultDocValuesFormatFactory.docValuesFormatNameToTypeMap"/>.</description></item>
-    ///     <item><description>Subclass <see cref="DefaultDocValuesFormatFactory"/> to add new or override the default <see cref="DocValuesFormat"/> 
-    ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutDocValuesFormatType(Type)"/>.</description></item>
-    ///     <item><description>Subclass <see cref="DefaultDocValuesFormatFactory"/> to scan additional assemblies for <see cref="DocValuesFormat"/>
-    ///         subclasses in by overriding <see cref="Initialize()"/> and calling <see cref="ScanForDocValuesFormats(Assembly)"/>. 
-    ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</description></item>
-    /// </list>
+    /// To replace the <see cref="DefaultDocValuesFormatFactory"/> instance, call
+    /// <see cref="DocValuesFormat.SetDocValuesFormatFactory(IDocValuesFormatFactory)"/> at application start up.
+    /// <see cref="DefaultDocValuesFormatFactory"/> can be subclassed or passed additional parameters to register
+    /// additional codecs, inject dependencies, or change caching behavior, as shown in the following examples.
+    /// Alternatively, <see cref="IDocValuesFormatFactory"/> can be implemented to provide complete control over
+    /// doc values format creation and lifetimes.
     /// <para/>
-    /// To set the <see cref="IDocValuesFormatFactory"/>, call <see cref="DocValuesFormat.SetDocValuesFormatFactory(IDocValuesFormatFactory)"/>.
+    /// <h4>Register Additional DocValuesFormats</h4>
+    /// <para/>
+    /// Additional codecs can be added by initializing the instance of <see cref="DefaultDocValuesFormatFactory"/> and
+    /// passing an array of <see cref="DocValuesFormat"/>-derived types.
+    /// <code>
+    /// // Register the factory at application start up.
+    /// DocValuesFormat.SetDocValuesFormatFactory(new DefaultDocValuesFormatFactory {
+    ///     CustomDocValuesFormatTypes = new Type[] { typeof(MyDocValuesFormat), typeof(AnotherDocValuesFormat) }
+    /// });
+    /// </code>
+    /// <para/>
+    /// <h4>Only Use Explicitly Defined DocValuesFormats</h4>
+    /// <para/>
+    /// <see cref="PutDocValuesFormatType(Type)"/> can be used to explicitly add codec types. In this example,
+    /// the call to <c>base.Initialize()</c> is excluded to skip the built-in codec registration.
+    /// Since <c>AnotherDocValuesFormat</c> doesn't have a default constructor, the <see cref="NewDocValuesFormat(Type)"/>
+    /// method is overridden to supply the required parameters.
+    /// <code>
+    /// public class ExplicitDocValuesFormatFactory : DefaultDocValuesFormatFactory
+    /// {
+    ///     protected override void Initialize()
+    ///     {
+    ///         // Load specific codecs in a specific order.
+    ///         PutDocValuesFormatType(typeof(MyDocValuesFormat));
+    ///         PutDocValuesFormatType(typeof(AnotherDocValuesFormat));
+    ///     }
+    ///     
+    ///     protected override DocValuesFormat NewDocValuesFormat(Type type)
+    ///     {
+    ///         // Special case: AnotherDocValuesFormat has a required dependency
+    ///         if (typeof(AnotherDocValuesFormat).Equals(type))
+    ///             return new AnotherDocValuesFormat(new SomeDependency());
+    ///         
+    ///         return base.NewDocValuesFormat(type);
+    ///     }
+    /// }
+    /// 
+    /// // Register the factory at application start up.
+    /// DocValuesFormat.SetDocValuesFormatFactory(new ExplicitDocValuesFormatFactory());
+    /// </code>
+    /// See the <see cref="Lucene.Net.Codecs"/> namespace documentation for more examples of how to
+    /// inject dependencies into <see cref="DocValuesFormat"/> subclasses.
+    /// <para/>
+    /// <h4>Use Reflection to Scan an Assembly for DocValuesFormats</h4>
+    /// <para/>
+    /// <see cref="ScanForDocValuesFormats(Assembly)"/> or <see cref="ScanForDocValuesFormats(IEnumerable{Assembly})"/> can be used
+    /// to scan assemblies using .NET Reflection for codec types and add all subclasses that are found automatically.
+    /// <code>
+    /// public class ScanningDocValuesFormatFactory : DefaultDocValuesFormatFactory
+    /// {
+    ///     protected override void Initialize()
+    ///     {
+    ///         // Load all default codecs
+    ///         base.Initialize();
+    ///         
+    ///         // Load all of the codecs inside of the same assembly that MyDocValuesFormat is defined in
+    ///         ScanForDocValuesFormats(typeof(MyDocValuesFormat).Assembly);
+    ///     }
+    /// }
+    /// 
+    /// // Register the factory at application start up.
+    /// DocValuesFormat.SetDocValuesFormatFactory(new ScanningDocValuesFormatFactory());
+    /// </code>
+    /// Doc values formats in the target assembly can be excluded from the scan by decorating them with
+    /// the <see cref="ExcludeDocValuesFormatFromScanAttribute"/>.
     /// </summary>
+    /// <seealso cref="IDocValuesFormatFactory"/>
+    /// <seealso cref="IServiceListable"/>
+    /// <seealso cref="ExcludeDocValuesFormatFromScanAttribute"/>
+    // LUCENENET specific
     public class DefaultDocValuesFormatFactory : NamedServiceFactory<DocValuesFormat>, IDocValuesFormatFactory, IServiceListable
     {
         private static readonly Type[] localDocValuesFormatTypes = new Type[] {
@@ -223,7 +279,7 @@ namespace Lucene.Net.Codecs
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
             EnsureInitialized();
-            if (!docValuesFormatNameToTypeMap.TryGetValue(name, out Type codecType) && codecType == null)
+            if (!docValuesFormatNameToTypeMap.TryGetValue(name, out Type codecType) || codecType == null)
             {
                 throw new ArgumentException($"DocValuesFormat '{name}' cannot be loaded. If the format is not " +
                     $"in a Lucene.Net assembly, you must subclass {typeof(DefaultDocValuesFormatFactory).FullName}, " +

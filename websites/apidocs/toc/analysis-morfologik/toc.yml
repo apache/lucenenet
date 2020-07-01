@@ -1,0 +1,3 @@
+- name: Analysis Morfologik
+  href: ../../obj/docfx/api/analysis-morfologik/toc.yml
+  topicUid: Lucene.Net.Analysis.Morfologik

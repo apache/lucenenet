@@ -31,9 +31,14 @@ namespace LuceneDocsPlugins
     public class LuceneDfmEngineCustomizer : IDfmEngineCustomizer
     {
         public void Customize(DfmEngineBuilder builder, IReadOnlyDictionary<string, object> parameters)
-        {
-            var index = builder.BlockRules.FindIndex(r => r is MarkdownHeadingBlockRule);
-            builder.BlockRules = builder.BlockRules.Insert(index, new LuceneNoteBlockRule());
+         {
+            //// insert inline rule at the top
+            //builder.InlineRules = builder.InlineRules.Insert(0, new EnvironmentVariableInlineRule());
+
+            // insert block rule above header rule. Why? I dunno, that's what the docs say: 
+            // https://dotnet.github.io/docfx/tutorial/intro_markdown_lite.html#select-token-kind
+            var blockIndex = builder.BlockRules.FindIndex(r => r is MarkdownHeadingBlockRule);
+            builder.BlockRules = builder.BlockRules.Insert(blockIndex, new LuceneNoteBlockRule());
         }
     }
 }

@@ -1,0 +1,82 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net/Lucene.Net.csproj"
+          ],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**"
+          ],
+          "src": "../../src"
+        }
+      ],
+      "dest": "obj/docfx/api/core",
+      "properties": {
+        "TargetFramework": "netstandard2.0"
+      }
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "overview.md"
+        ],
+        "src": "../../src/Lucene.Net"
+      },
+      {
+        "files": [
+          "**.yml",
+          "**.md"
+        ],
+        "src": "obj/docfx/api/core"
+      },   
+      {
+        "files": [
+          "toc.yml",
+          "core/toc.yml"
+        ],
+        "src": "toc"
+      }
+    ],    
+    "overwrite": [  
+      {
+        "files": [
+          "**/package.md",
+          "**/overview.md"
+        ],
+        "src": "../../src/Lucene.Net",
+        "exclude": [
+          "overview.md"
+        ]
+      },    
+      {
+        "files": [
+          "apiSpec/core/**/*.md"
+        ]
+      }
+    ],
+    "xref": [
+      "_site/api/codecs/xrefmap.yml"
+    ],
+    "dest": "_site/api/core",
+    "globalMetadataFiles": [
+      "docfx.global.json",
+      "docfx.global.subsite.json"
+    ],
+    "template": [
+      "Templates/DefaultTemplateNoAssets",
+      "Templates/LuceneTemplate",
+      "Templates/LuceneApiDocs"
+    ],
+    "postProcessors": [],
+    "markdownEngineName": "dfm",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}

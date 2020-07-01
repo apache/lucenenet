@@ -1,0 +1,3 @@
+- name: Analysis Phonetic
+  href: ../../obj/docfx/api/analysis-phonetic/toc.yml
+  topicUid: Lucene.Net.Analysis.Phonetic

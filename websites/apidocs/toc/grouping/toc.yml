@@ -1,0 +1,3 @@
+- name: Grouping
+  href: ../../obj/docfx/api/grouping/toc.yml
+  topicUid: Lucene.Net.Grouping

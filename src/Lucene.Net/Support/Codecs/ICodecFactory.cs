@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Codecs
+﻿using Lucene.Net.Util;
+
+namespace Lucene.Net.Codecs
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -18,12 +20,16 @@
      */
 
     /// <summary>
-    /// LUCENENET specific contract for extending the functionality of <see cref="Codec"/> implementations so
+    /// Contract for extending the functionality of <see cref="Codec"/> implementations so
     /// they can be injected with dependencies.
     /// <para/>
     /// To set the <see cref="ICodecFactory"/>, call <see cref="Codec.SetCodecFactory(ICodecFactory)"/>.
+    /// <para/>
+    /// See the <see cref="Lucene.Net.Codecs"/> namespace documentation for some common usage examples.
     /// </summary>
     /// <seealso cref="DefaultCodecFactory"/>
+    /// <seealso cref="IServiceListable"/>
+    // LUCENENET specific
     public interface ICodecFactory
     {
         /// <summary>

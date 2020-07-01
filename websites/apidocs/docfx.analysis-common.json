@@ -1,0 +1,82 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Analysis.Common/Lucene.Net.Analysis.Common.csproj"
+          ],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**"
+          ],
+          "src": "../../src"
+        }
+      ],
+      "dest": "obj/docfx/api/analysis-common",
+      "properties": {
+        "TargetFramework": "netstandard2.0"
+      }
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "overview.md"
+        ],
+        "src": "../../src/Lucene.Net.Analysis.Common"
+      },
+      {
+        "files": [
+          "**.yml",
+          "**.md"
+        ],
+        "src": "obj/docfx/api/analysis-common"
+      },   
+      {
+        "files": [
+          "toc.yml",
+          "analysis-common/toc.yml"
+        ],
+        "src": "toc"
+      }
+    ],    
+    "overwrite": [
+      {
+        "files": [
+          "**/package.md",
+          "**/overview.md"
+        ],
+        "src": "../../src/Lucene.Net.Analysis.Common",
+        "exclude": [
+          "overview.md"
+        ]
+      },
+      {
+        "files": [
+          "apiSpec/analysis-common/**/*.md"
+        ]
+      }
+    ],
+    "xref": [
+      "_site/api/core/xrefmap.yml"
+    ],
+    "dest": "_site/api/analysis-common",
+    "globalMetadataFiles": [
+      "docfx.global.json",
+      "docfx.global.subsite.json"
+    ],
+    "template": [
+      "Templates/DefaultTemplateNoAssets",
+      "Templates/LuceneTemplate",
+      "Templates/LuceneApiDocs"
+    ],
+    "postProcessors": [],
+    "markdownEngineName": "dfm",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}

@@ -3,16 +3,16 @@ title: Lucene.Net Docs - The documentation website for Lucene.Net
 description: The documentation website for Lucene.Net
 ---
 
-Apache Lucene.Net 4.8.0 Documentation
+Apache Lucene.Net 4.8.0-beta00009 Documentation
 ===============
 
 ---------------
 
-Lucene is a .NET full-text search engine. Lucene.NET is not a complete application, 
+Lucene is a _.NET full-text search engine_. Lucene.NET is not a complete application, 
 but rather a code library and API that can easily be used to add search capabilities
 to applications.
 
-This is the official API documentation for <b>Apache Lucene.NET 4.8.0</b>.
+This is the official API documentation for __Apache Lucene.NET 4.8.0-beta00009__.
 
 ## Getting Started
 
@@ -39,32 +39,32 @@ on some of the conceptual or inner details of Lucene:
 
 ## Libraries
 
-* [Lucene.Net](xref:Lucene.Net) - Core library
-* [Lucene.Net.Analysis.Common](xref:Lucene.Net.Analysis.Common) - Analyzers for indexing content in different languages and domains
+* <xref:Lucene.Net> - Core library
+* <xref:Lucene.Net.Analysis.Common> - Analyzers for indexing content in different languages and domains
 * [Lucene.Net.Analysis.Kuromoji](xref:Lucene.Net.Analysis.Ja) - Japanese Morphological Analyzer
-* [Lucene.Net.Analysis.Morfologik](xref:Lucene.Net.Analysis.Morfologik) - Analyzer for dictionary stemming, built-in Polish dictionary
-* [Lucene.Net.Analysis.OpenNLP](xref:Lucene.Net.Analysis.OpenNlp) - OpenNLP Library Integration
-* [Lucene.Net.Analysis.Phonetic](xref:Lucene.Net.Analysis.Phonetic) - Analyzer for indexing phonetic signatures (for sounds-alike search)
+* <xref:Lucene.Net.Analysis.Morfologik> - Analyzer for dictionary stemming, built-in Polish dictionary
+* <xref:Lucene.Net.Analysis.OpenNlp> - OpenNLP Library Integration
+* <xref:Lucene.Net.Analysis.Phonetic> - Analyzer for indexing phonetic signatures (for sounds-alike search)
 * [Lucene.Net.Analysis.SmartCn](xref:Lucene.Net.Analysis.Cn.Smart) - Analyzer for indexing Chinese
-* [Lucene.Net.Analysis.Stempel](xref:Lucene.Net.Analysis.Stempel) - Analyzer for indexing Polish
+* <xref:Lucene.Net.Analysis.Stempel> - Analyzer for indexing Polish
 * [Lucene.Net.Benchmark](xref:Lucene.Net.Benchmarks) - System for benchmarking Lucene
-* [Lucene.Net.Classification](xref:Lucene.Net.Classification) - Classification module for Lucene
-* [Lucene.Net.Codecs](xref:Lucene.Net.Codecs) - Lucene codecs and postings formats
+* <xref:Lucene.Net.Classification> - Classification module for Lucene
+* <xref:Lucene.Net.Codecs> - Lucene codecs and postings formats
 * [Lucene.Net.Expressions](xref:Lucene.Net.Expressions) - Dynamically computed values to sort/facet/search on based on a pluggable grammar
 * [Lucene.Net.Facet](xref:Lucene.Net.Facet) - Faceted indexing and search capabilities
-* [Lucene.Net.Grouping](xref:Lucene.Net.Grouping) - Collectors for grouping search results
-* [Lucene.Net.Highlighter](xref:Lucene.Net.Search.Highlight) - Highlights search keywords in results
-* [Lucene.Net.ICU](xref:Lucene.Net.Analysis.Icu) - Specialized ICU (International Components for Unicode) Analyzers and Highlighters
-* [Lucene.Net.Join](xref:Lucene.Net.Join) - Index-time and Query-time joins for normalized content
+* <xref:Lucene.Net.Grouping> - Collectors for grouping search results
+* <xref:Lucene.Net.Search.Highlight> - Highlights search keywords in results
+* <xref:Lucene.Net.Analysis.Icu> - Specialized ICU (International Components for Unicode) Analyzers and Highlighters
+* <xref:Lucene.Net.Join> - Index-time and Query-time joins for normalized content
 * [Lucene.Net.Memory](xref:Lucene.Net.Index.Memory) - Single-document in-memory index implementation
-* [Lucene.Net.Misc](xref:Lucene.Net.Misc) - Index tools and other miscellaneous code
-* [Lucene.Net.Queries](xref:Lucene.Net.Queries) - Filters and Queries that add to core Lucene
-* [Lucene.Net.QueryParser](xref:Lucene.Net.QueryParser) - Text to Query parsers and parsing framework
-* [Lucene.Net.Replicator](xref:Lucene.Net.Replicator)  Files replication utility
-* [Lucene.Net.Sandbox](xref:Lucene.Net.Sandbox) - Various third party contributions and new ideas
+* <xref:Lucene.Net.Misc> - Index tools and other miscellaneous code
+* <xref:Lucene.Net.Queries> - Filters and Queries that add to core Lucene
+* <xref:Lucene.Net.QueryParser> - Text to Query parsers and parsing framework
+* <xref:Lucene.Net.Replicator>  Files replication utility
+* <xref:Lucene.Net.Sandbox> - Various third party contributions and new ideas
 * [Lucene.Net.Spatial](xref:Lucene.Net.Spatial) - Geospatial search
-* [Lucene.Net.Suggest](xref:Lucene.Net.Suggest) - Auto-suggest and Spell-checking support
-* [Lucene.Net.TestFramework](xref:Lucene.Net.TestFramework) - Framework for testing Lucene-based applications
+* <xref:Lucene.Net.Suggest> - Auto-suggest and Spell-checking support
+* <xref:Lucene.Net.TestFramework> - Framework for testing Lucene-based applications
 
 ### Tools
 

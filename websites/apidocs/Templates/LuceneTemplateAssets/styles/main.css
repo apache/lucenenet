@@ -1,0 +1,103 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/* .navbar-inverse {
+    background: #4a95da;
+    background: rgb(44, 95, 163);
+    background: -moz-linear-gradient(top, rgba(44, 95, 163, 1) 0%, rgba(64, 150, 238, 1) 100%);
+    background: -webkit-linear-gradient(top, rgba(44, 95, 163, 1) 0%, rgba(64, 150, 238, 1) 100%);
+    background: linear-gradient(to bottom, rgba(44, 95, 163, 1) 0%, rgba(64, 150, 238, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2c5fa3', endColorstr='#4096ee', GradientType=0);
+    border-color:white;
+  }
+  .navbar-inverse .navbar-nav>li>a, .navbar-inverse .navbar-text {
+    color: #fff;
+  }
+  .navbar-inverse .navbar-nav>.active>a {
+      background-color: #1764AA;
+  }
+  .navbar-inverse .navbar-nav>.active>a:focus, .navbar-inverse .navbar-nav>.active>a:hover {
+      background-color: #1764AA;
+  } */
+
+  .btn-primary:hover {
+    background-color: #1764AA;
+}
+button, a {
+    color: #1764AA;
+    /* #0095eb */
+}
+button:hover,
+button:focus,
+a:hover,
+a:focus {
+  color: #143653;
+  text-decoration: none;
+}
+nav.navbar {
+    background-color:white;
+    min-height: 80px;
+}
+.navbar-brand  {
+    height:80px;
+}
+.navbar-header .navbar-brand img {    
+    width:300px;
+    height:55px;
+    margin:10px 10px 10px 0px;
+}
+.navbar-toggle .icon-bar{
+    margin-top: 2px;
+    background-color:#0095eb;
+}
+.navbar-toggle {
+    border-color:#0095eb;
+}
+header ul.navbar-nav {
+    font-size:1.2em;
+    float:right;
+    font-weight: 600;
+}
+
+.sidefilter {
+    top:120px; 
+}
+
+.sidetoc {
+    top: 180px;
+    background-color:rgb(247, 247, 247);
+}
+
+body .toc {
+    background-color:rgb(247, 247, 247);
+}
+
+.sidefilter {
+    background-color: rgb(247, 247, 247);
+}
+
+.level0.breadcrumb .level1.breadcrumb {
+    display: inline;
+}
+
+.level0.breadcrumb .level1.breadcrumb > li:before {
+    content: "\00a0/";
+    padding: 0 5px;
+    color: #ccc;
+}

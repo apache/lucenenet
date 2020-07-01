@@ -1,0 +1,3 @@
+- name: Suggest
+  href: ../../obj/docfx/api/suggest/toc.yml
+  topicUid: Lucene.Net.Suggest

@@ -1,0 +1,3 @@
+- name: Analysis Stempel
+  href: ../../obj/docfx/api/analysis-stempel/toc.yml
+  topicUid: Lucene.Net.Analysis.Stempel

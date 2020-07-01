@@ -1,0 +1,3 @@
+- name: Facet
+  href: ../../obj/docfx/api/facet/toc.yml
+  topicUid: Lucene.Net.Facet

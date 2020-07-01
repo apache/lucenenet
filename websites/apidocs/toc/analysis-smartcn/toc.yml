@@ -1,0 +1,3 @@
+- name: Analysis SmartCn
+  href: ../../obj/docfx/api/analysis-smartcn/toc.yml
+  topicUid: Lucene.Net.Analysis.Cn.Smart

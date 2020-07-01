@@ -1,0 +1,76 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Analysis.Kuromoji/Lucene.Net.Analysis.Kuromoji.csproj"
+          ],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**"
+          ],
+          "src": "../../src"
+        }
+      ],
+      "dest": "obj/docfx/api/analysis-kuromoji",
+      "properties": {
+        "TargetFramework": "netstandard2.0"
+      }
+    }
+  ],
+  "build": {
+    "content": [      
+      {
+        "files": [
+          "**.yml",
+          "**.md"
+        ],
+        "src": "obj/docfx/api/analysis-kuromoji"
+      },   
+      {
+        "files": [
+          "toc.yml",
+          "analysis-kuromoji/toc.yml"
+        ],
+        "src": "toc"
+      }
+    ],    
+    "overwrite": [
+      {
+        "files": [
+          "**/package.md",
+          "**/overview.md"
+        ],
+        "src": "../../src/Lucene.Net.Analysis.Kuromoji",
+        "exclude": [
+          "package.md"
+        ]
+      },
+      {
+        "files": [
+          "apiSpec/analysis-kuromoji/**/*.md"
+        ]
+      }
+    ],
+    "xref": [
+      "_site/api/core/xrefmap.yml"
+    ],
+    "dest": "_site/api/analysis-kuromoji",
+    "globalMetadataFiles": [
+      "docfx.global.json",
+      "docfx.global.subsite.json"
+    ],
+    "template": [
+      "Templates/DefaultTemplateNoAssets",
+      "Templates/LuceneTemplate",
+      "Templates/LuceneApiDocs"
+    ],
+    "postProcessors": [],
+    "markdownEngineName": "dfm",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}

@@ -1,0 +1,3 @@
+- name: Classification
+  href: ../../obj/docfx/api/classification/toc.yml
+  topicUid: Lucene.Net.Classification

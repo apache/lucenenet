@@ -1,0 +1,76 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Benchmark/Lucene.Net.Benchmark.csproj"
+          ],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**"
+          ],
+          "src": "../../src"
+        }
+      ],
+      "dest": "obj/docfx/api/benchmark",
+      "properties": {
+        "TargetFramework": "netstandard2.0"
+      }
+    }
+  ],
+  "build": {
+    "content": [      
+      {
+        "files": [
+          "**.yml",
+          "**.md"
+        ],
+        "src": "obj/docfx/api/benchmark"
+      },   
+      {
+        "files": [
+          "toc.yml",
+          "benchmark/toc.yml"
+        ],
+        "src": "toc"
+      }
+    ],    
+    "overwrite": [
+      {
+        "files": [
+          "**/package.md",
+          "**/overview.md"
+        ],
+        "src": "../../src/Lucene.Net.Benchmark",
+        "exclude": [
+          "overview.md"
+        ]
+      },      
+      {
+        "files": [
+          "apiSpec/benchmark/**/*.md"
+        ]
+      }
+    ],
+    "xref": [
+      "_site/api/core/xrefmap.yml"
+    ],
+    "dest": "_site/api/benchmark",
+    "globalMetadataFiles": [
+      "docfx.global.json",
+      "docfx.global.subsite.json"
+    ],
+    "template": [
+      "Templates/DefaultTemplateNoAssets",
+      "Templates/LuceneTemplate",
+      "Templates/LuceneApiDocs"
+    ],
+    "postProcessors": [],
+    "markdownEngineName": "dfm",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}

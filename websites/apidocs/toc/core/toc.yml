@@ -1,0 +1,3 @@
+- name: Core  
+  href: ../../obj/docfx/api/core/toc.yml
+  topicUid: Lucene.Net

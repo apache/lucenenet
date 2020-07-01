@@ -23,29 +23,85 @@ namespace Lucene.Net.Codecs
      */
 
     /// <summary>
-    /// LUCENENET specific class that implements the default functionality for the 
-    /// <see cref="IPostingsFormatFactory"/>.
+    /// Implements the default functionality of <see cref="IPostingsFormatFactory"/>.
     /// <para/>
-    /// The most common use cases are:
-    /// <list type="bullet">
-    ///     <item><description>Initialize <see cref="DefaultPostingsFormatFactory"/> with a set of <see cref="CustomPostingsFormatTypes"/>.</description></item>
-    ///     <item><description>Subclass <see cref="DefaultPostingsFormatFactory"/> and override
-    ///         <see cref="DefaultPostingsFormatFactory.GetPostingsFormat(Type)"/> so an external dependency injection
-    ///         container can be used to supply the instances (lifetime should be singleton). Note that you could 
-    ///         alternately use the "named type" feature that many DI containers have to supply the type based on name by 
-    ///         overriding <see cref="GetPostingsFormat(string)"/>.</description></item>
-    ///     <item><description>Subclass <see cref="DefaultPostingsFormatFactory"/> and override
-    ///         <see cref="DefaultPostingsFormatFactory.GetPostingsFormatType(string)"/> so a type new type can be
-    ///         supplied that is not in the <see cref="DefaultPostingsFormatFactory.postingsFormatNameToTypeMap"/>.</description></item>
-    ///     <item><description>Subclass <see cref="DefaultPostingsFormatFactory"/> to add new or override the default <see cref="PostingsFormat"/> 
-    ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutPostingsFormatType(Type)"/>.</description></item>
-    ///     <item><description>Subclass <see cref="DefaultPostingsFormatFactory"/> to scan additional assemblies for <see cref="PostingsFormat"/>
-    ///         subclasses in by overriding <see cref="Initialize()"/> and calling <see cref="ScanForPostingsFormats(Assembly)"/>. 
-    ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</description></item>
-    /// </list>
+    /// To replace the <see cref="DefaultPostingsFormatFactory"/> instance, call
+    /// <see cref="PostingsFormat.SetPostingsFormatFactory(IPostingsFormatFactory)"/> at application start up.
+    /// <see cref="DefaultPostingsFormatFactory"/> can be subclassed or passed additional parameters to register
+    /// additional codecs, inject dependencies, or change caching behavior, as shown in the following examples.
+    /// Alternatively, <see cref="IPostingsFormatFactory"/> can be implemented to provide complete control over
+    /// postings format creation and lifetimes.
     /// <para/>
-    /// To set the <see cref="IPostingsFormatFactory"/>, call <see cref="PostingsFormat.SetPostingsFormatFactory(IPostingsFormatFactory)"/>.
+    /// <h4>Register Additional PostingsFormats</h4>
+    /// <para/>
+    /// Additional codecs can be added by initializing the instance of <see cref="DefaultPostingsFormatFactory"/> and
+    /// passing an array of <see cref="PostingsFormat"/>-derived types.
+    /// <code>
+    /// // Register the factory at application start up.
+    /// PostingsFormat.SetPostingsFormatFactory(new DefaultPostingsFormatFactory {
+    ///     CustomPostingsFormatTypes = new Type[] { typeof(MyPostingsFormat), typeof(AnotherPostingsFormat) }
+    /// });
+    /// </code>
+    /// <para/>
+    /// <h4>Only Use Explicitly Defined PostingsFormats</h4>
+    /// <para/>
+    /// <see cref="PutPostingsFormatType(Type)"/> can be used to explicitly add codec types. In this example,
+    /// the call to <c>base.Initialize()</c> is excluded to skip the built-in codec registration.
+    /// Since <c>AnotherPostingsFormat</c> doesn't have a default constructor, the <see cref="NewPostingsFormat(Type)"/>
+    /// method is overridden to supply the required parameters.
+    /// <code>
+    /// public class ExplicitPostingsFormatFactory : DefaultPostingsFormatFactory
+    /// {
+    ///     protected override void Initialize()
+    ///     {
+    ///         // Load specific codecs in a specific order.
+    ///         PutPostingsFormatType(typeof(MyPostingsFormat));
+    ///         PutPostingsFormatType(typeof(AnotherPostingsFormat));
+    ///     }
+    ///     
+    ///     protected override PostingsFormat NewPostingsFormat(Type type)
+    ///     {
+    ///         // Special case: AnotherPostingsFormat has a required dependency
+    ///         if (typeof(AnotherPostingsFormat).Equals(type))
+    ///             return new AnotherPostingsFormat(new SomeDependency());
+    ///         
+    ///         return base.NewPostingsFormat(type);
+    ///     }
+    /// }
+    /// 
+    /// // Register the factory at application start up.
+    /// PostingsFormat.SetPostingsFormatFactory(new ExplicitPostingsFormatFactory());
+    /// </code>
+    /// See the <see cref="Lucene.Net.Codecs"/> namespace documentation for more examples of how to
+    /// inject dependencies into <see cref="PostingsFormat"/> subclasses.
+    /// <para/>
+    /// <h4>Use Reflection to Scan an Assembly for PostingsFormats</h4>
+    /// <para/>
+    /// <see cref="ScanForPostingsFormats(Assembly)"/> or <see cref="ScanForPostingsFormats(IEnumerable{Assembly})"/> can be used
+    /// to scan assemblies using .NET Reflection for codec types and add all subclasses that are found automatically.
+    /// <code>
+    /// public class ScanningPostingsFormatFactory : DefaultPostingsFormatFactory
+    /// {
+    ///     protected override void Initialize()
+    ///     {
+    ///         // Load all default codecs
+    ///         base.Initialize();
+    ///         
+    ///         // Load all of the codecs inside of the same assembly that MyPostingsFormat is defined in
+    ///         ScanForPostingsFormats(typeof(MyPostingsFormat).Assembly);
+    ///     }
+    /// }
+    /// 
+    /// // Register the factory at application start up.
+    /// PostingsFormat.SetPostingsFormatFactory(new ScanningPostingsFormatFactory());
+    /// </code>
+    /// Postings formats in the target assembly can be excluded from the scan by decorating them with
+    /// the <see cref="ExcludePostingsFormatFromScanAttribute"/>.
     /// </summary>
+    /// <seealso cref="IPostingsFormatFactory"/>
+    /// <seealso cref="IServiceListable"/>
+    /// <seealso cref="ExcludePostingsFormatFromScanAttribute"/>
+    // LUCENENET specific
     public class DefaultPostingsFormatFactory : NamedServiceFactory<PostingsFormat>, IPostingsFormatFactory, IServiceListable
     {
         private static readonly Type[] localPostingsFormatTypes = new Type[]
@@ -223,7 +279,7 @@ namespace Lucene.Net.Codecs
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
             EnsureInitialized();
-            if (!postingsFormatNameToTypeMap.TryGetValue(name, out Type codecType) && codecType == null)
+            if (!postingsFormatNameToTypeMap.TryGetValue(name, out Type codecType) || codecType == null)
             {
                 throw new ArgumentException($"PostingsFormat '{name}' cannot be loaded. If the format is not " +
                     $"in a Lucene.Net assembly, you must subclass {typeof(DefaultPostingsFormatFactory).FullName}, " +

@@ -1,0 +1,3 @@
+- name: Replicator
+  href: ../../obj/docfx/api/replicator/toc.yml
+  topicUid: Lucene.Net.Replicator

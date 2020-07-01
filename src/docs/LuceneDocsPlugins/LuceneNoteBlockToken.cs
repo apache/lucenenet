@@ -42,4 +42,5 @@ namespace LuceneDocsPlugins
 
         public SourceInfo SourceInfo { get; }
     }
+
 }

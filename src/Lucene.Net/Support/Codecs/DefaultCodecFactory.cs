@@ -23,29 +23,86 @@ namespace Lucene.Net.Codecs
      */
 
     /// <summary>
-    /// LUCENENET specific class that implements the default functionality for the 
-    /// <see cref="ICodecFactory"/>.
+    /// Implements the default functionality of <see cref="ICodecFactory"/>.
     /// <para/>
-    /// The most common use cases are:
-    /// <list type="bullet">
-    ///     <item><description>Initialize <see cref="DefaultCodecFactory"/> with a set of <see cref="CustomCodecTypes"/>.</description></item>
-    ///     <item><description>Subclass <see cref="DefaultCodecFactory"/> and override
-    ///         <see cref="DefaultCodecFactory.GetCodec(Type)"/> so an external dependency injection
-    ///         container can be used to supply the instances (lifetime should be singleton). Note that you could 
-    ///         alternately use the "named type" feature that many DI containers have to supply the type based on name by 
-    ///         overriding <see cref="GetCodec(string)"/>.</description></item>
-    ///     <item><description>Subclass <see cref="DefaultCodecFactory"/> and override
-    ///         <see cref="DefaultCodecFactory.GetCodecType(string)"/> so a type new type can be
-    ///         supplied that is not in the <see cref="DefaultCodecFactory.codecNameToTypeMap"/>.</description></item>
-    ///     <item><description>Subclass <see cref="DefaultCodecFactory"/> to add new or override the default <see cref="Codec"/> 
-    ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutCodecType(Type)"/>.</description></item>
-    ///     <item><description>Subclass <see cref="DefaultCodecFactory"/> to scan additional assemblies for <see cref="Codec"/>
-    ///         subclasses in by overriding <see cref="Initialize()"/> and calling <see cref="ScanForCodecs(Assembly)"/>. 
-    ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</description></item>
-    /// </list>
+    /// To replace the <see cref="DefaultCodecFactory"/> instance, call
+    /// <see cref="Codec.SetCodecFactory(ICodecFactory)"/> at application start up.
+    /// <see cref="DefaultCodecFactory"/> can be subclassed or passed additional parameters to register
+    /// additional codecs, inject dependencies, or change caching behavior, as shown in the following examples.
+    /// Alternatively, <see cref="ICodecFactory"/> can be implemented to provide complete control over
+    /// codec creation and lifetimes.
     /// <para/>
-    /// To set the <see cref="ICodecFactory"/>, call <see cref="Codec.SetCodecFactory(ICodecFactory)"/>.
+    /// <h4>Register Additional Codecs</h4>
+    /// <para/>
+    /// Additional codecs can be added by initializing the instance of <see cref="DefaultCodecFactory"/> and
+    /// passing an array of <see cref="Codec"/>-derived types.
+    /// <code>
+    /// // Register the factory at application start up.
+    /// Codec.SetCodecFactory(new DefaultCodecFactory {
+    ///     CustomCodecTypes = new Type[] { typeof(MyCodec), typeof(AnotherCodec) }
+    /// });
+    /// </code>
+    /// <para/>
+    /// <h4>Only Use Explicitly Defined Codecs</h4>
+    /// <para/>
+    /// <see cref="PutCodecType(Type)"/> can be used to explicitly add codec types. In this example,
+    /// the call to <c>base.Initialize()</c> is excluded to skip the built-in codec registration.
+    /// Since <c>AnotherCodec</c> doesn't have a default constructor, the <see cref="NewCodec(Type)"/>
+    /// method is overridden to supply the required parameters.
+    /// <code>
+    /// public class ExplicitCodecFactory : DefaultCodecFactory
+    /// {
+    ///     protected override void Initialize()
+    ///     {
+    ///         // Load specific codecs in a specific order.
+    ///         PutCodecType(typeof(MyCodec));
+    ///         PutCodecType(typeof(AnotherCodec));
+    ///     }
+    ///     
+    ///     protected override Codec NewCodec(Type type)
+    ///     {
+    ///         // Special case: AnotherCodec has a required dependency
+    ///         if (typeof(AnotherCodec).Equals(type))
+    ///             return new AnotherCodec(new SomeDependency());
+    ///         
+    ///         return base.NewCodec(type);
+    ///     }
+    /// }
+    /// 
+    /// // Register the factory at application start up.
+    /// Codec.SetCodecFactory(new ExplicitCodecFactory());
+    /// </code>
+    /// See the <see cref="Lucene.Net.Codecs"/> namespace documentation for more examples of how to
+    /// inject dependencies into <see cref="Codec"/> subclasses.
+    /// <para/>
+    /// <h4>Use Reflection to Scan an Assembly for Codecs</h4>
+    /// <para/>
+    /// <see cref="ScanForCodecs(Assembly)"/> or <see cref="ScanForCodecs(IEnumerable{Assembly})"/> can be used
+    /// to scan assemblies using .NET Reflection for codec types and add all subclasses that are found automatically.
+    /// This example calls <c>base.Initialize()</c> to load the default codecs prior to scanning for additional codecs.
+    /// <code>
+    /// public class ScanningCodecFactory : DefaultCodecFactory
+    /// {
+    ///     protected override void Initialize()
+    ///     {
+    ///         // Load all default codecs
+    ///         base.Initialize();
+    ///         
+    ///         // Load all of the codecs inside of the same assembly that MyCodec is defined in
+    ///         ScanForCodecs(typeof(MyCodec).Assembly);
+    ///     }
+    /// }
+    /// 
+    /// // Register the factory at application start up.
+    /// Codec.SetCodecFactory(new ScanningCodecFactory());
+    /// </code>
+    /// Codecs in the target assemblie(s) can be excluded from the scan by decorating them with
+    /// the <see cref="ExcludeCodecFromScanAttribute"/>.
     /// </summary>
+    /// <seealso cref="ICodecFactory"/>
+    /// <seealso cref="IServiceListable"/>
+    /// <seealso cref="ExcludeCodecFromScanAttribute"/>
+    // LUCENENET specific
     public class DefaultCodecFactory : NamedServiceFactory<Codec>, ICodecFactory, IServiceListable
     {
         private static readonly Type[] localCodecTypes = new Type[] {
@@ -226,7 +283,7 @@ namespace Lucene.Net.Codecs
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
             EnsureInitialized();
-            if (!codecNameToTypeMap.TryGetValue(name, out Type codecType) && codecType == null)
+            if (!codecNameToTypeMap.TryGetValue(name, out Type codecType) || codecType == null)
             {
                 throw new ArgumentException($"Codec '{name}' cannot be loaded. If the codec is not " +
                     $"in a Lucene.Net assembly, you must subclass {typeof(DefaultCodecFactory).FullName}, " +

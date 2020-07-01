@@ -201,7 +201,7 @@ stages:
 
     steps:
     - powershell: |
-         $(Build.SourcesDirectory)/websites/apidocs/docs.ps1 0 1
+         $(Build.SourcesDirectory)/websites/apidocs/docs.ps1 -LuceneNetVersion $(PackageVersion) -Clean -BaseUrl https://lucenenet.apache.org/docs/
       errorActionPreference: 'continue'
       ignoreLASTEXITCODE: true
       failOnStderr: false

@@ -1,0 +1,3 @@
+- name: Memory
+  href: ../../obj/docfx/api/memory/toc.yml
+  topicUid: Lucene.Net.Index.Memory
