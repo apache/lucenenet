@@ -49,6 +49,8 @@ This version is a direct port of the Java Lucene project at [this release](https
 - [Lucene.Net](https://www.nuget.org/packages/Lucene.Net/) - Core library
 - [Lucene.Net.Analysis.Common](https://www.nuget.org/packages/Lucene.Net.Analysis.Common/) - Analyzers for indexing content in different languages and domains
 - [Lucene.Net.Analysis.Kuromoji](https://www.nuget.org/packages/Lucene.Net.Analysis.Kuromoji/) - Japanese Morphological Analyzer 
+- [Lucene.Net.Analysis.Morfologik](https://www.nuget.org/packages/Lucene.Net.Analysis.Morfologik/) - Analyzer for dictionary stemming, built-in Polish dictionary
+- [Lucene.Net.Analysis.OpenNlp](https://www.nuget.org/packages/Lucene.Net.Analysis.OpenNlp/) - OpenNLP Library Integration
 - [Lucene.Net.Analysis.Phonetic](https://www.nuget.org/packages/Lucene.Net.Analysis.Phonetic/) - Analyzer for indexing phonetic signatures (for sounds-alike search)
 - [Lucene.Net.Analysis.SmartCn](https://www.nuget.org/packages/Lucene.Net.Analysis.SmartCn/) - Analyzer for indexing Chinese
 - [Lucene.Net.Analysis.Stempel](https://www.nuget.org/packages/Lucene.Net.Analysis.Stempel/) - Analyzer for indexing Polish
@@ -69,3 +71,4 @@ This version is a direct port of the Java Lucene project at [this release](https
 - [Lucene.Net.Sandbox](https://www.nuget.org/packages/Lucene.Net.Sandbox/) - Various third party contributions and new ideas
 - [Lucene.Net.Spatial](https://www.nuget.org/packages/Lucene.Net.Spatial/) - Geospatial search
 - [Lucene.Net.Suggest](https://www.nuget.org/packages/Lucene.Net.Suggest/) - Auto-suggest and Spellchecking support
+- [Lucene.Net.TestFramework](https://www.nuget.org/packages/Lucene.Net.TestFramework/) - Framework for testing Lucene-based applications
