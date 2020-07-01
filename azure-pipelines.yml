@@ -170,7 +170,22 @@ stages:
         publishLocation: 'pipeline'
       condition: and(succeeded(), ne(variables['RunTests'], 'false'))
       
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact: $(BinaryArtifactName)_netcoreapp2.1'
+      inputs:
+        targetPath: '$(PublishTempDirectory)\netcoreapp2.1'
+        artifact: '$(BinaryArtifactName)_netcoreapp2.1'
+        publishLocation: 'pipeline'
+      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
       
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact: $(BinaryArtifactName)_net48'
+      inputs:
+        targetPath: '$(PublishTempDirectory)\net48'
+        artifact: '$(BinaryArtifactName)_net48'
+        publishLocation: 'pipeline'
+      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(NuGetArtifactName)'
       inputs:
