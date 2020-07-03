@@ -28,8 +28,6 @@ namespace Lucene.Net.Util
     public class TestNumericUtils : LuceneTestCase
     {
 
-#if FEATURE_UTIL_TESTS
-
         [Test]
         public virtual void TestLongConversionAndOrdering()
         {
@@ -190,8 +188,6 @@ namespace Lucene.Net.Util
             }
         }
 
-#endif
-
         public static readonly double[] DOUBLE_NANs = new double[] {
             double.NaN,
             J2N.BitConversion.Int64BitsToDouble(0x7ff0000000000001L),
@@ -199,8 +195,6 @@ namespace Lucene.Net.Util
             J2N.BitConversion.Int64BitsToDouble(unchecked((long)0xfff0000000000001L)),
             J2N.BitConversion.Int64BitsToDouble(unchecked((long)0xffffffffffffffffL))
         };
-
-#if FEATURE_UTIL_TESTS
 
         [Test]
         public virtual void TestSortableDoubleNaN()
@@ -233,7 +227,6 @@ namespace Lucene.Net.Util
                 Assert.IsTrue(intVals[i - 1] < intVals[i], "check sort order");
             }
         }
-#endif
 
         public static readonly float[] FLOAT_NANs = new float[] {
             float.NaN,
@@ -242,8 +235,6 @@ namespace Lucene.Net.Util
             J2N.BitConversion.Int32BitsToSingle(unchecked((int)0xff800001)),
             J2N.BitConversion.Int32BitsToSingle(unchecked((int)0xffffffff))
         };
-
-#if FEATURE_UTIL_TESTS
 
         [Test]
         public virtual void TestSortableFloatNaN()
@@ -558,6 +549,5 @@ namespace Lucene.Net.Util
             // a 0-length range should reproduce the range itself
             AssertIntRangeSplit(9500, 9500, 4, false, new int[] { unchecked((int)0x8000251c), unchecked((int)0x8000251c) }, new int[] { 0 });
         }
-#endif
     }
 }

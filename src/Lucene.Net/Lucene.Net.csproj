@@ -117,8 +117,7 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests._A-D" />
     <InternalsVisibleTo Include="Lucene.Net.Tests._E-I" />
     <InternalsVisibleTo Include="Lucene.Net.Tests._J-S" />
-    <InternalsVisibleTo Include="Lucene.Net.Tests._T-U" />
-    <InternalsVisibleTo Include="Lucene.Net.Tests._U-Z" />
+    <InternalsVisibleTo Include="Lucene.Net.Tests._T-Z" />
 
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Common" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Analysis.Kuromoji" />
