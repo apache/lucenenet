@@ -26,17 +26,14 @@
   <PropertyGroup>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
 
-    <AssemblyTitle>Lucene.Net.Tests._U-Z</AssemblyTitle>
+    <AssemblyTitle>Lucene.Net.Tests._T-Z</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
   </PropertyGroup>
   
   <ItemGroup>
-    <Compile Include="..\Lucene.Net.Tests\Util\TestOfflineSorter.cs" Link="Util\TestOfflineSorter.cs" />
-    <Compile Include="..\Lucene.Net.Tests\Util\Automaton\**\*.cs" LinkBase="Util\Automaton" />
-    <Compile Include="..\Lucene.Net.Tests\Util\Fst\**\*.cs" LinkBase="Util\Fst" />
-    <Compile Include="..\Lucene.Net.Tests\Util\Packed\**\*.cs" LinkBase="Util\Packed" />
+    <Compile Include="..\Lucene.Net.Tests\Util\**\*.cs" LinkBase="Util" />
     <Compile Remove="..\Lucene.Net.Tests\Util\JunitCompat\**\*;..\Lucene.Net.Tests\Util\TestMaxFailuresRule.cs" />
   </ItemGroup>
   
@@ -47,15 +44,19 @@
     <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
     <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
   </ItemGroup>
-  
+
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);FEATURE_UTIL_TESTS</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)"/>
+    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">
+    <Compile Remove="..\Lucene.Net.Tests\Support\TestCase.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="$(SystemRuntimeInteropServicesRuntimeInformationPackageVersion)" />
   </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
