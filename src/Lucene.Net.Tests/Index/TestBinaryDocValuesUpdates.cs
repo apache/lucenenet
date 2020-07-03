@@ -105,6 +105,8 @@ namespace Lucene.Net.Index
             return doc;
         }
 
+#if FEATURE_INDEXWRITER_TESTS
+
         [Test]
         public virtual void TestUpdatesAreFlushed()
         {
@@ -1855,6 +1857,8 @@ namespace Lucene.Net.Index
                 IOUtils.Dispose(indexReader, taxoReader, nFsd);
             }
         }
+
+#endif
 
         private FacetsConfig GetFacetConfig()
         {

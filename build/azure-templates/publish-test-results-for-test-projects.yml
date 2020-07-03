@@ -126,6 +126,15 @@ steps:
 
 - template: publish-test-results.yml
   parameters:
+    testProjectName: 'Lucene.Net.Tests._I-J'
+    osName: '${{ parameters.osName }}'
+    framework: '${{ parameters.framework }}'
+    testResultsFormat: '${{ parameters.testResultsFormat }}'
+    testResultsArtifactName: '${{ parameters.testResultsArtifactName }}'
+    testResultsFileName: '${{ parameters.testResultsFileName }}'
+
+- template: publish-test-results.yml
+  parameters:
     testProjectName: 'Lucene.Net.Tests._J-S'
     osName: '${{ parameters.osName }}'
     framework: '${{ parameters.framework }}'

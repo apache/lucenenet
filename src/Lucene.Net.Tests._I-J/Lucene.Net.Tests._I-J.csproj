@@ -26,25 +26,32 @@
   <PropertyGroup>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
 
-    <AssemblyTitle>Lucene.Net.Tests._E-I</AssemblyTitle>
+    <AssemblyTitle>Lucene.Net.Tests._I-J</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Lucene.Net.Tests\Index\BinaryTokenStream.cs" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestA*.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestB*.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestC*.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestD*.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestE*.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestF*.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestG*.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestH*.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestI*.cs" LinkBase="Index" />
-    <Compile Include="..\Lucene.Net.Tests\Index\TestJ*.cs" LinkBase="Index" />
-    <EmbeddedResource Include="..\Lucene.Net.Tests\Index\*.zip" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestBinaryDocValuesUpdates.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestIndexWriterReader.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestIndexWriter.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestK*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestL*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestM*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestN*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestO*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestP*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestQ*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestR*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestS*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestT*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestU*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestV*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestW*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestX*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestY*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\TestZ*.cs" LinkBase="Index" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,12 +64,8 @@
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);FEATURE_INDEXWRITER_TESTS</DefineConstants>
-  </PropertyGroup>
-  
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)"/>
+    <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
   </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
