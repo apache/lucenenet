@@ -87,6 +87,8 @@ namespace Lucene.Net.Index
     {
         private static readonly FieldType StoredTextType = new FieldType(TextField.TYPE_NOT_STORED);
 
+#if FEATURE_INDEXWRITER_TESTS
+
         [Test]
         public virtual void TestDocCount()
         {
@@ -178,6 +180,8 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
         }
 
+#endif
+
         public static void AssertNoUnreferencedFiles(Directory dir, string message)
         {
             string[] startFiles = dir.ListAll();
@@ -206,6 +210,8 @@ namespace Lucene.Net.Index
             }
             return s;
         }
+
+#if FEATURE_INDEXWRITER_TESTS
 
         // Make sure we can open an index for create even when a
         // reader holds it open (this fails pre lock-less
@@ -2945,5 +2951,6 @@ namespace Lucene.Net.Index
             r.Dispose();
             dir.Dispose();
         }
+#endif
     }
 }
