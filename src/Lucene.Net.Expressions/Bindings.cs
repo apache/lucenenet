@@ -28,27 +28,27 @@ namespace Lucene.Net.Expressions
     /// @lucene.experimental
     /// </remarks>
     public abstract class Bindings
-	{
-		/// <summary>Sole constructor.</summary>
-		/// <remarks>
-		/// Sole constructor. (For invocation by subclass
-		/// constructors, typically implicit.)
-		/// </remarks>
-		public Bindings() // LUCENENET NOTE: This must be public for the Reflection code to work right.
+    {
+        /// <summary>Sole constructor.</summary>
+        /// <remarks>
+        /// Sole constructor. (For invocation by subclass
+        /// constructors, typically implicit.)
+        /// </remarks>
+        public Bindings() // LUCENENET NOTE: This must be public for the Reflection code to work right.
         {
-		}
+        }
 
-		/// <summary>
+        /// <summary>
         /// Returns a <see cref="ValueSource"/> bound to the variable name.
         /// </summary>
-		public abstract ValueSource GetValueSource(string name);
+        public abstract ValueSource GetValueSource(string name);
 
         /// <summary>
         /// Returns a <see cref="ValueSource"/> over relevance scores
         /// </summary>
         protected ValueSource GetScoreValueSource()
-		{
-			return new ScoreValueSource();
-		}
-	}
+        {
+            return new ScoreValueSource();
+        }
+    }
 }

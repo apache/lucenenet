@@ -12,21 +12,21 @@ using System.Globalization;
 namespace Lucene.Net.Expressions
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Tests some basic expressions against different queries,
@@ -57,20 +57,20 @@ namespace Lucene.Net.Expressions
             for (int i = 0; i < numDocs; i++)
             {
                 var document = new Document
-				{
-				    NewTextField("english", English.Int32ToEnglish(i), Field.Store.NO),
-				    NewTextField("oddeven", (i % 2 == 0) ? "even" : "odd", Field.Store.NO),
-				    NewStringField("byte", string.Empty + (unchecked((byte) Random.Next())).ToString(CultureInfo.InvariantCulture), Field.Store.NO),
-				    NewStringField("short", string.Empty + ((short) Random.Next()).ToString(CultureInfo.InvariantCulture), Field.Store.NO),
-				    new Int32Field("int", Random.Next(), Field.Store.NO),
-				    new Int64Field("long", Random.NextInt64(), Field.Store.NO),
+                {
+                    NewTextField("english", English.Int32ToEnglish(i), Field.Store.NO),
+                    NewTextField("oddeven", (i % 2 == 0) ? "even" : "odd", Field.Store.NO),
+                    NewStringField("byte", string.Empty + (unchecked((byte) Random.Next())).ToString(CultureInfo.InvariantCulture), Field.Store.NO),
+                    NewStringField("short", string.Empty + ((short) Random.Next()).ToString(CultureInfo.InvariantCulture), Field.Store.NO),
+                    new Int32Field("int", Random.Next(), Field.Store.NO),
+                    new Int64Field("long", Random.NextInt64(), Field.Store.NO),
 
-				    new SingleField("float", Random.NextSingle(), Field.Store.NO),
-				    new DoubleField("double", Random.NextDouble(), Field.Store.NO),
+                    new SingleField("float", Random.NextSingle(), Field.Store.NO),
+                    new DoubleField("double", Random.NextDouble(), Field.Store.NO),
 
-				    new NumericDocValuesField("intdocvalues", Random.Next()),
-				    new SingleDocValuesField("floatdocvalues", Random.NextSingle())
-				};
+                    new NumericDocValuesField("intdocvalues", Random.Next()),
+                    new SingleDocValuesField("floatdocvalues", Random.NextSingle())
+                };
                 iw.AddDocument(document);
             }
             reader = iw.GetReader();
