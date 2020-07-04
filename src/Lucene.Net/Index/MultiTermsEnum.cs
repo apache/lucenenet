@@ -52,7 +52,12 @@ namespace Lucene.Net.Index
 
         public class TermsEnumIndex
         {
-            public static readonly TermsEnumIndex[] EMPTY_ARRAY = new TermsEnumIndex[0];
+            public static readonly TermsEnumIndex[] EMPTY_ARRAY =
+#if FEATURE_ARRAYEMPTY
+                Array.Empty<TermsEnumIndex>();
+#else
+                new TermsEnumIndex[0];
+#endif
             internal int SubIndex { get; private set; }
             internal TermsEnum TermsEnum { get; private set; }
 

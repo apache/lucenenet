@@ -56,7 +56,12 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was EMPTY_INT_ARRAY in Lucene
         /// </summary>
-        private static readonly int[] EMPTY_INT32_ARRAY = new int[0];
+        private static readonly int[] EMPTY_INT32_ARRAY =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<int>();
+#else
+            new int[0];
+#endif
 
         private class SegStart
         {

@@ -30,6 +30,22 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// <seealso cref="TermsIndexReaderBase"/>
     public abstract class TermsIndexWriterBase : IDisposable
     {
+        // LUCENENET specific - optimized empty array creation
+        internal static readonly short[] EMPTY_INT16S =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<short>();
+#else
+            new short[0];
+#endif
+
+        // LUCENENET specific - optimized empty array creation
+        internal static readonly int[] EMPTY_INT32S =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<int>();
+#else
+            new int[0];
+#endif
+
         /// <summary>Terms index API for a single field.</summary>
         public abstract class FieldWriter
         {

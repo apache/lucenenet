@@ -512,9 +512,17 @@ namespace Lucene.Net.Codecs.SimpleText
                 _input = input;
                 _scratch = scratch;
                 _decoderFormat = field.Pattern;
-                _currentOrds = new string[0];
+                _currentOrds = EMPTY_STRINGS;
                 _currentIndex = 0;
             }
+
+            // LUCENENET specific - optimized empty array creation
+            private static readonly string[] EMPTY_STRINGS =
+#if FEATURE_ARRAYEMPTY
+                Array.Empty<string>();
+#else
+                new string[0];
+#endif
 
             private string[] _currentOrds;
             private int _currentIndex;
@@ -536,7 +544,7 @@ namespace Lucene.Net.Codecs.SimpleText
                                 docID * (1 + _field.OrdPattern.Length));
                     SimpleTextUtil.ReadLine(_input, _scratch);
                     var ordList = _scratch.Utf8ToString().Trim();
-                    _currentOrds = ordList.Length == 0 ? new string[0] : ordList.Split(',').TrimEnd();
+                    _currentOrds = ordList.Length == 0 ? EMPTY_STRINGS : ordList.Split(',').TrimEnd();
                     _currentIndex = 0;
                 }
                 catch (System.IO.IOException ioe)

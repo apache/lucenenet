@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -168,6 +169,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Zero-length array of <see cref="Terms"/>. </summary>
-        public static readonly Terms[] EMPTY_ARRAY = new Terms[0];
+        public static readonly Terms[] EMPTY_ARRAY =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<Terms>();
+#else
+            new Terms[0];
+#endif
     }
 }

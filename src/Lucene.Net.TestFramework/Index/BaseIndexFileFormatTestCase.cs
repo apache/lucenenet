@@ -5,6 +5,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -55,6 +56,15 @@ namespace Lucene.Net.Index
         // because it has public subclasses. So we are creating an internal constructor instead.
         internal BaseIndexFileFormatTestCase() { }
 #endif
+        // LUCENENET specific - optimized empty array creation
+        internal static readonly byte[] EMPTY_BYTES =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<byte>();
+#else
+            new byte[0];
+#endif
+
+
         /// <summary>
         /// Returns the codec to run tests against </summary>
         protected abstract Codec GetCodec();

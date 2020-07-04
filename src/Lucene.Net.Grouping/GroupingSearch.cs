@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Queries.Function;
 using Lucene.Net.Search.Grouping.Function;
 using Lucene.Net.Search.Grouping.Terms;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Mutable;
 using System;
@@ -10,21 +11,21 @@ using System.Collections.Generic;
 namespace Lucene.Net.Search.Grouping
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Convenience class to perform grouping in a non distributed environment.
@@ -55,6 +56,25 @@ namespace Lucene.Net.Search.Grouping
 
         private ICollection /* Collection<?> */ matchingGroups;
         private IBits matchingGroupHeads;
+
+        // LUCENENET specific - optimized empty array creation
+        private static readonly SortField[] EMPTY_SORTFIELDS =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<SortField>();
+#else
+            new SortField[0];
+#endif
+
+        // LUCENENET specific - optimized empty array creation
+        private class EmptyGroupDocsHolder<TGroupValue>
+        {
+            public static readonly GroupDocs<TGroupValue>[] EMPTY_GROUPDOCS =
+#if FEATURE_ARRAYEMPTY
+                Array.Empty<GroupDocs<TGroupValue>>();
+#else
+                new GroupDocs<TGroupValue>[0];
+#endif
+        }
 
         /// <summary>
         /// Constructs a <see cref="GroupingSearch"/> instance that groups documents by index terms using the <see cref="FieldCache"/>.
@@ -288,7 +308,8 @@ namespace Lucene.Net.Search.Grouping
             IEnumerable<ISearchGroup<TGroupValue>> topSearchGroups = firstPassCollector.GetTopGroups(groupOffset, fillSortFields);
             if (topSearchGroups == null)
             {
-                return new TopGroups<TGroupValue>(new SortField[0], new SortField[0], 0, 0, new GroupDocs<TGroupValue>[0], float.NaN);
+                // LUCENENET specific - optimized empty array creation
+                return new TopGroups<TGroupValue>(EMPTY_SORTFIELDS, EMPTY_SORTFIELDS, 0, 0, EmptyGroupDocsHolder<TGroupValue>.EMPTY_GROUPDOCS, float.NaN);
             }
 
             int topNInsideGroup = groupDocsOffset + groupDocsLimit;

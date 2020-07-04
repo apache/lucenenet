@@ -1434,9 +1434,19 @@ namespace Lucene.Net.Search
         public sealed class TermValComparer : FieldComparer<BytesRef>
         {
             // sentinels, just used internally in this comparer
-            private static readonly byte[] MISSING_BYTES = new byte[0];
+            private static readonly byte[] MISSING_BYTES =
+#if FEATURE_ARRAYEMPTY
+                Array.Empty<byte>();
+#else
+                new byte[0];
+#endif
 
-            private static readonly byte[] NON_MISSING_BYTES = new byte[0];
+            private static readonly byte[] NON_MISSING_BYTES =
+#if FEATURE_ARRAYEMPTY
+                Array.Empty<byte>();
+#else
+                new byte[0];
+#endif
 
             private BytesRef[] values;
             private BinaryDocValues docTerms;

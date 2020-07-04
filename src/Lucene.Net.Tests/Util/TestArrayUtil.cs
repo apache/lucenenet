@@ -348,7 +348,11 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestEmptyArraySort()
         {
+#if FEATURE_ARRAYEMPTY
+            int[] a = Array.Empty<int>();
+#else
             int[] a = new int[0];
+#endif
             ArrayUtil.IntroSort(a);
             ArrayUtil.TimSort(a);
             ArrayUtil.IntroSort(a, Collections.ReverseOrder<int>());

@@ -27,13 +27,21 @@ namespace Lucene.Net.Analysis.Ja.Util
     /// </summary>
     public sealed class CSVUtil
     {
-        private static readonly char QUOTE = '"';
+        private const char QUOTE = '"';
 
-        private static readonly char COMMA = ',';
+        private const char COMMA = ',';
 
         private static readonly Regex QUOTE_REPLACE_PATTERN = new Regex("^\"([^\"]+)\"$", RegexOptions.Compiled);
 
-        private static readonly string ESCAPED_QUOTE = "\"\"";
+        private const string ESCAPED_QUOTE = "\"\"";
+
+        // LUCENENET specific - optimized empty array creation
+        private static readonly string[] EMPTY_STRINGS =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<string>();
+#else
+            new string[0];
+#endif
 
         private CSVUtil() { } // no instance!!!
 
@@ -75,7 +83,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             // Validate
             if (quoteCount % 2 != 0)
             {
-                return new string[0];
+                return EMPTY_STRINGS;
             }
 
             return result.ToArray(/*new String[result.size()]*/);

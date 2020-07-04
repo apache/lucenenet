@@ -3496,7 +3496,7 @@ namespace Lucene.Net.Index
                 {
                     Document doc = new Document();
                     Field idField = new StringField("id", "", Field.Store.NO);
-                    Field storedBinField = new StoredField("storedBin", new byte[0]);
+                    Field storedBinField = new StoredField("storedBin", EMPTY_BYTES);
                     Field dvBinField = new BinaryDocValuesField("dvBin", new BytesRef());
                     Field dvSortedField = new SortedDocValuesField("dvSorted", new BytesRef());
                     Field storedNumericField = new StoredField("storedNum", "");
@@ -3621,7 +3621,7 @@ namespace Lucene.Net.Index
                 using (RandomIndexWriter writer = new RandomIndexWriter(Random, dir, conf))
                 {
                     Field idField = new StringField("id", "", Field.Store.NO);
-                    Field storedBinField = new StoredField("storedBin", new byte[0]);
+                    Field storedBinField = new StoredField("storedBin", EMPTY_BYTES);
                     Field dvBinField = new BinaryDocValuesField("dvBin", new BytesRef());
                     Field dvSortedField = new SortedDocValuesField("dvSorted", new BytesRef());
                     Field storedNumericField = new StoredField("storedNum", "");

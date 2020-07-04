@@ -68,7 +68,12 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Zero-length <see cref="PostingsFormat"/> array. </summary>
-        public static readonly PostingsFormat[] EMPTY = new PostingsFormat[0];
+        public static readonly PostingsFormat[] EMPTY =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<PostingsFormat>();
+#else
+            new PostingsFormat[0];
+#endif
 
         /// <summary>
         /// Unique name that's used to retrieve this format when
