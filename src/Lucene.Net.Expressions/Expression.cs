@@ -43,9 +43,9 @@ namespace Lucene.Net.Expressions
     /// </remarks>
     /// <seealso cref="Lucene.Net.Expressions.JS.JavascriptCompiler.Compile(string)"/>
     public abstract class Expression
-	{
-		/// <summary>The original source text</summary>
-		public string SourceText { get; private set; }
+    {
+        /// <summary>The original source text</summary>
+        public string SourceText { get; private set; }
 
         /// <summary>Named variables referred to by this expression</summary>
         [WritableArray]
@@ -63,45 +63,45 @@ namespace Lucene.Net.Expressions
         /// Names of external variables referred to by the expression
         /// </param>
         public Expression(string sourceText, string[] variables) // LUCENENET NOTE: This must be public for the Reflection code to work right.
-		{
-			// javadocs
-			this.SourceText = sourceText;
-			this.Variables = variables;
-		}
+        {
+            // javadocs
+            this.SourceText = sourceText;
+            this.Variables = variables;
+        }
 
-		/// <summary>Evaluates the expression for the given document.</summary>
-		/// <remarks>Evaluates the expression for the given document.</remarks>
-		/// <param name="document"><c>docId</c> of the document to compute a value for</param>
-		/// <param name="functionValues">
+        /// <summary>Evaluates the expression for the given document.</summary>
+        /// <remarks>Evaluates the expression for the given document.</remarks>
+        /// <param name="document"><c>docId</c> of the document to compute a value for</param>
+        /// <param name="functionValues">
         /// <see cref="Lucene.Net.Queries.Function.FunctionValues"/>
-		/// for each element of <see cref="Variables">variables</see>.
-		/// </param>
-		/// <returns>The computed value of the expression for the given document.</returns>
-		public abstract double Evaluate(int document, FunctionValues[] functionValues);
+        /// for each element of <see cref="Variables">variables</see>.
+        /// </param>
+        /// <returns>The computed value of the expression for the given document.</returns>
+        public abstract double Evaluate(int document, FunctionValues[] functionValues);
 
-		/// <summary>Get a value source which can compute the value of this expression in the context of the given bindings.</summary>
-		/// <remarks>Get a value source which can compute the value of this expression in the context of the given bindings.</remarks>
-		/// <param name="bindings">Bindings to use for external values in this expression</param>
-		/// <returns>A value source which will evaluate this expression when used</returns>
-		public virtual ValueSource GetValueSource(Bindings bindings)
-		{
-			return new ExpressionValueSource(bindings, this);
-		}
+        /// <summary>Get a value source which can compute the value of this expression in the context of the given bindings.</summary>
+        /// <remarks>Get a value source which can compute the value of this expression in the context of the given bindings.</remarks>
+        /// <param name="bindings">Bindings to use for external values in this expression</param>
+        /// <returns>A value source which will evaluate this expression when used</returns>
+        public virtual ValueSource GetValueSource(Bindings bindings)
+        {
+            return new ExpressionValueSource(bindings, this);
+        }
 
-		/// <summary>Get a sort field which can be used to rank documents by this expression.</summary>
-		/// <remarks>Get a sort field which can be used to rank documents by this expression.</remarks>
-		public virtual SortField GetSortField(Bindings bindings, bool reverse)
-		{
-			return GetValueSource(bindings).GetSortField(reverse);
-		}
+        /// <summary>Get a sort field which can be used to rank documents by this expression.</summary>
+        /// <remarks>Get a sort field which can be used to rank documents by this expression.</remarks>
+        public virtual SortField GetSortField(Bindings bindings, bool reverse)
+        {
+            return GetValueSource(bindings).GetSortField(reverse);
+        }
 
-		/// <summary>
-		/// Get a <see cref="Lucene.Net.Search.Rescorer"/>, to rescore first-pass hits
-		/// using this expression.
-		/// </summary>
-		public virtual Rescorer GetRescorer(Bindings bindings)
-		{
-			return new ExpressionRescorer(this, bindings);
-		}
-	}
+        /// <summary>
+        /// Get a <see cref="Lucene.Net.Search.Rescorer"/>, to rescore first-pass hits
+        /// using this expression.
+        /// </summary>
+        public virtual Rescorer GetRescorer(Bindings bindings)
+        {
+            return new ExpressionRescorer(this, bindings);
+        }
+    }
 }

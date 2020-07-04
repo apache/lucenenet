@@ -25,36 +25,36 @@ namespace Lucene.Net.Expressions
     /// A <see cref="Lucene.Net.Queries.Function.FunctionValues"/> which evaluates an expression
     /// </summary>
     internal class ExpressionFunctionValues : DoubleDocValues
-	{
-		internal readonly Expression expression;
-		internal readonly FunctionValues[] functionValues;
+    {
+        internal readonly Expression expression;
+        internal readonly FunctionValues[] functionValues;
 
-		internal int currentDocument = -1;
-		internal double currentValue;
+        internal int currentDocument = -1;
+        internal double currentValue;
 
-		internal ExpressionFunctionValues(ValueSource parent, Expression expression, FunctionValues[] functionValues) 
+        internal ExpressionFunctionValues(ValueSource parent, Expression expression, FunctionValues[] functionValues) 
             : base(parent)
-		{
-			if (expression == null)
-			{
-				throw new ArgumentNullException();
-			}
-			if (functionValues == null)
-			{
-				throw new ArgumentNullException();
-			}
-			this.expression = expression;
-			this.functionValues = functionValues;
-		}
+        {
+            if (expression == null)
+            {
+                throw new ArgumentNullException();
+            }
+            if (functionValues == null)
+            {
+                throw new ArgumentNullException();
+            }
+            this.expression = expression;
+            this.functionValues = functionValues;
+        }
 
-		public override double DoubleVal(int document)
-		{
-			if (currentDocument != document)
-			{
-				currentDocument = document;
-				currentValue = expression.Evaluate(document, functionValues);
-			}
-			return currentValue;
-		}
-	}
+        public override double DoubleVal(int document)
+        {
+            if (currentDocument != document)
+            {
+                currentDocument = document;
+                currentValue = expression.Evaluate(document, functionValues);
+            }
+            return currentValue;
+        }
+    }
 }

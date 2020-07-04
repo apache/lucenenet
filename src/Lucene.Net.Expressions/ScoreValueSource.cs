@@ -30,36 +30,36 @@ namespace Lucene.Net.Expressions
     /// the context map by <see cref="ExpressionComparer"/>.
     /// </summary>
     internal class ScoreValueSource : ValueSource
-	{
-	    /// <summary>
-		/// <paramref name="context"/> must contain a key "scorer" which is a
-		/// <see cref="Lucene.Net.Search.Scorer"/>.
-		/// </summary>
-		/// <exception cref="System.IO.IOException"></exception>
-		public override FunctionValues GetValues(IDictionary context, AtomicReaderContext
-			 readerContext)
-		{
-			Scorer v = (Scorer)context["scorer"];
-			if (v == null)
-			{
-				throw new InvalidOperationException("Expressions referencing the score can only be used for sorting");
-			}
-			return new ScoreFunctionValues(this, v);
-		}
-
-		public override bool Equals(object o)
-		{
-			return o == this;
-		}
-
-		public override int GetHashCode()
-		{
-		    return RuntimeHelpers.GetHashCode(this); // LUCENENET NOTE: This is equivalent to System.identityHashCode(this) in Java
-		}
-
-		public override string GetDescription()
+    {
+        /// <summary>
+        /// <paramref name="context"/> must contain a key "scorer" which is a
+        /// <see cref="Lucene.Net.Search.Scorer"/>.
+        /// </summary>
+        /// <exception cref="System.IO.IOException"></exception>
+        public override FunctionValues GetValues(IDictionary context, AtomicReaderContext
+             readerContext)
         {
-		    return "score()";
-		}
-	}
+            Scorer v = (Scorer)context["scorer"];
+            if (v == null)
+            {
+                throw new InvalidOperationException("Expressions referencing the score can only be used for sorting");
+            }
+            return new ScoreFunctionValues(this, v);
+        }
+
+        public override bool Equals(object o)
+        {
+            return o == this;
+        }
+
+        public override int GetHashCode()
+        {
+            return RuntimeHelpers.GetHashCode(this); // LUCENENET NOTE: This is equivalent to System.identityHashCode(this) in Java
+        }
+
+        public override string GetDescription()
+        {
+            return "score()";
+        }
+    }
 }

@@ -32,7 +32,7 @@ namespace Lucene.Net.Expressions.JS
     internal class JavascriptParser : Parser
     {
         public static readonly string[] tokenNames =
-		{
+        {
             "<invalid>", "<EOR>", "<DOWN>", "<UP>", "AT_ADD", "AT_BIT_AND", "AT_BIT_NOT",
             "AT_BIT_OR", "AT_BIT_SHL", "AT_BIT_SHR", "AT_BIT_SHU", "AT_BIT_XOR", "AT_BOOL_AND",
             "AT_BOOL_NOT", "AT_BOOL_OR", "AT_CALL", "AT_COLON", "AT_COMMA", "AT_COMP_EQ",
