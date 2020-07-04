@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
@@ -61,7 +62,7 @@ namespace Lucene.Net.Codecs.PerField
         [SetUp]
         public override void SetUp()
         {
-            codec = new RandomCodec(new Random(Random.Next()), new JCG.HashSet<string>());
+            codec = new RandomCodec(new Random(Random.Next()), Collections.EmptySet<string>());
             base.SetUp();
         }
 

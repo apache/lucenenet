@@ -6,8 +6,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Reflection;
 using System.Text;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Support
 {
@@ -30,14 +30,34 @@ namespace Lucene.Net.Support
 
     internal static class Collections
     {
+        private static class EmptyListHolder<T>
+        {
+            public static readonly IList<T> EMPTY_LIST = new JCG.List<T>().AsReadOnly();
+        }
+
+        private static class EmptyDictionaryHolder<TKey, TValue>
+        {
+            public static readonly IDictionary<TKey, TValue> EMPTY_DICTIONARY = new JCG.Dictionary<TKey, TValue>().AsReadOnly(); // LUCENENET-615: Must support nullable keys
+        }
+
+        private static class EmptySetHolder<T>
+        {
+            public static readonly ISet<T> EMPTY_SET = new JCG.HashSet<T>().AsReadOnly();
+        }
+
         public static IList<T> EmptyList<T>()
         {
-            return new List<T>(); // LUCENENET NOTE: Enumerable.Empty<T>() fails to cast to IList<T> on .NET Core 3.x, so we just create a new list
+            return EmptyListHolder<T>.EMPTY_LIST; // LUCENENET NOTE: Enumerable.Empty<T>() fails to cast to IList<T> on .NET Core 3.x, so we just create a new list
         }
 
         public static IDictionary<TKey, TValue> EmptyMap<TKey, TValue>()
         {
-            return new Dictionary<TKey, TValue>();
+            return EmptyDictionaryHolder<TKey, TValue>.EMPTY_DICTIONARY;
+        }
+
+        public static ISet<T> EmptySet<T>()
+        {
+            return EmptySetHolder<T>.EMPTY_SET;
         }
 
         public static void Reverse<T>(IList<T> list)
@@ -67,7 +87,7 @@ namespace Lucene.Net.Support
 
         public static IDictionary<TKey, TValue> SingletonMap<TKey, TValue>(TKey key, TValue value)
         {
-            return new Dictionary<TKey, TValue> { { key, value } };
+            return new Dictionary<TKey, TValue> { { key, value } }.AsReadOnly();
         }
 
 

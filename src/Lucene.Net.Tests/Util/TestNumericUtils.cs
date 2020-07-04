@@ -1,5 +1,6 @@
 using J2N.Text;
 using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -449,7 +450,7 @@ namespace Lucene.Net.Util
             AssertLongRangeSplit(long.MinValue, long.MaxValue, 1, false, new long[] { 0x0L, 0x1L }, new int[] { 63 });
 
             // a inverse range should produce no sub-ranges
-            AssertLongRangeSplit(9500L, -5000L, 4, false, new long[] { }, new int[] { });
+            AssertLongRangeSplit(9500L, -5000L, 4, false, Collections.EmptyList<long>(), Collections.EmptyList<int>());
 
             // a 0-length range should reproduce the range itself
             AssertLongRangeSplit(9500L, 9500L, 4, false, new long[] { unchecked((long)0x800000000000251cL), unchecked((long)0x800000000000251cL) }, new int[] { 0 });
@@ -553,7 +554,7 @@ namespace Lucene.Net.Util
             AssertIntRangeSplit(int.MinValue, int.MaxValue, 1, false, new int[] { 0x0, 0x1 }, new int[] { 31 });
 
             // a inverse range should produce no sub-ranges
-            AssertIntRangeSplit(9500, -5000, 4, false, new List<int>(), new List<int>());
+            AssertIntRangeSplit(9500, -5000, 4, false, Collections.EmptyList<int>(), Collections.EmptyList<int>());
 
             // a 0-length range should reproduce the range itself
             AssertIntRangeSplit(9500, 9500, 4, false, new int[] { unchecked((int)0x8000251c), unchecked((int)0x8000251c) }, new int[] { 0 });

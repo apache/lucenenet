@@ -3,6 +3,7 @@ using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.PerField
 {
+    using Lucene.Net.Support;
     using NUnit.Framework;
 
     /*
@@ -33,7 +34,7 @@ namespace Lucene.Net.Codecs.PerField
     {
         protected override Codec GetCodec()
         {
-            return new RandomCodec(new Random(Random.Next()), new JCG.HashSet<string>());
+            return new RandomCodec(new Random(Random.Next()), Collections.EmptySet<string>());
         }
 
         [Test]

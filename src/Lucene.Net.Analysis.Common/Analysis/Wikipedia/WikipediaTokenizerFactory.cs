@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         // TODO: add support for WikipediaTokenizer's advanced options.
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
-            return new WikipediaTokenizer(factory, input, WikipediaTokenizer.TOKENS_ONLY, Collections.EmptyList<string>());
+            return new WikipediaTokenizer(factory, input, WikipediaTokenizer.TOKENS_ONLY, Collections.EmptySet<string>());
         }
     }
 }

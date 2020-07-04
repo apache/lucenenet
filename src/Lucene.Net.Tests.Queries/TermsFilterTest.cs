@@ -353,8 +353,8 @@ namespace Lucene.Net.Tests.Queries
         [Test]
         public void TestNoTerms()
         {
-            var emptyTerms = new List<Term>();
-            var emptyBytesRef = new List<BytesRef>();
+            var emptyTerms = Collections.EmptyList<Term>();
+            var emptyBytesRef = Collections.EmptyList<BytesRef>();
 
             Assert.Throws<ArgumentException>(() => new TermsFilter(emptyTerms));
             Assert.Throws<ArgumentException>(() => new TermsFilter(emptyTerms.ToArray()));

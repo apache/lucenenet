@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics;
 using JCG = J2N.Collections.Generic;
@@ -190,7 +191,7 @@ namespace Lucene.Net.Search.Spans
         {
             if (Current == null)
             {
-                return new List<byte[]>();
+                return Collections.EmptyList<byte[]>();
             }
             return Current.GetPayload();
         }

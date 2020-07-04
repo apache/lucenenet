@@ -63,7 +63,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         protected int m_numToHighlight = int.MaxValue;
         protected int m_maxFrags = 2;
         protected int m_fragSize = 100;
-        protected ISet<string> m_paramFields = new JCG.HashSet<string>();
+        protected ISet<string> m_paramFields = Collections.EmptySet<string>();
         protected FastVectorHighlighter m_highlighter;
 
         public SearchTravRetVectorHighlightTask(PerfRunData runData)

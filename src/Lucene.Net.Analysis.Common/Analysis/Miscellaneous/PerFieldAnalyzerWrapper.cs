@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Support;
+using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -98,7 +99,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             : base(PER_FIELD_REUSE_STRATEGY)
         {
             this.defaultAnalyzer = defaultAnalyzer;
-            this.fieldAnalyzers = fieldAnalyzers ?? new JCG.Dictionary<string, Analyzer>(); // LUCENENET-615: Must support nullable keys
+            this.fieldAnalyzers = fieldAnalyzers ?? Collections.EmptyMap<string, Analyzer>(); // LUCENENET-615: Must support nullable keys
         }
 
         protected override Analyzer GetWrappedAnalyzer(string fieldName)

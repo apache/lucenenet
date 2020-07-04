@@ -1,10 +1,10 @@
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Expressions.JS
 {
@@ -28,13 +28,13 @@ namespace Lucene.Net.Expressions.JS
     [TestFixture]
     public class TestCustomFunctions : LuceneTestCase
     {
-        private static double DELTA = 0.0000001;
+        private const double DELTA = 0.0000001;
 
         /// <summary>empty list of methods</summary>
         [Test]
         public virtual void TestEmpty()
         {
-            IDictionary<string, MethodInfo> functions = new JCG.Dictionary<string,MethodInfo>();
+            IDictionary<string, MethodInfo> functions = Collections.EmptyMap<string,MethodInfo>();
             try
             {
                 JavascriptCompiler.Compile("sqrt(20)", functions);

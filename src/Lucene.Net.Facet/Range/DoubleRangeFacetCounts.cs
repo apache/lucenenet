@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Support;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Range
 {
@@ -99,7 +101,7 @@ namespace Lucene.Net.Facet.Range
             int missingCount = 0;
             foreach (MatchingDocs hits in matchingDocs)
             {
-                FunctionValues fv = valueSource.GetValues(new Dictionary<string, object>(), hits.Context);
+                FunctionValues fv = valueSource.GetValues((IDictionary)Collections.EmptyMap<string, object>(), hits.Context);
 
                 m_totCount += hits.TotalHits;
                 IBits bits;

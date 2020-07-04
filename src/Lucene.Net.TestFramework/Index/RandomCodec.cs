@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
         }
 
         public RandomCodec(Random random)
-            : this(random, new JCG.HashSet<string>())
+            : this(random, Collections.EmptySet<string>())
         {
         }
 

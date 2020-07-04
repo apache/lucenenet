@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -83,7 +84,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual ICollection<ChildScorer> GetChildren()
         {
-            return new List<ChildScorer>();
+            return Collections.EmptyList<ChildScorer>();
         }
 
         /// <summary>
