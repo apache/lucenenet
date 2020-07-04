@@ -1,6 +1,7 @@
 ﻿using J2N.Collections;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Support
@@ -42,6 +43,7 @@ namespace Lucene.Net.Support
         /// <see cref="IList{T}"/>, or <see cref="ISet{T}"/>, its values and any nested collection values
         /// will be compared for equality as well.
         /// </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Equals<T>(T[] a, T[] b)
         {
             return ArrayEqualityComparer<T>.OneDimensional.Equals(a, b);
@@ -56,6 +58,7 @@ namespace Lucene.Net.Support
         /// <typeparam name="T">The array element type.</typeparam>
         /// <param name="array">The array whose hash code to compute.</param>
         /// <returns>The hash code for <paramref name="array"/>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetHashCode<T>(T[] array)
         {
             return ArrayEqualityComparer<T>.OneDimensional.GetHashCode(array);
@@ -67,6 +70,7 @@ namespace Lucene.Net.Support
         /// <typeparam name="T">the type of the array</typeparam>
         /// <param name="a">the array to be filled</param>
         /// <param name="val">the value to be stored in all elements of the array</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Fill<T>(T[] a, T val)
         {
             for (int i = 0; i < a.Length; i++)
@@ -95,6 +99,7 @@ namespace Lucene.Net.Support
         /// <param name="val">the value to be stored in all elements of the array</param>
         /// <exception cref="ArgumentException">if <c>fromIndex &gt; toIndex</c></exception>
         /// <exception cref="ArgumentOutOfRangeException">if <c>fromIndex &lt; 0</c> or <c>toIndex &gt; a.Length</c></exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Fill<T>(T[] a, int fromIndex, int toIndex, T val)
         {
             //Java Arrays.fill exception logic
@@ -111,6 +116,7 @@ namespace Lucene.Net.Support
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T[] CopyOf<T>(T[] original, int newLength)
         {
             T[] newArray = new T[newLength];
@@ -123,6 +129,7 @@ namespace Lucene.Net.Support
             return newArray;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T[] CopyOfRange<T>(T[] original, int startIndexInc, int endIndexExc)
         {
             int newLength = endIndexExc - startIndexInc;
