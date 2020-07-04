@@ -34,7 +34,7 @@ namespace Lucene.Net.Queries.Function
         /// Gets the values for this reader and the context that was previously
         /// passed to <see cref="CreateWeight"/>
         /// </summary>
-        public abstract FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext);
+        public abstract FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext); // LUCENENET TODO: API - See if we can use generic IDictionary here instead
 
         public override abstract bool Equals(object o);
 

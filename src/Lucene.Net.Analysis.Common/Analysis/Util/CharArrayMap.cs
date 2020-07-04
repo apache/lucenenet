@@ -1863,7 +1863,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> an new unmodifiable <see cref="CharArrayMap{TValue}"/>. </returns>
         /// <exception cref="ArgumentException">
         ///           if the given map is <c>null</c>. </exception>
-        public static CharArrayMap<TValue> UnmodifiableMap<TValue>(CharArrayMap<TValue> map)
+        public static CharArrayMap<TValue> UnmodifiableMap<TValue>(CharArrayMap<TValue> map) // LUCENENET TODO: API - Rename AsReadOnly() to match .NET convention
         {
             if (map == null)
             {

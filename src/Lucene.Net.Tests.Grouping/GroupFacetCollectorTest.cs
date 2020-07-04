@@ -797,10 +797,10 @@ namespace Lucene.Net.Search.Grouping
             }));
 
             int endOffset = offset + limit;
-            List<TermGroupFacetCollector.FacetEntry> entriesResult;
+            IList<TermGroupFacetCollector.FacetEntry> entriesResult;
             if (offset >= entries.size())
             {
-                entriesResult = new List<TermGroupFacetCollector.FacetEntry>();
+                entriesResult = Collections.EmptyList<TermGroupFacetCollector.FacetEntry>();
             }
             else if (endOffset >= entries.size())
             {
@@ -867,9 +867,9 @@ namespace Lucene.Net.Search.Grouping
 
             internal readonly int totalCount;
             internal readonly int totalMissingCount;
-            internal readonly List<TermGroupFacetCollector.FacetEntry> facetEntries;
+            internal readonly IList<TermGroupFacetCollector.FacetEntry> facetEntries;
 
-            internal GroupedFacetResult(int totalCount, int totalMissingCount, List<TermGroupFacetCollector.FacetEntry> facetEntries)
+            internal GroupedFacetResult(int totalCount, int totalMissingCount, IList<TermGroupFacetCollector.FacetEntry> facetEntries)
             {
                 this.totalCount = totalCount;
                 this.totalMissingCount = totalMissingCount;
@@ -886,7 +886,7 @@ namespace Lucene.Net.Search.Grouping
                 get { return totalMissingCount; }
             }
 
-            public List<TermGroupFacetCollector.FacetEntry> GetFacetEntries()
+            public IList<TermGroupFacetCollector.FacetEntry> GetFacetEntries()
             {
                 return facetEntries;
             }

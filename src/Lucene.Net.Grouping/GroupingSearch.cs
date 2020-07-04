@@ -294,7 +294,7 @@ namespace Lucene.Net.Search.Grouping
             }
             else
             {
-                matchingGroups = new List<TGroupValue>();
+                matchingGroups = (ICollection)Collections.EmptyList<TGroupValue>();
             }
             if (allGroupHeads)
             {

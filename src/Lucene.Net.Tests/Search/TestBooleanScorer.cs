@@ -1,4 +1,5 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -101,7 +102,7 @@ namespace Lucene.Net.Search
             new BulkScorerAnonymousInnerClassHelper()
         };
 
-            BooleanScorer bs = new BooleanScorer(weight, false, 1, scorers, new List<BulkScorer>(), scorers.Length);
+            BooleanScorer bs = new BooleanScorer(weight, false, 1, scorers, Collections.EmptyList<BulkScorer>(), scorers.Length);
 
             IList<int> hits = new List<int>();
             bs.Score(new CollectorAnonymousInnerClassHelper(this, hits));

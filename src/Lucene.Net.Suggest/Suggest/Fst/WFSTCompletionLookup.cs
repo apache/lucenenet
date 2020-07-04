@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -147,7 +148,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             if (fst == null)
             {
-                return new List<LookupResult>();
+                return Collections.EmptyList<LookupResult>();
             }
 
             BytesRef scratch = new BytesRef(key);
@@ -167,7 +168,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             if (prefixOutput == null)
             {
-                return new List<LookupResult>();
+                return Collections.EmptyList<LookupResult>();
             }
 
             List<LookupResult> results = new List<LookupResult>(num);

@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -270,7 +271,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                return (new JCG.HashSet<Attribute>()).GetEnumerator();
+                return Collections.EmptySet<Attribute>().GetEnumerator();
             }
         }
 

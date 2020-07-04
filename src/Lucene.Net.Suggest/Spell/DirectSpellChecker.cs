@@ -427,7 +427,7 @@ namespace Lucene.Net.Search.Spell
             Terms terms = MultiFields.GetTerms(ir, term.Field);
             if (terms == null)
             {
-                return new List<ScoreTerm>();
+                return Collections.EmptyList<ScoreTerm>();
             }
             FuzzyTermsEnum e = new FuzzyTermsEnum(terms, atts, term, editDistance, Math.Max(minPrefix, editDistance - 1), true);
 

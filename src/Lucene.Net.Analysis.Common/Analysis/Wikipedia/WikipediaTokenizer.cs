@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         private readonly WikipediaTokenizerImpl scanner;
 
         private int tokenOutput = TOKENS_ONLY;
-        private ICollection<string> untokenizedTypes = Collections.EmptyList<string>();
+        private ICollection<string> untokenizedTypes = Collections.EmptySet<string>();
         private IEnumerator<AttributeSource.State> tokens = null;
 
         private IOffsetAttribute offsetAtt;
@@ -125,7 +125,7 @@ namespace Lucene.Net.Analysis.Wikipedia
         /// </summary>
         /// <param name="input"> The Input <see cref="TextReader"/> </param>
         public WikipediaTokenizer(TextReader input)
-            : this(input, TOKENS_ONLY, Collections.EmptyList<string>())
+            : this(input, TOKENS_ONLY, Collections.EmptySet<string>())
         {
         }
 
