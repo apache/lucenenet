@@ -301,7 +301,7 @@ namespace Lucene.Net.Search
             ScoreDoc[] hits;
             if (availHitCount <= start)
             {
-                hits = new ScoreDoc[0];
+                hits = EMPTY_SCOREDOCS;
             }
             else
             {
@@ -342,5 +342,13 @@ namespace Lucene.Net.Search
                 return new TopFieldDocs(totalHitCount, hits, sort.GetSort(), maxScore);
             }
         }
+
+        // LUCENENET specific - optimized empty array creation
+        private static readonly ScoreDoc[] EMPTY_SCOREDOCS =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<ScoreDoc>();
+#else
+            new ScoreDoc[0];
+#endif
     }
 }

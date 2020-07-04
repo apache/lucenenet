@@ -90,6 +90,15 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// Number of entries the lookup was built with </summary>
         private long count = 0;
 
+        // LUCENENET specific - optimized empty array creation
+        private static readonly byte[] EMPTY_BYTES =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<byte>();
+#else
+            new byte[0];
+#endif
+
+
         /// <summary>
         /// This constructor prepares for creating a suggested FST using the
         /// <see cref="Build(IInputIterator)"/> method. The number of weight
@@ -158,7 +167,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             count = 0;
             try
             {
-                byte[] buffer = new byte[0];
+                byte[] buffer = EMPTY_BYTES;
                 ByteArrayDataOutput output = new ByteArrayDataOutput(buffer);
                 BytesRef spare;
                 while ((spare = iterator.Next()) != null)

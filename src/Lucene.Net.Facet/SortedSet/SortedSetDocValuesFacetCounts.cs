@@ -57,6 +57,14 @@ namespace Lucene.Net.Facet.SortedSet
         internal readonly string field;
         internal readonly int[] counts;
 
+        // LUCENENET specific - optimized empty array creation
+        private static readonly string[] EMPTY_STRINGS =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<string>();
+#else
+            new string[0];
+#endif
+
         /// <summary>
         /// Sparse faceting: returns any dimension that had any
         /// hits, topCount labels per dimension. 
@@ -145,7 +153,7 @@ namespace Lucene.Net.Facet.SortedSet
                 labelValues[i] = new LabelAndValue(parts[1], ordAndValue.Value);
             }
 
-            return new FacetResult(dim, new string[0], dimCount, labelValues, childCount);
+            return new FacetResult(dim, EMPTY_STRINGS, dimCount, labelValues, childCount);
         }
 
         /// <summary>

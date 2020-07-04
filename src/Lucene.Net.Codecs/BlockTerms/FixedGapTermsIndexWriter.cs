@@ -139,8 +139,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                 this.fieldInfo = fieldInfo;
                 indexStart = outerInstance.m_output.GetFilePointer();
                 termsStart = lastTermsPointer = termsFilePointer;
-                termLengths = new short[0];
-                termsPointerDeltas = new int[0];
+                termLengths = EMPTY_INT16S;
+                termsPointerDeltas = EMPTY_INT32S;
             }
 
             public override bool CheckIndexTerm(BytesRef text, TermStats stats)

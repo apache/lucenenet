@@ -608,6 +608,14 @@ namespace Lucene.Net.Facet
         // Escapes any occurrence of the path component inside the label:
         private const char ESCAPE_CHAR = '\u001E';
 
+        // LUCENENET specific - optimized empty array creation
+        private static readonly string[] EMPTY_STRINGS =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<string>();
+#else
+            new string[0];
+#endif
+
         /// <summary>
         /// Turns a dim + path into an encoded string.
         /// </summary>
@@ -673,7 +681,7 @@ namespace Lucene.Net.Facet
             int length = s.Length;
             if (length == 0)
             {
-                return new string[0];
+                return EMPTY_STRINGS;
             }
             char[] buffer = new char[length];
 

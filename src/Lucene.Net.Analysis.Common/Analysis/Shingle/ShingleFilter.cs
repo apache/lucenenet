@@ -306,8 +306,16 @@ namespace Lucene.Net.Analysis.Shingle
         /// <param name="fillerToken"> string to insert at each position where there is no token </param>
         public void SetFillerToken(string fillerToken)
         {
-            this.fillerToken = null == fillerToken ? new char[0] : fillerToken.ToCharArray();
+            this.fillerToken = null == fillerToken ? EMPTY_CHARS : fillerToken.ToCharArray();
         }
+
+        // LUCENENET specific - optimized empty array creation
+        private static readonly char[] EMPTY_CHARS =
+#if FEATURE_ARRAYEMPTY
+                Array.Empty<char>();
+#else
+                new char[0];
+#endif
 
         public override bool IncrementToken()
         {

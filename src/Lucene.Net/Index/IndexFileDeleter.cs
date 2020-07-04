@@ -124,6 +124,14 @@ namespace Lucene.Net.Index
             get { return writer == null || true /*Monitor. IsEntered(Writer)*/; }
         }
 
+        // LUCENENET specific - optimized empty array creation
+        private static readonly string[] EMPTY_STRINGS =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<string>();
+#else
+            new string[0];
+#endif
+
         /// <summary>
         /// Initialize the deleter: find all previous commits in
         /// the <see cref="Directory"/>, incref the files they reference, call
@@ -160,7 +168,7 @@ namespace Lucene.Net.Index
 #pragma warning restore 168
             {
                 // it means the directory is empty, so ignore it.
-                files = new string[0];
+                files = EMPTY_STRINGS;
             }
 
             if (currentSegmentsFile != null)

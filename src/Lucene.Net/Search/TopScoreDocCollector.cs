@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search
@@ -134,9 +135,18 @@ namespace Lucene.Net.Search
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
-                return results == null ? new TopDocs(m_totalHits, new ScoreDoc[0], float.NaN) : new TopDocs(m_totalHits, results);
+                // LUCENENET specific - optimized empty array creation
+                return results == null ? new TopDocs(m_totalHits, EMPTY_SCOREDOCS, float.NaN) : new TopDocs(m_totalHits, results);
             }
         }
+
+        // LUCENENET specific - optimized empty array creation
+        private static readonly ScoreDoc[] EMPTY_SCOREDOCS =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<ScoreDoc>();
+#else
+            new ScoreDoc[0];
+#endif
 
         // Assumes docs are scored out of order.
         private class OutOfOrderTopScoreDocCollector : TopScoreDocCollector
@@ -240,7 +250,8 @@ namespace Lucene.Net.Search
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
-                return results == null ? new TopDocs(m_totalHits, new ScoreDoc[0], float.NaN) : new TopDocs(m_totalHits, results);
+                // LUCENENET specific - optimized empty array creation
+                return results == null ? new TopDocs(m_totalHits, EMPTY_SCOREDOCS, float.NaN) : new TopDocs(m_totalHits, results);
             }
         }
 

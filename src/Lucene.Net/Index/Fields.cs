@@ -97,6 +97,11 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Zero-length <see cref="Fields"/> array.
         /// </summary>
-        public static readonly Fields[] EMPTY_ARRAY = new Fields[0];
+        public static readonly Fields[] EMPTY_ARRAY =
+#if FEATURE_ARRAYEMPTY
+            Array.Empty<Fields>();
+#else
+            new Fields[0];
+#endif
     }
 }
