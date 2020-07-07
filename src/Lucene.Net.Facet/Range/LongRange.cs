@@ -148,7 +148,7 @@ namespace Lucene.Net.Facet.Range
                 // ValueSourceRangeFilter (solr); also,
                 // https://issues.apache.org/jira/browse/LUCENE-4251
 
-                FunctionValues values = valueSource.GetValues((IDictionary)Collections.EmptyMap<string, object>(), context);
+                FunctionValues values = valueSource.GetValues(Collections.EmptyMap<string, object>(), context);
 
                 int maxDoc = context.Reader.MaxDoc;
 

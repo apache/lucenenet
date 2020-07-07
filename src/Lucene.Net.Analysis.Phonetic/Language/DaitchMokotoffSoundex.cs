@@ -554,7 +554,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
 
                 // use an EMPTY_LIST to avoid false positive warnings wrt potential null pointer access
-                IList<Branch> nextBranches = branching ? new List<Branch>() : Collections.EmptyList<Branch>();
+                IList<Branch> nextBranches = branching ? new List<Branch>() : Collections.EmptyList<Branch>() as IList<Branch>;
 
                 foreach (Rule rule in rules)
                 {
