@@ -7,7 +7,6 @@ using J2N;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -1342,7 +1341,15 @@ namespace Lucene.Net.Index
         /// </summary>
         public int TotalDocCount
         {
-            get { return segments.Sum(info => info.Info.DocCount); }
+            get
+            {
+                int count = 0;
+                foreach (SegmentCommitInfo info in this)
+                {
+                    count += info.Info.DocCount;
+                }
+                return count;
+            }
         }
 
         /// <summary>
