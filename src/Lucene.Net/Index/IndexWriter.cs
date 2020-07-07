@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -35,13 +33,13 @@ namespace Lucene.Net.Index
      */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using Constants = Lucene.Net.Util.Constants;
     using Directory = Lucene.Net.Store.Directory;
     using FieldNumbers = Lucene.Net.Index.FieldInfos.FieldNumbers;
+    using IBits = Lucene.Net.Util.IBits;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
@@ -1362,7 +1360,12 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     EnsureOpen();
-                    return docWriter.NumDocs + segmentInfos.Segments.Sum(info => info.Info.DocCount - NumDeletedDocs(info));
+                    int count = docWriter.NumDocs;
+                    foreach (SegmentCommitInfo info in segmentInfos)
+                    {
+                        count += info.Info.DocCount - NumDeletedDocs(info);
+                    }
+                    return count;
                 }
             }
         }

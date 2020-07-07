@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Lucene.Net.Index
 {
@@ -198,7 +197,12 @@ namespace Lucene.Net.Index
             }
             if (m_tnums != null)
             {
-                sz = m_tnums.Where(arr => arr != null).Aggregate(sz, (current, arr) => current + arr.Length);
+                for (int i = 0; i < m_tnums.Length; i++)
+                {
+                    var arr = m_tnums[i];
+                    if (arr != null)
+                        sz += arr.Length;
+                }
             }
             memsz = sz;
             return sz;
@@ -666,7 +670,8 @@ namespace Lucene.Net.Index
             }
             if (indexedTerms != null)
             {
-                m_indexedTermsArray = indexedTerms.ToArray();
+                m_indexedTermsArray = new BytesRef[indexedTerms.Count];
+                indexedTerms.CopyTo(m_indexedTermsArray, 0);
             }
 
             long endTime = Environment.TickCount;
