@@ -66,7 +66,7 @@ namespace Lucene.Net.Configuration
 
             set
             {
-                if (!_providers.Any())
+                if (_providers.Count == 0)
                 {
                     throw new InvalidOperationException();
                 }

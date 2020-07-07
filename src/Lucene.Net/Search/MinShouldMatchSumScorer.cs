@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
             this.sortedSubScorers = subScorers.ToArray();
             // sorting by decreasing subscorer cost should be inversely correlated with
             // next docid (assuming costs are due to generating many postings)
-            ArrayUtil.TimSort(sortedSubScorers, Comparer<Scorer>.Create((o1,o2)=> (o2.GetCost() - o1.GetCost()).Signum()));
+            ArrayUtil.TimSort(sortedSubScorers, Comparer<Scorer>.Create((o1, o2) => (o2.GetCost() - o1.GetCost()).Signum()));
             // take mm-1 most costly subscorers aside
             this.mmStack = new Scorer[mm - 1];
             for (int i = 0; i < mm - 1; i++)

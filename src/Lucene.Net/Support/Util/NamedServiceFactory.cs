@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 
@@ -100,9 +99,9 @@ namespace Lucene.Net.Util
         {
             // Check for ServiceName attribute
             var nameAttributes = type.GetCustomAttributes(typeof(ServiceNameAttribute), inherit: true);
-            if (nameAttributes.Any())
+            if (nameAttributes.Length > 0)
             {
-                ServiceNameAttribute nameAttribute = nameAttributes.FirstOrDefault() as ServiceNameAttribute;
+                ServiceNameAttribute nameAttribute = nameAttributes[0] as ServiceNameAttribute;
                 if (nameAttribute != null)
                 {
                     string name = nameAttribute.Name;

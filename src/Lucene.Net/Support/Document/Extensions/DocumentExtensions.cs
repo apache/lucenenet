@@ -2,7 +2,6 @@
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System.IO;
-using System.Linq;
 
 namespace Lucene.Net.Documents.Extensions
 {
@@ -52,7 +51,10 @@ namespace Lucene.Net.Documents.Extensions
         /// <exception cref="System.InvalidCastException">If the field type cannot be cast to <typeparam name="T"/>.</exception>
         public static T[] GetFields<T>(this Document document, string name) where T : IIndexableField
         {
-            return document.GetFields(name).Cast<T>().ToArray();
+            var fields = document.GetFields(name);
+            var result = new T[fields.Length];
+            fields.CopyTo(result, 0);
+            return result;
         }
 
         /// <summary>

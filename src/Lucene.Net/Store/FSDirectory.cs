@@ -2,7 +2,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;// Used only for WRITE_LOCK_NAME in deprecated create=true case:

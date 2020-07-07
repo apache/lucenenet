@@ -1,7 +1,6 @@
 using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Search
@@ -186,7 +185,13 @@ namespace Lucene.Net.Search
 #endif
             }
 
-            return docIdSets.Sum(dis => RamUsageEstimator.SizeOf(dis));
+            long total = 0;
+            foreach (DocIdSet dis in docIdSets)
+            {
+                total += RamUsageEstimator.SizeOf(dis);
+            }
+
+            return total;
         }
     }
 }
