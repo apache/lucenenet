@@ -1,6 +1,8 @@
-﻿using Lucene.Net.Attributes;
+﻿using J2N;
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
+using System.Diagnostics;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis.Phonetic.Language.Bm
@@ -124,20 +126,22 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
      */
     public class PhoneticEnginePerformanceTest
     {
-        private static readonly int LOOP = 80000;
+        private const int LOOP = 80000;
 
         [Test, LongRunningTest]
         public void Test()
         {
             PhoneticEngine engine = new PhoneticEngine(NameType.GENERIC, RuleType.APPROX, true);
-            String input = "Angelo";
-            long startMillis = DateTime.UtcNow.Ticks;
+            string input = "Angelo";
+            var sw = new Stopwatch();
+            sw.Start();
             for (int i = 0; i < LOOP; i++)
             {
                 engine.Encode(input);
             }
-            long totalMillis = DateTime.UtcNow.Ticks - startMillis;
-            Console.WriteLine(String.Format("Time for encoding {0} times the input '{1}': {2} millis.", LOOP, input, totalMillis));
+            sw.Stop();
+            long totalMillis = sw.ElapsedMilliseconds;
+            Console.WriteLine(string.Format("Time for encoding {0} times the input '{1}': {2} millis.", LOOP, input, totalMillis));
         }
     }
 }
