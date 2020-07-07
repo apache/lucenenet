@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Search;
+using Lucene.Net.Support;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -152,7 +153,7 @@ namespace Lucene.Net.Facet.Range
                 // ValueSourceRangeFilter (solr); also,
                 // https://issues.apache.org/jira/browse/LUCENE-4251
 
-                var values = valueSource.GetValues((IDictionary)Collections.EmptyMap<string, Lucene.Net.Search.Scorer>(), context);
+                var values = valueSource.GetValues(Collections.EmptyMap<string, Scorer>(), context);
 
                 int maxDoc = context.Reader.MaxDoc;
 

@@ -1,5 +1,6 @@
 ﻿using J2N;
 using J2N.Collections.Generic.Extensions;
+using J2N.Collections.ObjectModel;
 using J2N.Globalization;
 using System;
 using System.Collections;
@@ -32,30 +33,30 @@ namespace Lucene.Net.Support
     {
         private static class EmptyListHolder<T>
         {
-            public static readonly IList<T> EMPTY_LIST = new JCG.List<T>().AsReadOnly();
+            public static readonly ReadOnlyList<T> EMPTY_LIST = new JCG.List<T>().AsReadOnly();
         }
 
         private static class EmptyDictionaryHolder<TKey, TValue>
         {
-            public static readonly IDictionary<TKey, TValue> EMPTY_DICTIONARY = new JCG.Dictionary<TKey, TValue>().AsReadOnly(); // LUCENENET-615: Must support nullable keys
+            public static readonly ReadOnlyDictionary<TKey, TValue> EMPTY_DICTIONARY = new JCG.Dictionary<TKey, TValue>().AsReadOnly(); // LUCENENET-615: Must support nullable keys
         }
 
         private static class EmptySetHolder<T>
         {
-            public static readonly ISet<T> EMPTY_SET = new JCG.HashSet<T>().AsReadOnly();
+            public static readonly ReadOnlySet<T> EMPTY_SET = new JCG.HashSet<T>().AsReadOnly();
         }
 
-        public static IList<T> EmptyList<T>()
+        public static ReadOnlyList<T> EmptyList<T>()
         {
             return EmptyListHolder<T>.EMPTY_LIST; // LUCENENET NOTE: Enumerable.Empty<T>() fails to cast to IList<T> on .NET Core 3.x, so we just create a new list
         }
 
-        public static IDictionary<TKey, TValue> EmptyMap<TKey, TValue>()
+        public static ReadOnlyDictionary<TKey, TValue> EmptyMap<TKey, TValue>()
         {
             return EmptyDictionaryHolder<TKey, TValue>.EMPTY_DICTIONARY;
         }
 
-        public static ISet<T> EmptySet<T>()
+        public static ReadOnlySet<T> EmptySet<T>()
         {
             return EmptySetHolder<T>.EMPTY_SET;
         }
