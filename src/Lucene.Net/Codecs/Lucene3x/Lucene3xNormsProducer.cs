@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -155,7 +154,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 try
                 {
-                    IOUtils.Dispose(openFiles.ToArray());
+                    IOUtils.Dispose(openFiles);
                 }
                 finally
                 {

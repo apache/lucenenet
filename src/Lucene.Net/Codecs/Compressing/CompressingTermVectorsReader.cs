@@ -5,8 +5,6 @@ using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -1205,7 +1203,10 @@ namespace Lucene.Net.Codecs.Compressing
 
         private static int Sum(int[] arr)
         {
-            return arr.Sum();
+            int sum = 0;
+            for (int i = 0; i < arr.Length; i++)
+                sum += arr[i];
+            return sum;
         }
 
         public override long RamBytesUsed()

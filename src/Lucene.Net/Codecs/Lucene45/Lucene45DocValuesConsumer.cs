@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene45
@@ -429,7 +428,12 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private static bool IsSingleValued(IEnumerable<long?> docToOrdCount)
         {
-            return docToOrdCount.All(ordCount => ordCount <= 1);
+            foreach (var ordCount in docToOrdCount)
+            {
+                if (ordCount.GetValueOrDefault() > 1)
+                    return false;
+            }
+            return true;
         }
 
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
