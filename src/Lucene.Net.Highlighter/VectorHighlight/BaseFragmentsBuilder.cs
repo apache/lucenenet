@@ -5,7 +5,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using SubInfo = Lucene.Net.Search.VectorHighlight.FieldFragList.WeightedFragInfo.SubInfo;
 using Toffs = Lucene.Net.Search.VectorHighlight.FieldPhraseList.WeightedPhraseInfo.Toffs;
@@ -266,7 +265,7 @@ namespace Lucene.Net.Search.VectorHighlight
                         goto fragInfos_continue;
                     }
 
-                    if (!fragInfo.SubInfos.Any())
+                    if (fragInfo.SubInfos.Count == 0)
                     {
                         goto fragInfos_continue;
                     }
@@ -315,7 +314,7 @@ namespace Lucene.Net.Search.VectorHighlight
                                     }
                                 }
                             }
-                            if (toffsList.Any())
+                            if (toffsList.Count > 0)
                             {
                                 // LUCENENET NOTE: Instead of removing during iteration (which isn't allowed in .NET when using an IEnumerator), 
                                 // we just remove the items at this point. We only get here if there are items to remove.
@@ -325,7 +324,7 @@ namespace Lucene.Net.Search.VectorHighlight
                                 boost += subInfo.Boost;
                             }
 
-                            if (!subInfo.TermsOffsets.Any())
+                            if (subInfo.TermsOffsets.Count == 0)
                             {
                                 //subInfoIterator.Remove();
                                 fragInfo_SubInfos_ToDelete.Add(subInfo);
