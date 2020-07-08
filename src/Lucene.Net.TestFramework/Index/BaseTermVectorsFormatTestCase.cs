@@ -18,6 +18,7 @@ using static Lucene.Net.Index.TermsEnum;
 using Assert = Lucene.Net.TestFramework.Assert;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Attribute = Lucene.Net.Util.Attribute;
+using System.Diagnostics.CodeAnalysis;
 
 #if TESTFRAMEWORK_MSTEST
 using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
@@ -130,7 +131,7 @@ namespace Lucene.Net.Index
 
             public static IEnumerable<Options> GetAsEnumer()
             {
-                return Enum.GetValues(typeof(Options)).Cast<Options>();
+                return (Options[])Enum.GetValues(typeof(Options));
             }
 
             public static IEnumerable<Options> GetAsEnumer(Options startInc, Options endInc)
