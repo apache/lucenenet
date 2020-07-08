@@ -12,21 +12,21 @@ using Directory = Lucene.Net.Store.Directory;
 namespace Lucene.Net.Replicator
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// A <see cref="IReplicationHandler"/> for replication of an index. Implements
@@ -83,9 +83,11 @@ namespace Lucene.Net.Replicator
             try
             {
                 // IndexNotFoundException which we handle below
-                return DirectoryReader.IndexExists(directory) 
-                    ? DirectoryReader.ListCommits(directory).Last() 
-                    : null;
+                if (DirectoryReader.IndexExists(directory))
+                {
+                    var commits = DirectoryReader.ListCommits(directory);
+                    return commits[commits.Count - 1];
+                }
             }
             catch (IndexNotFoundException)
             {
@@ -106,14 +108,14 @@ namespace Lucene.Net.Replicator
         /// </summary>
         public static string GetSegmentsFile(IList<string> files, bool allowEmpty)
         {
-            if (!files.Any())
+            if (files.Count == 0)
             {
                 if (allowEmpty)
                     return null;
                 throw new InvalidOperationException("empty list of files not allowed");
             }
 
-            string segmentsFile = files.Last();
+            string segmentsFile = files[files.Count - 1];
             //NOTE: Relying on side-effects outside?
             files.RemoveAt(files.Count - 1);
             if (!segmentsFile.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal) || segmentsFile.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal))
@@ -166,20 +168,22 @@ namespace Lucene.Net.Replicator
 
                 if (commit != null && commit.SegmentsFileName.Equals(segmentsFile, StringComparison.Ordinal))
                 {
-                    ISet<string> commitFiles = new JCG.HashSet<string>( commit.FileNames
-                        .Union(new[] {IndexFileNames.SEGMENTS_GEN}));
+                    ISet<string> commitFiles = new JCG.HashSet<string>(commit.FileNames);
+                    commitFiles.Add(IndexFileNames.SEGMENTS_GEN);
 
                     Regex matcher = IndexFileNames.CODEC_FILE_PATTERN;
-                    foreach (string file in directory.ListAll()
-                        .Where(file => !commitFiles.Contains(file) && (matcher.IsMatch(file) || file.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal))))
+                    foreach (string file in directory.ListAll())
                     {
-                        try
+                        if (!commitFiles.Contains(file) && (matcher.IsMatch(file) || file.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal)))
                         {
-                            directory.DeleteFile(file);
-                        }
-                        catch
-                        {
-                            // suppress, it's just a best effort
+                            try
+                            {
+                                directory.DeleteFile(file);
+                            }
+                            catch
+                            {
+                                // suppress, it's just a best effort
+                            }
                         }
                     }
 
@@ -246,7 +250,7 @@ namespace Lucene.Net.Replicator
             if (DirectoryReader.IndexExists(indexDirectory))
             {
                 IList<IndexCommit> commits = DirectoryReader.ListCommits(indexDirectory);
-                IndexCommit commit = commits.Last();
+                IndexCommit commit = commits[commits.Count - 1];
 
                 currentVersion = IndexRevision.RevisionVersion(commit);
                 currentRevisionFiles = IndexRevision.RevisionFiles(commit);
