@@ -4,7 +4,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Queries
@@ -114,7 +113,7 @@ namespace Lucene.Net.Queries
             public FieldAndTermEnumAnonymousInnerClassHelper2(string field, IList<BytesRef> terms)
                 : base(field)
             {
-                if (!terms.Any())
+                if (terms.Count == 0)
                 {
                     throw new ArgumentException("no terms provided");
                 }
