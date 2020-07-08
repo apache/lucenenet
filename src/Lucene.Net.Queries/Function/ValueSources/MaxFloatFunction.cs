@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 
 namespace Lucene.Net.Queries.Function.ValueSources
 {
@@ -39,7 +39,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return 0.0f;
             }
-            return valsArr.Select(vals => vals.SingleVal(doc)).Concat(new[] {float.NegativeInfinity}).Max();
+            float val = float.NegativeInfinity;
+            foreach (FunctionValues vals in valsArr)
+            {
+                val = Math.Max(vals.SingleVal(doc), val);
+            }
+            return val;
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
-using System.Linq;
 
 namespace Lucene.Net.Queries
 {
@@ -77,7 +76,12 @@ namespace Lucene.Net.Queries
             {
                 return CustomScore(doc, subQueryScore, 1);
             }
-            return valSrcScores.Aggregate(subQueryScore, (current, valSrcScore) => current*valSrcScore);
+            float score = subQueryScore;
+            foreach (float valSrcScore in valSrcScores)
+            {
+                score *= valSrcScore;
+            }
+            return score;
         }
 
         /// <summary>

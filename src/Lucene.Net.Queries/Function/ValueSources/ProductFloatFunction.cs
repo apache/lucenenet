@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Lucene.Net.Queries.Function.ValueSources
+﻿namespace Lucene.Net.Queries.Function.ValueSources
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -35,7 +33,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         protected override float Func(int doc, FunctionValues[] valsArr)
         {
-            return valsArr.Aggregate(1.0f, (current, vals) => current * vals.SingleVal(doc));
+            float val = 1.0f;
+            foreach (FunctionValues vals in valsArr)
+            {
+                val *= vals.SingleVal(doc);
+            }
+            return val;
         }
     }
 }
