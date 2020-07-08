@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 
 namespace Lucene.Net.Spatial.Queries
 {
@@ -199,7 +198,12 @@ namespace Lucene.Net.Spatial.Queries
 
         public static bool Is(SpatialOperation op, params SpatialOperation[] tst)
         {
-            return tst.Any(t => op == t);
+            foreach (SpatialOperation t in tst)
+            {
+                if (op == t)
+                    return true;
+            }
+            return false;
         }
 
         /// <summary>
