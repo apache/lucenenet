@@ -80,18 +80,16 @@ namespace Lucene.Net.Search.Suggest
         {
             get
             {
+                if (HasPayloads && m_curPos < m_payloads.Length)
                 {
-                    if (HasPayloads && m_curPos < m_payloads.Length)
-                    {
-                        Debug.Assert(currentOrd == ords[m_curPos]);
-                        return m_payloads.Get(payloadSpare, currentOrd);
-                    }
-                    return null;
+                    Debug.Assert(currentOrd == ords[m_curPos]);
+                    return m_payloads.Get(payloadSpare, currentOrd);
                 }
+                return null;
             }
         }
 
-        public override IEnumerable<BytesRef> Contexts
+        public override ICollection<BytesRef> Contexts
         {
             get
             {

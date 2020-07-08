@@ -161,10 +161,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        public virtual long Weight
-        {
-            get { return weight; }
-        }
+        public virtual long Weight => weight;
 
         public virtual BytesRef Payload
         {
@@ -178,28 +175,13 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        public virtual bool HasPayloads
-        {
-            get { return hasPayloads; }
-        }
+        public virtual bool HasPayloads => hasPayloads;
 
-        public virtual IEnumerable<BytesRef> Contexts
-        {
-            get { return contexts; }
-        }
+        public virtual ICollection<BytesRef> Contexts => contexts;
 
-        public virtual IComparer<BytesRef> Comparer
-        {
-            get
-            {
-                return tieBreakByCostComparer;
-            }
-        }
+        public virtual IComparer<BytesRef> Comparer => tieBreakByCostComparer;
 
-        public virtual bool HasContexts
-        {
-            get { return hasContexts; }
-        }
+        public virtual bool HasContexts => hasContexts;
 
         /// <summary>
         /// Sortes by BytesRef (ascending) then cost (ascending). </summary>
@@ -269,7 +251,7 @@ namespace Lucene.Net.Search.Suggest
         /// </summary>
         protected internal virtual void Encode(OfflineSorter.ByteSequencesWriter writer,
             ByteArrayDataOutput output, byte[] buffer, BytesRef spare, BytesRef payload,
-            IEnumerable<BytesRef> contexts, long weight)
+            ICollection<BytesRef> contexts, long weight)
         {
             int requiredLength = spare.Length + 8 + ((hasPayloads) ? 2 + payload.Length : 0);
             if (hasContexts)
@@ -293,7 +275,7 @@ namespace Lucene.Net.Search.Suggest
                     output.WriteBytes(ctx.Bytes, ctx.Offset, ctx.Length);
                     output.WriteInt16((short)ctx.Length);
                 }
-                output.WriteInt16((short)contexts.Count());
+                output.WriteInt16((short)contexts.Count);
             }
             if (hasPayloads)
             {

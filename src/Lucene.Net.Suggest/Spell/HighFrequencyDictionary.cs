@@ -35,8 +35,8 @@ namespace Lucene.Net.Search.Spell
     public class HighFrequencyDictionary : IDictionary
     {
         private IndexReader reader;
-        private string field;
-        private float thresh;
+        private readonly string field;
+        private readonly float thresh;
 
         /// <summary>
         /// Creates a new Dictionary, pulling source terms from
@@ -87,10 +87,7 @@ namespace Lucene.Net.Search.Spell
                 return freq >= minNumDocs;
             }
 
-            public long Weight
-            {
-                get { return freq; }
-            }
+            public long Weight => freq;
 
             public BytesRef Next()
             {
@@ -125,25 +122,13 @@ namespace Lucene.Net.Search.Spell
                 }
             }
 
-            public BytesRef Payload
-            {
-                get { return null; }
-            }
+            public BytesRef Payload => null;
 
-            public bool HasPayloads
-            {
-                get { return false; }
-            }
+            public bool HasPayloads => false;
 
-            public IEnumerable<BytesRef> Contexts
-            {
-                get { return null; }
-            }
+            public ICollection<BytesRef> Contexts => null;
 
-            public bool HasContexts
-            {
-                get { return false; }
-            }
+            public bool HasContexts => false;
         }
     }
 }

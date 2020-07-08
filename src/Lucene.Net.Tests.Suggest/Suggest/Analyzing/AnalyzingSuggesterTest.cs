@@ -9,11 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -239,7 +238,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             suggester.Build(new InputArrayIterator(new Input[0]));
 
             IList<Lookup.LookupResult> result = suggester.DoLookup("a", false, 20);
-            assertTrue(!result.Any());
+            assertTrue(result.Count == 0);
         }
 
         [Test]

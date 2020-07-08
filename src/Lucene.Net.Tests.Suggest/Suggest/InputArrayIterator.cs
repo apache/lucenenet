@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Suggest
 
         public IComparer<BytesRef> Comparer => null;
 
-        public IEnumerable<BytesRef> Contexts => current.contexts;
+        public ICollection<BytesRef> Contexts => current.contexts;
 
         public bool HasContexts => hasContexts;
     }

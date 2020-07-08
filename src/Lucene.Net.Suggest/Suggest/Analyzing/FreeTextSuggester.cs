@@ -14,28 +14,27 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     // TODO
     //   - test w/ syns
@@ -820,8 +819,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             private readonly FreeTextSuggester outerInstance;
 
-            private IEnumerable<BytesRef> seen;
-            private BytesRef finalLastToken;
+            private readonly ISet<BytesRef> seen;
+            private readonly BytesRef finalLastToken;
 
             public TopNSearcherAnonymousInnerClassHelper(
                 FreeTextSuggester outerInstance,
@@ -829,7 +828,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 int num,
                 int size,
                 IComparer<long?> weightComparer,
-                IEnumerable<BytesRef> seen,
+                ISet<BytesRef> seen,
                 BytesRef finalLastToken)
                 : base(fst, num, size, weightComparer)
             {
@@ -911,7 +910,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return output;
         }
 
-        internal static readonly IComparer<long?> weightComparer = Comparer<long?>.Create((left, right) => Comparer<long?>.Default.Compare(left, right));
+        internal static readonly IComparer<long?> weightComparer =  Comparer<long?>.Default;
 
         /// <summary>
         /// Returns the weight associated with an input string,

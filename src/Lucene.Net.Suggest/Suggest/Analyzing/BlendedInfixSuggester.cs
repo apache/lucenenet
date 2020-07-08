@@ -5,7 +5,6 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 
@@ -140,7 +139,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         }
 
         protected internal override IList<Lookup.LookupResult> CreateResults(IndexSearcher searcher, TopFieldDocs hits,
-            int num, string key, bool doHighlight, IEnumerable<string> matchedTokens, string prefixToken)
+            int num, string key, bool doHighlight, ICollection<string> matchedTokens, string prefixToken)
         {
 
             BinaryDocValues textDV = MultiDocValues.GetBinaryValues(searcher.IndexReader, TEXT_FIELD_NAME);
@@ -216,29 +215,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             if (results.Count >= num)
             {
-                if (results.Min.Value < result.Value)
-                {
-                    lock (syncLock)
-                    {
-                        if (results.Min.Value < result.Value)
-                        {
-                            // Code similar to the java TreeMap class
-                            var entry = results.FirstOrDefault();
-                            if (entry != null)
-                            {
-                                results.Remove(entry);
-                            }
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-                }
+                var first = results.Min; // "get" our first object so we don't cross threads
+                if (first.Value < result.Value)
+                    // Code similar to the java TreeMap class
+                    results.Remove(first);
                 else
-                {
                     return;
-                }
             }
 
             results.Add(result);
@@ -252,7 +234,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <param name="prefixToken"> unfinished token in the query </param>
         /// <returns> the coefficient </returns>
         /// <exception cref="System.IO.IOException"> If there are problems reading term vectors from the underlying Lucene index. </exception>
-        private double CreateCoefficient(IndexSearcher searcher, int doc, IEnumerable<string> matchedTokens, string prefixToken)
+        private double CreateCoefficient(IndexSearcher searcher, int doc, ICollection<string> matchedTokens, string prefixToken)
         {
             Terms tv = searcher.IndexReader.GetTermVector(doc, TEXT_FIELD_NAME);
             TermsEnum it = tv.GetIterator(TermsEnum.EMPTY);

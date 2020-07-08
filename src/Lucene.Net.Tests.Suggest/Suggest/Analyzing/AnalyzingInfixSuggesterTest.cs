@@ -150,7 +150,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
             }
 
-            protected internal override object Highlight(string text, IEnumerable<string> matchedTokens, string prefixToken)
+            protected internal override object Highlight(string text, ICollection<string> matchedTokens, string prefixToken)
             {
                 TokenStream ts = m_queryAnalyzer.GetTokenStream("text", new StringReader(text));
                 try
@@ -1021,7 +1021,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private IEnumerable<BytesRef> AsSet(params string[] values)
+        private ISet<BytesRef> AsSet(params string[] values)
         {
             ISet<BytesRef> result = new JCG.HashSet<BytesRef>();
             foreach (string value in values)

@@ -3,7 +3,6 @@ using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {

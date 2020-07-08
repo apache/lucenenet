@@ -12,7 +12,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
@@ -127,7 +126,7 @@ namespace Lucene.Net.Search.Suggest
                 assertEquals(inputIterator.Weight, (w1 + w2 + w3));
                 assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
             }
-            assertTrue(!docs.Any());
+            assertTrue(docs.Count == 0);
             ir.Dispose();
             dir.Dispose();
         }
@@ -170,7 +169,7 @@ namespace Lucene.Net.Search.Suggest
                 }
                 assertEquals(originalCtxs, inputIterator.Contexts);
             }
-            assertTrue(!docs.Any());
+            assertTrue(docs.Count == 0);
             ir.Dispose();
             dir.Dispose();
         }
@@ -207,7 +206,7 @@ namespace Lucene.Net.Search.Suggest
                 assertEquals(inputIterator.Weight, (w1 + w2 + w3));
                 assertEquals(inputIterator.Payload, null);
             }
-            assertTrue(!docs.Any());
+            assertTrue(docs.Count == 0);
             ir.Dispose();
             dir.Dispose();
         }
@@ -271,7 +270,7 @@ namespace Lucene.Net.Search.Suggest
                 assertEquals(inputIterator.Weight, w2 + w1);
                 assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
             }
-            assertTrue(!docs.Any());
+            assertTrue(docs.Count == 0);
             ir.Dispose();
             dir.Dispose();
         }
@@ -305,7 +304,7 @@ namespace Lucene.Net.Search.Suggest
                 assertEquals(inputIterator.Weight, 10);
                 assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
             }
-            assertTrue(!docs.Any());
+            assertTrue(docs.Count == 0);
             ir.Dispose();
             dir.Dispose();
         }

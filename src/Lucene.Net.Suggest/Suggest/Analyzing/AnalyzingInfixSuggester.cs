@@ -10,7 +10,6 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
@@ -545,7 +544,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Create the results based on the search hits.
         /// Can be overridden by subclass to add particular behavior (e.g. weight transformation) </summary>
         /// <exception cref="System.IO.IOException"> If there are problems reading fields from the underlying Lucene index. </exception>
-        protected internal virtual IList<LookupResult> CreateResults(IndexSearcher searcher, TopFieldDocs hits, int num, string charSequence, bool doHighlight, IEnumerable<string> matchedTokens, string prefixToken)
+        protected internal virtual IList<LookupResult> CreateResults(IndexSearcher searcher, TopFieldDocs hits, int num, string charSequence, bool doHighlight, ICollection<string> matchedTokens, string prefixToken)
         {
 
             BinaryDocValues textDV = MultiDocValues.GetBinaryValues(searcher.IndexReader, TEXT_FIELD_NAME);
@@ -628,7 +627,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// result is set on each <see cref="Lookup.LookupResult.HighlightKey"/>
         /// member. 
         /// </summary>
-        protected internal virtual object Highlight(string text, IEnumerable<string> matchedTokens, string prefixToken)
+        protected internal virtual object Highlight(string text, ICollection<string> matchedTokens, string prefixToken)
         {
             TokenStream ts = m_queryAnalyzer.GetTokenStream("text", new StringReader(text));
             try

@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Suggest
         protected BytesRefArray m_payloads = new BytesRefArray(Counter.NewCounter());
         /// <summary>
         /// buffered context set entries </summary>
-        protected IList<IEnumerable<BytesRef>> m_contextSets = new List<IEnumerable<BytesRef>>();
+        protected IList<ICollection<BytesRef>> m_contextSets = new List<ICollection<BytesRef>>();
         /// <summary>
         /// current buffer position </summary>
         protected int m_curPos = -1;
@@ -77,10 +77,7 @@ namespace Lucene.Net.Search.Suggest
             comp = source.Comparer;
         }
 
-        public virtual long Weight
-        {
-            get { return m_freqs[m_curPos]; }
-        }
+        public virtual long Weight => m_freqs[m_curPos];
 
         public virtual BytesRef Next()
         {
@@ -104,20 +101,11 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        public virtual bool HasPayloads
-        {
-            get { return hasPayloads; }
-        }
+        public virtual bool HasPayloads => hasPayloads;
 
-        public virtual IComparer<BytesRef> Comparer
-        {
-            get
-            {
-                return comp;
-            }
-        }
+        public virtual IComparer<BytesRef> Comparer => comp;
 
-        public virtual IEnumerable<BytesRef> Contexts
+        public virtual ICollection<BytesRef> Contexts
         {
             get
             {
@@ -129,9 +117,6 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        public virtual bool HasContexts
-        {
-            get { return hasContexts; }
-        }
+        public virtual bool HasContexts => hasContexts;
     }
 }

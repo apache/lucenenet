@@ -6,7 +6,6 @@ using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
@@ -365,12 +364,12 @@ namespace Lucene.Net.Search.Spell
                 docfreq = Math.Max(docfreq, (int)(thresholdFrequency * maxDoc) - 1);
             }
 
-            IEnumerable<ScoreTerm> terms = null;
+            ICollection<ScoreTerm> terms = null;
             int inspections = numSug * maxInspections;
 
             // try ed=1 first, in case we get lucky
             terms = SuggestSimilar(term, inspections, ir, docfreq, 1, accuracy, spare);
-            if (maxEdits > 1 && terms.Count() < inspections)
+            if (maxEdits > 1 && terms.Count < inspections)
             {
                 var moreTerms = new JCG.HashSet<ScoreTerm>();
                 moreTerms.UnionWith(terms);
@@ -380,7 +379,7 @@ namespace Lucene.Net.Search.Spell
 
             // create the suggestword response, sort it, and trim it to size.
 
-            var suggestions = new SuggestWord[terms.Count()];
+            var suggestions = new SuggestWord[terms.Count];
             int index = suggestions.Length - 1;
             foreach (ScoreTerm s in terms)
             {
@@ -418,7 +417,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="spare"> a chars scratch </param>
         /// <returns> a collection of spelling corrections sorted by <code>ScoreTerm</code>'s natural order. </returns>
         /// <exception cref="System.IO.IOException"> If I/O related errors occur </exception>
-        protected internal virtual IEnumerable<ScoreTerm> SuggestSimilar(Term term, int numSug, IndexReader ir, 
+        protected internal virtual ICollection<ScoreTerm> SuggestSimilar(Term term, int numSug, IndexReader ir, 
             int docfreq, int editDistance, float accuracy, CharsRef spare)
         {
 

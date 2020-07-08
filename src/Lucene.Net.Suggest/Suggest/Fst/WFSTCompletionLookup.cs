@@ -296,7 +296,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 Debug.Assert(source.HasPayloads == false);
             }
 
-            protected internal override void Encode(OfflineSorter.ByteSequencesWriter writer, ByteArrayDataOutput output, byte[] buffer, BytesRef spare, BytesRef payload, IEnumerable<BytesRef> contexts, long weight)
+            protected internal override void Encode(OfflineSorter.ByteSequencesWriter writer, ByteArrayDataOutput output, byte[] buffer, BytesRef spare, BytesRef payload, ICollection<BytesRef> contexts, long weight)
             {
                 if (spare.Length + 4 >= buffer.Length)
                 {
@@ -326,12 +326,6 @@ namespace Lucene.Net.Search.Suggest.Fst
             return (fst == null) ? 0 : fst.GetSizeInBytes();
         }
 
-        public override long Count
-        {
-            get
-            {
-                return count;
-            }
-        }
+        public override long Count => count;
     }
 }
