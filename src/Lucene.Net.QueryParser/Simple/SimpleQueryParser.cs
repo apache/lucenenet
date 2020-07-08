@@ -6,7 +6,6 @@ using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.QueryParsers.Simple
@@ -674,7 +673,7 @@ namespace Lucene.Net.QueryParsers.Simple
         /// </summary>
         protected virtual Query Simplify(BooleanQuery bq)
         {
-            if (!bq.Clauses.Any())
+            if (bq.Clauses.Count == 0)
             {
                 return null;
             }

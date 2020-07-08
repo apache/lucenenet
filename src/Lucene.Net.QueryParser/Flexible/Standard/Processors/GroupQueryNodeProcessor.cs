@@ -5,7 +5,6 @@ using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Operator = Lucene.Net.QueryParsers.Flexible.Standard.Config.StandardQueryConfigHandler.Operator;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
@@ -190,7 +189,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         {
             if (node is AndQueryNode || node is OrQueryNode)
             {
-                if (!this.latestNodeVerified && this.queryNodeList.Any())
+                if (!this.latestNodeVerified && this.queryNodeList.Count > 0)
                 {
                     var value = this.queryNodeList[this.queryNodeList.Count - 1];
                     this.queryNodeList.Remove(value);

@@ -6,7 +6,6 @@ using Lucene.Net.Search.Spans;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.QueryParsers.ComplexPhrase
 {

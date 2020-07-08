@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.QueryParsers.Surround.Query
@@ -56,7 +55,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
             if (fieldNames.Count == 1)
             { /* single field name: no new queries needed */
-                return q.MakeLuceneQueryFieldNoBoost(fieldNames.FirstOrDefault(), qf);
+                return q.MakeLuceneQueryFieldNoBoost(fieldNames[0], qf);
             }
             else
             { /* OR query over the fields */

@@ -2,7 +2,6 @@
 using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
 {
@@ -130,7 +129,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
 
         public virtual bool Contains(object o)
         {
-            return this.processors.Contains(o);
+            // LUCENENET specific - cast required to get from object to IQueryNodeProcessor
+            if (o is IQueryNodeProcessor other)
+                return this.Contains(other);
+            return false;
         }
 
         /// <summary>
