@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
@@ -78,7 +77,7 @@ namespace Lucene.Net.Index
                 {
                     segs.Add(args[x]);
                 }
-                @is.Remove(segs.ToArray());
+                @is.Remove(segs);
             }
             else
             {
@@ -88,7 +87,7 @@ namespace Lucene.Net.Index
                 {
                     segs.Add(args[x]);
                 }
-                @is.Split(targetDir, segs.ToArray());
+                @is.Split(targetDir, segs);
             }
         }
 
@@ -134,7 +133,7 @@ namespace Lucene.Net.Index
             return null;
         }
 
-        public virtual void Remove(string[] segs)
+        public virtual void Remove(ICollection<string> segs) // LUCENENET specific - changed to ICollection to reduce copy operations
         {
             foreach (string n in segs)
             {
@@ -145,7 +144,7 @@ namespace Lucene.Net.Index
             Infos.Commit(fsDir);
         }
 
-        public virtual void Split(DirectoryInfo destDir, string[] segs)
+        public virtual void Split(DirectoryInfo destDir, ICollection<string> segs) // LUCENENET specific - changed to ICollection to reduce copy operations
         {
             destDir.Create();
             FSDirectory destFSDir = FSDirectory.Open(destDir);
@@ -175,11 +174,9 @@ namespace Lucene.Net.Index
         private static void CopyFile(FileInfo src, FileInfo dst)
         {
             using (Stream @in = new FileStream(src.FullName, FileMode.Open, FileAccess.Read))
+            using (Stream @out = new FileStream(dst.FullName, FileMode.OpenOrCreate, FileAccess.Write))
             {
-                using (Stream @out = new FileStream(dst.FullName, FileMode.OpenOrCreate, FileAccess.Write))
-                {
-                    @in.CopyTo(@out);
-                }
+                @in.CopyTo(@out);
             }
         }
     }
