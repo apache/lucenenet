@@ -2,9 +2,9 @@
 using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
-using Lucene.Net.Search.Grouping.Terms;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Search.Grouping.Terms;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -12,10 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using JCG = J2N.Collections.Generic;
 using Collections = Lucene.Net.Support.Collections;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 
 namespace Lucene.Net.Search.Grouping
@@ -707,11 +706,11 @@ namespace Lucene.Net.Search.Grouping
                     groupDc.SetBytesValue(new BytesRef());
                 }
                 content.SetStringValue(contentStr);
-                if (groupValue == null && !facetVals.Any())
+                if (groupValue == null && facetVals.Count == 0)
                 {
                     writer.AddDocument(docNoGroupNoFacet);
                 }
-                else if (!facetVals.Any())
+                else if (facetVals.Count == 0)
                 {
                     writer.AddDocument(docNoFacet);
                 }
