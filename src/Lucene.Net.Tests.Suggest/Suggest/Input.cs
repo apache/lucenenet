@@ -29,7 +29,7 @@ namespace Lucene.Net.Search.Suggest
         public readonly long v;
         public readonly BytesRef payload;
         public readonly bool hasPayloads;
-        public readonly IEnumerable<BytesRef> contexts;
+        public readonly ICollection<BytesRef> contexts;
         public readonly bool hasContexts;
 
         public Input(BytesRef term, long v, BytesRef payload)
@@ -42,12 +42,12 @@ namespace Lucene.Net.Search.Suggest
         {
         }
 
-        public Input(BytesRef term, long v, IEnumerable<BytesRef> contexts)
+        public Input(BytesRef term, long v, ICollection<BytesRef> contexts)
             : this(term, v, null, false, contexts, true)
         {
         }
 
-        public Input(string term, long v, IEnumerable<BytesRef> contexts)
+        public Input(string term, long v, ICollection<BytesRef> contexts)
             : this(new BytesRef(term), v, null, false, contexts, true)
         {
         }
@@ -62,19 +62,19 @@ namespace Lucene.Net.Search.Suggest
         {
         }
 
-        public Input(string term, int v, BytesRef payload, IEnumerable<BytesRef> contexts)
+        public Input(string term, int v, BytesRef payload, ICollection<BytesRef> contexts)
             : this(new BytesRef(term), v, payload, true, contexts, true)
         {
         }
 
-        public Input(BytesRef term, long v, BytesRef payload, IEnumerable<BytesRef> contexts)
+        public Input(BytesRef term, long v, BytesRef payload, ICollection<BytesRef> contexts)
             : this(term, v, payload, true, contexts, true)
         {
         }
 
 
 
-        public Input(BytesRef term, long v, BytesRef payload, bool hasPayloads, IEnumerable<BytesRef> contexts,
+        public Input(BytesRef term, long v, BytesRef payload, bool hasPayloads, ICollection<BytesRef> contexts,
             bool hasContexts)
         {
             this.term = term;
@@ -85,14 +85,8 @@ namespace Lucene.Net.Search.Suggest
             this.hasContexts = hasContexts;
         }
 
-        public bool HasContexts
-        {
-            get { return hasContexts; }
-        }
+        public bool HasContexts => hasContexts;
 
-        public bool HasPayloads
-        {
-            get { return hasPayloads; }
-        }
+        public bool HasPayloads => hasPayloads;
     }
 }

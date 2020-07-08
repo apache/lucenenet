@@ -10,7 +10,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
@@ -173,7 +172,7 @@ namespace Lucene.Net.Search.Suggest
                 docs.Remove(invalidTerm);
                 assertNotNull(invalid);
             }
-            assertTrue(!docs.Any());
+            assertTrue(docs.Count == 0);
 
             ir.Dispose();
             dir.Dispose();
@@ -218,7 +217,7 @@ namespace Lucene.Net.Search.Suggest
             }
 
 
-            assertTrue(!docs.Any());
+            assertTrue(docs.Count == 0);
 
             ir.Dispose();
             dir.Dispose();
@@ -255,12 +254,12 @@ namespace Lucene.Net.Search.Suggest
                 assertEquals(inputIterator.Weight, (weightField != null) ? weightField.GetInt64ValueOrDefault() : 0);
                 assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
                 ISet<BytesRef> oriCtxs = new JCG.HashSet<BytesRef>();
-                IEnumerable<BytesRef> contextSet = inputIterator.Contexts;
+                ICollection<BytesRef> contextSet = inputIterator.Contexts;
                 foreach (IIndexableField ctxf in doc.GetFields(CONTEXT_FIELD_NAME))
                 {
                     oriCtxs.add(ctxf.GetBinaryValue());
                 }
-                assertEquals(oriCtxs.size(), contextSet.Count());
+                assertEquals(oriCtxs.size(), contextSet.Count);
             }
 
             foreach (string invalidTerm in invalidDocTerms)
@@ -269,7 +268,7 @@ namespace Lucene.Net.Search.Suggest
                 docs.Remove(invalidTerm);
                 assertNotNull(invalid);
             }
-            assertTrue(!docs.Any());
+            assertTrue(docs.Count == 0);
 
             ir.Dispose();
             dir.Dispose();
@@ -340,7 +339,7 @@ namespace Lucene.Net.Search.Suggest
                 docs.Remove(invalidTerm);
                 assertNotNull(invalid);
             }
-            assertTrue(!docs.Any());
+            assertTrue(docs.Count == 0);
 
             ir.Dispose();
             dir.Dispose();

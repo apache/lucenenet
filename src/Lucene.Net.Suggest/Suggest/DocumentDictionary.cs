@@ -140,18 +140,9 @@ namespace Lucene.Net.Search.Suggest
                 relevantFields = GetRelevantFields(new string[] { outerInstance.field, outerInstance.weightField, outerInstance.m_payloadField, outerInstance.m_contextsField });
             }
 
-            public virtual long Weight
-            {
-                get { return currentWeight; }
-            }
+            public virtual long Weight => currentWeight;
 
-            public virtual IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public virtual IComparer<BytesRef> Comparer => null;
 
             public virtual BytesRef Next()
             {
@@ -251,17 +242,7 @@ namespace Lucene.Net.Search.Suggest
                 return relevantFields;
             }
 
-            public virtual IEnumerable<BytesRef> Contexts
-            {
-                get
-                {
-                    if (hasContexts)
-                    {
-                        return currentContexts;
-                    }
-                    return null;
-                }
-            }
+            public virtual ICollection<BytesRef> Contexts => hasContexts ? currentContexts : null;
 
             public virtual bool HasContexts => hasContexts;
         }

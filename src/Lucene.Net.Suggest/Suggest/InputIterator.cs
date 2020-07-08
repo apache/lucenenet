@@ -47,7 +47,7 @@ namespace Lucene.Net.Search.Suggest
         /// A term's contexts context can be used to filter suggestions.
         /// May return null, if suggest entries do not have any context
         /// </summary>
-        IEnumerable<BytesRef> Contexts { get; }
+        ICollection<BytesRef> Contexts { get; }
 
         /// <summary>
         /// Returns true if the iterator has contexts </summary>
@@ -80,42 +80,19 @@ namespace Lucene.Net.Search.Suggest
             this.wrapped = wrapped;
         }
 
-        public virtual long Weight
-        {
-            get { return 1; }
-        }
+        public virtual long Weight => 1;
 
         public virtual BytesRef Next()
-        {
-            return wrapped.Next();
-        }
+            => wrapped.Next();
 
-        public virtual BytesRef Payload
-        {
-            get { return null; }
-        }
+        public virtual BytesRef Payload => null;
 
-        public virtual bool HasPayloads
-        {
-            get { return false; }
-        }
+        public virtual bool HasPayloads => false;
 
-        public virtual IComparer<BytesRef> Comparer
-        {
-            get
-            {
-                return wrapped.Comparer;
-            }
-        }
+        public virtual IComparer<BytesRef> Comparer => wrapped.Comparer;
 
-        public virtual IEnumerable<BytesRef> Contexts
-        {
-            get { return null; }
-        }
+        public virtual ICollection<BytesRef> Contexts => null;
 
-        public virtual bool HasContexts
-        {
-            get { return false; }
-        }
+        public virtual bool HasContexts => false;
     }
 }

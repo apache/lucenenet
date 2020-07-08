@@ -141,21 +141,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.lfd = lfd;
             }
 
-            public long Weight
-            {
-                get
-                {
-                    return 1;
-                }
-            }
+            public long Weight => 1;
 
-            public IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public IComparer<BytesRef> Comparer => null;
 
             public BytesRef Next()
             {
@@ -179,37 +167,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 return new BytesRef(doc.Get("body"));
             }
 
-            public BytesRef Payload
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public BytesRef Payload => null;
 
-            public bool HasPayloads
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public bool HasPayloads => false;
 
-            public IEnumerable<BytesRef> Contexts
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public ICollection<BytesRef> Contexts => null;
 
-            public bool HasContexts
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public bool HasContexts => false;
         }
 
         [Ignore("Ignored in Lucene")]
@@ -370,13 +334,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 this.docs = docs;
             }
 
-            public IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public IComparer<BytesRef> Comparer => null;
 
             public BytesRef Next()
             {
@@ -389,54 +347,23 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     StringBuilder b = new StringBuilder();
                     foreach (string token in docs[upto])
                     {
-                        b.append(' ');
-                        b.append(token);
+                        b.Append(' ');
+                        b.Append(token);
                     }
                     upto++;
-                    return new BytesRef(b.toString());
+                    return new BytesRef(b.ToString());
                 }
             }
 
-            public long Weight
-            {
-                get
-                {
-                    return Random.Next();
-                }
-            }
+            public long Weight => Random.Next();
 
-            public BytesRef Payload
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public BytesRef Payload => null;
 
-            public bool HasPayloads
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public bool HasPayloads => false;
 
+            public ICollection<BytesRef> Contexts => null;
 
-            public IEnumerable<BytesRef> Contexts
-            {
-                get
-                {
-                    return null;
-                }
-            }
-
-            public bool HasContexts
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public bool HasContexts => false;
         }
 
         [Test]

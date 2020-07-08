@@ -3,7 +3,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Fst
@@ -250,7 +249,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             suggester.Build(new InputArrayIterator(new Input[0]));
             assertEquals(0, suggester.Count);
             IList<Lookup.LookupResult> result = suggester.DoLookup("a", false, 20);
-            assertTrue(!result.Any());
+            assertTrue(result.Count == 0);
         }
     }
 }

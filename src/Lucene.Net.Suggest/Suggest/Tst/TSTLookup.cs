@@ -2,7 +2,6 @@
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.Search.Suggest.Tst
 {
@@ -177,7 +176,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         // pre-order traversal
         private void ReadRecursively(DataInput @in, TernaryTreeNode node)
         {
-            node.splitchar = @in.ReadString().First();
+            node.splitchar = @in.ReadString()[0];
             sbyte mask = (sbyte)@in.ReadByte();
             if ((mask & HAS_TOKEN) != 0)
             {

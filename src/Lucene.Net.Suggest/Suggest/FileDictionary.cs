@@ -170,10 +170,7 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            public long Weight
-            {
-                get { return curWeight; }
-            }
+            public long Weight => curWeight;
 
             public BytesRef Next()
             {
@@ -231,28 +228,13 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            public IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public IComparer<BytesRef> Comparer => null;
 
             public BytesRef Payload
-            {
-                get
-                {
-                    {
-                        return (hasPayloads) ? curPayload : null;
-                    }
-                }
-            }
+                => (hasPayloads) ? curPayload : null;
 
-            public bool HasPayloads
-            {
-                get { return hasPayloads; }
-            }
+
+            public bool HasPayloads => hasPayloads;
 
             internal void ReadWeight(string weight)
             {
@@ -273,15 +255,9 @@ namespace Lucene.Net.Search.Suggest
                 }
             }
 
-            public IEnumerable<BytesRef> Contexts
-            {
-                get { return null; }
-            }
+            public ICollection<BytesRef> Contexts => null;
 
-            public bool HasContexts
-            {
-                get { return false; }
-            }
+            public bool HasContexts => false;
         }
     }
 }
