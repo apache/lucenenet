@@ -5,7 +5,6 @@ using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Spatial.Queries
@@ -104,7 +103,7 @@ namespace Lucene.Net.Spatial.Queries
                 {
                     IDictionary<string, string> aa = ParseMap(body);
                     ReadNameValuePairs(args, aa);
-                    if (!aa.Any())
+                    if (aa.Count == 0)
                     {
                         throw new ArgumentException("unused parameters: " + aa);
                     }

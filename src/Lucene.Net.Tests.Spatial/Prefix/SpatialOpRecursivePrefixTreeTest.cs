@@ -365,7 +365,7 @@ namespace Lucene.Net.Spatial.Prefix
                 }
                 if (opIsDisjoint)
                     remainingExpectedIds.ExceptWith(secondaryIds);
-                if (remainingExpectedIds.Any())
+                if (remainingExpectedIds.Count > 0)
                 {
                     var iter = remainingExpectedIds.GetEnumerator();
                     iter.MoveNext();
