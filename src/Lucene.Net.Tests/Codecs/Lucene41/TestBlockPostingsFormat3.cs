@@ -9,28 +9,27 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
@@ -79,7 +78,24 @@ namespace Lucene.Net.Codecs.Lucene41
         public virtual void Test()
         {
             Directory dir = NewDirectory();
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader);
+                if (fieldName.Contains("payloadsFixed"))
+                {
+                    TokenFilter filter = new MockFixedLengthPayloadFilter(new Random(0), tokenizer, 1);
+                    return new TokenStreamComponents(tokenizer, filter);
+                }
+                else if (fieldName.Contains("payloadsVariable"))
+                {
+                    TokenFilter filter = new MockVariableLengthPayloadFilter(new Random(0), tokenizer);
+                    return new TokenStreamComponents(tokenizer, filter);
+                }
+                else
+                {
+                    return new TokenStreamComponents(tokenizer);
+                }
+            }, reuseStrategy: Analyzer.PER_FIELD_REUSE_STRATEGY);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             iwc.SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()));
             // TODO we could actually add more fields implemented with different PFs
@@ -142,36 +158,6 @@ namespace Lucene.Net.Codecs.Lucene41
             iw2.Dispose();
             Verify(dir);
             dir.Dispose();
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestBlockPostingsFormat3 OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestBlockPostingsFormat3 outerInstance, ReuseStrategy PER_FIELD_REUSE_STRATEGY)
-                : base(PER_FIELD_REUSE_STRATEGY)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader);
-                if (fieldName.Contains("payloadsFixed"))
-                {
-                    TokenFilter filter = new MockFixedLengthPayloadFilter(new Random(0), tokenizer, 1);
-                    return new TokenStreamComponents(tokenizer, filter);
-                }
-                else if (fieldName.Contains("payloadsVariable"))
-                {
-                    TokenFilter filter = new MockVariableLengthPayloadFilter(new Random(0), tokenizer);
-                    return new TokenStreamComponents(tokenizer, filter);
-                }
-                else
-                {
-                    return new TokenStreamComponents(tokenizer);
-                }
-            }
         }
 
         private void Verify(Directory dir)
@@ -542,28 +528,28 @@ namespace Lucene.Net.Codecs.Lucene41
 
         new private class RandomBits : IBits
         {
-            internal FixedBitSet Bits;
+            internal FixedBitSet bits;
 
             internal RandomBits(int maxDoc, double pctLive, Random random)
             {
-                Bits = new FixedBitSet(maxDoc);
+                bits = new FixedBitSet(maxDoc);
                 for (int i = 0; i < maxDoc; i++)
                 {
                     if (random.NextDouble() <= pctLive)
                     {
-                        Bits.Set(i);
+                        bits.Set(i);
                     }
                 }
             }
 
             public bool Get(int index)
             {
-                return Bits.Get(index);
+                return bits.Get(index);
             }
 
             public int Length
             {
-                get { return Bits.Length; }
+                get { return bits.Length; }
             }
         }
     }

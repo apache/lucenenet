@@ -1,16 +1,32 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Codec = Lucene.Net.Codecs.Codec;
     using Constants = Lucene.Net.Util.Constants;
     using Directory = Lucene.Net.Store.Directory;
@@ -19,24 +35,6 @@ namespace Lucene.Net.Index
     using InfoStream = Lucene.Net.Util.InfoStream;
     using IOContext = Lucene.Net.Store.IOContext;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using TextField = TextField;
@@ -47,9 +45,9 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestDoc : LuceneTestCase
     {
-        private DirectoryInfo WorkDir;
-        private DirectoryInfo IndexDir;
-        private LinkedList<FileInfo> Files;
+        private DirectoryInfo workDir;
+        private DirectoryInfo indexDir;
+        private LinkedList<FileInfo> files;
 
         /// <summary>
         /// Set the test case. this test case needs
@@ -63,17 +61,17 @@ namespace Lucene.Net.Index
             {
                 Console.WriteLine("TEST: setUp");
             }
-            WorkDir = CreateTempDir("TestDoc");
+            workDir = CreateTempDir("TestDoc");
 
-            IndexDir = CreateTempDir("testIndex");
+            indexDir = CreateTempDir("testIndex");
 
-            Directory directory = NewFSDirectory(IndexDir);
+            Directory directory = NewFSDirectory(indexDir);
             directory.Dispose();
 
-            Files = new LinkedList<FileInfo>();
-            Files.AddLast(CreateOutput("test.txt", "this is the first test file"));
+            files = new LinkedList<FileInfo>();
+            files.AddLast(CreateOutput("test.txt", "this is the first test file"));
 
-            Files.AddLast(CreateOutput("test2.txt", "this is the second test file"));
+            files.AddLast(CreateOutput("test2.txt", "this is the second test file"));
         }
 
         private FileInfo CreateOutput(string name, string text)
@@ -83,7 +81,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                FileInfo f = new FileInfo(Path.Combine(WorkDir.FullName, name));
+                FileInfo f = new FileInfo(Path.Combine(workDir.FullName, name));
                 if (f.Exists)
                 {
                     f.Delete();
@@ -122,7 +120,7 @@ namespace Lucene.Net.Index
             MemoryStream sw = new MemoryStream();
             StreamWriter @out = new StreamWriter(sw);
 
-            Directory directory = NewFSDirectory(IndexDir, null);
+            Directory directory = NewFSDirectory(indexDir, null);
 
             MockDirectoryWrapper wrapper = directory as MockDirectoryWrapper;
             if (wrapper != null)
@@ -160,7 +158,7 @@ namespace Lucene.Net.Index
             sw = new MemoryStream();
             @out = new StreamWriter(sw);
 
-            directory = NewFSDirectory(IndexDir, null);
+            directory = NewFSDirectory(indexDir, null);
 
             wrapper = directory as MockDirectoryWrapper;
             if (wrapper != null)
@@ -198,7 +196,7 @@ namespace Lucene.Net.Index
 
         private SegmentCommitInfo IndexDoc(IndexWriter writer, string fileName)
         {
-            FileInfo file = new FileInfo(Path.Combine(WorkDir.FullName, fileName));
+            FileInfo file = new FileInfo(Path.Combine(workDir.FullName, fileName));
             Document doc = new Document();
             StreamReader @is = new StreamReader(File.Open(file.FullName, FileMode.Open));
             doc.Add(new TextField("contents", @is));

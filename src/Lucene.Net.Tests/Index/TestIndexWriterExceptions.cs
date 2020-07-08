@@ -17,21 +17,21 @@ using Console = Lucene.Net.Util.SystemConsole;
 namespace Lucene.Net.Index
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
@@ -70,42 +70,42 @@ namespace Lucene.Net.Index
     {
         private class DocCopyIterator : IEnumerable<Document>
         {
-            internal readonly Document Doc;
-            internal readonly int Count;
+            internal readonly Document doc;
+            internal readonly int count;
 
             /* private field types */
             /* private field types */
 
-            internal static readonly FieldType Custom1 = new FieldType(TextField.TYPE_NOT_STORED);
-            internal static readonly FieldType Custom2 = new FieldType();
-            internal static readonly FieldType Custom3 = new FieldType();
-            internal static readonly FieldType Custom4 = new FieldType(StringField.TYPE_NOT_STORED);
-            internal static readonly FieldType Custom5 = new FieldType(TextField.TYPE_STORED);
+            internal static readonly FieldType custom1 = new FieldType(TextField.TYPE_NOT_STORED);
+            internal static readonly FieldType custom2 = new FieldType();
+            internal static readonly FieldType custom3 = new FieldType();
+            internal static readonly FieldType custom4 = new FieldType(StringField.TYPE_NOT_STORED);
+            internal static readonly FieldType custom5 = new FieldType(TextField.TYPE_STORED);
 
             static DocCopyIterator()
             {
-                Custom1.StoreTermVectors = true;
-                Custom1.StoreTermVectorPositions = true;
-                Custom1.StoreTermVectorOffsets = true;
+                custom1.StoreTermVectors = true;
+                custom1.StoreTermVectorPositions = true;
+                custom1.StoreTermVectorOffsets = true;
 
-                Custom2.IsStored = true;
-                Custom2.IsIndexed = true;
+                custom2.IsStored = true;
+                custom2.IsIndexed = true;
 
-                Custom3.IsStored = true;
+                custom3.IsStored = true;
 
-                Custom4.StoreTermVectors = true;
-                Custom4.StoreTermVectorPositions = true;
-                Custom4.StoreTermVectorOffsets = true;
+                custom4.StoreTermVectors = true;
+                custom4.StoreTermVectorPositions = true;
+                custom4.StoreTermVectorOffsets = true;
 
-                Custom5.StoreTermVectors = true;
-                Custom5.StoreTermVectorPositions = true;
-                Custom5.StoreTermVectorOffsets = true;
+                custom5.StoreTermVectors = true;
+                custom5.StoreTermVectorPositions = true;
+                custom5.StoreTermVectorOffsets = true;
             }
 
             public DocCopyIterator(Document doc, int count)
             {
-                this.Count = count;
-                this.Doc = doc;
+                this.count = count;
+                this.doc = doc;
             }
 
             public virtual IEnumerator<Document> GetEnumerator()
@@ -120,11 +120,11 @@ namespace Lucene.Net.Index
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<Document>
             {
-                private readonly DocCopyIterator OuterInstance;
+                private readonly DocCopyIterator outerInstance;
 
                 public IteratorAnonymousInnerClassHelper(DocCopyIterator outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 internal int upto;
@@ -132,13 +132,13 @@ namespace Lucene.Net.Index
 
                 public bool MoveNext()
                 {
-                    if (upto >= OuterInstance.Count)
+                    if (upto >= outerInstance.count)
                     {
                         return false;
                     }
 
                     upto++;
-                    current = OuterInstance.Doc;
+                    current = outerInstance.doc;
                     return true;
                 }
 
@@ -167,18 +167,18 @@ namespace Lucene.Net.Index
         {
             private DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-            private readonly TestIndexWriterExceptions OuterInstance;
+            private readonly TestIndexWriterExceptions outerInstance;
 
-            internal IndexWriter Writer;
+            internal IndexWriter writer;
 
             internal readonly Random r = new Random(Random.Next());
-            internal volatile Exception Failure = null;
+            internal volatile Exception failure = null;
 
             public IndexerThread(TestIndexWriterExceptions outerInstance, int i, IndexWriter writer)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 Name = "Indexer " + i;
-                this.Writer = writer;
+                this.writer = writer;
             }
 
             public override void Run()
@@ -186,9 +186,9 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
 
                 doc.Add(NewTextField(r, "content1", "aaa bbb ccc ddd", Field.Store.YES));
-                doc.Add(NewField(r, "content6", "aaa bbb ccc ddd", DocCopyIterator.Custom1));
-                doc.Add(NewField(r, "content2", "aaa bbb ccc ddd", DocCopyIterator.Custom2));
-                doc.Add(NewField(r, "content3", "aaa bbb ccc ddd", DocCopyIterator.Custom3));
+                doc.Add(NewField(r, "content6", "aaa bbb ccc ddd", DocCopyIterator.custom1));
+                doc.Add(NewField(r, "content2", "aaa bbb ccc ddd", DocCopyIterator.custom2));
+                doc.Add(NewField(r, "content3", "aaa bbb ccc ddd", DocCopyIterator.custom3));
 
                 doc.Add(NewTextField(r, "content4", "aaa bbb ccc ddd", Field.Store.NO));
                 doc.Add(NewStringField(r, "content5", "aaa bbb ccc ddd", Field.Store.NO));
@@ -204,9 +204,9 @@ namespace Lucene.Net.Index
                     doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("again")));
                 }
 
-                doc.Add(NewField(r, "content7", "aaa bbb ccc ddd", DocCopyIterator.Custom4));
+                doc.Add(NewField(r, "content7", "aaa bbb ccc ddd", DocCopyIterator.custom4));
 
-                Field idField = NewField(r, "id", "", DocCopyIterator.Custom2);
+                Field idField = NewField(r, "id", "", DocCopyIterator.custom2);
                 doc.Add(idField);
 
                 long stopTime = ((long)(DateTime.UtcNow - unixEpoch).TotalMilliseconds) + 500;
@@ -217,7 +217,7 @@ namespace Lucene.Net.Index
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": TEST: IndexerThread: cycle");
                     }
-                    OuterInstance.DoFail.Value = (this.Instance);
+                    outerInstance.doFail.Value = (this.Instance);
                     string id = "" + r.Next(50);
                     idField.SetStringValue(id);
                     Term idTerm = new Term("id", id);
@@ -225,11 +225,11 @@ namespace Lucene.Net.Index
                     {
                         if (r.NextBoolean())
                         {
-                            Writer.UpdateDocuments(idTerm, new DocCopyIterator(doc, TestUtil.NextInt32(r, 1, 20)));
+                            writer.UpdateDocuments(idTerm, new DocCopyIterator(doc, TestUtil.NextInt32(r, 1, 20)));
                         }
                         else
                         {
-                            Writer.UpdateDocument(idTerm, doc);
+                            writer.UpdateDocument(idTerm, doc);
                         }
                     }
                     catch (TestPoint1Exception re)
@@ -241,13 +241,13 @@ namespace Lucene.Net.Index
                         }
                         try
                         {
-                            TestUtil.CheckIndex(Writer.Directory);
+                            TestUtil.CheckIndex(writer.Directory);
                         }
                         catch (IOException ioe)
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": unexpected exception1");
                             Console.WriteLine(ioe.StackTrace);
-                            Failure = ioe;
+                            failure = ioe;
                             break;
                         }
                     }
@@ -255,46 +255,46 @@ namespace Lucene.Net.Index
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": unexpected exception2");
                         Console.WriteLine(t.StackTrace);
-                        Failure = t;
+                        failure = t;
                         break;
                     }
 
-                    OuterInstance.DoFail.Value = (null);
+                    outerInstance.doFail.Value = (null);
 
                     // After a possible exception (above) I should be able
                     // to add a new document without hitting an
                     // exception:
                     try
                     {
-                        Writer.UpdateDocument(idTerm, doc);
+                        writer.UpdateDocument(idTerm, doc);
                     }
                     catch (Exception t)
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": unexpected exception3");
                         Console.WriteLine(t.StackTrace);
-                        Failure = t;
+                        failure = t;
                         break;
                     }
                 } while (((long)(DateTime.UtcNow - unixEpoch).TotalMilliseconds) < stopTime);
             }
         }
 
-        internal ThreadLocal<Thread> DoFail = new ThreadLocal<Thread>();
+        internal ThreadLocal<Thread> doFail = new ThreadLocal<Thread>();
 
         private class TestPoint1 : ITestPoint
         {
-            private readonly TestIndexWriterExceptions OuterInstance;
+            private readonly TestIndexWriterExceptions outerInstance;
 
             public TestPoint1(TestIndexWriterExceptions outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             internal Random r = new Random(Random.Next());
 
             public void Apply(string name)
             {
-                if (OuterInstance.DoFail.Value != null && !name.Equals("startDoFlush", StringComparison.Ordinal) && r.Next(40) == 17)
+                if (outerInstance.doFail.Value != null && !name.Equals("startDoFlush", StringComparison.Ordinal) && r.Next(40) == 17)
                 {
                     if (VERBOSE)
                     {
@@ -347,9 +347,9 @@ namespace Lucene.Net.Index
 
             IndexerThread thread = new IndexerThread(this, 0, writer);
             thread.Run();
-            if (thread.Failure != null)
+            if (thread.failure != null)
             {
-                Console.WriteLine(thread.Failure.StackTrace);
+                Console.WriteLine(thread.failure.StackTrace);
                 Assert.Fail("thread " + thread.Name + ": hit unexpected failure");
             }
 
@@ -418,7 +418,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < NUM_THREADS; i++)
             {
-                if (threads[i].Failure != null)
+                if (threads[i].failure != null)
                 {
                     Assert.Fail("thread " + threads[i].Name + ": hit unexpected failure");
                 }
@@ -450,11 +450,11 @@ namespace Lucene.Net.Index
         // LUCENE-1198
         private sealed class TestPoint2 : ITestPoint
         {
-            internal bool DoFail;
+            internal bool doFail;
 
             public void Apply(string name)
             {
-                if (DoFail && name.Equals("DocumentsWriterPerThread addDocument start", StringComparison.Ordinal))
+                if (doFail && name.Equals("DocumentsWriterPerThread addDocument start", StringComparison.Ordinal))
                 {
                     throw new Exception("intentionally failing");
                 }
@@ -465,21 +465,21 @@ namespace Lucene.Net.Index
 
         private class CrashingFilter : TokenFilter
         {
-            private readonly TestIndexWriterExceptions OuterInstance;
+            private readonly TestIndexWriterExceptions outerInstance;
 
-            internal string FieldName;
-            internal int Count;
+            internal string fieldName;
+            internal int count;
 
             public CrashingFilter(TestIndexWriterExceptions outerInstance, string fieldName, TokenStream input)
                 : base(input)
             {
-                this.OuterInstance = outerInstance;
-                this.FieldName = fieldName;
+                this.outerInstance = outerInstance;
+                this.fieldName = fieldName;
             }
 
             public sealed override bool IncrementToken()
             {
-                if (this.FieldName.Equals("crash", StringComparison.Ordinal) && Count++ >= 4)
+                if (this.fieldName.Equals("crash", StringComparison.Ordinal) && count++ >= 4)
                 {
                     throw new IOException(CRASH_FAIL_MESSAGE);
                 }
@@ -489,7 +489,7 @@ namespace Lucene.Net.Index
             public override void Reset()
             {
                 base.Reset();
-                Count = 0;
+                count = 0;
             }
         }
 
@@ -502,7 +502,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             doc.Add(NewTextField("field", "a field", Field.Store.YES));
             w.AddDocument(doc);
-            testPoint.DoFail = true;
+            testPoint.doFail = true;
 
             // LUCENENET: Don't swallow NUnit's assert exception
             Assert.Throws<Exception>(() => w.AddDocument(doc), "did not hit exception");
@@ -531,9 +531,14 @@ namespace Lucene.Net.Index
             doc.Add(NewTextField("field", "a field", Field.Store.YES));
             w.AddDocument(doc);
 
-            Analyzer analyzer = new TEJBFAnalyzerAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
+                return new TokenStreamComponents(tokenizer, new CrashingFilter(this, fieldName, tokenizer));
+            }, reuseStrategy: Analyzer.PER_FIELD_REUSE_STRATEGY);
 
-            Document crashDoc = new Document();
+             Document crashDoc = new Document();
             crashDoc.Add(NewTextField("crash", "do it on token 4", Field.Store.YES));
             try
             {
@@ -551,34 +556,16 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TEJBFAnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestIndexWriterExceptions OuterInstance;
-
-            public TEJBFAnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, ReuseStrategy PER_FIELD_REUSE_STRATEGY)
-                : base(PER_FIELD_REUSE_STRATEGY)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-                return new TokenStreamComponents(tokenizer, new CrashingFilter(OuterInstance, fieldName, tokenizer));
-            }
-        }
-
         private sealed class TestPoint3 : ITestPoint
         {
-            internal bool DoFail;
-            internal bool Failed;
+            internal bool doFail;
+            internal bool failed;
 
             public void Apply(string name)
             {
-                if (DoFail && name.Equals("startMergeInit", StringComparison.Ordinal))
+                if (doFail && name.Equals("startMergeInit", StringComparison.Ordinal))
                 {
-                    Failed = true;
+                    failed = true;
                     throw new Exception("intentionally failing");
                 }
             }
@@ -597,7 +584,7 @@ namespace Lucene.Net.Index
             ((LogMergePolicy)conf.MergePolicy).MergeFactor = 2;
             TestPoint3 testPoint = new TestPoint3();
             IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, conf, testPoint);
-            testPoint.DoFail = true;
+            testPoint.doFail = true;
             Document doc = new Document();
             doc.Add(NewTextField("field", "a field", Field.Store.YES));
             for (int i = 0; i < 10; i++)
@@ -613,7 +600,7 @@ namespace Lucene.Net.Index
             }
 
             ((IConcurrentMergeScheduler)w.Config.MergeScheduler).Sync();
-            Assert.IsTrue(testPoint.Failed);
+            Assert.IsTrue(testPoint.failed);
             w.Dispose();
             dir.Dispose();
         }
@@ -623,7 +610,14 @@ namespace Lucene.Net.Index
         public virtual void TestExceptionFromTokenStream()
         {
             Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new TEFTSAnalyzerAnonymousInnerClassHelper(this));
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader2) =>
+            {
+                MockTokenizer tokenizer = new MockTokenizer(reader2, MockTokenizer.SIMPLE, true);
+                tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
+                return new TokenStreamComponents(tokenizer, new TokenFilterAnonymousInnerClassHelper(tokenizer));
+            });
+
+            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             conf.SetMaxBufferedDocs(Math.Max(3, conf.MaxBufferedDocs));
 
             IndexWriter writer = new IndexWriter(dir, conf);
@@ -673,49 +667,29 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class TEFTSAnalyzerAnonymousInnerClassHelper : Analyzer
+        private class TokenFilterAnonymousInnerClassHelper : TokenFilter
         {
-            private readonly TestIndexWriterExceptions OuterInstance;
-
-            public TEFTSAnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance)
+            public TokenFilterAnonymousInnerClassHelper(MockTokenizer tokenizer)
+                : base(tokenizer)
             {
-                this.OuterInstance = outerInstance;
+                count = 0;
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            private int count;
+
+            public sealed override bool IncrementToken()
             {
-                MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-                return new TokenStreamComponents(tokenizer, new TokenFilterAnonymousInnerClassHelper(this, tokenizer));
+                if (count++ == 5)
+                {
+                    throw new IOException();
+                }
+                return m_input.IncrementToken();
             }
 
-            private class TokenFilterAnonymousInnerClassHelper : TokenFilter
+            public override void Reset()
             {
-                private readonly TEFTSAnalyzerAnonymousInnerClassHelper OuterInstance;
-
-                public TokenFilterAnonymousInnerClassHelper(TEFTSAnalyzerAnonymousInnerClassHelper outerInstance, MockTokenizer tokenizer)
-                    : base(tokenizer)
-                {
-                    this.OuterInstance = outerInstance;
-                    count = 0;
-                }
-
-                private int count;
-
-                public sealed override bool IncrementToken()
-                {
-                    if (count++ == 5)
-                    {
-                        throw new IOException();
-                    }
-                    return m_input.IncrementToken();
-                }
-
-                public override void Reset()
-                {
-                    base.Reset();
-                    this.count = 0;
-                }
+                base.Reset();
+                this.count = 0;
             }
         }
 
@@ -793,7 +767,12 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestDocumentsWriterExceptions()
         {
-            Analyzer analyzer = new TDWEAnalyzerAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
+                return new TokenStreamComponents(tokenizer, new CrashingFilter(this, fieldName, tokenizer));
+            }, reuseStrategy: Analyzer.PER_FIELD_REUSE_STRATEGY);
 
             for (int i = 0; i < 2; i++)
             {
@@ -810,11 +789,11 @@ namespace Lucene.Net.Index
                 lmp.MergeFactor = Math.Max(lmp.MergeFactor, 5);
 
                 Document doc = new Document();
-                doc.Add(NewField("contents", "here are some contents", DocCopyIterator.Custom5));
+                doc.Add(NewField("contents", "here are some contents", DocCopyIterator.custom5));
                 writer.AddDocument(doc);
                 writer.AddDocument(doc);
-                doc.Add(NewField("crash", "this should crash after 4 terms", DocCopyIterator.Custom5));
-                doc.Add(NewField("other", "this will not get indexed", DocCopyIterator.Custom5));
+                doc.Add(NewField("crash", "this should crash after 4 terms", DocCopyIterator.custom5));
+                doc.Add(NewField("other", "this will not get indexed", DocCopyIterator.custom5));
                 try
                 {
                     writer.AddDocument(doc);
@@ -832,7 +811,7 @@ namespace Lucene.Net.Index
                 if (0 == i)
                 {
                     doc = new Document();
-                    doc.Add(NewField("contents", "here are some contents", DocCopyIterator.Custom5));
+                    doc.Add(NewField("contents", "here are some contents", DocCopyIterator.custom5));
                     writer.AddDocument(doc);
                     writer.AddDocument(doc);
                 }
@@ -869,7 +848,7 @@ namespace Lucene.Net.Index
 
                 writer = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10));
                 doc = new Document();
-                doc.Add(NewField("contents", "here are some contents", DocCopyIterator.Custom5));
+                doc.Add(NewField("contents", "here are some contents", DocCopyIterator.custom5));
                 for (int j = 0; j < 17; j++)
                 {
                     writer.AddDocument(doc);
@@ -895,28 +874,15 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class TDWEAnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestIndexWriterExceptions OuterInstance;
-
-            public TDWEAnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, ReuseStrategy PER_FIELD_REUSE_STRATEGY)
-                : base(PER_FIELD_REUSE_STRATEGY)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-                return new TokenStreamComponents(tokenizer, new CrashingFilter(OuterInstance, fieldName, tokenizer));
-            }
-        }
-
         [Test]
         public virtual void TestDocumentsWriterExceptionThreads()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
+                return new TokenStreamComponents(tokenizer, new CrashingFilter(this, fieldName, tokenizer));
+            }, reuseStrategy: Analyzer.PER_FIELD_REUSE_STRATEGY);
 
             const int NUM_THREAD = 3;
             const int NUM_ITER = 100;
@@ -970,7 +936,7 @@ namespace Lucene.Net.Index
 
                 IndexWriter indWriter = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10));
                 Document doc = new Document();
-                doc.Add(NewField("contents", "here are some contents", DocCopyIterator.Custom5));
+                doc.Add(NewField("contents", "here are some contents", DocCopyIterator.custom5));
                 for (int j = 0; j < 17; j++)
                 {
                     indWriter.AddDocument(doc);
@@ -994,39 +960,21 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestIndexWriterExceptions OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestIndexWriterExceptions outerInstance, ReuseStrategy PER_FIELD_REUSE_STRATEGY)
-                : base(PER_FIELD_REUSE_STRATEGY)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-                return new TokenStreamComponents(tokenizer, new CrashingFilter(OuterInstance, fieldName, tokenizer));
-            }
-        }
-
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestIndexWriterExceptions OuterInstance;
+            private readonly TestIndexWriterExceptions outerInstance;
 
             private int NUM_ITER;
-            private IndexWriter Writer;
-            private int FinalI;
+            private IndexWriter writer;
+            private int finalI;
             private int t;
 
             public ThreadAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, int NUM_ITER, IndexWriter writer, int finalI, int t)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.NUM_ITER = NUM_ITER;
-                this.Writer = writer;
-                this.FinalI = finalI;
+                this.writer = writer;
+                this.finalI = finalI;
                 this.t = t;
             }
 
@@ -1037,14 +985,14 @@ namespace Lucene.Net.Index
                     for (int iter = 0; iter < NUM_ITER; iter++)
                     {
                         Document doc = new Document();
-                        doc.Add(NewField("contents", "here are some contents", DocCopyIterator.Custom5));
-                        Writer.AddDocument(doc);
-                        Writer.AddDocument(doc);
-                        doc.Add(NewField("crash", "this should crash after 4 terms", DocCopyIterator.Custom5));
-                        doc.Add(NewField("other", "this will not get indexed", DocCopyIterator.Custom5));
+                        doc.Add(NewField("contents", "here are some contents", DocCopyIterator.custom5));
+                        writer.AddDocument(doc);
+                        writer.AddDocument(doc);
+                        doc.Add(NewField("crash", "this should crash after 4 terms", DocCopyIterator.custom5));
+                        doc.Add(NewField("other", "this will not get indexed", DocCopyIterator.custom5));
                         try
                         {
-                            Writer.AddDocument(doc);
+                            writer.AddDocument(doc);
                             Assert.Fail("did not hit expected exception");
                         }
 #pragma warning disable 168
@@ -1053,12 +1001,12 @@ namespace Lucene.Net.Index
                         {
                         }
 
-                        if (0 == FinalI)
+                        if (0 == finalI)
                         {
                             doc = new Document();
-                            doc.Add(NewField("contents", "here are some contents", DocCopyIterator.Custom5));
-                            Writer.AddDocument(doc);
-                            Writer.AddDocument(doc);
+                            doc.Add(NewField("contents", "here are some contents", DocCopyIterator.custom5));
+                            writer.AddDocument(doc);
+                            writer.AddDocument(doc);
                         }
                     }
                 }
@@ -1077,7 +1025,7 @@ namespace Lucene.Net.Index
         // Throws IOException during MockDirectoryWrapper.sync
         private class FailOnlyInSync : Failure
         {
-            internal bool DidFail;
+            internal bool didFail;
 
             public override void Eval(MockDirectoryWrapper dir)
             {
@@ -1090,7 +1038,7 @@ namespace Lucene.Net.Index
 
                     if (m_doFail && foundMethod)
                     {
-                        DidFail = true;
+                        didFail = true;
                         if (VERBOSE)
                         {
                             Console.WriteLine("TEST: now throw exc:");
@@ -1145,7 +1093,7 @@ namespace Lucene.Net.Index
                 }
             }
             ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
-            Assert.IsTrue(failure.DidFail);
+            Assert.IsTrue(failure.didFail);
             failure.ClearDoFail();
             writer.Dispose();
 
@@ -1157,27 +1105,27 @@ namespace Lucene.Net.Index
 
         private class FailOnlyInCommit : Failure
         {
-            internal bool FailOnCommit, FailOnDeleteFile;
-            internal readonly bool DontFailDuringGlobalFieldMap;
+            internal bool failOnCommit, failOnDeleteFile;
+            internal readonly bool dontFailDuringGlobalFieldMap;
             internal const string PREPARE_STAGE = "PrepareCommit";
             internal const string FINISH_STAGE = "FinishCommit";
-            internal readonly string Stage;
+            internal readonly string stage;
 
             public FailOnlyInCommit(bool dontFailDuringGlobalFieldMap, string stage)
             {
-                this.DontFailDuringGlobalFieldMap = dontFailDuringGlobalFieldMap;
-                this.Stage = stage;
+                this.dontFailDuringGlobalFieldMap = dontFailDuringGlobalFieldMap;
+                this.stage = stage;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                bool isCommit = StackTraceHelper.DoesStackTraceContainMethod(typeof(SegmentInfos).Name, Stage);
+                bool isCommit = StackTraceHelper.DoesStackTraceContainMethod(typeof(SegmentInfos).Name, stage);
                 bool isDelete = StackTraceHelper.DoesStackTraceContainMethod(typeof(MockDirectoryWrapper).Name, "DeleteFile");
                 bool isInGlobalFieldMap = StackTraceHelper.DoesStackTraceContainMethod(typeof(SegmentInfos).Name, "WriteGlobalFieldMap");
 
-                if (isInGlobalFieldMap && DontFailDuringGlobalFieldMap)
+                if (isInGlobalFieldMap && dontFailDuringGlobalFieldMap)
                 {
                     isCommit = false;
                 }
@@ -1185,12 +1133,12 @@ namespace Lucene.Net.Index
                 {
                     if (!isDelete)
                     {
-                        FailOnCommit = true;
+                        failOnCommit = true;
                         throw new Exception("now fail first");
                     }
                     else
                     {
-                        FailOnDeleteFile = true;
+                        failOnDeleteFile = true;
                         throw new IOException("now fail during delete");
                     }
                 }
@@ -1228,7 +1176,7 @@ namespace Lucene.Net.Index
                 {
                     // Expected
                 }
-                Assert.IsTrue(failure.FailOnCommit && failure.FailOnDeleteFile);
+                Assert.IsTrue(failure.failOnCommit && failure.failOnDeleteFile);
                 w.Rollback();
                 string[] files = dir.ListAll();
                 Assert.IsTrue(files.Length == 0 || Arrays.Equals(files, new string[] { IndexWriter.WRITE_LOCK_NAME }));
@@ -1309,19 +1257,19 @@ namespace Lucene.Net.Index
 
         private class TOOMInfoStreamAnonymousInnerClassHelper : InfoStream
         {
-            private readonly TestIndexWriterExceptions OuterInstance;
+            private readonly TestIndexWriterExceptions outerInstance;
 
-            private AtomicBoolean Thrown;
+            private AtomicBoolean thrown;
 
             public TOOMInfoStreamAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, AtomicBoolean thrown)
             {
-                this.OuterInstance = outerInstance;
-                this.Thrown = thrown;
+                this.outerInstance = outerInstance;
+                this.thrown = thrown;
             }
 
             public override void Message(string component, string message)
             {
-                if (message.StartsWith("now flush at close", StringComparison.Ordinal) && Thrown.CompareAndSet(false, true))
+                if (message.StartsWith("now flush at close", StringComparison.Ordinal) && thrown.CompareAndSet(false, true))
                 {
                     throw new System.OutOfMemoryException("fake OOME at " + message);
                 }
@@ -1340,11 +1288,11 @@ namespace Lucene.Net.Index
         // LUCENE-1347
         private sealed class TestPoint4 : ITestPoint
         {
-            internal bool DoFail;
+            internal bool doFail;
 
             public void Apply(string name)
             {
-                if (DoFail && name.Equals("rollback before checkpoint", StringComparison.Ordinal))
+                if (doFail && name.Equals("rollback before checkpoint", StringComparison.Ordinal))
                 {
                     throw new Exception("intentionally failing");
                 }
@@ -1360,7 +1308,7 @@ namespace Lucene.Net.Index
             IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)), testPoint);
 
             AddDoc(w);
-            testPoint.DoFail = true;
+            testPoint.doFail = true;
             try
             {
                 w.Rollback();
@@ -1373,7 +1321,7 @@ namespace Lucene.Net.Index
                 // expected
             }
 
-            testPoint.DoFail = false;
+            testPoint.doFail = false;
             w.Rollback();
             dir.Dispose();
         }
@@ -1701,18 +1649,18 @@ namespace Lucene.Net.Index
             internal const string INIT_STAGE = "InitTermVectorsWriter";
             internal const string AFTER_INIT_STAGE = "FinishDocument";
             internal const string EXC_MSG = "FOTV";
-            internal readonly string Stage;
+            internal readonly string stage;
 
             public FailOnTermVectors(string stage)
             {
-                this.Stage = stage;
+                this.stage = stage;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                bool fail = StackTraceHelper.DoesStackTraceContainMethod(typeof(TermVectorsConsumer).Name, Stage);
+                bool fail = StackTraceHelper.DoesStackTraceContainMethod(typeof(TermVectorsConsumer).Name, stage);
 
                 if (fail)
                 {
@@ -1887,13 +1835,13 @@ namespace Lucene.Net.Index
 
         internal class UOEDirectory : RAMDirectory
         {
-            internal bool DoFail = false;
+            internal bool doFail = false;
 
             public override IndexInput OpenInput(string name, IOContext context)
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                if (DoFail
+                if (doFail
                     && name.StartsWith("segments_", StringComparison.Ordinal)
                     && StackTraceHelper.DoesStackTraceContainMethod("Read"))
                 {
@@ -1912,7 +1860,7 @@ namespace Lucene.Net.Index
             IndexWriter iw = new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));
             iw.AddDocument(new Document());
             iw.Dispose();
-            uoe.DoFail = true;
+            uoe.doFail = true;
             try
             {
                 new IndexWriter(d, NewIndexWriterConfig(TEST_VERSION_CURRENT, null));
@@ -1924,7 +1872,7 @@ namespace Lucene.Net.Index
             {
             }
 
-            uoe.DoFail = false;
+            uoe.doFail = false;
             d.Dispose();
         }
 
@@ -2013,11 +1961,11 @@ namespace Lucene.Net.Index
 
         private class IndexableFieldAnonymousInnerClassHelper : IIndexableField
         {
-            private readonly TestIndexWriterExceptions OuterInstance;
+            private readonly TestIndexWriterExceptions outerInstance;
 
             public IndexableFieldAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public string Name
@@ -2193,11 +2141,11 @@ namespace Lucene.Net.Index
 
         private class FailureAnonymousInnerClassHelper : Failure
         {
-            private readonly TestIndexWriterExceptions OuterInstance;
+            private readonly TestIndexWriterExceptions outerInstance;
 
             public FailureAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override Failure Reset()
@@ -2464,16 +2412,16 @@ namespace Lucene.Net.Index
 
         private class FailureAnonymousInnerClassHelper2 : Failure
         {
-            private AtomicBoolean ShouldFail;
+            private AtomicBoolean shouldFail;
 
             public FailureAnonymousInnerClassHelper2(AtomicBoolean shouldFail)
             {
-                this.ShouldFail = shouldFail;
+                this.shouldFail = shouldFail;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (ShouldFail == false)
+                if (shouldFail == false)
                 {
                     return;
                 }
@@ -2496,7 +2444,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: now fail; thread=" + Thread.CurrentThread.Name + " exc:");
                         Console.WriteLine((new Exception()).StackTrace);
                     }
-                    ShouldFail.Value = (false);
+                    shouldFail.Value = (false);
                     throw new FakeIOException();
                 }
             }
@@ -2509,11 +2457,11 @@ namespace Lucene.Net.Index
             ConcurrentMergeScheduler
 #endif
         {
-            private readonly TestIndexWriterExceptions OuterInstance;
+            private readonly TestIndexWriterExceptions outerInstance;
 
             public ConcurrentMergeSchedulerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected override void HandleMergeException(Exception exc)
@@ -2583,19 +2531,19 @@ namespace Lucene.Net.Index
 
         private class TEDRInfoStreamAnonymousInnerClassHelper : InfoStream
         {
-            private readonly TestIndexWriterExceptions OuterInstance;
+            private readonly TestIndexWriterExceptions outerInstance;
 
-            private string MessageToFailOn;
+            private string messageToFailOn;
 
             public TEDRInfoStreamAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, string messageToFailOn)
             {
-                this.OuterInstance = outerInstance;
-                this.MessageToFailOn = messageToFailOn;
+                this.outerInstance = outerInstance;
+                this.messageToFailOn = messageToFailOn;
             }
 
             public override void Message(string component, string message)
             {
-                if (MessageToFailOn.Equals(message, StringComparison.Ordinal))
+                if (messageToFailOn.Equals(message, StringComparison.Ordinal))
                 {
                     throw new Exception("BOOM!");
                 }
@@ -2671,14 +2619,14 @@ namespace Lucene.Net.Index
 
         private class FailureAnonymousInnerClassHelper3 : Failure
         {
-            private readonly TestIndexWriterExceptions OuterInstance;
+            private readonly TestIndexWriterExceptions outerInstance;
 
-            private MockDirectoryWrapper Dir;
+            private MockDirectoryWrapper dir;
 
             public FailureAnonymousInnerClassHelper3(TestIndexWriterExceptions outerInstance, MockDirectoryWrapper dir)
             {
-                this.OuterInstance = outerInstance;
-                this.Dir = dir;
+                this.outerInstance = outerInstance;
+                this.dir = dir;
             }
 
             public override void Eval(MockDirectoryWrapper dir)

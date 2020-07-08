@@ -26,7 +26,16 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void Test()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
+            Analyzer analyzer = Analyzer.NewAnonymous(
+                createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    return new TokenStreamComponents(tokenizer, tokenizer);
+                }, 
+                initReader: (fieldName, reader) =>
+                {
+                    return new MockCharFilter(reader, 7);
+                });
 
             AssertAnalyzesTo(analyzer, "ab",
                 new string[] { "aab" },
@@ -45,27 +54,6 @@ namespace Lucene.Net.Analysis
                 new int[] { 0 },
                 new int[] { 8 }
             );
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestMockCharFilter OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestMockCharFilter outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, tokenizer);
-            }
-
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
-            {
-                return new MockCharFilter(reader, 7);
-            }
         }
     }
 }

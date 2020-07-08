@@ -14,28 +14,28 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using StringField = StringField;
@@ -323,20 +323,20 @@ namespace Lucene.Net.Index
 
         private class ConcurrentMergeSchedulerAnonymousInnerClassHelper : ConcurrentMergeScheduler
         {
-            private readonly TestConcurrentMergeScheduler OuterInstance;
+            private readonly TestConcurrentMergeScheduler outerInstance;
 
-            private int maxMergeCount;
-            private CountdownEvent EnoughMergesWaiting;
-            private AtomicInt32 RunningMergeCount;
-            private AtomicBoolean Failed;
+            private readonly int maxMergeCount;
+            private readonly CountdownEvent enoughMergesWaiting;
+            private readonly AtomicInt32 runningMergeCount;
+            private readonly AtomicBoolean failed;
 
             public ConcurrentMergeSchedulerAnonymousInnerClassHelper(TestConcurrentMergeScheduler outerInstance, int maxMergeCount, CountdownEvent enoughMergesWaiting, AtomicInt32 runningMergeCount, AtomicBoolean failed)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.maxMergeCount = maxMergeCount;
-                this.EnoughMergesWaiting = enoughMergesWaiting;
-                this.RunningMergeCount = runningMergeCount;
-                this.Failed = failed;
+                this.enoughMergesWaiting = enoughMergesWaiting;
+                this.runningMergeCount = runningMergeCount;
+                this.failed = failed;
             }
 
             protected override void DoMerge(MergePolicy.OneMerge merge)
@@ -345,18 +345,18 @@ namespace Lucene.Net.Index
                 {
                     // Stall all incoming merges until we see
                     // maxMergeCount:
-                    int count = RunningMergeCount.IncrementAndGet();
+                    int count = runningMergeCount.IncrementAndGet();
                     try
                     {
                         Assert.IsTrue(count <= maxMergeCount, "count=" + count + " vs maxMergeCount=" + maxMergeCount);
-                        EnoughMergesWaiting.Signal();
+                        enoughMergesWaiting.Signal();
 
                         // Stall this merge until we see exactly
                         // maxMergeCount merges waiting
                         while (true)
                         {
                             // wait for 10 milliseconds
-                            if (EnoughMergesWaiting.Wait(new TimeSpan(0, 0, 0, 0, 10)) || Failed)
+                            if (enoughMergesWaiting.Wait(new TimeSpan(0, 0, 0, 0, 10)) || failed)
                             {
                                 break;
                             }
@@ -368,12 +368,12 @@ namespace Lucene.Net.Index
                     }
                     finally
                     {
-                        RunningMergeCount.DecrementAndGet();
+                        runningMergeCount.DecrementAndGet();
                     }
                 }
                 catch (Exception /*t*/)
                 {
-                    Failed.Value = (true);
+                    failed.Value = (true);
                     m_writer.MergeFinish(merge);
 
                     // LUCENENET specific - throwing an exception on a background thread causes the test
@@ -385,7 +385,7 @@ namespace Lucene.Net.Index
 
         private class TrackingCMS : ConcurrentMergeScheduler
         {
-            internal long TotMergedBytes;
+            internal long totMergedBytes;
 
             public TrackingCMS()
             {
@@ -394,7 +394,7 @@ namespace Lucene.Net.Index
 
             protected override void DoMerge(MergePolicy.OneMerge merge)
             {
-                TotMergedBytes += merge.TotalBytesSize;
+                totMergedBytes += merge.TotalBytesSize;
                 base.DoMerge(merge);
             }
         }
@@ -427,7 +427,7 @@ namespace Lucene.Net.Index
                     w.DeleteDocuments(new Term("id", "" + Random.Next(i + 1)));
                 }
             }
-            Assert.IsTrue(((TrackingCMS)w.IndexWriter.Config.MergeScheduler).TotMergedBytes != 0);
+            Assert.IsTrue(((TrackingCMS)w.IndexWriter.Config.MergeScheduler).totMergedBytes != 0);
             w.Dispose();
             d.Dispose();
         }

@@ -24,28 +24,26 @@ using JCG = J2N.Collections.Generic;
 namespace Lucene.Net.Index
 {
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
-
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Assert = Lucene.Net.TestFramework.Assert;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
-    //using SimpleTextCodec = Lucene.Net.Codecs.simpletext.SimpleTextCodec;
     using BinaryDocValuesField = BinaryDocValuesField;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
@@ -85,7 +83,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexWriter : LuceneTestCase
     {
-        private static readonly FieldType StoredTextType = new FieldType(TextField.TYPE_NOT_STORED);
+        private static readonly FieldType storedTextType = new FieldType(TextField.TYPE_NOT_STORED);
 
 #if FEATURE_INDEXWRITER_TESTS
 
@@ -175,8 +173,8 @@ namespace Lucene.Net.Index
         private void AddDocWithIndex(IndexWriter writer, int index)
         {
             Document doc = new Document();
-            doc.Add(NewField("content", "aaa " + index, StoredTextType));
-            doc.Add(NewField("id", "" + index, StoredTextType));
+            doc.Add(NewField("content", "aaa " + index, storedTextType));
+            doc.Add(NewField("id", "" + index, storedTextType));
             writer.AddDocument(doc);
         }
 
@@ -304,12 +302,12 @@ namespace Lucene.Net.Index
             for (int j = 0; j < 100; j++)
             {
                 Document doc = new Document();
-                doc.Add(NewField("a" + j, "aaa" + j, StoredTextType));
-                doc.Add(NewField("b" + j, "aaa" + j, StoredTextType));
-                doc.Add(NewField("c" + j, "aaa" + j, StoredTextType));
-                doc.Add(NewField("d" + j, "aaa", StoredTextType));
-                doc.Add(NewField("e" + j, "aaa", StoredTextType));
-                doc.Add(NewField("f" + j, "aaa", StoredTextType));
+                doc.Add(NewField("a" + j, "aaa" + j, storedTextType));
+                doc.Add(NewField("b" + j, "aaa" + j, storedTextType));
+                doc.Add(NewField("c" + j, "aaa" + j, storedTextType));
+                doc.Add(NewField("d" + j, "aaa", storedTextType));
+                doc.Add(NewField("e" + j, "aaa", storedTextType));
+                doc.Add(NewField("f" + j, "aaa", storedTextType));
                 writer.AddDocument(doc);
             }
             writer.Dispose();
@@ -340,7 +338,7 @@ namespace Lucene.Net.Index
             for (int j = 0; j < 9; j++)
             {
                 Document doc = new Document();
-                doc.Add(NewField("field", "aaa" + j, StoredTextType));
+                doc.Add(NewField("field", "aaa" + j, storedTextType));
                 writer.AddDocument(doc);
                 int numFile = dir.ListAll().Length;
                 // Verify that with a tiny RAM buffer we see new
@@ -366,7 +364,7 @@ namespace Lucene.Net.Index
             for (int j = 1; j < 52; j++)
             {
                 Document doc = new Document();
-                doc.Add(new Field("field", "aaa" + j, StoredTextType));
+                doc.Add(new Field("field", "aaa" + j, storedTextType));
                 writer.AddDocument(doc);
                 TestUtil.SyncConcurrentMerges(writer);
                 int flushCount = writer.FlushCount;
@@ -444,7 +442,7 @@ namespace Lucene.Net.Index
             for (int j = 1; j < 52; j++)
             {
                 Document doc = new Document();
-                doc.Add(new Field("field", "aaa" + j, StoredTextType));
+                doc.Add(new Field("field", "aaa" + j, storedTextType));
                 writer.AddDocument(doc);
             }
 
@@ -533,7 +531,7 @@ namespace Lucene.Net.Index
                     Document doc = new Document();
                     for (int k = 0; k < 100; k++)
                     {
-                        doc.Add(NewField("field", Convert.ToString(Random.Next()), StoredTextType));
+                        doc.Add(NewField("field", Convert.ToString(Random.Next()), storedTextType));
                     }
                     writer.AddDocument(doc);
                 }
@@ -543,7 +541,7 @@ namespace Lucene.Net.Index
                 for (int j = 0; j < 100; j++)
                 {
                     Document doc = new Document();
-                    doc.Add(NewField("field", "aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa", StoredTextType));
+                    doc.Add(NewField("field", "aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa", storedTextType));
                     writer.AddDocument(doc);
                 }
 
@@ -561,7 +559,7 @@ namespace Lucene.Net.Index
                     string longTerm = b.ToString();
 
                     Document doc = new Document();
-                    doc.Add(NewField("field", longTerm, StoredTextType));
+                    doc.Add(NewField("field", longTerm, storedTextType));
                     writer.AddDocument(doc);
                 }
             }
@@ -594,7 +592,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    f = NewField("field", "aaa", StoredTextType);
+                    f = NewField("field", "aaa", storedTextType);
                 }
                 doc.Add(f);
                 writer.AddDocument(doc);
@@ -621,7 +619,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    f = NewField("field", "aaa", StoredTextType);
+                    f = NewField("field", "aaa", storedTextType);
                 }
                 doc.Add(f);
                 writer.AddDocument(doc);
@@ -971,17 +969,17 @@ namespace Lucene.Net.Index
             {
             }
 
-            internal bool AfterWasCalled;
-            internal bool BeforeWasCalled;
+            internal bool afterWasCalled;
+            internal bool beforeWasCalled;
 
             protected override void DoAfterFlush()
             {
-                AfterWasCalled = true;
+                afterWasCalled = true;
             }
 
             protected override void DoBeforeFlush()
             {
-                BeforeWasCalled = true;
+                beforeWasCalled = true;
             }
         }
 
@@ -996,14 +994,14 @@ namespace Lucene.Net.Index
             doc.Add(NewField("field", "a field", customType));
             w.AddDocument(doc);
             w.Commit();
-            Assert.IsTrue(w.BeforeWasCalled);
-            Assert.IsTrue(w.AfterWasCalled);
-            w.BeforeWasCalled = false;
-            w.AfterWasCalled = false;
+            Assert.IsTrue(w.beforeWasCalled);
+            Assert.IsTrue(w.afterWasCalled);
+            w.beforeWasCalled = false;
+            w.afterWasCalled = false;
             w.DeleteDocuments(new Term("field", "field"));
             w.Commit();
-            Assert.IsTrue(w.BeforeWasCalled);
-            Assert.IsTrue(w.AfterWasCalled);
+            Assert.IsTrue(w.beforeWasCalled);
+            Assert.IsTrue(w.afterWasCalled);
             w.Dispose();
 
             IndexReader ir = DirectoryReader.Open(dir);
@@ -1040,11 +1038,11 @@ namespace Lucene.Net.Index
 
         private class TokenStreamAnonymousInnerClassHelper : TokenStream
         {
-            private readonly TestIndexWriter OuterInstance;
+            private readonly TestIndexWriter outerInstance;
 
             public TokenStreamAnonymousInnerClassHelper(TestIndexWriter outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 termAtt = AddAttribute<ICharTermAttribute>();
                 posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
                 terms = new List<string> { "a", "b", "c" }.GetEnumerator();
@@ -1178,7 +1176,7 @@ namespace Lucene.Net.Index
                 {
                     Document doc = new Document();
                     doc.Add(NewStringField(this.random, "id", "500", Field.Store.NO));
-                    doc.Add(NewField(this.random, "field", "some prepackaged text contents", StoredTextType));
+                    doc.Add(NewField(this.random, "field", "some prepackaged text contents", storedTextType));
                     if (DefaultCodecSupportsDocValues)
                     {
                         doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("500")));
@@ -1193,7 +1191,7 @@ namespace Lucene.Net.Index
                     w.AddDocument(doc);
                     doc = new Document();
                     doc.Add(NewStringField(this.random, "id", "501", Field.Store.NO));
-                    doc.Add(NewField(this.random, "field", "some more contents", StoredTextType));
+                    doc.Add(NewField(this.random, "field", "some more contents", storedTextType));
                     if (DefaultCodecSupportsDocValues)
                     {
                         doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("501")));
@@ -1251,7 +1249,7 @@ namespace Lucene.Net.Index
                             Field sortedDVField = null;
                             Field sortedSetDVField = new SortedSetDocValuesField("sortedsetdv", new BytesRef());
                             doc.Add(idField);
-                            doc.Add(NewField(random, "field", "some text contents", StoredTextType));
+                            doc.Add(NewField(random, "field", "some text contents", storedTextType));
                             if (DefaultCodecSupportsDocValues)
                             {
                                 binaryDVField = new BinaryDocValuesField("binarydv", new BytesRef());
@@ -1907,7 +1905,7 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 doc.Add(new Field("id", Convert.ToString(i) + BIG, customType3));
                 doc.Add(new Field("str", Convert.ToString(i) + BIG, customType2));
-                doc.Add(new Field("str2", Convert.ToString(i) + BIG, StoredTextType));
+                doc.Add(new Field("str2", Convert.ToString(i) + BIG, storedTextType));
                 doc.Add(new Field("str3", Convert.ToString(i) + BIG, customType));
                 indexWriter.AddDocument(doc);
             }
@@ -1938,14 +1936,14 @@ namespace Lucene.Net.Index
 
         private class StringSplitTokenizer : Tokenizer
         {
-            private string[] Tokens;
-            private int Upto;
-            private readonly ICharTermAttribute TermAtt;
+            private string[] tokens;
+            private int upto;
+            private readonly ICharTermAttribute termAtt;
 
             public StringSplitTokenizer(TextReader r)
                 : base(r)
             {
-                TermAtt = AddAttribute<ICharTermAttribute>();
+                termAtt = AddAttribute<ICharTermAttribute>();
                 try
                 {
                     SetReader(r);
@@ -1959,11 +1957,11 @@ namespace Lucene.Net.Index
             public sealed override bool IncrementToken()
             {
                 ClearAttributes();
-                if (Upto < Tokens.Length)
+                if (upto < tokens.Length)
                 {
-                    TermAtt.SetEmpty();
-                    TermAtt.Append(Tokens[Upto]);
-                    Upto++;
+                    termAtt.SetEmpty();
+                    termAtt.Append(tokens[upto]);
+                    upto++;
                     return true;
                 }
                 else
@@ -1975,7 +1973,7 @@ namespace Lucene.Net.Index
             public override void Reset()
             {
                 base.Reset();
-                this.Upto = 0;
+                this.upto = 0;
                 StringBuilder b = new StringBuilder();
                 char[] buffer = new char[1024];
                 int n;
@@ -1983,7 +1981,7 @@ namespace Lucene.Net.Index
                 {
                     b.Append(buffer, 0, n);
                 }
-                this.Tokens = b.ToString().Split(' ').TrimEnd();
+                this.tokens = b.ToString().Split(' ').TrimEnd();
             }
         }
 
@@ -2301,11 +2299,11 @@ namespace Lucene.Net.Index
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
         {
-            private readonly TestIndexWriter OuterInstance;
+            private readonly TestIndexWriter outerInstance;
 
             public AnalyzerAnonymousInnerClassHelper(TestIndexWriter outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
@@ -2356,7 +2354,12 @@ namespace Lucene.Net.Index
         public virtual void TestStopwordsPosIncHole()
         {
             Directory dir = NewDirectory();
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader);
+                TokenStream stream = new MockTokenFilter(tokenizer, MockTokenFilter.ENGLISH_STOPSET);
+                return new TokenStreamComponents(tokenizer, stream);
+            });
             RandomIndexWriter iw = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
@@ -2378,23 +2381,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestIndexWriter OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestIndexWriter outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader);
-                TokenStream stream = new MockTokenFilter(tokenizer, MockTokenFilter.ENGLISH_STOPSET);
-                return new TokenStreamComponents(tokenizer, stream);
-            }
-        }
-
         // LUCENE-3849
         [Test]
         public virtual void TestStopwordsPosIncHole2()
@@ -2402,7 +2388,13 @@ namespace Lucene.Net.Index
             // use two stopfilters for testing here
             Directory dir = NewDirectory();
             Automaton secondSet = BasicAutomata.MakeString("foobar");
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this, secondSet);
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader);
+                TokenStream stream = new MockTokenFilter(tokenizer, MockTokenFilter.ENGLISH_STOPSET);
+                stream = new MockTokenFilter(stream, new CharacterRunAutomaton(secondSet));
+                return new TokenStreamComponents(tokenizer, stream);
+            });
             RandomIndexWriter iw = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
@@ -2422,27 +2414,6 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, @is.Search(pq, 5).TotalHits);
             ir.Dispose();
             dir.Dispose();
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestIndexWriter OuterInstance;
-
-            private Automaton SecondSet;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestIndexWriter outerInstance, Automaton secondSet)
-            {
-                this.OuterInstance = outerInstance;
-                this.SecondSet = secondSet;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader);
-                TokenStream stream = new MockTokenFilter(tokenizer, MockTokenFilter.ENGLISH_STOPSET);
-                stream = new MockTokenFilter(stream, new CharacterRunAutomaton(SecondSet));
-                return new TokenStreamComponents(tokenizer, stream);
-            }
         }
 
         // here we do better, there is no current segments file, so we don't delete anything.
@@ -2658,18 +2629,18 @@ namespace Lucene.Net.Index
 
         private class RandomFailingFieldIterable : IEnumerable<IEnumerable<IIndexableField>>
         {
-            internal readonly IList<IEnumerable<IIndexableField>> DocList;
-            internal readonly Random Random;
+            internal readonly IList<IEnumerable<IIndexableField>> docList;
+            internal readonly Random random;
 
             public RandomFailingFieldIterable(IList<IEnumerable<IIndexableField>> docList, Random random)
             {
-                this.DocList = docList;
-                this.Random = random;
+                this.docList = docList;
+                this.random = random;
             }
 
             public virtual IEnumerator<IEnumerable<IIndexableField>> GetEnumerator()
             {
-                return DocList.GetEnumerator();
+                return docList.GetEnumerator();
                 //return new IteratorAnonymousInnerClassHelper(this, docIter);
             }
 
@@ -2681,13 +2652,13 @@ namespace Lucene.Net.Index
             /*
           private class IteratorAnonymousInnerClassHelper : IEnumerator<IEnumerable<IndexableField>>
           {
-              private readonly RandomFailingFieldIterable OuterInstance;
+              private readonly RandomFailingFieldIterable outerInstance;
 
               private IEnumerator<IEnumerable<IndexableField>> DocIter;
 
               public IteratorAnonymousInnerClassHelper(RandomFailingFieldIterable outerInstance, IEnumerator<IEnumerable<IndexableField>> docIter)
               {
-                  this.OuterInstance = outerInstance;
+                  this.outerInstance = outerInstance;
                   this.DocIter = docIter;
               }
 
@@ -2698,7 +2669,7 @@ namespace Lucene.Net.Index
 
               public virtual IEnumerable<IndexableField> Next()
               {
-                if (OuterInstance.Random.Next(5) == 0)
+                if (outerInstance.Random.Next(5) == 0)
                 {
                   throw new Exception("boom");
                 }
@@ -2855,25 +2826,25 @@ namespace Lucene.Net.Index
 
         private class TestPointAnonymousInnerClassHelper : ITestPoint
         {
-            private readonly TestIndexWriter OuterInstance;
+            private readonly TestIndexWriter outerInstance;
 
-            private SetOnce<IndexWriter> IwRef;
+            private SetOnce<IndexWriter> iwRef;
 
             public TestPointAnonymousInnerClassHelper(TestIndexWriter outerInstance, SetOnce<IndexWriter> iwRef)
             {
-                this.OuterInstance = outerInstance;
-                this.IwRef = iwRef;
+                this.outerInstance = outerInstance;
+                this.iwRef = iwRef;
             }
 
             public void Apply(string message)
             {
                 if ("startCommitMerge".Equals(message, StringComparison.Ordinal))
                 {
-                    IwRef.Get().KeepFullyDeletedSegments = false;
+                    iwRef.Get().KeepFullyDeletedSegments = false;
                 }
                 else if ("startMergeInit".Equals(message, StringComparison.Ordinal))
                 {
-                    IwRef.Get().KeepFullyDeletedSegments = true;
+                    iwRef.Get().KeepFullyDeletedSegments = true;
                 }
             }
         }

@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexWriterReader : LuceneTestCase
     {
-        private readonly int NumThreads = TEST_NIGHTLY ? 5 : 3;
+        private readonly int numThreads = TEST_NIGHTLY ? 5 : 3;
 
         public static int Count(Term t, IndexReader r)
         {
@@ -441,16 +441,16 @@ namespace Lucene.Net.Index
 
             //Assert.AreEqual(100 + numDirs * (3 * numIter / 4) * addDirThreads.numThreads
             //    * addDirThreads.NUM_INIT_DOCS, addDirThreads.mainWriter.NumDocs);
-            Assert.AreEqual(addDirThreads.Count, addDirThreads.MainWriter.NumDocs);
+            Assert.AreEqual(addDirThreads.count, addDirThreads.mainWriter.NumDocs);
 
             addDirThreads.Close(true);
 
-            Assert.IsTrue(addDirThreads.Failures.Count == 0);
+            Assert.IsTrue(addDirThreads.failures.Count == 0);
 
             TestUtil.CheckIndex(mainDir);
 
             IndexReader reader = DirectoryReader.Open(mainDir);
-            Assert.AreEqual(addDirThreads.Count, reader.NumDocs);
+            Assert.AreEqual(addDirThreads.count, reader.NumDocs);
             //Assert.AreEqual(100 + numDirs * (3 * numIter / 4) * addDirThreads.numThreads
             //    * addDirThreads.NUM_INIT_DOCS, reader.NumDocs);
             reader.Dispose();
@@ -463,33 +463,33 @@ namespace Lucene.Net.Index
         {
             internal virtual void InitializeInstanceFields()
             {
-                Threads = new ThreadJob[OuterInstance.NumThreads];
+                threads = new ThreadJob[outerInstance.numThreads];
             }
 
-            private readonly TestIndexWriterReader OuterInstance;
+            private readonly TestIndexWriterReader outerInstance;
 
-            internal Directory AddDir;
+            internal Directory addDir;
             internal const int NUM_INIT_DOCS = 100;
-            internal int NumDirs;
-            internal ThreadJob[] Threads;
-            internal IndexWriter MainWriter;
-            internal readonly IList<Exception> Failures = new List<Exception>();
-            internal IndexReader[] Readers;
-            internal bool DidClose = false;
-            internal AtomicInt32 Count = new AtomicInt32(0);
-            internal AtomicInt32 NumaddIndexes = new AtomicInt32(0);
+            internal int numDirs;
+            internal ThreadJob[] threads;
+            internal IndexWriter mainWriter;
+            internal readonly IList<Exception> failures = new List<Exception>();
+            internal IndexReader[] readers;
+            internal bool didClose = false;
+            internal AtomicInt32 count = new AtomicInt32(0);
+            internal AtomicInt32 numaddIndexes = new AtomicInt32(0);
 
             public AddDirectoriesThreads(TestIndexWriterReader outerInstance, int numDirs, IndexWriter mainWriter)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
 
                 InitializeInstanceFields();
-                this.NumDirs = numDirs;
-                this.MainWriter = mainWriter;
-                AddDir = NewDirectory();
-                IndexWriter writer = new IndexWriter(AddDir, NewIndexWriterConfig(
+                this.numDirs = numDirs;
+                this.mainWriter = mainWriter;
+                addDir = NewDirectory();
+                IndexWriter writer = new IndexWriter(addDir, NewIndexWriterConfig(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    OuterInstance,
+                    outerInstance,
 #endif
                     TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
                 TestUtil.ReduceOpenFiles(writer);
@@ -501,22 +501,22 @@ namespace Lucene.Net.Index
 
                 writer.Dispose();
 
-                Readers = new IndexReader[numDirs];
+                readers = new IndexReader[numDirs];
                 for (int i = 0; i < numDirs; i++)
                 {
-                    Readers[i] = DirectoryReader.Open(AddDir);
+                    readers[i] = DirectoryReader.Open(addDir);
                 }
             }
 
             internal virtual void JoinThreads()
             {
-                for (int i = 0; i < OuterInstance.NumThreads; i++)
+                for (int i = 0; i < outerInstance.numThreads; i++)
                 {
 //#if !NETSTANDARD1_6
 //                    try
 //                    {
 //#endif
-                    Threads[i].Join();
+                    threads[i].Join();
 //#if !NETSTANDARD1_6
 //                    }
 //                    catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
@@ -529,73 +529,73 @@ namespace Lucene.Net.Index
 
             internal virtual void Close(bool doWait)
             {
-                DidClose = true;
+                didClose = true;
                 if (doWait)
                 {
-                    MainWriter.WaitForMerges();
+                    mainWriter.WaitForMerges();
                 }
-                MainWriter.Dispose(doWait);
+                mainWriter.Dispose(doWait);
             }
 
             internal virtual void CloseDir()
             {
-                for (int i = 0; i < NumDirs; i++)
+                for (int i = 0; i < numDirs; i++)
                 {
-                    Readers[i].Dispose();
+                    readers[i].Dispose();
                 }
-                AddDir.Dispose();
+                addDir.Dispose();
             }
 
             internal virtual void Handle(Exception t)
             {
                 Console.WriteLine(t.StackTrace);
-                lock (Failures)
+                lock (failures)
                 {
-                    Failures.Add(t);
+                    failures.Add(t);
                 }
             }
 
             internal virtual void LaunchThreads(int numIter)
             {
-                for (int i = 0; i < OuterInstance.NumThreads; i++)
+                for (int i = 0; i < outerInstance.numThreads; i++)
                 {
-                    Threads[i] = new ThreadAnonymousInnerClassHelper(this, numIter);
+                    threads[i] = new ThreadAnonymousInnerClassHelper(this, numIter);
                 }
-                for (int i = 0; i < OuterInstance.NumThreads; i++)
+                for (int i = 0; i < outerInstance.numThreads; i++)
                 {
-                    Threads[i].Start();
+                    threads[i].Start();
                 }
             }
 
             private class ThreadAnonymousInnerClassHelper : ThreadJob
             {
-                private readonly AddDirectoriesThreads OuterInstance;
+                private readonly AddDirectoriesThreads outerInstance;
 
-                private int NumIter;
+                private int numIter;
 
                 public ThreadAnonymousInnerClassHelper(AddDirectoriesThreads outerInstance, int numIter)
                 {
-                    this.OuterInstance = outerInstance;
-                    this.NumIter = numIter;
+                    this.outerInstance = outerInstance;
+                    this.numIter = numIter;
                 }
 
                 public override void Run()
                 {
                     try
                     {
-                        Directory[] dirs = new Directory[OuterInstance.NumDirs];
-                        for (int k = 0; k < OuterInstance.NumDirs; k++)
+                        Directory[] dirs = new Directory[outerInstance.numDirs];
+                        for (int k = 0; k < outerInstance.numDirs; k++)
                         {
-                            dirs[k] = new MockDirectoryWrapper(Random, new RAMDirectory(OuterInstance.AddDir, NewIOContext(Random)));
+                            dirs[k] = new MockDirectoryWrapper(Random, new RAMDirectory(outerInstance.addDir, NewIOContext(Random)));
                         }
                         //int j = 0;
                         //while (true) {
                         // System.out.println(Thread.currentThread().getName() + ": iter
                         // j=" + j);
-                        for (int x = 0; x < NumIter; x++)
+                        for (int x = 0; x < numIter; x++)
                         {
                             // only do addIndexes
-                            OuterInstance.DoBody(x, dirs);
+                            outerInstance.DoBody(x, dirs);
                         }
                         //if (numIter > 0 && j == numIter)
                         //  break;
@@ -605,7 +605,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception t)
                     {
-                        OuterInstance.Handle(t);
+                        outerInstance.Handle(t);
                     }
                 }
             }
@@ -615,24 +615,24 @@ namespace Lucene.Net.Index
                 switch (j % 4)
                 {
                     case 0:
-                        MainWriter.AddIndexes(dirs);
-                        MainWriter.ForceMerge(1);
+                        mainWriter.AddIndexes(dirs);
+                        mainWriter.ForceMerge(1);
                         break;
 
                     case 1:
-                        MainWriter.AddIndexes(dirs);
-                        NumaddIndexes.IncrementAndGet();
+                        mainWriter.AddIndexes(dirs);
+                        numaddIndexes.IncrementAndGet();
                         break;
 
                     case 2:
-                        MainWriter.AddIndexes(Readers);
+                        mainWriter.AddIndexes(readers);
                         break;
 
                     case 3:
-                        MainWriter.Commit();
+                        mainWriter.Commit();
                         break;
                 }
-                Count.AddAndGet(dirs.Length * NUM_INIT_DOCS);
+                count.AddAndGet(dirs.Length * NUM_INIT_DOCS);
             }
         }
 
@@ -743,11 +743,11 @@ namespace Lucene.Net.Index
 
         private class MyWarmer : IndexWriter.IndexReaderWarmer
         {
-            internal int WarmCount;
+            internal int warmCount;
 
             public override void Warm(AtomicReader reader)
             {
-                WarmCount++;
+                warmCount++;
             }
         }
 
@@ -780,14 +780,14 @@ namespace Lucene.Net.Index
             }
             ((IConcurrentMergeScheduler)writer.Config.MergeScheduler).Sync();
 
-            Assert.IsTrue(warmer.WarmCount > 0);
-            Console.WriteLine("Count {0}", warmer.WarmCount);
-            int count = warmer.WarmCount;
+            Assert.IsTrue(warmer.warmCount > 0);
+            Console.WriteLine("Count {0}", warmer.warmCount);
+            int count = warmer.warmCount;
 
             var newDocument = DocHelper.CreateDocument(17, "test", 4);
             writer.AddDocument(newDocument);
             writer.ForceMerge(1);
-            Assert.IsTrue(warmer.WarmCount > count);
+            Assert.IsTrue(warmer.warmCount > count);
 
             writer.Dispose();
             r1.Dispose();
@@ -949,17 +949,17 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private IndexWriter Writer;
-            private Directory[] Dirs;
-            private long EndTime;
-            private ConcurrentQueue<Exception> Excs;
+            private IndexWriter writer;
+            private Directory[] dirs;
+            private long endTime;
+            private ConcurrentQueue<Exception> excs;
 
             public ThreadAnonymousInnerClassHelper(IndexWriter writer, Directory[] dirs, long endTime, ConcurrentQueue<Exception> excs)
             {
-                this.Writer = writer;
-                this.Dirs = dirs;
-                this.EndTime = endTime;
-                this.Excs = excs;
+                this.writer = writer;
+                this.dirs = dirs;
+                this.endTime = endTime;
+                this.excs = excs;
             }
 
             public override void Run()
@@ -968,15 +968,15 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-                        Writer.AddIndexes(Dirs);
-                        Writer.MaybeMerge();
+                        writer.AddIndexes(dirs);
+                        writer.MaybeMerge();
                     }
                     catch (Exception t)
                     {
-                        Excs.Enqueue(t);
+                        excs.Enqueue(t);
                         throw new Exception(t.Message, t);
                     }
-                } while (Environment.TickCount < EndTime);
+                } while (Environment.TickCount < endTime);
             }
         }
 
@@ -1007,8 +1007,8 @@ namespace Lucene.Net.Index
             long endTime = (long)(Environment.TickCount + 1000.0 * SECONDS);
             ConcurrentQueue<Exception> excs = new ConcurrentQueue<Exception>();
 
-            var threads = new ThreadJob[NumThreads];
-            for (int i = 0; i < NumThreads; i++)
+            var threads = new ThreadJob[numThreads];
+            for (int i = 0; i < numThreads; i++)
             {
                 threads[i] = new ThreadAnonymousInnerClassHelper2(writer, r, endTime, excs);
                 threads[i].IsBackground = (true);
@@ -1029,7 +1029,7 @@ namespace Lucene.Net.Index
                 sum += searcher.Search(q, 10).TotalHits;
             }
 
-            for (int i = 0; i < NumThreads; i++)
+            for (int i = 0; i < numThreads; i++)
             {
                 threads[i].Join();
             }
@@ -1054,17 +1054,17 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
-            private IndexWriter Writer;
+            private IndexWriter writer;
             private DirectoryReader r;
-            private long EndTime;
-            private ConcurrentQueue<Exception> Excs;
+            private long endTime;
+            private ConcurrentQueue<Exception> excs;
 
             public ThreadAnonymousInnerClassHelper2(IndexWriter writer, DirectoryReader r, long endTime, ConcurrentQueue<Exception> excs)
             {
-                this.Writer = writer;
+                this.writer = writer;
                 this.r = r;
-                this.EndTime = endTime;
-                this.Excs = excs;
+                this.endTime = endTime;
+                this.excs = excs;
                 rand = new Random(Random.Next());
             }
 
@@ -1079,22 +1079,22 @@ namespace Lucene.Net.Index
                     {
                         for (int docUpto = 0; docUpto < 10; docUpto++)
                         {
-                            Writer.AddDocument(DocHelper.CreateDocument(10 * count + docUpto, "test", 4));
+                            writer.AddDocument(DocHelper.CreateDocument(10 * count + docUpto, "test", 4));
                         }
                         count++;
                         int limit = count * 10;
                         for (int delUpto = 0; delUpto < 5; delUpto++)
                         {
                             int x = rand.Next(limit);
-                            Writer.DeleteDocuments(new Term("field3", "b" + x));
+                            writer.DeleteDocuments(new Term("field3", "b" + x));
                         }
                     }
                     catch (Exception t)
                     {
-                        Excs.Enqueue(t);
+                        excs.Enqueue(t);
                         throw new Exception(t.Message, t);
                     }
-                } while (Environment.TickCount < EndTime);
+                } while (Environment.TickCount < endTime);
             }
         }
 
@@ -1190,26 +1190,26 @@ namespace Lucene.Net.Index
 
         private class IndexReaderWarmerAnonymousInnerClassHelper : IndexWriter.IndexReaderWarmer
         {
-            private readonly TestIndexWriterReader OuterInstance;
+            private readonly TestIndexWriterReader outerInstance;
 
-            private AtomicBoolean DidWarm;
+            private AtomicBoolean didWarm;
 
             public IndexReaderWarmerAnonymousInnerClassHelper(TestIndexWriterReader outerInstance, AtomicBoolean didWarm)
             {
-                this.OuterInstance = outerInstance;
-                this.DidWarm = didWarm;
+                this.outerInstance = outerInstance;
+                this.didWarm = didWarm;
             }
 
             public override void Warm(AtomicReader r)
             {
                 IndexSearcher s = NewSearcher(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    OuterInstance,
+                    outerInstance,
 #endif
                     r);
                 TopDocs hits = s.Search(new TermQuery(new Term("foo", "bar")), 10);
                 Assert.AreEqual(20, hits.TotalHits);
-                DidWarm.Value = (true);
+                didWarm.Value = (true);
             }
         }
 
@@ -1235,14 +1235,14 @@ namespace Lucene.Net.Index
 
         private class InfoStreamAnonymousInnerClassHelper : InfoStream
         {
-            private readonly TestIndexWriterReader OuterInstance;
+            private readonly TestIndexWriterReader outerInstance;
 
-            private AtomicBoolean DidWarm;
+            private AtomicBoolean didWarm;
 
             public InfoStreamAnonymousInnerClassHelper(TestIndexWriterReader outerInstance, AtomicBoolean didWarm)
             {
-                this.OuterInstance = outerInstance;
-                this.DidWarm = didWarm;
+                this.outerInstance = outerInstance;
+                this.didWarm = didWarm;
             }
 
             protected override void Dispose(bool disposing)
@@ -1253,7 +1253,7 @@ namespace Lucene.Net.Index
             {
                 if ("SMSW".Equals(component, StringComparison.Ordinal))
                 {
-                    DidWarm.Value = (true);
+                    didWarm.Value = (true);
                 }
             }
 
@@ -1393,25 +1393,25 @@ namespace Lucene.Net.Index
 
         private class FailureAnonymousInnerClassHelper : Failure
         {
-            private readonly AtomicBoolean ShouldFail;
+            private readonly AtomicBoolean shouldFail;
 
             public FailureAnonymousInnerClassHelper(AtomicBoolean shouldFail)
             {
-                this.ShouldFail = shouldFail;
+                this.shouldFail = shouldFail;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                if (ShouldFail && StackTraceHelper.DoesStackTraceContainMethod("GetReadOnlyClone"))
+                if (shouldFail && StackTraceHelper.DoesStackTraceContainMethod("GetReadOnlyClone"))
                 {
                     if (VERBOSE)
                     {
                         Console.WriteLine("TEST: now fail; exc:");
                         Console.WriteLine((new Exception()).StackTrace);
                     }
-                    ShouldFail.Value = (false);
+                    shouldFail.Value = (false);
                     throw new FakeIOException();
                 }
             }

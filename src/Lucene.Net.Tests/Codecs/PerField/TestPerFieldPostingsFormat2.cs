@@ -18,21 +18,22 @@ using Console = Lucene.Net.Util.SystemConsole;
 namespace Lucene.Net.Codecs.PerField
 {
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Document = Documents.Document;
 
     //TODO: would be better in this test to pull termsenums and instanceof or something?
@@ -201,41 +202,41 @@ namespace Lucene.Net.Codecs.PerField
 
         private class MockCodec : Lucene46Codec
         {
-            internal readonly PostingsFormat Lucene40 = new Lucene41PostingsFormat();
-            internal readonly PostingsFormat SimpleText = new SimpleTextPostingsFormat();
-            internal readonly PostingsFormat MockSep = new MockSepPostingsFormat();
+            internal readonly PostingsFormat lucene40 = new Lucene41PostingsFormat();
+            internal readonly PostingsFormat simpleText = new SimpleTextPostingsFormat();
+            internal readonly PostingsFormat mockSep = new MockSepPostingsFormat();
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
                 if (field.Equals("id", StringComparison.Ordinal))
                 {
-                    return SimpleText;
+                    return simpleText;
                 }
                 else if (field.Equals("content", StringComparison.Ordinal))
                 {
-                    return MockSep;
+                    return mockSep;
                 }
                 else
                 {
-                    return Lucene40;
+                    return lucene40;
                 }
             }
         }
 
         private class MockCodec2 : Lucene46Codec
         {
-            internal readonly PostingsFormat Lucene40 = new Lucene41PostingsFormat();
-            internal readonly PostingsFormat SimpleText = new SimpleTextPostingsFormat();
+            internal readonly PostingsFormat lucene40 = new Lucene41PostingsFormat();
+            internal readonly PostingsFormat simpleText = new SimpleTextPostingsFormat();
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
                 if (field.Equals("id", StringComparison.Ordinal))
                 {
-                    return SimpleText;
+                    return simpleText;
                 }
                 else
                 {
-                    return Lucene40;
+                    return lucene40;
                 }
             }
         }
@@ -288,11 +289,11 @@ namespace Lucene.Net.Codecs.PerField
 
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
-            private readonly TestPerFieldPostingsFormat2 OuterInstance;
+            private readonly TestPerFieldPostingsFormat2 outerInstance;
 
             public Lucene46CodecAnonymousInnerClassHelper(TestPerFieldPostingsFormat2 outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override PostingsFormat GetPostingsFormatForField(string field)
@@ -321,11 +322,11 @@ namespace Lucene.Net.Codecs.PerField
 
         private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
         {
-            private readonly TestPerFieldPostingsFormat2 OuterInstance;
+            private readonly TestPerFieldPostingsFormat2 outerInstance;
 
             public Lucene46CodecAnonymousInnerClassHelper2(TestPerFieldPostingsFormat2 outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override PostingsFormat GetPostingsFormatForField(string field)

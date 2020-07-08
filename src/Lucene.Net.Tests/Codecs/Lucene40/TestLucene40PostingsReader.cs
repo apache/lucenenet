@@ -1,40 +1,37 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
-using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
-    using J2N.Collections.Generic.Extensions;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using StringField = StringField;
@@ -45,14 +42,16 @@ namespace Lucene.Net.Codecs.Lucene40
     [TestFixture]
     public class TestLucene40PostingsReader : LuceneTestCase
     {
-        internal static readonly string[] Terms = new string[100];
+        internal static readonly string[] terms = LoadTerms();
 
-        static TestLucene40PostingsReader()
+        static string[] LoadTerms()
         {
-            for (int i = 0; i < Terms.Length; i++)
+            string[] terms = new string[100];
+            for (int i = 0; i < terms.Length; i++)
             {
-                Terms[i] = Convert.ToString(i + 1);
+                terms[i] = Convert.ToString(i + 1);
             }
+            return terms;
         }
 
         [OneTimeSetUp]
@@ -115,7 +114,7 @@ namespace Lucene.Net.Codecs.Lucene40
             if (Random.NextBoolean())
             {
                 // delete 1-100% of docs
-                iw.DeleteDocuments(new Term("title", Terms[Random.Next(Terms.Length)]));
+                iw.DeleteDocuments(new Term("title", terms[Random.Next(terms.Length)]));
             }
             iw.Dispose();
             dir.Dispose(); // checkindex
@@ -143,13 +142,13 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             IList<string> shuffled = new List<string>();
             StringBuilder sb = new StringBuilder();
-            int i = Random.Next(Terms.Length);
-            while (i < Terms.Length)
+            int i = Random.Next(terms.Length);
+            while (i < terms.Length)
             {
                 int tf = TestUtil.NextInt32(Random, 1, maxTF);
                 for (int j = 0; j < tf; j++)
                 {
-                    shuffled.Add(Terms[i]);
+                    shuffled.Add(terms[i]);
                 }
                 i++;
             }

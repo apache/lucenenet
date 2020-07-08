@@ -92,13 +92,13 @@
 
 //        private class ThreadAnonymousInnerClassHelper : ThreadClass
 //        {
-//            private readonly TestIndexWriterOnJRECrash OuterInstance;
+//            private readonly TestIndexWriterOnJRECrash outerInstance;
 
 //            private int CrashTime;
 
 //            public ThreadAnonymousInnerClassHelper(TestIndexWriterOnJRECrash outerInstance, int crashTime)
 //            {
-//                this.OuterInstance = outerInstance;
+//                this.outerInstance = outerInstance;
 //                this.CrashTime = crashTime;
 //            }
 
@@ -111,7 +111,7 @@
 //                catch (ThreadInterruptedException e)
 //                {
 //                }
-//                OuterInstance.CrashJRE();
+//                outerInstance.CrashJRE();
 //            }
 //        }
 

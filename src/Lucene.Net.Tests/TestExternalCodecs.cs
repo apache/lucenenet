@@ -46,23 +46,23 @@ namespace Lucene.Net
         private sealed class CustomPerFieldCodec : Lucene46Codec
         {
 
-            internal readonly PostingsFormat RamFormat = Codecs.PostingsFormat.ForName("RAMOnly");
-            internal readonly PostingsFormat DefaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
-            internal readonly PostingsFormat PulsingFormat = Codecs.PostingsFormat.ForName("Pulsing41");
+            internal readonly PostingsFormat ramFormat = Codecs.PostingsFormat.ForName("RAMOnly");
+            internal readonly PostingsFormat defaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
+            internal readonly PostingsFormat pulsingFormat = Codecs.PostingsFormat.ForName("Pulsing41");
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
                 if (field.Equals("field2", StringComparison.Ordinal) || field.Equals("id", StringComparison.Ordinal))
                 {
-                    return PulsingFormat;
+                    return pulsingFormat;
                 }
                 else if (field.Equals("field1", StringComparison.Ordinal))
                 {
-                    return DefaultFormat;
+                    return defaultFormat;
                 }
                 else
                 {
-                    return RamFormat;
+                    return ramFormat;
                 }
             }
         }

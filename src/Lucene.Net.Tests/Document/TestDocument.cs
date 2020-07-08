@@ -8,21 +8,21 @@ using Assert = Lucene.Net.TestFramework.Assert;
 namespace Lucene.Net.Documents
 {
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -49,8 +49,8 @@ namespace Lucene.Net.Documents
     [TestFixture]
     public class TestDocument : LuceneTestCase
     {
-        internal string BinaryVal = "this text will be stored as a byte array in the index";
-        internal string BinaryVal2 = "this text will be also stored as a byte array in the index";
+        internal string binaryVal = "this text will be stored as a byte array in the index";
+        internal string binaryVal2 = "this text will be also stored as a byte array in the index";
 
         [Test]
         public virtual void TestBinaryField()
@@ -59,9 +59,9 @@ namespace Lucene.Net.Documents
 
             FieldType ft = new FieldType();
             ft.IsStored = true;
-            IIndexableField stringFld = new Field("string", BinaryVal, ft);
-            IIndexableField binaryFld = new StoredField("binary", BinaryVal.GetBytes(Encoding.UTF8));
-            IIndexableField binaryFld2 = new StoredField("binary", BinaryVal2.GetBytes(Encoding.UTF8));
+            IIndexableField stringFld = new Field("string", binaryVal, ft);
+            IIndexableField binaryFld = new StoredField("binary", binaryVal.GetBytes(Encoding.UTF8));
+            IIndexableField binaryFld2 = new StoredField("binary", binaryVal2.GetBytes(Encoding.UTF8));
 
             doc.Add(stringFld);
             doc.Add(binaryFld);
@@ -73,7 +73,7 @@ namespace Lucene.Net.Documents
             Assert.IsFalse(binaryFld.IndexableFieldType.IsIndexed);
 
             string binaryTest = doc.GetBinaryValue("binary").Utf8ToString();
-            Assert.IsTrue(binaryTest.Equals(BinaryVal, StringComparison.Ordinal));
+            Assert.IsTrue(binaryTest.Equals(binaryVal, StringComparison.Ordinal));
 
             string stringTest = doc.Get("string");
             Assert.IsTrue(binaryTest.Equals(stringTest, StringComparison.Ordinal));
@@ -91,8 +91,8 @@ namespace Lucene.Net.Documents
 
             Assert.IsFalse(binaryTest.Equals(binaryTest2, StringComparison.Ordinal));
 
-            Assert.IsTrue(binaryTest.Equals(BinaryVal, StringComparison.Ordinal));
-            Assert.IsTrue(binaryTest2.Equals(BinaryVal2, StringComparison.Ordinal));
+            Assert.IsTrue(binaryTest.Equals(binaryVal, StringComparison.Ordinal));
+            Assert.IsTrue(binaryTest2.Equals(binaryVal2, StringComparison.Ordinal));
 
             doc.RemoveField("string");
             Assert.AreEqual(2, doc.Fields.Count);

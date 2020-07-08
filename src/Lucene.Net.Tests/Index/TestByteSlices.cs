@@ -1,5 +1,3 @@
-using Lucene.Net.Attributes;
-using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;

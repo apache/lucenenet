@@ -6,34 +6,32 @@ using System.Text;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
-    using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldType = FieldType;
     using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using OpenMode = Lucene.Net.Index.OpenMode;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
@@ -46,31 +44,31 @@ namespace Lucene.Net.Codecs.Lucene41
     [TestFixture]
     public class TestBlockPostingsFormat2 : LuceneTestCase
     {
-        internal Directory Dir;
-        internal RandomIndexWriter Iw;
-        internal IndexWriterConfig Iwc;
+        internal Directory dir;
+        internal RandomIndexWriter iw;
+        internal IndexWriterConfig iwc;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewFSDirectory(CreateTempDir("testDFBlockSize"));
-            Iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            Iwc.SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()));
-            Iw = new RandomIndexWriter(Random, Dir, (IndexWriterConfig)Iwc.Clone());
-            Iw.DoRandomForceMerge = false; // we will ourselves
+            dir = NewFSDirectory(CreateTempDir("testDFBlockSize"));
+            iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            iwc.SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat()));
+            iw = new RandomIndexWriter(Random, dir, (IndexWriterConfig)iwc.Clone());
+            iw.DoRandomForceMerge = false; // we will ourselves
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Iw.Dispose();
-            TestUtil.CheckIndex(Dir); // for some extra coverage, checkIndex before we forceMerge
-            Iwc.SetOpenMode(OpenMode.APPEND);
-            IndexWriter iw = new IndexWriter(Dir, (IndexWriterConfig)Iwc.Clone());
+            this.iw.Dispose();
+            TestUtil.CheckIndex(dir); // for some extra coverage, checkIndex before we forceMerge
+            iwc.SetOpenMode(OpenMode.APPEND);
+            IndexWriter iw = new IndexWriter(dir, (IndexWriterConfig)iwc.Clone());
             iw.ForceMerge(1);
             iw.Dispose();
-            Dir.Dispose(); // just force a checkindex for now
+            dir.Dispose(); // just force a checkindex for now
             base.TearDown();
         }
 
@@ -111,7 +109,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     ((Field)f).SetStringValue(f.Name + " " + f.Name + "_2");
                 }
-                Iw.AddDocument(doc);
+                iw.AddDocument(doc);
             }
         }
 
@@ -127,7 +125,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     ((Field)f).SetStringValue(f.Name + " " + f.Name + "_2");
                 }
-                Iw.AddDocument(doc);
+                iw.AddDocument(doc);
             }
         }
 
@@ -143,7 +141,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     ((Field)f).SetStringValue(f.Name + " " + f.Name + " " + f.Name + "_2 " + f.Name + "_2");
                 }
-                Iw.AddDocument(doc);
+                iw.AddDocument(doc);
             }
         }
 
@@ -166,7 +164,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     }
                     ((Field)f).SetStringValue(val.ToString());
                 }
-                Iw.AddDocument(doc);
+                iw.AddDocument(doc);
             }
         }
     }

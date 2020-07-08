@@ -11,30 +11,29 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using NumericDocValuesField = NumericDocValuesField;
@@ -561,8 +560,8 @@ namespace Lucene.Net.Index
 
         private class FailTwiceDuringMerge : Failure
         {
-            public bool DidFail1;
-            public bool DidFail2;
+            public bool didFail1;
+            public bool didFail2;
 
             public override void Eval(MockDirectoryWrapper dir)
             {
@@ -573,17 +572,17 @@ namespace Lucene.Net.Index
 
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                if (StackTraceHelper.DoesStackTraceContainMethod(typeof(SegmentMerger).Name, "MergeTerms") && !DidFail1)
+                if (StackTraceHelper.DoesStackTraceContainMethod(typeof(SegmentMerger).Name, "MergeTerms") && !didFail1)
                 {
-                    DidFail1 = true;
+                    didFail1 = true;
                     throw new IOException("fake disk full during mergeTerms");
                 }
 
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
-                if (StackTraceHelper.DoesStackTraceContainMethod(typeof(LiveDocsFormat).Name, "WriteLiveDocs") && !DidFail2)
+                if (StackTraceHelper.DoesStackTraceContainMethod(typeof(LiveDocsFormat).Name, "WriteLiveDocs") && !didFail2)
                 {
-                    DidFail2 = true;
+                    didFail2 = true;
                     throw new IOException("fake disk full while writing LiveDocs");
                 }
             }
@@ -623,7 +622,7 @@ namespace Lucene.Net.Index
 #pragma warning restore 168
             {
                 // expected
-                Assert.IsTrue(ftdm.DidFail1 || ftdm.DidFail2);
+                Assert.IsTrue(ftdm.didFail1 || ftdm.didFail2);
             }
             TestUtil.CheckIndex(dir);
             ftdm.ClearDoFail();

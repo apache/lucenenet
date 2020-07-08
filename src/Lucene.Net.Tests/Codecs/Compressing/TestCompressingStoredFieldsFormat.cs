@@ -8,6 +8,23 @@ using Field = Lucene.Net.Documents.Field;
 
 namespace Lucene.Net.Codecs.Compressing
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BaseStoredFieldsFormatTestCase = Lucene.Net.Index.BaseStoredFieldsFormatTestCase;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -15,24 +32,6 @@ namespace Lucene.Net.Codecs.Compressing
     using FieldType = FieldType;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using Int32Field = Int32Field;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
 
@@ -93,12 +92,12 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class FieldAnonymousInnerClassHelper : Field
         {
-            private readonly TestCompressingStoredFieldsFormat OuterInstance;
+            private readonly TestCompressingStoredFieldsFormat outerInstance;
 
             public FieldAnonymousInnerClassHelper(TestCompressingStoredFieldsFormat outerInstance, FieldType fieldType)
                 : base("invalid", fieldType)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
         }
     }

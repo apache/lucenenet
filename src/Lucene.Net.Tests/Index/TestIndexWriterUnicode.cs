@@ -11,37 +11,36 @@ using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharsRef = Lucene.Net.Util.CharsRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
     [TestFixture]
     public class TestIndexWriterUnicode : LuceneTestCase
     {
-        internal readonly string[] Utf8Data = new string[] { "ab\udc17cd", "ab\ufffdcd", "\udc17abcd", "\ufffdabcd", "\udc17", "\ufffd", "ab\udc17\udc17cd", "ab\ufffd\ufffdcd", "\udc17\udc17abcd", "\ufffd\ufffdabcd", "\udc17\udc17", "\ufffd\ufffd", "ab\ud917cd", "ab\ufffdcd", "\ud917abcd", "\ufffdabcd", "\ud917", "\ufffd", "ab\ud917\ud917cd", "ab\ufffd\ufffdcd", "\ud917\ud917abcd", "\ufffd\ufffdabcd", "\ud917\ud917", "\ufffd\ufffd", "ab\udc17\ud917cd", "ab\ufffd\ufffdcd", "\udc17\ud917abcd", "\ufffd\ufffdabcd", "\udc17\ud917", "\ufffd\ufffd", "ab\udc17\ud917\udc17\ud917cd", "ab\ufffd\ud917\udc17\ufffdcd", "\udc17\ud917\udc17\ud917abcd", "\ufffd\ud917\udc17\ufffdabcd", "\udc17\ud917\udc17\ud917", "\ufffd\ud917\udc17\ufffd" };
+        internal readonly string[] utf8Data = new string[] { "ab\udc17cd", "ab\ufffdcd", "\udc17abcd", "\ufffdabcd", "\udc17", "\ufffd", "ab\udc17\udc17cd", "ab\ufffd\ufffdcd", "\udc17\udc17abcd", "\ufffd\ufffdabcd", "\udc17\udc17", "\ufffd\ufffd", "ab\ud917cd", "ab\ufffdcd", "\ud917abcd", "\ufffdabcd", "\ud917", "\ufffd", "ab\ud917\ud917cd", "ab\ufffd\ufffdcd", "\ud917\ud917abcd", "\ufffd\ufffdabcd", "\ud917\ud917", "\ufffd\ufffd", "ab\udc17\ud917cd", "ab\ufffd\ufffdcd", "\udc17\ud917abcd", "\ufffd\ufffdabcd", "\udc17\ud917", "\ufffd\ufffd", "ab\udc17\ud917\udc17\ud917cd", "ab\ufffd\ud917\udc17\ufffdcd", "\udc17\ud917\udc17\ud917abcd", "\ufffd\ud917\udc17\ufffdabcd", "\udc17\ud917\udc17\ud917", "\ufffd\ud917\udc17\ufffd" };
 
         private int NextInt(int lim)
         {
@@ -293,10 +292,10 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new TestIndexWriter.StringSplitAnalyzer()));
             Document doc = new Document();
 
-            int count = Utf8Data.Length / 2;
+            int count = utf8Data.Length / 2;
             for (int i = 0; i < count; i++)
             {
-                doc.Add(NewTextField("f" + i, Utf8Data[2 * i], Field.Store.YES));
+                doc.Add(NewTextField("f" + i, utf8Data[2 * i], Field.Store.YES));
             }
             w.AddDocument(doc);
             w.Dispose();
@@ -305,8 +304,8 @@ namespace Lucene.Net.Index
             Document doc2 = ir.Document(0);
             for (int i = 0; i < count; i++)
             {
-                Assert.AreEqual(1, ir.DocFreq(new Term("f" + i, Utf8Data[2 * i + 1])), "field " + i + " was not indexed correctly");
-                Assert.AreEqual(Utf8Data[2 * i + 1], doc2.GetField("f" + i).GetStringValue(), "field " + i + " is incorrect");
+                Assert.AreEqual(1, ir.DocFreq(new Term("f" + i, utf8Data[2 * i + 1])), "field " + i + " was not indexed correctly");
+                Assert.AreEqual(utf8Data[2 * i + 1], doc2.GetField("f" + i).GetStringValue(), "field " + i + " is incorrect");
             }
             ir.Dispose();
             dir.Dispose();

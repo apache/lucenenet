@@ -295,11 +295,11 @@ namespace Lucene.Net.Index
         // merging a segment with >= 20 (maxMergeDocs) docs
         private class MyMergeScheduler : MergeScheduler
         {
-            private readonly TestIndexWriterMerging OuterInstance;
+            private readonly TestIndexWriterMerging outerInstance;
 
             public MyMergeScheduler(TestIndexWriterMerging outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
@@ -431,18 +431,18 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestIndexWriterMerging OuterInstance;
+            private readonly TestIndexWriterMerging outerInstance;
 
-            private Document Doc;
-            private IndexWriter FinalWriter;
-            private List<Exception> Failure;
+            private Document doc;
+            private IndexWriter finalWriter;
+            private List<Exception> failure;
 
             public ThreadAnonymousInnerClassHelper(TestIndexWriterMerging outerInstance, Document doc, IndexWriter finalWriter, List<Exception> failure)
             {
-                this.OuterInstance = outerInstance;
-                this.Doc = doc;
-                this.FinalWriter = finalWriter;
-                this.Failure = failure;
+                this.outerInstance = outerInstance;
+                this.doc = doc;
+                this.finalWriter = finalWriter;
+                this.failure = failure;
             }
 
             public override void Run()
@@ -454,7 +454,7 @@ namespace Lucene.Net.Index
                     {
                         try
                         {
-                            FinalWriter.AddDocument(Doc);
+                            finalWriter.AddDocument(doc);
                         }
 #pragma warning disable 168
                         catch (ObjectDisposedException e)
@@ -473,7 +473,7 @@ namespace Lucene.Net.Index
                         catch (Exception e)
                         {
                             Console.WriteLine(e.StackTrace);
-                            Failure.Add(e);
+                            failure.Add(e);
                             done = true;
                             break;
                         }

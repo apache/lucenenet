@@ -1,33 +1,31 @@
-using System;
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
@@ -39,28 +37,28 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestExceedMaxTermLength : LuceneTestCase
     {
-        private static readonly int MinTestTermLength = IndexWriter.MAX_TERM_LENGTH + 1;
-        private static readonly int MaxTestTermLegnth = IndexWriter.MAX_TERM_LENGTH * 2;
+        private static readonly int minTestTermLength = IndexWriter.MAX_TERM_LENGTH + 1;
+        private static readonly int maxTestTermLegnth = IndexWriter.MAX_TERM_LENGTH * 2;
 
-        internal Directory Dir = null;
+        internal Directory dir = null;
 
         [SetUp]
         public virtual void CreateDir()
         {
-            Dir = NewDirectory();
+            dir = NewDirectory();
         }
 
         [TearDown]
         public virtual void DestroyDir()
         {
-            Dir.Dispose();
-            Dir = null;
+            dir.Dispose();
+            dir = null;
         }
 
         [Test]
         public virtual void Test()
         {
-            IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             try
             {
                 FieldType ft = new FieldType();
@@ -76,7 +74,7 @@ namespace Lucene.Net.Index
                 }
                 // problematic field
                 string name = TestUtil.RandomSimpleString(Random, 1, 50);
-                string value = TestUtil.RandomSimpleString(Random, MinTestTermLength, MaxTestTermLegnth);
+                string value = TestUtil.RandomSimpleString(Random, minTestTermLength, maxTestTermLegnth);
                 Field f = new Field(name, value, ft);
                 if (Random.NextBoolean())
                 {

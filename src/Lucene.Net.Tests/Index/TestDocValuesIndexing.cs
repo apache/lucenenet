@@ -11,21 +11,21 @@ using Assert = Lucene.Net.TestFramework.Assert;
 namespace Lucene.Net.Index
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BinaryDocValuesField = BinaryDocValuesField;
@@ -597,35 +597,35 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestDocValuesIndexing OuterInstance;
+            private readonly TestDocValuesIndexing outerInstance;
 
-            private IndexWriter w;
-            private CountdownEvent StartingGun;
-            private AtomicBoolean HitExc;
-            private Document Doc;
+            private readonly IndexWriter w;
+            private readonly CountdownEvent startingGun;
+            private readonly AtomicBoolean hitExc;
+            private readonly Document doc;
 
             public ThreadAnonymousInnerClassHelper(TestDocValuesIndexing outerInstance, IndexWriter w, CountdownEvent startingGun, AtomicBoolean hitExc, Document doc)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.w = w;
-                this.StartingGun = startingGun;
-                this.HitExc = hitExc;
-                this.Doc = doc;
+                this.startingGun = startingGun;
+                this.hitExc = hitExc;
+                this.doc = doc;
             }
 
             public override void Run()
             {
                 try
                 {
-                    StartingGun.Wait();
-                    w.AddDocument(Doc);
+                    startingGun.Wait();
+                    w.AddDocument(doc);
                 }
 #pragma warning disable 168
                 catch (System.ArgumentException iae)
 #pragma warning restore 168
                 {
                     // expected
-                    HitExc.Value = (true);
+                    hitExc.Value = (true);
                 }
                 catch (Exception e)
                 {

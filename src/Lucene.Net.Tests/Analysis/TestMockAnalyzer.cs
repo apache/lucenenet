@@ -8,6 +8,23 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
@@ -16,24 +33,6 @@ namespace Lucene.Net.Analysis
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using Field = Field;
     using Fields = Lucene.Net.Index.Fields;
@@ -168,25 +167,13 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestTooLongToken()
         {
-            Analyzer whitespace = new AnalyzerAnonymousInnerClassHelper(this);
-            AssertTokenStreamContents(whitespace.GetTokenStream("bogus", new StringReader("test 123 toolong ok ")), new string[] { "test", "123", "toolo", "ng", "ok" }, new int[] { 0, 5, 9, 14, 17 }, new int[] { 4, 8, 14, 16, 19 }, new int?(20));
-            AssertTokenStreamContents(whitespace.GetTokenStream("bogus", new StringReader("test 123 toolo")), new string[] { "test", "123", "toolo" }, new int[] { 0, 5, 9 }, new int[] { 4, 8, 14 }, new int?(14));
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestMockAnalyzer OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestMockAnalyzer outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer whitespace = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false, 5);
                 return new TokenStreamComponents(t, t);
-            }
+            });
+            AssertTokenStreamContents(whitespace.GetTokenStream("bogus", new StringReader("test 123 toolong ok ")), new string[] { "test", "123", "toolo", "ng", "ok" }, new int[] { 0, 5, 9, 14, 17 }, new int[] { 4, 8, 14, 16, 19 }, new int?(20));
+            AssertTokenStreamContents(whitespace.GetTokenStream("bogus", new StringReader("test 123 toolo")), new string[] { "test", "123", "toolo" }, new int[] { 0, 5, 9 }, new int[] { 4, 8, 14 }, new int?(14));
         }
 
         [Test]
@@ -237,32 +224,13 @@ namespace Lucene.Net.Analysis
                 CharacterRunAutomaton dfa = new CharacterRunAutomaton(AutomatonTestUtil.RandomAutomaton(Random));
                 bool lowercase = Random.NextBoolean();
                 int limit = TestUtil.NextInt32(Random, 0, 500);
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, dfa, lowercase, limit);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer t = new MockTokenizer(reader, dfa, lowercase, limit);
+                    return new TokenStreamComponents(t, t);
+                });
                 CheckRandomData(Random, a, 100);
                 a.Dispose();
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestMockAnalyzer OuterInstance;
-
-            private CharacterRunAutomaton Dfa;
-            private bool Lowercase;
-            private int Limit;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestMockAnalyzer outerInstance, CharacterRunAutomaton dfa, bool lowercase, int limit)
-            {
-                this.OuterInstance = outerInstance;
-                this.Dfa = dfa;
-                this.Lowercase = lowercase;
-                this.Limit = limit;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer t = new MockTokenizer(reader, Dfa, Lowercase, Limit);
-                return new TokenStreamComponents(t, t);
             }
         }
 
@@ -312,14 +280,14 @@ namespace Lucene.Net.Analysis
 
         private class AnalyzerWrapperAnonymousInnerClassHelper : AnalyzerWrapper
         {
-            private readonly TestMockAnalyzer OuterInstance;
+            private readonly TestMockAnalyzer outerInstance;
 
             private Analyzer @delegate;
 
             public AnalyzerWrapperAnonymousInnerClassHelper(TestMockAnalyzer outerInstance, ReuseStrategy getReuseStrategy, Analyzer @delegate)
                 : base(getReuseStrategy)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.@delegate = @delegate;
             }
 
@@ -385,18 +353,18 @@ namespace Lucene.Net.Analysis
 
         private class AnalyzerWrapperAnonymousInnerClassHelper2 : AnalyzerWrapper
         {
-            private readonly TestMockAnalyzer OuterInstance;
+            private readonly TestMockAnalyzer outerInstance;
 
-            private int PositionGap;
-            private int OffsetGap;
+            private int positionGap;
+            private int offsetGap;
             private Analyzer @delegate;
 
             public AnalyzerWrapperAnonymousInnerClassHelper2(TestMockAnalyzer outerInstance, ReuseStrategy getReuseStrategy, int positionGap, int offsetGap, Analyzer @delegate)
                 : base(getReuseStrategy)
             {
-                this.OuterInstance = outerInstance;
-                this.PositionGap = positionGap;
-                this.OffsetGap = offsetGap;
+                this.outerInstance = outerInstance;
+                this.positionGap = positionGap;
+                this.offsetGap = offsetGap;
                 this.@delegate = @delegate;
             }
 
@@ -407,12 +375,12 @@ namespace Lucene.Net.Analysis
 
             public override int GetPositionIncrementGap(string fieldName)
             {
-                return PositionGap;
+                return positionGap;
             }
 
             public override int GetOffsetGap(string fieldName)
             {
-                return OffsetGap;
+                return offsetGap;
             }
         }
     }

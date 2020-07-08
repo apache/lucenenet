@@ -41,26 +41,26 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestDocumentWriter : LuceneTestCase
     {
-        private Directory Dir;
+        private Directory dir;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewDirectory();
+            dir = NewDirectory();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Dir.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
         [Test]
         public virtual void Test()
         {
-            Assert.IsTrue(Dir != null);
+            Assert.IsTrue(dir != null);
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
         {
             Document testDoc = new Document();
             DocHelper.SetupDoc(testDoc);
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer.AddDocument(testDoc);
             writer.Commit();
             SegmentCommitInfo info = writer.NewestSegment();
@@ -117,9 +117,9 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestPositionIncrementGap()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
+            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
 
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 
             Document doc = new Document();
             doc.Add(NewTextField("repeated", "repeated one", Field.Store.YES));
@@ -142,13 +142,6 @@ namespace Lucene.Net.Index
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
         {
-            private readonly TestDocumentWriter OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestDocumentWriter outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, false));
@@ -165,7 +158,7 @@ namespace Lucene.Net.Index
         {
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this);
 
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
 
             Document doc = new Document();
             doc.Add(NewTextField("f1", "a 5 a a", Field.Store.YES));
@@ -191,11 +184,11 @@ namespace Lucene.Net.Index
 
         private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
         {
-            private readonly TestDocumentWriter OuterInstance;
+            private readonly TestDocumentWriter outerInstance;
 
             public AnalyzerAnonymousInnerClassHelper2(TestDocumentWriter outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
@@ -206,12 +199,12 @@ namespace Lucene.Net.Index
 
             private class TokenFilterAnonymousInnerClassHelper : TokenFilter
             {
-                private readonly AnalyzerAnonymousInnerClassHelper2 OuterInstance;
+                private readonly AnalyzerAnonymousInnerClassHelper2 outerInstance;
 
                 public TokenFilterAnonymousInnerClassHelper(AnalyzerAnonymousInnerClassHelper2 outerInstance, Tokenizer tokenizer)
                     : base(tokenizer)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                     first = true;
                     termAtt = AddAttribute<ICharTermAttribute>();
                     payloadAtt = AddAttribute<IPayloadAttribute>();
@@ -270,7 +263,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestPreAnalyzedField()
         {
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             Document doc = new Document();
 
             doc.Add(new TextField("preanalyzed", new TokenStreamAnonymousInnerClassHelper(this)));
@@ -301,11 +294,11 @@ namespace Lucene.Net.Index
 
         private class TokenStreamAnonymousInnerClassHelper : TokenStream
         {
-            private readonly TestDocumentWriter OuterInstance;
+            private readonly TestDocumentWriter outerInstance;
 
             public TokenStreamAnonymousInnerClassHelper(TestDocumentWriter outerInstance) 
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 tokens = new string[] { "term1", "term2", "term3", "term2" };
                 index = 0;
                 termAtt = AddAttribute<ICharTermAttribute>();
@@ -350,13 +343,13 @@ namespace Lucene.Net.Index
             doc.Add(NewField("f2", "v1", customType2));
             doc.Add(NewStringField("f2", "v2", Field.Store.YES));
 
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer.AddDocument(doc);
             writer.Dispose();
 
-            TestUtil.CheckIndex(Dir);
+            TestUtil.CheckIndex(dir);
 
-            IndexReader reader = DirectoryReader.Open(Dir);
+            IndexReader reader = DirectoryReader.Open(dir);
             // f1
             Terms tfv1 = reader.GetTermVectors(0).GetTerms("f1");
             Assert.IsNotNull(tfv1);
@@ -391,14 +384,14 @@ namespace Lucene.Net.Index
             doc.Add(f);
             doc.Add(NewField("f2", "v2", customType2));
 
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
             writer.AddDocument(doc);
             writer.ForceMerge(1); // be sure to have a single segment
             writer.Dispose();
 
-            TestUtil.CheckIndex(Dir);
+            TestUtil.CheckIndex(dir);
 
-            SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(Dir));
+            SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(dir));
             FieldInfos fi = reader.FieldInfos;
             // f1
             Assert.IsFalse(fi.FieldInfo("f1").HasNorms, "f1 should have no norms");

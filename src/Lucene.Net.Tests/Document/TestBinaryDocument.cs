@@ -36,16 +36,16 @@ namespace Lucene.Net.Documents
     [TestFixture]
     public class TestBinaryDocument : LuceneTestCase
     {
-        internal string BinaryValStored = "this text will be stored as a byte array in the index";
-        internal string BinaryValCompressed = "this text will be also stored and compressed as a byte array in the index";
+        internal string binaryValStored = "this text will be stored as a byte array in the index";
+        internal string binaryValCompressed = "this text will be also stored and compressed as a byte array in the index";
 
         [Test]
         public virtual void TestBinaryFieldInIndex()
         {
             FieldType ft = new FieldType();
             ft.IsStored = true;
-            IIndexableField binaryFldStored = new StoredField("binaryStored", System.Text.UTF8Encoding.UTF8.GetBytes(BinaryValStored));
-            IIndexableField stringFldStored = new Field("stringStored", BinaryValStored, ft);
+            IIndexableField binaryFldStored = new StoredField("binaryStored", Encoding.UTF8.GetBytes(binaryValStored));
+            IIndexableField stringFldStored = new Field("stringStored", binaryValStored, ft);
 
             Documents.Document doc = new Documents.Document();
 
@@ -81,12 +81,12 @@ namespace Lucene.Net.Documents
 
             string binaryFldStoredTest = Encoding.UTF8.GetString(bytes.Bytes).Substring(bytes.Offset, bytes.Length);
             //new string(bytes.Bytes, bytes.Offset, bytes.Length, IOUtils.CHARSET_UTF_8);
-            Assert.IsTrue(binaryFldStoredTest.Equals(BinaryValStored, StringComparison.Ordinal));
+            Assert.IsTrue(binaryFldStoredTest.Equals(binaryValStored, StringComparison.Ordinal));
 
             /// <summary>
             /// fetch the string field and compare it's content with the original one </summary>
             string stringFldStoredTest = docFromReader.Get("stringStored");
-            Assert.IsTrue(stringFldStoredTest.Equals(BinaryValStored, StringComparison.Ordinal));
+            Assert.IsTrue(stringFldStoredTest.Equals(binaryValStored, StringComparison.Ordinal));
 
             writer.Dispose();
             reader.Dispose();
@@ -96,8 +96,8 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestCompressionTools()
         {
-            IIndexableField binaryFldCompressed = new StoredField("binaryCompressed", CompressionTools.Compress(BinaryValCompressed.GetBytes(Encoding.UTF8)));
-            IIndexableField stringFldCompressed = new StoredField("stringCompressed", CompressionTools.CompressString(BinaryValCompressed));
+            IIndexableField binaryFldCompressed = new StoredField("binaryCompressed", CompressionTools.Compress(binaryValCompressed.GetBytes(Encoding.UTF8)));
+            IIndexableField stringFldCompressed = new StoredField("stringCompressed", CompressionTools.CompressString(binaryValCompressed));
 
             var doc = new Documents.Document {binaryFldCompressed, stringFldCompressed};
 
@@ -119,10 +119,10 @@ namespace Lucene.Net.Documents
                         Encoding.UTF8.GetString(
                             CompressionTools.Decompress(docFromReader.GetBinaryValue("binaryCompressed")));
                     //new string(CompressionTools.Decompress(docFromReader.GetBinaryValue("binaryCompressed")), IOUtils.CHARSET_UTF_8);
-                    Assert.IsTrue(binaryFldCompressedTest.Equals(BinaryValCompressed, StringComparison.Ordinal));
+                    Assert.IsTrue(binaryFldCompressedTest.Equals(binaryValCompressed, StringComparison.Ordinal));
                     Assert.IsTrue(
                         CompressionTools.DecompressString(docFromReader.GetBinaryValue("stringCompressed"))
-                            .Equals(BinaryValCompressed, StringComparison.Ordinal));
+                            .Equals(binaryValCompressed, StringComparison.Ordinal));
                 }
 
             }

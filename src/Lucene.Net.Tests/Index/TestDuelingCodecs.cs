@@ -7,30 +7,29 @@ using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NumericDocValuesField = NumericDocValuesField;
     using SortedSetDocValuesField = SortedSetDocValuesField;
@@ -42,15 +41,15 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestDuelingCodecs : LuceneTestCase
     {
-        private Directory LeftDir;
-        private IndexReader LeftReader;
-        private Codec LeftCodec;
+        private Directory leftDir;
+        private IndexReader leftReader;
+        private Codec leftCodec;
 
-        private Directory RightDir;
-        private IndexReader RightReader;
-        private Codec RightCodec;
+        private Directory rightDir;
+        private IndexReader rightReader;
+        private Codec rightCodec;
 
-        private string Info; // for debugging
+        private string info; // for debugging
 
         [SetUp]
         public override void SetUp()
@@ -61,11 +60,11 @@ namespace Lucene.Net.Index
             // as this gives the best overall coverage. when we have more
             // codecs we should probably pick 2 from Codec.availableCodecs()
 
-            LeftCodec = Codec.ForName("SimpleText");
-            RightCodec = new RandomCodec(Random);
+            leftCodec = Codec.ForName("SimpleText");
+            rightCodec = new RandomCodec(Random);
 
-            LeftDir = NewDirectory();
-            RightDir = NewDirectory();
+            leftDir = NewDirectory();
+            rightDir = NewDirectory();
 
             long seed = Random.Next();
 
@@ -79,54 +78,54 @@ namespace Lucene.Net.Index
             // but these can be different
             // TODO: this turns this into a really big test of Multi*, is that what we want?
             IndexWriterConfig leftConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, leftAnalyzer);
-            leftConfig.SetCodec(LeftCodec);
+            leftConfig.SetCodec(leftCodec);
             // preserve docids
             leftConfig.SetMergePolicy(NewLogMergePolicy());
 
             IndexWriterConfig rightConfig = NewIndexWriterConfig(TEST_VERSION_CURRENT, rightAnalyzer);
-            rightConfig.SetCodec(RightCodec);
+            rightConfig.SetCodec(rightCodec);
             // preserve docids
             rightConfig.SetMergePolicy(NewLogMergePolicy());
 
             // must use same seed because of random docvalues fields, etc
-            RandomIndexWriter leftWriter = new RandomIndexWriter(new Random((int)seed), LeftDir, leftConfig);
-            RandomIndexWriter rightWriter = new RandomIndexWriter(new Random((int)seed), RightDir, rightConfig);
+            RandomIndexWriter leftWriter = new RandomIndexWriter(new Random((int)seed), leftDir, leftConfig);
+            RandomIndexWriter rightWriter = new RandomIndexWriter(new Random((int)seed), rightDir, rightConfig);
 
             int numdocs = AtLeast(100);
             CreateRandomIndex(numdocs, leftWriter, seed);
             CreateRandomIndex(numdocs, rightWriter, seed);
 
-            LeftReader = MaybeWrapReader(leftWriter.GetReader());
+            leftReader = MaybeWrapReader(leftWriter.GetReader());
             leftWriter.Dispose();
-            RightReader = MaybeWrapReader(rightWriter.GetReader());
+            rightReader = MaybeWrapReader(rightWriter.GetReader());
             rightWriter.Dispose();
 
             // check that our readers are valid
-            TestUtil.CheckReader(LeftReader);
-            TestUtil.CheckReader(RightReader);
+            TestUtil.CheckReader(leftReader);
+            TestUtil.CheckReader(rightReader);
 
-            Info = "left: " + LeftCodec.ToString() + " / right: " + RightCodec.ToString();
+            info = "left: " + leftCodec.ToString() + " / right: " + rightCodec.ToString();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            if (LeftReader != null)
+            if (leftReader != null)
             {
-                LeftReader.Dispose();
+                leftReader.Dispose();
             }
-            if (RightReader != null)
+            if (rightReader != null)
             {
-                RightReader.Dispose();
+                rightReader.Dispose();
             }
 
-            if (LeftDir != null)
+            if (leftDir != null)
             {
-                LeftDir.Dispose();
+                leftDir.Dispose();
             }
-            if (RightDir != null)
+            if (rightDir != null)
             {
-                RightDir.Dispose();
+                rightDir.Dispose();
             }
 
             base.TearDown();
@@ -174,7 +173,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestEquals()
         {
-            AssertReaderEquals(Info, LeftReader, RightReader);
+            AssertReaderEquals(info, leftReader, rightReader);
         }
     }
 }

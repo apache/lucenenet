@@ -8,6 +8,23 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
@@ -22,24 +39,6 @@ namespace Lucene.Net.Codecs.Lucene3x
     using IOContext = Lucene.Net.Store.IOContext;
     using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using MultiFields = Lucene.Net.Index.MultiFields;
@@ -58,13 +57,13 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         private static int NUMBER_OF_DOCUMENTS;
         private static int NUMBER_OF_FIELDS;
-        private static TermInfosReaderIndex Index;
-        private static Directory Directory;
-        private static SegmentTermEnum TermEnum;
-        private static int IndexDivisor;
-        private static int TermIndexInterval;
-        private static IndexReader Reader;
-        private static IList<Term> SampleTerms;
+        private static TermInfosReaderIndex index;
+        private static Directory directory;
+        private static SegmentTermEnum termEnum;
+        private static int indexDivisor;
+        private static int termIndexInterval;
+        private static IndexReader reader;
+        private static IList<Term> sampleTerms;
 
         /// <summary>
         /// we will manually instantiate preflex-rw here
@@ -78,12 +77,12 @@ namespace Lucene.Net.Codecs.Lucene3x
             OldFormatImpersonationIsActive = true;
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetUseCompoundFile(false);
 
-            TermIndexInterval = config.TermIndexInterval;
-            IndexDivisor = TestUtil.NextInt32(Random, 1, 10);
+            termIndexInterval = config.TermIndexInterval;
+            indexDivisor = TestUtil.NextInt32(Random, 1, 10);
             NUMBER_OF_DOCUMENTS = AtLeast(100);
-            NUMBER_OF_FIELDS = AtLeast(Math.Max(10, 3 * TermIndexInterval * IndexDivisor / NUMBER_OF_DOCUMENTS));
+            NUMBER_OF_FIELDS = AtLeast(Math.Max(10, 3 * termIndexInterval * indexDivisor / NUMBER_OF_DOCUMENTS));
 
-            Directory = NewDirectory();
+            directory = NewDirectory();
 
             config.SetCodec(new PreFlexRWCodec());
             LogMergePolicy mp = NewLogMergePolicy();
@@ -91,41 +90,41 @@ namespace Lucene.Net.Codecs.Lucene3x
             mp.NoCFSRatio = 0.0;
             config.SetMergePolicy(mp);
 
-            Populate(Directory, config);
+            Populate(directory, config);
 
-            DirectoryReader r0 = IndexReader.Open(Directory);
+            DirectoryReader r0 = IndexReader.Open(directory);
             SegmentReader r = LuceneTestCase.GetOnlySegmentReader(r0);
             string segment = r.SegmentName;
             r.Dispose();
 
             FieldInfosReader infosReader = (new PreFlexRWCodec()).FieldInfosFormat.FieldInfosReader;
-            FieldInfos fieldInfos = infosReader.Read(Directory, segment, "", IOContext.READ_ONCE);
+            FieldInfos fieldInfos = infosReader.Read(directory, segment, "", IOContext.READ_ONCE);
             string segmentFileName = IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
-            long tiiFileLength = Directory.FileLength(segmentFileName);
-            IndexInput input = Directory.OpenInput(segmentFileName, NewIOContext(Random));
-            TermEnum = new SegmentTermEnum(Directory.OpenInput(IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_EXTENSION), NewIOContext(Random)), fieldInfos, false);
-            int totalIndexInterval = TermEnum.indexInterval * IndexDivisor;
+            long tiiFileLength = directory.FileLength(segmentFileName);
+            IndexInput input = directory.OpenInput(segmentFileName, NewIOContext(Random));
+            termEnum = new SegmentTermEnum(directory.OpenInput(IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_EXTENSION), NewIOContext(Random)), fieldInfos, false);
+            int totalIndexInterval = termEnum.indexInterval * indexDivisor;
 
             SegmentTermEnum indexEnum = new SegmentTermEnum(input, fieldInfos, true);
-            Index = new TermInfosReaderIndex(indexEnum, IndexDivisor, tiiFileLength, totalIndexInterval);
+            index = new TermInfosReaderIndex(indexEnum, indexDivisor, tiiFileLength, totalIndexInterval);
             indexEnum.Dispose();
             input.Dispose();
 
-            Reader = IndexReader.Open(Directory);
-            SampleTerms = Sample(Random, Reader, 1000);
+            reader = IndexReader.Open(directory);
+            sampleTerms = Sample(Random, reader, 1000);
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            TermEnum.Dispose();
-            Reader.Dispose();
-            Directory.Dispose();
-            TermEnum = null;
-            Reader = null;
-            Directory = null;
-            Index = null;
-            SampleTerms = null;
+            termEnum.Dispose();
+            reader.Dispose();
+            directory.Dispose();
+            termEnum = null;
+            reader = null;
+            directory = null;
+            index = null;
+            sampleTerms = null;
             base.AfterClass();
         }
 
@@ -133,10 +132,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         public virtual void TestSeekEnum()
         {
             int indexPosition = 3;
-            SegmentTermEnum clone = (SegmentTermEnum)TermEnum.Clone();
+            SegmentTermEnum clone = (SegmentTermEnum)termEnum.Clone();
             Term term = FindTermThatWouldBeAtIndex(clone, indexPosition);
             SegmentTermEnum enumerator = clone;
-            Index.SeekEnum(enumerator, indexPosition);
+            index.SeekEnum(enumerator, indexPosition);
             Assert.AreEqual(term, enumerator.Term());
             clone.Dispose();
         }
@@ -145,19 +144,19 @@ namespace Lucene.Net.Codecs.Lucene3x
         public virtual void TestCompareTo()
         {
             Term term = new Term("field" + Random.Next(NUMBER_OF_FIELDS), Text);
-            for (int i = 0; i < Index.Length; i++)
+            for (int i = 0; i < index.Length; i++)
             {
-                Term t = Index.GetTerm(i);
+                Term t = index.GetTerm(i);
                 int compareTo = term.CompareTo(t);
-                Assert.AreEqual(compareTo, Index.CompareTo(term, i));
+                Assert.AreEqual(compareTo, index.CompareTo(term, i));
             }
         }
 
         [Test]
         public virtual void TestRandomSearchPerformance()
         {
-            IndexSearcher searcher = new IndexSearcher(Reader);
-            foreach (Term t in SampleTerms)
+            IndexSearcher searcher = new IndexSearcher(reader);
+            foreach (Term t in sampleTerms)
             {
                 TermQuery query = new TermQuery(t);
                 TopDocs topDocs = searcher.Search(query, 10);
@@ -193,7 +192,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private Term FindTermThatWouldBeAtIndex(SegmentTermEnum termEnum, int index)
         {
-            int termPosition = index * TermIndexInterval * IndexDivisor;
+            int termPosition = index * termIndexInterval * indexDivisor;
             for (int i = 0; i < termPosition; i++)
             {
                 // TODO: this test just uses random terms, so this is always possible

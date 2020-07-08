@@ -157,22 +157,22 @@ namespace Lucene.Net.Index
         }
         */
 
-        internal static readonly string[] OldNames = new string[] {
+        internal static readonly string[] oldNames = new string[] {
             "40.cfs", "40.nocfs", "41.cfs", "41.nocfs", "42.cfs",
             "42.nocfs", "45.cfs", "45.nocfs", "461.cfs", "461.nocfs"
         };
 
-        internal readonly string[] UnsupportedNames = new string[] {
+        internal readonly string[] unsupportedNames = new string[] {
             "19.cfs", "19.nocfs", "20.cfs", "20.nocfs", "21.cfs",
             "21.nocfs", "22.cfs", "22.nocfs", "23.cfs", "23.nocfs",
             "24.cfs", "24.nocfs", "29.cfs", "29.nocfs"
         };
 
-        internal static readonly string[] OldSingleSegmentNames = new string[] {
+        internal static readonly string[] oldSingleSegmentNames = new string[] {
             "40.optimized.cfs", "40.optimized.nocfs"
         };
 
-        internal static IDictionary<string, Directory> OldIndexDirs;
+        internal static IDictionary<string, Directory> oldIndexDirs;
 
         /// <summary>
         /// Randomizes the use of some of hte constructor variations
@@ -202,10 +202,10 @@ namespace Lucene.Net.Index
             base.BeforeClass();
 
             Assert.IsFalse(OldFormatImpersonationIsActive, "test infra is broken!");
-            List<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
-            names.AddRange(OldNames);
-            names.AddRange(OldSingleSegmentNames);
-            OldIndexDirs = new Dictionary<string, Directory>();
+            List<string> names = new List<string>(oldNames.Length + oldSingleSegmentNames.Length);
+            names.AddRange(oldNames);
+            names.AddRange(oldSingleSegmentNames);
+            oldIndexDirs = new Dictionary<string, Directory>();
             foreach (string name in names)
             {
                 DirectoryInfo dir = CreateTempDir(name);
@@ -213,18 +213,18 @@ namespace Lucene.Net.Index
                 {
                     TestUtil.Unzip(zipFileStream, dir);
                 }
-                OldIndexDirs[name] = NewFSDirectory(dir);
+                oldIndexDirs[name] = NewFSDirectory(dir);
             }
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            foreach (Directory d in OldIndexDirs.Values)
+            foreach (Directory d in oldIndexDirs.Values)
             {
                 d.Dispose();
             }
-            OldIndexDirs = null;
+            oldIndexDirs = null;
             base.AfterClass();
         }
 
@@ -233,14 +233,14 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestUnsupportedOldIndexes()
         {
-            for (int i = 0; i < UnsupportedNames.Length; i++)
+            for (int i = 0; i < unsupportedNames.Length; i++)
             {
                 if (VERBOSE)
                 {
-                    Console.WriteLine("TEST: index " + UnsupportedNames[i]);
+                    Console.WriteLine("TEST: index " + unsupportedNames[i]);
                 }
-                DirectoryInfo oldIndxeDir = CreateTempDir(UnsupportedNames[i]);
-                using (Stream dataFile = GetDataFile("unsupported." + UnsupportedNames[i] + ".zip"))
+                DirectoryInfo oldIndxeDir = CreateTempDir(unsupportedNames[i]);
+                using (Stream dataFile = GetDataFile("unsupported." + unsupportedNames[i] + ".zip"))
                 {
                     TestUtil.Unzip(dataFile, oldIndxeDir);
                 }
@@ -253,7 +253,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     reader = DirectoryReader.Open(dir);
-                    Assert.Fail("DirectoryReader.open should not pass for " + UnsupportedNames[i]);
+                    Assert.Fail("DirectoryReader.open should not pass for " + unsupportedNames[i]);
                 }
 #pragma warning disable 168
                 catch (IndexFormatTooOldException e)
@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-                    Assert.Fail("IndexWriter creation should not pass for " + UnsupportedNames[i]);
+                    Assert.Fail("IndexWriter creation should not pass for " + unsupportedNames[i]);
                 }
                 catch (IndexFormatTooOldException e)
                 {
@@ -319,13 +319,13 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestFullyMergeOldIndex()
         {
-            foreach (string name in OldNames)
+            foreach (string name in oldNames)
             {
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: index=" + name);
                 }
-                Directory dir = NewDirectory(OldIndexDirs[name]);
+                Directory dir = NewDirectory(oldIndexDirs[name]);
                 IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                 w.ForceMerge(1);
                 w.Dispose();
@@ -337,7 +337,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestAddOldIndexes()
         {
-            foreach (string name in OldNames)
+            foreach (string name in oldNames)
             {
                 if (VERBOSE)
                 {
@@ -345,7 +345,7 @@ namespace Lucene.Net.Index
                 }
                 Directory targetDir = NewDirectory();
                 IndexWriter w = new IndexWriter(targetDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-                w.AddIndexes(OldIndexDirs[name]);
+                w.AddIndexes(oldIndexDirs[name]);
                 if (VERBOSE)
                 {
                     Console.WriteLine("\nTEST: done adding indices; now close");
@@ -359,9 +359,9 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestAddOldIndexesReader()
         {
-            foreach (string name in OldNames)
+            foreach (string name in oldNames)
             {
-                IndexReader reader = DirectoryReader.Open(OldIndexDirs[name]);
+                IndexReader reader = DirectoryReader.Open(oldIndexDirs[name]);
 
                 Directory targetDir = NewDirectory();
                 IndexWriter w = new IndexWriter(targetDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
@@ -376,18 +376,18 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestSearchOldIndex()
         {
-            foreach (string name in OldNames)
+            foreach (string name in oldNames)
             {
-                SearchIndex(OldIndexDirs[name], name);
+                SearchIndex(oldIndexDirs[name], name);
             }
         }
 
         [Test]
         public virtual void TestIndexOldIndexNoAdds()
         {
-            foreach (string name in OldNames)
+            foreach (string name in oldNames)
             {
-                Directory dir = NewDirectory(OldIndexDirs[name]);
+                Directory dir = NewDirectory(oldIndexDirs[name]);
                 ChangeIndexNoAdds(Random, dir);
                 dir.Dispose();
             }
@@ -396,13 +396,13 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestIndexOldIndex()
         {
-            foreach (string name in OldNames)
+            foreach (string name in oldNames)
             {
                 if (VERBOSE)
                 {
                     Console.WriteLine("TEST: oldName=" + name);
                 }
-                Directory dir = NewDirectory(OldIndexDirs[name]);
+                Directory dir = NewDirectory(oldIndexDirs[name]);
                 ChangeIndexWithAdds(Random, dir, name);
                 dir.Dispose();
             }
@@ -774,9 +774,9 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestNextIntoWrongField()
         {
-            foreach (string name in OldNames)
+            foreach (string name in oldNames)
             {
-                Directory dir = OldIndexDirs[name];
+                Directory dir = oldIndexDirs[name];
                 IndexReader r = DirectoryReader.Open(dir);
                 TermsEnum terms = MultiFields.GetFields(r).GetTerms("content").GetIterator(null);
                 BytesRef t = terms.Next();
@@ -837,9 +837,9 @@ namespace Lucene.Net.Index
             IComparer<string> comparer = StringHelper.VersionComparer;
 
             // now check all the old indexes, their version should be < the current version
-            foreach (string name in OldNames)
+            foreach (string name in oldNames)
             {
-                Directory dir = OldIndexDirs[name];
+                Directory dir = oldIndexDirs[name];
                 DirectoryReader r = DirectoryReader.Open(dir);
                 foreach (AtomicReaderContext context in r.Leaves)
                 {
@@ -855,10 +855,10 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestNumericFields()
         {
-            foreach (string name in OldNames)
+            foreach (string name in oldNames)
             {
 
-                Directory dir = OldIndexDirs[name];
+                Directory dir = oldIndexDirs[name];
                 IndexReader reader = DirectoryReader.Open(dir);
                 IndexSearcher searcher = NewSearcher(reader);
 
@@ -927,16 +927,16 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestUpgradeOldIndex()
         {
-            List<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
-            names.AddRange(OldNames);
-            names.AddRange(OldSingleSegmentNames);
+            List<string> names = new List<string>(oldNames.Length + oldSingleSegmentNames.Length);
+            names.AddRange(oldNames);
+            names.AddRange(oldSingleSegmentNames);
             foreach (string name in names)
             {
                 if (VERBOSE)
                 {
                     Console.WriteLine("testUpgradeOldIndex: index=" + name);
                 }
-                Directory dir = NewDirectory(OldIndexDirs[name]);
+                Directory dir = NewDirectory(oldIndexDirs[name]);
 
                 NewIndexUpgrader(dir).Upgrade();
 
@@ -950,7 +950,7 @@ namespace Lucene.Net.Index
         public virtual void TestCommandLineArgs()
         {
 
-            foreach (string name in OldIndexDirs.Keys)
+            foreach (string name in oldIndexDirs.Keys)
             {
                 DirectoryInfo dir = CreateTempDir(name);
                 using (Stream dataFile = this.GetType().FindAndGetManifestResourceStream("index." + name + ".zip"))
@@ -1008,13 +1008,13 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestUpgradeOldSingleSegmentIndexWithAdditions()
         {
-            foreach (string name in OldSingleSegmentNames)
+            foreach (string name in oldSingleSegmentNames)
             {
                 if (VERBOSE)
                 {
                     Console.WriteLine("testUpgradeOldSingleSegmentIndexWithAdditions: index=" + name);
                 }
-                Directory dir = NewDirectory(OldIndexDirs[name]);
+                Directory dir = NewDirectory(oldIndexDirs[name]);
 
                 Assert.AreEqual(1, GetNumberOfSegments(dir), "Original index must be single segment");
 

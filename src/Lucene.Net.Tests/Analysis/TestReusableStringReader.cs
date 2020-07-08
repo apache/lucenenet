@@ -1,11 +1,10 @@
 using System.Text;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
+using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
 namespace Lucene.Net.Analysis
 {
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with

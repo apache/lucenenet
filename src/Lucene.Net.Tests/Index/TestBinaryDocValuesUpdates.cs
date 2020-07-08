@@ -22,6 +22,23 @@ using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AssertingDocValuesFormat = Lucene.Net.Codecs.Asserting.AssertingDocValuesFormat;
     using BinaryDocValuesField = BinaryDocValuesField;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -46,23 +63,6 @@ namespace Lucene.Net.Index
     using Store = Field.Store;
     using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
 
     [SuppressCodecs("Appending", "Lucene3x", "Lucene40", "Lucene41", "Lucene42", "Lucene45")]
     [TestFixture]
@@ -706,11 +706,11 @@ namespace Lucene.Net.Index
 
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
-            private readonly TestBinaryDocValuesUpdates OuterInstance;
+            private readonly TestBinaryDocValuesUpdates outerInstance;
 
             public Lucene46CodecAnonymousInnerClassHelper(TestBinaryDocValuesUpdates outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override DocValuesFormat GetDocValuesFormatForField(string field)
@@ -1287,25 +1287,25 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestBinaryDocValuesUpdates OuterInstance;
+            private readonly TestBinaryDocValuesUpdates outerInstance;
 
-            private IndexWriter Writer;
-            private int NumDocs;
-            private CountdownEvent Done;
-            private AtomicInt32 NumUpdates;
-            private string f;
-            private string Cf;
+            private readonly IndexWriter writer;
+            private readonly int numDocs;
+            private readonly CountdownEvent done;
+            private readonly AtomicInt32 numUpdates;
+            private readonly string f;
+            private readonly string cf;
 
             public ThreadAnonymousInnerClassHelper(TestBinaryDocValuesUpdates outerInstance, string str, IndexWriter writer, int numDocs, CountdownEvent done, AtomicInt32 numUpdates, string f, string cf)
                 : base(str)
             {
-                this.OuterInstance = outerInstance;
-                this.Writer = writer;
-                this.NumDocs = numDocs;
-                this.Done = done;
-                this.NumUpdates = numUpdates;
+                this.outerInstance = outerInstance;
+                this.writer = writer;
+                this.numDocs = numDocs;
+                this.done = done;
+                this.numUpdates = numUpdates;
                 this.f = f;
-                this.Cf = cf;
+                this.cf = cf;
             }
 
             public override void Run()
@@ -1315,7 +1315,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     Random random = Random;
-                    while (NumUpdates.GetAndDecrement() > 0)
+                    while (numUpdates.GetAndDecrement() > 0)
                     {
                         double group = random.NextDouble();
                         Term t;
@@ -1338,28 +1338,28 @@ namespace Lucene.Net.Index
                         //              System.out.println("[" + Thread.currentThread().getName() + "] numUpdates=" + numUpdates + " updateTerm=" + t);
                         if (random.NextBoolean()) // sometimes unset a value
                         {
-                            Writer.UpdateBinaryDocValue(t, f, null);
-                            Writer.UpdateBinaryDocValue(t, Cf, null);
+                            writer.UpdateBinaryDocValue(t, f, null);
+                            writer.UpdateBinaryDocValue(t, cf, null);
                         }
                         else
                         {
                             long updValue = random.Next();
-                            Writer.UpdateBinaryDocValue(t, f, ToBytes(updValue));
-                            Writer.UpdateBinaryDocValue(t, Cf, ToBytes(updValue * 2));
+                            writer.UpdateBinaryDocValue(t, f, ToBytes(updValue));
+                            writer.UpdateBinaryDocValue(t, cf, ToBytes(updValue * 2));
                         }
 
                         if (random.NextDouble() < 0.2)
                         {
                             // delete a random document
-                            int doc = random.Next(NumDocs);
+                            int doc = random.Next(numDocs);
                             //                System.out.println("[" + Thread.currentThread().getName() + "] deleteDoc=doc" + doc);
-                            Writer.DeleteDocuments(new Term("id", "doc" + doc));
+                            writer.DeleteDocuments(new Term("id", "doc" + doc));
                         }
 
                         if (random.NextDouble() < 0.05) // commit every 20 updates on average
                         {
                             //                  System.out.println("[" + Thread.currentThread().getName() + "] commit");
-                            Writer.Commit();
+                            writer.Commit();
                         }
 
                         if (random.NextDouble() < 0.1) // reopen NRT reader (apply updates), on average once every 10 updates
@@ -1367,12 +1367,12 @@ namespace Lucene.Net.Index
                             if (reader == null)
                             {
                                 //                  System.out.println("[" + Thread.currentThread().getName() + "] open NRT");
-                                reader = DirectoryReader.Open(Writer, true);
+                                reader = DirectoryReader.Open(writer, true);
                             }
                             else
                             {
                                 //                  System.out.println("[" + Thread.currentThread().getName() + "] reopen NRT");
-                                DirectoryReader r2 = DirectoryReader.OpenIfChanged(reader, Writer, true);
+                                DirectoryReader r2 = DirectoryReader.OpenIfChanged(reader, writer, true);
                                 if (r2 != null)
                                 {
                                     reader.Dispose();
@@ -1404,7 +1404,7 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    Done.Signal();
+                    done.Signal();
                 }
             }
         }
@@ -1495,11 +1495,11 @@ namespace Lucene.Net.Index
 
         private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
         {
-            private readonly TestBinaryDocValuesUpdates OuterInstance;
+            private readonly TestBinaryDocValuesUpdates outerInstance;
 
             public Lucene46CodecAnonymousInnerClassHelper2(TestBinaryDocValuesUpdates outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override DocValuesFormat GetDocValuesFormatForField(string field)
@@ -1510,11 +1510,11 @@ namespace Lucene.Net.Index
 
         private class Lucene46CodecAnonymousInnerClassHelper3 : Lucene46Codec
         {
-            private readonly TestBinaryDocValuesUpdates OuterInstance;
+            private readonly TestBinaryDocValuesUpdates outerInstance;
 
             public Lucene46CodecAnonymousInnerClassHelper3(TestBinaryDocValuesUpdates outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override DocValuesFormat GetDocValuesFormatForField(string field)

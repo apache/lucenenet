@@ -1,4 +1,3 @@
-using Lucene.Net.Attributes;
 using NUnit.Framework;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -21,7 +20,6 @@ namespace Lucene.Net.Codecs.Lucene3x
      */
 
     using BaseStoredFieldsFormatTestCase = Lucene.Net.Index.BaseStoredFieldsFormatTestCase;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     [TestFixture]
     public class TestLucene3xStoredFieldsFormat : BaseStoredFieldsFormatTestCase

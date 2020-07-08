@@ -14,30 +14,29 @@ using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
@@ -138,20 +137,20 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestBagOfPostings OuterInstance;
+            private readonly TestBagOfPostings outerInstance;
 
-            private int MaxTermsPerDoc;
-            private ConcurrentQueue<string> Postings;
-            private RandomIndexWriter Iw;
-            private CountdownEvent StartingGun;
+            private readonly int maxTermsPerDoc;
+            private readonly ConcurrentQueue<string> postings;
+            private readonly RandomIndexWriter iw;
+            private readonly CountdownEvent startingGun;
 
             public ThreadAnonymousInnerClassHelper(TestBagOfPostings outerInstance, int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountdownEvent startingGun)
             {
-                this.OuterInstance = outerInstance;
-                this.MaxTermsPerDoc = maxTermsPerDoc;
-                this.Postings = postings;
-                this.Iw = iw;
-                this.StartingGun = startingGun;
+                this.outerInstance = outerInstance;
+                this.maxTermsPerDoc = maxTermsPerDoc;
+                this.postings = postings;
+                this.iw = iw;
+                this.startingGun = startingGun;
             }
 
             public override void Run()
@@ -161,22 +160,22 @@ namespace Lucene.Net.Index
                     Document document = new Document();
                     Field field = NewTextField("field", "", Field.Store.NO);
                     document.Add(field);
-                    StartingGun.Wait();
-                    while (!(Postings.Count == 0))
+                    startingGun.Wait();
+                    while (!(postings.Count == 0))
                     {
                         StringBuilder text = new StringBuilder();
                         ISet<string> visited = new JCG.HashSet<string>();
-                        for (int i = 0; i < MaxTermsPerDoc; i++)
+                        for (int i = 0; i < maxTermsPerDoc; i++)
                         {
                             string token;
-                            if (!Postings.TryDequeue(out token))
+                            if (!postings.TryDequeue(out token))
                             {
                                 break;
                             }
                             if (visited.Contains(token))
                             {
                                 // Put it back:
-                                Postings.Enqueue(token);
+                                postings.Enqueue(token);
                                 break;
                             }
                             text.Append(' ');
@@ -184,7 +183,7 @@ namespace Lucene.Net.Index
                             visited.Add(token);
                         }
                         field.SetStringValue(text.ToString());
-                        Iw.AddDocument(document);
+                        iw.AddDocument(document);
                     }
                 }
                 catch (Exception e)

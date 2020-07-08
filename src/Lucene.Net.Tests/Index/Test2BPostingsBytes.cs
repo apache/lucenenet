@@ -8,38 +8,33 @@ using System;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using TextField = TextField;
     using TokenStream = Lucene.Net.Analysis.TokenStream;
-
-    /*using Ignore = org.junit.Ignore;
-
-    using TimeoutSuite = com.carrotsearch.randomizedtesting.annotations.TimeoutSuite;*/
 
     /// <summary>
     /// Test indexes 2B docs with 65k freqs each,
@@ -139,23 +134,23 @@ namespace Lucene.Net.Index
 
         public sealed class MyTokenStream : TokenStream
         {
-            internal readonly ICharTermAttribute TermAtt;
-            internal int Index;
+            internal readonly ICharTermAttribute termAtt;
+            internal int index;
             internal int n;
 
             public MyTokenStream()
             {
-                TermAtt = AddAttribute<ICharTermAttribute>();
+                termAtt = AddAttribute<ICharTermAttribute>();
             }
 
             public override bool IncrementToken()
             {
-                if (Index < n)
+                if (index < n)
                 {
                     ClearAttributes();
-                    TermAtt.Buffer[0] = 'a';
-                    TermAtt.Length = 1;
-                    Index++;
+                    termAtt.Buffer[0] = 'a';
+                    termAtt.Length = 1;
+                    index++;
                     return true;
                 }
                 return false;
@@ -163,7 +158,7 @@ namespace Lucene.Net.Index
 
             public override void Reset()
             {
-                Index = 0;
+                index = 0;
             }
         }
     }

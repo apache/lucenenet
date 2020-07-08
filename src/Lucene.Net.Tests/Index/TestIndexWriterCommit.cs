@@ -6,7 +6,6 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -42,7 +41,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexWriterCommit : LuceneTestCase
     {
-        private static readonly FieldType StoredTextType = new FieldType(TextField.TYPE_NOT_STORED);
+        private static readonly FieldType storedTextType = new FieldType(TextField.TYPE_NOT_STORED);
 
         /*
          * Simple test for "commit on close": open writer then
@@ -209,13 +208,20 @@ namespace Lucene.Net.Index
             if (Random.NextBoolean())
             {
                 // no payloads
-                analyzer = new AnalyzerAnonymousInnerClassHelper(this);
+                analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
+                });
             }
             else
             {
                 // fixed length payloads
                 int length = Random.Next(200);
-                analyzer = new AnalyzerAnonymousInnerClassHelper2(this, length);
+                analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
+                    return new TokenStreamComponents(tokenizer, new MockFixedLengthPayloadFilter(Random, tokenizer, length));
+                });
             }
 
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10).SetReaderPooling(false).SetMergePolicy(NewLogMergePolicy(10)));
@@ -251,40 +257,6 @@ namespace Lucene.Net.Index
             Assert.IsTrue(midDiskUsage < 150 * startDiskUsage, "writer used too much space while adding documents: mid=" + midDiskUsage + " start=" + startDiskUsage + " end=" + endDiskUsage + " max=" + (startDiskUsage * 150));
             Assert.IsTrue(endDiskUsage < 150 * startDiskUsage, "writer used too much space after close: endDiskUsage=" + endDiskUsage + " startDiskUsage=" + startDiskUsage + " max=" + (startDiskUsage * 150));
             dir.Dispose();
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestIndexWriterCommit OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestIndexWriterCommit outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestIndexWriterCommit OuterInstance;
-
-            private int Length;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestIndexWriterCommit outerInstance, int length)
-            {
-                this.OuterInstance = outerInstance;
-                this.Length = length;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
-                return new TokenStreamComponents(tokenizer, new MockFixedLengthPayloadFilter(Random, tokenizer, Length));
-            }
         }
 
         /*
@@ -388,12 +360,12 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly Func<string, string, Field.Store, Field> NewStringField;
-            private Directory Dir;
+            private readonly Func<string, string, Field.Store, Field> newStringField;
+            private Directory dir;
             private RandomIndexWriter w;
-            private AtomicBoolean Failed;
-            private long EndTime;
-            private int FinalI;
+            private AtomicBoolean failed;
+            private long endTime;
+            private int finalI;
 
             /// <param name="newStringField">
             /// LUCENENET specific
@@ -402,12 +374,12 @@ namespace Lucene.Net.Index
             /// </param>
             public ThreadAnonymousInnerClassHelper(Directory dir, RandomIndexWriter w, AtomicBoolean failed, long endTime, int finalI, Func<string, string, Field.Store, Field> newStringField)
             {
-                NewStringField = newStringField;
-                this.Dir = dir;
+                this.newStringField = newStringField;
+                this.dir = dir;
                 this.w = w;
-                this.Failed = failed;
-                this.EndTime = endTime;
-                this.FinalI = finalI;
+                this.failed = failed;
+                this.endTime = endTime;
+                this.finalI = finalI;
             }
 
             public override void Run()
@@ -415,19 +387,19 @@ namespace Lucene.Net.Index
                 try
                 {
                     Document doc = new Document();
-                    DirectoryReader r = DirectoryReader.Open(Dir);
-                    Field f = NewStringField("f", "", Field.Store.NO);
+                    DirectoryReader r = DirectoryReader.Open(dir);
+                    Field f = newStringField("f", "", Field.Store.NO);
                     doc.Add(f);
                     int count = 0;
                     do
                     {
-                        if (Failed)
+                        if (failed)
                         {
                             break;
                         }
                         for (int j = 0; j < 10; j++)
                         {
-                            string s = FinalI + "_" + Convert.ToString(count++);
+                            string s = finalI + "_" + Convert.ToString(count++);
                             f.SetStringValue(s);
                             w.AddDocument(doc);
                             w.Commit();
@@ -438,12 +410,12 @@ namespace Lucene.Net.Index
                             r = r2;
                             Assert.AreEqual(1, r.DocFreq(new Term("f", s)), "term=f:" + s + "; r=" + r);
                         }
-                    } while (Environment.TickCount < EndTime);
+                    } while (Environment.TickCount < endTime);
                     r.Dispose();
                 }
                 catch (Exception t)
                 {
-                    Failed.Value = (true);
+                    failed.Value = (true);
                     throw new Exception(t.Message, t);
                 }
             }
@@ -766,8 +738,8 @@ namespace Lucene.Net.Index
         private void AddDocWithIndex(IndexWriter writer, int index)
         {
             Document doc = new Document();
-            doc.Add(NewField("content", "aaa " + index, StoredTextType));
-            doc.Add(NewField("id", "" + index, StoredTextType));
+            doc.Add(NewField("content", "aaa " + index, storedTextType));
+            doc.Add(NewField("id", "" + index, storedTextType));
             writer.AddDocument(doc);
         }
 

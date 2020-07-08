@@ -1,13 +1,30 @@
-using System;
-using System.Collections.Generic;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BaseDirectory = Lucene.Net.Store.BaseDirectory;
     using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
     using Directory = Lucene.Net.Store.Directory;
@@ -18,33 +35,14 @@ namespace Lucene.Net.Index
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOContext = Lucene.Net.Store.IOContext;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
     public class TestFieldsReader : LuceneTestCase
     {
-        private static Directory Dir;
-        private static Document TestDoc;
-        private static FieldInfos.Builder FieldInfos = null;
+        private static Directory dir;
+        private static Document testDoc;
+        private static FieldInfos.Builder fieldInfos = null;
 
         /// <summary>
         /// LUCENENET specific
@@ -55,38 +53,38 @@ namespace Lucene.Net.Index
         {
             base.BeforeClass();
 
-            TestDoc = new Document();
-            FieldInfos = new FieldInfos.Builder();
-            DocHelper.SetupDoc(TestDoc);
-            foreach (IIndexableField field in TestDoc)
+            testDoc = new Document();
+            fieldInfos = new FieldInfos.Builder();
+            DocHelper.SetupDoc(testDoc);
+            foreach (IIndexableField field in testDoc)
             {
-                FieldInfos.AddOrUpdate(field.Name, field.IndexableFieldType);
+                fieldInfos.AddOrUpdate(field.Name, field.IndexableFieldType);
             }
-            Dir = NewDirectory();
+            dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy());
             conf.MergePolicy.NoCFSRatio = 0.0;
-            IndexWriter writer = new IndexWriter(Dir, conf);
-            writer.AddDocument(TestDoc);
+            IndexWriter writer = new IndexWriter(dir, conf);
+            writer.AddDocument(testDoc);
             writer.Dispose();
-            FaultyIndexInput.DoFail = false;
+            FaultyIndexInput.doFail = false;
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            Dir.Dispose();
-            Dir = null;
-            FieldInfos = null;
-            TestDoc = null;
+            dir.Dispose();
+            dir = null;
+            fieldInfos = null;
+            testDoc = null;
             base.AfterClass();
         }
 
         [Test]
         public virtual void Test()
         {
-            Assert.IsTrue(Dir != null);
-            Assert.IsTrue(FieldInfos != null);
-            IndexReader reader = DirectoryReader.Open(Dir);
+            Assert.IsTrue(dir != null);
+            Assert.IsTrue(fieldInfos != null);
+            IndexReader reader = DirectoryReader.Open(dir);
             Document doc = reader.Document(0);
             Assert.IsTrue(doc != null);
             Assert.IsTrue(doc.GetField(DocHelper.TEXT_FIELD_1_KEY) != null);
@@ -120,55 +118,55 @@ namespace Lucene.Net.Index
 
         public class FaultyFSDirectory : BaseDirectory
         {
-            internal Directory FsDir;
+            internal Directory fsDir;
 
             public FaultyFSDirectory(DirectoryInfo dir)
             {
-                FsDir = NewFSDirectory(dir);
-                m_lockFactory = FsDir.LockFactory;
+                fsDir = NewFSDirectory(dir);
+                m_lockFactory = fsDir.LockFactory;
             }
 
             public override IndexInput OpenInput(string name, IOContext context)
             {
-                return new FaultyIndexInput(FsDir.OpenInput(name, context));
+                return new FaultyIndexInput(fsDir.OpenInput(name, context));
             }
 
             public override string[] ListAll()
             {
-                return FsDir.ListAll();
+                return fsDir.ListAll();
             }
 
             [Obsolete("this method will be removed in 5.0")]
             public override bool FileExists(string name)
             {
-                return FsDir.FileExists(name);
+                return fsDir.FileExists(name);
             }
 
             public override void DeleteFile(string name)
             {
-                FsDir.DeleteFile(name);
+                fsDir.DeleteFile(name);
             }
 
             public override long FileLength(string name)
             {
-                return FsDir.FileLength(name);
+                return fsDir.FileLength(name);
             }
 
             public override IndexOutput CreateOutput(string name, IOContext context)
             {
-                return FsDir.CreateOutput(name, context);
+                return fsDir.CreateOutput(name, context);
             }
 
             public override void Sync(ICollection<string> names)
             {
-                FsDir.Sync(names);
+                fsDir.Sync(names);
             }
 
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
                 {
-                    FsDir.Dispose();
+                    fsDir.Dispose();
                 }
             }
         }
@@ -176,8 +174,8 @@ namespace Lucene.Net.Index
         private class FaultyIndexInput : BufferedIndexInput
         {
             internal IndexInput @delegate;
-            internal static bool DoFail;
-            internal int Count;
+            internal static bool doFail;
+            internal int count;
 
             internal FaultyIndexInput(IndexInput @delegate)
                 : base("FaultyIndexInput(" + @delegate + ")", BufferedIndexInput.BUFFER_SIZE)
@@ -187,7 +185,7 @@ namespace Lucene.Net.Index
 
             internal virtual void SimOutage()
             {
-                if (DoFail && Count++ % 2 == 1)
+                if (doFail && count++ % 2 == 1)
                 {
                     throw new IOException("Simulated network outage");
                 }
@@ -248,14 +246,14 @@ namespace Lucene.Net.Index
                 IndexWriter writer = new IndexWriter(dir, iwc);
                 for (int i = 0; i < 2; i++)
                 {
-                    writer.AddDocument(TestDoc);
+                    writer.AddDocument(testDoc);
                 }
                 writer.ForceMerge(1);
                 writer.Dispose();
 
                 IndexReader reader = DirectoryReader.Open(dir);
 
-                FaultyIndexInput.DoFail = true;
+                FaultyIndexInput.doFail = true;
 
                 bool exc = false;
 

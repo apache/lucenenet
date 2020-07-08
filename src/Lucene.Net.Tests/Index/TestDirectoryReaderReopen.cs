@@ -13,30 +13,29 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using TermQuery = Lucene.Net.Search.TermQuery;
@@ -64,47 +63,47 @@ namespace Lucene.Net.Index
 
         private class TestReopenAnonymousInnerClassHelper : TestReopen
         {
-            private readonly TestDirectoryReaderReopen OuterInstance;
+            private readonly TestDirectoryReaderReopen outerInstance;
 
-            private Directory Dir1;
+            private Directory dir1;
 
             public TestReopenAnonymousInnerClassHelper(TestDirectoryReaderReopen outerInstance, Directory dir1)
             {
-                this.OuterInstance = outerInstance;
-                this.Dir1 = dir1;
+                this.outerInstance = outerInstance;
+                this.dir1 = dir1;
             }
 
             protected internal override void ModifyIndex(int i)
             {
-                TestDirectoryReaderReopen.ModifyIndex(i, Dir1);
+                TestDirectoryReaderReopen.ModifyIndex(i, dir1);
             }
 
             protected internal override DirectoryReader OpenReader()
             {
-                return DirectoryReader.Open(Dir1);
+                return DirectoryReader.Open(dir1);
             }
         }
 
         private class TestReopenAnonymousInnerClassHelper2 : TestReopen
         {
-            private readonly TestDirectoryReaderReopen OuterInstance;
+            private readonly TestDirectoryReaderReopen outerInstance;
 
-            private Directory Dir2;
+            private readonly Directory dir2;
 
             public TestReopenAnonymousInnerClassHelper2(TestDirectoryReaderReopen outerInstance, Directory dir2)
             {
-                this.OuterInstance = outerInstance;
-                this.Dir2 = dir2;
+                this.outerInstance = outerInstance;
+                this.dir2 = dir2;
             }
 
             protected internal override void ModifyIndex(int i)
             {
-                TestDirectoryReaderReopen.ModifyIndex(i, Dir2);
+                TestDirectoryReaderReopen.ModifyIndex(i, dir2);
             }
 
             protected internal override DirectoryReader OpenReader()
             {
-                return DirectoryReader.Open(Dir2);
+                return DirectoryReader.Open(dir2);
             }
         }
 
@@ -199,13 +198,13 @@ namespace Lucene.Net.Index
             // verify that reopen() does not return a new reader instance
             // in case the index has no changes
             ReaderCouple couple = RefreshReader(index2, false);
-            Assert.IsTrue(couple.RefreshedReader == index2);
+            Assert.IsTrue(couple.refreshedReader == index2);
 
             couple = RefreshReader(index2, test, 0, true);
             index1.Dispose();
-            index1 = couple.NewReader;
+            index1 = couple.newReader;
 
-            DirectoryReader index2_refreshed = couple.RefreshedReader;
+            DirectoryReader index2_refreshed = couple.refreshedReader;
             index2.Dispose();
 
             // test if refreshed reader and newly opened reader return equal results
@@ -224,8 +223,8 @@ namespace Lucene.Net.Index
                 // refresh DirectoryReader
                 index2.Dispose();
 
-                index2 = couple.RefreshedReader;
-                index1 = couple.NewReader;
+                index2 = couple.refreshedReader;
+                index1 = couple.newReader;
                 TestDirectoryReader.AssertIndexEquals(index1, index2);
             }
 
@@ -306,9 +305,9 @@ namespace Lucene.Net.Index
                 if (threads[i] != null)
                 {
                     threads[i].Join();
-                    if (threads[i].Error != null)
+                    if (threads[i].error != null)
                     {
-                        string msg = "Error occurred in thread " + threads[i].Name + ":\n" + threads[i].Error.Message;
+                        string msg = "Error occurred in thread " + threads[i].Name + ":\n" + threads[i].error.Message;
                         Assert.Fail(msg);
                     }
                 }
@@ -335,63 +334,63 @@ namespace Lucene.Net.Index
 
         private class TestReopenAnonymousInnerClassHelper3 : TestReopen
         {
-            private readonly TestDirectoryReaderReopen OuterInstance;
+            private readonly TestDirectoryReaderReopen outerInstance;
 
-            private Directory Dir;
-            private int n;
+            private readonly Directory dir;
+            private readonly int n;
 
             public TestReopenAnonymousInnerClassHelper3(TestDirectoryReaderReopen outerInstance, Directory dir, int n)
             {
-                this.OuterInstance = outerInstance;
-                this.Dir = dir;
+                this.outerInstance = outerInstance;
+                this.dir = dir;
                 this.n = n;
             }
 
             protected internal override void ModifyIndex(int i)
             {
-                IndexWriter modifier = new IndexWriter(Dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+                IndexWriter modifier = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                 modifier.AddDocument(CreateDocument(n + i, 6));
                 modifier.Dispose();
             }
 
             protected internal override DirectoryReader OpenReader()
             {
-                return DirectoryReader.Open(Dir);
+                return DirectoryReader.Open(dir);
             }
         }
 
         private class ReaderThreadTaskAnonymousInnerClassHelper : ReaderThreadTask
         {
-            private readonly TestDirectoryReaderReopen OuterInstance;
+            private readonly TestDirectoryReaderReopen outerInstance;
 
-            private Lucene.Net.Index.TestDirectoryReaderReopen.TestReopen Test;
-            private IList<ReaderCouple> Readers;
-            private ISet<DirectoryReader> ReadersToClose;
-            private DirectoryReader r;
-            private int Index;
+            private readonly TestReopen test;
+            private readonly IList<ReaderCouple> readers;
+            private readonly ISet<DirectoryReader> readersToClose;
+            private readonly DirectoryReader r;
+            private readonly int index;
 
             public ReaderThreadTaskAnonymousInnerClassHelper(TestDirectoryReaderReopen outerInstance, Lucene.Net.Index.TestDirectoryReaderReopen.TestReopen test, IList<ReaderCouple> readers, ISet<DirectoryReader> readersToClose, DirectoryReader r, int index)
             {
-                this.OuterInstance = outerInstance;
-                this.Test = test;
-                this.Readers = readers;
-                this.ReadersToClose = readersToClose;
+                this.outerInstance = outerInstance;
+                this.test = test;
+                this.readers = readers;
+                this.readersToClose = readersToClose;
                 this.r = r;
-                this.Index = index;
+                this.index = index;
             }
 
             public override void Run()
             {
                 Random rnd = LuceneTestCase.Random;
-                while (!Stopped)
+                while (!stopped)
                 {
-                    if (Index % 2 == 0)
+                    if (index % 2 == 0)
                     {
                         // refresh reader synchronized
-                        ReaderCouple c = (OuterInstance.RefreshReader(r, Test, Index, true));
-                        ReadersToClose.Add(c.NewReader);
-                        ReadersToClose.Add(c.RefreshedReader);
-                        Readers.Add(c);
+                        ReaderCouple c = (outerInstance.RefreshReader(r, test, index, true));
+                        readersToClose.Add(c.newReader);
+                        readersToClose.Add(c.refreshedReader);
+                        readers.Add(c);
                         // prevent too many readers
                         break;
                     }
@@ -406,7 +405,7 @@ namespace Lucene.Net.Index
 
                         IndexSearcher searcher =
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                            OuterInstance.
+                            outerInstance.
 #endif
                             NewSearcher(refreshed);
                         ScoreDoc[] hits = searcher.Search(new TermQuery(new Term("field1", "a" + rnd.Next(refreshed.MaxDoc))), null, 1000).ScoreDocs;
@@ -429,26 +428,26 @@ namespace Lucene.Net.Index
 
         private class ReaderThreadTaskAnonymousInnerClassHelper2 : ReaderThreadTask
         {
-            private readonly TestDirectoryReaderReopen OuterInstance;
+            private readonly TestDirectoryReaderReopen outerInstance;
 
-            private IList<ReaderCouple> Readers;
+            private readonly IList<ReaderCouple> readers;
 
             public ReaderThreadTaskAnonymousInnerClassHelper2(TestDirectoryReaderReopen outerInstance, IList<ReaderCouple> readers)
             {
-                this.OuterInstance = outerInstance;
-                this.Readers = readers;
+                this.outerInstance = outerInstance;
+                this.readers = readers;
             }
 
             public override void Run()
             {
                 Random rnd = LuceneTestCase.Random;
-                while (!Stopped)
+                while (!stopped)
                 {
-                    int numReaders = Readers.Count;
+                    int numReaders = readers.Count;
                     if (numReaders > 0)
                     {
-                        ReaderCouple c = Readers[rnd.Next(numReaders)];
-                        TestDirectoryReader.AssertIndexEquals(c.NewReader, c.RefreshedReader);
+                        ReaderCouple c = readers[rnd.Next(numReaders)];
+                        TestDirectoryReader.AssertIndexEquals(c.newReader, c.refreshedReader);
                     }
 
                     lock (this)
@@ -463,21 +462,21 @@ namespace Lucene.Net.Index
         {
             internal ReaderCouple(DirectoryReader r1, DirectoryReader r2)
             {
-                NewReader = r1;
-                RefreshedReader = r2;
+                newReader = r1;
+                refreshedReader = r2;
             }
 
-            internal DirectoryReader NewReader;
-            internal DirectoryReader RefreshedReader;
+            internal DirectoryReader newReader;
+            internal DirectoryReader refreshedReader;
         }
 
         internal abstract class ReaderThreadTask
         {
-            protected internal volatile bool Stopped;
+            protected internal volatile bool stopped;
 
             public virtual void Stop()
             {
-                this.Stopped = true;
+                this.stopped = true;
             }
 
             public abstract void Run();
@@ -485,34 +484,34 @@ namespace Lucene.Net.Index
 
         private class ReaderThread : ThreadJob
         {
-            internal ReaderThreadTask Task;
-            internal Exception Error;
+            internal ReaderThreadTask task;
+            internal Exception error;
 
             internal ReaderThread(ReaderThreadTask task)
             {
-                this.Task = task;
+                this.task = task;
             }
 
             public virtual void StopThread()
             {
-                this.Task.Stop();
+                this.task.Stop();
             }
 
             public override void Run()
             {
                 try
                 {
-                    this.Task.Run();
+                    this.task.Run();
                 }
                 catch (Exception r)
                 {
                     Console.WriteLine(r.StackTrace);
-                    this.Error = r;
+                    this.error = r;
                 }
             }
         }
 
-        private object CreateReaderMutex = new object();
+        private object createReaderMutex = new object();
 
         private ReaderCouple RefreshReader(DirectoryReader reader, bool hasChanges)
         {
@@ -521,7 +520,7 @@ namespace Lucene.Net.Index
 
         internal virtual ReaderCouple RefreshReader(DirectoryReader reader, TestReopen test, int modify, bool hasChanges)
         {
-            lock (CreateReaderMutex)
+            lock (createReaderMutex)
             {
                 DirectoryReader r = null;
                 if (test != null)

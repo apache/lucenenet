@@ -13,30 +13,29 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
@@ -155,51 +154,51 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestBagOfPositions OuterInstance;
+            private readonly TestBagOfPositions outerInstance;
 
-            private int NumTerms;
-            private int MaxTermsPerDoc;
-            private ConcurrentQueue<string> Postings;
-            private RandomIndexWriter Iw;
-            private CountdownEvent StartingGun;
-            private Random ThreadRandom;
-            private Document Document;
-            private Field Field;
+            private readonly int numTerms;
+            private readonly int maxTermsPerDoc;
+            private readonly ConcurrentQueue<string> postings;
+            private readonly RandomIndexWriter iw;
+            private readonly CountdownEvent startingGun;
+            private readonly Random threadRandom;
+            private readonly Document document;
+            private readonly Field field;
 
             public ThreadAnonymousInnerClassHelper(TestBagOfPositions outerInstance, int numTerms, int maxTermsPerDoc, ConcurrentQueue<string> postings, RandomIndexWriter iw, CountdownEvent startingGun, Random threadRandom, Document document, Field field)
             {
-                this.OuterInstance = outerInstance;
-                this.NumTerms = numTerms;
-                this.MaxTermsPerDoc = maxTermsPerDoc;
-                this.Postings = postings;
-                this.Iw = iw;
-                this.StartingGun = startingGun;
-                this.ThreadRandom = threadRandom;
-                this.Document = document;
-                this.Field = field;
+                this.outerInstance = outerInstance;
+                this.numTerms = numTerms;
+                this.maxTermsPerDoc = maxTermsPerDoc;
+                this.postings = postings;
+                this.iw = iw;
+                this.startingGun = startingGun;
+                this.threadRandom = threadRandom;
+                this.document = document;
+                this.field = field;
             }
 
             public override void Run()
             {
                 try
                 {
-                    StartingGun.Wait();
-                    while (!(Postings.Count == 0))
+                    startingGun.Wait();
+                    while (!(postings.Count == 0))
                     {
                         StringBuilder text = new StringBuilder();
-                        int numTerms = ThreadRandom.Next(MaxTermsPerDoc);
+                        int numTerms = threadRandom.Next(maxTermsPerDoc);
                         for (int i = 0; i < numTerms; i++)
                         {
                             string token;
-                            if (!Postings.TryDequeue(out token))
+                            if (!postings.TryDequeue(out token))
                             {
                                 break;
                             }
                             text.Append(' ');
                             text.Append(token);
                         }
-                        Field.SetStringValue(text.ToString());
-                        Iw.AddDocument(Document);
+                        field.SetStringValue(text.ToString());
+                        iw.AddDocument(document);
                     }
                 }
                 catch (Exception e)

@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Compressing
         public override void SetUp()
         {
             base.SetUp();
-            Mode = CompressionMode.FAST_DECOMPRESSION;
+            mode = CompressionMode.FAST_DECOMPRESSION;
         }
 
         public override byte[] Test(byte[] decompressed, int off, int len)

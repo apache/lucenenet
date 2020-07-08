@@ -12,21 +12,21 @@ using Console = Lucene.Net.Util.SystemConsole;
 namespace Lucene.Net.Analysis
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
@@ -51,50 +51,50 @@ namespace Lucene.Net.Analysis
 
         private class GraphTokenizer : Tokenizer
         {
-            internal IList<Token> Tokens;
-            internal int Upto;
-            internal int InputLength;
+            internal IList<Token> tokens;
+            internal int upto;
+            internal int inputLength;
 
-            internal readonly ICharTermAttribute TermAtt;
-            internal readonly IOffsetAttribute OffsetAtt;
-            internal readonly IPositionIncrementAttribute PosIncrAtt;
-            internal readonly IPositionLengthAttribute PosLengthAtt;
+            internal readonly ICharTermAttribute termAtt;
+            internal readonly IOffsetAttribute offsetAtt;
+            internal readonly IPositionIncrementAttribute posIncrAtt;
+            internal readonly IPositionLengthAttribute posLengthAtt;
 
             public GraphTokenizer(TextReader input)
                 : base(input)
             {
-                TermAtt = AddAttribute<ICharTermAttribute>();
-                OffsetAtt = AddAttribute<IOffsetAttribute>();
-                PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
-                PosLengthAtt = AddAttribute<IPositionLengthAttribute>();
+                termAtt = AddAttribute<ICharTermAttribute>();
+                offsetAtt = AddAttribute<IOffsetAttribute>();
+                posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+                posLengthAtt = AddAttribute<IPositionLengthAttribute>();
             }
 
             public override void Reset()
             {
                 base.Reset();
-                Tokens = null;
-                Upto = 0;
+                tokens = null;
+                upto = 0;
             }
 
             public sealed override bool IncrementToken()
             {
-                if (Tokens == null)
+                if (tokens == null)
                 {
                     FillTokens();
                 }
                 //System.out.println("graphTokenizer: incr upto=" + upto + " vs " + tokens.size());
-                if (Upto == Tokens.Count)
+                if (upto == tokens.Count)
                 {
                     //System.out.println("  END @ " + tokens.size());
                     return false;
                 }
-                Token t = Tokens[Upto++];
+                Token t = tokens[upto++];
                 //System.out.println("  return token=" + t);
                 ClearAttributes();
-                TermAtt.Append(t.ToString());
-                OffsetAtt.SetOffset(t.StartOffset, t.EndOffset);
-                PosIncrAtt.PositionIncrement = t.PositionIncrement;
-                PosLengthAtt.PositionLength = t.PositionLength;
+                termAtt.Append(t.ToString());
+                offsetAtt.SetOffset(t.StartOffset, t.EndOffset);
+                posIncrAtt.PositionIncrement = t.PositionIncrement;
+                posLengthAtt.PositionLength = t.PositionLength;
                 return true;
             }
 
@@ -104,15 +104,15 @@ namespace Lucene.Net.Analysis
                 // NOTE: somewhat... hackish, but we need this to
                 // satisfy BTSTC:
                 int lastOffset;
-                if (Tokens != null && Tokens.Count > 0)
+                if (tokens != null && tokens.Count > 0)
                 {
-                    lastOffset = Tokens[Tokens.Count - 1].EndOffset;
+                    lastOffset = tokens[tokens.Count - 1].EndOffset;
                 }
                 else
                 {
                     lastOffset = 0;
                 }
-                OffsetAtt.SetOffset(CorrectOffset(lastOffset), CorrectOffset(InputLength));
+                offsetAtt.SetOffset(CorrectOffset(lastOffset), CorrectOffset(inputLength));
             }
 
             internal virtual void FillTokens()
@@ -135,11 +135,11 @@ namespace Lucene.Net.Analysis
                 }
                 //System.out.println("fillTokens: " + sb);
 
-                InputLength = sb.Length;
+                inputLength = sb.Length;
 
                 string[] parts = sb.ToString().Split(' ').TrimEnd();
 
-                Tokens = new List<Token>();
+                tokens = new List<Token>();
                 int pos = 0;
                 int maxPos = -1;
                 int offset = 0;
@@ -171,7 +171,7 @@ namespace Lucene.Net.Analysis
                         t.PositionIncrement = firstAtPos ? 1 : 0;
                         firstAtPos = false;
                         //System.out.println("  add token=" + t + " startOff=" + t.StartOffset + " endOff=" + t.EndOffset);
-                        Tokens.Add(t);
+                        tokens.Add(t);
                     }
                     pos += minPosLength;
                     offset = 2 * pos;
@@ -192,26 +192,13 @@ namespace Lucene.Net.Analysis
 
                 // Make new analyzer each time, because MGTF has fixed
                 // seed:
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    TokenStream t2 = new MockGraphTokenFilter(Random, t);
+                    return new TokenStreamComponents(t, t2);
+                });
                 CheckAnalysisConsistency(Random, a, false, "a b c d e f g h i j k");
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestGraphTokenizers OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestGraphTokenizers outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t2 = new MockGraphTokenFilter(Random, t);
-                return new TokenStreamComponents(t, t2);
             }
         }
 
@@ -227,54 +214,42 @@ namespace Lucene.Net.Analysis
 
                 // Make new analyzer each time, because MGTF has fixed
                 // seed:
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer t = new GraphTokenizer(reader);
+                    TokenStream t2 = new MockGraphTokenFilter(Random, t);
+                    return new TokenStreamComponents(t, t2);
+                });
 
                 CheckAnalysisConsistency(Random, a, false, "a/x:3 c/y:2 d e f/z:4 g h i j k");
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestGraphTokenizers OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestGraphTokenizers outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer t = new GraphTokenizer(reader);
-                TokenStream t2 = new MockGraphTokenFilter(Random, t);
-                return new TokenStreamComponents(t, t2);
             }
         }
 
         // Just deletes (leaving hole) token 'a':
         private sealed class RemoveATokens : TokenFilter
         {
-            internal int PendingPosInc;
+            internal int pendingPosInc;
 
-            internal readonly ICharTermAttribute TermAtt;// = addAttribute(typeof(CharTermAttribute));
-            internal readonly IPositionIncrementAttribute PosIncAtt;// = addAttribute(typeof(PositionIncrementAttribute));
+            internal readonly ICharTermAttribute termAtt;
+            internal readonly IPositionIncrementAttribute posIncAtt;
 
             public RemoveATokens(TokenStream @in)
                 : base(@in)
             {
-                TermAtt = AddAttribute<ICharTermAttribute>();
-                PosIncAtt = AddAttribute<IPositionIncrementAttribute>();
+                termAtt = AddAttribute<ICharTermAttribute>();
+                posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
             public override void Reset()
             {
                 base.Reset();
-                PendingPosInc = 0;
+                pendingPosInc = 0;
             }
 
             public override void End()
             {
                 base.End();
-                PosIncAtt.PositionIncrement = PendingPosInc + PosIncAtt.PositionIncrement;
+                posIncAtt.PositionIncrement = pendingPosInc + posIncAtt.PositionIncrement;
             }
 
             public override bool IncrementToken()
@@ -286,14 +261,14 @@ namespace Lucene.Net.Analysis
                     {
                         return false;
                     }
-                    else if (TermAtt.ToString().Equals("a", StringComparison.Ordinal))
+                    else if (termAtt.ToString().Equals("a", StringComparison.Ordinal))
                     {
-                        PendingPosInc += PosIncAtt.PositionIncrement;
+                        pendingPosInc += posIncAtt.PositionIncrement;
                     }
                     else
                     {
-                        PosIncAtt.PositionIncrement = PendingPosInc + PosIncAtt.PositionIncrement;
-                        PendingPosInc = 0;
+                        posIncAtt.PositionIncrement = pendingPosInc + posIncAtt.PositionIncrement;
+                        pendingPosInc = 0;
                         return true;
                     }
                 }
@@ -312,31 +287,19 @@ namespace Lucene.Net.Analysis
 
                 // Make new analyzer each time, because MGTF has fixed
                 // seed:
-                Analyzer a = new MGTFBHAnalyzerAnonymousInnerClassHelper(this);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    TokenStream t2 = new MockGraphTokenFilter(Random, t);
+                    TokenStream t3 = new RemoveATokens(t2);
+                    return new TokenStreamComponents(t, t3);
+                });
 
                 Random random = Random;
                 CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k");
                 CheckAnalysisConsistency(random, a, false, "x y a b c d e f g h i j k");
                 CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k a");
                 CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k a x y");
-            }
-        }
-
-        private class MGTFBHAnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestGraphTokenizers OuterInstance;
-
-            public MGTFBHAnalyzerAnonymousInnerClassHelper(TestGraphTokenizers outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t2 = new MockGraphTokenFilter(Random, t);
-                TokenStream t3 = new RemoveATokens(t2);
-                return new TokenStreamComponents(t, t3);
             }
         }
 
@@ -352,31 +315,19 @@ namespace Lucene.Net.Analysis
 
                 // Make new analyzer each time, because MGTF has fixed
                 // seed:
-                Analyzer a = new MGTFAHAnalyzerAnonymousInnerClassHelper2(this);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    TokenStream t2 = new RemoveATokens(t);
+                    TokenStream t3 = new MockGraphTokenFilter(Random, t2);
+                    return new TokenStreamComponents(t, t3);
+                });
 
                 Random random = Random;
                 CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k");
                 CheckAnalysisConsistency(random, a, false, "x y a b c d e f g h i j k");
                 CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k a");
                 CheckAnalysisConsistency(random, a, false, "a b c d e f g h i j k a x y");
-            }
-        }
-
-        private class MGTFAHAnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestGraphTokenizers OuterInstance;
-
-            public MGTFAHAnalyzerAnonymousInnerClassHelper2(TestGraphTokenizers outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t2 = new RemoveATokens(t);
-                TokenStream t3 = new MockGraphTokenFilter(Random, t2);
-                return new TokenStreamComponents(t, t3);
             }
         }
 
@@ -392,27 +343,15 @@ namespace Lucene.Net.Analysis
 
                 // Make new analyzer each time, because MGTF has fixed
                 // seed:
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    TokenStream t2 = new MockGraphTokenFilter(Random, t);
+                    return new TokenStreamComponents(t, t2);
+                });
 
                 Random random = Random;
                 CheckRandomData(random, a, 5, AtLeast(100));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestGraphTokenizers OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestGraphTokenizers outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t2 = new MockGraphTokenFilter(Random, t);
-                return new TokenStreamComponents(t, t2);
             }
         }
 
@@ -429,9 +368,15 @@ namespace Lucene.Net.Analysis
 
                 // Make new analyzer each time, because MGTF has fixed
                 // seed:
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper4(this);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    TokenStream t1 = new MockGraphTokenFilter(Random, t);
+                    TokenStream t2 = new MockGraphTokenFilter(Random, t1);
+                    return new TokenStreamComponents(t, t2);
+                });
 
-                Random random = Random;
+                 Random random = Random;
                 CheckRandomData(random, a, 5, AtLeast(100));
             }
         }
@@ -443,23 +388,6 @@ namespace Lucene.Net.Analysis
             var mt = new MockTokenizer(sr);
         }
 
-        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-        {
-            private readonly TestGraphTokenizers OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper4(TestGraphTokenizers outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t1 = new MockGraphTokenFilter(Random, t);
-                TokenStream t2 = new MockGraphTokenFilter(Random, t1);
-                return new TokenStreamComponents(t, t2);
-            }
-        }
 
         [Test, LongRunningTest]
         public virtual void TestMockGraphTokenFilterBeforeHolesRandom()
@@ -473,28 +401,16 @@ namespace Lucene.Net.Analysis
 
                 // Make new analyzer each time, because MGTF has fixed
                 // seed:
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper5(this);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    TokenStream t1 = new MockGraphTokenFilter(Random, t);
+                    TokenStream t2 = new MockHoleInjectingTokenFilter(Random, t1);
+                    return new TokenStreamComponents(t, t2);
+                });
 
                 Random random = Random;
                 CheckRandomData(random, a, 5, AtLeast(100));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper5 : Analyzer
-        {
-            private readonly TestGraphTokenizers OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper5(TestGraphTokenizers outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t1 = new MockGraphTokenFilter(Random, t);
-                TokenStream t2 = new MockHoleInjectingTokenFilter(Random, t1);
-                return new TokenStreamComponents(t, t2);
             }
         }
 
@@ -510,28 +426,16 @@ namespace Lucene.Net.Analysis
 
                 // Make new analyzer each time, because MGTF has fixed
                 // seed:
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper6(this);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    TokenStream t1 = new MockHoleInjectingTokenFilter(Random, t);
+                    TokenStream t2 = new MockGraphTokenFilter(Random, t1);
+                    return new TokenStreamComponents(t, t2);
+                });
 
                 Random random = Random;
                 CheckRandomData(random, a, 5, AtLeast(100));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper6 : Analyzer
-        {
-            private readonly TestGraphTokenizers OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper6(TestGraphTokenizers outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream t1 = new MockHoleInjectingTokenFilter(Random, t);
-                TokenStream t2 = new MockGraphTokenFilter(Random, t1);
-                return new TokenStreamComponents(t, t2);
             }
         }
 

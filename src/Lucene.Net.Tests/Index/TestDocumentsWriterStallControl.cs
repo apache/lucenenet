@@ -9,21 +9,21 @@ using Console = Lucene.Net.Util.SystemConsole;
 namespace Lucene.Net.Index
 {
     /*
-             * Licensed to the Apache Software Foundation (ASF) under one or more
-             * contributor license agreements. See the NOTICE file distributed with this
-             * work for additional information regarding copyright ownership. The ASF
-             * licenses this file to You under the Apache License, Version 2.0 (the
-             * "License"); you may not use this file except in compliance with the License.
-             * You may obtain a copy of the License at
-             *
-             * http://www.apache.org/licenses/LICENSE-2.0
-             *
-             * Unless required by applicable law or agreed to in writing, software
-             * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-             * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-             * License for the specific language governing permissions and limitations under
-             * the License.
-             */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -92,13 +92,13 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private DocumentsWriterStallControl Ctrl;
-            private int StallProbability;
+            private readonly DocumentsWriterStallControl ctrl;
+            private readonly int stallProbability;
 
             public ThreadAnonymousInnerClassHelper(DocumentsWriterStallControl ctrl, int stallProbability)
             {
-                this.Ctrl = ctrl;
-                this.StallProbability = stallProbability;
+                this.ctrl = ctrl;
+                this.stallProbability = stallProbability;
             }
 
             public override void Run()
@@ -106,10 +106,10 @@ namespace Lucene.Net.Index
                 int iters = AtLeast(1000);
                 for (int j = 0; j < iters; j++)
                 {
-                    Ctrl.UpdateStalled(Random.Next(StallProbability) == 0);
+                    ctrl.UpdateStalled(Random.Next(stallProbability) == 0);
                     if (Random.Next(5) == 0) // thread 0 only updates
                     {
-                        Ctrl.WaitIfStalled();
+                        ctrl.WaitIfStalled();
                     }
                 }
             }
@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
             {
                 if (checkPoint)
                 {
-                    Assert.IsTrue(sync.UpdateJoin.Wait(new TimeSpan(0, 0, 0, 10)), "timed out waiting for update threads - deadlock?");
+                    Assert.IsTrue(sync.updateJoin.Wait(new TimeSpan(0, 0, 0, 10)), "timed out waiting for update threads - deadlock?");
                     if (exceptions.Count > 0)
                     {
                         foreach (Exception throwable in exceptions)
@@ -166,11 +166,11 @@ namespace Lucene.Net.Index
                     }
 
                     checkPoint.Value = (false);
-                    sync.Waiter.Signal();
-                    sync.LeftCheckpoint.Wait();
+                    sync.waiter.Signal();
+                    sync.leftCheckpoint.Wait();
                 }
                 Assert.IsFalse(checkPoint);
-                Assert.AreEqual(0, sync.Waiter.CurrentCount);
+                Assert.AreEqual(0, sync.waiter.CurrentCount);
                 if (checkPointProbability >= (float)Random.NextDouble())
                 {
                     sync.Reset(numStallers + numReleasers, numStallers + numReleasers + numWaiters);
@@ -183,12 +183,12 @@ namespace Lucene.Net.Index
                 checkPoint.Value = (true);
             }
 
-            Assert.IsTrue(sync.UpdateJoin.Wait(new TimeSpan(0, 0, 0, 10)));
+            Assert.IsTrue(sync.updateJoin.Wait(new TimeSpan(0, 0, 0, 10)));
             AssertState(numReleasers, numStallers, numWaiters, threads, ctrl);
             checkPoint.Value = (false);
             stop.Value = (true);
-            sync.Waiter.Signal();
-            sync.LeftCheckpoint.Wait();
+            sync.waiter.Signal();
+            sync.leftCheckpoint.Wait();
 
             for (int i = 0; i < threads.Length; i++)
             {
@@ -238,41 +238,41 @@ namespace Lucene.Net.Index
 
         internal class Waiter : ThreadJob
         {
-            internal Synchronizer Sync;
-            internal DocumentsWriterStallControl Ctrl;
-            internal AtomicBoolean CheckPoint;
-            internal AtomicBoolean Stop;
-            internal IList<Exception> Exceptions;
+            internal Synchronizer sync;
+            internal DocumentsWriterStallControl ctrl;
+            internal AtomicBoolean checkPoint;
+            internal AtomicBoolean stop;
+            internal IList<Exception> exceptions;
 
             public Waiter(AtomicBoolean stop, AtomicBoolean checkPoint, DocumentsWriterStallControl ctrl, Synchronizer sync, IList<Exception> exceptions)
                 : base("waiter")
             {
-                this.Stop = stop;
-                this.CheckPoint = checkPoint;
-                this.Ctrl = ctrl;
-                this.Sync = sync;
-                this.Exceptions = exceptions;
+                this.stop = stop;
+                this.checkPoint = checkPoint;
+                this.ctrl = ctrl;
+                this.sync = sync;
+                this.exceptions = exceptions;
             }
 
             public override void Run()
             {
                 try
                 {
-                    while (!Stop)
+                    while (!stop)
                     {
-                        Ctrl.WaitIfStalled();
-                        if (CheckPoint)
+                        ctrl.WaitIfStalled();
+                        if (checkPoint)
                         {
 #if !NETSTANDARD1_6
                             try
                             {
 #endif
-                                Assert.IsTrue(Sync.await());
+                                Assert.IsTrue(sync.await());
 #if !NETSTANDARD1_6
                             }
                             catch (ThreadInterruptedException /*e*/)
                             {
-                                Console.WriteLine("[Waiter] got interrupted - wait count: " + Sync.Waiter.CurrentCount);
+                                Console.WriteLine("[Waiter] got interrupted - wait count: " + sync.waiter.CurrentCount);
                                 //throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
@@ -284,53 +284,53 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine(e.ToString());
                     Console.Write(e.StackTrace);
-                    Exceptions.Add(e);
+                    exceptions.Add(e);
                 }
             }
         }
 
         internal class Updater : ThreadJob
         {
-            internal Synchronizer Sync;
-            internal DocumentsWriterStallControl Ctrl;
-            internal AtomicBoolean CheckPoint;
-            internal AtomicBoolean Stop;
-            internal bool Release;
-            internal IList<Exception> Exceptions;
+            internal Synchronizer sync;
+            internal DocumentsWriterStallControl ctrl;
+            internal AtomicBoolean checkPoint;
+            internal AtomicBoolean stop;
+            internal bool release;
+            internal IList<Exception> exceptions;
 
             public Updater(AtomicBoolean stop, AtomicBoolean checkPoint, DocumentsWriterStallControl ctrl, Synchronizer sync, bool release, IList<Exception> exceptions)
                 : base("updater")
             {
-                this.Stop = stop;
-                this.CheckPoint = checkPoint;
-                this.Ctrl = ctrl;
-                this.Sync = sync;
-                this.Release = release;
-                this.Exceptions = exceptions;
+                this.stop = stop;
+                this.checkPoint = checkPoint;
+                this.ctrl = ctrl;
+                this.sync = sync;
+                this.release = release;
+                this.exceptions = exceptions;
             }
 
             public override void Run()
             {
                 try
                 {
-                    while (!Stop)
+                    while (!stop)
                     {
-                        int internalIters = Release && Random.NextBoolean() ? AtLeast(5) : 1;
+                        int internalIters = release && Random.NextBoolean() ? AtLeast(5) : 1;
                         for (int i = 0; i < internalIters; i++)
                         {
-                            Ctrl.UpdateStalled(Random.NextBoolean());
+                            ctrl.UpdateStalled(Random.NextBoolean());
                         }
-                        if (CheckPoint)
+                        if (checkPoint)
                         {
-                            Sync.UpdateJoin.Signal();
+                            sync.updateJoin.Signal();
                             try
                             {
-                                Assert.IsTrue(Sync.await());
+                                Assert.IsTrue(sync.await());
                             }
 #if !NETSTANDARD1_6
                             catch (ThreadInterruptedException /*e*/)
                             {
-                                Console.WriteLine("[Updater] got interrupted - wait count: " + Sync.Waiter.CurrentCount);
+                                Console.WriteLine("[Updater] got interrupted - wait count: " + sync.waiter.CurrentCount);
                                 //throw new ThreadInterruptedException("Thread Interrupted Exception", e);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
@@ -341,7 +341,7 @@ namespace Lucene.Net.Index
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
 
-                            Sync.LeftCheckpoint.Signal();
+                            sync.leftCheckpoint.Signal();
                         }
                         if (Random.NextBoolean())
                         {
@@ -353,12 +353,12 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine(e.ToString());
                     Console.Write(e.StackTrace);
-                    Exceptions.Add(e);
+                    exceptions.Add(e);
                 }
 
-                if (!Sync.UpdateJoin.IsSet)
+                if (!sync.updateJoin.IsSet)
                 {
-                    Sync.UpdateJoin.Signal();
+                    sync.updateJoin.Signal();
                 }
             }
         }
@@ -404,16 +404,16 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
-            private DocumentsWriterStallControl Ctrl;
+            private readonly DocumentsWriterStallControl ctrl;
 
             public ThreadAnonymousInnerClassHelper2(DocumentsWriterStallControl ctrl)
             {
-                this.Ctrl = ctrl;
+                this.ctrl = ctrl;
             }
 
             public override void Run()
             {
-                Ctrl.WaitIfStalled();
+                ctrl.WaitIfStalled();
             }
         }
 
@@ -451,9 +451,9 @@ namespace Lucene.Net.Index
 
         public sealed class Synchronizer
         {
-            internal volatile CountdownEvent Waiter;
-            internal volatile CountdownEvent UpdateJoin;
-            internal volatile CountdownEvent LeftCheckpoint;
+            internal volatile CountdownEvent waiter;
+            internal volatile CountdownEvent updateJoin;
+            internal volatile CountdownEvent leftCheckpoint;
 
             public Synchronizer(int numUpdater, int numThreads)
             {
@@ -462,14 +462,14 @@ namespace Lucene.Net.Index
 
             public void Reset(int numUpdaters, int numThreads)
             {
-                this.Waiter = new CountdownEvent(1);
-                this.UpdateJoin = new CountdownEvent(numUpdaters);
-                this.LeftCheckpoint = new CountdownEvent(numUpdaters);
+                this.waiter = new CountdownEvent(1);
+                this.updateJoin = new CountdownEvent(numUpdaters);
+                this.leftCheckpoint = new CountdownEvent(numUpdaters);
             }
 
             public bool @await()
             {
-                return Waiter.Wait(new TimeSpan(0, 0, 0, 10));
+                return waiter.Wait(new TimeSpan(0, 0, 0, 10));
             }
         }
     }

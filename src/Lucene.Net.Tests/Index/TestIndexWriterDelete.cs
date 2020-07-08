@@ -20,21 +20,21 @@ using Console = Lucene.Net.Util.SystemConsole;
 namespace Lucene.Net.Index
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Assert = Lucene.Net.TestFramework.Assert;
@@ -382,29 +382,29 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestIndexWriterDelete OuterInstance;
+            private readonly TestIndexWriterDelete outerInstance;
 
-            private RandomIndexWriter Modifier;
-            private CountdownEvent Latch;
-            private CountdownEvent DoneLatch;
-            private int Offset;
+            private readonly RandomIndexWriter modifier;
+            private readonly CountdownEvent latch;
+            private readonly CountdownEvent doneLatch;
+            private readonly int offset;
 
             public ThreadAnonymousInnerClassHelper(TestIndexWriterDelete outerInstance, RandomIndexWriter modifier, CountdownEvent latch, CountdownEvent doneLatch, int offset)
             {
-                this.OuterInstance = outerInstance;
-                this.Modifier = modifier;
-                this.Latch = latch;
-                this.DoneLatch = doneLatch;
-                this.Offset = offset;
+                this.outerInstance = outerInstance;
+                this.modifier = modifier;
+                this.latch = latch;
+                this.doneLatch = doneLatch;
+                this.offset = offset;
             }
 
             public override void Run()
             {
-                int id = Offset * 1000;
+                int id = offset * 1000;
                 int value = 100;
                 try
                 {
-                    Latch.Wait();
+                    latch.Wait();
                     for (int j = 0; j < 1000; j++)
                     {
                         Document doc = new Document();
@@ -415,10 +415,10 @@ namespace Lucene.Net.Index
                         {
                             doc.Add(new NumericDocValuesField("dv", value));
                         }
-                        Modifier.AddDocument(doc);
+                        modifier.AddDocument(doc);
                         if (VERBOSE)
                         {
-                            Console.WriteLine("\tThread[" + Offset + "]: add doc: " + id);
+                            Console.WriteLine("\tThread[" + offset + "]: add doc: " + id);
                         }
                     }
                 }
@@ -428,10 +428,10 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    DoneLatch.Signal();
+                    doneLatch.Signal();
                     if (VERBOSE)
                     {
-                        Console.WriteLine("\tThread[" + Offset + "]: done indexing");
+                        Console.WriteLine("\tThread[" + offset + "]: done indexing");
                     }
                 }
             }
@@ -948,11 +948,11 @@ namespace Lucene.Net.Index
 
         private class FailureAnonymousInnerClassHelper : Failure
         {
-            private readonly TestIndexWriterDelete OuterInstance;
+            private readonly TestIndexWriterDelete outerInstance;
 
             public FailureAnonymousInnerClassHelper(TestIndexWriterDelete outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 sawMaybe = false;
                 failed = false;
             }
@@ -1063,11 +1063,11 @@ namespace Lucene.Net.Index
 
         private class FailureAnonymousInnerClassHelper2 : Failure
         {
-            private readonly TestIndexWriterDelete OuterInstance;
+            private readonly TestIndexWriterDelete outerInstance;
 
             public FailureAnonymousInnerClassHelper2(TestIndexWriterDelete outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 failed = false;
             }
 
@@ -1161,7 +1161,10 @@ namespace Lucene.Net.Index
             Random r = Random;
             Directory dir = NewDirectory();
             // note this test explicitly disables payloads
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
+            });
             IndexWriter w = new IndexWriter(dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetRAMBufferSizeMB(1.0).SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMaxBufferedDeleteTerms(IndexWriterConfig.DISABLE_AUTO_FLUSH));
             Document doc = new Document();
             doc.Add(NewTextField("field", "go 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20", Field.Store.NO));
@@ -1199,21 +1202,6 @@ namespace Lucene.Net.Index
             }
             w.Dispose();
             dir.Dispose();
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestIndexWriterDelete OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestIndexWriterDelete outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
-            }
         }
 
         // LUCENE-3340: make sure deletes that we don't apply
@@ -1362,26 +1350,26 @@ namespace Lucene.Net.Index
 
         private class IndexWriterAnonymousInnerClassHelper : IndexWriter
         {
-            private readonly TestIndexWriterDelete OuterInstance;
+            private readonly TestIndexWriterDelete outerInstance;
 
-            private AtomicInt32 DocsInSegment;
-            private AtomicBoolean Closing;
-            private AtomicBoolean SawAfterFlush;
+            private readonly AtomicInt32 docsInSegment;
+            private readonly AtomicBoolean closing;
+            private readonly AtomicBoolean sawAfterFlush;
 
             public IndexWriterAnonymousInnerClassHelper(TestIndexWriterDelete outerInstance, Directory dir, IndexWriterConfig setReaderPooling, AtomicInt32 docsInSegment, AtomicBoolean closing, AtomicBoolean sawAfterFlush)
                 : base(dir, setReaderPooling)
             {
-                this.OuterInstance = outerInstance;
-                this.DocsInSegment = docsInSegment;
-                this.Closing = closing;
-                this.SawAfterFlush = sawAfterFlush;
+                this.outerInstance = outerInstance;
+                this.docsInSegment = docsInSegment;
+                this.closing = closing;
+                this.sawAfterFlush = sawAfterFlush;
             }
 
             protected override void DoAfterFlush()
             {
-                Assert.IsTrue(Closing || DocsInSegment >= 7, "only " + DocsInSegment + " in segment");
-                DocsInSegment.Value = 0;
-                SawAfterFlush.Value = (true);
+                Assert.IsTrue(closing || docsInSegment >= 7, "only " + docsInSegment + " in segment");
+                docsInSegment.Value = 0;
+                sawAfterFlush.Value = (true);
             }
         }
 

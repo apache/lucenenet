@@ -13,29 +13,28 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BinaryDocValuesField = BinaryDocValuesField;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NumericDocValuesField = NumericDocValuesField;
     using SortedDocValuesField = SortedDocValuesField;
@@ -101,26 +100,26 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestDocValuesWithThreads OuterInstance;
+            private readonly TestDocValuesWithThreads outerInstance;
 
-            private IList<long?> Numbers;
-            private IList<BytesRef> Binary;
-            private IList<BytesRef> Sorted;
-            private int NumDocs;
-            private AtomicReader Ar;
-            private CountdownEvent StartingGun;
-            private Random ThreadRandom;
+            private readonly IList<long?> numbers;
+            private readonly IList<BytesRef> binary;
+            private readonly IList<BytesRef> sorted;
+            private readonly int numDocs;
+            private readonly AtomicReader ar;
+            private readonly CountdownEvent startingGun;
+            private readonly Random threadRandom;
 
             public ThreadAnonymousInnerClassHelper(TestDocValuesWithThreads outerInstance, IList<long?> numbers, IList<BytesRef> binary, IList<BytesRef> sorted, int numDocs, AtomicReader ar, CountdownEvent startingGun, Random threadRandom)
             {
-                this.OuterInstance = outerInstance;
-                this.Numbers = numbers;
-                this.Binary = binary;
-                this.Sorted = sorted;
-                this.NumDocs = numDocs;
-                this.Ar = ar;
-                this.StartingGun = startingGun;
-                this.ThreadRandom = threadRandom;
+                this.outerInstance = outerInstance;
+                this.numbers = numbers;
+                this.binary = binary;
+                this.sorted = sorted;
+                this.numDocs = numDocs;
+                this.ar = ar;
+                this.startingGun = startingGun;
+                this.threadRandom = threadRandom;
             }
 
             public override void Run()
@@ -128,50 +127,50 @@ namespace Lucene.Net.Index
                 try
                 {
                     //NumericDocValues ndv = ar.GetNumericDocValues("number");
-                    FieldCache.Int64s ndv = FieldCache.DEFAULT.GetInt64s(Ar, "number", false);
+                    FieldCache.Int64s ndv = FieldCache.DEFAULT.GetInt64s(ar, "number", false);
                     //BinaryDocValues bdv = ar.GetBinaryDocValues("bytes");
-                    BinaryDocValues bdv = FieldCache.DEFAULT.GetTerms(Ar, "bytes", false);
-                    SortedDocValues sdv = FieldCache.DEFAULT.GetTermsIndex(Ar, "sorted");
-                    StartingGun.Wait();
+                    BinaryDocValues bdv = FieldCache.DEFAULT.GetTerms(ar, "bytes", false);
+                    SortedDocValues sdv = FieldCache.DEFAULT.GetTermsIndex(ar, "sorted");
+                    startingGun.Wait();
                     int iters = AtLeast(1000);
                     BytesRef scratch = new BytesRef();
                     BytesRef scratch2 = new BytesRef();
                     for (int iter = 0; iter < iters; iter++)
                     {
-                        int docID = ThreadRandom.Next(NumDocs);
-                        switch (ThreadRandom.Next(6))
+                        int docID = threadRandom.Next(numDocs);
+                        switch (threadRandom.Next(6))
                         {
 #pragma warning disable 612, 618
                             case 0:
-                                Assert.AreEqual((long)(sbyte)Numbers[docID], (sbyte)FieldCache.DEFAULT.GetBytes(Ar, "number", false).Get(docID));
+                                Assert.AreEqual((long)(sbyte)numbers[docID], (sbyte)FieldCache.DEFAULT.GetBytes(ar, "number", false).Get(docID));
                                 break;
 
                             case 1:
-                                Assert.AreEqual((long)(short)Numbers[docID], FieldCache.DEFAULT.GetInt16s(Ar, "number", false).Get(docID));
+                                Assert.AreEqual((long)(short)numbers[docID], FieldCache.DEFAULT.GetInt16s(ar, "number", false).Get(docID));
                                 break;
 #pragma warning restore 612, 618
 
                             case 2:
-                                Assert.AreEqual((long)(int)Numbers[docID], FieldCache.DEFAULT.GetInt32s(Ar, "number", false).Get(docID));
+                                Assert.AreEqual((long)(int)numbers[docID], FieldCache.DEFAULT.GetInt32s(ar, "number", false).Get(docID));
                                 break;
 
                             case 3:
-                                Assert.AreEqual((long)Numbers[docID], FieldCache.DEFAULT.GetInt64s(Ar, "number", false).Get(docID));
+                                Assert.AreEqual((long)numbers[docID], FieldCache.DEFAULT.GetInt64s(ar, "number", false).Get(docID));
                                 break;
 
                             case 4:
-                                Assert.AreEqual(J2N.BitConversion.Int32BitsToSingle((int)Numbers[docID]), FieldCache.DEFAULT.GetSingles(Ar, "number", false).Get(docID), 0.0f);
+                                Assert.AreEqual(J2N.BitConversion.Int32BitsToSingle((int)numbers[docID]), FieldCache.DEFAULT.GetSingles(ar, "number", false).Get(docID), 0.0f);
                                 break;
 
                             case 5:
-                                Assert.AreEqual(J2N.BitConversion.Int64BitsToDouble((long)Numbers[docID]), FieldCache.DEFAULT.GetDoubles(Ar, "number", false).Get(docID), 0.0);
+                                Assert.AreEqual(J2N.BitConversion.Int64BitsToDouble((long)numbers[docID]), FieldCache.DEFAULT.GetDoubles(ar, "number", false).Get(docID), 0.0);
                                 break;
                         }
                         bdv.Get(docID, scratch);
-                        Assert.AreEqual(Binary[docID], scratch);
+                        Assert.AreEqual(binary[docID], scratch);
                         // Cannot share a single scratch against two "sources":
                         sdv.Get(docID, scratch2);
-                        Assert.AreEqual(Sorted[docID], scratch2);
+                        Assert.AreEqual(sorted[docID], scratch2);
                     }
                 }
                 catch (Exception e)
@@ -270,35 +269,34 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
-            private Random Random;
-            private IList<BytesRef> DocValues;
-            private AtomicReader Sr;
-            private long END_TIME;
+            private readonly Random random;
+            private readonly IList<BytesRef> docValues;
+            private readonly AtomicReader sr;
+            private readonly long endTime;
 
-            public ThreadAnonymousInnerClassHelper2(Random random, IList<BytesRef> docValues, AtomicReader sr, long END_TIME)
+            public ThreadAnonymousInnerClassHelper2(Random random, IList<BytesRef> docValues, AtomicReader sr, long endTime)
             {
-                this.Random = random;
-                this.DocValues = docValues;
-                this.Sr = sr;
-                this.END_TIME = END_TIME;
+                this.random = random;
+                this.docValues = docValues;
+                this.sr = sr;
+                this.endTime = endTime;
             }
 
             public override void Run()
             {
-                Random random = Random;
                 SortedDocValues stringDVDirect;
                 NumericDocValues docIDToID;
                 try
                 {
-                    stringDVDirect = Sr.GetSortedDocValues("stringdv");
-                    docIDToID = Sr.GetNumericDocValues("id");
+                    stringDVDirect = sr.GetSortedDocValues("stringdv");
+                    docIDToID = sr.GetNumericDocValues("id");
                     Assert.IsNotNull(stringDVDirect);
                 }
                 catch (IOException ioe)
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }
-                while (Environment.TickCount < END_TIME)
+                while (Environment.TickCount < endTime)
                 {
                     SortedDocValues source;
                     source = stringDVDirect;
@@ -306,9 +304,9 @@ namespace Lucene.Net.Index
 
                     for (int iter = 0; iter < 100; iter++)
                     {
-                        int docID = random.Next(Sr.MaxDoc);
+                        int docID = random.Next(sr.MaxDoc);
                         source.Get(docID, scratch);
-                        Assert.AreEqual(DocValues[(int)docIDToID.Get(docID)], scratch);
+                        Assert.AreEqual(docValues[(int)docIDToID.Get(docID)], scratch);
                     }
                 }
             }

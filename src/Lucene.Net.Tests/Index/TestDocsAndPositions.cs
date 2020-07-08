@@ -8,6 +8,23 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -16,24 +33,6 @@ namespace Lucene.Net.Index
     using Field = Field;
     using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TextField = TextField;
@@ -41,13 +40,13 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestDocsAndPositions : LuceneTestCase
     {
-        private string FieldName;
+        private string fieldName;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            FieldName = "field" + Random.Next();
+            fieldName = "field" + Random.Next();
         }
 
         /// <summary>
@@ -63,7 +62,7 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
                 customType.OmitNorms = true;
-                doc.Add(NewField(FieldName, "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10", customType));
+                doc.Add(NewField(fieldName, "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10 " + "1 2 3 4 5 6 7 8 9 10", customType));
                 writer.AddDocument(doc);
             }
             IndexReader reader = writer.GetReader();
@@ -103,7 +102,7 @@ namespace Lucene.Net.Index
 
         public virtual DocsAndPositionsEnum GetDocsAndPositions(AtomicReader reader, BytesRef bytes, IBits liveDocs)
         {
-            Terms terms = reader.GetTerms(FieldName);
+            Terms terms = reader.GetTerms(fieldName);
             if (terms != null)
             {
                 TermsEnum te = terms.GetIterator(null);
@@ -152,7 +151,7 @@ namespace Lucene.Net.Index
                     builder.Append(term);
                     positions.Add(num);
                 }
-                doc.Add(NewField(FieldName, builder.ToString(), customType));
+                doc.Add(NewField(fieldName, builder.ToString(), customType));
                 positionsInDoc[i] = positions.ToArray();
                 writer.AddDocument(doc);
             }
@@ -237,7 +236,7 @@ namespace Lucene.Net.Index
                         freqInDoc[i]++;
                     }
                 }
-                doc.Add(NewField(FieldName, builder.ToString(), customType));
+                doc.Add(NewField(fieldName, builder.ToString(), customType));
                 writer.AddDocument(doc);
             }
 
@@ -252,7 +251,7 @@ namespace Lucene.Net.Index
                 foreach (AtomicReaderContext context in topReaderContext.Leaves)
                 {
                     int maxDoc = context.AtomicReader.MaxDoc;
-                    DocsEnum docsEnum = TestUtil.Docs(Random, context.Reader, FieldName, bytes, null, null, DocsFlags.FREQS);
+                    DocsEnum docsEnum = TestUtil.Docs(Random, context.Reader, fieldName, bytes, null, null, DocsFlags.FREQS);
                     if (FindNext(freqInDoc, context.DocBase, context.DocBase + maxDoc) == int.MaxValue)
                     {
                         Assert.IsNull(docsEnum);
@@ -332,7 +331,7 @@ namespace Lucene.Net.Index
                         builder.Append("odd ");
                     }
                 }
-                doc.Add(NewField(FieldName, builder.ToString(), customType));
+                doc.Add(NewField(fieldName, builder.ToString(), customType));
                 writer.AddDocument(doc);
             }
 
