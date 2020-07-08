@@ -1,11 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Sandbox.Queries;
 using Lucene.Net.Search;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Lucene.Net.QueryParsers.Xml.Builders
