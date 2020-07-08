@@ -13,12 +13,10 @@ using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
@@ -312,7 +310,7 @@ namespace Lucene.Net.Util
             }
             catch (Exception e)
             {
-                Console.Error.WriteLine("NOTE: " + e.Message + " Suppressed codecs: " + Arrays.ToString(avoidCodecs.ToArray()));
+                Console.Error.WriteLine("NOTE: " + e.Message + " Suppressed codecs: " + avoidCodecs);
                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
             }
         }
