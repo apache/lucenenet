@@ -2,7 +2,6 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Lucene.Net.Codecs.Bloom
 {
@@ -104,10 +103,13 @@ namespace Lucene.Net.Codecs.Bloom
         /// </summary>
         public static int GetNearestSetSize(int maxNumberOfBits)
         {
-            var result = _usableBitSetSizes[0];
-            foreach (var t in _usableBitSetSizes.Where(t => t <= maxNumberOfBits))
+            int result = _usableBitSetSizes[0];
+            for (int i = 0; i < _usableBitSetSizes.Length; i++)
             {
-                result = t;
+                if (_usableBitSetSizes[i] <= maxNumberOfBits)
+                {
+                    result = _usableBitSetSizes[i];
+                }
             }
             return result;
         }
@@ -124,12 +126,15 @@ namespace Lucene.Net.Codecs.Bloom
         {
             // Iterate around the various scales of bitset from smallest to largest looking for the first that
             // satisfies value volumes at the chosen saturation level
-            foreach (var t in from t in _usableBitSetSizes
-                              let numSetBitsAtDesiredSaturation = (int) (t*desiredSaturation)
-                              let estimatedNumUniqueValues = GetEstimatedNumberUniqueValuesAllowingForCollisions(
-                t, numSetBitsAtDesiredSaturation) where estimatedNumUniqueValues > maxNumberOfValuesExpected select t)
+            for (int i = 0; i < _usableBitSetSizes.Length; i++)
             {
-                return t;
+                int numSetBitsAtDesiredSaturation = (int)(_usableBitSetSizes[i] * desiredSaturation);
+                int estimatedNumUniqueValues = GetEstimatedNumberUniqueValuesAllowingForCollisions(
+                    _usableBitSetSizes[i], numSetBitsAtDesiredSaturation);
+                if (estimatedNumUniqueValues > maxNumberOfValuesExpected)
+                {
+                    return _usableBitSetSizes[i];
+                }
             }
             return -1;
         }
@@ -257,13 +262,16 @@ namespace Lucene.Net.Codecs.Bloom
             FixedBitSet rightSizedBitSet;
             var rightSizedBitSetSize = _bloomSize;
             //Hopefully find a smaller size bitset into which we can project accumulated values while maintaining desired saturation level
-            foreach (var candidateBitsetSize in from candidateBitsetSize in _usableBitSetSizes
-                                                let candidateSaturation = numBitsSet /(float) candidateBitsetSize
-                                                where candidateSaturation <= targetMaxSaturation
-                                                select candidateBitsetSize)
+            for (int i = 0; i < _usableBitSetSizes.Length; i++)
             {
-                rightSizedBitSetSize = candidateBitsetSize;
-                break;
+                int candidateBitsetSize = _usableBitSetSizes[i];
+                float candidateSaturation = (float)numBitsSet
+                    / (float)candidateBitsetSize;
+                if (candidateSaturation <= targetMaxSaturation)
+                {
+                    rightSizedBitSetSize = candidateBitsetSize;
+                    break;
+                }
             }
             // Re-project the numbers to a smaller space if necessary
             if (rightSizedBitSetSize < _bloomSize)

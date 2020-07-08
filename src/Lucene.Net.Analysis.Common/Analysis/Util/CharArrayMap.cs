@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Util
@@ -1274,7 +1273,13 @@ namespace Lucene.Net.Analysis.Util
 
             public bool Contains(TValue item)
             {
-                return outerInstance.values.Select(x => (x != null) ? x.Value : default(TValue)).Contains(item);
+                for (int i = 0; i < outerInstance.values.Length; i++)
+                {
+                    var value = outerInstance.values[i];
+                    if (J2N.Collections.Generic.EqualityComparer<TValue>.Equals(value, item))
+                        return true;
+                }
+                return false;
             }
 
             public void CopyTo(TValue[] array, int arrayIndex)

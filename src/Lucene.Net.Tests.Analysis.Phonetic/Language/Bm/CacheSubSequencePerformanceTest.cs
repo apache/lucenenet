@@ -2,6 +2,7 @@
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
+using System.Diagnostics;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -29,36 +30,63 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         [Test, LongRunningTest]
         public void Test()
         {
-            //int times = 10000000;
-            int times = 100000; // LUCENENET: 10 million times would take several minutes to run - decreasing to 100,000
+            int times = 10000000;
+            var stopwatch = new Stopwatch();
             Console.WriteLine("Test with String : ");
-            Test("Angelo", times);
+            Test("Angelo", times, stopwatch);
             Console.WriteLine("Test with StringBuilder : ");
-            Test(new StringBuilder("Angelo"), times);
+            Test(new StringBuilder("Angelo"), times, stopwatch);
             Console.WriteLine("Test with cached String : ");
-            Test(CacheSubSequence("Angelo").ToString(), times);
+            Test(CacheSubSequence("Angelo"), times, stopwatch);
             Console.WriteLine("Test with cached StringBuilder : ");
-            Test(CacheSubSequence(new StringBuilder("Angelo")).ToString(), times);
+            Test(CacheSubSequence(new StringBuilder("Angelo")), times, stopwatch);
         }
 
-        private void Test(string input, int times)
+        private void Test(ICharSequence input, int times, Stopwatch stopwatch)
         {
-            long beginTime = DateTime.UtcNow.Ticks;
+            stopwatch.Reset();
+            stopwatch.Start();
             for (int i = 0; i < times; i++)
             {
                 Test(input);
             }
-            Console.WriteLine(DateTime.UtcNow.Ticks - beginTime + " millis");
+            stopwatch.Stop();
+            Console.WriteLine($"{stopwatch.ElapsedMilliseconds} millis");
         }
 
-        private void Test(StringBuilder input, int times)
+        private void Test(string input, int times, Stopwatch stopwatch)
         {
-            long beginTime = DateTime.UtcNow.Ticks;
+            stopwatch.Reset();
+            stopwatch.Start();
             for (int i = 0; i < times; i++)
             {
                 Test(input);
             }
-            Console.WriteLine(DateTime.UtcNow.Ticks - beginTime + " millis");
+            stopwatch.Stop();
+            Console.WriteLine($"{stopwatch.ElapsedMilliseconds} millis");
+        }
+
+        private void Test(StringBuilder input, int times, Stopwatch stopwatch)
+        {
+            stopwatch.Reset();
+            stopwatch.Start();
+            for (int i = 0; i < times; i++)
+            {
+                Test(input);
+            }
+            stopwatch.Stop();
+            Console.WriteLine($"{stopwatch.ElapsedMilliseconds} millis");
+        }
+
+        private void Test(ICharSequence input)
+        {
+            for (int i = 0; i < input.Length; i++)
+            {
+                for (int j = i; j <= input.Length; j++)
+                {
+                    input.Subsequence(i, (j - i));
+                }
+            }
         }
 
         private void Test(string input)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Lucene.Net.Facet
 {
@@ -177,9 +176,9 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Create a sampled copy of the matching documents list.
         /// </summary>
-        private IList<MatchingDocs> CreateSampledDocs(IEnumerable<MatchingDocs> matchingDocsList)
+        private IList<MatchingDocs> CreateSampledDocs(ICollection<MatchingDocs> matchingDocsList)
         {
-            List<MatchingDocs> sampledDocsList = new List<MatchingDocs>(matchingDocsList.Count());
+            List<MatchingDocs> sampledDocsList = new List<MatchingDocs>(matchingDocsList.Count);
             foreach (MatchingDocs docs in matchingDocsList)
             {
                 sampledDocsList.Add(CreateSample(docs));

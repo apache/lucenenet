@@ -4,7 +4,6 @@ using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using AttributeFactory = Lucene.Net.Util.AttributeSource.AttributeFactory;
 
 namespace Lucene.Net.Analysis.OpenNlp
@@ -50,7 +49,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         {
             sentenceModelFile = Require(args, SENTENCE_MODEL);
             tokenizerModelFile = Require(args, TOKENIZER_MODEL);
-            if (args.Any())
+            if (args.Count > 0)
             {
                 throw new ArgumentException("Unknown parameters: " + args);
             }

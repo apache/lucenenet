@@ -4,7 +4,6 @@ using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Lucene.Net.Analysis.OpenNlp
 {
@@ -61,7 +60,7 @@ namespace Lucene.Net.Analysis.OpenNlp
                     + DICTIONARY + "' and '" + LEMMATIZER_MODEL + "' must be provided.");
             }
 
-            if (args.Any())
+            if (args.Count > 0)
             {
                 throw new ArgumentException("Unknown parameters: " + args);
             }

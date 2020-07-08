@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
 using System.Collections.Generic;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core
@@ -58,7 +57,7 @@ namespace Lucene.Net.Analysis.Core
         public virtual void Inform(IResourceLoader loader)
         {
             IList<string> files = SplitFileNames(stopTypesFiles);
-            if (files.Count() > 0)
+            if (files.Count > 0)
             {
                 stopTypes = new JCG.HashSet<string>();
                 foreach (string file in files)

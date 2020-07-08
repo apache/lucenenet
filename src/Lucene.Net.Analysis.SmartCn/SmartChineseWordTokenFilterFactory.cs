@@ -2,7 +2,6 @@
 using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.Analysis.Cn.Smart
 {
@@ -42,7 +41,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         public SmartChineseWordTokenFilterFactory(IDictionary<string, string> args)
             : base(args)
         {
-            if (args.Any())
+            if (args.Count > 0)
             {
                 throw new ArgumentException("Unknown parameters: " + args);
             }

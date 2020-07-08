@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
@@ -176,7 +175,8 @@ namespace Lucene.Net.Codecs.Memory
                 else
                 {
                     meta.WriteByte(MemoryDocValuesProducer.TABLE_COMPRESSED); // table-compressed
-                    long?[] decode = uniqueValues.ToArray();
+                    long?[] decode = new long?[uniqueValues.Count];
+                    uniqueValues.CopyTo(decode, 0);
 
                     var encode = new Dictionary<long?, int?>();
                     data.WriteVInt32(decode.Length);

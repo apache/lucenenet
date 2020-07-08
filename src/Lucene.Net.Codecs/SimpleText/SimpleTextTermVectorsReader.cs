@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Reflection;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.SimpleText
@@ -394,8 +392,9 @@ namespace Lucene.Net.Codecs.SimpleText
             public override SeekStatus SeekCeil(BytesRef text)
             {
                 var newTerms = new JCG.SortedDictionary<BytesRef, SimpleTVPostings>(_terms.Comparer);
-                foreach (var p in _terms.Where(p => p.Key.CompareTo(text) >= 0))
-                    newTerms.Add(p.Key, p.Value);
+                foreach (var p in _terms)
+                    if (p.Key.CompareTo(text) >= 0)
+                        newTerms.Add(p.Key, p.Value);
 
                 _iterator = newTerms.GetEnumerator();
 

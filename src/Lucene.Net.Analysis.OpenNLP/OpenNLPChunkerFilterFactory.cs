@@ -4,7 +4,6 @@ using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Lucene.Net.Analysis.OpenNlp
 {
@@ -48,7 +47,7 @@ namespace Lucene.Net.Analysis.OpenNlp
                   : base(args)
         {
             chunkerModelFile = Get(args, CHUNKER_MODEL);
-            if (args.Any())
+            if (args.Count > 0)
             {
                 throw new ArgumentException("Unknown parameters: " + args);
             }

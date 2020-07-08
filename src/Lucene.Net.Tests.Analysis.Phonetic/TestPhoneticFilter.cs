@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis.Phonetic
         public void TestRandomStrings()
         {
             IStringEncoder[] encoders = new IStringEncoder[] {
-                new Metaphone(), new DoubleMetaphone(), new Soundex()/*, new RefinedSoundex()*/, new Caverphone2()
+                new Metaphone(), new DoubleMetaphone(), new Soundex(), new RefinedSoundex(), new Caverphone2()
             };
 
             foreach (IStringEncoder e in encoders)

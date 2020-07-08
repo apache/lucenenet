@@ -367,7 +367,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             ISet<string> result = new JCG.HashSet<string>();
             string alts = config.Get("alt.tasks.packages", null);
             string dfltPkg = typeof(PerfTask).Assembly.GetName().Name;
-            string[] referencedAssemblies = AssemblyUtils.GetReferencedAssemblies().Select(a => a.GetName().Name).ToArray();
+            IEnumerable<string> referencedAssemblies = AssemblyUtils.GetReferencedAssemblies().Select(a => a.GetName().Name);
             result.Add(dfltPkg);
 
             if (alts == null)

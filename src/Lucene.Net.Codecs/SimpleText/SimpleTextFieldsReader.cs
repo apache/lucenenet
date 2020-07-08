@@ -3,7 +3,6 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -778,7 +777,12 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override long RamBytesUsed()
         {
-            return _termsCache.Values.Sum(simpleTextTerms => (simpleTextTerms != null) ? simpleTextTerms.RamBytesUsed() : 0);
+            long sizeInBytes = 0;
+            foreach (SimpleTextTerms simpleTextTerms in _termsCache.Values)
+            {
+                sizeInBytes += (simpleTextTerms != null) ? simpleTextTerms.RamBytesUsed() : 0;
+            }
+            return sizeInBytes;
         }
 
         public override void CheckIntegrity()

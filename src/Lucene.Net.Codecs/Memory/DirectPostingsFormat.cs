@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
@@ -167,7 +166,12 @@ namespace Lucene.Net.Codecs.Memory
             {
                 get
                 {
-                    return fields.Values.Aggregate<DirectField, long>(0, (current, field) => current + field.terms.Length);
+                    long numTerms = 0;
+                    foreach (DirectField field in fields.Values)
+                    {
+                        numTerms += field.terms.Length;
+                    }
+                    return numTerms;
                 }
             }
 

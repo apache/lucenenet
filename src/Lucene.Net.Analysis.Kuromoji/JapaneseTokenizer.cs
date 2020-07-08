@@ -1,12 +1,11 @@
-﻿using Lucene.Net.Analysis.Ja.Dict;
+﻿using J2N;
+using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Analysis.Ja.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
-using J2N;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;

@@ -5,10 +5,10 @@
 // $Id: NamespaceSupport.java,v 1.15 2004/04/26 17:34:35 dmegginson Exp $
 
 using J2N.Text;
+using Lucene.Net.Support;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Sax.Helpers
 {
@@ -763,7 +763,7 @@ namespace Sax.Helpers
             {
                 if (declarations == null)
                 {
-                    return Enumerable.Empty<object>();
+                    return Collections.EmptyList<object>();
                 }
                 return declarations;
             }
@@ -780,7 +780,7 @@ namespace Sax.Helpers
             {
                 if (prefixTable == null)
                 {
-                    return Enumerable.Empty<object>();
+                    return Collections.EmptyList<object>();
                 }
                 return prefixTable.Keys;
             }

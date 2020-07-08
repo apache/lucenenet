@@ -8,7 +8,6 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Pl
@@ -158,7 +157,7 @@ namespace Lucene.Net.Analysis.Pl
             TokenStream result = new StandardFilter(m_matchVersion, source);
             result = new LowerCaseFilter(m_matchVersion, result);
             result = new StopFilter(m_matchVersion, result, m_stopwords);
-            if (stemExclusionSet.Any())
+            if (stemExclusionSet.Count > 0)
                 result = new SetKeywordMarkerFilter(result, stemExclusionSet);
             result = new StempelFilter(result, new StempelStemmer(stemTable));
             return new TokenStreamComponents(source, result);

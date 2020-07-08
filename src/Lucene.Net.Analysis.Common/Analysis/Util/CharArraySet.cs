@@ -285,7 +285,7 @@ namespace Lucene.Net.Analysis.Util
             string[] stringSet;
             using (var context = new CultureContext(CultureInfo.InvariantCulture))
             {
-                stringSet = set.Select(x => x.ToString()).ToArray();
+                stringSet = set.Select(x => x.ToString()).ToArray(); // LUCENENET TODO: Performance - this approach can probably be improved
             }
 
             return new CharArraySet(matchVersion, stringSet, false);
