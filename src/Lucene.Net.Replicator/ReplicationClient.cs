@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
@@ -14,21 +13,21 @@ using Directory = Lucene.Net.Store.Directory;
 namespace Lucene.Net.Replicator
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// A client which monitors and obtains new revisions from a <see cref="IReplicator"/>.
@@ -358,19 +357,29 @@ namespace Lucene.Net.Replicator
                 return newRevisionFiles;
 
             Dictionary<string, IList<RevisionFile>> requiredFiles = new Dictionary<string, IList<RevisionFile>>();
-            foreach (KeyValuePair<string, IList<RevisionFile>> pair in handlerRevisionFiles)
+            foreach (var e in handlerRevisionFiles)
             {
                 // put the handler files in a Set, for faster contains() checks later
-                ISet<string> handlerFiles = new JCG.HashSet<string>(pair.Value.Select(v => v.FileName));
+                ISet<string> handlerFiles = new JCG.HashSet<string>();
+                foreach (RevisionFile file in e.Value)
+                {
+                    handlerFiles.Add(file.FileName);
+                }
 
                 // make sure to preserve revisionFiles order
-                string source = pair.Key;
+                List<RevisionFile> res = new List<RevisionFile>();
+                string source = e.Key;
                 Debug.Assert(newRevisionFiles.ContainsKey(source), string.Format("source not found in newRevisionFiles: {0}", newRevisionFiles));
-                List<RevisionFile> res = newRevisionFiles[source]
-                    .Where(file => !handlerFiles.Contains(file.FileName))
-                    .ToList();
-                requiredFiles.Add(source, res);
+                foreach (RevisionFile file in newRevisionFiles[source])
+                {
+                    if (!handlerFiles.Contains(file.FileName))
+                    {
+                        res.Add(file);
+                    }
+                }
+                requiredFiles[source] = res;
             }
+
             return requiredFiles;
         }
 
