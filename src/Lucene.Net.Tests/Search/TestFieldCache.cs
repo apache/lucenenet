@@ -9,11 +9,11 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -365,7 +365,7 @@ namespace Lucene.Net.Search
             {
                 termOrds.SetDocument(i);
                 // this will remove identical terms. A DocTermOrds doesn't return duplicate ords for a docId
-                IList<BytesRef> values = MultiValued[i].Distinct().ToList();
+                ISet<BytesRef> values = new JCG.LinkedHashSet<BytesRef>(MultiValued[i]);
                 foreach (BytesRef v in values)
                 {
                     if (v == null)
