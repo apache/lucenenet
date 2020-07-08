@@ -2,7 +2,6 @@ using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
-using System.Linq;
 using System.Reflection;
 
 namespace Lucene.Net.Index
@@ -34,20 +33,20 @@ namespace Lucene.Net.Index
         {
             MergeScheduler ms = NoMergeScheduler.INSTANCE;
             ms.Dispose();
-            ms.Merge(null, RandomPicks.RandomFrom(Random, Enum.GetValues(typeof(MergeTrigger)).Cast<MergeTrigger>().ToArray()), Random.NextBoolean());
+            ms.Merge(null, RandomPicks.RandomFrom(Random, (MergeTrigger[])Enum.GetValues(typeof(MergeTrigger))), Random.NextBoolean());
         }
 
         [Test]
         public virtual void TestFinalSingleton()
-	    {
-		    assertTrue(typeof(NoMergeScheduler).IsSealed);
-		    ConstructorInfo[] ctors = typeof(NoMergeScheduler).GetConstructors(BindingFlags.Instance |
+        {
+            assertTrue(typeof(NoMergeScheduler).IsSealed);
+            ConstructorInfo[] ctors = typeof(NoMergeScheduler).GetConstructors(BindingFlags.Instance |
                     BindingFlags.NonPublic |
                     BindingFlags.Public |
                     BindingFlags.DeclaredOnly); // LUCENENET NOTE: It seems .NET automatically adds a private static constructor, so leaving off the static BindingFlag
             assertEquals("expected 1 private ctor only: " + Arrays.ToString(ctors), 1, ctors.Length);
-		    assertTrue("that 1 should be private: " + ctors[0], ctors[0].IsPrivate);
-	    }
+            assertTrue("that 1 should be private: " + ctors[0], ctors[0].IsPrivate);
+        }
 
         [Test]
         public virtual void TestMethodsOverridden()
