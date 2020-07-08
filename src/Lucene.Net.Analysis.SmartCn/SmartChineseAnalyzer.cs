@@ -5,7 +5,6 @@ using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Cn.Smart
@@ -51,9 +50,9 @@ namespace Lucene.Net.Analysis.Cn.Smart
     {
         private readonly CharArraySet stopWords;
 
-        private static readonly string DEFAULT_STOPWORD_FILE = "stopwords.txt";
+        private const string DEFAULT_STOPWORD_FILE = "stopwords.txt";
 
-        private static readonly string STOPWORD_FILE_COMMENT = "//";
+        private const string STOPWORD_FILE_COMMENT = "//";
 
         /// <summary>
         /// Returns an unmodifiable instance of the default stop-words set.
@@ -162,7 +161,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
             // LowerCaseFilter is not needed, as SegTokenFilter lowercases Basic Latin text.
             // The porter stemming is too strict, this is not a bug, this is a feature:)
             result = new PorterStemFilter(result);
-            if (stopWords.Any())
+            if (stopWords.Count > 0)
             {
                 result = new StopFilter(matchVersion, result, stopWords);
             }

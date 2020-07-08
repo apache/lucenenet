@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
@@ -361,7 +360,7 @@ namespace Lucene.Net.Analysis.Util
             AssureMatchVersion();
             IList<string> files = SplitFileNames(wordFiles);
             CharArraySet words = null;
-            if (files.Count() > 0)
+            if (files.Count > 0)
             {
                 // default stopwords list has 35 or so words, but maybe don't make it that
                 // big to start
@@ -392,11 +391,11 @@ namespace Lucene.Net.Analysis.Util
             AssureMatchVersion();
             IList<string> files = SplitFileNames(wordFiles);
             CharArraySet words = null;
-            if (files.Count() > 0)
+            if (files.Count > 0)
             {
                 // default stopwords list has 35 or so words, but maybe don't make it that
                 // big to start
-                words = new CharArraySet(m_luceneMatchVersion, files.Count() * 10, ignoreCase);
+                words = new CharArraySet(m_luceneMatchVersion, files.Count * 10, ignoreCase);
                 foreach (string file in files)
                 {
                     using (Stream stream = loader.OpenResource(file.Trim()))

@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous

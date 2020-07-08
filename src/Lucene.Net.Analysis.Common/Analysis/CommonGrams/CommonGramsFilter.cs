@@ -1,8 +1,6 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Analysis.CommonGrams

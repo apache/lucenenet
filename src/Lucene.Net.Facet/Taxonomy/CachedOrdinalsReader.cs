@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -198,10 +197,18 @@ namespace Lucene.Net.Facet.Taxonomy
 
         public virtual long RamBytesUsed()
         {
-#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+#if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
             lock (this)
 #endif
-                return ordsCache.Sum(pair => pair.Value.RamBytesUsed());
+            {
+                long bytes = 0;
+                foreach (var pair in ordsCache)
+                {
+                    bytes += pair.Value.RamBytesUsed();
+                }
+
+                return bytes;
+            }
         }
     }
 }

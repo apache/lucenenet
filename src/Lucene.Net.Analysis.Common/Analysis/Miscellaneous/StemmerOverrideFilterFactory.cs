@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Lucene.Net.Analysis.Util;
 using System.Text.RegularExpressions;
-using System.Linq;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -57,7 +56,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 AssureMatchVersion();
                 IList<string> files = SplitFileNames(dictionaryFiles);
-                if (files.Count() > 0)
+                if (files.Count > 0)
                 {
                     StemmerOverrideFilter.Builder builder = new StemmerOverrideFilter.Builder(ignoreCase);
                     foreach (string file in files)

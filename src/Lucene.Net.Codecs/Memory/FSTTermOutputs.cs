@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Support;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -383,7 +382,12 @@ namespace Lucene.Net.Codecs.Memory
 
         private static bool AllZero(long[] l)
         {
-            return l.All(t => t == 0);
+            for (int i = 0; i < l.Length; i++)
+            {
+                if (l[i] != 0)
+                    return false;
+            }
+            return true;
         }
     }
 }

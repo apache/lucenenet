@@ -63,7 +63,7 @@ namespace Lucene.Net.Util
                 this.m_blockSize = blockSize;
             }
 
-            public abstract void RecycleByteBlocks(byte[][] blocks, int start, int end);
+            public abstract void RecycleByteBlocks(byte[][] blocks, int start, int end); // LUCENENT TODO: API - Change to use IList<byte[]>
 
             public virtual void RecycleByteBlocks(IList<byte[]> blocks)
             {

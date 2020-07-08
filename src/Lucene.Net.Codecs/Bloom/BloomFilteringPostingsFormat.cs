@@ -5,7 +5,6 @@ using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Bloom
@@ -455,7 +454,14 @@ namespace Lucene.Net.Codecs.Bloom
                 {
                     _delegateFieldsConsumer.Dispose();
                     // Now we are done accumulating values for these fields
-                    var nonSaturatedBlooms = (from entry in _bloomFilters let bloomFilter = entry.Value where !outerInstance._bloomFilterFactory.IsSaturated(bloomFilter, entry.Key) select entry).ToList();
+                    var nonSaturatedBlooms = new List<KeyValuePair<FieldInfo, FuzzySet>>();
+
+                    foreach (var entry in _bloomFilters)
+                    {
+                        var bloomFilter = entry.Value;
+                        if (!outerInstance._bloomFilterFactory.IsSaturated(bloomFilter, entry.Key))
+                            nonSaturatedBlooms.Add(entry);
+                    }
 
                     var bloomFileName = IndexFileNames.SegmentFileName(
                         _state.SegmentInfo.Name, _state.SegmentSuffix, BLOOM_EXTENSION);

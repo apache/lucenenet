@@ -71,16 +71,15 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 return new PhonemeBuilder(new Phoneme("", languages));
             }
 
-            private readonly IList<Phoneme> phonemes;
+            private readonly ISet<Phoneme> phonemes;
 
             private PhonemeBuilder(Phoneme phoneme)
             {
-                // LUCENENET NOTE: LinkedHashSet cares about insertion order - in .NET, we can just use List<T> for that
-                this.phonemes = new List<Phoneme>();
+                this.phonemes = new JCG.LinkedHashSet<Phoneme>();
                 this.phonemes.Add(phoneme);
             }
 
-            internal PhonemeBuilder(IList<Phoneme> phonemes)
+            internal PhonemeBuilder(ISet<Phoneme> phonemes)
             {
                 this.phonemes = phonemes;
             }
@@ -133,8 +132,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             /// <param name="maxPhonemes">The maximum number of phonemes to build up.</param>
             public void Apply(IPhonemeExpr phonemeExpr, int maxPhonemes)
             {
-                // LUCENENET NOTE: LinkedHashSet cares about insertion order - in .NET, we can just use List<T> for that
-                IList<Phoneme> newPhonemes = new List<Phoneme>(maxPhonemes);
+                ISet<Phoneme> newPhonemes = new JCG.LinkedHashSet<Phoneme>(maxPhonemes);
 
                 //EXPR_continue:
                 foreach (Phoneme left in this.phonemes)
@@ -159,15 +157,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 EXPR_break: { }
 
                 this.phonemes.Clear();
-                // LUCENENET: We need to filter out any duplicates, since we converted from LinkedHashSet
-                // to List.
-                this.phonemes.AddRange(newPhonemes.Where(x => !phonemes.Any(y => y.Equals(x))));
+                this.phonemes.UnionWith(newPhonemes);
             }
 
             /// <summary>
             /// Gets underlying phoneme set. Please don't mutate.
             /// </summary>
-            public IList<Phoneme> Phonemes => phonemes;
+            public ISet<Phoneme> Phonemes => phonemes;
 
             /// <summary>
             /// Stringifies the phoneme set. This produces a single string of the strings of each phoneme,
@@ -399,7 +395,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 phonemes.UnionWith(subBuilder.Phonemes);
             }
 
-            return new PhonemeBuilder(phonemes.ToList());
+            return new PhonemeBuilder(phonemes);
         }
 
         /// <summary>
@@ -452,7 +448,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 }
             }
 
-            IList<string> words = WHITESPACE.Split(input).TrimEnd().ToList();
+            IList<string> words = WHITESPACE.Split(input).TrimEnd();
             IList<string> words2 = new List<string>();
 
             // special-case handling of word prefixes based upon the name type

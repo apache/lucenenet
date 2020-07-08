@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
@@ -287,7 +286,7 @@ namespace Lucene.Net.Facet
 
         public override Query Rewrite(IndexReader r)
         {
-            if (!query.Clauses.Any())
+            if (query.Clauses.Count == 0)
             {
                 return new MatchAllDocsQuery();
             }
