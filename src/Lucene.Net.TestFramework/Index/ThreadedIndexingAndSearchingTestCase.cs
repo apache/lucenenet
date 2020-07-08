@@ -12,11 +12,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Directory = Lucene.Net.Store.Directory;
@@ -746,7 +744,7 @@ namespace Lucene.Net.Index
                     TopDocs hits = s.Search(new TermQuery(new Term("docid", stringID)), 1);
                     if (hits.TotalHits != 1)
                     {
-                        Console.WriteLine("doc id=" + stringID + " is not supposed to be deleted, but got hitCount=" + hits.TotalHits + "; delIDs=" + string.Join(",",  delIDs.ToArray()));
+                        Console.WriteLine("doc id=" + stringID + " is not supposed to be deleted, but got hitCount=" + hits.TotalHits + "; delIDs=" + Collections.ToString(delIDs));
                         doFail = true;
                     }
                 }
