@@ -8,18 +8,16 @@ using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Support.IO;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
-using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
 using Assert = Lucene.Net.TestFramework.Assert;
+using Console = Lucene.Net.Util.SystemConsole;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 
 //#if TESTFRAMEWORK_MSTEST
@@ -65,7 +63,7 @@ namespace Lucene.Net.Util
         public static void Rm(params DirectoryInfo[] locations)
         {
             ISet<FileSystemInfo> unremoved = Rm(new JCG.HashSet<FileSystemInfo>(), locations);
-            if (unremoved.Any())
+            if (unremoved.Count > 0)
             {
                 StringBuilder b = new StringBuilder("Could not remove the following files (in the order of attempts):\n");
                 foreach (var f in unremoved)
