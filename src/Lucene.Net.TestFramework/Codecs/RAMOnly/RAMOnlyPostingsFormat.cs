@@ -370,7 +370,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                     else
                     {
                         //It = RamField.TermToDocs.tailMap(Current).Keys.GetEnumerator();
-                        it = ramField.termToDocs.Where(kvpair => String.CompareOrdinal(kvpair.Key, current) >= 0).ToDictionary(kvpair => kvpair.Key, kvpair => kvpair.Value).Keys.GetEnumerator();
+                        it = ramField.termToDocs.Where(kvpair => string.CompareOrdinal(kvpair.Key, current) >= 0).ToDictionary(kvpair => kvpair.Key, kvpair => kvpair.Value).Keys.GetEnumerator();
                     }
                 }
                 if (it.MoveNext())

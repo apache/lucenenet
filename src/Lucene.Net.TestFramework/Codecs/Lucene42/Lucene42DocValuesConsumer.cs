@@ -6,7 +6,6 @@ using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 using static Lucene.Net.Util.Fst.FST;
 using static Lucene.Net.Util.Packed.PackedInt32s;
@@ -145,7 +144,8 @@ namespace Lucene.Net.Codecs.Lucene42
                 else
                 {
                     meta.WriteByte((byte)Lucene42DocValuesProducer.TABLE_COMPRESSED); // table-compressed
-                    long[] decode = uniqueValues.ToArray(/*new long?[uniqueValues.Count]*/);
+                    var decode = new long[uniqueValues.Count];
+                    uniqueValues.CopyTo(decode, 0);
                     var encode = new Dictionary<long, int>();
                     data.WriteVInt32(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
