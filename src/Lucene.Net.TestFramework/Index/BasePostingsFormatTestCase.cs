@@ -2,12 +2,10 @@ using J2N.Threading;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
@@ -533,6 +531,9 @@ namespace Lucene.Net.Index
 
         private FieldInfos currentFieldInfos;
 
+        // LUCENENET specific - cache the list of index options so we don't need to look it up over and over
+        private static readonly IndexOptions[] ALL_INDEX_OPTIONS = (IndexOptions[])Enum.GetValues(typeof(IndexOptions));
+
         // maxAllowed = the "highest" we can index, but we will still
         // randomly index at lower IndexOption
         private FieldsProducer BuildIndex(Directory dir, IndexOptions maxAllowed, bool allowPayloads, bool alwaysTestMax)
@@ -540,13 +541,13 @@ namespace Lucene.Net.Index
             Codec codec = GetCodec();
             SegmentInfo segmentInfo = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, "_0", maxDoc, false, codec, null);
 
-            int maxIndexOption = Enum.GetValues(typeof(IndexOptions)).Cast<IndexOptions>().ToList().IndexOf(maxAllowed);
+            int maxIndexOption = Array.IndexOf(ALL_INDEX_OPTIONS, maxAllowed);
             if (VERBOSE)
             {
                 Console.WriteLine("\nTEST: now build index");
             }
 
-            int maxIndexOptionNoOffsets = Enum.GetValues(typeof(IndexOptions)).Cast<IndexOptions>().ToList().IndexOf(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            int maxIndexOptionNoOffsets = Array.IndexOf(ALL_INDEX_OPTIONS, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
             // TODO use allowPayloads
 
@@ -568,7 +569,7 @@ namespace Lucene.Net.Index
 
                 // Randomly picked the IndexOptions to index this
                 // field with:
-                IndexOptions indexOptions = Enum.GetValues(typeof(IndexOptions)).Cast<IndexOptions>().ToArray()[alwaysTestMax ? fieldMaxIndexOption : Random.Next(1, 1 + fieldMaxIndexOption)]; // LUCENENET: Skipping NONE option
+                IndexOptions indexOptions = ALL_INDEX_OPTIONS[alwaysTestMax ? fieldMaxIndexOption : Random.Next(1, 1 + fieldMaxIndexOption)]; // LUCENENET: Skipping NONE option
                 bool doPayloads = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
 
                 newFieldInfoArray[fieldUpto] = new FieldInfo(oldFieldInfo.Name, true, fieldUpto, false, false, doPayloads, indexOptions, DocValuesType.NONE, DocValuesType.NUMERIC, null);
@@ -1298,19 +1299,26 @@ namespace Lucene.Net.Index
 
                     TestFields(fieldsProducer);
 
-                    var allOptions = ((IndexOptions[])Enum.GetValues(typeof(IndexOptions))).Skip(1).ToArray(); // LUCENENET: Skip our NONE option
-                                                                                                               //IndexOptions_e.values();
+                    // LUCENENET: A bit of extra work required since we don't have an easy way to filter out
+                    // the "NONE" option we added to avoid having to use null
+                    IndexOptions[] allOptions = new IndexOptions[ALL_INDEX_OPTIONS.Length - 1];
+                    Array.Copy(ALL_INDEX_OPTIONS, 1, allOptions, 0, allOptions.Length); // LUCENENET: Skip our NONE option
                     int maxIndexOption = Array.IndexOf(allOptions, options);
+
+                    ISet<Option> allOptionsHashSet = new JCG.HashSet<Option>((Option[])Enum.GetValues(typeof(Option)));
 
                     for (int i = 0; i <= maxIndexOption; i++)
                     {
-                        ISet<Option> allOptionsHashSet = new JCG.HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>());
                         TestTerms(fieldsProducer, allOptionsHashSet, allOptions[i], options, true);
                         if (withPayloads)
                         {
                             // If we indexed w/ payloads, also test enums w/o accessing payloads:
+
+                            // LUCENENET: No EnumSet in .NET, so we have some extra work to do
+                            // to populate the options.
                             ISet<Option> payloadsHashSet = new JCG.HashSet<Option>() { Option.PAYLOADS };
-                            var complementHashSet = new JCG.HashSet<Option>(allOptionsHashSet.Except(payloadsHashSet));
+                            var complementHashSet = new JCG.HashSet<Option>(allOptionsHashSet);
+                            complementHashSet.SymmetricExceptWith(payloadsHashSet); // Complement of
                             TestTerms(fieldsProducer, complementHashSet, allOptions[i], options, true);
                         }
                     }
@@ -1376,8 +1384,8 @@ namespace Lucene.Net.Index
                         // NOTE: you can also test "weaker" index options than
                         // you indexed with:
                         TestTerms(fieldsProducer,
-                            // LUCENENET: Skip our NONE option
-                            new JCG.HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>().Skip(1)),
+                            // LUCENENET: No need to skip options here
+                            new JCG.HashSet<Option>((Option[])Enum.GetValues(typeof(Option))),
                             IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
                             IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
                             false);
