@@ -1,8 +1,6 @@
 using Lucene.Net.Attributes;
-using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
 using System;
-using System.IO;
 
 namespace Lucene.Net.Analysis
 {
@@ -29,26 +27,14 @@ namespace Lucene.Net.Analysis
         [Test, LongRunningTest]
         public virtual void TestRandomStrings()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random, a, 200 * RANDOM_MULTIPLIER, 8192);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestLookaheadTokenFilter OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestLookaheadTokenFilter outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Random random = Random;
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, random.NextBoolean());
                 TokenStream output = new MockRandomLookaheadTokenFilter(random, tokenizer);
                 return new TokenStreamComponents(tokenizer, output);
-            }
+            });
+            CheckRandomData(Random, a, 200 * RANDOM_MULTIPLIER, 8192);
         }
 
         private class NeverPeeksLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
@@ -72,50 +58,26 @@ namespace Lucene.Net.Analysis
         [Test, LongRunningTest]
         public virtual void TestNeverCallingPeek()
         {
-            Analyzer a = new NCPAnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random, a, 200 * RANDOM_MULTIPLIER, 8192);
-        }
-
-        private class NCPAnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestLookaheadTokenFilter OuterInstance;
-
-            public NCPAnalyzerAnonymousInnerClassHelper(TestLookaheadTokenFilter outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, Random.NextBoolean());
                 TokenStream output = new NeverPeeksLookaheadTokenFilter(tokenizer);
                 return new TokenStreamComponents(tokenizer, output);
-            }
+            });
+            CheckRandomData(Random, a, 200 * RANDOM_MULTIPLIER, 8192);
         }
 
         [Test]
         public virtual void TestMissedFirstToken()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this);
-
-            AssertAnalyzesTo(analyzer, "Only he who is running knows .", new string[] { "Only", "Only-huh?", "he", "he-huh?", "who", "who-huh?", "is", "is-huh?", "running", "running-huh?", "knows", "knows-huh?", ".", ".-huh?" });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestLookaheadTokenFilter OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestLookaheadTokenFilter outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TrivialLookaheadFilter filter = new TrivialLookaheadFilter(source);
                 return new TokenStreamComponents(source, filter);
-            }
+            });
+
+            AssertAnalyzesTo(analyzer, "Only he who is running knows .", new string[] { "Only", "Only-huh?", "he", "he-huh?", "who", "who-huh?", "is", "is-huh?", "running", "running-huh?", "knows", "knows-huh?", ".", ".-huh?" });
         }
     }
 }

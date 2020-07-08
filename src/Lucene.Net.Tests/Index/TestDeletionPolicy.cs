@@ -1,4 +1,3 @@
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -6,35 +5,34 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using Query = Lucene.Net.Search.Query;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
@@ -71,32 +69,32 @@ namespace Lucene.Net.Index
 
         internal class KeepAllDeletionPolicy : IndexDeletionPolicy
         {
-            private readonly TestDeletionPolicy OuterInstance;
+            private readonly TestDeletionPolicy outerInstance;
 
-            internal int NumOnInit;
-            internal int NumOnCommit;
-            internal Directory Dir;
+            internal int numOnInit;
+            internal int numOnCommit;
+            internal Directory dir;
 
             internal KeepAllDeletionPolicy(TestDeletionPolicy outerInstance, Directory dir)
             {
-                this.OuterInstance = outerInstance;
-                this.Dir = dir;
+                this.outerInstance = outerInstance;
+                this.dir = dir;
             }
 
             public override void OnInit<T>(IList<T> commits)
             {
-                OuterInstance.VerifyCommitOrder(commits);
-                NumOnInit++;
+                outerInstance.VerifyCommitOrder(commits);
+                numOnInit++;
             }
 
             public override void OnCommit<T>(IList<T> commits)
             {
                 IndexCommit lastCommit = commits[commits.Count - 1];
-                DirectoryReader r = DirectoryReader.Open(Dir);
+                DirectoryReader r = DirectoryReader.Open(dir);
                 Assert.AreEqual(r.Leaves.Count, lastCommit.SegmentCount, "lastCommit.segmentCount()=" + lastCommit.SegmentCount + " vs IndexReader.segmentCount=" + r.Leaves.Count);
                 r.Dispose();
-                OuterInstance.VerifyCommitOrder(commits);
-                NumOnCommit++;
+                outerInstance.VerifyCommitOrder(commits);
+                numOnCommit++;
             }
         }
 
@@ -106,20 +104,20 @@ namespace Lucene.Net.Index
         /// </summary>
         internal class KeepNoneOnInitDeletionPolicy : IndexDeletionPolicy
         {
-            private readonly TestDeletionPolicy OuterInstance;
+            private readonly TestDeletionPolicy outerInstance;
 
             public KeepNoneOnInitDeletionPolicy(TestDeletionPolicy outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
-            internal int NumOnInit;
-            internal int NumOnCommit;
+            internal int numOnInit;
+            internal int numOnCommit;
 
             public override void OnInit<T>(IList<T> commits)
             {
-                OuterInstance.VerifyCommitOrder(commits);
-                NumOnInit++;
+                outerInstance.VerifyCommitOrder(commits);
+                numOnInit++;
                 // On init, delete all commit points:
                 foreach (IndexCommit commit in commits)
                 {
@@ -130,31 +128,31 @@ namespace Lucene.Net.Index
 
             public override void OnCommit<T>(IList<T> commits)
             {
-                OuterInstance.VerifyCommitOrder(commits);
+                outerInstance.VerifyCommitOrder(commits);
                 int size = commits.Count;
                 // Delete all but last one:
                 for (int i = 0; i < size - 1; i++)
                 {
                     ((IndexCommit)commits[i]).Delete();
                 }
-                NumOnCommit++;
+                numOnCommit++;
             }
         }
 
         internal class KeepLastNDeletionPolicy : IndexDeletionPolicy
         {
-            private readonly TestDeletionPolicy OuterInstance;
+            private readonly TestDeletionPolicy outerInstance;
 
-            internal int NumOnInit;
-            internal int NumOnCommit;
-            internal int NumToKeep;
-            internal int NumDelete;
-            internal ISet<string> Seen = new JCG.HashSet<string>();
+            internal int numOnInit;
+            internal int numOnCommit;
+            internal int numToKeep;
+            internal int numDelete;
+            internal ISet<string> seen = new JCG.HashSet<string>();
 
             public KeepLastNDeletionPolicy(TestDeletionPolicy outerInstance, int numToKeep)
             {
-                this.OuterInstance = outerInstance;
-                this.NumToKeep = numToKeep;
+                this.outerInstance = outerInstance;
+                this.numToKeep = numToKeep;
             }
 
             public override void OnInit<T>(IList<T> commits)
@@ -163,8 +161,8 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: onInit");
                 }
-                OuterInstance.VerifyCommitOrder(commits);
-                NumOnInit++;
+                outerInstance.VerifyCommitOrder(commits);
+                numOnInit++;
                 // do no deletions on init
                 DoDeletes(commits, false);
             }
@@ -175,7 +173,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: onCommit");
                 }
-                OuterInstance.VerifyCommitOrder(commits);
+                outerInstance.VerifyCommitOrder(commits);
                 DoDeletes(commits, true);
             }
 
@@ -187,18 +185,18 @@ namespace Lucene.Net.Index
                 if (isCommit)
                 {
                     string fileName = ((IndexCommit)commits[commits.Count - 1]).SegmentsFileName;
-                    if (Seen.Contains(fileName))
+                    if (seen.Contains(fileName))
                     {
                         throw new Exception("onCommit was called twice on the same commit point: " + fileName);
                     }
-                    Seen.Add(fileName);
-                    NumOnCommit++;
+                    seen.Add(fileName);
+                    numOnCommit++;
                 }
                 int size = commits.Count;
-                for (int i = 0; i < size - NumToKeep; i++)
+                for (int i = 0; i < size - numToKeep; i++)
                 {
                     ((IndexCommit)commits[i]).Delete();
-                    NumDelete++;
+                    numDelete++;
                 }
             }
         }
@@ -215,17 +213,17 @@ namespace Lucene.Net.Index
 
         internal class ExpirationTimeDeletionPolicy : IndexDeletionPolicy
         {
-            private readonly TestDeletionPolicy OuterInstance;
+            private readonly TestDeletionPolicy outerInstance;
 
-            internal Directory Dir;
-            internal double ExpirationTimeSeconds;
-            internal int NumDelete;
+            internal Directory dir;
+            internal double expirationTimeSeconds;
+            internal int numDelete;
 
             public ExpirationTimeDeletionPolicy(TestDeletionPolicy outerInstance, Directory dir, double seconds)
             {
-                this.OuterInstance = outerInstance;
-                this.Dir = dir;
-                this.ExpirationTimeSeconds = seconds;
+                this.outerInstance = outerInstance;
+                this.dir = dir;
+                this.expirationTimeSeconds = seconds;
             }
 
             public override void OnInit<T>(IList<T> commits)
@@ -234,18 +232,18 @@ namespace Lucene.Net.Index
                 {
                     return;
                 }
-                OuterInstance.VerifyCommitOrder(commits);
+                outerInstance.VerifyCommitOrder(commits);
                 OnCommit(commits);
             }
 
             public override void OnCommit<T>(IList<T> commits)
             {
-                OuterInstance.VerifyCommitOrder(commits);
+                outerInstance.VerifyCommitOrder(commits);
 
                 IndexCommit lastCommit = commits[commits.Count - 1];
 
                 // Any commit older than expireTime should be deleted:
-                double expireTime = GetCommitTime(lastCommit) / 1000.0 - ExpirationTimeSeconds;
+                double expireTime = GetCommitTime(lastCommit) / 1000.0 - expirationTimeSeconds;
 
                 foreach (IndexCommit commit in commits)
                 {
@@ -253,7 +251,7 @@ namespace Lucene.Net.Index
                     if (commit != lastCommit && modTime < expireTime)
                     {
                         commit.Delete();
-                        NumDelete += 1;
+                        numDelete += 1;
                     }
                 }
             }
@@ -282,7 +280,7 @@ namespace Lucene.Net.Index
 
             long lastDeleteTime = 0;
             int targetNumDelete = TestUtil.NextInt32(Random, 1, 5);
-            while (policy.NumDelete < targetNumDelete)
+            while (policy.numDelete < targetNumDelete)
             {
                 // Record last time when writer performed deletes of
                 // past commits
@@ -400,11 +398,11 @@ namespace Lucene.Net.Index
                     writer.Dispose();
                 }
 
-                Assert.AreEqual(needsMerging ? 2 : 1, policy.NumOnInit);
+                Assert.AreEqual(needsMerging ? 2 : 1, policy.numOnInit);
 
                 // If we are not auto committing then there should
                 // be exactly 2 commits (one per close above):
-                Assert.AreEqual(1 + (needsMerging ? 1 : 0), policy.NumOnCommit);
+                Assert.AreEqual(1 + (needsMerging ? 1 : 0), policy.numOnCommit);
 
                 // Test listCommits
                 ICollection<IndexCommit> commits = DirectoryReader.ListCommits(dir);
@@ -583,10 +581,10 @@ namespace Lucene.Net.Index
                 writer.ForceMerge(1);
                 writer.Dispose();
 
-                Assert.AreEqual(2, policy.NumOnInit);
+                Assert.AreEqual(2, policy.numOnInit);
                 // If we are not auto committing then there should
                 // be exactly 2 commits (one per close above):
-                Assert.AreEqual(2, policy.NumOnCommit);
+                Assert.AreEqual(2, policy.numOnCommit);
 
                 // Simplistic check: just verify the index is in fact
                 // readable:
@@ -628,9 +626,9 @@ namespace Lucene.Net.Index
                     writer.Dispose();
                 }
 
-                Assert.IsTrue(policy.NumDelete > 0);
-                Assert.AreEqual(N + 1, policy.NumOnInit);
-                Assert.AreEqual(N + 1, policy.NumOnCommit);
+                Assert.IsTrue(policy.numDelete > 0);
+                Assert.AreEqual(N + 1, policy.numOnInit);
+                Assert.AreEqual(N + 1, policy.numOnCommit);
 
                 // Simplistic check: just verify only the past N segments_N's still
                 // exist, and, I can open a reader on each:
@@ -721,8 +719,8 @@ namespace Lucene.Net.Index
                     writer.Dispose();
                 }
 
-                Assert.AreEqual(3 * (N + 1) + 1, policy.NumOnInit);
-                Assert.AreEqual(3 * (N + 1) + 1, policy.NumOnCommit);
+                Assert.AreEqual(3 * (N + 1) + 1, policy.numOnInit);
+                Assert.AreEqual(3 * (N + 1) + 1, policy.numOnCommit);
 
                 IndexReader rwReader = DirectoryReader.Open(dir);
                 IndexSearcher searcher_ = NewSearcher(rwReader);

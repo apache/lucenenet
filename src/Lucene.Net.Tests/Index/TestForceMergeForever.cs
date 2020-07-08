@@ -7,27 +7,26 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
@@ -37,8 +36,8 @@ namespace Lucene.Net.Index
         // Just counts how many merges are done
         private class MyIndexWriter : IndexWriter
         {
-            internal AtomicInt32 MergeCount = new AtomicInt32();
-            internal bool First;
+            internal AtomicInt32 mergeCount = new AtomicInt32();
+            internal bool first;
 
             public MyIndexWriter(Directory dir, IndexWriterConfig conf)
                 : base(dir, conf)
@@ -47,14 +46,14 @@ namespace Lucene.Net.Index
 
             public override void Merge(MergePolicy.OneMerge merge)
             {
-                if (merge.MaxNumSegments != -1 && (First || merge.Segments.Count == 1))
+                if (merge.MaxNumSegments != -1 && (first || merge.Segments.Count == 1))
                 {
-                    First = false;
+                    first = false;
                     if (VERBOSE)
                     {
                         Console.WriteLine("TEST: maxNumSegments merge");
                     }
-                    MergeCount.IncrementAndGet();
+                    mergeCount.IncrementAndGet();
                 }
                 base.Merge(merge);
             }
@@ -102,7 +101,7 @@ namespace Lucene.Net.Index
             w.ForceMerge(1);
             doStop.Value = true;
             t.Join();
-            Assert.IsTrue(w.MergeCount <= 1, "merge count is " + w.MergeCount);
+            Assert.IsTrue(w.mergeCount <= 1, "merge count is " + w.mergeCount);
             w.Dispose();
             d.Dispose();
             docs.Dispose();
@@ -110,29 +109,29 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestForceMergeForever OuterInstance;
+            private readonly TestForceMergeForever outerInstance;
 
-            private Lucene.Net.Index.TestForceMergeForever.MyIndexWriter w;
-            private int NumStartDocs;
-            private LineFileDocs Docs;
-            private AtomicBoolean DoStop;
+            private readonly MyIndexWriter w;
+            private readonly int numStartDocs;
+            private readonly LineFileDocs docs;
+            private readonly AtomicBoolean doStop;
 
             public ThreadAnonymousInnerClassHelper(TestForceMergeForever outerInstance, Lucene.Net.Index.TestForceMergeForever.MyIndexWriter w, int numStartDocs, LineFileDocs docs, AtomicBoolean doStop)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.w = w;
-                this.NumStartDocs = numStartDocs;
-                this.Docs = docs;
-                this.DoStop = doStop;
+                this.numStartDocs = numStartDocs;
+                this.docs = docs;
+                this.doStop = doStop;
             }
 
             public override void Run()
             {
                 try
                 {
-                    while (!DoStop)
+                    while (!doStop)
                     {
-                        w.UpdateDocument(new Term("docid", "" + Random.Next(NumStartDocs)), Docs.NextDoc());
+                        w.UpdateDocument(new Term("docid", "" + Random.Next(numStartDocs)), docs.NextDoc());
                         // Force deletes to apply
                         w.GetReader().Dispose();
                     }

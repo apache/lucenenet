@@ -14,21 +14,21 @@ using Console = Lucene.Net.Util.SystemConsole;
 namespace Lucene.Net.Codecs.Lucene3x
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     [TestFixture]
     public class TestSurrogates : LuceneTestCase
@@ -105,14 +105,14 @@ namespace Lucene.Net.Codecs.Lucene3x
         private sealed class SortTermAsUTF16Comparer : IComparer<Term>
         {
 #pragma warning disable 612, 618
-            private static readonly IComparer<BytesRef> LegacyComparer = BytesRef.UTF8SortedAsUTF16Comparer;
+            private static readonly IComparer<BytesRef> legacyComparer = BytesRef.UTF8SortedAsUTF16Comparer;
 #pragma warning restore 612, 618
 
             public int Compare(Term term1, Term term2)
             {
                 if (term1.Field.Equals(term2.Field, StringComparison.Ordinal))
                 {
-                    return LegacyComparer.Compare(term1.Bytes, term2.Bytes);
+                    return legacyComparer.Compare(term1.Bytes, term2.Bytes);
                 }
                 else
                 {
@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        private static readonly SortTermAsUTF16Comparer TermAsUTF16Comparer = new SortTermAsUTF16Comparer();
+        private static readonly SortTermAsUTF16Comparer termAsUTF16Comparer = new SortTermAsUTF16Comparer();
 
         // single straight enum
         private void DoTestStraightEnum(IList<Term> fieldTerms, IndexReader reader, int uniqueTermCount)
@@ -380,7 +380,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             if (VERBOSE)
             {
-                fieldTerms.Sort(TermAsUTF16Comparer);
+                fieldTerms.Sort(termAsUTF16Comparer);
 
                 Console.WriteLine("\nTEST: UTF16 order");
                 foreach (Term t in fieldTerms)

@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis
         private readonly IPositionIncrementAttribute posIncAtt;
         private readonly IOffsetAttribute offsetAtt;
 
-        private int InsertUpto;
+        private int insertUpto;
 
         internal TrivialLookaheadFilter(TokenStream input)
             : base(input)
@@ -60,12 +60,12 @@ namespace Lucene.Net.Analysis
         public override void Reset()
         {
             base.Reset();
-            InsertUpto = -1;
+            insertUpto = -1;
         }
 
         protected override void AfterPosition()
         {
-            if (InsertUpto < m_outputPos)
+            if (insertUpto < m_outputPos)
             {
                 InsertToken();
                 // replace term with 'improved' term.
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis
                 posIncAtt.PositionIncrement = 0;
                 termAtt.Append(((TestPosition)m_positions.Get(m_outputPos)).Fact);
                 offsetAtt.SetOffset(m_positions.Get(m_outputPos).StartOffset, m_positions.Get(m_outputPos + 1).EndOffset);
-                InsertUpto = m_outputPos;
+                insertUpto = m_outputPos;
             }
         }
 

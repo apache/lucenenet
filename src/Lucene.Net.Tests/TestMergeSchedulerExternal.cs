@@ -52,29 +52,29 @@ namespace Lucene.Net
     public class TestMergeSchedulerExternal : LuceneTestCase
     {
 #if FEATURE_CONCURRENTMERGESCHEDULER
-        internal volatile bool MergeCalled;
-        internal volatile bool MergeThreadCreated;
-        internal volatile bool ExcCalled;
+        internal volatile bool mergeCalled;
+        internal volatile bool mergeThreadCreated;
+        internal volatile bool excCalled;
 
         private class MyMergeScheduler : ConcurrentMergeScheduler
         {
-            private readonly TestMergeSchedulerExternal OuterInstance;
+            private readonly TestMergeSchedulerExternal outerInstance;
 
             public MyMergeScheduler(TestMergeSchedulerExternal outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
 
             private class MyMergeThread : ConcurrentMergeScheduler.MergeThread
             {
-                private readonly TestMergeSchedulerExternal.MyMergeScheduler OuterInstance;
+                private readonly TestMergeSchedulerExternal.MyMergeScheduler outerInstance;
 
                 public MyMergeThread(TestMergeSchedulerExternal.MyMergeScheduler outerInstance, IndexWriter writer, MergePolicy.OneMerge merge)
                     : base(outerInstance, writer, merge)
                 {
-                    this.OuterInstance = outerInstance;
-                    outerInstance.OuterInstance.MergeThreadCreated = true;
+                    this.outerInstance = outerInstance;
+                    outerInstance.outerInstance.mergeThreadCreated = true;
                 }
             }
 
@@ -89,12 +89,12 @@ namespace Lucene.Net
 
             protected override void HandleMergeException(Exception t)
             {
-                OuterInstance.ExcCalled = true;
+                outerInstance.excCalled = true;
             }
 
             protected override void DoMerge(MergePolicy.OneMerge merge)
             {
-                OuterInstance.MergeCalled = true;
+                outerInstance.mergeCalled = true;
                 base.DoMerge(merge);
             }
         }
@@ -109,7 +109,7 @@ namespace Lucene.Net
                 {
                     throw new IOException("now failing during merge");
                 }
-		    }
+            }
         }
 
         [Test]
@@ -133,9 +133,9 @@ namespace Lucene.Net
             ((MyMergeScheduler)writer.Config.MergeScheduler).Sync();
             writer.Dispose();
 
-            Assert.IsTrue(MergeThreadCreated);
-            Assert.IsTrue(MergeCalled);
-            Assert.IsTrue(ExcCalled);
+            Assert.IsTrue(mergeThreadCreated);
+            Assert.IsTrue(mergeCalled);
+            Assert.IsTrue(excCalled);
             dir.Dispose();
         }
 #endif

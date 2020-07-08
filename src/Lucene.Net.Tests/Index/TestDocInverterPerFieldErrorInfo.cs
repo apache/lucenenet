@@ -9,21 +9,21 @@ using System.Text;
 namespace Lucene.Net.Index
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Directory = Lucene.Net.Store.Directory;
@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestDocInverterPerFieldErrorInfo : LuceneTestCase
     {
-        private static readonly FieldType StoredTextType = new FieldType(TextField.TYPE_NOT_STORED);
+        private static readonly FieldType storedTextType = new FieldType(TextField.TYPE_NOT_STORED);
 
         private class BadNews : Exception
         {
@@ -70,12 +70,12 @@ namespace Lucene.Net.Index
 
             private class TokenFilterAnonymousInnerClassHelper : TokenFilter
             {
-                private readonly ThrowingAnalyzer OuterInstance;
+                private readonly ThrowingAnalyzer outerInstance;
 
                 public TokenFilterAnonymousInnerClassHelper(ThrowingAnalyzer outerInstance, Tokenizer tokenizer)
                     : base(tokenizer)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 public sealed override bool IncrementToken()
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
             c.SetInfoStream(printStreamInfoStream);
             writer = new IndexWriter(dir, c);
             Document doc = new Document();
-            doc.Add(NewField("distinctiveFieldName", "aaa ", StoredTextType));
+            doc.Add(NewField("distinctiveFieldName", "aaa ", storedTextType));
             try
             {
                 writer.AddDocument(doc);
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
             c.SetInfoStream(printStreamInfoStream);
             writer = new IndexWriter(dir, c);
             Document doc = new Document();
-            doc.Add(NewField("boringFieldName", "aaa ", StoredTextType));
+            doc.Add(NewField("boringFieldName", "aaa ", storedTextType));
             try
             {
                 writer.AddDocument(doc);

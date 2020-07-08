@@ -14,7 +14,22 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    //using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -27,24 +42,6 @@ namespace Lucene.Net.Index
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using NumericDocValuesField = NumericDocValuesField;
@@ -61,15 +58,15 @@ namespace Lucene.Net.Index
         // Used by test cases below
         private class IndexerThread : ThreadJob
         {
-            private readonly Func<string, string, FieldType, Field> NewField;
+            private readonly Func<string, string, FieldType, Field> newField;
 
-            internal bool DiskFull;
-            internal Exception Error;
-            //internal ObjectDisposedException Ace; // LUCENENET: Not used
-            internal IndexWriter Writer;
-            internal bool NoErrors;
-            internal volatile int AddCount;
-            internal int TimeToRunInMilliseconds = 200;
+            internal bool diskFull;
+            internal Exception error;
+            //internal ObjectDisposedException ace; // LUCENENET: Not used
+            internal IndexWriter writer;
+            internal bool noErrors;
+            internal volatile int addCount;
+            internal int timeToRunInMilliseconds = 200;
 
             /// <param name="newField">
             /// LUCENENET specific
@@ -78,9 +75,9 @@ namespace Lucene.Net.Index
             /// </param>
             public IndexerThread(IndexWriter writer, bool noErrors, Func<string, string, FieldType, Field> newField)
             {
-                this.Writer = writer;
-                this.NoErrors = noErrors;
-                NewField = newField;
+                this.writer = writer;
+                this.noErrors = noErrors;
+                this.newField = newField;
             }
 
             public override void Run()
@@ -91,19 +88,19 @@ namespace Lucene.Net.Index
                 customType.StoreTermVectorPositions = true;
                 customType.StoreTermVectorOffsets = true;
 
-                doc.Add(NewField("field", "aaa bbb ccc ddd eee fff ggg hhh iii jjj", customType));
+                doc.Add(newField("field", "aaa bbb ccc ddd eee fff ggg hhh iii jjj", customType));
                 doc.Add(new NumericDocValuesField("dv", 5));
 
                 int idUpto = 0;
                 int fullCount = 0;
-                long stopTime = Environment.TickCount + TimeToRunInMilliseconds; // LUCENENET specific: added the ability to change how much time to alot
+                long stopTime = Environment.TickCount + timeToRunInMilliseconds; // LUCENENET specific: added the ability to change how much time to alot
 
                 do
                 {
                     try
                     {
-                        Writer.UpdateDocument(new Term("id", "" + (idUpto++)), doc);
-                        AddCount++;
+                        writer.UpdateDocument(new Term("id", "" + (idUpto++)), doc);
+                        addCount++;
                     }
                     catch (IOException ioe)
                     {
@@ -116,7 +113,7 @@ namespace Lucene.Net.Index
                         //ioConsole.WriteLine(e.StackTrace);
                         if (ioe.Message.StartsWith("fake disk full at", StringComparison.Ordinal) || ioe.Message.Equals("now failing on purpose", StringComparison.Ordinal))
                         {
-                            DiskFull = true;
+                            diskFull = true;
 //#if !NETSTANDARD1_6
 //                            try
 //                            {
@@ -136,11 +133,11 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            if (NoErrors)
+                            if (noErrors)
                             {
                                 Console.WriteLine(Thread.CurrentThread.Name + ": ERROR: unexpected IOException:");
                                 Console.WriteLine(ioe.StackTrace);
-                                Error = ioe;
+                                error = ioe;
                             }
                             break;
                         }
@@ -148,11 +145,11 @@ namespace Lucene.Net.Index
                     catch (Exception t)
                     {
                         //Console.WriteLine(t.StackTrace);
-                        if (NoErrors)
+                        if (noErrors)
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": ERROR: unexpected Throwable:");
                             Console.WriteLine(t.StackTrace);
-                            Error = t;
+                            error = t;
                         }
                         break;
                     }
@@ -204,7 +201,7 @@ namespace Lucene.Net.Index
                     // Without fix for LUCENE-1130: one of the
                     // threads will hang
                     threads[i].Join();
-                    Assert.IsTrue(threads[i].Error == null, "hit unexpected Throwable");
+                    Assert.IsTrue(threads[i].error == null, "hit unexpected Throwable");
                 }
 
                 // Make sure once disk space is avail again, we can
@@ -252,7 +249,7 @@ namespace Lucene.Net.Index
                         // used to take too long for this test to index a single document
                         // so, increased the time from 200 to 300 ms. 
                         // But it has now been restored to 200 ms like Lucene.
-                        { TimeToRunInMilliseconds = 200 };
+                        { timeToRunInMilliseconds = 200 };
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
@@ -267,7 +264,7 @@ namespace Lucene.Net.Index
                     for (int i = 0; i < NUM_THREADS; i++)
                     // only stop when at least one thread has added a doc
                     {
-                        if (threads[i].AddCount > 0)
+                        if (threads[i].addCount > 0)
                         {
                             done = true;
                             break;
@@ -356,7 +353,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
                     threads[i].Join();
-                    Assert.IsTrue(threads[i].Error == null, "hit unexpected Throwable");
+                    Assert.IsTrue(threads[i].error == null, "hit unexpected Throwable");
                 }
 
                 bool success = false;
@@ -434,11 +431,11 @@ namespace Lucene.Net.Index
         // Throws IOException during FieldsWriter.flushDocument and during DocumentsWriter.abort
         private class FailOnlyOnAbortOrFlush : Failure
         {
-            internal bool OnlyOnce;
+            internal bool onlyOnce;
 
             public FailOnlyOnAbortOrFlush(bool onlyOnce)
             {
-                this.OnlyOnce = onlyOnce;
+                this.onlyOnce = onlyOnce;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
@@ -460,7 +457,7 @@ namespace Lucene.Net.Index
 
                     if (sawAbortOrFlushDoc && !sawClose && !sawMerge)
                     {
-                        if (OnlyOnce)
+                        if (onlyOnce)
                         {
                             m_doFail = false;
                         }
@@ -507,11 +504,11 @@ namespace Lucene.Net.Index
         // Throws IOException during DocumentsWriter.writeSegment
         private class FailOnlyInWriteSegment : Failure
         {
-            internal bool OnlyOnce;
+            internal bool onlyOnce;
 
             public FailOnlyInWriteSegment(bool onlyOnce)
             {
-                this.OnlyOnce = onlyOnce;
+                this.onlyOnce = onlyOnce;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
@@ -522,7 +519,7 @@ namespace Lucene.Net.Index
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     if (StackTraceHelper.DoesStackTraceContainMethod(typeof(DocFieldProcessor).Name, "Flush"))
                     {
-                        if (OnlyOnce)
+                        if (onlyOnce)
                         {
                             m_doFail = false;
                         }
@@ -588,11 +585,11 @@ namespace Lucene.Net.Index
             // TODO: can we improve this in LuceneTestCase? I dont know what the logic would be...
             try
             {
-                AssumeFalse("aborting test: timeout obtaining lock", thread1.Failure is LockObtainFailedException);
-                AssumeFalse("aborting test: timeout obtaining lock", thread2.Failure is LockObtainFailedException);
+                AssumeFalse("aborting test: timeout obtaining lock", thread1.failure is LockObtainFailedException);
+                AssumeFalse("aborting test: timeout obtaining lock", thread2.failure is LockObtainFailedException);
 
-                Assert.IsFalse(thread1.Failed, "Failed due to: " + thread1.Failure);
-                Assert.IsFalse(thread2.Failed, "Failed due to: " + thread2.Failure);
+                Assert.IsFalse(thread1.failed, "Failed due to: " + thread1.failure);
+                Assert.IsFalse(thread2.failed, "Failed due to: " + thread2.failure);
                 // now verify that we have two documents in the index
                 IndexReader reader = DirectoryReader.Open(dir);
                 Assert.AreEqual(2, reader.NumDocs, "IndexReader should have one document per thread running");
@@ -607,12 +604,12 @@ namespace Lucene.Net.Index
 
         internal class DelayedIndexAndCloseRunnable : ThreadJob
         {
-            internal readonly Directory Dir;
-            internal bool Failed = false;
-            internal Exception Failure = null;
-            internal readonly CountdownEvent StartIndexing_Renamed = new CountdownEvent(1);
-            internal CountdownEvent IwConstructed;
-            private readonly LuceneTestCase OuterInstance;
+            internal readonly Directory dir;
+            internal bool failed = false;
+            internal Exception failure = null;
+            internal readonly CountdownEvent startIndexing = new CountdownEvent(1);
+            internal CountdownEvent iwConstructed;
+            private readonly LuceneTestCase outerInstance;
 
             /// <param name="outerInstance">
             /// LUCENENET specific
@@ -621,14 +618,14 @@ namespace Lucene.Net.Index
             /// </param>
             public DelayedIndexAndCloseRunnable(Directory dir, CountdownEvent iwConstructed, LuceneTestCase outerInstance)
             {
-                this.Dir = dir;
-                this.IwConstructed = iwConstructed;
-                OuterInstance = outerInstance;
+                this.dir = dir;
+                this.iwConstructed = iwConstructed;
+                this.outerInstance = outerInstance;
             }
 
             public virtual void StartIndexing()
             {
-                this.StartIndexing_Renamed.Signal();
+                this.startIndexing.Signal();
             }
 
             public override void Run()
@@ -638,24 +635,24 @@ namespace Lucene.Net.Index
                     Document doc = new Document();
                     Field field = NewTextField("field", "testData", Field.Store.YES);
                     doc.Add(field);
-                    using (IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(
+                    using (IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                        OuterInstance,
+                        outerInstance,
 #endif
                         TEST_VERSION_CURRENT, new MockAnalyzer(Random))))
                     {
-                        if (IwConstructed.CurrentCount > 0)
+                        if (iwConstructed.CurrentCount > 0)
                         {
-                            IwConstructed.Signal();
+                            iwConstructed.Signal();
                         }
-                        StartIndexing_Renamed.Wait();
+                        startIndexing.Wait();
                         writer.AddDocument(doc);
                     }
                 }
                 catch (Exception e)
                 {
-                    Failed = true;
-                    Failure = e;
+                    failed = true;
+                    failure = e;
                     Console.WriteLine(e.ToString());
                     return;
                 }
@@ -710,31 +707,31 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestIndexWriterWithThreads OuterInstance;
+            private readonly TestIndexWriterWithThreads outerInstance;
 
             private BaseDirectoryWrapper d;
-            private AtomicReference<IndexWriter> WriterRef;
-            private LineFileDocs Docs;
-            private int Iters;
-            private AtomicBoolean Failed;
-            private ReentrantLock RollbackLock;
-            private ReentrantLock CommitLock;
+            private AtomicReference<IndexWriter> writerRef;
+            private LineFileDocs docs;
+            private int iters;
+            private AtomicBoolean failed;
+            private ReentrantLock rollbackLock;
+            private ReentrantLock commitLock;
 
             public ThreadAnonymousInnerClassHelper(TestIndexWriterWithThreads outerInstance, BaseDirectoryWrapper d, AtomicReference<IndexWriter> writerRef, LineFileDocs docs, int iters, AtomicBoolean failed, ReentrantLock rollbackLock, ReentrantLock commitLock)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.d = d;
-                this.WriterRef = writerRef;
-                this.Docs = docs;
-                this.Iters = iters;
-                this.Failed = failed;
-                this.RollbackLock = rollbackLock;
-                this.CommitLock = commitLock;
+                this.writerRef = writerRef;
+                this.docs = docs;
+                this.iters = iters;
+                this.failed = failed;
+                this.rollbackLock = rollbackLock;
+                this.commitLock = commitLock;
             }
 
             public override void Run()
             {
-                for (int iter = 0; iter < Iters && !Failed.Value; iter++)
+                for (int iter = 0; iter < iters && !failed.Value; iter++)
                 {
                     //final int x = Random().nextInt(5);
                     int x = Random.Next(3);
@@ -743,33 +740,33 @@ namespace Lucene.Net.Index
                         switch (x)
                         {
                             case 0:
-                                RollbackLock.@Lock();
+                                rollbackLock.@Lock();
                                 if (VERBOSE)
                                 {
                                     Console.WriteLine("\nTEST: " + Thread.CurrentThread.Name + ": now rollback");
                                 }
                                 try
                                 {
-                                    WriterRef.Value.Rollback();
+                                    writerRef.Value.Rollback();
                                     if (VERBOSE)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": rollback done; now open new writer");
                                     }
-                                    WriterRef.Value = 
+                                    writerRef.Value = 
                                         new IndexWriter(d, NewIndexWriterConfig(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                                            OuterInstance,
+                                            outerInstance,
 #endif
                                             TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                                 }
                                 finally
                                 {
-                                    RollbackLock.Unlock();
+                                    rollbackLock.Unlock();
                                 }
                                 break;
 
                             case 1:
-                                CommitLock.@Lock();
+                                commitLock.@Lock();
                                 if (VERBOSE)
                                 {
                                     Console.WriteLine("\nTEST: " + Thread.CurrentThread.Name + ": now commit");
@@ -778,9 +775,9 @@ namespace Lucene.Net.Index
                                 {
                                     if (Random.NextBoolean())
                                     {
-                                        WriterRef.Value.PrepareCommit();
+                                        writerRef.Value.PrepareCommit();
                                     }
-                                    WriterRef.Value.Commit();
+                                    writerRef.Value.Commit();
                                 }
                                 catch (ObjectDisposedException)
                                 {
@@ -792,7 +789,7 @@ namespace Lucene.Net.Index
                                 }
                                 finally
                                 {
-                                    CommitLock.Unlock();
+                                    commitLock.Unlock();
                                 }
                                 break;
 
@@ -803,7 +800,7 @@ namespace Lucene.Net.Index
                                 }
                                 try
                                 {
-                                    WriterRef.Value.AddDocument(Docs.NextDoc());
+                                    writerRef.Value.AddDocument(docs.NextDoc());
                                 }
                                 catch (ObjectDisposedException)
                                 {
@@ -822,7 +819,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception t)
                     {
-                        Failed.Value = (true);
+                        failed.Value = (true);
                         throw new Exception(t.Message, t);
                     }
                 }

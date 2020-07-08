@@ -6,26 +6,25 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 
     [TestFixture]
@@ -107,21 +106,21 @@ namespace Lucene.Net.Index
 
         private class FilterAtomicReaderAnonymousInnerClassHelper : FilterAtomicReader
         {
-            private readonly TestIndexReaderClose OuterInstance;
+            private readonly TestIndexReaderClose outerInstance;
 
-            private bool ThrowOnClose;
+            private bool throwOnClose;
 
             public FilterAtomicReaderAnonymousInnerClassHelper(TestIndexReaderClose outerInstance, AtomicReader wrap, bool throwOnClose)
                 : base(wrap)
             {
-                this.OuterInstance = outerInstance;
-                this.ThrowOnClose = throwOnClose;
+                this.outerInstance = outerInstance;
+                this.throwOnClose = throwOnClose;
             }
 
             protected internal override void DoClose()
             {
                 base.DoClose();
-                if (ThrowOnClose)
+                if (throwOnClose)
                 {
                     throw new InvalidOperationException("BOOM!");
                 }
@@ -130,16 +129,16 @@ namespace Lucene.Net.Index
 
         private sealed class CountListener : IndexReader.IReaderClosedListener
         {
-            internal readonly AtomicInt32 Count;
+            internal readonly AtomicInt32 count;
 
             public CountListener(AtomicInt32 count)
             {
-                this.Count = count;
+                this.count = count;
             }
 
             public void OnClose(IndexReader reader)
             {
-                Count.DecrementAndGet();
+                count.DecrementAndGet();
             }
         }
 

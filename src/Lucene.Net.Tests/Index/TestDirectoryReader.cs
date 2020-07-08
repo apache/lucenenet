@@ -13,6 +13,23 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
@@ -22,23 +39,6 @@ namespace Lucene.Net.Index
     using IBits = Lucene.Net.Util.IBits;
     using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using StoredField = StoredField;
     using StringField = StringField;
@@ -1130,21 +1130,21 @@ namespace Lucene.Net.Index
 
         private class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.IReaderClosedListener
         {
-            private readonly TestDirectoryReader OuterInstance;
+            private readonly TestDirectoryReader outerInstance;
 
-            private DirectoryReader Reader;
-            private int[] CloseCount;
+            private readonly DirectoryReader reader;
+            private readonly int[] closeCount;
 
             public ReaderClosedListenerAnonymousInnerClassHelper(TestDirectoryReader outerInstance, DirectoryReader reader, int[] closeCount)
             {
-                this.OuterInstance = outerInstance;
-                this.Reader = reader;
-                this.CloseCount = closeCount;
+                this.outerInstance = outerInstance;
+                this.reader = reader;
+                this.closeCount = closeCount;
             }
 
             public void OnClose(IndexReader reader)
             {
-                CloseCount[0]++;
+                closeCount[0]++;
             }
         }
 
@@ -1213,7 +1213,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i].Join();
-                Assert.IsNull(threads[i].Failed);
+                Assert.IsNull(threads[i].failed);
             }
             Assert.IsFalse(r.TryIncRef());
             writer.Dispose();
@@ -1222,30 +1222,30 @@ namespace Lucene.Net.Index
 
         internal class IncThread : ThreadJob
         {
-            internal readonly IndexReader ToInc;
-            internal readonly Random Random;
-            internal Exception Failed;
+            internal readonly IndexReader toInc;
+            internal readonly Random random;
+            internal Exception failed;
 
             internal IncThread(IndexReader toInc, Random random)
             {
-                this.ToInc = toInc;
-                this.Random = random;
+                this.toInc = toInc;
+                this.random = random;
             }
 
             public override void Run()
             {
                 try
                 {
-                    while (ToInc.TryIncRef())
+                    while (toInc.TryIncRef())
                     {
-                        Assert.IsFalse(ToInc.HasDeletions);
-                        ToInc.DecRef();
+                        Assert.IsFalse(toInc.HasDeletions);
+                        toInc.DecRef();
                     }
-                    Assert.IsFalse(ToInc.TryIncRef());
+                    Assert.IsFalse(toInc.TryIncRef());
                 }
                 catch (Exception e)
                 {
-                    Failed = e;
+                    failed = e;
                 }
             }
         }

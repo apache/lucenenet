@@ -4,20 +4,6 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Codecs.Compressing
 {
-    using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using BaseTermVectorsFormatTestCase = Lucene.Net.Index.BaseTermVectorsFormatTestCase;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Directory = Lucene.Net.Store.Directory;
-    using Document = Documents.Document;
-    using Field = Field;
-    using FieldType = FieldType;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Terms = Lucene.Net.Index.Terms;
-    using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using TextField = TextField;
-
-    //using Repeat = com.carrotsearch.randomizedtesting.annotations.Repeat;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -34,6 +20,18 @@ namespace Lucene.Net.Codecs.Compressing
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using AtomicReader = Lucene.Net.Index.AtomicReader;
+    using BaseTermVectorsFormatTestCase = Lucene.Net.Index.BaseTermVectorsFormatTestCase;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Documents.Document;
+    using Field = Field;
+    using FieldType = FieldType;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Terms = Lucene.Net.Index.Terms;
+    using TermsEnum = Lucene.Net.Index.TermsEnum;
+    using TextField = TextField;
 
     [TestFixture]
     public class TestCompressingTermVectorsFormat : BaseTermVectorsFormatTestCase

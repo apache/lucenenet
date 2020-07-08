@@ -1,10 +1,5 @@
-using NUnit.Framework;
-
 namespace Lucene.Net.Codecs.Lucene3x
 {
-    using BasePostingsFormatTestCase = Lucene.Net.Index.BasePostingsFormatTestCase;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +16,9 @@ namespace Lucene.Net.Codecs.Lucene3x
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using BasePostingsFormatTestCase = Lucene.Net.Index.BasePostingsFormatTestCase;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /// <summary>
     /// Tests Lucene3x postings format

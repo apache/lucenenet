@@ -8,21 +8,21 @@ using Assert = Lucene.Net.TestFramework.Assert;
 namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using BytesRef = Lucene.Net.Util.BytesRef;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -344,45 +344,45 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         private class CharSequenceAnonymousInnerClassHelper : ICharSequence
         {
-            private readonly TestCharTermAttributeImpl OuterInstance;
+            private readonly TestCharTermAttributeImpl outerInstance;
 
-            private string LongTestString;
+            private string longTestString;
 
             public CharSequenceAnonymousInnerClassHelper(TestCharTermAttributeImpl outerInstance, string longTestString)
             {
-                this.OuterInstance = outerInstance;
-                this.LongTestString = longTestString;
+                this.outerInstance = outerInstance;
+                this.longTestString = longTestString;
             }
 
-            bool ICharSequence.HasValue => LongTestString != null; // LUCENENET specific (implementation of ICharSequence)
+            bool ICharSequence.HasValue => longTestString != null; // LUCENENET specific (implementation of ICharSequence)
 
             public char CharAt(int i)
             {
-                return LongTestString[i];
+                return longTestString[i];
             }
 
             // LUCENENET specific - Added to .NETify
             public char this[int i]
             {
-                get { return LongTestString[i]; }
+                get { return longTestString[i]; }
             }
 
             public int Length
             {
                 get
                 {
-                    return LongTestString.Length;
+                    return longTestString.Length;
                 }
             }
 
             public ICharSequence Subsequence(int startIndex, int length) // LUCENENET: Changed semantics to startIndex/length to match .NET
             {
-                return new StringCharSequence(LongTestString.Substring(startIndex, length));
+                return new StringCharSequence(longTestString.Substring(startIndex, length));
             }
 
             public override string ToString()
             {
-                return LongTestString;
+                return longTestString;
             }
         }
 

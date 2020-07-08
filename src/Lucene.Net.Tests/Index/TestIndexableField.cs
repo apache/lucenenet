@@ -10,21 +10,21 @@ using Console = Lucene.Net.Util.SystemConsole;
 namespace Lucene.Net.Index
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
@@ -48,9 +48,9 @@ namespace Lucene.Net.Index
     {
         private class MyField : IIndexableField
         {
-            private readonly TestIndexableField OuterInstance;
+            private readonly TestIndexableField outerInstance;
 
-            internal readonly int Counter;
+            internal readonly int counter;
             internal readonly IIndexableFieldType fieldType;
 
             public MyField()
@@ -60,21 +60,21 @@ namespace Lucene.Net.Index
 
             private class IndexableFieldTypeAnonymousInnerClassHelper : IIndexableFieldType
             {
-                private MyField OuterInstance;
+                private MyField outerInstance;
 
                 public IndexableFieldTypeAnonymousInnerClassHelper(MyField outerInstance)
                 {
-                    OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 public bool IsIndexed
                 {
-                    get { return (OuterInstance.Counter % 10) != 3; }
+                    get { return (outerInstance.counter % 10) != 3; }
                 }
 
                 public bool IsStored
                 {
-                    get { return (OuterInstance.Counter & 1) == 0 || (OuterInstance.Counter % 10) == 3; }
+                    get { return (outerInstance.counter & 1) == 0 || (outerInstance.counter % 10) == 3; }
                 }
 
                 public bool IsTokenized
@@ -84,17 +84,17 @@ namespace Lucene.Net.Index
 
                 public bool StoreTermVectors
                 {
-                    get { return IsIndexed && OuterInstance.Counter % 2 == 1 && OuterInstance.Counter % 10 != 9; }
+                    get { return IsIndexed && outerInstance.counter % 2 == 1 && outerInstance.counter % 10 != 9; }
                 }
 
                 public bool StoreTermVectorOffsets
                 {
-                    get { return StoreTermVectors && OuterInstance.Counter % 10 != 9; }
+                    get { return StoreTermVectors && outerInstance.counter % 10 != 9; }
                 }
 
                 public bool StoreTermVectorPositions
                 {
-                    get { return StoreTermVectors && OuterInstance.Counter % 10 != 9; }
+                    get { return StoreTermVectors && outerInstance.counter % 10 != 9; }
                 }
 
                 public bool StoreTermVectorPayloads
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            return StoreTermVectors && OuterInstance.Counter % 10 != 9;
+                            return StoreTermVectors && outerInstance.counter % 10 != 9;
                         }
                     }
                 }
@@ -133,13 +133,13 @@ namespace Lucene.Net.Index
             public MyField(TestIndexableField outerInstance, int counter)
                 : this()
             {
-                this.OuterInstance = outerInstance;
-                this.Counter = counter;
+                this.outerInstance = outerInstance;
+                this.counter = counter;
             }
 
             public string Name
             {
-                get { return "f" + Counter; }
+                get { return "f" + counter; }
             }
 
             public float Boost
@@ -149,12 +149,12 @@ namespace Lucene.Net.Index
 
             public BytesRef GetBinaryValue()
             {
-                if ((Counter % 10) == 3)
+                if ((counter % 10) == 3)
                 {
                     var bytes = new byte[10];
                     for (int idx = 0; idx < bytes.Length; idx++)
                     {
-                        bytes[idx] = (byte)(Counter + idx);
+                        bytes[idx] = (byte)(counter + idx);
                     }
                     return new BytesRef(bytes, 0, bytes.Length);
                 }
@@ -166,10 +166,10 @@ namespace Lucene.Net.Index
 
             public string GetStringValue()
             {
-                int fieldID = Counter % 10;
+                int fieldID = counter % 10;
                 if (fieldID != 3 && fieldID != 7)
                 {
-                    return "text " + Counter;
+                    return "text " + counter;
                 }
                 else
                 {
@@ -197,9 +197,9 @@ namespace Lucene.Net.Index
 
             public TextReader GetReaderValue()
             {
-                if (Counter % 10 == 7)
+                if (counter % 10 == 7)
                 {
-                    return new StringReader("text " + Counter);
+                    return new StringReader("text " + counter);
                 }
                 else
                 {
@@ -418,23 +418,23 @@ namespace Lucene.Net.Index
 
         private class IterableAnonymousInnerClassHelper : IEnumerable<IIndexableField>
         {
-            private readonly TestIndexableField OuterInstance;
+            private readonly TestIndexableField outerInstance;
 
-            private int FieldCount;
-            private int FinalDocCount;
-            private int FinalBaseCount;
+            private int fieldCount;
+            private int finalDocCount;
+            private int finalBaseCount;
 
             public IterableAnonymousInnerClassHelper(TestIndexableField outerInstance, int fieldCount, int finalDocCount, int finalBaseCount)
             {
-                this.OuterInstance = outerInstance;
-                this.FieldCount = fieldCount;
-                this.FinalDocCount = finalDocCount;
-                this.FinalBaseCount = finalBaseCount;
+                this.outerInstance = outerInstance;
+                this.fieldCount = fieldCount;
+                this.finalDocCount = finalDocCount;
+                this.finalBaseCount = finalBaseCount;
             }
 
             public virtual IEnumerator<IIndexableField> GetEnumerator()
             {
-                return new IteratorAnonymousInnerClassHelper(this, OuterInstance);
+                return new IteratorAnonymousInnerClassHelper(this, outerInstance);
             }
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -444,13 +444,13 @@ namespace Lucene.Net.Index
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<IIndexableField>
             {
-                private readonly IterableAnonymousInnerClassHelper OuterInstance;
-                private readonly TestIndexableField OuterTextIndexableField;
+                private readonly IterableAnonymousInnerClassHelper outerInstance;
+                private readonly TestIndexableField outerTextIndexableField;
 
                 public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance, TestIndexableField outerTextIndexableField)
                 {
-                    this.OuterInstance = outerInstance;
-                    OuterTextIndexableField = outerTextIndexableField;
+                    this.outerInstance = outerInstance;
+                    this.outerTextIndexableField = outerTextIndexableField;
                 }
 
                 internal int fieldUpto;
@@ -458,20 +458,20 @@ namespace Lucene.Net.Index
 
                 public bool MoveNext()
                 {
-                    if (fieldUpto >= OuterInstance.FieldCount)
+                    if (fieldUpto >= outerInstance.fieldCount)
                     {
                         return false;
                     }
 
-                    Debug.Assert(fieldUpto < OuterInstance.FieldCount);
+                    Debug.Assert(fieldUpto < outerInstance.fieldCount);
                     if (fieldUpto == 0)
                     {
                         fieldUpto = 1;
-                        current = NewStringField("id", "" + OuterInstance.FinalDocCount, Field.Store.YES);
+                        current = NewStringField("id", "" + outerInstance.finalDocCount, Field.Store.YES);
                     }
                     else
                     {
-                        current = new MyField(OuterTextIndexableField, OuterInstance.FinalBaseCount + (fieldUpto++ - 1));
+                        current = new MyField(outerTextIndexableField, outerInstance.finalBaseCount + (fieldUpto++ - 1));
                     }
 
                     return true;

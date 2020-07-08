@@ -10,29 +10,27 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Codec = Lucene.Net.Codecs.Codec;
 
@@ -55,54 +53,54 @@ namespace Lucene.Net.Index
     {
         private const int TOKEN_LEN = 5;
 
-        private static readonly BytesRef Bytes = new BytesRef(TOKEN_LEN);
+        private static readonly BytesRef bytes = new BytesRef(TOKEN_LEN);
 
         private sealed class MyTokenStream : TokenStream
         {
-            internal readonly int TokensPerDoc;
-            internal int TokenCount;
-            public readonly IList<BytesRef> SavedTerms = new List<BytesRef>();
-            internal int NextSave;
-            internal long TermCounter;
-            internal readonly Random Random;
+            internal readonly int tokensPerDoc;
+            internal int tokenCount;
+            public readonly IList<BytesRef> savedTerms = new List<BytesRef>();
+            internal int nextSave;
+            internal long termCounter;
+            internal readonly Random random;
 
             public MyTokenStream(Random random, int tokensPerDoc)
                 : base(new MyAttributeFactory(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY))
             {
-                this.TokensPerDoc = tokensPerDoc;
+                this.tokensPerDoc = tokensPerDoc;
                 AddAttribute<ITermToBytesRefAttribute>();
-                Bytes.Length = TOKEN_LEN;
-                this.Random = random;
-                NextSave = TestUtil.NextInt32(random, 500000, 1000000);
+                bytes.Length = TOKEN_LEN;
+                this.random = random;
+                nextSave = TestUtil.NextInt32(random, 500000, 1000000);
             }
 
             public override bool IncrementToken()
             {
                 ClearAttributes();
-                if (TokenCount >= TokensPerDoc)
+                if (tokenCount >= tokensPerDoc)
                 {
                     return false;
                 }
                 int shift = 32;
                 for (int i = 0; i < 5; i++)
                 {
-                    Bytes.Bytes[i] = unchecked((byte)((TermCounter >> shift) & 0xFF));
+                    bytes.Bytes[i] = unchecked((byte)((termCounter >> shift) & 0xFF));
                     shift -= 8;
                 }
-                TermCounter++;
-                TokenCount++;
-                if (--NextSave == 0)
+                termCounter++;
+                tokenCount++;
+                if (--nextSave == 0)
                 {
-                    SavedTerms.Add(BytesRef.DeepCopyOf(Bytes));
-                    Console.WriteLine("TEST: save term=" + Bytes);
-                    NextSave = TestUtil.NextInt32(Random, 500000, 1000000);
+                    savedTerms.Add(BytesRef.DeepCopyOf(bytes));
+                    Console.WriteLine("TEST: save term=" + bytes);
+                    nextSave = TestUtil.NextInt32(random, 500000, 1000000);
                 }
                 return true;
             }
 
             public override void Reset()
             {
-                TokenCount = 0;
+                tokenCount = 0;
             }
 
             private sealed class MyTermAttributeImpl : Util.Attribute, ITermToBytesRefAttribute
@@ -116,7 +114,7 @@ namespace Lucene.Net.Index
                 {
                     get
                     {
-                        return Bytes;
+                        return bytes;
                     }
                 }
 
@@ -228,7 +226,7 @@ namespace Lucene.Net.Index
                     w.AddDocument(doc);
                     Console.WriteLine(i + " of " + numDocs + " " + (Environment.TickCount - t0) + " msec");
                 }
-                savedTerms = ts.SavedTerms;
+                savedTerms = ts.savedTerms;
 
                 Console.WriteLine("TEST: full merge");
                 w.ForceMerge(1);

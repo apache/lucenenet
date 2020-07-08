@@ -6,28 +6,27 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Analysis
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using MultiFields = Lucene.Net.Index.MultiFields;
@@ -37,7 +36,7 @@ namespace Lucene.Net.Analysis
     [TestFixture]
     public class TestCachingTokenFilter : BaseTokenStreamTestCase
     {
-        private string[] Tokens = new string[] { "term1", "term2", "term3", "term2" };
+        private string[] tokens = new string[] { "term1", "term2", "term3", "term2" };
 
         [Test]
         public virtual void TestCaching()
@@ -90,7 +89,7 @@ namespace Lucene.Net.Analysis
 
         private class TokenStreamAnonymousInnerClassHelper : TokenStream
         {
-            private TestCachingTokenFilter OuterInstance;
+            private TestCachingTokenFilter outerInstance;
 
             public TokenStreamAnonymousInnerClassHelper(TestCachingTokenFilter outerInstance)
             {
@@ -99,7 +98,7 @@ namespace Lucene.Net.Analysis
 
             public void InitMembers(TestCachingTokenFilter outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 index = 0;
                 termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();
@@ -111,14 +110,14 @@ namespace Lucene.Net.Analysis
 
             public sealed override bool IncrementToken()
             {
-                if (index == OuterInstance.Tokens.Length)
+                if (index == outerInstance.tokens.Length)
                 {
                     return false;
                 }
                 else
                 {
                     ClearAttributes();
-                    termAtt.Append(OuterInstance.Tokens[index++]);
+                    termAtt.Append(outerInstance.tokens[index++]);
                     offsetAtt.SetOffset(0, 0);
                     return true;
                 }
@@ -132,12 +131,12 @@ namespace Lucene.Net.Analysis
             ICharTermAttribute termAtt = stream.GetAttribute<ICharTermAttribute>();
             while (stream.IncrementToken())
             {
-                Assert.IsTrue(count < Tokens.Length);
-                Assert.AreEqual(Tokens[count], termAtt.ToString());
+                Assert.IsTrue(count < tokens.Length);
+                Assert.AreEqual(tokens[count], termAtt.ToString());
                 count++;
             }
 
-            Assert.AreEqual(Tokens.Length, count);
+            Assert.AreEqual(tokens.Length, count);
         }
     }
 }

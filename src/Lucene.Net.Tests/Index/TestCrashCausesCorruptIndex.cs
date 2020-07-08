@@ -7,6 +7,23 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
@@ -16,24 +33,6 @@ namespace Lucene.Net.Index
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IOContext = Lucene.Net.Store.IOContext;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TermQuery = Lucene.Net.Search.TermQuery;
     using TopDocs = Lucene.Net.Search.TopDocs;
@@ -41,7 +40,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestCrashCausesCorruptIndex : LuceneTestCase
     {
-        internal DirectoryInfo Path;
+        internal DirectoryInfo path;
 
         /// <summary>
         /// LUCENE-3627: this test fails.
@@ -49,7 +48,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestCrashCorruptsIndexing()
         {
-            Path = CreateTempDir("testCrashCorruptsIndexing");
+            path = CreateTempDir("testCrashCorruptsIndexing");
 
             IndexAndCrashOnCreateOutputSegments2();
 
@@ -67,7 +66,7 @@ namespace Lucene.Net.Index
         /// </summary>
         private void IndexAndCrashOnCreateOutputSegments2()
         {
-            Directory realDirectory = FSDirectory.Open(Path);
+            Directory realDirectory = FSDirectory.Open(path);
             CrashAfterCreateOutput crashAfterCreateOutput = new CrashAfterCreateOutput(realDirectory);
 
             // NOTE: cannot use RandomIndexWriter because it
@@ -103,7 +102,7 @@ namespace Lucene.Net.Index
         /// </summary>
         private void IndexAfterRestart()
         {
-            Directory realDirectory = NewFSDirectory(Path);
+            Directory realDirectory = NewFSDirectory(path);
 
             // LUCENE-3627 (before the fix): this line fails because
             // it doesn't know what to do with the created but empty
@@ -123,7 +122,7 @@ namespace Lucene.Net.Index
         /// </summary>
         private void SearchForFleas(int expectedTotalHits)
         {
-            Directory realDirectory = NewFSDirectory(Path);
+            Directory realDirectory = NewFSDirectory(path);
             IndexReader indexReader = DirectoryReader.Open(realDirectory);
             IndexSearcher indexSearcher = NewSearcher(indexReader);
             TopDocs topDocs = indexSearcher.Search(new TermQuery(new Term(TEXT_FIELD, "fleas")), 10);
@@ -166,7 +165,7 @@ namespace Lucene.Net.Index
         /// </summary>
         private class CrashAfterCreateOutput : FilterDirectory
         {
-            internal string CrashAfterCreateOutput_Renamed;
+            internal string crashAfterCreateOutput;
 
             public CrashAfterCreateOutput(Directory realDirectory)
                 : base(realDirectory)
@@ -178,14 +177,14 @@ namespace Lucene.Net.Index
             {
                 set
                 {
-                    this.CrashAfterCreateOutput_Renamed = value;
+                    this.crashAfterCreateOutput = value;
                 }
             }
 
             public override IndexOutput CreateOutput(string name, IOContext cxt)
             {
                 IndexOutput indexOutput = m_input.CreateOutput(name, cxt);
-                if (null != CrashAfterCreateOutput_Renamed && name.Equals(CrashAfterCreateOutput_Renamed, StringComparison.Ordinal))
+                if (null != crashAfterCreateOutput && name.Equals(crashAfterCreateOutput, StringComparison.Ordinal))
                 {
                     // CRASH!
                     indexOutput.Dispose();
@@ -194,7 +193,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: now crash");
                         Console.WriteLine(new Exception().StackTrace);
                     }
-                    throw new CrashingException("crashAfterCreateOutput " + CrashAfterCreateOutput_Renamed);
+                    throw new CrashingException("crashAfterCreateOutput " + crashAfterCreateOutput);
                 }
                 return indexOutput;
             }

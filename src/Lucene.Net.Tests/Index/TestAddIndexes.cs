@@ -15,21 +15,21 @@ using Console = Lucene.Net.Util.SystemConsole;
 namespace Lucene.Net.Index
 {
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using Codec = Lucene.Net.Codecs.Codec;
@@ -634,38 +634,38 @@ namespace Lucene.Net.Index
 
         private abstract class RunAddIndexesThreads
         {
-            private readonly TestAddIndexes OuterInstance;
+            private readonly TestAddIndexes outerInstance;
 
-            internal Directory Dir, Dir2;
+            internal Directory dir, dir2;
             internal const int NUM_INIT_DOCS = 17;
-            internal IndexWriter Writer2;
-            internal readonly IList<Exception> Failures = new List<Exception>();
-            internal volatile bool DidClose;
-            internal readonly IndexReader[] Readers;
+            internal IndexWriter writer2;
+            internal readonly IList<Exception> failures = new List<Exception>();
+            internal volatile bool didClose;
+            internal readonly IndexReader[] readers;
             internal readonly int NUM_COPY;
             internal const int NUM_THREADS = 5;
-            internal readonly ThreadJob[] Threads = new ThreadJob[NUM_THREADS];
+            internal readonly ThreadJob[] threads = new ThreadJob[NUM_THREADS];
 
             public RunAddIndexesThreads(TestAddIndexes outerInstance, int numCopy)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 NUM_COPY = numCopy;
-                Dir = new MockDirectoryWrapper(Random, new RAMDirectory());
-                IndexWriter writer = new IndexWriter(Dir, (IndexWriterConfig)new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
+                dir = new MockDirectoryWrapper(Random, new RAMDirectory());
+                IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
                 for (int i = 0; i < NUM_INIT_DOCS; i++)
                 {
                     outerInstance.AddDoc(writer);
                 }
                 writer.Dispose();
 
-                Dir2 = NewDirectory();
-                Writer2 = new IndexWriter(Dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-                Writer2.Commit();
+                dir2 = NewDirectory();
+                writer2 = new IndexWriter(dir2, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+                writer2.Commit();
 
-                Readers = new IndexReader[NUM_COPY];
+                readers = new IndexReader[NUM_COPY];
                 for (int i = 0; i < NUM_COPY; i++)
                 {
-                    Readers[i] = DirectoryReader.Open(Dir);
+                    readers[i] = DirectoryReader.Open(dir);
                 }
             }
 
@@ -673,35 +673,34 @@ namespace Lucene.Net.Index
             {
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    Threads[i] = new ThreadAnonymousInnerClassHelper(this, numIter);
+                    threads[i] = new ThreadAnonymousInnerClassHelper(this, numIter);
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    Threads[i].Start();
+                    threads[i].Start();
                 }
             }
 
             private class ThreadAnonymousInnerClassHelper : ThreadJob
             {
-                private readonly RunAddIndexesThreads OuterInstance;
-
-                private int NumIter;
+                private readonly RunAddIndexesThreads outerInstance;
+                private readonly int numIter;
 
                 public ThreadAnonymousInnerClassHelper(RunAddIndexesThreads outerInstance, int numIter)
                 {
-                    this.OuterInstance = outerInstance;
-                    this.NumIter = numIter;
+                    this.outerInstance = outerInstance;
+                    this.numIter = numIter;
                 }
 
                 public override void Run()
                 {
                     try
                     {
-                        Directory[] dirs = new Directory[OuterInstance.NUM_COPY];
-                        for (int k = 0; k < OuterInstance.NUM_COPY; k++)
+                        Directory[] dirs = new Directory[outerInstance.NUM_COPY];
+                        for (int k = 0; k < outerInstance.NUM_COPY; k++)
                         {
-                            dirs[k] = new MockDirectoryWrapper(Random, new RAMDirectory(OuterInstance.Dir, NewIOContext(Random)));
+                            dirs[k] = new MockDirectoryWrapper(Random, new RAMDirectory(outerInstance.dir, NewIOContext(Random)));
                         }
 
                         int j = 0;
@@ -709,16 +708,16 @@ namespace Lucene.Net.Index
                         while (true)
                         {
                             // System.out.println(Thread.currentThread().getName() + ": iter j=" + j);
-                            if (NumIter > 0 && j == NumIter)
+                            if (numIter > 0 && j == numIter)
                             {
                                 break;
                             }
-                            OuterInstance.DoBody(j++, dirs);
+                            outerInstance.DoBody(j++, dirs);
                         }
                     }
                     catch (Exception t)
                     {
-                        OuterInstance.Handle(t);
+                        outerInstance.Handle(t);
                     }
                 }
             }
@@ -727,23 +726,23 @@ namespace Lucene.Net.Index
             {
                 for (int i = 0; i < NUM_THREADS; i++)
                 {
-                    Threads[i].Join();
+                    threads[i].Join();
                 }
             }
 
             internal virtual void Close(bool doWait)
             {
-                DidClose = true;
-                Writer2.Dispose(doWait);
+                didClose = true;
+                writer2.Dispose(doWait);
             }
 
             internal virtual void CloseDir()
             {
                 for (int i = 0; i < NUM_COPY; i++)
                 {
-                    Readers[i].Dispose();
+                    readers[i].Dispose();
                 }
-                Dir2.Dispose();
+                dir2.Dispose();
             }
 
             internal abstract void DoBody(int j, Directory[] dirs);
@@ -753,20 +752,20 @@ namespace Lucene.Net.Index
 
         private class CommitAndAddIndexes : RunAddIndexesThreads
         {
-            private readonly TestAddIndexes OuterInstance;
+            private readonly TestAddIndexes outerInstance;
 
             public CommitAndAddIndexes(TestAddIndexes outerInstance, int numCopy)
                 : base(outerInstance, numCopy)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             internal override void Handle(Exception t)
             {
                 Console.Error.WriteLine(t.StackTrace);
-                lock (Failures)
+                lock (failures)
                 {
-                    Failures.Add(t);
+                    failures.Add(t);
                 }
             }
 
@@ -779,8 +778,8 @@ namespace Lucene.Net.Index
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": TEST: addIndexes(Dir[]) then full merge");
                         }
-                        Writer2.AddIndexes(dirs);
-                        Writer2.ForceMerge(1);
+                        writer2.AddIndexes(dirs);
+                        writer2.ForceMerge(1);
                         break;
 
                     case 1:
@@ -788,7 +787,7 @@ namespace Lucene.Net.Index
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": TEST: addIndexes(Dir[])");
                         }
-                        Writer2.AddIndexes(dirs);
+                        writer2.AddIndexes(dirs);
                         break;
 
                     case 2:
@@ -796,7 +795,7 @@ namespace Lucene.Net.Index
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": TEST: addIndexes(IndexReader[])");
                         }
-                        Writer2.AddIndexes(Readers);
+                        writer2.AddIndexes(readers);
                         break;
 
                     case 3:
@@ -804,8 +803,8 @@ namespace Lucene.Net.Index
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": TEST: addIndexes(Dir[]) then maybeMerge");
                         }
-                        Writer2.AddIndexes(dirs);
-                        Writer2.MaybeMerge();
+                        writer2.AddIndexes(dirs);
+                        writer2.MaybeMerge();
                         break;
 
                     case 4:
@@ -813,7 +812,7 @@ namespace Lucene.Net.Index
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": TEST: commit");
                         }
-                        Writer2.Commit();
+                        writer2.Commit();
                         break;
                 }
             }
@@ -831,20 +830,20 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < 100; i++)
             {
-                AddDoc(c.Writer2);
+                AddDoc(c.writer2);
             }
 
             c.JoinThreads();
 
             int expectedNumDocs = 100 + NUM_COPY * (4 * NUM_ITER / 5) * RunAddIndexesThreads.NUM_THREADS * RunAddIndexesThreads.NUM_INIT_DOCS;
-            Assert.AreEqual(expectedNumDocs, c.Writer2.NumDocs, "expected num docs don't match - failures: " + Environment.NewLine
-                + string.Join(Environment.NewLine, c.Failures.Select(x => x.ToString())));
+            Assert.AreEqual(expectedNumDocs, c.writer2.NumDocs, "expected num docs don't match - failures: " + Environment.NewLine
+                + string.Join(Environment.NewLine, c.failures.Select(x => x.ToString())));
 
             c.Close(true);
 
-            Assert.IsTrue(c.Failures.Count == 0, "found unexpected failures: " + c.Failures);
+            Assert.IsTrue(c.failures.Count == 0, "found unexpected failures: " + c.failures);
 
-            IndexReader reader = DirectoryReader.Open(c.Dir2);
+            IndexReader reader = DirectoryReader.Open(c.dir2);
             Assert.AreEqual(expectedNumDocs, reader.NumDocs);
             reader.Dispose();
 
@@ -853,12 +852,12 @@ namespace Lucene.Net.Index
 
         private class CommitAndAddIndexes2 : CommitAndAddIndexes
         {
-            private readonly TestAddIndexes OuterInstance;
+            private readonly TestAddIndexes outerInstance;
 
             public CommitAndAddIndexes2(TestAddIndexes outerInstance, int numCopy)
                 : base(outerInstance, numCopy)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             internal override void Handle(Exception t)
@@ -866,9 +865,9 @@ namespace Lucene.Net.Index
                 if (!(t is ObjectDisposedException) && !(t is System.NullReferenceException))
                 {
                     Console.Error.WriteLine(t.StackTrace);
-                    lock (Failures)
+                    lock (failures)
                     {
-                        Failures.Add(t);
+                        failures.Add(t);
                     }
                 }
             }
@@ -891,17 +890,17 @@ namespace Lucene.Net.Index
 
             c.CloseDir();
 
-            Assert.IsTrue(c.Failures.Count == 0);
+            Assert.IsTrue(c.failures.Count == 0);
         }
 
         private class CommitAndAddIndexes3 : RunAddIndexesThreads
         {
-            private readonly TestAddIndexes OuterInstance;
+            private readonly TestAddIndexes outerInstance;
 
             public CommitAndAddIndexes3(TestAddIndexes outerInstance, int numCopy)
                 : base(outerInstance, numCopy)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             internal override void DoBody(int j, Directory[] dirs)
@@ -913,8 +912,8 @@ namespace Lucene.Net.Index
                         {
                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": addIndexes + full merge");
                         }
-                        Writer2.AddIndexes(dirs);
-                        Writer2.ForceMerge(1);
+                        writer2.AddIndexes(dirs);
+                        writer2.ForceMerge(1);
                         break;
 
                     case 1:
@@ -922,7 +921,7 @@ namespace Lucene.Net.Index
                         {
                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": addIndexes");
                         }
-                        Writer2.AddIndexes(dirs);
+                        writer2.AddIndexes(dirs);
                         break;
 
                     case 2:
@@ -930,7 +929,7 @@ namespace Lucene.Net.Index
                         {
                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": addIndexes(IR[])");
                         }
-                        Writer2.AddIndexes(Readers);
+                        writer2.AddIndexes(readers);
                         break;
 
                     case 3:
@@ -938,7 +937,7 @@ namespace Lucene.Net.Index
                         {
                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": full merge");
                         }
-                        Writer2.ForceMerge(1);
+                        writer2.ForceMerge(1);
                         break;
 
                     case 4:
@@ -946,7 +945,7 @@ namespace Lucene.Net.Index
                         {
                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": commit");
                         }
-                        Writer2.Commit();
+                        writer2.Commit();
                         break;
                 }
             }
@@ -957,28 +956,28 @@ namespace Lucene.Net.Index
 
                 if (t is ObjectDisposedException || t is MergePolicy.MergeAbortedException || t is System.NullReferenceException)
                 {
-                    report = !DidClose;
+                    report = !didClose;
                 }
                 // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
                 // in Lucene, we need to handle it here to be on the safe side.
                 else if (t is FileNotFoundException/* || t is NoSuchFileException*/ || t is DirectoryNotFoundException)
                 {
-                    report = !DidClose;
+                    report = !didClose;
                 }
                 else if (t is IOException)
                 {
                     Exception t2 = t.InnerException;
                     if (t2 is MergePolicy.MergeAbortedException)
                     {
-                        report = !DidClose;
+                        report = !didClose;
                     }
                 }
                 if (report)
                 {
                     Console.Out.WriteLine(t.StackTrace);
-                    lock (Failures)
+                    lock (failures)
                     {
-                        Failures.Add(t);
+                        failures.Add(t);
                     }
                 }
             }
@@ -1009,7 +1008,7 @@ namespace Lucene.Net.Index
             }
             c.CloseDir();
 
-            Assert.IsTrue(c.Failures.Count == 0);
+            Assert.IsTrue(c.failures.Count == 0);
         }
 
         // LUCENE-1335: test simultaneous addIndexes & close
@@ -1027,14 +1026,14 @@ namespace Lucene.Net.Index
             {
                 Console.WriteLine("TEST: now force rollback");
             }
-            c.DidClose = true;
-            c.Writer2.Rollback();
+            c.didClose = true;
+            c.writer2.Rollback();
 
             c.JoinThreads();
 
             c.CloseDir();
 
-            Assert.IsTrue(c.Failures.Count == 0);
+            Assert.IsTrue(c.failures.Count == 0);
         }
 
         // LUCENE-2996: tests that addIndexes(IndexReader) applies existing deletes correctly.
@@ -1136,30 +1135,30 @@ namespace Lucene.Net.Index
 
         private sealed class CustomPerFieldCodec : Lucene46Codec
         {
-            internal readonly PostingsFormat SimpleTextFormat;
-            internal readonly PostingsFormat DefaultFormat;
-            internal readonly PostingsFormat MockSepFormat;
+            internal readonly PostingsFormat simpleTextFormat;
+            internal readonly PostingsFormat defaultFormat;
+            internal readonly PostingsFormat mockSepFormat;
 
             public CustomPerFieldCodec()
             {
-                SimpleTextFormat = Codecs.PostingsFormat.ForName("SimpleText");
-                DefaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
-                MockSepFormat = Codecs.PostingsFormat.ForName("MockSep");
+                simpleTextFormat = Codecs.PostingsFormat.ForName("SimpleText");
+                defaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
+                mockSepFormat = Codecs.PostingsFormat.ForName("MockSep");
             }
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
                 if (field.Equals("id", StringComparison.Ordinal))
                 {
-                    return SimpleTextFormat;
+                    return simpleTextFormat;
                 }
                 else if (field.Equals("content", StringComparison.Ordinal))
                 {
-                    return MockSepFormat;
+                    return mockSepFormat;
                 }
                 else
                 {
-                    return DefaultFormat;
+                    return defaultFormat;
                 }
             }
         }

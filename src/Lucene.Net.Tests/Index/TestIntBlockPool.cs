@@ -6,21 +6,21 @@ using Assert = Lucene.Net.TestFramework.Assert;
 namespace Lucene.Net.Index
 {
     /*
-             * Licensed to the Apache Software Foundation (ASF) under one or more
-             * contributor license agreements.  See the NOTICE file distributed with
-             * this work for additional information regarding copyright ownership.
-             * The ASF licenses this file to You under the Apache License, Version 2.0
-             * (the "License"); you may not use this file except in compliance with
-             * the License.  You may obtain a copy of the License at
-             *
-             *     http://www.apache.org/licenses/LICENSE-2.0
-             *
-             * Unless required by applicable law or agreed to in writing, software
-             * distributed under the License is distributed on an "AS IS" BASIS,
-             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-             * See the License for the specific language governing permissions and
-             * limitations under the License.
-             */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Counter = Lucene.Net.Util.Counter;
     using Int32BlockPool = Lucene.Net.Util.Int32BlockPool;
@@ -90,16 +90,16 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < numValuesToWrite; i++)
                 {
                     StartEndAndValues values = holders[Random.Next(holders.Count)];
-                    if (values.ValueCount == 0)
+                    if (values.valueCount == 0)
                     {
-                        values.Start = writer.StartNewSlice();
+                        values.start = writer.StartNewSlice();
                     }
                     else
                     {
-                        writer.Reset(values.End);
+                        writer.Reset(values.end);
                     }
                     writer.WriteInt32(values.NextValue());
-                    values.End = writer.CurrentOffset;
+                    values.end = writer.CurrentOffset;
                     if (Random.Next(5) == 0)
                     {
                         // pick one and reader the ints
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
 
         private class ByteTrackingAllocator : Int32BlockPool.Allocator
         {
-            internal readonly Counter BytesUsed;
+            internal readonly Counter bytesUsed;
 
             public ByteTrackingAllocator(Counter bytesUsed)
                 : this(Int32BlockPool.INT32_BLOCK_SIZE, bytesUsed)
@@ -139,46 +139,46 @@ namespace Lucene.Net.Index
             public ByteTrackingAllocator(int blockSize, Counter bytesUsed)
                 : base(blockSize)
             {
-                this.BytesUsed = bytesUsed;
+                this.bytesUsed = bytesUsed;
             }
 
             public override int[] GetInt32Block()
             {
-                BytesUsed.AddAndGet(m_blockSize * RamUsageEstimator.NUM_BYTES_INT32);
+                bytesUsed.AddAndGet(m_blockSize * RamUsageEstimator.NUM_BYTES_INT32);
                 return new int[m_blockSize];
             }
 
             public override void RecycleInt32Blocks(int[][] blocks, int start, int end)
             {
-                BytesUsed.AddAndGet(-((end - start) * m_blockSize * RamUsageEstimator.NUM_BYTES_INT32));
+                bytesUsed.AddAndGet(-((end - start) * m_blockSize * RamUsageEstimator.NUM_BYTES_INT32));
             }
         }
 
         private void AssertReader(Int32BlockPool.SliceReader reader, StartEndAndValues values)
         {
-            reader.Reset(values.Start, values.End);
-            for (int i = 0; i < values.ValueCount; i++)
+            reader.Reset(values.start, values.end);
+            for (int i = 0; i < values.valueCount; i++)
             {
-                Assert.AreEqual(values.ValueOffset + i, reader.ReadInt32());
+                Assert.AreEqual(values.valueOffset + i, reader.ReadInt32());
             }
             Assert.IsTrue(reader.IsEndOfSlice);
         }
 
         private class StartEndAndValues
         {
-            internal int ValueOffset;
-            internal int ValueCount;
-            internal int Start;
-            internal int End;
+            internal int valueOffset;
+            internal int valueCount;
+            internal int start;
+            internal int end;
 
             public StartEndAndValues(int valueOffset)
             {
-                this.ValueOffset = valueOffset;
+                this.valueOffset = valueOffset;
             }
 
             public virtual int NextValue()
             {
-                return ValueOffset + ValueCount++;
+                return valueOffset + valueCount++;
             }
         }
     }

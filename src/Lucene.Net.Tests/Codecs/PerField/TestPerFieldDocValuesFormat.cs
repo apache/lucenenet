@@ -6,26 +6,25 @@ using NUnit.Framework;
 using System;
 using System.Diagnostics;
 using Assert = Lucene.Net.TestFramework.Assert;
-using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.PerField
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BaseDocValuesFormatTestCase = Lucene.Net.Index.BaseDocValuesFormatTestCase;
@@ -128,27 +127,27 @@ namespace Lucene.Net.Codecs.PerField
 
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
-            private readonly TestPerFieldDocValuesFormat OuterInstance;
+            private readonly TestPerFieldDocValuesFormat outerInstance;
 
-            private DocValuesFormat Fast;
-            private DocValuesFormat Slow;
+            private readonly DocValuesFormat fast;
+            private readonly DocValuesFormat slow;
 
             public Lucene46CodecAnonymousInnerClassHelper(TestPerFieldDocValuesFormat outerInstance, DocValuesFormat fast, DocValuesFormat slow)
             {
-                this.OuterInstance = outerInstance;
-                this.Fast = fast;
-                this.Slow = slow;
+                this.outerInstance = outerInstance;
+                this.fast = fast;
+                this.slow = slow;
             }
 
             public override DocValuesFormat GetDocValuesFormatForField(string field)
             {
                 if ("dv1".Equals(field, StringComparison.Ordinal))
                 {
-                    return Fast;
+                    return fast;
                 }
                 else
                 {
-                    return Slow;
+                    return slow;
                 }
             }
         }

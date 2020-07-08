@@ -7,21 +7,21 @@ using Assert = Lucene.Net.TestFramework.Assert;
 namespace Lucene.Net.Codecs.Compressing
 {
     /*
-                 * Licensed to the Apache Software Foundation (ASF) under one or more
-                 * contributor license agreements.  See the NOTICE file distributed with
-                 * this work for additional information regarding copyright ownership.
-                 * The ASF licenses this file to You under the Apache License, Version 2.0
-                 * (the "License"); you may not use this file except in compliance with
-                 * the License.  You may obtain a copy of the License at
-                 *
-                 *     http://www.apache.org/licenses/LICENSE-2.0
-                 *
-                 * Unless required by applicable law or agreed to in writing, software
-                 * distributed under the License is distributed on an "AS IS" BASIS,
-                 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-                 * See the License for the specific language governing permissions and
-                 * limitations under the License.
-                 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
     using ByteArrayDataOutput = Lucene.Net.Store.ByteArrayDataOutput;
@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs.Compressing
     [TestFixture]
     public abstract class AbstractTestCompressionMode : LuceneTestCase
     {
-        internal CompressionMode Mode;
+        internal CompressionMode mode;
 
         internal static byte[] RandomArray()
         {
@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         internal virtual byte[] Compress(byte[] decompressed, int off, int len)
         {
-            Compressor compressor = Mode.NewCompressor();
+            Compressor compressor = mode.NewCompressor();
             return Compress(compressor, decompressed, off, len);
         }
 
@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         internal virtual byte[] Decompress(byte[] compressed, int originalLength)
         {
-            Decompressor decompressor = Mode.NewDecompressor();
+            Decompressor decompressor = mode.NewDecompressor();
             return Decompress(decompressor, compressed, originalLength);
         }
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         internal virtual byte[] Decompress(byte[] compressed, int originalLength, int offset, int length)
         {
-            Decompressor decompressor = Mode.NewDecompressor();
+            Decompressor decompressor = mode.NewDecompressor();
             BytesRef bytes = new BytesRef();
             decompressor.Decompress(new ByteArrayDataInput(compressed), originalLength, offset, length, bytes);
             return Arrays.CopyOfRange(bytes.Bytes, bytes.Offset, bytes.Offset + bytes.Length);

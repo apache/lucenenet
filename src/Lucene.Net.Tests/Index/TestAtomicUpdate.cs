@@ -35,23 +35,23 @@ namespace Lucene.Net.Index
     {
         private abstract class TimedThread : ThreadJob
         {
-            internal volatile bool Failed;
-            internal int Count;
+            internal volatile bool failed;
+            internal int count;
             internal static float RUN_TIME_MSEC = AtLeast(500);
-            internal TimedThread[] AllThreads;
+            internal TimedThread[] allThreads;
 
             public abstract void DoWork();
 
             internal TimedThread(TimedThread[] threads)
             {
-                this.AllThreads = threads;
+                this.allThreads = threads;
             }
 
             public override void Run()
             {
                 long stopTime = Environment.TickCount + (long)RUN_TIME_MSEC;
 
-                Count = 0;
+                count = 0;
 
                 try
                 {
@@ -62,22 +62,22 @@ namespace Lucene.Net.Index
                             break;
                         }
                         DoWork();
-                        Count++;
+                        count++;
                     } while (Environment.TickCount < stopTime);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": exc");
                     Console.WriteLine(e.StackTrace);
-                    Failed = true;
+                    failed = true;
                 }
             }
 
             internal virtual bool AnyErrors()
             {
-                for (int i = 0; i < AllThreads.Length; i++)
+                for (int i = 0; i < allThreads.Length; i++)
                 {
-                    if (AllThreads[i] != null && AllThreads[i].Failed)
+                    if (allThreads[i] != null && allThreads[i].failed)
                     {
                         return true;
                     }
@@ -88,12 +88,12 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : TimedThread
         {
-            internal IndexWriter Writer;
+            internal IndexWriter writer;
 
             public IndexerThread(IndexWriter writer, TimedThread[] threads)
                 : base(threads)
             {
-                this.Writer = writer;
+                this.writer = writer;
             }
 
             public override void DoWork()
@@ -103,25 +103,25 @@ namespace Lucene.Net.Index
                 {
                     Documents.Document d = new Documents.Document();
                     d.Add(new StringField("id", Convert.ToString(i), Field.Store.YES));
-                    d.Add(new TextField("contents", English.Int32ToEnglish(i + 10 * Count), Field.Store.NO));
-                    Writer.UpdateDocument(new Term("id", Convert.ToString(i)), d);
+                    d.Add(new TextField("contents", English.Int32ToEnglish(i + 10 * count), Field.Store.NO));
+                    writer.UpdateDocument(new Term("id", Convert.ToString(i)), d);
                 }
             }
         }
 
         private class SearcherThread : TimedThread
         {
-            internal Directory Directory;
+            internal Directory directory;
 
             public SearcherThread(Directory directory, TimedThread[] threads)
                 : base(threads)
             {
-                this.Directory = directory;
+                this.directory = directory;
             }
 
             public override void DoWork()
             {
-                IndexReader r = DirectoryReader.Open(Directory);
+                IndexReader r = DirectoryReader.Open(directory);
                 Assert.AreEqual(100, r.NumDocs);
                 r.Dispose();
             }
@@ -181,10 +181,10 @@ namespace Lucene.Net.Index
 
             writer.Dispose();
 
-            Assert.IsTrue(!indexerThread.Failed, "hit unexpected exception in indexer");
-            Assert.IsTrue(!indexerThread2.Failed, "hit unexpected exception in indexer2");
-            Assert.IsTrue(!searcherThread1.Failed, "hit unexpected exception in search1");
-            Assert.IsTrue(!searcherThread2.Failed, "hit unexpected exception in search2");
+            Assert.IsTrue(!indexerThread.failed, "hit unexpected exception in indexer");
+            Assert.IsTrue(!indexerThread2.failed, "hit unexpected exception in indexer2");
+            Assert.IsTrue(!searcherThread1.failed, "hit unexpected exception in search1");
+            Assert.IsTrue(!searcherThread2.failed, "hit unexpected exception in search2");
             //System.out.println("    Writer: " + indexerThread.count + " iterations");
             //System.out.println("Searcher 1: " + searcherThread1.count + " searchers created");
             //System.out.println("Searcher 2: " + searcherThread2.count + " searchers created");
