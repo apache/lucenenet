@@ -49,7 +49,7 @@ namespace Lucene.Net.Store
             length = file.length;
             if (length / BUFFER_SIZE >= int.MaxValue)
             {
-                throw new System.IO.IOException("RAMInputStream too large length=" + length + ": " + name);
+                throw new IOException("RAMInputStream too large length=" + length + ": " + name);
             }
 
             // make sure that we switch to the

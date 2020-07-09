@@ -1,26 +1,27 @@
 using J2N.Threading;
 using Lucene.Net.Support;
 using System;
+using System.IO;
 using System.Threading;
 
 namespace Lucene.Net.Search
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using TrackingIndexWriter = Lucene.Net.Index.TrackingIndexWriter;
 
@@ -73,7 +74,7 @@ namespace Lucene.Net.Search
         {
             if (targetMaxStaleSec < targetMinStaleSec)
             {
-                throw new System.ArgumentException("targetMaxScaleSec (= " + targetMaxStaleSec.ToString("0.0") + ") < targetMinStaleSec (=" + targetMinStaleSec.ToString("0.0") + ")");
+                throw new ArgumentException("targetMaxScaleSec (= " + targetMaxStaleSec.ToString("0.0") + ") < targetMinStaleSec (=" + targetMinStaleSec.ToString("0.0") + ")");
             }
             this.writer = writer;
             this.manager = manager;
@@ -170,7 +171,7 @@ namespace Lucene.Net.Search
             long curGen = writer.Generation;
             if (targetGen > curGen)
             {
-                throw new System.ArgumentException("targetGen=" + targetGen + " was never returned by the ReferenceManager instance (current gen=" + curGen + ")");
+                throw new ArgumentException("targetGen=" + targetGen + " was never returned by the ReferenceManager instance (current gen=" + curGen + ")");
             }
             lock (this)
                 if (targetGen <= searchingGen)
@@ -256,7 +257,7 @@ namespace Lucene.Net.Search
                 {
                     manager.MaybeRefreshBlocking();
                 }
-                catch (System.IO.IOException ioe)
+                catch (IOException ioe)
                 {
                     throw new Exception(ioe.ToString(), ioe);
                 }

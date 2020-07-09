@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
                 ICollection<IndexCommit> commits = DirectoryReader.ListCommits(dir);
                 if (commits.Count > 1)
                 {
-                    throw new System.ArgumentException("this tool was invoked to not delete prior commit points, but the following commits were found: " + commits);
+                    throw new ArgumentException("this tool was invoked to not delete prior commit points, but the following commits were found: " + commits);
                 }
             }
 

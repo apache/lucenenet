@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // okay, all terms must belong to the same field
@@ -658,7 +658,7 @@ namespace Lucene.Net.Search
                 Assert.Fail("didn't get expected exception");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected exception

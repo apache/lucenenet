@@ -2,6 +2,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Codecs.Bloom
 {
@@ -191,7 +192,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// </list>
         /// </summary>
         /// <param name="output">Data output stream.</param>
-        /// <exception cref="System.IO.IOException">If there is a low-level I/O error.</exception>
+        /// <exception cref="IOException">If there is a low-level I/O error.</exception>
         public virtual void Serialize(DataOutput output)
         {
             output.WriteInt32(VERSION_CURRENT);
@@ -238,7 +239,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// chosen size of the internal bitset.
         /// </summary>
         /// <param name="value">The Key value to be hashed.</param>
-        /// <exception cref="System.IO.IOException">If there is a low-level I/O error.</exception>
+        /// <exception cref="IOException">If there is a low-level I/O error.</exception>
         public virtual void AddValue(BytesRef value)
         {
             var hash = _hashFunction.Hash(value);

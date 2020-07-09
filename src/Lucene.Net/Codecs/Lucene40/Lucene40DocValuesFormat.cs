@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override DocValuesConsumer FieldsConsumer(SegmentWriteState state)
         {
-            throw new System.NotSupportedException("this codec can only be used for reading");
+            throw new NotSupportedException("this codec can only be used for reading");
         }
 
         public override DocValuesProducer FieldsProducer(SegmentReadState state)

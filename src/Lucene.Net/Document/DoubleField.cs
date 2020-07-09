@@ -180,7 +180,7 @@ namespace Lucene.Net.Documents
         {
             if (type.NumericType != Documents.NumericType.DOUBLE)
             {
-                throw new System.ArgumentException("type.NumericType must be NumericType.DOUBLE but got " + type.NumericType);
+                throw new ArgumentException("type.NumericType must be NumericType.DOUBLE but got " + type.NumericType);
             }
             FieldsData = new Double(value);
         }

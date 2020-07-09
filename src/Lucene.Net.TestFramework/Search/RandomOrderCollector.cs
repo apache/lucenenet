@@ -41,7 +41,7 @@ namespace Lucene.Net.Search
         {
             if (!@in.AcceptsDocsOutOfOrder)
             {
-                throw new System.ArgumentException();
+                throw new ArgumentException();
             }
             this.@in = @in;
             this.random = random;

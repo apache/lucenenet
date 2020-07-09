@@ -91,7 +91,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
                 else
                 {
-                    throw new System.ArgumentException("cannot return dimension-level value alone; use getTopChildren instead");
+                    throw new ArgumentException("cannot return dimension-level value alone; use getTopChildren instead");
                 }
             }
             int ord = m_taxoReader.GetOrdinal(new FacetLabel(dim, path));
@@ -106,7 +106,7 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             if (topN <= 0)
             {
-                throw new System.ArgumentException("topN must be > 0 (got: " + topN + ")");
+                throw new ArgumentException("topN must be > 0 (got: " + topN + ")");
             }
             FacetsConfig.DimConfig dimConfig = VerifyDim(dim);
             FacetLabel cp = new FacetLabel(dim, path);

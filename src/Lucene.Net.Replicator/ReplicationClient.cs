@@ -523,14 +523,14 @@ namespace Lucene.Net.Replicator
         /// sessions, or the same directory for all sessions. In that case, it is
         /// advised to clean the directory before it is used for a new session.
         /// </summary>
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         /// <seealso cref="CleanupSession(string)"/>
         Directory GetDirectory(string sessionId, string source); //throws IOException;
 
         /// <summary>
         /// Called to denote that the replication actions for this session were finished and the directory is no longer needed. 
         /// </summary>
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         void CleanupSession(string sessionId);
     }
 }

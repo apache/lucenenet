@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System.IO;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -167,7 +168,7 @@ namespace Lucene.Net.Search
         /// <param name="searcher"> <see cref="IndexSearcher"/> to use in the rewriting </param>
         /// <returns> <c>this</c> if the Sort/Fields have not changed, or a new <see cref="Sort"/> if there
         ///        is a change </returns>
-        /// <exception cref="System.IO.IOException"> Can be thrown by the rewriting</exception>
+        /// <exception cref="IOException"> Can be thrown by the rewriting</exception>
         public virtual Sort Rewrite(IndexSearcher searcher)
         {
             bool changed = false;

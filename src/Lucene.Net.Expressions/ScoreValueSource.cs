@@ -3,6 +3,7 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using System;
 using System.Collections;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Expressions
@@ -35,7 +36,7 @@ namespace Lucene.Net.Expressions
         /// <paramref name="context"/> must contain a key "scorer" which is a
         /// <see cref="Lucene.Net.Search.Scorer"/>.
         /// </summary>
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext
              readerContext)
         {

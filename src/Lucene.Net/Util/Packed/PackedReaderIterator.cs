@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -69,7 +70,7 @@ namespace Lucene.Net.Util.Packed
             int remaining = m_valueCount - position - 1;
             if (remaining <= 0)
             {
-                throw new System.IO.EndOfStreamException();
+                throw new EndOfStreamException();
             }
             count = Math.Min(remaining, count);
 

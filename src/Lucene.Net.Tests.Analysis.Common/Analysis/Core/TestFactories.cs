@@ -158,7 +158,7 @@ namespace Lucene.Net.Analysis.Core
             }
             catch (TargetInvocationException e)
             {
-                if (e.InnerException is System.ArgumentException)
+                if (e.InnerException is ArgumentException)
                 {
                     // its ok if we dont provide the right parameters to throw this
                     return null;
@@ -175,7 +175,7 @@ namespace Lucene.Net.Analysis.Core
                 {
                     // its ok if the right files arent available or whatever to throw this
                 }
-                catch (System.ArgumentException)
+                catch (ArgumentException)
                 {
                     // is this ok? I guess so
                 }

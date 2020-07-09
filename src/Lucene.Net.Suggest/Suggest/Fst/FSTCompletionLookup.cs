@@ -148,11 +148,11 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             if (iterator.HasPayloads)
             {
-                throw new System.ArgumentException("this suggester doesn't support payloads");
+                throw new ArgumentException("this suggester doesn't support payloads");
             }
             if (iterator.HasContexts)
             {
-                throw new System.ArgumentException("this suggester doesn't support contexts");
+                throw new ArgumentException("this suggester doesn't support contexts");
             }
             FileInfo tempInput = FileSupport.CreateTempFile(typeof(FSTCompletionLookup).Name, ".input", OfflineSorter.DefaultTempDir());
             FileInfo tempSorted = FileSupport.CreateTempFile(typeof(FSTCompletionLookup).Name, ".sorted", OfflineSorter.DefaultTempDir());

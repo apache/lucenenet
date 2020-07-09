@@ -807,10 +807,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override void SeekExact(long ord)
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
 
-            public override long Ord => throw new System.NotSupportedException();
+            public override long Ord => throw new NotSupportedException();
 
             public override SeekStatus SeekCeil(BytesRef term)
             {

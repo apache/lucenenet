@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using System;
 
 namespace Lucene.Net.Analysis.No
 {
@@ -87,7 +88,7 @@ namespace Lucene.Net.Analysis.No
         {
             if (flags <= 0 || flags > (int)NorwegianStandard.BOKMAAL + NorwegianStandard.NYNORSK)
             {
-                throw new System.ArgumentException("invalid flags");
+                throw new ArgumentException("invalid flags");
             }
             useBokmaal = (flags & NorwegianStandard.BOKMAAL) != 0;
             useNynorsk = (flags & NorwegianStandard.NYNORSK) != 0;

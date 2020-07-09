@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Util
                 version.OnOrAfter(LuceneVersion.LUCENE_44))
 #pragma warning restore 612, 618
             {
-                throw new System.ArgumentException("enablePositionIncrements=false is not supported anymore as of Lucene 4.4 as it can create broken token streams");
+                throw new ArgumentException("enablePositionIncrements=false is not supported anymore as of Lucene 4.4 as it can create broken token streams");
             }
         }
 

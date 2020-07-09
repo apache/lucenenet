@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Util
@@ -55,7 +56,7 @@ namespace Lucene.Net.Util
         {
             if (to < from)
             {
-                throw new System.ArgumentException("'to' must be >= 'from', got from=" + from + " and to=" + to);
+                throw new ArgumentException("'to' must be >= 'from', got from=" + from + " and to=" + to);
             }
         }
 

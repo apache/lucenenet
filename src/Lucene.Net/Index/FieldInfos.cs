@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
             {
                 if (info.Number < 0)
                 {
-                    throw new System.ArgumentException("illegal field number: " + info.Number + " for field " + info.Name);
+                    throw new ArgumentException("illegal field number: " + info.Number + " for field " + info.Name);
                 }
 
                 FieldInfo previous;
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
         {
             if (fieldNumber < 0)
             {
-                throw new System.ArgumentException("Illegal field number: " + fieldNumber);
+                throw new ArgumentException("Illegal field number: " + fieldNumber);
             }
             Index.FieldInfo ret;
             byNumber.TryGetValue(fieldNumber, out ret);
@@ -225,7 +225,7 @@ namespace Lucene.Net.Index
                         }
                         else if (currentDVType != DocValuesType.NONE && currentDVType != dvType)
                         {
-                            throw new System.ArgumentException("cannot change DocValues type from " + currentDVType + " to " + dvType + " for field \"" + fieldName + "\"");
+                            throw new ArgumentException("cannot change DocValues type from " + currentDVType + " to " + dvType + " for field \"" + fieldName + "\"");
                         }
                     }
                     int? fieldNumber;

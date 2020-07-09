@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
                 Debug.Assert(this.codec == null);
                 if (value == null)
                 {
-                    throw new System.ArgumentException("codec must be non-null");
+                    throw new ArgumentException("codec must be non-null");
                 }
                 this.codec = value;
             }
@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
             {
                 if (!r.IsMatch(file))
                 {
-                    throw new System.ArgumentException("invalid codec filename '" + file + "', must match: " + IndexFileNames.CODEC_FILE_PATTERN.ToString());
+                    throw new ArgumentException("invalid codec filename '" + file + "', must match: " + IndexFileNames.CODEC_FILE_PATTERN.ToString());
                 }
             }
         }

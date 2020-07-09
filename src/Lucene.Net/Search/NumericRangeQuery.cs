@@ -171,7 +171,7 @@ namespace Lucene.Net.Search
         {
             if (precisionStep < 1)
             {
-                throw new System.ArgumentException("precisionStep must be >=1");
+                throw new ArgumentException("precisionStep must be >=1");
             }
             this.precisionStep = precisionStep;
             this.dataType = dataType;
@@ -405,7 +405,7 @@ namespace Lucene.Net.Search
 
                     default:
                         // should never happen
-                        throw new System.ArgumentException("Invalid NumericType");
+                        throw new ArgumentException("Invalid NumericType");
                 }
 
                 termComp = Comparer;

@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
@@ -131,7 +132,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (bitsPerValue > 32)
             {
-                throw new System.NotSupportedException("Cannot decode " + bitsPerValue + "-bits values into an int[]");
+                throw new NotSupportedException("Cannot decode " + bitsPerValue + "-bits values into an int[]");
             }
             int bitsLeft = 64;
             for (int i = 0; i < longValueCount * iterations; ++i)

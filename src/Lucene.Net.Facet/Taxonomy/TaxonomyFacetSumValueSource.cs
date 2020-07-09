@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -81,27 +82,27 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 return score;
             }
-            public override int Freq => throw new System.NotSupportedException();
+            public override int Freq => throw new NotSupportedException();
 
             public override int DocID => docID;
 
             public override int NextDoc()
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
             public override int Advance(int target)
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
             public override long GetCost()
             {
                 return 0;
             }
-            public override Weight Weight => throw new System.NotSupportedException();
+            public override Weight Weight => throw new NotSupportedException();
 
             public override ICollection<ChildScorer> GetChildren()
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
         }
 
@@ -188,7 +189,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         return scorer.GetScore();
                     }
-                    catch (System.IO.IOException exception)
+                    catch (IOException exception)
                     {
                         throw new Exception(exception.ToString(), exception);
                     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -85,7 +86,7 @@ namespace Lucene.Net.Search.Spans
         /// </summary>
         /// <returns> A <see cref="T:ICollection{byte[]}"/> of byte arrays containing the data of this payload, 
         /// otherwise <c>null</c> if <see cref="IsPayloadAvailable"/> is <c>false</c> </returns>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         // TODO: Remove warning after API has been finalized
         public abstract ICollection<byte[]> GetPayload();
 

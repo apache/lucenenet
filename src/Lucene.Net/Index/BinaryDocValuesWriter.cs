@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -72,15 +73,15 @@ namespace Lucene.Net.Index
         {
             if (docID < addedValues)
             {
-                throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
+                throw new ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
             }
             if (value == null)
             {
-                throw new System.ArgumentException("field=\"" + fieldInfo.Name + "\": null value not allowed");
+                throw new ArgumentException("field=\"" + fieldInfo.Name + "\": null value not allowed");
             }
             if (value.Length > MAX_LENGTH)
             {
-                throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" is too large, must be <= " + MAX_LENGTH);
+                throw new ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" is too large, must be <= " + MAX_LENGTH);
             }
 
             // Fill in any holes:
@@ -95,7 +96,7 @@ namespace Lucene.Net.Index
             {
                 bytesOut.WriteBytes(value.Bytes, value.Offset, value.Length);
             }
-            catch (System.IO.IOException ioe)
+            catch (IOException ioe)
             {
                 // Should never happen!
                 throw new Exception(ioe.ToString(), ioe);
@@ -158,7 +159,7 @@ namespace Lucene.Net.Index
                     {
                         bytesIterator.ReadBytes(value.Bytes, value.Offset, value.Length);
                     }
-                    catch (System.IO.IOException ioe)
+                    catch (IOException ioe)
                     {
                         // Should never happen!
                         throw new Exception(ioe.ToString(), ioe);

@@ -94,7 +94,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             //if (context == null) // LUCENENET NOTE: enum values can never be null in .NET
             //{
-            //    throw new System.ArgumentException("Context must not be null");
+            //    throw new ArgumentException("Context must not be null");
             //}
             //int ord = context.ordinal();
             RateLimiter limiter;

@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis.Synonym
 
                 if (mapping.Count > 2)
                 {
-                    throw new System.ArgumentException("Invalid Synonym Rule:" + rule);
+                    throw new ArgumentException("Invalid Synonym Rule:" + rule);
                 }
                 else if (mapping.Count == 2)
                 {

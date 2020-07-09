@@ -76,7 +76,7 @@ namespace Lucene.Net.Util.Automaton
                 int v = word[i];
                 if (v > alphaMax)
                 {
-                    throw new System.ArgumentException("alphaMax exceeded by symbol " + v + " in word");
+                    throw new ArgumentException("alphaMax exceeded by symbol " + v + " in word");
                 }
                 set.Add(v);
             }

@@ -160,7 +160,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 else
                 {
-                    throw new System.ArgumentException("transition accepts only surrogates: " + t);
+                    throw new ArgumentException("transition accepts only surrogates: " + t);
                 }
             }
             else if (t.Max <= UnicodeUtil.UNI_SUR_LOW_END)
@@ -172,7 +172,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 else
                 {
-                    throw new System.ArgumentException("transition accepts only surrogates: " + t);
+                    throw new ArgumentException("transition accepts only surrogates: " + t);
                 }
             }
             else

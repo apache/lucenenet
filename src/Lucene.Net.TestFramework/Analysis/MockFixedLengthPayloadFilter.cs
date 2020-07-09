@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis
         {
             if (length < 0)
             {
-                throw new System.ArgumentException("length must be >= 0");
+                throw new ArgumentException("length must be >= 0");
             }
             this.random = random;
             this.bytes = new byte[length];

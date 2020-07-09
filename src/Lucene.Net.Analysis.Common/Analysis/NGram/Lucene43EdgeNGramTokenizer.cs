@@ -160,29 +160,29 @@ namespace Lucene.Net.Analysis.NGram
         {
             //if (version == null)
             //{
-            //    throw new System.ArgumentException("version must not be null");
+            //    throw new ArgumentException("version must not be null");
             //}
 
             if (!Enum.IsDefined(typeof(Side), side))
             {
-                throw new System.ArgumentException("sideLabel must be either front or back");
+                throw new ArgumentException("sideLabel must be either front or back");
             }
 
             if (minGram < 1)
             {
-                throw new System.ArgumentException("minGram must be greater than zero");
+                throw new ArgumentException("minGram must be greater than zero");
             }
 
             if (minGram > maxGram)
             {
-                throw new System.ArgumentException("minGram must not be greater than maxGram");
+                throw new ArgumentException("minGram must not be greater than maxGram");
             }
 
             if (version.OnOrAfter(LuceneVersion.LUCENE_44))
             {
                 if (side == Side.BACK)
                 {
-                    throw new System.ArgumentException("Side.BACK is not supported anymore as of Lucene 4.4");
+                    throw new ArgumentException("Side.BACK is not supported anymore as of Lucene 4.4");
                 }
             }
             else

@@ -5,7 +5,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
+using System.IO;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
@@ -256,7 +256,7 @@ namespace Lucene.Net.Index
         /// reader is disposed.  If an exception is hit, the <see cref="RefCount"/>
         /// is unchanged.
         /// </summary>
-        /// <exception cref="System.IO.IOException"> in case an <see cref="System.IO.IOException"/> occurs in <see cref="DoClose()"/>
+        /// <exception cref="IOException"> in case an <see cref="IOException"/> occurs in <see cref="DoClose()"/>
         /// </exception>
         /// <seealso cref="IncRef"/>
         public void DecRef()
@@ -345,7 +345,7 @@ namespace Lucene.Net.Index
         /// Returns a <see cref="IndexReader"/> reading the index in the given
         /// <see cref="Directory"/> </summary>
         /// <param name="directory"> the index directory </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
         [Obsolete("Use DirectoryReader.Open(Directory)")]
         public static DirectoryReader Open(Directory directory)
         {
@@ -367,7 +367,7 @@ namespace Lucene.Net.Index
         ///  memory usage, at the expense of higher latency when
         ///  loading a TermInfo.  The default value is 1.  Set this
         ///  to -1 to skip loading the terms index entirely. </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
         [Obsolete("Use DirectoryReader.Open(Directory, int)")]
         public static DirectoryReader Open(Directory directory, int termInfosIndexDivisor)
         {
@@ -386,7 +386,7 @@ namespace Lucene.Net.Index
         /// can tolerate deleted documents being returned you might
         /// gain some performance by passing false. </param>
         /// <returns> The new <see cref="IndexReader"/> </returns>
-        /// <exception cref="System.IO.IOException"> if there is a low-level IO error
+        /// <exception cref="IOException"> if there is a low-level IO error
         /// </exception>
         /// <seealso cref="DirectoryReader.OpenIfChanged(DirectoryReader, IndexWriter, bool)"/>
         ///
@@ -402,7 +402,7 @@ namespace Lucene.Net.Index
         /// <see cref="IndexCommit"/>. 
         /// </summary>
         /// <param name="commit"> the commit point to open </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
         [Obsolete("Use DirectoryReader.Open(IndexCommit)")]
         public static DirectoryReader Open(IndexCommit commit)
         {
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
         ///  memory usage, at the expense of higher latency when
         ///  loading a TermInfo.  The default value is 1.  Set this
         ///  to -1 to skip loading the terms index entirely. </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
         [Obsolete("Use DirectoryReader.Open(IndexCommit, int)/>")]
         public static DirectoryReader Open(IndexCommit commit, int termInfosIndexDivisor)
         {
@@ -495,7 +495,7 @@ namespace Lucene.Net.Index
         /// like boost, omitNorm, IndexOptions, tokenized, etc.,
         /// are not preserved.
         /// </summary>
-        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
         // TODO: we need a separate StoredField, so that the
         // Document returned here contains that class not
         // IndexableField
@@ -529,7 +529,7 @@ namespace Lucene.Net.Index
         /// Also saves any new deletions to disk.
         /// No other methods should be called after this has been called.
         /// </summary>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
+        /// <exception cref="IOException">If there is a low-level IO error</exception>
         public void Dispose()
         {
             Dispose(true);

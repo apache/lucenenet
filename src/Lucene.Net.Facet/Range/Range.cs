@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Facet.Range
+﻿using System;
+
+namespace Lucene.Net.Facet.Range
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -79,7 +81,7 @@
         /// </summary>
         protected internal virtual void FailNoMatch()
         {
-            throw new System.ArgumentException("range \"" + Label + "\" matches nothing");
+            throw new ArgumentException("range \"" + Label + "\" matches nothing");
         }
     }
 }

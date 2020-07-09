@@ -266,7 +266,7 @@ namespace Lucene.Net.Search
         {
             if (numHits <= 0)
             {
-                throw new System.ArgumentException("numHits must be > 0; please use TotalHitCountCollector if you just need the total hit count");
+                throw new ArgumentException("numHits must be > 0; please use TotalHitCountCollector if you just need the total hit count");
             }
 
             if (docsScoredInOrder)

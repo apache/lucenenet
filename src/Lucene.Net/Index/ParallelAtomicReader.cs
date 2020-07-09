@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
             this.closeSubReaders = closeSubReaders;
             if (readers.Length == 0 && storedFieldsReaders.Length > 0)
             {
-                throw new System.ArgumentException("There must be at least one main reader if storedFieldsReaders are used.");
+                throw new ArgumentException("There must be at least one main reader if storedFieldsReaders are used.");
             }
             this.parallelReaders = (AtomicReader[])readers.Clone();
             this.storedFieldsReaders = (AtomicReader[])storedFieldsReaders.Clone();
@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
             {
                 if (reader.MaxDoc != maxDoc)
                 {
-                    throw new System.ArgumentException("All readers must have same MaxDoc: " + maxDoc + "!=" + reader.MaxDoc);
+                    throw new ArgumentException("All readers must have same MaxDoc: " + maxDoc + "!=" + reader.MaxDoc);
                 }
             }
 

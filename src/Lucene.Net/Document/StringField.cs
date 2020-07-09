@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using System;
 
 namespace Lucene.Net.Documents
 {
@@ -73,7 +74,7 @@ namespace Lucene.Net.Documents
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="string"/> value </param>
         /// <param name="stored"> <see cref="Field.Store.YES"/> if the content should also be stored </param>
-        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
         public StringField(string name, string value, Store stored)
             : base(name, value, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {

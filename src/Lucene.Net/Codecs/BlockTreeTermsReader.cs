@@ -634,7 +634,7 @@ namespace Lucene.Net.Codecs
             {
                 if (compiled.Type != CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
                 {
-                    throw new System.ArgumentException("please use CompiledAutomaton.getTermsEnum instead");
+                    throw new ArgumentException("please use CompiledAutomaton.getTermsEnum instead");
                 }
                 return new IntersectEnum(this, compiled, startTerm);
             }
@@ -1457,19 +1457,19 @@ namespace Lucene.Net.Codecs
 
                 public override bool SeekExact(BytesRef text)
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
 
                 public override void SeekExact(long ord)
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
 
-                public override long Ord => throw new System.NotSupportedException();
+                public override long Ord => throw new NotSupportedException();
 
                 public override SeekStatus SeekCeil(BytesRef text)
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
             }
 

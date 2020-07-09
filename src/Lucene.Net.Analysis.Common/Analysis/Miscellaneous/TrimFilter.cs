@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             if (updateOffsets && version.OnOrAfter(LuceneVersion.LUCENE_44))
             {
-                throw new System.ArgumentException("updateOffsets=true is not supported anymore as of Lucene 4.4");
+                throw new ArgumentException("updateOffsets=true is not supported anymore as of Lucene 4.4");
             }
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();

@@ -1,25 +1,26 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Search.Grouping
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// This collector specializes in collecting the most relevant document (group head) for each group that match the query.
@@ -93,7 +94,7 @@ namespace Lucene.Net.Search.Grouping
         /// </para>
         /// </summary>
         /// <param name="doc">The document to retrieve the group head for.</param>
-        /// <exception cref="System.IO.IOException">If I/O related errors occur</exception>
+        /// <exception cref="IOException">If I/O related errors occur</exception>
         protected override abstract void RetrieveGroupHeadAndAddIfNotExist(int doc);
 
         /// <summary>
@@ -185,14 +186,14 @@ namespace Lucene.Net.Search.Grouping
         /// -1 if the specified document wasn't competitive against the current most relevant document, 1 if the
         /// specified document was competitive against the current most relevant document. Otherwise 0.
         /// </returns>
-        /// <exception cref="System.IO.IOException">If I/O related errors occur</exception>
+        /// <exception cref="IOException">If I/O related errors occur</exception>
         public abstract int Compare(int compIDX, int doc);
 
         /// <summary>
         /// Updates the current most relevant document with the specified document.
         /// </summary>
         /// <param name="doc">The specified document</param>
-        /// <exception cref="System.IO.IOException">If I/O related errors occur</exception>
+        /// <exception cref="IOException">If I/O related errors occur</exception>
         public abstract void UpdateDocHead(int doc);
     }
 
@@ -232,7 +233,7 @@ namespace Lucene.Net.Search.Grouping
         /// </para>
         /// </summary>
         /// <param name="doc">The document to retrieve the group head for.</param>
-        /// <exception cref="System.IO.IOException">If I/O related errors occur</exception>
+        /// <exception cref="IOException">If I/O related errors occur</exception>
         protected abstract void RetrieveGroupHeadAndAddIfNotExist(int doc);
 
 

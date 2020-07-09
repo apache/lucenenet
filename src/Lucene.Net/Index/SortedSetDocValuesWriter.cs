@@ -66,11 +66,11 @@ namespace Lucene.Net.Index
         {
             if (value == null)
             {
-                throw new System.ArgumentException("field \"" + fieldInfo.Name + "\": null value not allowed");
+                throw new ArgumentException("field \"" + fieldInfo.Name + "\": null value not allowed");
             }
             if (value.Length > (ByteBlockPool.BYTE_BLOCK_SIZE - 2))
             {
-                throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" is too large, must be <= " + (ByteBlockPool.BYTE_BLOCK_SIZE - 2));
+                throw new ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" is too large, must be <= " + (ByteBlockPool.BYTE_BLOCK_SIZE - 2));
             }
 
             if (docID != currentDoc)

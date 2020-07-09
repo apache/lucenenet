@@ -4,6 +4,8 @@
 // NO WARRANTY!  This class is in the public domain.
 // $Id: DefaultHandler.java,v 1.9 2004/04/26 17:34:35 dmegginson Exp $
 
+using System.IO;
+
 namespace Sax.Helpers
 {
     /// <summary>
@@ -58,7 +60,7 @@ namespace Sax.Helpers
         /// <param name="publicId">The public identifer, or null if none is available.</param>
         /// <param name="systemId">The system identifier provided in the XML document.</param>
         /// <remarks>The new input source, or null to require the default behaviour.</remarks>
-        /// <exception cref="System.IO.IOException">If there is an error setting
+        /// <exception cref="IOException">If there is an error setting
         /// up the new input source.</exception>
         /// <exception cref="SAXException">Any SAX exception, possibly
         /// wrapping another exception.</exception>

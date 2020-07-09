@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.Compound
 {
@@ -56,7 +57,7 @@ namespace Lucene.Net.Analysis.Compound
         {
             if (dictionary == null)
             {
-                throw new System.ArgumentException("dictionary cannot be null");
+                throw new ArgumentException("dictionary cannot be null");
             }
         }
 
@@ -85,7 +86,7 @@ namespace Lucene.Net.Analysis.Compound
         {
             if (dictionary == null)
             {
-                throw new System.ArgumentException("dictionary cannot be null");
+                throw new ArgumentException("dictionary cannot be null");
             }
         }
 

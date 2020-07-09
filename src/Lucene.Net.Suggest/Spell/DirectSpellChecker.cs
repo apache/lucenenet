@@ -6,6 +6,7 @@ using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
@@ -183,7 +184,7 @@ namespace Lucene.Net.Search.Spell
             {
                 if (value >= 1f && value != (int)value)
                 {
-                    throw new System.ArgumentException("Fractional absolute document frequencies are not allowed");
+                    throw new ArgumentException("Fractional absolute document frequencies are not allowed");
                 }
                 thresholdFrequency = value;
             }
@@ -222,7 +223,7 @@ namespace Lucene.Net.Search.Spell
             {
                 if (value >= 1f && value != (int)value)
                 {
-                    throw new System.ArgumentException("Fractional absolute document frequencies are not allowed");
+                    throw new ArgumentException("Fractional absolute document frequencies are not allowed");
                 }
                 maxQueryFrequency = value;
             }
@@ -316,7 +317,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="suggestMode"> specifies when to return suggested words </param>
         /// <param name="accuracy"> return only suggested words that match with this similarity </param>
         /// <returns> sorted list of the suggested words according to the comparer </returns>
-        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public virtual SuggestWord[] SuggestSimilar(Term term, int numSug, IndexReader ir, 
             SuggestMode suggestMode, float accuracy)
         {
@@ -416,7 +417,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="accuracy"> The minimum accuracy a suggested spelling correction needs to have in order to be included </param>
         /// <param name="spare"> a chars scratch </param>
         /// <returns> a collection of spelling corrections sorted by <code>ScoreTerm</code>'s natural order. </returns>
-        /// <exception cref="System.IO.IOException"> If I/O related errors occur </exception>
+        /// <exception cref="IOException"> If I/O related errors occur </exception>
         protected internal virtual ICollection<ScoreTerm> SuggestSimilar(Term term, int numSug, IndexReader ir, 
             int docfreq, int editDistance, float accuracy, CharsRef spare)
         {

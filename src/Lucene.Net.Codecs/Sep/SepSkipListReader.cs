@@ -2,6 +2,7 @@
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Codecs.Sep
 {
@@ -47,7 +48,7 @@ namespace Lucene.Net.Codecs.Sep
         private long lastPayloadPointer;
         private int lastPayloadLength;
 
-        /// <exception cref="System.IO.IOException"/>
+        /// <exception cref="IOException"/>
         internal SepSkipListReader(IndexInput skipStream,
                           Int32IndexInput freqIn,
                           Int32IndexInput docIn,
@@ -145,7 +146,7 @@ namespace Lucene.Net.Codecs.Sep
         /// </summary>
         internal int PayloadLength => lastPayloadLength;
 
-        /// <exception cref="System.IO.IOException"/>
+        /// <exception cref="IOException"/>
         protected override void SeekChild(int level)
         {
             base.SeekChild(level);
@@ -189,7 +190,7 @@ namespace Lucene.Net.Codecs.Sep
 
         internal Int32IndexInput.Index DocIndex => lastDocIndex;
 
-        /// <exception cref="System.IO.IOException"/>
+        /// <exception cref="IOException"/>
         protected override int ReadSkipData(int level, IndexInput skipStream)
         {
             int delta;

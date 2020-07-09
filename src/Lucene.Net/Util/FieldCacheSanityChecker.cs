@@ -382,11 +382,11 @@ namespace Lucene.Net.Util
             {
                 if (null == type)
                 {
-                    throw new System.ArgumentException("Insanity requires non-null InsanityType");
+                    throw new ArgumentException("Insanity requires non-null InsanityType");
                 }
                 if (null == entries || 0 == entries.Length)
                 {
-                    throw new System.ArgumentException("Insanity requires non-null/non-empty CacheEntry[]");
+                    throw new ArgumentException("Insanity requires non-null/non-empty CacheEntry[]");
                 }
                 this.type = type;
                 this.msg = msg;

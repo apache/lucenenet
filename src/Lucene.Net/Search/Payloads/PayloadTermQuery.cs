@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Lucene.Net.Search.Payloads
 {
     /*
@@ -143,7 +145,7 @@ namespace Lucene.Net.Search.Payloads
 
                 ///
                 /// <returns> <see cref="GetSpanScore()"/> * <see cref="GetPayloadScore()"/> </returns>
-                /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+                /// <exception cref="IOException"> if there is a low-level I/O error </exception>
                 public override float GetScore()
                 {
                     return outerInstance.outerInstance.includeSpanScore ? GetSpanScore() * GetPayloadScore() : GetPayloadScore();
@@ -155,7 +157,7 @@ namespace Lucene.Net.Search.Payloads
                 /// Should not be overridden without good cause!
                 /// </summary>
                 /// <returns> the score for just the Span part w/o the payload </returns>
-                /// <exception cref="System.IO.IOException"> if there is a low-level I/O error
+                /// <exception cref="IOException"> if there is a low-level I/O error
                 /// </exception>
                 /// <seealso cref="GetScore()"/>
                 protected internal virtual float GetSpanScore()

@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
         {
             if (maxNumThreadStates < 1)
             {
-                throw new System.ArgumentException("maxNumThreadStates must be >= 1 but was: " + maxNumThreadStates);
+                throw new ArgumentException("maxNumThreadStates must be >= 1 but was: " + maxNumThreadStates);
             }
             threadStates = new ThreadState[maxNumThreadStates];
             numThreadStatesActive = 0;

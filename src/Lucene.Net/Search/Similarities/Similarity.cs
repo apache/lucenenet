@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -165,7 +167,7 @@ namespace Lucene.Net.Search.Similarities
         /// <param name="weight"> collection information from <see cref="ComputeWeight(float, CollectionStatistics, TermStatistics[])"/> </param>
         /// <param name="context"> segment of the inverted index to be scored. </param>
         /// <returns> Sloppy <see cref="SimScorer"/> for scoring documents across <c>context</c> </returns>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public abstract SimScorer GetSimScorer(SimWeight weight, AtomicReaderContext context);
 
         /// <summary>

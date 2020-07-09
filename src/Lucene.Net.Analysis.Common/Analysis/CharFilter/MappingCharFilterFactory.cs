@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -48,7 +49,7 @@ namespace Lucene.Net.Analysis.CharFilters
             mapping = Get(args, "mapping");
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 
@@ -101,7 +102,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 Match m = p.Match(rule);
                 if (!m.Success)
                 {
-                    throw new System.ArgumentException("Invalid Mapping Rule : [" + rule + "], file = " + mapping);
+                    throw new ArgumentException("Invalid Mapping Rule : [" + rule + "], file = " + mapping);
                 }
                 builder.Add(ParseString(m.Groups[1].Value), ParseString(m.Groups[2].Value));
             }
@@ -121,7 +122,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 {
                     if (readPos >= len)
                     {
-                        throw new System.ArgumentException("Invalid escaped char in [" + s + "]");
+                        throw new ArgumentException("Invalid escaped char in [" + s + "]");
                     }
                     c = s[readPos++];
                     switch (c)
@@ -150,7 +151,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         case 'u':
                             if (readPos + 3 >= len)
                             {
-                                throw new System.ArgumentException("Invalid escaped char in [" + s + "]");
+                                throw new ArgumentException("Invalid escaped char in [" + s + "]");
                             }
                             //c = (char)int.Parse(s.Substring(readPos, 4), 16);
                             c = (char)int.Parse(s.Substring(readPos, 4), System.Globalization.NumberStyles.HexNumber);

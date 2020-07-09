@@ -597,7 +597,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should not have allowed creating new fields through update");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // ok
@@ -609,7 +609,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should not have allowed updating an existing field to numeric-dv");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // ok
@@ -1098,7 +1098,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should not have succeeded to update a segment written with an old Codec");
             }
 #pragma warning disable 168
-            catch (System.NotSupportedException e)
+            catch (NotSupportedException e)
 #pragma warning restore 168
             {
                 writer.Rollback();

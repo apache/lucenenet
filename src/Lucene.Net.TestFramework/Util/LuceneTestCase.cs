@@ -954,7 +954,7 @@ namespace Lucene.Net.Util
             IList<AtomicReaderContext> subReaders = reader.Leaves;
             if (subReaders.Count != 1)
             {
-                throw new System.ArgumentException(reader + " has " + subReaders.Count + " segments instead of exactly one");
+                throw new ArgumentException(reader + " has " + subReaders.Count + " segments instead of exactly one");
             }
             AtomicReader r = (AtomicReader)subReaders[0].Reader;
             Assert.IsTrue(r is SegmentReader);

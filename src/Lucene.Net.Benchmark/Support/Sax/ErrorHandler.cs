@@ -3,6 +3,8 @@
 // No warranty; no copyright -- use this as you will.
 // $Id: ErrorHandler.java,v 1.10 2004/03/08 13:01:00 dmegginson Exp $
 
+using System.IO;
+
 namespace Sax
 {
     /// <summary>
@@ -36,7 +38,7 @@ namespace Sax
     /// may throw an exception after reporting any fatalError.
     /// Also parsers may throw appropriate exceptions for non - XML errors.
     /// For example, <see cref="IXMLReader.Parse(InputSource)"/> would throw
-    /// an <see cref="System.IO.IOException"/> for errors accessing entities or the document.
+    /// an <see cref="IOException"/> for errors accessing entities or the document.
     /// </remarks>
     /// <since>SAX 1.0</since>
     /// <author>David Megginson</author>

@@ -76,11 +76,11 @@ namespace Lucene.Net.Analysis.NGram
         {
             if (minGram < 1)
             {
-                throw new System.ArgumentException("minGram must be greater than zero");
+                throw new ArgumentException("minGram must be greater than zero");
             }
             if (minGram > maxGram)
             {
-                throw new System.ArgumentException("minGram must not be greater than maxGram");
+                throw new ArgumentException("minGram must not be greater than maxGram");
             }
             this.minGram = minGram;
             this.maxGram = maxGram;

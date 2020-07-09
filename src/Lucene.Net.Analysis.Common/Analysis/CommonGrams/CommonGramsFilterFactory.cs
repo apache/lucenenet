@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.CommonGrams
             ignoreCase = GetBoolean(args, "ignoreCase", false);
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

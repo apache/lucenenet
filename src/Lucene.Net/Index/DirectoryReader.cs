@@ -314,7 +314,7 @@ namespace Lucene.Net.Index
                     //}
                     // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
                     // in Lucene, we need to catch it here to be on the safe side.
-                    catch (System.IO.DirectoryNotFoundException)
+                    catch (DirectoryNotFoundException)
                     {
                         // LUCENE-948: on NFS (and maybe others), if
                         // you have writers switching back and forth

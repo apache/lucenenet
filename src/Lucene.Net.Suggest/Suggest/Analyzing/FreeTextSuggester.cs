@@ -182,11 +182,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             this.queryAnalyzer = AddShingles(queryAnalyzer);
             if (grams < 1)
             {
-                throw new System.ArgumentException("grams must be >= 1");
+                throw new ArgumentException("grams must be >= 1");
             }
             if ((separator & 0x80) != 0)
             {
-                throw new System.ArgumentException("separator must be simple ascii character");
+                throw new ArgumentException("separator must be simple ascii character");
             }
             this.separator = separator;
         }
@@ -301,11 +301,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (iterator.HasPayloads)
             {
-                throw new System.ArgumentException("this suggester doesn't support payloads");
+                throw new ArgumentException("this suggester doesn't support payloads");
             }
             if (iterator.HasContexts)
             {
-                throw new System.ArgumentException("this suggester doesn't support contexts");
+                throw new ArgumentException("this suggester doesn't support contexts");
             }
 
             string prefix = this.GetType().Name;
@@ -366,7 +366,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     Terms terms = MultiFields.GetTerms(reader, "body");
                     if (terms == null)
                     {
-                        throw new System.ArgumentException("need at least one suggestion");
+                        throw new ArgumentException("need at least one suggestion");
                     }
 
                     // Move all ngrams into an FST:
@@ -386,7 +386,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         int ngramCount = CountGrams(term);
                         if (ngramCount > grams)
                         {
-                            throw new System.ArgumentException("tokens must not contain separator byte; got token=" + term + " but gramCount=" + ngramCount + ", which is greater than expected max ngram size=" + grams);
+                            throw new ArgumentException("tokens must not contain separator byte; got token=" + term + " but gramCount=" + ngramCount + ", which is greater than expected max ngram size=" + grams);
                         }
                         if (ngramCount == 1)
                         {
@@ -399,7 +399,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     fst = builder.Finish();
                     if (fst == null)
                     {
-                        throw new System.ArgumentException("need at least one suggestion");
+                        throw new ArgumentException("need at least one suggestion");
                     }
                     //System.out.println("FST: " + fst.getNodeCount() + " nodes");
 
@@ -527,7 +527,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (contexts != null)
             {
-                throw new System.ArgumentException("this suggester doesn't support contexts");
+                throw new ArgumentException("this suggester doesn't support contexts");
             }
 
             TokenStream ts = queryAnalyzer.GetTokenStream("", key.ToString());
@@ -561,7 +561,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // Safety: make sure the recalculated count "agrees":
                     if (CountGrams(tokenBytes) != gramCount)
                     {
-                        throw new System.ArgumentException("tokens must not contain separator byte; got token=" + tokenBytes + " but gramCount=" + gramCount + " does not match recalculated count=" + CountGrams(tokenBytes));
+                        throw new ArgumentException("tokens must not contain separator byte; got token=" + tokenBytes + " but gramCount=" + gramCount + " does not match recalculated count=" + CountGrams(tokenBytes));
                     }
                     maxEndOffset = Math.Max(maxEndOffset, offsetAtt.EndOffset);
                     lastTokens[gramCount - 1] = BytesRef.DeepCopyOf(tokenBytes);
@@ -570,7 +570,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 if (!sawRealToken)
                 {
-                    throw new System.ArgumentException("no tokens produced by analyzer, or the only tokens were empty strings");
+                    throw new ArgumentException("no tokens produced by analyzer, or the only tokens were empty strings");
                 }
 
                 // Carefully fill last tokens with _ tokens;

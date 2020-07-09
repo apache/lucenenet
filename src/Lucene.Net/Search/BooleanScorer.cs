@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -172,7 +173,7 @@ namespace Lucene.Net.Search
             {
                 if (required)
                 {
-                    throw new System.ArgumentException("this scorer cannot handle required=true");
+                    throw new ArgumentException("this scorer cannot handle required=true");
                 }
                 this.Scorer = scorer;
                 this.More = true;

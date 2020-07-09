@@ -1861,7 +1861,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should have gotten a UOE");
             }
 #pragma warning disable 168
-            catch (System.NotSupportedException expected)
+            catch (NotSupportedException expected)
 #pragma warning restore 168
             {
             }
@@ -1889,7 +1889,7 @@ namespace Lucene.Net.Index
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected exception
@@ -1940,7 +1940,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("didn't get any exception, boost silently discarded");
             }
 #pragma warning disable 168
-            catch (System.NotSupportedException expected)
+            catch (NotSupportedException expected)
 #pragma warning restore 168
             {
                 // expected
@@ -2101,7 +2101,7 @@ namespace Lucene.Net.Index
                 }
                 // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
                 // in Lucene, we need to catch it here to be on the safe side.
-                catch (System.IO.DirectoryNotFoundException)
+                catch (DirectoryNotFoundException)
                 {
                     continue;
                 }

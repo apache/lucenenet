@@ -79,7 +79,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 if (string.IsNullOrEmpty(comp))
                 {
-                    throw new System.ArgumentException("empty or null components not allowed: " + Arrays.ToString(components));
+                    throw new ArgumentException("empty or null components not allowed: " + Arrays.ToString(components));
                 }
             }
             this.Components = components;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 {
                     if (string.IsNullOrEmpty(comp))
                     {
-                        throw new System.ArgumentException("empty or null components not allowed: " + Arrays.ToString(comps));
+                        throw new ArgumentException("empty or null components not allowed: " + Arrays.ToString(comps));
                     }
                 }
                 Components = comps;
@@ -158,7 +158,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private void HasDelimiter(string offender, char delimiter)
         {
-            throw new System.ArgumentException("delimiter character '" + delimiter + 
+            throw new ArgumentException("delimiter character '" + delimiter + 
                 "' (U+" + delimiter.ToString() + ") appears in path component \"" + offender + "\"");
         }
 

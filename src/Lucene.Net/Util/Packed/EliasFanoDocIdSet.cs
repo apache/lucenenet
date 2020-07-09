@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Util.Packed
 {
     /*
@@ -60,7 +62,7 @@ namespace Lucene.Net.Util.Packed
                 int x = disi.NextDoc();
                 if (x == DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    throw new System.ArgumentException("disi: " + disi.ToString() + "\nhas " + efEncoder.numEncoded + " docs, but at least " + efEncoder.numValues + " are required.");
+                    throw new ArgumentException("disi: " + disi.ToString() + "\nhas " + efEncoder.numEncoded + " docs, but at least " + efEncoder.numValues + " are required.");
                 }
                 efEncoder.EncodeNext(x);
             }
@@ -73,7 +75,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (efEncoder.lastEncoded >= DocIdSetIterator.NO_MORE_DOCS)
             {
-                throw new System.NotSupportedException("Highest encoded value too high for DocIdSetIterator.NO_MORE_DOCS: " + efEncoder.lastEncoded);
+                throw new NotSupportedException("Highest encoded value too high for DocIdSetIterator.NO_MORE_DOCS: " + efEncoder.lastEncoded);
             }
             return new DocIdSetIteratorAnonymousInnerClassHelper(this);
         }

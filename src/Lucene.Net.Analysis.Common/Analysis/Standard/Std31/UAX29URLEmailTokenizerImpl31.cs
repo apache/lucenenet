@@ -3325,7 +3325,7 @@ namespace Lucene.Net.Analysis.Standard.Std31
         /// Refills the input buffer.
         /// </summary>
         /// <returns><code>false</code>, iff there was new input.</returns>
-        /// <exception cref="System.IO.IOException">if any I/O-Error occurs</exception>
+        /// <exception cref="IOException">if any I/O-Error occurs</exception>
         private bool ZzRefill()
         {
 

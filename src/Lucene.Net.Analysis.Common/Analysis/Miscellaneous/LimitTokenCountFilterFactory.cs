@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -50,7 +51,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             consumeAllTokens = GetBoolean(args, CONSUME_ALL_TOKENS_KEY, false);
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

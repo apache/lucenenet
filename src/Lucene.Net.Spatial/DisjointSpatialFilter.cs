@@ -4,6 +4,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Util;
 using System;
+using System.IO;
 
 namespace Lucene.Net.Spatial
 {
@@ -87,7 +88,7 @@ namespace Lucene.Net.Spatial
             return result;
         }
 
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             IBits docsWithField;

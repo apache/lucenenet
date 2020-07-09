@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
 
@@ -107,7 +108,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         /// <param name="blenderType"> Type of blending strategy, see BlenderType for more precisions </param>
         /// <param name="numFactor">   Factor to multiply the number of searched elements before ponderate </param>
-        /// <exception cref="System.IO.IOException"> If there are problems opening the underlying Lucene index. </exception>
+        /// <exception cref="IOException"> If there are problems opening the underlying Lucene index. </exception>
         public BlendedInfixSuggester(LuceneVersion matchVersion, Directory dir, Analyzer indexAnalyzer, Analyzer queryAnalyzer, int minPrefixChars, BlenderType blenderType, int numFactor)
             : base(matchVersion, dir, indexAnalyzer, queryAnalyzer, minPrefixChars)
         {
@@ -233,7 +234,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <param name="matchedTokens"> tokens found in the query </param>
         /// <param name="prefixToken"> unfinished token in the query </param>
         /// <returns> the coefficient </returns>
-        /// <exception cref="System.IO.IOException"> If there are problems reading term vectors from the underlying Lucene index. </exception>
+        /// <exception cref="IOException"> If there are problems reading term vectors from the underlying Lucene index. </exception>
         private double CreateCoefficient(IndexSearcher searcher, int doc, ICollection<string> matchedTokens, string prefixToken)
         {
             Terms tv = searcher.IndexReader.GetTermVector(doc, TEXT_FIELD_NAME);

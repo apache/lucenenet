@@ -3,6 +3,8 @@
 // No warranty; no copyright -- use this as you will.
 // $Id: EntityResolver.java,v 1.10 2002/01/30 21:13:44 dbrownell Exp $
 
+using System.IO;
+
 namespace Sax
 {
     /// <summary>
@@ -100,8 +102,8 @@ namespace Sax
         /// or null to request that the parser open a regular
         /// URI connection to the system identifier.</returns>
         /// <exception cref="SAXException">Any SAX exception, possibly wrapping another exception.</exception>
-        /// <exception cref="System.IO.IOException">A .NET-specific IO exception, possibly the result of creating 
-        /// a new <see cref="System.IO.Stream"/> or <see cref="System.IO.TextReader"/> for the <see cref="InputSource"/>.</exception>
+        /// <exception cref="IOException">A .NET-specific IO exception, possibly the result of creating 
+        /// a new <see cref="Stream"/> or <see cref="TextReader"/> for the <see cref="InputSource"/>.</exception>
         /// <seealso cref="InputSource"/>
         InputSource ResolveEntity(string publicId,
                            string systemId);

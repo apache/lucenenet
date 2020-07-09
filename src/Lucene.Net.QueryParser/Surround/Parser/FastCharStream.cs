@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.QueryParsers.Surround.Parser
@@ -88,7 +89,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
 
             int charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
             if (charsRead <= 0)
-                throw new System.IO.IOException("read past eof");
+                throw new IOException("read past eof");
             else
                 bufferLength += charsRead;
         }
@@ -119,7 +120,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             {
                 input.Dispose();
             }
-            catch (System.IO.IOException e)
+            catch (IOException e)
             {
                 Console.Error.WriteLine("Caught: " + e + "; ignoring.");
             }

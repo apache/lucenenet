@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -178,7 +179,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 facets.GetSpecificValue("float");
                 fail("should have hit exc");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 // expected
             }
@@ -188,7 +189,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 facets.GetTopChildren(10, "float");
                 fail("should have hit exc");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 // expected
             }
@@ -216,7 +217,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 writer.AddDocument(config.Build(taxoWriter, doc));
                 fail("did not hit expected exception");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 // expected
             }
@@ -245,7 +246,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 writer.AddDocument(config.Build(taxoWriter, doc));
                 fail("did not hit expected exception");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 // expected
             }
@@ -274,7 +275,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 writer.AddDocument(config.Build(taxoWriter, doc));
                 fail("did not hit expected exception");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 // expected
             }

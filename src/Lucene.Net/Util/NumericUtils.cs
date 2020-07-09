@@ -151,7 +151,7 @@ namespace Lucene.Net.Util
         {
             if ((shift & ~0x3f) != 0) // ensure shift is 0..63
             {
-                throw new System.ArgumentException("Illegal shift value, must be 0..63");
+                throw new ArgumentException("Illegal shift value, must be 0..63");
             }
             int nChars = (((63 - shift) * 37) >> 8) + 1; // i/7 is the same as (i*37)>>8 for i in 0..63
             bytes.Offset = 0;
@@ -186,7 +186,7 @@ namespace Lucene.Net.Util
         {
             if ((shift & ~0x1f) != 0) // ensure shift is 0..31
             {
-                throw new System.ArgumentException("Illegal shift value, must be 0..31");
+                throw new ArgumentException("Illegal shift value, must be 0..31");
             }
             int nChars = (((31 - shift) * 37) >> 8) + 1; // i/7 is the same as (i*37)>>8 for i in 0..63
             bytes.Offset = 0;
@@ -411,7 +411,7 @@ namespace Lucene.Net.Util
         {
             if (precisionStep < 1)
             {
-                throw new System.ArgumentException("precisionStep must be >=1");
+                throw new ArgumentException("precisionStep must be >=1");
             }
             if (minBound > maxBound)
             {
@@ -470,7 +470,7 @@ namespace Lucene.Net.Util
 
                 default:
                     // Should not happen!
-                    throw new System.ArgumentException("valSize must be 32 or 64.");
+                    throw new ArgumentException("valSize must be 32 or 64.");
             }
         }
 
@@ -491,7 +491,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public virtual void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
 
             /// <summary>
@@ -524,7 +524,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public virtual void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
 
             /// <summary>

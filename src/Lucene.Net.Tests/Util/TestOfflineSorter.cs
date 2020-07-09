@@ -203,7 +203,7 @@ namespace Lucene.Net.Util
                 Assert.Fail("max mb is 2047");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
             }
@@ -214,7 +214,7 @@ namespace Lucene.Net.Util
                 Assert.Fail("min mb is 0.5");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
             }
@@ -225,7 +225,7 @@ namespace Lucene.Net.Util
                 Assert.Fail("min mb is 0.5");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
             }

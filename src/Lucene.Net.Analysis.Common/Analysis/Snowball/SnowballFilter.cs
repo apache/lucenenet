@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.Snowball
             }
             catch (Exception e)
             {
-                throw new System.ArgumentException("Invalid stemmer class specified: " + name, e);
+                throw new ArgumentException("Invalid stemmer class specified: " + name, e);
             }
 
             this.termAtt = AddAttribute<ICharTermAttribute>();

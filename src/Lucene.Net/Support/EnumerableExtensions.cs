@@ -36,7 +36,7 @@ namespace Lucene.Net.Support
         /// <typeparam name="TOut">The type of the elements returned from <paramref name="join" />.</typeparam>
         /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to enumerate in pairs.</param>
         /// <param name="join">A function that is invoked for each pair of elements.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> or <paramref name="join" /> is <see langword="null" />.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> or <paramref name="join" /> is <see langword="null" />.</exception>
         /// <returns>A new <see cref="T:System.Collections.Generic.IEnumerable`1" /> containing the results from each pair.</returns>
         public static IEnumerable<TOut> InPairs<T, TOut>(this IEnumerable<T> source, Func<T, T, TOut> join)
         {

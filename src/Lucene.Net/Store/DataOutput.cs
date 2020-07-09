@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
@@ -192,7 +193,7 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <param name="i"> Smaller values take fewer bytes.  Negative numbers are
         /// supported, but should be avoided. </param>
-        /// <exception cref="System.IO.IOException"> If there is an I/O error writing to the underlying medium. </exception>
+        /// <exception cref="IOException"> If there is an I/O error writing to the underlying medium. </exception>
         /// <seealso cref="DataInput.ReadVInt32()"/>
         public void WriteVInt32(int i)
         {

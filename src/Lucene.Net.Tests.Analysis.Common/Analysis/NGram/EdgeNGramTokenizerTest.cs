@@ -2,6 +2,7 @@
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 using System.IO;
 using Reader = System.IO.TextReader;
 using Version = Lucene.Net.Util.LuceneVersion;
@@ -46,7 +47,7 @@ namespace Lucene.Net.Analysis.NGram
             {
                 new EdgeNGramTokenizer(TEST_VERSION_CURRENT, input, 0, 0);
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 gotException = true;
             }
@@ -61,7 +62,7 @@ namespace Lucene.Net.Analysis.NGram
             {
                 new EdgeNGramTokenizer(TEST_VERSION_CURRENT, input, 2, 1);
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 gotException = true;
             }
@@ -76,7 +77,7 @@ namespace Lucene.Net.Analysis.NGram
             {
                 new EdgeNGramTokenizer(TEST_VERSION_CURRENT, input, -1, 2);
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 gotException = true;
             }

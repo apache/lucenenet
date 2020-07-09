@@ -1,5 +1,5 @@
-// LUCENENET specific - excluding this class in favor of System.IO.DirectoryNotFoundException,
-// although that means we need to catch System.IO.DirectoryNotFoundException everywhere that 
+// LUCENENET specific - excluding this class in favor of DirectoryNotFoundException,
+// although that means we need to catch DirectoryNotFoundException everywhere that 
 // FileNotFoundException is being caught (because it is a superclass) to be sure we have the same behavior.
 
 //using System;

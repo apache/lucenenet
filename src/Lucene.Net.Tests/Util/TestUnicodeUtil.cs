@@ -147,7 +147,7 @@ namespace Lucene.Net.Util
                 UnicodeUtil.CodePointCount(new BytesRef(bytes));
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 threwAssertion = true;
@@ -226,7 +226,7 @@ namespace Lucene.Net.Util
                     // Ignored.
                 }
 #pragma warning disable 168
-                catch (System.ArgumentException e2)
+                catch (ArgumentException e2)
 #pragma warning restore 168
                 {
                     // Ignored.

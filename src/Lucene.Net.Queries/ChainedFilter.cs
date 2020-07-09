@@ -1,6 +1,8 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System;
+using System.IO;
 using System.Text;
 
 namespace Lucene.Net.Queries
@@ -176,7 +178,7 @@ namespace Lucene.Net.Queries
         {
             if (logic.Length != chain.Length)
             {
-                throw new System.ArgumentException("Invalid number of elements in logic array");
+                throw new ArgumentException("Invalid number of elements in logic array");
             }
 
             FixedBitSet result = InitialResult(context, logic[0], index);
@@ -201,7 +203,7 @@ namespace Lucene.Net.Queries
             return sb.ToString();
         }
 
-        /// <exception cref="System.IO.IOException"/>
+        /// <exception cref="IOException"/>
         private void DoChain(FixedBitSet result, int logic, DocIdSet dis)
         {
             if (dis is FixedBitSet)

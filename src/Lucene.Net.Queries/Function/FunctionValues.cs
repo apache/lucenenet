@@ -39,7 +39,7 @@ namespace Lucene.Net.Queries.Function
     {
         public virtual byte ByteVal(int doc)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public virtual short Int16Val(int doc) 
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public virtual float SingleVal(int doc)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public virtual int Int32Val(int doc)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -71,18 +71,18 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public virtual long Int64Val(int doc)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         public virtual double DoubleVal(int doc)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         // TODO: should we make a termVal, returns BytesRef?
         public virtual string StrVal(int doc)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         public virtual bool BoolVal(int doc)
@@ -124,11 +124,11 @@ namespace Lucene.Net.Queries.Function
         /// TODO: Maybe we can just use intVal for this... </returns>
         public virtual int OrdVal(int doc)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <returns> the number of unique sort ordinals this instance has </returns>
-        public virtual int NumOrd => throw new System.NotSupportedException();
+        public virtual int NumOrd => throw new NotSupportedException();
 
         public abstract string ToString(int doc);
 
@@ -187,7 +187,7 @@ namespace Lucene.Net.Queries.Function
         //For Functions that can work with multiple values from the same document.  This does not apply to all functions
         public virtual void ByteVal(int doc, byte[] vals)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public virtual void Int16Val(int doc, short[] vals)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public virtual void SingleVal(int doc, float[] vals)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public virtual void Int32Val(int doc, int[] vals)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -219,18 +219,18 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public virtual void Int64Val(int doc, long[] vals)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         public virtual void DoubleVal(int doc, double[] vals)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         // TODO: should we make a termVal, fills BytesRef[]?
         public virtual void StrVal(int doc, string[] vals)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         public virtual Explanation Explain(int doc)

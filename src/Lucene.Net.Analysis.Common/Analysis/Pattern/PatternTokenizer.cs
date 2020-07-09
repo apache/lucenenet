@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -86,7 +87,7 @@ namespace Lucene.Net.Analysis.Pattern
             var groupCount = pattern.GetGroupNumbers().Length;
             if (group >= 0 && group > groupCount)
             {
-                throw new System.ArgumentException("invalid group specified: pattern only has: " + groupCount + " capturing groups");
+                throw new ArgumentException("invalid group specified: pattern only has: " + groupCount + " capturing groups");
             }
 
         }

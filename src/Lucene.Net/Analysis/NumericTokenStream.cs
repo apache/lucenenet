@@ -147,7 +147,7 @@ namespace Lucene.Net.Analysis
                 var attClass = typeof(T);
                 if (typeof(ICharTermAttribute).IsAssignableFrom(attClass))
                 {
-                    throw new System.ArgumentException("NumericTokenStream does not support CharTermAttribute.");
+                    throw new ArgumentException("NumericTokenStream does not support CharTermAttribute.");
                 }
                 return @delegate.CreateAttributeInstance<T>();
             }
@@ -264,7 +264,7 @@ namespace Lucene.Net.Analysis
             InitializeInstanceFields();
             if (precisionStep < 1)
             {
-                throw new System.ArgumentException("precisionStep must be >=1");
+                throw new ArgumentException("precisionStep must be >=1");
             }
             this.precisionStep = precisionStep;
             numericAtt.Shift = -precisionStep;

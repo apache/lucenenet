@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -69,14 +70,14 @@ namespace Lucene.Net.Index
                 var readers = new SegmentReader[sis.Count];
                 for (int i = sis.Count - 1; i >= 0; i--)
                 {
-                    System.IO.IOException prior = null;
+                    IOException prior = null;
                     bool success = false;
                     try
                     {
                         readers[i] = new SegmentReader(sis.Info(i), termInfosIndexDivisor, IOContext.READ);
                         success = true;
                     }
-                    catch (System.IO.IOException ex)
+                    catch (IOException ex)
                     {
                         prior = ex;
                     }
@@ -388,7 +389,7 @@ namespace Lucene.Net.Index
             {
                 if (m_directory != commit.Directory)
                 {
-                    throw new System.IO.IOException("the specified commit does not match the specified Directory");
+                    throw new IOException("the specified commit does not match the specified Directory");
                 }
                 if (segmentInfos != null && commit.SegmentsFileName.Equals(segmentInfos.GetSegmentsFileName(), StringComparison.Ordinal))
                 {

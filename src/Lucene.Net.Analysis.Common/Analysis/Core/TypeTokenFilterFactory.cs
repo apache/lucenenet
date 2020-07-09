@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -50,7 +51,7 @@ namespace Lucene.Net.Analysis.Core
             useWhitelist = GetBoolean(args, "useWhitelist", false);
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

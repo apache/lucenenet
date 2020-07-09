@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis
                 stream.AddAttribute<ICharTermAttribute>();
                 Assert.Fail("Succeeded to add CharTermAttribute.");
             }
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
             {
                 Assert.IsTrue(iae.Message.StartsWith("NumericTokenStream does not support", StringComparison.Ordinal));
             }
@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis
                 stream.AddAttribute<ITestAttribute>();
                 Assert.Fail("Succeeded to add TestAttribute.");
             }
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
             {
                 Assert.IsTrue(iae.Message.StartsWith("NumericTokenStream does not support", StringComparison.Ordinal));
             }

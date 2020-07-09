@@ -1144,7 +1144,7 @@ namespace Lucene.Net.Index
                             ord = termsEnum.Ord;
                         }
 #pragma warning disable 168
-                        catch (System.NotSupportedException uoe)
+                        catch (NotSupportedException uoe)
 #pragma warning restore 168
                         {
                             hasOrd = false;
@@ -2349,7 +2349,7 @@ namespace Lucene.Net.Index
         {
             if (result.Partial)
             {
-                throw new System.ArgumentException("can only fix an index that was fully checked (this status checked a subset of segments)");
+                throw new ArgumentException("can only fix an index that was fully checked (this status checked a subset of segments)");
             }
             result.NewSegments.Changed();
             result.NewSegments.Commit(result.Dir);

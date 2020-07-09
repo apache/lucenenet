@@ -48,11 +48,11 @@ namespace Lucene.Net.Search.Suggest.Tst
         {
             if (tfit.HasPayloads)
             {
-                throw new System.ArgumentException("this suggester doesn't support payloads");
+                throw new ArgumentException("this suggester doesn't support payloads");
             }
             if (tfit.HasContexts)
             {
-                throw new System.ArgumentException("this suggester doesn't support contexts");
+                throw new ArgumentException("this suggester doesn't support contexts");
             }
             root = new TernaryTreeNode();
             // buffer first
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         {
             if (contexts != null)
             {
-                throw new System.ArgumentException("this suggester doesn't support contexts");
+                throw new ArgumentException("this suggester doesn't support contexts");
             }
             IList<TernaryTreeNode> list = autocomplete.PrefixCompletion(root, key, 0);
             List<LookupResult> res = new List<LookupResult>();

@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace Lucene.Net.Search
 {
@@ -55,7 +56,7 @@ namespace Lucene.Net.Search
             {
                 if (fields.Length == 0)
                 {
-                    throw new System.ArgumentException("Sort must contain at least one field");
+                    throw new ArgumentException("Sort must contain at least one field");
                 }
 
                 SortField field = fields[0];
@@ -134,7 +135,7 @@ namespace Lucene.Net.Search
         /// </param>
         /// <param name="size">The number of hits to retain. Must be greater than zero.
         /// </param>
-        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
+        /// <exception cref="IOException">If there is a low-level IO error</exception>
         public static FieldValueHitQueue<T> Create<T>(SortField[] fields, int size)
             where T : FieldValueHitQueue.Entry
         {

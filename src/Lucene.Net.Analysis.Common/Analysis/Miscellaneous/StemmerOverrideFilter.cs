@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -210,7 +211,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// <summary>
             /// Returns a <see cref="StemmerOverrideMap"/> to be used with the <see cref="StemmerOverrideFilter"/> </summary>
             /// <returns> a <see cref="StemmerOverrideMap"/> to be used with the <see cref="StemmerOverrideFilter"/> </returns>
-            /// <exception cref="System.IO.IOException"> if an <see cref="System.IO.IOException"/> occurs; </exception>
+            /// <exception cref="IOException"> if an <see cref="IOException"/> occurs; </exception>
             public virtual StemmerOverrideMap Build()
             {
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;

@@ -200,7 +200,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
             // We have a data directory, so first check if the file exists
             string path = System.IO.Path.Combine(DATA_DIR, fileName);
-            if (!System.IO.File.Exists(path))
+            if (!File.Exists(path))
             {
                 throw new FileNotFoundException(string.Format("Expected file '{0}' not found. " +
                     "If the '{1}' directory exists, this file is required. " +

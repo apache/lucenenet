@@ -166,12 +166,12 @@ namespace Lucene.Net.Search
                             ScoreDoc sd = shard[hitIDX];
                             if (!(sd is FieldDoc))
                             {
-                                throw new System.ArgumentException("shard " + shardIDX + " was not sorted by the provided Sort (expected FieldDoc but got ScoreDoc)");
+                                throw new ArgumentException("shard " + shardIDX + " was not sorted by the provided Sort (expected FieldDoc but got ScoreDoc)");
                             }
                             FieldDoc fd = (FieldDoc)sd;
                             if (fd.Fields == null)
                             {
-                                throw new System.ArgumentException("shard " + shardIDX + " did not set sort field values (FieldDoc.fields is null); you must pass fillFields=true to IndexSearcher.search on each shard");
+                                throw new ArgumentException("shard " + shardIDX + " did not set sort field values (FieldDoc.fields is null); you must pass fillFields=true to IndexSearcher.search on each shard");
                             }
                         }
                     }

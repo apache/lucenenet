@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 
 namespace Lucene.Net.Store
@@ -108,7 +109,7 @@ namespace Lucene.Net.Store
         /// <exception cref="LockObtainFailedException"> if lock wait times out </exception>
         /// <exception cref="ArgumentException"> if <paramref name="lockWaitTimeout"/> is
         ///         out of bounds </exception>
-        /// <exception cref="System.IO.IOException"> if <see cref="Obtain()"/> throws <see cref="System.IO.IOException"/> </exception>
+        /// <exception cref="IOException"> if <see cref="Obtain()"/> throws <see cref="IOException"/> </exception>
         public bool Obtain(long lockWaitTimeout)
         {
             FailureReason = null;
@@ -203,7 +204,7 @@ namespace Lucene.Net.Store
             /// <see cref="DoBody"/> exits. </summary>
             /// <exception cref="LockObtainFailedException"> if lock could not
             /// be obtained </exception>
-            /// <exception cref="System.IO.IOException"> if <see cref="Lock.Obtain()"/> throws <see cref="System.IO.IOException"/> </exception>
+            /// <exception cref="IOException"> if <see cref="Lock.Obtain()"/> throws <see cref="IOException"/> </exception>
             public virtual T Run()
             {
                 bool locked = false;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace Lucene.Net.Codecs
@@ -74,7 +75,7 @@ namespace Lucene.Net.Codecs
         /// <param name="field"> Field information. </param>
         /// <param name="values"> <see cref="IEnumerable{T}"/> of numeric values (one for each document). <c>null</c> indicates
         ///               a missing value. </param>
-        /// <exception cref="System.IO.IOException"> If an I/O error occurred. </exception>
+        /// <exception cref="IOException"> If an I/O error occurred. </exception>
         public abstract void AddNumericField(FieldInfo field, IEnumerable<long?> values);
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace Lucene.Net.Codecs
         /// <param name="field"> Field information. </param>
         /// <param name="values"> <see cref="IEnumerable{T}"/> of binary values (one for each document). <c>null</c> indicates
         ///               a missing value. </param>
-        /// <exception cref="System.IO.IOException"> If an I/O error occurred. </exception>
+        /// <exception cref="IOException"> If an I/O error occurred. </exception>
         public abstract void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values);
 
         /// <summary>
@@ -91,7 +92,7 @@ namespace Lucene.Net.Codecs
         /// <param name="values"> <see cref="IEnumerable{T}"/> of binary values in sorted order (deduplicated). </param>
         /// <param name="docToOrd"> <see cref="IEnumerable{T}"/> of ordinals (one for each document). <c>-1</c> indicates
         ///                 a missing value. </param>
-        /// <exception cref="System.IO.IOException"> If an I/O error occurred. </exception>
+        /// <exception cref="IOException"> If an I/O error occurred. </exception>
         public abstract void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd);
 
         /// <summary>
@@ -101,7 +102,7 @@ namespace Lucene.Net.Codecs
         /// <param name="docToOrdCount"> <see cref="IEnumerable{T}"/> of the number of values for each document. A zero ordinal
         ///                      count indicates a missing value. </param>
         /// <param name="ords"> <see cref="IEnumerable{T}"/> of ordinal occurrences (<paramref name="docToOrdCount"/>*maxDoc total). </param>
-        /// <exception cref="System.IO.IOException"> If an I/O error occurred. </exception>
+        /// <exception cref="IOException"> If an I/O error occurred. </exception>
         public abstract void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords);
 
         /// <summary>

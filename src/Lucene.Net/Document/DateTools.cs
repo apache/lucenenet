@@ -271,7 +271,7 @@ namespace Lucene.Net.Documents
             }
             else
             {
-                throw new System.ArgumentException("unknown resolution " + resolution);
+                throw new ArgumentException("unknown resolution " + resolution);
             }
             return dt.Ticks;
         }

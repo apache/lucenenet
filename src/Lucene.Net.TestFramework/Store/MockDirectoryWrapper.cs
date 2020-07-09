@@ -176,7 +176,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// If set to true, we throw an <see cref="System.IO.IOException"/> if the same
+        /// If set to true, we throw an <see cref="IOException"/> if the same
         /// file is opened by <see cref="CreateOutput(string, IOContext)"/>, ever.
         /// </summary>
         public virtual bool PreventDoubleWrite
@@ -187,7 +187,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// If set to true (the default), when we throw random
-        /// <see cref="System.IO.IOException"/> on <see cref="OpenInput(string, IOContext)"/> or 
+        /// <see cref="IOException"/> on <see cref="OpenInput(string, IOContext)"/> or 
         /// <see cref="CreateOutput(string, IOContext)"/>, we may
         /// sometimes throw <see cref="FileNotFoundException"/>.
         /// </summary>
@@ -877,7 +877,7 @@ namespace Lucene.Net.Store
                         // print the first one as its very verbose otherwise
                         Exception cause = openFileHandles.Values.FirstOrDefault();
 
-                        // RuntimeException instead ofSystem.IO.IOException because
+                        // RuntimeException instead ofIOException because
                         // super() does not throw IOException currently:
                         throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: "
                             + Collections.ToString(openFiles), cause);

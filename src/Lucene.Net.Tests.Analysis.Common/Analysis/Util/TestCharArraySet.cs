@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Add(NOT_IN_SET.ToCharArray());
                 fail("Modified unmodifiable set");
             }
-            catch (System.NotSupportedException)
+            catch (NotSupportedException)
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Util
                 set.add(NOT_IN_SET);
                 fail("Modified unmodifiable set");
             }
-            catch (System.NotSupportedException)
+            catch (NotSupportedException)
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Add(new StringBuilder(NOT_IN_SET));
                 fail("Modified unmodifiable set");
             }
-            catch (System.NotSupportedException)
+            catch (NotSupportedException)
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
@@ -155,7 +155,7 @@ namespace Lucene.Net.Analysis.Util
                 set.clear();
                 fail("Modified unmodifiable set");
             }
-            catch (System.NotSupportedException)
+            catch (NotSupportedException)
             {
                 // expected
                 assertFalse("Changed unmodifiable set", set.contains(NOT_IN_SET));
@@ -166,7 +166,7 @@ namespace Lucene.Net.Analysis.Util
                 set.add(NOT_IN_SET);
                 fail("Modified unmodifiable set");
             }
-            catch (System.NotSupportedException)
+            catch (NotSupportedException)
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
@@ -183,7 +183,7 @@ namespace Lucene.Net.Analysis.Util
             //    set.removeAll(new CharArraySet(TEST_VERSION_CURRENT, TEST_STOP_WORDS, true));
             //    fail("Modified unmodifiable set");
             //}
-            //catch (System.NotSupportedException)
+            //catch (NotSupportedException)
             //{
             //    // expected
             //    assertEquals("Size of unmodifiable set has changed", size, set.size());
@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Util
 #pragma warning restore 612, 618
                 fail("Modified unmodifiable set");
             }
-            catch (System.NotSupportedException)
+            catch (NotSupportedException)
             {
                 // expected
                 assertEquals("Size of unmodifiable set has changed", size, set.size());
@@ -211,7 +211,7 @@ namespace Lucene.Net.Analysis.Util
                 set.retainAll(new CharArraySet(TEST_VERSION_CURRENT, new [] { NOT_IN_SET }, true));
                 fail("Modified unmodifiable set");
             }
-            catch (System.NotSupportedException)
+            catch (NotSupportedException)
             {
                 // expected
                 assertEquals("Size of unmodifiable set has changed", size, set.size());
@@ -222,7 +222,7 @@ namespace Lucene.Net.Analysis.Util
                 set.addAll(new[] { NOT_IN_SET});
                 fail("Modified unmodifiable set");
             }
-            catch (System.NotSupportedException)
+            catch (NotSupportedException)
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
@@ -234,7 +234,7 @@ namespace Lucene.Net.Analysis.Util
                 set.UnionWith(new[] { NOT_IN_SET });
                 fail("Modified unmodifiable set");
             }
-            catch (System.NotSupportedException)
+            catch (NotSupportedException)
             {
                 // expected
                 assertFalse("Test String has been added to unmodifiable set", set.contains(NOT_IN_SET));
@@ -268,7 +268,7 @@ namespace Lucene.Net.Analysis.Util
                 CharArraySet.UnmodifiableSet(null);
                 fail("can not make null unmodifiable");
             }
-            catch (System.ArgumentNullException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentNullException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
             {
                 // expected
             }
@@ -595,7 +595,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Contains((char[])null, 0, 10);
                 fail("null value must raise NPE");
             }
-            catch (System.ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
             {
             }
             try
@@ -603,7 +603,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Contains((ICharSequence)null);
                 fail("null value must raise NPE");
             }
-            catch (System.ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
             {
             }
             // LUCENENET Specific test for string (since it does not implement ICharSequence)
@@ -612,7 +612,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Contains((string)null);
                 fail("null value must raise NPE");
             }
-            catch (System.ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
             {
             }
             try
@@ -620,7 +620,7 @@ namespace Lucene.Net.Analysis.Util
                 set.Contains((object)null);
                 fail("null value must raise NPE");
             }
-            catch (System.ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
+            catch (ArgumentException) // NOTE: In .NET we throw an ArgumentExcpetion, not a NullReferenceExeption
             {
             }
         }

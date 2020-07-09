@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             if (currMap.synonyms != null && !mergeExisting)
             {
-                throw new System.ArgumentException("SynonymFilter: there is already a mapping for " + singleMatch);
+                throw new ArgumentException("SynonymFilter: there is already a mapping for " + singleMatch);
             }
             IList<Token> superset = currMap.synonyms == null ? replacement : MergeTokens(currMap.synonyms, replacement);
             currMap.synonyms = superset.ToArray();

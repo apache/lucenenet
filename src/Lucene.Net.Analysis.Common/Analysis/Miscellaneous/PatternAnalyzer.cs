@@ -158,7 +158,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             if (pattern == null)
             {
-                throw new System.ArgumentException("pattern must not be null");
+                throw new ArgumentException("pattern must not be null");
             }
 
             if (EqPattern(NON_WORD_PATTERN, pattern))

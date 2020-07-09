@@ -83,7 +83,7 @@ namespace Lucene.Net.Facet
             BooleanClause[] clauses = other.query.GetClauses();
             if (clauses.Length == other.drillDownDims.Count)
             {
-                throw new System.ArgumentException("cannot apply filter unless baseQuery isn't null; pass ConstantScoreQuery instead");
+                throw new ArgumentException("cannot apply filter unless baseQuery isn't null; pass ConstantScoreQuery instead");
             }
             Debug.Assert(clauses.Length == 1 + other.drillDownDims.Count, clauses.Length + " vs " + (1 + other.drillDownDims.Count));
             drillDownDims.PutAll(other.drillDownDims);
@@ -201,7 +201,7 @@ namespace Lucene.Net.Facet
 
             if (drillDownDims.ContainsKey(dim))
             {
-                throw new System.ArgumentException("dimension \"" + dim + "\" already has a drill-down");
+                throw new ArgumentException("dimension \"" + dim + "\" already has a drill-down");
             }
             // TODO: we should use FilteredQuery?
 
@@ -224,7 +224,7 @@ namespace Lucene.Net.Facet
 
             if (drillDownDims.ContainsKey(dim))
             {
-                throw new System.ArgumentException("dimension \"" + dim + "\" already has a drill-down");
+                throw new ArgumentException("dimension \"" + dim + "\" already has a drill-down");
             }
 
             // TODO: we should use FilteredQuery?

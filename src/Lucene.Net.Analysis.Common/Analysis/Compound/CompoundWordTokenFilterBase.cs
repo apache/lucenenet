@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -88,17 +89,17 @@ namespace Lucene.Net.Analysis.Compound
             this.m_tokens = new LinkedList<CompoundToken>();
             if (minWordSize < 0)
             {
-                throw new System.ArgumentException("minWordSize cannot be negative");
+                throw new ArgumentException("minWordSize cannot be negative");
             }
             this.m_minWordSize = minWordSize;
             if (minSubwordSize < 0)
             {
-                throw new System.ArgumentException("minSubwordSize cannot be negative");
+                throw new ArgumentException("minSubwordSize cannot be negative");
             }
             this.m_minSubwordSize = minSubwordSize;
             if (maxSubwordSize < 0)
             {
-                throw new System.ArgumentException("maxSubwordSize cannot be negative");
+                throw new ArgumentException("maxSubwordSize cannot be negative");
             }
             this.m_maxSubwordSize = maxSubwordSize;
             this.m_onlyLongestMatch = onlyLongestMatch;

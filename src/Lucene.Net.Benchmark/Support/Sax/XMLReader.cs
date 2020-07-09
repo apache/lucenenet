@@ -4,6 +4,8 @@
 // NO WARRANTY!  This class is in the Public Domain.
 // $Id: XMLFilter.java,v 1.6 2002/01/30 21:13:48 dbrownell Exp $
 
+using System.IO;
+
 namespace Sax
 {
     /// <summary>
@@ -269,7 +271,7 @@ namespace Sax
         /// XML document.</param>
         /// <exception cref="SAXException">Any SAX exception, possibly
         /// wrapping another exception.</exception>
-        /// <exception cref="System.IO.IOException">An IO exception from the parser,
+        /// <exception cref="IOException">An IO exception from the parser,
         /// possibly from a byte stream or character stream
         /// supplied by the application.</exception>
         /// <seealso cref="InputSource"/>
@@ -297,7 +299,7 @@ namespace Sax
         /// <param name="systemId">The system identifier (URI).</param>
         /// <exception cref="SAXException">Any SAX exception, possibly
         /// wrapping another exception.</exception>
-        /// <exception cref="System.IO.IOException">An IO exception from the parser,
+        /// <exception cref="IOException">An IO exception from the parser,
         /// possibly from a byte stream or character stream
         /// supplied by the application.</exception>
         void Parse(string systemId);

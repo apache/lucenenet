@@ -413,7 +413,7 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
                 if (fieldCount > fieldNames.Length)
                 {
-                    throw new System.ArgumentException();
+                    throw new ArgumentException();
                 }
                 this.fieldNames = new string[fieldCount];
                 fieldTypes = new FieldType[fieldCount];

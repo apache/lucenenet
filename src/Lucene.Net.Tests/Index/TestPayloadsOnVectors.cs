@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using System;
 using System.Diagnostics;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -161,7 +162,7 @@ namespace Lucene.Net.Index
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected

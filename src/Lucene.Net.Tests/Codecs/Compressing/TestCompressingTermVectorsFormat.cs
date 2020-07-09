@@ -1,5 +1,6 @@
 using Lucene.Net.Documents;
 using NUnit.Framework;
+using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Codecs.Compressing
@@ -67,7 +68,7 @@ namespace Lucene.Net.Codecs.Compressing
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.NotSupportedException expected)
+            catch (NotSupportedException expected)
 #pragma warning restore 168
             {
                 // expected exception
@@ -79,7 +80,7 @@ namespace Lucene.Net.Codecs.Compressing
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.NotSupportedException expected)
+            catch (NotSupportedException expected)
 #pragma warning restore 168
             {
                 // expected exception

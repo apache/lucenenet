@@ -34,7 +34,7 @@ namespace Lucene.Net.Util
         {
             if (@base <= 1)
             {
-                throw new System.ArgumentException("base must be > 1");
+                throw new ArgumentException("base must be > 1");
             }
             int ret = 0;
             while (x >= @base)

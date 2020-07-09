@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -35,7 +37,7 @@ namespace Lucene.Net.Search
         {
             if (innerIter == null)
             {
-                throw new System.ArgumentException("null iterator");
+                throw new ArgumentException("null iterator");
             }
             m_innerIter = innerIter;
             doc = -1;

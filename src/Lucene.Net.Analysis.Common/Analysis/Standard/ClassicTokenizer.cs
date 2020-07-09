@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
+using System;
 using Reader = System.IO.TextReader;
 
 namespace Lucene.Net.Analysis.Standard
@@ -89,7 +90,7 @@ namespace Lucene.Net.Analysis.Standard
             set
             {
                 if (value < 1)
-                    throw new System.ArgumentException("maxTokenLength must be greater than zero");
+                    throw new ArgumentException("maxTokenLength must be greater than zero");
 
                 this.maxTokenLength = value;
             }

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
@@ -465,7 +466,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     EncodeValues(count);
                 }
-                catch (System.IO.IOException bogus)
+                catch (IOException bogus)
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }

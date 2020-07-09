@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -106,7 +107,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 return ((long)((ulong)rawValue >> shiftRightBits)) & valueMask;
             }
-            catch (System.IO.IOException ioe)
+            catch (IOException ioe)
             {
                 throw new InvalidOperationException("failed", ioe);
             }

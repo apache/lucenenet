@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Cjk
                 TokenFilterFactory("CJKBigram", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis.Synonym
                 TokenFilterFactory("Synonym", "synonyms", "synonyms.txt", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

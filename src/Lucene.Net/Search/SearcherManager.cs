@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Search
 {
@@ -82,7 +83,7 @@ namespace Lucene.Net.Search
         ///          don't require the searcher to be warmed before going live or other
         ///          custom behavior.
         /// </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public SearcherManager(IndexWriter writer, bool applyAllDeletes, SearcherFactory searcherFactory)
         {
             if (searcherFactory == null)
@@ -100,7 +101,7 @@ namespace Lucene.Net.Search
         ///        <c>null</c> if you don't require the searcher to be warmed
         ///        before going live or other custom behavior.
         /// </param>
-        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
         public SearcherManager(Directory dir, SearcherFactory searcherFactory)
         {
             if (searcherFactory == null)

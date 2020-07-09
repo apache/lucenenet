@@ -418,7 +418,7 @@ namespace Lucene.Net.Search
                 Assert.Fail("Should throw IllegalArgumentException");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
 #pragma warning restore 168
             {
                 // pass
@@ -429,7 +429,7 @@ namespace Lucene.Net.Search
                 Assert.Fail("Should throw IllegalArgumentException");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
 #pragma warning restore 168
             {
                 // pass
@@ -440,7 +440,7 @@ namespace Lucene.Net.Search
                 Assert.Fail("Should throw IllegalArgumentException");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
 #pragma warning restore 168
             {
                 // pass

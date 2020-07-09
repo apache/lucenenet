@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Synonym
                     {
                         if (sides.Length != 2)
                         {
-                            throw new System.ArgumentException("more than one explicit mapping specified on the same line");
+                            throw new ArgumentException("more than one explicit mapping specified on the same line");
                         }
                         string[] inputStrings = Split(sides[0], ",");
                         inputs = new CharsRef[inputStrings.Length];
@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Synonym
                     }
                 }
             }
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
             {
                 throw new Exception("Invalid synonym rule at line " + lineNumber, e);
                 //ex.initCause(e);

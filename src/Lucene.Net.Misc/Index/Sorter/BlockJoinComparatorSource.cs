@@ -148,7 +148,7 @@ namespace Lucene.Net.Index.Sorter
             public override void SetTopValue(object value)
             {
                 // we dont have enough information (the docid is needed)
-                throw new System.NotSupportedException("this comparer cannot be used with deep paging");
+                throw new NotSupportedException("this comparer cannot be used with deep paging");
             }
 
             public override int CompareBottom(int doc)
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index.Sorter
             public override int CompareTop(int doc)
             {
                 // we dont have enough information (the docid is needed)
-                throw new System.NotSupportedException("this comparer cannot be used with deep paging");
+                throw new NotSupportedException("this comparer cannot be used with deep paging");
             }
 
             public override void Copy(int slot, int doc)
@@ -195,7 +195,7 @@ namespace Lucene.Net.Index.Sorter
             // LUCENENET NOTE: This was value(int) in Lucene.
             public override IComparable this[int slot] => throw
                 // really our sort "value" is more complex...
-                new System.NotSupportedException("filling sort field values is not yet supported");
+                new NotSupportedException("filling sort field values is not yet supported");
 
             public override void SetScorer(Scorer scorer)
             {

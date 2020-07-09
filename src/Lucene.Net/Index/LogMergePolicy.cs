@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 2)
                 {
-                    throw new System.ArgumentException("mergeFactor cannot be less than 2");
+                    throw new ArgumentException("mergeFactor cannot be less than 2");
                 }
                 this.m_mergeFactor = value;
             }

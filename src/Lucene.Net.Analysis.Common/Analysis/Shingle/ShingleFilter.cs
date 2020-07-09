@@ -260,7 +260,7 @@ namespace Lucene.Net.Analysis.Shingle
         {
             if (maxShingleSize < 2)
             {
-                throw new System.ArgumentException("Max shingle size must be >= 2");
+                throw new ArgumentException("Max shingle size must be >= 2");
             }
             this.maxShingleSize = maxShingleSize;
         }
@@ -281,11 +281,11 @@ namespace Lucene.Net.Analysis.Shingle
         {
             if (minShingleSize < 2)
             {
-                throw new System.ArgumentException("Min shingle size must be >= 2");
+                throw new ArgumentException("Min shingle size must be >= 2");
             }
             if (minShingleSize > maxShingleSize)
             {
-                throw new System.ArgumentException("Min shingle size must be <= max shingle size");
+                throw new ArgumentException("Min shingle size must be <= max shingle size");
             }
             this.minShingleSize = minShingleSize;
             gramSize = new CircularSequence(this);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Facet
 {
@@ -45,7 +46,7 @@ namespace Lucene.Net.Facet
             {
                 if (defaultFacets == null)
                 {
-                    throw new System.ArgumentException("invalid dim \"" + dim + "\"");
+                    throw new ArgumentException("invalid dim \"" + dim + "\"");
                 }
                 facets = defaultFacets;
             }
@@ -60,7 +61,7 @@ namespace Lucene.Net.Facet
             {
                 if (defaultFacets == null)
                 {
-                    throw new System.ArgumentException("invalid dim \"" + dim + "\"");
+                    throw new ArgumentException("invalid dim \"" + dim + "\"");
                 }
                 facets = defaultFacets;
             }

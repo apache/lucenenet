@@ -148,7 +148,7 @@ namespace Lucene.Net.Search.Suggest
                     string[] fields = outerInstance.line.Split(new string[] { outerInstance.fieldDelimiter }, StringSplitOptions.RemoveEmptyEntries);
                     if (fields.Length > 3)
                     {
-                        throw new System.ArgumentException("More than 3 fields in one line");
+                        throw new ArgumentException("More than 3 fields in one line");
                     } // term, weight, payload
                     else if (fields.Length == 3)
                     {
@@ -189,7 +189,7 @@ namespace Lucene.Net.Search.Suggest
                     string[] fields = outerInstance.line.Split(new string[] { outerInstance.fieldDelimiter }, StringSplitOptions.RemoveEmptyEntries);
                     if (fields.Length > 3)
                     {
-                        throw new System.ArgumentException("More than 3 fields in one line");
+                        throw new ArgumentException("More than 3 fields in one line");
                     } // term, weight and payload
                     else if (fields.Length == 3)
                     {

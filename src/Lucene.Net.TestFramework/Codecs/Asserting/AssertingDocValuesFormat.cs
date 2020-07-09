@@ -250,7 +250,7 @@ namespace Lucene.Net.Codecs.Asserting
                     //    iterator.Reset();
                     //    throw new InvalidOperationException("broken iterator (supports remove): " + iterator);
                     //}
-                    //catch (System.NotSupportedException)
+                    //catch (NotSupportedException)
                     //{
                     //    // ok
                     //}

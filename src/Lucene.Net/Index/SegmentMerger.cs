@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -82,7 +83,7 @@ namespace Lucene.Net.Index
         /// Merges the readers into the directory passed to the constructor </summary>
         /// <returns> The number of documents that were merged </returns>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
-        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal MergeState Merge()
         {
@@ -377,7 +378,7 @@ namespace Lucene.Net.Index
         ///
         /// <returns> The number of documents in all of the readers </returns>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
-        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
         private int MergeFields()
         {
             StoredFieldsWriter fieldsWriter = codec.StoredFieldsFormat.FieldsWriter(directory, mergeState.SegmentInfo, context);
@@ -394,7 +395,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Merge the TermVectors from each of the segments into the new one. </summary>
-        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
         private int MergeVectors()
         {
             TermVectorsWriter termVectorsWriter = codec.TermVectorsFormat.VectorsWriter(directory, mergeState.SegmentInfo, context);

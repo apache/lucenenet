@@ -71,7 +71,7 @@ namespace Lucene.Net.Analysis.Hunspell
             GetInt32(args, "recursionCap", 0);
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

@@ -8,6 +8,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -451,7 +452,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected
@@ -466,7 +467,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected
@@ -481,7 +482,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected
@@ -496,7 +497,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected
@@ -511,7 +512,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected
@@ -526,7 +527,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected
@@ -541,7 +542,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected
@@ -556,7 +557,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected
@@ -571,7 +572,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected
@@ -586,7 +587,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected
@@ -601,7 +602,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected
@@ -616,7 +617,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected

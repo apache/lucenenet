@@ -421,7 +421,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
             {
                 // Expected
                 Assert.AreEqual("cannot index term vector payloads without term vector positions (field=\"field\")", iae.Message);
@@ -437,7 +437,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
             {
                 // Expected
                 Assert.AreEqual("cannot index term vector offsets when term vectors are not indexed (field=\"field\")", iae.Message);
@@ -453,7 +453,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
             {
                 // Expected
                 Assert.AreEqual("cannot index term vector positions when term vectors are not indexed (field=\"field\")", iae.Message);
@@ -469,7 +469,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
                 Assert.Fail("did not hit exception");
             }
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
             {
                 // Expected
                 Assert.AreEqual("cannot index term vector payloads when term vectors are not indexed (field=\"field\")", iae.Message);

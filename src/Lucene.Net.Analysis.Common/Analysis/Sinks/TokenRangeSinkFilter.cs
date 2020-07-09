@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.Sinks
 {
@@ -32,11 +33,11 @@ namespace Lucene.Net.Analysis.Sinks
         {
             if (lower < 1)
             {
-                throw new System.ArgumentOutOfRangeException("lower must be greater than zero");
+                throw new ArgumentOutOfRangeException("lower must be greater than zero");
             }
             if (lower > upper)
             {
-                throw new System.ArgumentOutOfRangeException("lower must not be greater than upper");
+                throw new ArgumentOutOfRangeException("lower must not be greater than upper");
             }
             this.lower = lower;
             this.upper = upper;

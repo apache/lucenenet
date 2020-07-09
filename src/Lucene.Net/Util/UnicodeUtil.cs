@@ -649,7 +649,7 @@ namespace Lucene.Net.Util
                         break;
 
                     default:
-                        throw new System.ArgumentException("invalid utf8");
+                        throw new ArgumentException("invalid utf8");
                 }
 
                 // TODO: this may read past utf8's limit.
@@ -721,7 +721,7 @@ namespace Lucene.Net.Util
         {
             if (count < 0)
             {
-                throw new System.ArgumentException();
+                throw new ArgumentException();
             }
             int countThreashold = 1024; // If the number of chars exceeds this, we count them instead of allocating count * 2
             // LUCENENET: as a first approximation, assume each codepoint 
@@ -750,7 +750,7 @@ namespace Lucene.Net.Util
                 int cp = codePoints[r];
                 if (cp < 0 || cp > 0x10ffff)
                 {
-                    throw new System.ArgumentException();
+                    throw new ArgumentException();
                 }
                 if (cp < 0x010000)
                 {

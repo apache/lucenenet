@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -40,7 +42,7 @@ namespace Lucene.Net.Search
         {
             if (m_numScorers <= 1)
             {
-                throw new System.ArgumentException("There must be at least 2 subScorers");
+                throw new ArgumentException("There must be at least 2 subScorers");
             }
             this.coord = coord;
         }

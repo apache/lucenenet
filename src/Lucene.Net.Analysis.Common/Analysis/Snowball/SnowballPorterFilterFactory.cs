@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Snowball
             wordFiles = Get(args, PROTECTED_TOKENS);
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

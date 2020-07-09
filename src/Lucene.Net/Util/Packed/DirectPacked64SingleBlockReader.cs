@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -49,7 +50,7 @@ namespace Lucene.Net.Util.Packed
                 int offsetInBlock = index % valuesPerBlock;
                 return ((long)((ulong)block >> (offsetInBlock * m_bitsPerValue))) & mask;
             }
-            catch (System.IO.IOException e)
+            catch (IOException e)
             {
                 throw new InvalidOperationException("failed", e);
             }

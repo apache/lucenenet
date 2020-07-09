@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using JCG = J2N.Collections.Generic;
 
@@ -64,7 +65,7 @@ namespace Lucene.Net.Search.Grouping
         /// Sort.RELEVANCE.
         /// </param>
         /// <param name="topNGroups">How many top groups to keep.</param>
-        /// <exception cref="System.IO.IOException">If I/O related errors occur</exception>
+        /// <exception cref="IOException">If I/O related errors occur</exception>
         public AbstractFirstPassGroupingCollector(Sort groupSort, int topNGroups)
         {
             if (topNGroups < 1)

@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
@@ -58,7 +59,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(!finished);
             if (m_valueCount != -1 && written >= m_valueCount)
             {
-                throw new System.IO.EndOfStreamException("Writing past end of stream");
+                throw new EndOfStreamException("Writing past end of stream");
             }
             nextValues[off++] = v;
             if (off == nextValues.Length)

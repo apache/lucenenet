@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
                 Assert.IsTrue(false);
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 Assert.AreEqual(100, writer.MaxDoc);
@@ -1241,7 +1241,7 @@ namespace Lucene.Net.Index
                         Assert.Fail("no such codec");
                     }
 #pragma warning disable 168
-                    catch (System.ArgumentException ex)
+                    catch (ArgumentException ex)
 #pragma warning restore 168
                     {
                         // expected
@@ -1263,7 +1263,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("no such codec");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException ex)
+            catch (ArgumentException ex)
 #pragma warning restore 168
             {
                 // expected

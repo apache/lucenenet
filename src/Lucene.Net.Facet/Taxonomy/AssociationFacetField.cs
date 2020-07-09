@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -84,7 +85,7 @@ namespace Lucene.Net.Facet.Taxonomy
             this.Assoc = assoc;
             if (path.Length == 0)
             {
-                throw new System.ArgumentException("path must have at least one element");
+                throw new ArgumentException("path must have at least one element");
             }
             this.Path = path;
         }

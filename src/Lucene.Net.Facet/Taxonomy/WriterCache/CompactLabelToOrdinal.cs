@@ -132,7 +132,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             int prevVal = collisionMap.AddLabel(label, hash, ordinal);
             if (prevVal != ordinal)
             {
-                throw new System.ArgumentException("Label already exists: " + label + " prev ordinal " + prevVal);
+                throw new ArgumentException("Label already exists: " + label + " prev ordinal " + prevVal);
             }
         }
 

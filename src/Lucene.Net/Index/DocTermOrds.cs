@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
@@ -411,7 +412,7 @@ namespace Lucene.Net.Index
                         //System.out.println("got ordBase=" + ordBase);
                     }
 #pragma warning disable 168
-                    catch (System.NotSupportedException uoe)
+                    catch (NotSupportedException uoe)
 #pragma warning restore 168
                     {
                         // Reader cannot provide ord support, so we wrap
@@ -1066,7 +1067,7 @@ namespace Lucene.Net.Index
                 {
                     @ref = outerInstance.LookupTerm(te, (int)ord);
                 }
-                catch (System.IO.IOException e)
+                catch (IOException e)
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -1090,7 +1091,7 @@ namespace Lucene.Net.Index
                         return -te.Ord - 1;
                     }
                 }
-                catch (System.IO.IOException e)
+                catch (IOException e)
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -1103,7 +1104,7 @@ namespace Lucene.Net.Index
                     return outerInstance.GetOrdTermsEnum(reader);
                 }
 #pragma warning disable 168
-                catch (System.IO.IOException e)
+                catch (IOException e)
 #pragma warning restore 168
                 {
                     throw new Exception(e.ToString(), e);

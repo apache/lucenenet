@@ -1,6 +1,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -257,7 +258,7 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestTokenAttributeFactory()
         {
-            TokenStream ts = new MockTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new System.IO.StringReader("foo bar"), MockTokenizer.WHITESPACE, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
+            TokenStream ts = new MockTokenizer(Token.TOKEN_ATTRIBUTE_FACTORY, new StringReader("foo bar"), MockTokenizer.WHITESPACE, false, MockTokenizer.DEFAULT_MAX_TOKEN_LENGTH);
 
             Assert.IsTrue(ts.AddAttribute<ISenselessAttribute>() is SenselessAttribute, "SenselessAttribute is not implemented by SenselessAttributeImpl");
 

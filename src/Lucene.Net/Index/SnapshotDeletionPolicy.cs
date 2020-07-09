@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
             int? refCount = m_refCounts[gen];
             if (refCount == null)
             {
-                throw new System.ArgumentException("commit gen=" + gen + " is not currently snapshotted");
+                throw new ArgumentException("commit gen=" + gen + " is not currently snapshotted");
             }
             int refCountInt = (int)refCount;
             Debug.Assert(refCountInt > 0);

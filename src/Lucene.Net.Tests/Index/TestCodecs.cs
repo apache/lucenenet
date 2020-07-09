@@ -640,7 +640,7 @@ namespace Lucene.Net.Index
                         success = true;
                     }
 #pragma warning disable 168
-                    catch (System.NotSupportedException uoe)
+                    catch (NotSupportedException uoe)
 #pragma warning restore 168
                     {
                         // ok -- skip it
@@ -693,7 +693,7 @@ namespace Lucene.Net.Index
                             Assert.IsTrue(termsEnum.Term.BytesEquals(new BytesRef(field.terms[i].text2)));
                         }
 #pragma warning disable 168
-                        catch (System.NotSupportedException uoe)
+                        catch (NotSupportedException uoe)
 #pragma warning restore 168
                         {
                         }
@@ -887,7 +887,7 @@ namespace Lucene.Net.Index
                     Assert.Fail("should not have succeeded to impersonate an old format!");
                 }
 #pragma warning disable 168
-                catch (System.NotSupportedException e)
+                catch (NotSupportedException e)
 #pragma warning restore 168
                 {
                     writer.Rollback();

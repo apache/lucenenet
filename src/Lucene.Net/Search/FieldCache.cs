@@ -534,7 +534,7 @@ namespace Lucene.Net.Search
             /// </summary>
             /// <param name="terms">The <see cref="Index.Terms"/> instance to create the <see cref="Index.TermsEnum"/> from.</param>
             /// <returns>A possibly filtered <see cref="Index.TermsEnum"/> instance, this method must not return <c>null</c>.</returns>
-            /// <exception cref="System.IO.IOException">If an <see cref="IOException"/> occurs</exception>
+            /// <exception cref="IOException">If an <see cref="IOException"/> occurs</exception>
             TermsEnum TermsEnum(Terms terms);
         }
 

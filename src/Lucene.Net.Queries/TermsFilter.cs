@@ -183,7 +183,7 @@ namespace Lucene.Net.Queries
                 currentField = iter.Field;
                 if (currentField == null)
                 {
-                    throw new System.ArgumentException("Field must not be null");
+                    throw new ArgumentException("Field must not be null");
                 }
                 if (previousField != null)
                 {

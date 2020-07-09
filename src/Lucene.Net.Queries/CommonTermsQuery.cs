@@ -122,11 +122,11 @@ namespace Lucene.Net.Queries
         {
             if (highFreqOccur == Occur.MUST_NOT)
             {
-                throw new System.ArgumentException("highFreqOccur should be MUST or SHOULD but was MUST_NOT");
+                throw new ArgumentException("highFreqOccur should be MUST or SHOULD but was MUST_NOT");
             }
             if (lowFreqOccur == Occur.MUST_NOT)
             {
-                throw new System.ArgumentException("lowFreqOccur should be MUST or SHOULD but was MUST_NOT");
+                throw new ArgumentException("lowFreqOccur should be MUST or SHOULD but was MUST_NOT");
             }
             this.m_disableCoord = disableCoord;
             this.m_highFreqOccur = highFreqOccur;

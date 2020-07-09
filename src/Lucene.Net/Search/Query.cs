@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual Weight CreateWeight(IndexSearcher searcher)
         {
-            throw new System.NotSupportedException("Query " + this + " does not implement createWeight");
+            throw new NotSupportedException("Query " + this + " does not implement createWeight");
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
         public virtual void ExtractTerms(ISet<Term> terms)
         {
             // needs to be implemented by query subclasses
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>

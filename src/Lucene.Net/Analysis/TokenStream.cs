@@ -1,5 +1,6 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
+using System.IO;
 
 namespace Lucene.Net.Analysis
 {
@@ -28,7 +29,7 @@ namespace Lucene.Net.Analysis
     /// <para/>
     /// this is an abstract class; concrete subclasses are:
     /// <list type="bullet">
-    ///     <item><description><see cref="Tokenizer"/>, a <see cref="TokenStream"/> whose input is a <see cref="System.IO.TextReader"/>; and</description></item>
+    ///     <item><description><see cref="Tokenizer"/>, a <see cref="TokenStream"/> whose input is a <see cref="TextReader"/>; and</description></item>
     ///     <item><description><see cref="TokenFilter"/>, a <see cref="TokenStream"/> whose input is another
     ///         <see cref="TokenStream"/>.</description></item>
     /// </list>
@@ -149,7 +150,7 @@ namespace Lucene.Net.Analysis
         /// <para/>
         /// If you override this method, always call <c>base.End();</c>.
         /// </summary>
-        /// <exception cref="System.IO.IOException"> If an I/O error occurs </exception>
+        /// <exception cref="IOException"> If an I/O error occurs </exception>
         public virtual void End()
         {
             ClearAttributes(); // LUCENE-3849: don't consume dirty atts

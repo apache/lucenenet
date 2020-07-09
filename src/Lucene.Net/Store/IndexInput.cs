@@ -50,7 +50,7 @@ namespace Lucene.Net.Store
         {
             if (resourceDescription == null)
             {
-                throw new System.ArgumentException("resourceDescription must not be null");
+                throw new ArgumentException("resourceDescription must not be null");
             }
             this.resourceDescription = resourceDescription;
         }

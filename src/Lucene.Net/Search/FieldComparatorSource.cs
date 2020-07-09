@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -30,7 +32,7 @@ namespace Lucene.Net.Search
         /// <param name="fieldname">
         ///          Name of the field to create comparer for. </param>
         /// <returns> <see cref="FieldComparer"/>. </returns>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         ///           If an error occurs reading the index. </exception>
         public abstract FieldComparer NewComparer(string fieldname, int numHits, int sortPos, bool reversed);
     }

@@ -230,7 +230,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (set == null)
             {
-                throw new System.ArgumentNullException("Given set is null");
+                throw new ArgumentNullException("Given set is null");
             }
             if (set == EMPTY_SET)
             {

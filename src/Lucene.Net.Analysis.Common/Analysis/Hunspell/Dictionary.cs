@@ -491,7 +491,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     patternIndex = patterns.Count;
                     if (patternIndex > short.MaxValue)
                     {
-                        throw new System.NotSupportedException("Too many patterns, please report this to dev@lucene.apache.org");
+                        throw new NotSupportedException("Too many patterns, please report this to dev@lucene.apache.org");
                     }
                     seenPatterns[regex] = patternIndex;
                     CharacterRunAutomaton pattern = new CharacterRunAutomaton((new RegExp(regex, RegExpSyntax.NONE)).ToAutomaton());
@@ -504,7 +504,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     seenStrips[strip] = stripOrd;
                     if (stripOrd > char.MaxValue)
                     {
-                        throw new System.NotSupportedException("Too many unique strips, please report this to dev@lucene.apache.org");
+                        throw new NotSupportedException("Too many unique strips, please report this to dev@lucene.apache.org");
                     }
                 }
 
@@ -523,7 +523,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 else if (appendFlagsOrd > short.MaxValue)
                 {
                     // this limit is probably flexible, but its a good sanity check too
-                    throw new System.NotSupportedException("Too many unique append flags, please report this to dev@lucene.apache.org");
+                    throw new NotSupportedException("Too many unique append flags, please report this to dev@lucene.apache.org");
                 }
 
                 affixWriter.WriteInt16((short)flag);
@@ -689,7 +689,7 @@ namespace Lucene.Net.Analysis.Hunspell
             string[] parts = whitespacePattern.Split(flagLine).TrimEnd();
             if (parts.Length != 2)
             {
-                throw new System.ArgumentException("Illegal FLAG specification: " + flagLine);
+                throw new ArgumentException("Illegal FLAG specification: " + flagLine);
             }
             string flagType = parts[1];
 
@@ -706,7 +706,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 return new DoubleASCIIFlagParsingStrategy();
             }
 
-            throw new System.ArgumentException("Unknown flag type: " + flagType);
+            throw new ArgumentException("Unknown flag type: " + flagType);
         }
 
         internal readonly char FLAG_SEPARATOR = (char)0x1f; // flag separator after escaping
@@ -896,7 +896,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     int cmp = currentEntry == null ? 1 : entry.CompareToOrdinal(currentEntry);
                     if (cmp < 0)
                     {
-                        throw new System.ArgumentException("out of order: " + entry + " < " + currentEntry);
+                        throw new ArgumentException("out of order: " + entry + " < " + currentEntry);
                     }
                     else
                     {
@@ -994,7 +994,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             catch (System.IndexOutOfRangeException ex)
             {
-                throw new System.ArgumentException("Bad flag alias number:" + id, ex);
+                throw new ArgumentException("Bad flag alias number:" + id, ex);
             }
         }
 
@@ -1013,7 +1013,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 char[] flags = ParseFlags(rawFlag);
                 if (flags.Length != 1)
                 {
-                    throw new System.ArgumentException("expected only one flag, got: " + rawFlag);
+                    throw new ArgumentException("expected only one flag, got: " + rawFlag);
                 }
                 return flags[0];
             }
@@ -1096,7 +1096,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 StringBuilder builder = new StringBuilder();
                 if (rawFlags.Length % 2 == 1)
                 {
-                    throw new System.ArgumentException("Invalid flags (should be even number of characters): " + rawFlags);
+                    throw new ArgumentException("Invalid flags (should be even number of characters): " + rawFlags);
                 }
                 for (int i = 0; i < rawFlags.Length; i += 2)
                 {

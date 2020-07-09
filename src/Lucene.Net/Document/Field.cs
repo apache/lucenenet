@@ -142,11 +142,11 @@ namespace Lucene.Net.Documents
         {
             if (name == null)
             {
-                throw new System.ArgumentNullException("name", "name cannot be null");
+                throw new ArgumentNullException("name", "name cannot be null");
             }
             if (type == null)
             {
-                throw new System.ArgumentNullException("type", "type cannot be null");
+                throw new ArgumentNullException("type", "type cannot be null");
             }
             this.m_name = name;
             this.m_type = type;
@@ -165,23 +165,23 @@ namespace Lucene.Net.Documents
         {
             if (name == null)
             {
-                throw new System.ArgumentNullException("name", "name cannot be null");
+                throw new ArgumentNullException("name", "name cannot be null");
             }
             if (type == null)
             {
-                throw new System.ArgumentNullException("type", "type cannot be null");
+                throw new ArgumentNullException("type", "type cannot be null");
             }
             if (reader == null)
             {
-                throw new System.ArgumentNullException("reader", "reader cannot be null");
+                throw new ArgumentNullException("reader", "reader cannot be null");
             }
             if (type.IsStored)
             {
-                throw new System.ArgumentException("fields with a Reader value cannot be stored");
+                throw new ArgumentException("fields with a Reader value cannot be stored");
             }
             if (type.IsIndexed && !type.IsTokenized)
             {
-                throw new System.ArgumentException("non-tokenized fields must use String values");
+                throw new ArgumentException("non-tokenized fields must use String values");
             }
 
             this.m_name = name;
@@ -202,23 +202,23 @@ namespace Lucene.Net.Documents
         {
             if (name == null)
             {
-                throw new System.ArgumentNullException("name", "name cannot be null");
+                throw new ArgumentNullException("name", "name cannot be null");
             }
             if (tokenStream == null)
             {
-                throw new System.ArgumentNullException("tokenStream", "tokenStream cannot be null");
+                throw new ArgumentNullException("tokenStream", "tokenStream cannot be null");
             }
             if (type == null)
             {
-                throw new System.ArgumentNullException("type", "type cannot be null");
+                throw new ArgumentNullException("type", "type cannot be null");
             }
             if (!type.IsIndexed || !type.IsTokenized)
             {
-                throw new System.ArgumentException("TokenStream fields must be indexed and tokenized");
+                throw new ArgumentException("TokenStream fields must be indexed and tokenized");
             }
             if (type.IsStored)
             {
-                throw new System.ArgumentException("TokenStream fields cannot be stored");
+                throw new ArgumentException("TokenStream fields cannot be stored");
             }
 
             this.m_name = name;
@@ -279,15 +279,15 @@ namespace Lucene.Net.Documents
         {
             if (name == null)
             {
-                throw new System.ArgumentNullException("name", "name cannot be null");
+                throw new ArgumentNullException("name", "name cannot be null");
             }
             if (type == null)
             {
-                throw new System.ArgumentNullException("type", "type cannot be null");
+                throw new ArgumentNullException("type", "type cannot be null");
             }
             if (type.IsIndexed)
             {
-                throw new System.ArgumentException("Fields with BytesRef values cannot be indexed");
+                throw new ArgumentException("Fields with BytesRef values cannot be indexed");
             }
             this.FieldsData = bytes;
             this.m_type = type;
@@ -309,23 +309,23 @@ namespace Lucene.Net.Documents
         {
             if (name == null)
             {
-                throw new System.ArgumentNullException("name", "name cannot be null");
+                throw new ArgumentNullException("name", "name cannot be null");
             }
             if (value == null)
             {
-                throw new System.ArgumentNullException("value", "value cannot be null");
+                throw new ArgumentNullException("value", "value cannot be null");
             }
             if (type == null)
             {
-                throw new System.ArgumentNullException("type", "type cannot be null");
+                throw new ArgumentNullException("type", "type cannot be null");
             }
             if (!type.IsStored && !type.IsIndexed)
             {
-                throw new System.ArgumentException("it doesn't make sense to have a field that " + "is neither indexed nor stored");
+                throw new ArgumentException("it doesn't make sense to have a field that " + "is neither indexed nor stored");
             }
             if (!type.IsIndexed && (type.StoreTermVectors))
             {
-                throw new System.ArgumentException("cannot store term vector information " + "for a field that is not indexed");
+                throw new ArgumentException("cannot store term vector information " + "for a field that is not indexed");
             }
 
             this.m_type = type;
@@ -492,11 +492,11 @@ namespace Lucene.Net.Documents
         {
             if (!(FieldsData is BytesRef))
             {
-                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to BytesRef");
+                throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to BytesRef");
             }
             if (m_type.IsIndexed)
             {
-                throw new System.ArgumentException("cannot set a BytesRef value on an indexed field");
+                throw new ArgumentException("cannot set a BytesRef value on an indexed field");
             }
             FieldsData = value;
         }
@@ -518,7 +518,7 @@ namespace Lucene.Net.Documents
         {
             if (!(FieldsData is Byte))
             {
-                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Byte");
+                throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Byte");
             }
             FieldsData = new Byte(value);
         }
@@ -531,7 +531,7 @@ namespace Lucene.Net.Documents
         {
             if (!(FieldsData is Int16))
             {
-                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Short");
+                throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Short");
             }
             FieldsData = new Int16(value);
         }
@@ -544,7 +544,7 @@ namespace Lucene.Net.Documents
         {
             if (!(FieldsData is Int32))
             {
-                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Integer");
+                throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Integer");
             }
             FieldsData = new Int32(value);
         }
@@ -557,7 +557,7 @@ namespace Lucene.Net.Documents
         {
             if (!(FieldsData is Int64))
             {
-                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Long");
+                throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Long");
             }
             FieldsData = new Int64(value);
         }
@@ -570,7 +570,7 @@ namespace Lucene.Net.Documents
         {
             if (!(FieldsData is Single))
             {
-                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Float");
+                throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Float");
             }
             FieldsData = new Single(value);
         }
@@ -583,7 +583,7 @@ namespace Lucene.Net.Documents
         {
             if (!(FieldsData is Double))
             {
-                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Double");
+                throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Double");
             }
             FieldsData = new Double(value);
         }
@@ -601,11 +601,11 @@ namespace Lucene.Net.Documents
         {
             if (!m_type.IsIndexed || !m_type.IsTokenized)
             {
-                throw new System.ArgumentException("TokenStream fields must be indexed and tokenized");
+                throw new ArgumentException("TokenStream fields must be indexed and tokenized");
             }
             if (m_type.NumericType != Documents.NumericType.NONE)
             {
-                throw new System.ArgumentException("cannot set private TokenStream on numeric fields");
+                throw new ArgumentException("cannot set private TokenStream on numeric fields");
             }
             this.m_tokenStream = tokenStream;
         }
@@ -630,7 +630,7 @@ namespace Lucene.Net.Documents
                 {
                     if (m_type.IsIndexed == false || m_type.OmitNorms)
                     {
-                        throw new System.ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
+                        throw new ArgumentException("You cannot set an index-time boost on an unindexed field, or one that omits norms");
                     }
                 }
                 this.m_boost = value;
@@ -896,7 +896,7 @@ namespace Lucene.Net.Documents
             {
                 if (stringValue == null)
                 {
-                    throw new System.ArgumentException("Non-Tokenized Fields must have a String value");
+                    throw new ArgumentException("Non-Tokenized Fields must have a String value");
                 }
                 if (!(internalTokenStream is StringTokenStream))
                 {
@@ -922,7 +922,7 @@ namespace Lucene.Net.Documents
                 return analyzer.GetTokenStream(Name, sr);
             }
 
-            throw new System.ArgumentException("Field must have either TokenStream, String, Reader or Number value; got " + this);
+            throw new ArgumentException("Field must have either TokenStream, String, Reader or Number value; got " + this);
         }
 
         internal sealed class StringTokenStream : TokenStream

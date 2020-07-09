@@ -237,7 +237,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 int length = v == null ? 0 : v.Length;
                 if (length > Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH)
                 {
-                    throw new System.ArgumentException("DocValuesField \"" + field.Name + "\" is too large, must be <= " + Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
+                    throw new ArgumentException("DocValuesField \"" + field.Name + "\" is too large, must be <= " + Lucene42DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
                 }
                 minLength = Math.Min(minLength, length);
                 maxLength = Math.Max(maxLength, length);

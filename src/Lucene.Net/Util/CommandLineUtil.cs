@@ -46,19 +46,19 @@ namespace Lucene.Net.Util
             }
             catch (TypeLoadException e)
             {
-                throw new System.ArgumentException(typeof(FSDirectory).Name + " implementation not found: " + clazzName, e);
+                throw new ArgumentException(typeof(FSDirectory).Name + " implementation not found: " + clazzName, e);
             }
             catch (System.InvalidCastException e)
             {
-                throw new System.ArgumentException(clazzName + " is not a " + typeof(FSDirectory).Name + " implementation", e);
+                throw new ArgumentException(clazzName + " is not a " + typeof(FSDirectory).Name + " implementation", e);
             }
             catch (MissingMethodException e)
             {
-                throw new System.ArgumentException(clazzName + " constructor with " + typeof(FileInfo).Name + " as parameter not found", e);
+                throw new ArgumentException(clazzName + " constructor with " + typeof(FileInfo).Name + " as parameter not found", e);
             }
             catch (Exception e)
             {
-                throw new System.ArgumentException("Error creating " + clazzName + " instance", e);
+                throw new ArgumentException("Error creating " + clazzName + " instance", e);
             }
         }
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
         {
             if (clazzName == null || clazzName.Trim().Length == 0)
             {
-                throw new System.ArgumentException("The " + typeof(FSDirectory).Name + " implementation cannot be null or empty");
+                throw new ArgumentException("The " + typeof(FSDirectory).Name + " implementation cannot be null or empty");
             }
 
             // LUCENENET specific: Changed to use char rather than string so we get StringComparison.Ordinal,

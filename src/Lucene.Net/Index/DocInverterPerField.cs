@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -82,7 +83,7 @@ namespace Lucene.Net.Index
                     // if the field omits norms, the boost cannot be indexed.
                     if (fieldType.OmitNorms && field.Boost != 1.0f)
                     {
-                        throw new System.NotSupportedException("You cannot set an index-time boost: norms are omitted for field '" + field.Name + "'");
+                        throw new NotSupportedException("You cannot set an index-time boost: norms are omitted for field '" + field.Name + "'");
                     }
 
                     // only bother checking offsets if something will consume them.
@@ -132,11 +133,11 @@ namespace Lucene.Net.Index
                                 int posIncr = posIncrAttribute.PositionIncrement;
                                 if (posIncr < 0)
                                 {
-                                    throw new System.ArgumentException("position increment must be >=0 (got " + posIncr + ") for field '" + field.Name + "'");
+                                    throw new ArgumentException("position increment must be >=0 (got " + posIncr + ") for field '" + field.Name + "'");
                                 }
                                 if (fieldState.Position == 0 && posIncr == 0)
                                 {
-                                    throw new System.ArgumentException("first position increment must be > 0 (got 0) for field '" + field.Name + "'");
+                                    throw new ArgumentException("first position increment must be > 0 (got 0) for field '" + field.Name + "'");
                                 }
                                 int position = fieldState.Position + posIncr;
                                 if (position > 0)
@@ -147,7 +148,7 @@ namespace Lucene.Net.Index
                                 }
                                 else if (position < 0)
                                 {
-                                    throw new System.ArgumentException("position overflow for field '" + field.Name + "'");
+                                    throw new ArgumentException("position overflow for field '" + field.Name + "'");
                                 }
 
                                 // position is legal, we can safely place it in fieldState now.
@@ -165,11 +166,11 @@ namespace Lucene.Net.Index
                                     int endOffset = fieldState.Offset + offsetAttribute.EndOffset;
                                     if (startOffset < 0 || endOffset < startOffset)
                                     {
-                                        throw new System.ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset + " for field '" + field.Name + "'");
+                                        throw new ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset + " for field '" + field.Name + "'");
                                     }
                                     if (startOffset < lastStartOffset)
                                     {
-                                        throw new System.ArgumentException("offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + lastStartOffset + " for field '" + field.Name + "'");
+                                        throw new ArgumentException("offsets must not go backwards startOffset=" + startOffset + " is < lastStartOffset=" + lastStartOffset + " for field '" + field.Name + "'");
                                     }
                                     lastStartOffset = startOffset;
                                 }
@@ -212,7 +213,7 @@ namespace Lucene.Net.Index
                                 docState.infoStream.Message("IW", "ERROR: " + msg);
                             }
                             docState.maxTermPrefix = null;
-                            throw new System.ArgumentException(msg);
+                            throw new ArgumentException(msg);
                         }
 
                         /* if success was false above there is an exception coming through and we won't get here.*/

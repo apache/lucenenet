@@ -1,5 +1,6 @@
 using Lucene.Net.Documents;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -395,7 +396,7 @@ namespace Lucene.Net.Search
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected

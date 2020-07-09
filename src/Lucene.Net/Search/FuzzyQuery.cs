@@ -86,15 +86,15 @@ namespace Lucene.Net.Search
         {
             if (maxEdits < 0 || maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
             {
-                throw new System.ArgumentException("maxEdits must be between 0 and " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
+                throw new ArgumentException("maxEdits must be between 0 and " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
             }
             if (prefixLength < 0)
             {
-                throw new System.ArgumentException("prefixLength cannot be negative.");
+                throw new ArgumentException("prefixLength cannot be negative.");
             }
             if (maxExpansions < 0)
             {
-                throw new System.ArgumentException("maxExpansions cannot be negative.");
+                throw new ArgumentException("maxExpansions cannot be negative.");
             }
 
             this.term = term;

@@ -3,6 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Queries.Function
 {
@@ -105,7 +106,7 @@ namespace Lucene.Net.Queries.Function
             private readonly FunctionValues vals;
             private readonly IBits acceptDocs;
 
-            /// <exception cref="System.IO.IOException"/>
+            /// <exception cref="IOException"/>
             public AllScorer(FunctionQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, FunctionWeight w, float qWeight)
                 : base(w)
             {

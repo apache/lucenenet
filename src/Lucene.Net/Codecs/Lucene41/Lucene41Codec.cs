@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             public override StoredFieldsWriter FieldsWriter(Directory directory, SegmentInfo si, IOContext context)
             {
-                throw new System.NotSupportedException("this codec can only be used for reading");
+                throw new NotSupportedException("this codec can only be used for reading");
             }
         }
 

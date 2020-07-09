@@ -1,4 +1,5 @@
 using Lucene.Net.Util.Packed;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -56,7 +57,7 @@ namespace Lucene.Net.Index
         {
             if (docID < pending.Count)
             {
-                throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
+                throw new ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
             }
 
             // Fill in any holes:

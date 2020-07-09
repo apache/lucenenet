@@ -139,7 +139,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             if (minPrefixChars < 0)
             {
-                throw new System.ArgumentException("minPrefixChars must be >= 0; got: " + minPrefixChars);
+                throw new ArgumentException("minPrefixChars must be >= 0; got: " + minPrefixChars);
             }
 
             this.m_queryAnalyzer = queryAnalyzer;
@@ -537,7 +537,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// <summary>
         /// Create the results based on the search hits.
         /// Can be overridden by subclass to add particular behavior (e.g. weight transformation) </summary>
-        /// <exception cref="System.IO.IOException"> If there are problems reading fields from the underlying Lucene index. </exception>
+        /// <exception cref="IOException"> If there are problems reading fields from the underlying Lucene index. </exception>
         protected internal virtual IList<LookupResult> CreateResults(IndexSearcher searcher, TopFieldDocs hits, int num, string charSequence, bool doHighlight, ICollection<string> matchedTokens, string prefixToken)
         {
 

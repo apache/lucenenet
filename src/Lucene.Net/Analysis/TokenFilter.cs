@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Lucene.Net.Analysis
 {
     /*
@@ -56,7 +58,7 @@ namespace Lucene.Net.Analysis
         /// The default implementation chains the call to the input TokenStream, so
         /// be sure to call <c>base.End()</c> first when overriding this method.
         /// </summary>
-        /// <exception cref="System.IO.IOException"> If an I/O error occurs </exception>
+        /// <exception cref="IOException"> If an I/O error occurs </exception>
         public override void End()
         {
             m_input.End();

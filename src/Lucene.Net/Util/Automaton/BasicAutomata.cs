@@ -251,7 +251,7 @@ namespace Lucene.Net.Util.Automaton
             string y = Convert.ToString(max, CultureInfo.InvariantCulture);
             if (min > max || (digits > 0 && y.Length > digits))
             {
-                throw new System.ArgumentException();
+                throw new ArgumentException();
             }
             int d;
             if (digits > 0)

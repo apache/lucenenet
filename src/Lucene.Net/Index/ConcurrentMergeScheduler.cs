@@ -114,15 +114,15 @@ namespace Lucene.Net.Index
         {
             if (maxThreadCount < 1)
             {
-                throw new System.ArgumentException("maxThreadCount should be at least 1");
+                throw new ArgumentException("maxThreadCount should be at least 1");
             }
             if (maxMergeCount < 1)
             {
-                throw new System.ArgumentException("maxMergeCount should be at least 1");
+                throw new ArgumentException("maxMergeCount should be at least 1");
             }
             if (maxThreadCount > maxMergeCount)
             {
-                throw new System.ArgumentException("maxThreadCount should be <= maxMergeCount (= " + maxMergeCount + ")");
+                throw new ArgumentException("maxThreadCount should be <= maxMergeCount (= " + maxMergeCount + ")");
             }
             this.maxThreadCount = maxThreadCount;
             this.maxMergeCount = maxMergeCount;
@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
             {
                 if (priority > (int)ThreadPriority.Highest || priority < (int)ThreadPriority.Lowest)
                 {
-                    throw new System.ArgumentException("priority must be in range " + (int)ThreadPriority.Highest + " .. " + (int)ThreadPriority.Lowest + " inclusive");
+                    throw new ArgumentException("priority must be in range " + (int)ThreadPriority.Highest + " .. " + (int)ThreadPriority.Lowest + " inclusive");
                 }
                 mergeThreadPriority = priority;
                 UpdateMergeThreads();

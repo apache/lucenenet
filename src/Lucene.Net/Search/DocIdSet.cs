@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace Lucene.Net.Search
 {
@@ -51,7 +52,7 @@ namespace Lucene.Net.Search
         /// only need to implement this method if your <see cref="DocIdSet"/> can
         /// guarantee random access to every docid in O(1) time without
         /// external disk access (as <see cref="IBits"/> interface cannot throw
-        /// <see cref="System.IO.IOException"/>). This is generally true for bit sets
+        /// <see cref="IOException"/>). This is generally true for bit sets
         /// like <see cref="Lucene.Net.Util.FixedBitSet"/>, which return
         /// itself if they are used as <see cref="DocIdSet"/>. </returns>
         public virtual IBits Bits => null; // LUCENENET NOTE: This isn't a great candidate for a property, but it makes more sense to call this Bits than Bits(). GetBits() was already taken in the same context.

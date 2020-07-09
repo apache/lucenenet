@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using System;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -67,7 +68,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             if (maxTokenPosition < 1)
             {
-                throw new System.ArgumentException("maxTokenPosition must be greater than zero");
+                throw new ArgumentException("maxTokenPosition must be greater than zero");
             }
             this.maxTokenPosition = maxTokenPosition;
             this.consumeAllTokens = consumeAllTokens;

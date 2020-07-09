@@ -2,6 +2,7 @@
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Codecs.Sep
 {
@@ -52,7 +53,7 @@ namespace Lucene.Net.Codecs.Sep
         private int curPayloadLength;
         private long curPayloadPointer;
 
-        /// <exception cref="System.IO.IOException"/>
+        /// <exception cref="IOException"/>
         internal SepSkipListWriter(int skipInterval, int numberOfSkipLevels, int docCount,
                           Int32IndexOutput freqOutput,
                           Int32IndexOutput docOutput,
@@ -95,7 +96,7 @@ namespace Lucene.Net.Codecs.Sep
             indexOptions = v;
         }
 
-        /// <exception cref="System.IO.IOException"/>
+        /// <exception cref="IOException"/>
         internal void SetPosOutput(Int32IndexOutput posOutput)
         {
             this.posOutput = posOutput;
@@ -127,7 +128,7 @@ namespace Lucene.Net.Codecs.Sep
         }
 
         // Called @ start of new term
-        /// <exception cref="System.IO.IOException"/>
+        /// <exception cref="IOException"/>
         protected internal void ResetSkip(Int32IndexOutput.Index topDocIndex, Int32IndexOutput.Index topFreqIndex, Int32IndexOutput.Index topPosIndex)
         {
             base.ResetSkip();
@@ -152,7 +153,7 @@ namespace Lucene.Net.Codecs.Sep
             }
         }
 
-        /// <exception cref="System.IO.IOException"/>
+        /// <exception cref="IOException"/>
         protected override void WriteSkipData(int level, IndexOutput skipBuffer)
         {
             // To efficiently store payloads in the posting lists we do not store the length of

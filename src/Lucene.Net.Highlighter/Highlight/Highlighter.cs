@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Lucene.Net.Search.Highlight
@@ -152,7 +153,7 @@ namespace Lucene.Net.Search.Highlight
         /// This method has been made public to allow visibility of score information held in <see cref="TextFragment"/> objects.
         /// Thanks to Jason Calabrese for help in redefining the interface.
         /// </summary>
-        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         /// <exception cref="InvalidTokenOffsetsException">thrown if any token's EndOffset exceeds the provided text's length</exception>
         public TextFragment[] GetBestTextFragments(
             TokenStream tokenStream,

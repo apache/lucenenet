@@ -3,8 +3,7 @@ using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
-using JCG = J2N.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Search
 {
@@ -80,14 +79,14 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Decrement reference counting on the given reference. </summary>
-        /// <exception cref="System.IO.IOException"> If reference decrement on the given resource failed.</exception>
+        /// <exception cref="IOException"> If reference decrement on the given resource failed.</exception>
         protected abstract void DecRef(G reference);
 
         /// <summary>
         /// Refresh the given reference if needed. Returns <c>null</c> if no refresh
         /// was needed, otherwise a new refreshed reference. </summary>
         /// <exception cref="ObjectDisposedException"> If the reference manager has been <see cref="Dispose()"/>d. </exception>
-        /// <exception cref="System.IO.IOException"> If the refresh operation failed </exception>
+        /// <exception cref="IOException"> If the refresh operation failed </exception>
         protected abstract G RefreshIfNeeded(G referenceToRefresh);
 
         /// <summary>
@@ -151,7 +150,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="ObjectDisposedException"/>.
         /// </para>
         /// </summary>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         ///           If the underlying reader of the current reference could not be disposed </exception>
         public void Dispose()
         {
@@ -169,7 +168,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Called after <see cref="Dispose()"/>, so subclass can free any resources. </summary>
-        /// <exception cref="System.IO.IOException"> if the after dispose operation in a sub-class throws an <see cref="System.IO.IOException"/>
+        /// <exception cref="IOException"> if the after dispose operation in a sub-class throws an <see cref="IOException"/>
         /// </exception>
         protected virtual void Dispose(bool disposing)
         {
@@ -246,7 +245,7 @@ namespace Lucene.Net.Search
         /// that there were no changes to refresh. If it returns <c>false</c> it means another
         /// thread is currently refreshing.
         /// </para> </summary>
-        /// <exception cref="System.IO.IOException"> If refreshing the resource causes an <see cref="System.IO.IOException"/> </exception>
+        /// <exception cref="IOException"> If refreshing the resource causes an <see cref="IOException"/> </exception>
         /// <exception cref="ObjectDisposedException"> If the reference manager has been <see cref="Dispose()"/>d.  </exception>
         public bool MaybeRefresh()
         {
@@ -279,7 +278,7 @@ namespace Lucene.Net.Search
         /// useful if you want to guarantee that the next call to <see cref="Acquire()"/>
         /// will return a refreshed instance. Otherwise, consider using the
         /// non-blocking <see cref="MaybeRefresh()"/>. </summary>
-        /// <exception cref="System.IO.IOException"> If refreshing the resource causes an <see cref="System.IO.IOException"/> </exception>
+        /// <exception cref="IOException"> If refreshing the resource causes an <see cref="IOException"/> </exception>
         /// <exception cref="ObjectDisposedException"> If the reference manager has been <see cref="Dispose()"/>d.  </exception>
         public void MaybeRefreshBlocking()
         {
@@ -300,7 +299,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Called after a refresh was attempted, regardless of
         /// whether a new reference was in fact created. </summary>
-        /// <exception cref="System.IO.IOException"> if a low level I/O exception occurs</exception>
+        /// <exception cref="IOException"> if a low level I/O exception occurs</exception>
         protected virtual void AfterMaybeRefresh()
         {
         }
@@ -309,7 +308,7 @@ namespace Lucene.Net.Search
         /// Release the reference previously obtained via <see cref="Acquire()"/>.
         /// <para/>
         /// <b>NOTE:</b> it's safe to call this after <see cref="Dispose()"/>. </summary>
-        /// <exception cref="System.IO.IOException"> If the release operation on the given resource throws an <see cref="System.IO.IOException"/> </exception>
+        /// <exception cref="IOException"> If the release operation on the given resource throws an <see cref="IOException"/> </exception>
         public void Release(G reference)
         {
             Debug.Assert(reference != null);

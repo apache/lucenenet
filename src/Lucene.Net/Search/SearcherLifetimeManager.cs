@@ -242,7 +242,7 @@ namespace Lucene.Net.Search
             {
                 if (maxAgeSec < 0)
                 {
-                    throw new System.ArgumentException("maxAgeSec must be > 0 (got " + maxAgeSec + ")");
+                    throw new ArgumentException("maxAgeSec must be > 0 (got " + maxAgeSec + ")");
                 }
                 this.maxAgeSec = maxAgeSec;
             }

@@ -5,6 +5,7 @@
 // $Id: XMLFilterImpl.java,v 1.9 2004/04/26 17:34:35 dmegginson Exp $
 
 using System;
+using System.IO;
 
 namespace Sax.Helpers
 {
@@ -245,7 +246,7 @@ namespace Sax.Helpers
         /// Any SAX exception, possibly
         /// wrapping another exception.
         /// </exception>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         /// An IO exception from the parser,
         /// possibly from a byte stream or character stream
         /// supplied by the application.
@@ -268,7 +269,7 @@ namespace Sax.Helpers
         /// <param name="systemId">The system identifier as a fully-qualified URI.</param>
         /// <exception cref="SAXException">Any SAX exception, possibly
         /// wrapping another exception.</exception>
-        /// <exception cref="System.IO.IOException">An IO exception from the parser,
+        /// <exception cref="IOException">An IO exception from the parser,
         /// possibly from a byte stream or character stream
         /// supplied by the application.</exception>
         public virtual void Parse(string systemId)
@@ -289,7 +290,7 @@ namespace Sax.Helpers
         /// <returns>A new <see cref="InputSource"/> or null for the default.</returns>
         /// <exception cref="SAXException">The client may throw
         /// an exception during processing.</exception>
-        /// <exception cref="System.IO.IOException">The client may throw an
+        /// <exception cref="IOException">The client may throw an
         /// I/O-related exception while obtaining the
         /// new <see cref="InputSource"/>.</exception>
         public virtual InputSource ResolveEntity(string publicId, string systemId)

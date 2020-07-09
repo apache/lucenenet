@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Sep
@@ -197,7 +198,7 @@ namespace Lucene.Net.Codecs.Sep
             this.indexOptions = fieldInfo.IndexOptions;
             if (indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
-                throw new System.NotSupportedException("this codec cannot index offsets");
+                throw new NotSupportedException("this codec cannot index offsets");
             }
             skipListWriter.SetIndexOptions(indexOptions);
             storePayloads = indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS && fieldInfo.HasPayloads;

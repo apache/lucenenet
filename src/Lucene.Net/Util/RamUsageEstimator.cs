@@ -425,7 +425,7 @@ namespace Lucene.Net.Util
         {
             if (clazz.IsArray)
             {
-                throw new System.ArgumentException("this method does not work with array classes.");
+                throw new ArgumentException("this method does not work with array classes.");
             }
             if (clazz.IsPrimitive)
             {

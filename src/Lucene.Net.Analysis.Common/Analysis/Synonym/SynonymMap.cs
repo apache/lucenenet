@@ -157,19 +157,19 @@ namespace Lucene.Net.Analysis.Synonym
                 // first convert to UTF-8
                 if (numInputWords <= 0)
                 {
-                    throw new System.ArgumentException("numInputWords must be > 0 (got " + numInputWords + ")");
+                    throw new ArgumentException("numInputWords must be > 0 (got " + numInputWords + ")");
                 }
                 if (input.Length <= 0)
                 {
-                    throw new System.ArgumentException("input.length must be > 0 (got " + input.Length + ")");
+                    throw new ArgumentException("input.length must be > 0 (got " + input.Length + ")");
                 }
                 if (numOutputWords <= 0)
                 {
-                    throw new System.ArgumentException("numOutputWords must be > 0 (got " + numOutputWords + ")");
+                    throw new ArgumentException("numOutputWords must be > 0 (got " + numOutputWords + ")");
                 }
                 if (output.Length <= 0)
                 {
-                    throw new System.ArgumentException("output.length must be > 0 (got " + output.Length + ")");
+                    throw new ArgumentException("output.length must be > 0 (got " + output.Length + ")");
                 }
 
                 Debug.Assert(!HasHoles(input), "input has holes: " + input);
@@ -365,11 +365,11 @@ namespace Lucene.Net.Analysis.Synonym
                         int length = termAtt.Length;
                         if (length == 0)
                         {
-                            throw new System.ArgumentException("term: " + text + " analyzed to a zero-length token");
+                            throw new ArgumentException("term: " + text + " analyzed to a zero-length token");
                         }
                         if (posIncAtt.PositionIncrement != 1)
                         {
-                            throw new System.ArgumentException("term: " + text + " analyzed to a token with posinc != 1");
+                            throw new ArgumentException("term: " + text + " analyzed to a token with posinc != 1");
                         }
                         reuse.Grow(reuse.Length + length + 1); // current + word + separator
                         int end = reuse.Offset + reuse.Length;
@@ -393,7 +393,7 @@ namespace Lucene.Net.Analysis.Synonym
                 }
                 if (reuse.Length == 0)
                 {
-                    throw new System.ArgumentException("term: " + text + " was completely eliminated by analyzer");
+                    throw new ArgumentException("term: " + text + " was completely eliminated by analyzer");
                 }
                 return reuse;
             }

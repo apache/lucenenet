@@ -98,14 +98,14 @@
 //            // based on harmony charset.java
 //            if (name.Length >= 128)
 //            {
-//                throw new System.ArgumentException("Illegal service name: '" + name + "' is too long (must be < 128 chars).");
+//                throw new ArgumentException("Illegal service name: '" + name + "' is too long (must be < 128 chars).");
 //            }
 //            for (int i = 0, len = name.Length; i < len; i++)
 //            {
 //                char c = name[i];
 //                if (!IsLetterOrDigit(c))
 //                {
-//                    throw new System.ArgumentException("Illegal service name: '" + name + "' must be simple ascii alphanumeric.");
+//                    throw new ArgumentException("Illegal service name: '" + name + "' must be simple ascii alphanumeric.");
 //                }
 //            }
 //        }
@@ -125,7 +125,7 @@
 //            {
 //                return service;
 //            }
-//            throw new System.ArgumentException("A SPI class of type " + clazz.Name + " with name '" + name + "' does not exist. " + "You need to add the corresponding JAR file supporting this SPI to your classpath." + "The current classpath supports the following names: " + AvailableServices());
+//            throw new ArgumentException("A SPI class of type " + clazz.Name + " with name '" + name + "' does not exist. " + "You need to add the corresponding JAR file supporting this SPI to your classpath." + "The current classpath supports the following names: " + AvailableServices());
 //        }
 
 //        public ISet<string> AvailableServices()

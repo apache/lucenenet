@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
             set
             {
                 if (value < 0)
-                    throw new System.ArgumentException("slop value cannot be negative");
+                    throw new ArgumentException("slop value cannot be negative");
 
                 slop = value;
             }
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search
             {
                 if (!terms[i].Field.Equals(field, StringComparison.Ordinal))
                 {
-                    throw new System.ArgumentException("All phrase terms must be in the same field (" + field + "): " + terms[i]);
+                    throw new ArgumentException("All phrase terms must be in the same field (" + field + "): " + terms[i]);
                 }
             }
 

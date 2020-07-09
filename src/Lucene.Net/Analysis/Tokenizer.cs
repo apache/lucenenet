@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis
         {
             if (input == null)
             {
-                throw new System.ArgumentNullException("input", "input must not be null");
+                throw new ArgumentNullException("input", "input must not be null");
             }
             this.inputPending = input;
         }
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis
         {
             if (input == null)
             {
-                throw new System.ArgumentNullException("input", "input must not be null");
+                throw new ArgumentNullException("input", "input must not be null");
             }
             this.inputPending = input;
         }
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis
         {
             if (input == null)
             {
-                throw new System.ArgumentNullException("value", "input must not be null");
+                throw new ArgumentNullException("value", "input must not be null");
             }
             else if (this.m_input != ILLEGAL_STATE_READER)
             {

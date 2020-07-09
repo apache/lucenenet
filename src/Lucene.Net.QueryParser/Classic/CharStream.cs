@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace Lucene.Net.QueryParsers.Classic
 {
@@ -35,59 +36,59 @@ namespace Lucene.Net.QueryParsers.Classic
     /// operation.
     /// </summary>
     public interface ICharStream
-	{
-		/// <summary> 
+    {
+        /// <summary> 
         /// Returns the next character from the selected input.  The method
-		/// of selecting the input is the responsibility of the class
-		/// implementing this interface.  Can throw any <see cref="System.IO.IOException"/>.
-		/// </summary>
-		char ReadChar();
+        /// of selecting the input is the responsibility of the class
+        /// implementing this interface.  Can throw any <see cref="IOException"/>.
+        /// </summary>
+        char ReadChar();
 
-	    /// <summary>
+        /// <summary>
         /// Returns the column position of the character last read.
         /// </summary>
-	    /// <seealso cref="EndColumn"/>
-	    [Obsolete]
-	    int Column { get; }
+        /// <seealso cref="EndColumn"/>
+        [Obsolete]
+        int Column { get; }
 
-	    /// <summary>
+        /// <summary>
         /// Returns the line number of the character last read.
         /// </summary>
-	    /// <seealso cref="EndLine"/>
-	    [Obsolete]
-	    int Line { get; }
+        /// <seealso cref="EndLine"/>
+        [Obsolete]
+        int Line { get; }
 
-	    /// <summary>
+        /// <summary>
         /// Returns the column number of the last character for current token (being
-	    /// matched after the last call to BeginTOken).
-	    /// </summary>
-	    int EndColumn { get; }
+        /// matched after the last call to BeginTOken).
+        /// </summary>
+        int EndColumn { get; }
 
-	    /// <summary> 
+        /// <summary> 
         /// Returns the line number of the last character for current token (being
-	    /// matched after the last call to BeginTOken).
-	    /// </summary>
-	    int EndLine { get; }
+        /// matched after the last call to BeginTOken).
+        /// </summary>
+        int EndLine { get; }
 
-	    /// <summary> 
+        /// <summary> 
         /// Returns the column number of the first character for current token (being
-	    /// matched after the last call to BeginTOken).
-	    /// </summary>
-	    int BeginColumn { get; }
+        /// matched after the last call to BeginTOken).
+        /// </summary>
+        int BeginColumn { get; }
 
-	    /// <summary> 
+        /// <summary> 
         /// Returns the line number of the first character for current token (being
-	    /// matched after the last call to BeginTOken).
-	    /// </summary>
-	    int BeginLine { get; }
+        /// matched after the last call to BeginTOken).
+        /// </summary>
+        int BeginLine { get; }
 
-	    /// <summary> 
+        /// <summary> 
         /// Backs up the input stream by amount steps. Lexer calls this method if it
-		/// had already read some characters, but could not use them to match a
-		/// (longer) token. So, they will be used again as the prefix of the next
-		/// token and it is the implemetation's responsibility to do this right.
-		/// </summary>
-		void BackUp(int amount);
+        /// had already read some characters, but could not use them to match a
+        /// (longer) token. So, they will be used again as the prefix of the next
+        /// token and it is the implemetation's responsibility to do this right.
+        /// </summary>
+        void BackUp(int amount);
 
         /// <summary> 
         /// Returns the next character that marks the beginning of the next token.
@@ -96,13 +97,13 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         char BeginToken();
 
-	    /// <summary> 
+        /// <summary> 
         /// Returns a string made up of characters from the marked token beginning
-	    /// to the current buffer position. Implementations have the choice of returning
-	    /// anything that they want to. For example, for efficiency, one might decide
-	    /// to just return null, which is a valid implementation.
-	    /// </summary>
-	    string Image { get; }
+        /// to the current buffer position. Implementations have the choice of returning
+        /// anything that they want to. For example, for efficiency, one might decide
+        /// to just return null, which is a valid implementation.
+        /// </summary>
+        string Image { get; }
 
         /// <summary> 
         /// Returns an array of characters that make up the suffix of length 'len' for
@@ -118,13 +119,13 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </code>
         /// </summary>
         char[] GetSuffix(int len);
-		
-		/// <summary> 
+        
+        /// <summary> 
         /// The lexer calls this function to indicate that it is done with the stream
-		/// and hence implementations can free any resources held by this class.
-		/// Again, the body of this function can be just empty and it will not
-		/// affect the lexer's operation.
-		/// </summary>
-		void  Done();
-	}
+        /// and hence implementations can free any resources held by this class.
+        /// Again, the body of this function can be just empty and it will not
+        /// affect the lexer's operation.
+        /// </summary>
+        void  Done();
+    }
 }

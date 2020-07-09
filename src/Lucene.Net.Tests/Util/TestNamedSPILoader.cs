@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Util
 {
@@ -43,7 +44,7 @@ namespace Lucene.Net.Util
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
             }

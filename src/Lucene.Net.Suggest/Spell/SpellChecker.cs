@@ -3,7 +3,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.IO;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Search.Spell
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Spell
         /// is created if it doesn't exist yet. </summary>
         /// <param name="spellIndex"> the spell index directory </param>
         /// <param name="sd"> the <see cref="StringDistance"/> measurement to use </param>
-        /// <exception cref="System.IO.IOException"> if Spellchecker can not open the directory </exception>
+        /// <exception cref="IOException"> if Spellchecker can not open the directory </exception>
         public SpellChecker(Directory spellIndex, IStringDistance sd)
             : this(spellIndex, sd, SuggestWordQueue.DEFAULT_COMPARER)
         {
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         /// <param name="spellIndex">
         ///          the spell index directory </param>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         ///           if spellchecker can not open the directory </exception>
         public SpellChecker(Directory spellIndex)
             : this(spellIndex, new LevensteinDistance())
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="spellIndex"> The spelling index </param>
         /// <param name="sd"> The distance </param>
         /// <param name="comparer"> The comparer </param>
-        /// <exception cref="System.IO.IOException"> if there is a problem opening the index </exception>
+        /// <exception cref="IOException"> if there is a problem opening the index </exception>
         public SpellChecker(Directory spellIndex, IStringDistance sd, IComparer<SuggestWord> comparer)
         {
             SetSpellIndex(spellIndex);
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search.Spell
         /// as given in the constructor. </summary>
         /// <param name="spellIndexDir"> the spell directory to use </param>
         /// <exception cref="ObjectDisposedException"> if the Spellchecker is already closed </exception>
-        /// <exception cref="System.IO.IOException"> if spellchecker can not open the directory </exception>
+        /// <exception cref="IOException"> if spellchecker can not open the directory </exception>
         // TODO: we should make this final as it is called in the constructor
         public virtual void SetSpellIndex(Directory spellIndexDir)
         {
@@ -208,7 +208,7 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         /// <param name="word"> the word you want a spell check done on </param>
         /// <param name="numSug"> the number of suggested words </param>
-        /// <exception cref="System.IO.IOException"> if the underlying index throws an <see cref="System.IO.IOException"/> </exception>
+        /// <exception cref="IOException"> if the underlying index throws an <see cref="IOException"/> </exception>
         /// <exception cref="ObjectDisposedException"> if the Spellchecker is already disposed </exception>
         /// <returns>string[] the sorted list of the suggest words with these 2 criteria:
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="word"> the word you want a spell check done on </param>
         /// <param name="numSug"> the number of suggested words </param>
         /// <param name="accuracy"> The minimum score a suggestion must have in order to qualify for inclusion in the results </param>
-        /// <exception cref="System.IO.IOException"> if the underlying index throws an <see cref="System.IO.IOException"/> </exception>
+        /// <exception cref="IOException"> if the underlying index throws an <see cref="IOException"/> </exception>
         /// <exception cref="ObjectDisposedException"> if the Spellchecker is already disposed </exception>
         /// <returns>string[] the sorted list of the suggest words with these 2 criteria:
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
@@ -277,7 +277,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="suggestMode"> 
         /// (NOTE: if indexReader==null and/or field==null, then this is overridden with SuggestMode.SUGGEST_ALWAYS) </param>
         /// <param name="accuracy"> The minimum score a suggestion must have in order to qualify for inclusion in the results </param>
-        /// <exception cref="System.IO.IOException"> if the underlying index throws an <see cref="System.IO.IOException"/> </exception>
+        /// <exception cref="IOException"> if the underlying index throws an <see cref="IOException"/> </exception>
         /// <exception cref="ObjectDisposedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
         /// <returns> string[] the sorted list of the suggest words with these 2 criteria:
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
@@ -437,7 +437,7 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Removes all terms from the spell check index. </summary>
-        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         /// <exception cref="ObjectDisposedException"> if the Spellchecker is already closed </exception>
         public virtual void ClearIndex()
         {
@@ -456,7 +456,7 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Check whether the word exists in the index. </summary>
         /// <param name="word"> word to check </param>
-        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         /// <exception cref="ObjectDisposedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
         /// <returns> true if the word exists in the index </returns>
         public virtual bool Exist(string word)
@@ -481,7 +481,7 @@ namespace Lucene.Net.Search.Spell
         /// <param name="config"> <see cref="IndexWriterConfig"/> to use </param>
         /// <param name="fullMerge"> whether or not the spellcheck index should be fully merged </param>
         /// <exception cref="ObjectDisposedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
-        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public void IndexDictionary(IDictionary dict, IndexWriterConfig config, bool fullMerge)
         {
             lock (modifyCurrentIndexLock)
@@ -656,7 +656,7 @@ namespace Lucene.Net.Search.Spell
 
         /// <summary>
         /// Dispose the underlying IndexSearcher used by this SpellChecker </summary>
-        /// <exception cref="System.IO.IOException"> if the close operation causes an <see cref="System.IO.IOException"/> </exception>
+        /// <exception cref="IOException"> if the close operation causes an <see cref="IOException"/> </exception>
         /// <exception cref="ObjectDisposedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
         public void Dispose()
         {
@@ -703,7 +703,7 @@ namespace Lucene.Net.Search.Spell
         /// Creates a new read-only IndexSearcher </summary>
         /// <param name="dir"> the directory used to open the searcher </param>
         /// <returns> a new read-only IndexSearcher </returns>
-        /// <exception cref="System.IO.IOException"> f there is a low-level IO error </exception>
+        /// <exception cref="IOException"> f there is a low-level IO error </exception>
         // for testing purposes
         internal virtual IndexSearcher CreateSearcher(Directory dir)
         {

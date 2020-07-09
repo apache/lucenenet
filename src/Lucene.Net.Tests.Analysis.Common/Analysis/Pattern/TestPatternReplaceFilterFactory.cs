@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Pattern
@@ -47,7 +48,7 @@ namespace Lucene.Net.Analysis.Pattern
                 TokenFilterFactory("PatternReplace", "pattern", "something", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

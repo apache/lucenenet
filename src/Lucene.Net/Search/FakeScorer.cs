@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -36,7 +37,7 @@ namespace Lucene.Net.Search
 
         public override int Advance(int target)
         {
-            throw new System.NotSupportedException("FakeScorer doesn't support advance(int)");
+            throw new NotSupportedException("FakeScorer doesn't support advance(int)");
         }
 
         public override int DocID => doc;
@@ -45,7 +46,7 @@ namespace Lucene.Net.Search
 
         public override int NextDoc()
         {
-            throw new System.NotSupportedException("FakeScorer doesn't support nextDoc()");
+            throw new NotSupportedException("FakeScorer doesn't support nextDoc()");
         }
 
         public override float GetScore()
@@ -58,11 +59,11 @@ namespace Lucene.Net.Search
             return 1;
         }
 
-        public override Weight Weight => throw new System.NotSupportedException();
+        public override Weight Weight => throw new NotSupportedException();
 
         public override ICollection<ChildScorer> GetChildren()
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
     }
 }

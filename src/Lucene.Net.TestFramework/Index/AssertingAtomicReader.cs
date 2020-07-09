@@ -1,6 +1,7 @@
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
+using System;
 using System.Collections.Generic;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
@@ -103,7 +104,7 @@ namespace Lucene.Net.Index
                 int docid = @in.DocID;
                 Debug.Assert(docid == -1, @in.GetType() + ": invalid initial doc id: " + docid);
             }
-            catch (System.NotSupportedException /*e*/)
+            catch (NotSupportedException /*e*/)
             {
                 if (failOnUnsupportedDocID)
                 {

@@ -3,6 +3,8 @@
 // No warranty; no copyright -- use this as you will.
 // $Id: EntityResolver2.java,v 1.2 2002/01/12 19:20:08 dbrownell Exp $
 
+using System.IO;
+
 namespace Sax.Ext
 {
     /// <summary>
@@ -117,8 +119,8 @@ namespace Sax.Ext
         /// </returns>
         /// <exception cref="SAXException">Any SAX exception, possibly wrapping
         /// another exception.</exception>
-        /// <exception cref="System.IO.IOException">Probably indicating a failure to create
-        /// a new <see cref="System.IO.Stream"/> or <see cref="System.IO.TextReader"/>, or an illegal URL.</exception>
+        /// <exception cref="IOException">Probably indicating a failure to create
+        /// a new <see cref="Stream"/> or <see cref="TextReader"/>, or an illegal URL.</exception>
         InputSource GetExternalSubset(string name, string baseURI);
 
         /// <summary>
@@ -166,8 +168,8 @@ namespace Sax.Ext
         /// to resulting URI.</returns>
         /// <exception cref="SAXException">Any SAX exception, possibly wrapping
         /// another exception.</exception>
-        /// <exception cref="System.IO.IOException">Probably indicating a failure to create
-        /// a new <see cref="System.IO.Stream"/> or <see cref="System.IO.TextReader"/>, or an illegal URL.</exception>
+        /// <exception cref="IOException">Probably indicating a failure to create
+        /// a new <see cref="Stream"/> or <see cref="TextReader"/>, or an illegal URL.</exception>
         InputSource ResolveEntity(
             string name,
             string publicId,

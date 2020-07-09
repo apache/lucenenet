@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -355,7 +356,7 @@ namespace Lucene.Net.Search
             {
                 // TODO: if we fix type safety of TopFieldDocs we can
                 // remove this
-                throw new System.ArgumentException("after must be a FieldDoc; got " + after);
+                throw new ArgumentException("after must be a FieldDoc; got " + after);
             }
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), (FieldDoc)after, n, sort, true, false, false);
         }
@@ -366,7 +367,7 @@ namespace Lucene.Net.Search
         /// <param name="n"> Return only the top n results </param>
         /// <param name="sort"> The <see cref="Lucene.Net.Search.Sort"/> object </param>
         /// <returns> The top docs, sorted according to the supplied <see cref="Lucene.Net.Search.Sort"/> instance </returns>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public virtual TopFieldDocs Search(Query query, int n, Sort sort)
         {
             return Search(CreateNormalizedWeight(query), n, sort, false, false);
@@ -389,7 +390,7 @@ namespace Lucene.Net.Search
             {
                 // TODO: if we fix type safety of TopFieldDocs we can
                 // remove this
-                throw new System.ArgumentException("after must be a FieldDoc; got " + after);
+                throw new ArgumentException("after must be a FieldDoc; got " + after);
             }
             return Search(CreateNormalizedWeight(query), (FieldDoc)after, n, sort, true, false, false);
         }
@@ -416,7 +417,7 @@ namespace Lucene.Net.Search
             {
                 // TODO: if we fix type safety of TopFieldDocs we can
                 // remove this
-                throw new System.ArgumentException("after must be a FieldDoc; got " + after);
+                throw new ArgumentException("after must be a FieldDoc; got " + after);
             }
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), (FieldDoc)after, n, sort, true, doDocScores, doMaxScore);
         }
@@ -438,7 +439,7 @@ namespace Lucene.Net.Search
             }
             if (after != null && after.Doc >= limit)
             {
-                throw new System.ArgumentException("after.doc exceeds the number of documents in the reader: after.doc=" + after.Doc + " limit=" + limit);
+                throw new ArgumentException("after.doc exceeds the number of documents in the reader: after.doc=" + after.Doc + " limit=" + limit);
             }
             nDocs = Math.Min(nDocs, limit);
 
@@ -526,7 +527,7 @@ namespace Lucene.Net.Search
         {
             if (sort == null)
             {
-                throw new System.ArgumentNullException("Sort must not be null");
+                throw new ArgumentNullException("Sort must not be null");
             }
 
             int limit = reader.MaxDoc;
@@ -902,7 +903,7 @@ namespace Lucene.Net.Search
             // LUCENENET NOTE: Not supported in .NET anyway
             //public override void Remove()
             //{
-            //  throw new System.NotSupportedException();
+            //  throw new NotSupportedException();
             //}
 
             public IEnumerator<T> GetEnumerator()

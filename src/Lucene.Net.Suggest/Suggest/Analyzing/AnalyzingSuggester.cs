@@ -209,7 +209,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             this.queryAnalyzer = queryAnalyzer;
             if ((options & ~(SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP)) != 0)
             {
-                throw new System.ArgumentException("options should only contain SuggesterOptions.EXACT_FIRST and SuggesterOptions.PRESERVE_SEP; got " +
+                throw new ArgumentException("options should only contain SuggesterOptions.EXACT_FIRST and SuggesterOptions.PRESERVE_SEP; got " +
                                                    options);
             }
             this.exactFirst = (options & SuggesterOptions.EXACT_FIRST) != 0;
@@ -221,14 +221,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // like it should be way more then enough.
             if (maxSurfaceFormsPerAnalyzedForm <= 0 || maxSurfaceFormsPerAnalyzedForm > 256)
             {
-                throw new System.ArgumentException("maxSurfaceFormsPerAnalyzedForm must be > 0 and < 256 (got: " +
+                throw new ArgumentException("maxSurfaceFormsPerAnalyzedForm must be > 0 and < 256 (got: " +
                                                    maxSurfaceFormsPerAnalyzedForm + ")");
             }
             this.maxSurfaceFormsPerAnalyzedForm = maxSurfaceFormsPerAnalyzedForm;
 
             if (maxGraphExpansions < 1 && maxGraphExpansions != -1)
             {
-                throw new System.ArgumentException("maxGraphExpansions must -1 (no limit) or > 0 (got: " +
+                throw new ArgumentException("maxGraphExpansions must -1 (no limit) or > 0 (got: " +
                                                    maxGraphExpansions + ")");
             }
             this.maxGraphExpansions = maxGraphExpansions;
@@ -393,7 +393,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (iterator.HasContexts)
             {
-                throw new System.ArgumentException("this suggester doesn't support contexts");
+                throw new ArgumentException("this suggester doesn't support contexts");
             }
             string prefix = this.GetType().Name;
             var directory = OfflineSorter.DefaultTempDir();
@@ -430,7 +430,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         // length of the analyzed text (FST input)
                         if (scratch.Length > ushort.MaxValue - 2)
                         {
-                            throw new System.ArgumentException("cannot handle analyzed forms > " + (ushort.MaxValue - 2) +
+                            throw new ArgumentException("cannot handle analyzed forms > " + (ushort.MaxValue - 2) +
                                                                " in length (got " + scratch.Length + ")");
                         }
                         ushort analyzedLength = (ushort)scratch.Length;
@@ -710,11 +710,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             if (onlyMorePopular)
             {
-                throw new System.ArgumentException("this suggester only works with onlyMorePopular=false");
+                throw new ArgumentException("this suggester only works with onlyMorePopular=false");
             }
             if (contexts != null)
             {
-                throw new System.ArgumentException("this suggester doesn't support contexts");
+                throw new ArgumentException("this suggester doesn't support contexts");
             }
             if (fst == null)
             {
@@ -1026,7 +1026,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (value < 0 || value > int.MaxValue)
             {
-                throw new System.NotSupportedException("cannot encode value: " + value);
+                throw new NotSupportedException("cannot encode value: " + value);
             }
             return int.MaxValue - (int)value;
         }

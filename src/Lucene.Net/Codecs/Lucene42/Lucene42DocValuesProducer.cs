@@ -1,9 +1,9 @@
 using J2N.Threading.Atomic;
 using Lucene.Net.Index;
-using Lucene.Net.Store;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Codecs.Lucene42
 {
@@ -25,7 +25,6 @@ namespace Lucene.Net.Codecs.Lucene42
      */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using IBits = Lucene.Net.Util.IBits;
     using BlockPackedReader = Lucene.Net.Util.Packed.BlockPackedReader;
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -37,6 +36,7 @@ namespace Lucene.Net.Codecs.Lucene42
     using DocValuesType = Lucene.Net.Index.DocValuesType;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using Int32sRef = Lucene.Net.Util.Int32sRef;
@@ -480,7 +480,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     result.Length = 0;
                     Util.ToBytesRef(output, result);
                 }
-                catch (System.IO.IOException bogus)
+                catch (IOException bogus)
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }
@@ -504,7 +504,7 @@ namespace Lucene.Net.Codecs.Lucene42
                         return (int)-o.Output.GetValueOrDefault() - 1;
                     }
                 }
-                catch (System.IO.IOException bogus)
+                catch (IOException bogus)
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }
@@ -611,7 +611,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     result.Length = 0;
                     Lucene.Net.Util.Fst.Util.ToBytesRef(output, result);
                 }
-                catch (System.IO.IOException bogus)
+                catch (IOException bogus)
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }
@@ -635,7 +635,7 @@ namespace Lucene.Net.Codecs.Lucene42
                         return -o.Output.GetValueOrDefault() - 1;
                     }
                 }
-                catch (System.IO.IOException bogus)
+                catch (IOException bogus)
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }
@@ -786,18 +786,18 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public override long Ord => @in.Current.Output.GetValueOrDefault();
 
-            public override int DocFreq => throw new System.NotSupportedException();
+            public override int DocFreq => throw new NotSupportedException();
 
-            public override long TotalTermFreq => throw new System.NotSupportedException();
+            public override long TotalTermFreq => throw new NotSupportedException();
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
         }
     }

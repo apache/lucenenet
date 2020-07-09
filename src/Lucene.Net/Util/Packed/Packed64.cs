@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -92,7 +93,7 @@ namespace Lucene.Net.Util.Packed
         /// <param name="in">       A <see cref="DataInput"/>, positioned at the start of Packed64-content. </param>
         /// <param name="valueCount">  The number of elements. </param>
         /// <param name="bitsPerValue"> The number of bits available for any given value. </param>
-        /// <exception cref="System.IO.IOException"> If the values for the backing array could not
+        /// <exception cref="IOException"> If the values for the backing array could not
         ///                             be retrieved. </exception>
         public Packed64(int packedIntsVersion, DataInput @in, int valueCount, int bitsPerValue)
             : base(valueCount, bitsPerValue)

@@ -39,7 +39,7 @@ namespace Lucene.Net.Store
     /// <list type="bullet">
     ///
     ///     <item><description> <see cref="SimpleFSDirectory"/> is a straightforward
-    ///         implementation using <see cref="System.IO.FileStream"/>.
+    ///         implementation using <see cref="FileStream"/>.
     ///         However, it has poor concurrent performance
     ///         (multiple threads will bottleneck) as it
     ///         synchronizes when multiple threads read from the
@@ -255,7 +255,7 @@ namespace Lucene.Net.Store
             // LUCENENET NOTE: this can never happen in .NET
             //if (result == null)
             //{
-            //    throw new System.IO.IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
+            //    throw new IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
             //}
 
             return result;
@@ -456,7 +456,7 @@ namespace Lucene.Net.Store
             set
             {
                 if (value <= 0)
-                    throw new System.ArgumentException("chunkSize must be positive");
+                    throw new ArgumentException("chunkSize must be positive");
 
                 this.chunkSize = value;
             }

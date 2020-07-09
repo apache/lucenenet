@@ -8,6 +8,7 @@ using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -136,7 +137,7 @@ namespace Lucene.Net.Spatial.Prefix
             }
         }
 
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             return new VisitorTemplateAnonymousHelper(this, context, acceptDocs, true).GetDocIdSet();
@@ -197,7 +198,7 @@ namespace Lucene.Net.Spatial.Prefix
                 return true;
             }
 
-            /// <exception cref="System.IO.IOException"></exception>
+            /// <exception cref="IOException"></exception>
             protected internal override void VisitLeaf(Cell cell)
             {
                 //visitRelation is declared as a field, populated by visit() so we don't recompute it
@@ -250,7 +251,7 @@ namespace Lucene.Net.Spatial.Prefix
                 return true;
             }
 
-            /// <exception cref="System.IO.IOException"></exception>
+            /// <exception cref="IOException"></exception>
             protected internal override void VisitScanned(Cell cell)
             {
                 if (AllCellsIntersectQuery(cell, SpatialRelation.NOT_SET))
