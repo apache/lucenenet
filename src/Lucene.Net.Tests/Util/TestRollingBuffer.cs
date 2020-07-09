@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
     {
         private class Position : RollingBuffer.IResettable
         {
-            public int Pos;
+            public int Pos { get; set; }
 
             public void Reset()
             {
@@ -90,12 +90,12 @@ namespace Lucene.Net.Util
 
         private class RollingBufferAnonymousInnerClassHelper : RollingBuffer<Position>
         {
-            private readonly TestRollingBuffer OuterInstance;
+            private readonly TestRollingBuffer outerInstance;
 
             public RollingBufferAnonymousInnerClassHelper(TestRollingBuffer outerInstance)
                 : base(NewInstanceFunc)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public static Position NewInstanceFunc()

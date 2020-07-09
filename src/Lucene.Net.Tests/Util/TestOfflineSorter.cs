@@ -31,15 +31,15 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestOfflineSorter : LuceneTestCase
     {
-        private DirectoryInfo TempDir;
+        private DirectoryInfo tempDir;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            TempDir = CreateTempDir("mergesort");
+            tempDir = CreateTempDir("mergesort");
             DeleteTestFiles();
-            TempDir.Create();
+            tempDir.Create();
         }
 
         [TearDown]
@@ -51,15 +51,15 @@ namespace Lucene.Net.Util
 
         private void DeleteTestFiles()
         {
-            if (TempDir != null)
+            if (tempDir != null)
             {
-                if (Directory.Exists(TempDir.FullName))
+                if (Directory.Exists(tempDir.FullName))
                 {
-                    foreach (var file in TempDir.GetFiles())
+                    foreach (var file in tempDir.GetFiles())
                     {
                         file.Delete();
                     }
-                    TempDir.Delete();
+                    tempDir.Delete();
                 }
             }
         }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Util
             Array.Sort(data, unsignedByteOrderComparer);
             FileInfo golden = WriteAll("golden", data);
 
-            FileInfo sorted = new FileInfo(Path.Combine(TempDir.FullName, "sorted"));
+            FileInfo sorted = new FileInfo(Path.Combine(tempDir.FullName, "sorted"));
             OfflineSorter.SortInfo sortInfo = sort.Sort(unsorted, sorted);
             //System.out.println("Input size [MB]: " + unsorted.Length() / (1024 * 1024));
             //System.out.println(sortInfo);
@@ -175,7 +175,7 @@ namespace Lucene.Net.Util
 
         private FileInfo WriteAll(string name, byte[][] data)
         {
-            FileInfo file = new FileInfo(Path.Combine(TempDir.FullName, name));
+            FileInfo file = new FileInfo(Path.Combine(tempDir.FullName, name));
             using (file.Create()) { }
             OfflineSorter.ByteSequencesWriter w = new OfflineSorter.ByteSequencesWriter(file);
             foreach (byte[] datum in data)

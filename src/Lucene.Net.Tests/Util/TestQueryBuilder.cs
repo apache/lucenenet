@@ -25,7 +25,6 @@ namespace Lucene.Net.Util
      */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using BooleanClause = Lucene.Net.Search.BooleanClause;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
     using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
@@ -151,31 +150,31 @@ namespace Lucene.Net.Util
         /// </summary>
         protected internal class MockSynonymFilter : TokenFilter
         {
-            internal ICharTermAttribute TermAtt;// = AddAttribute(typeof(CharTermAttribute));
-            internal IPositionIncrementAttribute PosIncAtt;// = AddAttribute(typeof(PositionIncrementAttribute));
-            internal bool AddSynonym = false;
+            private readonly ICharTermAttribute termAtt;
+            private readonly IPositionIncrementAttribute posIncAtt;
+            private bool addSynonym = false;
 
             public MockSynonymFilter(TokenStream input)
                 : base(input)
             {
-                TermAtt = AddAttribute<ICharTermAttribute>();
-                PosIncAtt = AddAttribute<IPositionIncrementAttribute>();
+                termAtt = AddAttribute<ICharTermAttribute>();
+                posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
             public sealed override bool IncrementToken()
             {
-                if (AddSynonym) // inject our synonym
+                if (addSynonym) // inject our synonym
                 {
                     ClearAttributes();
-                    TermAtt.SetEmpty().Append("dog");
-                    PosIncAtt.PositionIncrement = 0;
-                    AddSynonym = false;
+                    termAtt.SetEmpty().Append("dog");
+                    posIncAtt.PositionIncrement = 0;
+                    addSynonym = false;
                     return true;
                 }
 
                 if (m_input.IncrementToken())
                 {
-                    AddSynonym = TermAtt.ToString().Equals("dogs", StringComparison.Ordinal);
+                    addSynonym = termAtt.ToString().Equals("dogs", StringComparison.Ordinal);
                     return true;
                 }
                 else
@@ -214,12 +213,12 @@ namespace Lucene.Net.Util
 
         protected internal class SimpleCJKTokenizer : Tokenizer
         {
-            internal ICharTermAttribute TermAtt;// = AddAttribute(typeof(CharTermAttribute));
+            private readonly ICharTermAttribute termAtt;
 
             public SimpleCJKTokenizer(TextReader input)
                 : base(input)
             {
-                TermAtt = AddAttribute<ICharTermAttribute>();
+                termAtt = AddAttribute<ICharTermAttribute>();
             }
 
             public sealed override bool IncrementToken()
@@ -230,20 +229,13 @@ namespace Lucene.Net.Util
                     return false;
                 }
                 ClearAttributes();
-                TermAtt.SetEmpty().Append((char)ch);
+                termAtt.SetEmpty().Append((char)ch);
                 return true;
             }
         }
 
         private class SimpleCJKAnalyzer : Analyzer
         {
-            private readonly TestQueryBuilder OuterInstance;
-
-            public SimpleCJKAnalyzer(TestQueryBuilder outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new SimpleCJKTokenizer(reader));
@@ -254,7 +246,7 @@ namespace Lucene.Net.Util
         public virtual void TestCJKTerm()
         {
             // individual CJK chars as terms
-            SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer(this);
+            SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer();
 
             BooleanQuery expected = new BooleanQuery();
             expected.Add(new TermQuery(new Term("field", "中")), Occur.SHOULD);
@@ -268,7 +260,7 @@ namespace Lucene.Net.Util
         public virtual void TestCJKPhrase()
         {
             // individual CJK chars as terms
-            SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer(this);
+            SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer();
 
             PhraseQuery expected = new PhraseQuery();
             expected.Add(new Term("field", "中"));
@@ -282,7 +274,7 @@ namespace Lucene.Net.Util
         public virtual void TestCJKSloppyPhrase()
         {
             // individual CJK chars as terms
-            SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer(this);
+            SimpleCJKAnalyzer analyzer = new SimpleCJKAnalyzer();
 
             PhraseQuery expected = new PhraseQuery();
             expected.Slop = 3;
@@ -298,31 +290,31 @@ namespace Lucene.Net.Util
         /// </summary>
         protected internal class MockCJKSynonymFilter : TokenFilter
         {
-            internal ICharTermAttribute TermAtt;
-            internal IPositionIncrementAttribute PosIncAtt;
-            internal bool AddSynonym = false;
+            private readonly ICharTermAttribute termAtt;
+            private readonly IPositionIncrementAttribute posIncAtt;
+            private bool addSynonym = false;
 
             public MockCJKSynonymFilter(TokenStream input)
                 : base(input)
             {
-                TermAtt = AddAttribute<ICharTermAttribute>();
-                PosIncAtt = AddAttribute<IPositionIncrementAttribute>();
+                termAtt = AddAttribute<ICharTermAttribute>();
+                posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
 
             public sealed override bool IncrementToken()
             {
-                if (AddSynonym) // inject our synonym
+                if (addSynonym) // inject our synonym
                 {
                     ClearAttributes();
-                    TermAtt.SetEmpty().Append("國");
-                    PosIncAtt.PositionIncrement = 0;
-                    AddSynonym = false;
+                    termAtt.SetEmpty().Append("國");
+                    posIncAtt.PositionIncrement = 0;
+                    addSynonym = false;
                     return true;
                 }
 
                 if (m_input.IncrementToken())
                 {
-                    AddSynonym = TermAtt.ToString().Equals("国", StringComparison.Ordinal);
+                    addSynonym = termAtt.ToString().Equals("国", StringComparison.Ordinal);
                     return true;
                 }
                 else

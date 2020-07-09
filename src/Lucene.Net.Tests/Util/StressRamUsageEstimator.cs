@@ -24,7 +24,6 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-
     /// <summary>
     /// Estimates how <seealso cref="RamUsageEstimator"/> estimates physical memory consumption
     /// of Java objects. 
@@ -35,14 +34,14 @@ namespace Lucene.Net.Util
         internal class Entry
         {
             internal object o;
-            internal Entry Next;
+            internal Entry next;
 
             public virtual Entry CreateNext(object o)
             {
                 Entry e = new Entry();
                 e.o = o;
-                e.Next = Next;
-                this.Next = e;
+                e.next = next;
+                this.next = e;
                 return e;
             }
         }
@@ -77,7 +76,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        internal volatile object Guard;
+        internal volatile object guard;
 
         // this shows an easy stack overflow because we're counting recursively.
         [Test]
@@ -95,7 +94,7 @@ namespace Lucene.Net.Util
             Console.WriteLine("mx:  " + RamUsageEstimator.HumanReadableUnits(after - before));
             Console.WriteLine("rue: " + RamUsageEstimator.HumanReadableUnits(ShallowSizeOf(all)));
 
-            Guard = all;
+            guard = all;
         }
 
         private long ShallowSizeOf(object[] all)

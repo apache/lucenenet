@@ -1,10 +1,7 @@
 using NUnit.Framework;
-using System.Collections.Generic;
 
 namespace Lucene.Net.Util
 {
-    using Codec = Lucene.Net.Codecs.Codec;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +18,8 @@ namespace Lucene.Net.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using Codec = Lucene.Net.Codecs.Codec;
 
     // TODO: maybe we should test this with mocks, but its easy
     // enough to test the basics via Codec

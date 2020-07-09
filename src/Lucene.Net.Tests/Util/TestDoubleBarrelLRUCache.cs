@@ -4,22 +4,22 @@ using System;
 
 namespace Lucene.Net.Util
 {
-    /// <summary>
-    /// Licensed to the Apache Software Foundation (ASF) under one or more
-    /// contributor license agreements.  See the NOTICE file distributed with
-    /// this work for additional information regarding copyright ownership.
-    /// The ASF licenses this file to You under the Apache License, Version 2.0
-    /// (the "License"); you may not use this file except in compliance with
-    /// the License.  You may obtain a copy of the License at
-    ///
-    ///     http://www.apache.org/licenses/LICENSE-2.0
-    ///
-    /// Unless required by applicable law or agreed to in writing, software
-    /// distributed under the License is distributed on an "AS IS" BASIS,
-    /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    /// See the License for the specific language governing permissions and
-    /// limitations under the License.
-    /// </summary>
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     [TestFixture]
     public class TestDoubleBarrelLRUCache : LuceneTestCase
@@ -75,19 +75,19 @@ namespace Lucene.Net.Util
 
         private class CacheThread : ThreadJob
         {
-            private readonly TestDoubleBarrelLRUCache OuterInstance;
+            private readonly TestDoubleBarrelLRUCache outerInstance;
 
-            internal readonly CloneableObject[] Objs;
-            internal readonly DoubleBarrelLRUCache<CloneableObject, object> c;
-            internal readonly DateTime EndTime;
-            internal volatile bool Failed;
+            private readonly CloneableObject[] objs;
+            private readonly DoubleBarrelLRUCache<CloneableObject, object> c;
+            private readonly DateTime endTime;
+            internal volatile bool failed;
 
             public CacheThread(TestDoubleBarrelLRUCache outerInstance, DoubleBarrelLRUCache<CloneableObject, object> c, CloneableObject[] objs, DateTime endTime)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.c = c;
-                this.Objs = objs;
-                this.EndTime = endTime;
+                this.objs = objs;
+                this.endTime = endTime;
             }
 
             public override void Run()
@@ -97,11 +97,11 @@ namespace Lucene.Net.Util
                     long count = 0;
                     long miss = 0;
                     long hit = 0;
-                    int limit = Objs.Length;
+                    int limit = objs.Length;
 
                     while (true)
                     {
-                        CloneableObject obj = Objs[(int)((count / 2) % limit)];
+                        CloneableObject obj = objs[(int)((count / 2) % limit)];
                         object v = c.Get(obj);
                         if (v == null)
                         {
@@ -115,29 +115,29 @@ namespace Lucene.Net.Util
                         }
                         if ((++count % 10000) == 0)
                         {
-                            if (DateTime.Now.CompareTo(EndTime) > 0)
+                            if (DateTime.Now.CompareTo(endTime) > 0)
                             {
                                 break;
                             }
                         }
                     }
 
-                    OuterInstance.AddResults(miss, hit);
+                    outerInstance.AddResults(miss, hit);
                 }
                 catch (Exception t)
                 {
-                    Failed = true;
+                    failed = true;
                     throw new Exception(t.Message, t);
                 }
             }
         }
 
-        internal long TotMiss, TotHit;
+        internal long totMiss, totHit;
 
         internal virtual void AddResults(long miss, long hit)
         {
-            TotMiss += miss;
-            TotHit += hit;
+            totMiss += miss;
+            totHit += hit;
         }
 
         [Test]
@@ -165,61 +165,61 @@ namespace Lucene.Net.Util
             for (int i = 0; i < NUM_THREADS; i++)
             {
                 threads[i].Join();
-                Assert.False(threads[i].Failed);
+                Assert.False(threads[i].failed);
             }
             //System.out.println("hits=" + totHit + " misses=" + totMiss);
         }
 
         private class CloneableObject : DoubleBarrelLRUCache.CloneableKey
         {
-            internal object Value;
+            private readonly object value;
 
             public CloneableObject(object value)
             {
-                this.Value = value;
+                this.value = value;
             }
 
             public override bool Equals(object other)
             {
                 if (other.GetType().Equals(typeof (CloneableObject)))
-                    return this.Value.Equals(((CloneableObject) other).Value);
+                    return this.value.Equals(((CloneableObject) other).value);
                 else
                     return false;
             }
 
             public override int GetHashCode()
             {
-                return Value.GetHashCode();
+                return value.GetHashCode();
             }
 
             public override object Clone()
             {
-                return new CloneableObject(Value);
+                return new CloneableObject(value);
             }
         }
 
         protected internal class CloneableInteger : DoubleBarrelLRUCache.CloneableKey
         {
-            internal int? Value;
+            internal int? value;
 
             public CloneableInteger(int? value)
             {
-                this.Value = value;
+                this.value = value;
             }
 
             public override bool Equals(object other)
             {
-                return this.Value.Equals(((CloneableInteger)other).Value);
+                return this.value.Equals(((CloneableInteger)other).value);
             }
 
             public override int GetHashCode()
             {
-                return Value.GetHashCode();
+                return value.GetHashCode();
             }
 
             public override object Clone()
             {
-                return new CloneableInteger(Value);
+                return new CloneableInteger(value);
             }
         }
     }

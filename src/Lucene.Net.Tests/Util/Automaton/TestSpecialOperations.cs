@@ -1,10 +1,9 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 
+
 namespace Lucene.Net.Util.Automaton
 {
-    using Util = Lucene.Net.Util.Fst.Util;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -21,6 +20,8 @@ namespace Lucene.Net.Util.Automaton
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using Util = Lucene.Net.Util.Fst.Util;
 
     [TestFixture]
     public class TestSpecialOperations : LuceneTestCase
