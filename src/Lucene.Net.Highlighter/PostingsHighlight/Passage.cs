@@ -117,37 +117,25 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// Gets the start index (inclusive) of the passage in the
         /// original content: always &gt;= 0.
         /// </summary>
-        public int StartOffset
-        {
-            get { return startOffset; }
-        }
+        public int StartOffset => startOffset;
 
         /// <summary>
         /// Gets the end index (exclusive) of the passage in the 
         ///  original content: always &gt;= <see cref="StartOffset"/>
         /// </summary>
-        public int EndOffset
-        {
-            get { return endOffset; }
-        }
+        public int EndOffset => endOffset;
 
         /// <summary>
         /// Passage's score.
         /// </summary>
-        public float Score
-        {
-            get { return score; }
-        }
+        public float Score => score;
 
         /// <summary>
         /// Number of term matches available in 
         /// <see cref="MatchStarts"/>, <see cref="MatchEnds"/>,
         /// <see cref="MatchTerms"/>
         /// </summary>
-        public int NumMatches
-        {
-            get { return numMatches; }
-        }
+        public int NumMatches => numMatches;
 
         /// <summary>
         /// Start offsets of the term matches, in increasing order.
@@ -156,10 +144,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// offsets are absolute (not relative to <see cref="StartOffset"/>).
         /// </summary>
         /// <returns></returns>
-        public IReadOnlyList<int> MatchStarts
-        {
-            get { return matchStarts; }
-        }
+        public IReadOnlyList<int> MatchStarts => matchStarts;
 
         /// <summary>
         /// End offsets of the term matches, corresponding with <see cref="MatchStarts"/>. 
@@ -168,20 +153,14 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// could exceed beyond the bounds of the passage <see cref="EndOffset"/>, if the 
         /// <see cref="Analysis.Analyzer"/> produced a term which spans a passage boundary.
         /// </summary>
-        public IReadOnlyList<int> MatchEnds
-        {
-            get { return matchEnds; }
-        }
+        public IReadOnlyList<int> MatchEnds => matchEnds;
 
         /// <summary>
         /// BytesRef (term text) of the matches, corresponding with <see cref="MatchStarts"/>.
         /// <para/>
         /// Only <see cref="NumMatches"/> are valid.
         /// </summary>
-        public IReadOnlyList<BytesRef> MatchTerms
-        {
-            get { return matchTerms; }
-        }
+        public IReadOnlyList<BytesRef> MatchTerms => matchTerms;
     }
 }
 #endif

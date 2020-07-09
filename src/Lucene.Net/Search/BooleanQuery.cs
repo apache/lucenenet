@@ -108,10 +108,7 @@ namespace Lucene.Net.Search
         /// <see cref="TooManyClausesException"/> to be thrown. </summary>
         public static int MaxClauseCount
         {
-            get
-            {
-                return maxClauseCount;
-            }
+            get => maxClauseCount;
             set
             {
                 if (value < 1)
@@ -150,13 +147,7 @@ namespace Lucene.Net.Search
         /// Returns true if <see cref="Similarity.Coord(int,int)"/> is disabled in
         /// scoring for this query instance. </summary>
         /// <seealso cref="BooleanQuery(bool)"/>
-        public virtual bool CoordDisabled // LUCENENET TODO: API Change to CoordEnabled? Per MSDN, properties should be in the affirmative.
-        {
-            get
-            {
-                return disableCoord;
-            }
-        }
+        public virtual bool CoordDisabled => disableCoord; // LUCENENET TODO: API Change to CoordEnabled? Per MSDN, properties should be in the affirmative.
 
         /// <summary>
         /// Specifies a minimum number of the optional <see cref="BooleanClause"/>s
@@ -176,14 +167,8 @@ namespace Lucene.Net.Search
         /// <param name="value"> The number of optional clauses that must match </param>
         public virtual int MinimumNumberShouldMatch
         {
-            set
-            {
-                this.m_minNrShouldMatch = value;
-            }
-            get
-            {
-                return m_minNrShouldMatch;
-            }
+            get => m_minNrShouldMatch;
+            set => this.m_minNrShouldMatch = value;
         }
 
         protected int m_minNrShouldMatch = 0;
@@ -221,10 +206,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the list of clauses in this query. </summary>
-        public virtual IList<BooleanClause> Clauses
-        {
-            get { return clauses; }
-        }
+        public virtual IList<BooleanClause> Clauses => clauses;
 
         /// <summary>
         /// Returns an iterator on the clauses in this query. It implements the <see cref="T:IEnumerable{BooleanClause}"/> interface to
@@ -277,23 +259,11 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public Similarity Similarity
-            {
-                get { return m_similarity; }
-            }
+            public Similarity Similarity => m_similarity;
 
-            public int MaxCoord
-            {
-                get { return m_maxCoord; }
-            }
+            public int MaxCoord => m_maxCoord;
 
-            public override Query Query
-            {
-                get
-                {
-                    return outerInstance;
-                }
-            }
+            public override Query Query => outerInstance;
 
             public override float GetValueForNormalization()
             {

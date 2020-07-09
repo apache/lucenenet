@@ -134,26 +134,14 @@ namespace Lucene.Net.Index
             return WrapDirectoryReader(m_input.DoOpenIfChanged(writer, applyAllDeletes));
         }
 
-        public override long Version
-        {
-            get
-            {
-                return m_input.Version;
-            }
-        }
+        public override long Version => m_input.Version;
 
         public override bool IsCurrent()
         {
             return m_input.IsCurrent();
         }
 
-        public override IndexCommit IndexCommit
-        {
-            get
-            {
-                return m_input.IndexCommit;
-            }
-        }
+        public override IndexCommit IndexCommit => m_input.IndexCommit;
 
         protected internal override void DoClose()
         {

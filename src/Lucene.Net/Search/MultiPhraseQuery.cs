@@ -81,17 +81,13 @@ namespace Lucene.Net.Search
         /// <seealso cref="PhraseQuery.Slop"/>
         public virtual int Slop
         {
+            get => slop;
             set
             {
                 if (value < 0)
-                {
                     throw new System.ArgumentException("slop value cannot be negative");
-                }
+
                 slop = value;
-            }
-            get
-            {
-                return slop;
             }
         }
 
@@ -213,13 +209,7 @@ namespace Lucene.Net.Search
                 stats = similarity.ComputeWeight(outerInstance.Boost, searcher.CollectionStatistics(outerInstance.field), allTermStats.ToArray());
             }
 
-            public override Query Query
-            {
-                get
-                {
-                    return outerInstance;
-                }
-            }
+            public override Query Query => outerInstance;
 
             public override float GetValueForNormalization()
             {
@@ -606,10 +596,7 @@ namespace Lucene.Net.Search
                 _lastIndex = 0;
             }
 
-            internal int Count // LUCENENET NOTE: This was size() in Lucene.
-            {
-                get { return (_lastIndex - _index); }
-            }
+            internal int Count => (_lastIndex - _index); // LUCENENET NOTE: This was size() in Lucene.
 
             private void GrowArray()
             {
@@ -699,15 +686,9 @@ namespace Lucene.Net.Search
             return _posList.Next();
         }
 
-        public override int StartOffset
-        {
-            get { return -1; }
-        }
+        public override int StartOffset => -1;
 
-        public override int EndOffset
-        {
-            get { return -1; }
-        }
+        public override int EndOffset => -1;
 
         public override BytesRef GetPayload()
         {
@@ -727,15 +708,9 @@ namespace Lucene.Net.Search
             return NextDoc();
         }
 
-        public override sealed int Freq
-        {
-            get { return _freq; }
-        }
+        public override sealed int Freq => _freq;
 
-        public override sealed int DocID
-        {
-            get { return _doc; }
-        }
+        public override sealed int DocID => _doc;
 
         public override long GetCost()
         {

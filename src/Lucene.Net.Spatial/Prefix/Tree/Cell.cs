@@ -126,20 +126,14 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
         }
 
-        public virtual SpatialRelation ShapeRel
-        {
-            get { return m_shapeRel; }
-        }
+        public virtual SpatialRelation ShapeRel => m_shapeRel;
 
         /// <summary>For points, this is always false.</summary>
         /// <remarks>
         /// For points, this is always false.  Otherwise this is true if there are no
         /// further cells with this prefix for the shape (always true at maxLevels).
         /// </remarks>
-        public virtual bool IsLeaf
-        {
-            get { return m_leaf; }
-        }
+        public virtual bool IsLeaf => m_leaf;
 
         /// <summary>Note: not supported at level 0.</summary>
         public virtual void SetLeaf()
@@ -180,13 +174,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             return bytes;
         }
 
-        public virtual int Level
-        {
-            get
-            {
-                return token != null ? token.Length : b_len;
-            }
-        }
+        public virtual int Level => token != null ? token.Length : b_len;
 
         //TODO add getParent() and update some algorithms to use this?
         //public Cell getParent();
@@ -265,10 +253,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public abstract IShape Shape { get; }
 
-        public virtual IPoint Center
-        {
-            get { return Shape.Center; }
-        }
+        public virtual IPoint Center => Shape.Center;
 
         #region IComparable<Cell> Members
 

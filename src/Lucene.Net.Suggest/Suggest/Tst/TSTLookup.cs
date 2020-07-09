@@ -288,12 +288,6 @@ namespace Lucene.Net.Search.Suggest.Tst
             return mem;
         }
 
-        public override long Count
-        {
-            get
-            {
-                return count;
-            }
-        }
+        public override long Count => count;
     }
 }

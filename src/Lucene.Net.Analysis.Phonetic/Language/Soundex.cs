@@ -252,8 +252,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         [Obsolete("This feature is not needed since the encoding size must be constant. Will be removed in 2.0.")]
         public virtual int MaxLength
         {
-            get { return this.maxLength; }
-            set { this.maxLength = value; }
+            get => this.maxLength;
+            set => this.maxLength = value;
         }
 
         /// <summary>

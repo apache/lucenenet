@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         private readonly string termText;
-        public virtual string TermText { get { return termText; } }
+        public virtual string TermText => termText;
 
         public virtual Term GetLuceneTerm(string fieldName)
         {

@@ -239,19 +239,13 @@ namespace Lucene.Net.Spatial.Prefix
             }
 
             /// <summary>Largest docid.</summary>
-            public virtual int Length
-            {
-                get { return maxInt; }
-            }
+            public virtual int Length => maxInt;
 
             /// <summary>
             /// Number of docids.
             /// NOTE: This was size() in Lucene.
             /// </summary>
-            public virtual int Count
-            {
-                get { return intSet.Count; }
-            }
+            public virtual int Count => intSet.Count;
 
             /// <summary>NOTE: modifies and returns either "this" or "other"</summary>
             public virtual SmallDocSet Union(SmallDocSet other)
@@ -280,15 +274,10 @@ namespace Lucene.Net.Spatial.Prefix
                 return bigger;
             }
 
-            public override IBits Bits
-            {
-                get
-                {
-                    //if the # of docids is super small, return null since iteration is going
-                    // to be faster
-                    return Count > 4 ? this : null;
-                }
-            }
+            public override IBits Bits =>
+                //if the # of docids is super small, return null since iteration is going
+                // to be faster
+                Count > 4 ? this : null;
 
             public override DocIdSetIterator GetIterator()
             {

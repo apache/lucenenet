@@ -85,13 +85,7 @@ namespace Lucene.Net.Analysis.CharFilters
             }
         }
 
-        protected virtual int LastCumulativeDiff
-        {
-            get
-            {
-                return offsets == null ? 0 : diffs[size - 1];
-            }
-        }
+        protected virtual int LastCumulativeDiff => offsets == null ? 0 : diffs[size - 1];
 
         /// <summary>
         /// <para>

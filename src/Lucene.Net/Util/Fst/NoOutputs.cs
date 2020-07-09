@@ -60,13 +60,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static NoOutputs Singleton
-        {
-            get
-            {
-                return singleton;
-            }
-        }
+        public static NoOutputs Singleton => singleton;
 
         public override object Common(object output1, object output2)
         {
@@ -109,13 +103,7 @@ namespace Lucene.Net.Util.Fst
             return NO_OUTPUT;
         }
 
-        public override object NoOutput
-        {
-            get
-            {
-                return NO_OUTPUT;
-            }
-        }
+        public override object NoOutput => NO_OUTPUT;
 
         public override string OutputToString(object output)
         {

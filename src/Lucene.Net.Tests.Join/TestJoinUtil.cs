@@ -289,10 +289,7 @@ namespace Lucene.Net.Tests.Join
             {
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => true;
         }
 
         [Test]
@@ -564,10 +561,7 @@ namespace Lucene.Net.Tests.Join
                 topScoreDocCollector.SetScorer(scorer);
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return scoreDocsInOrder; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => scoreDocsInOrder;
         }
         
         private IndexIterationContext CreateContext(int nDocs, RandomIndexWriter writer, bool multipleValuesPerDocument,
@@ -810,10 +804,7 @@ namespace Lucene.Net.Tests.Join
                 this.scorer = scorer;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => false;
         }
 
         private class CollectorAnonymousInnerClassHelper4 : ICollector
@@ -868,10 +859,7 @@ namespace Lucene.Net.Tests.Join
                 this.scorer = scorer;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => false;
         }
 
         private class CollectorAnonymousInnerClassHelper5 : ICollector
@@ -969,10 +957,7 @@ namespace Lucene.Net.Tests.Join
                 docBase = context.DocBase;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => false;
 
             public virtual void SetScorer(Scorer scorer)
             {

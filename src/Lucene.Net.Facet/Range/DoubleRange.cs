@@ -198,10 +198,7 @@ namespace Lucene.Net.Facet.Range
                     this.fastMatchBits = fastMatchBits;
                 }
 
-                public override IBits Bits
-                {
-                    get { return new BitsAnonymousInnerClassHelper(this); }
-                }
+                public override IBits Bits => new BitsAnonymousInnerClassHelper(this);
 
                 private class BitsAnonymousInnerClassHelper : IBits
                 {
@@ -225,10 +222,7 @@ namespace Lucene.Net.Facet.Range
                         return outerInstance.outerInstance.outerInstance.Accept(outerInstance.values.DoubleVal(docID));
                     }
 
-                    public virtual int Length
-                    {
-                        get { return outerInstance.maxDoc; }
-                    }
+                    public virtual int Length => outerInstance.maxDoc;
                 }
 
                 public override DocIdSetIterator GetIterator()

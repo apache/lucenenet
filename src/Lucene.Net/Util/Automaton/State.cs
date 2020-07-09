@@ -54,11 +54,9 @@ namespace Lucene.Net.Util.Automaton
         internal bool accept;
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public Transition[] TransitionsArray
-        {
-            get => transitionsArray;
-            // LUCENENET NOTE: Setter removed because it is apparently not in use outside of this class
-        }
+        public Transition[] TransitionsArray => transitionsArray;
+
+        // LUCENENET NOTE: Setter removed because it is apparently not in use outside of this class
         private Transition[] transitionsArray = EMPTY_TRANSITIONS;
 
         internal int numTransitions = 0;// LUCENENET NOTE: Made internal because we already have a public property for access
@@ -154,10 +152,7 @@ namespace Lucene.Net.Util.Automaton
             return new TransitionsEnumerable(this);
         }
 
-        public virtual int NumTransitions
-        {
-            get { return numTransitions; }
-        }
+        public virtual int NumTransitions => numTransitions;
 
         public virtual void SetTransitions(Transition[] transitions)
         {

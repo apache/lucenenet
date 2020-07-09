@@ -39,15 +39,9 @@ namespace Lucene.Net.Join
             throw new NotSupportedException("FakeScorer doesn't support Advance(int)");
         }
 
-        public override int DocID
-        {
-            get { return doc; }
-        }
+        public override int DocID => doc;
 
-        public override int Freq
-        {
-            get { throw new NotSupportedException("FakeScorer doesn't support Freq"); }
-        }
+        public override int Freq => throw new NotSupportedException("FakeScorer doesn't support Freq");
 
         public override int NextDoc()
         {
@@ -64,10 +58,7 @@ namespace Lucene.Net.Join
             return 1;
         }
 
-        public override Weight Weight
-        {
-            get { throw new NotSupportedException(); }
-        }
+        public override Weight Weight => throw new NotSupportedException();
 
         public override ICollection<ChildScorer> GetChildren()
         {

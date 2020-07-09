@@ -73,51 +73,27 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Returns the freq pointer of the doc to which the last call of
         /// <see cref="MultiLevelSkipListReader.SkipTo(int)"/> has skipped.
         /// </summary>
-        public virtual long FreqPointer
-        {
-            get
-            {
-                return lastFreqPointer;
-            }
-        }
+        public virtual long FreqPointer => lastFreqPointer;
 
         /// <summary>
         /// Returns the prox pointer of the doc to which the last call of
         /// <see cref="MultiLevelSkipListReader.SkipTo(int)"/> has skipped.
         /// </summary>
-        public virtual long ProxPointer
-        {
-            get
-            {
-                return lastProxPointer;
-            }
-        }
+        public virtual long ProxPointer => lastProxPointer;
 
         /// <summary>
         /// Returns the payload length of the payload stored just before
         /// the doc to which the last call of <see cref="MultiLevelSkipListReader.SkipTo(int)"/>
         /// has skipped.
         /// </summary>
-        public virtual int PayloadLength
-        {
-            get
-            {
-                return lastPayloadLength;
-            }
-        }
+        public virtual int PayloadLength => lastPayloadLength;
 
         /// <summary>
         /// Returns the offset length (endOffset-startOffset) of the position stored just before
         /// the doc to which the last call of <see cref="MultiLevelSkipListReader.SkipTo(int)"/>
         /// has skipped.
         /// </summary>
-        public virtual int OffsetLength
-        {
-            get
-            {
-                return lastOffsetLength;
-            }
-        }
+        public virtual int OffsetLength => lastOffsetLength;
 
         protected override void SeekChild(int level)
         {

@@ -516,19 +516,13 @@ namespace Lucene.Net.Index
                 i = 0;
             }
 
-            public ThreadState Current
-            {
-                get { return current; }
-            }
+            public ThreadState Current => current;
 
             public void Dispose()
             {
             }
 
-            object System.Collections.IEnumerator.Current
-            {
-                get { return Current; }
-            }
+            object System.Collections.IEnumerator.Current => Current;
 
             public bool MoveNext()
             {
@@ -559,21 +553,9 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns the number of delete terms in the global pool
         /// </summary>
-        public int NumGlobalTermDeletes
-        {
-            get
-            {
-                return documentsWriter.deleteQueue.NumGlobalTermDeletes + bufferedUpdatesStream.NumTerms;
-            }
-        }
+        public int NumGlobalTermDeletes => documentsWriter.deleteQueue.NumGlobalTermDeletes + bufferedUpdatesStream.NumTerms;
 
-        public long DeleteBytesUsed
-        {
-            get
-            {
-                return documentsWriter.deleteQueue.BytesUsed + bufferedUpdatesStream.BytesUsed;
-            }
-        }
+        public long DeleteBytesUsed => documentsWriter.deleteQueue.BytesUsed + bufferedUpdatesStream.BytesUsed;
 
         internal int NumFlushingDWPT
         {
@@ -596,10 +578,7 @@ namespace Lucene.Net.Index
             flushDeletes.Value = true;
         }
 
-        internal int NumActiveDWPT
-        {
-            get { return this.perThreadPool.NumThreadStatesActive; }
-        }
+        internal int NumActiveDWPT => this.perThreadPool.NumThreadStatesActive;
 
         internal ThreadState ObtainAndLock()
         {
@@ -942,12 +921,6 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns the <see cref="IndexWriter"/> <see cref="Util.InfoStream"/>
         /// </summary>
-        public InfoStream InfoStream
-        {
-            get
-            {
-                return infoStream;
-            }
-        }
+        public InfoStream InfoStream => infoStream;
     }
 }

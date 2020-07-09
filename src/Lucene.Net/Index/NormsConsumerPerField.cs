@@ -72,13 +72,7 @@ namespace Lucene.Net.Index
             consumer.Flush(state, normsWriter);
         }
 
-        internal bool IsEmpty
-        {
-            get
-            {
-                return consumer == null;
-            }
-        }
+        internal bool IsEmpty => consumer == null;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Abort()

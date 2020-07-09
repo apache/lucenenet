@@ -31,29 +31,29 @@ namespace Lucene.Net.Util
 	/// </summary>
 	public class FailureMarker : RunListener
 	{
-	  internal static readonly AtomicInteger Failures_Renamed = new AtomicInteger();
+	  internal static readonly AtomicInteger failures = new AtomicInteger();
 
 	  public override void TestFailure(Failure failure)
 	  {
-		Failures_Renamed.IncrementAndGet();
+		failures.IncrementAndGet();
 	  }
 
 	  public static bool HadFailures()
 	  {
-		return Failures_Renamed.Get() > 0;
+		return failures.Get() > 0;
 	  }
 
 	  internal static int Failures
 	  {
 		  get
 		  {
-			return Failures_Renamed.Get();
+			return failures.Get();
 		  }
 	  }
 
 	  public static void ResetFailures()
 	  {
-		Failures_Renamed.Set(0);
+		failures.Set(0);
 	  }
 	}
 

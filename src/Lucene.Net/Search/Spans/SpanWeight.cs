@@ -62,13 +62,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        public override Query Query
-        {
-            get
-            {
-                return m_query;
-            }
-        }
+        public override Query Query => m_query;
 
         public override float GetValueForNormalization()
         {

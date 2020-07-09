@@ -93,14 +93,8 @@ namespace Lucene.Net.Analysis.Standard
         /// </summary>
         public int MaxTokenLength
         {
-            set
-            {
-                maxTokenLength = value;
-            }
-            get
-            {
-                return maxTokenLength;
-            }
+            get => maxTokenLength;
+            set => maxTokenLength = value;
         }
 
 

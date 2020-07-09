@@ -4,6 +4,7 @@ using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -224,13 +225,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             writer.Dispose();
         }
 
-        private static string Text
-        {
-            get
-            {
-                return Convert.ToString(Random.Next());
-            }
-        }
+        private static string Text => Convert.ToString(Random.Next(), CultureInfo.InvariantCulture);
     }
 #pragma warning restore 612, 618
 }

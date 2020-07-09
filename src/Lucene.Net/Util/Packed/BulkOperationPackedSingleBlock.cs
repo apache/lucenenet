@@ -38,28 +38,16 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// NOTE: This was longBlockCount() in Lucene.
         /// </summary>
-        public override sealed int Int64BlockCount
-        {
-            get { return BLOCK_COUNT; }
-        }
+        public override sealed int Int64BlockCount => BLOCK_COUNT;
 
-        public override sealed int ByteBlockCount
-        {
-            get { return BLOCK_COUNT * 8; }
-        }
+        public override sealed int ByteBlockCount => BLOCK_COUNT * 8;
 
         /// <summary>
         /// NOTE: This was longValueCount() in Lucene.
         /// </summary>
-        public override int Int64ValueCount
-        {
-            get { return valueCount; }
-        }
+        public override int Int64ValueCount => valueCount;
 
-        public override sealed int ByteValueCount
-        {
-            get { return valueCount; }
-        }
+        public override sealed int ByteValueCount => valueCount;
 
         /// <summary>
         /// NOTE: This was readLong() in Lucene.

@@ -49,10 +49,7 @@ namespace Lucene.Net.Search
                 maxDoc = reader.MaxDoc;
             }
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             public override int NextDoc()
             {
@@ -73,10 +70,7 @@ namespace Lucene.Net.Search
                 return score;
             }
 
-            public override int Freq
-            {
-                get { return 1; }
-            }
+            public override int Freq => 1;
 
             public override int Advance(int target)
             {
@@ -107,13 +101,7 @@ namespace Lucene.Net.Search
                 return "weight(" + outerInstance + ")";
             }
 
-            public override Query Query
-            {
-                get
-                {
-                    return outerInstance;
-                }
-            }
+            public override Query Query => outerInstance;
 
             public override float GetValueForNormalization()
             {

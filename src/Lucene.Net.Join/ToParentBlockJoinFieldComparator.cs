@@ -113,10 +113,7 @@ namespace Lucene.Net.Join
         }
 
         // LUCENENET NOTE: This was value(int) in Lucene.
-        public override IComparable this[int slot]
-        {
-            get { return _wrappedComparer[slot]; }
-        }
+        public override IComparable this[int slot] => _wrappedComparer[slot];
 
         /// <summary>
         /// Concrete implementation of <see cref="ToParentBlockJoinSortField"/> to sorts the parent docs with the lowest values

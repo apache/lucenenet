@@ -167,9 +167,6 @@ namespace Lucene.Net.Expressions
             return true;
         }
 
-        internal bool NeedsScores
-        {
-            get { return needsScores; }
-        }
+        internal bool NeedsScores => needsScores;
     }
 }

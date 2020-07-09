@@ -51,10 +51,7 @@ namespace Lucene.Net.Search
                 return NO_MORE_DOCS;
             }
 
-            public override int DocID
-            {
-                get { return exhausted ? NO_MORE_DOCS : -1; }
-            }
+            public override int DocID => exhausted ? NO_MORE_DOCS : -1;
 
             public override int NextDoc()
             {

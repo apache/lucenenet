@@ -967,15 +967,9 @@ namespace Lucene.Net.Util
         /// <para/>
         /// LUCENENET: Not Implemented - always returns true
         /// </summary>
-        internal static bool IsTestThread // LUCENENET specific - changed from public to internal since there is no way to support it
-        {
-            get
-            {
-                /*Assert.IsNotNull(ThreadAndTestNameRule.TestCaseThread, "Test case thread not set?");
+        /*Assert.IsNotNull(ThreadAndTestNameRule.TestCaseThread, "Test case thread not set?");
                 return Thread.CurrentThread == ThreadAndTestNameRule.TestCaseThread;*/
-                return true;
-            }
-        }
+        internal static bool IsTestThread => true; // LUCENENET specific - changed from public to internal since there is no way to support it
 
         /// <summary>
         /// Asserts that <see cref="FieldCacheSanityChecker"/> does not detect any
@@ -1760,10 +1754,7 @@ namespace Lucene.Net.Util
             return new CultureInfo(localeName);
         }
 
-        public static bool DefaultCodecSupportsDocValues
-        {
-            get { return !Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal); }
-        }
+        public static bool DefaultCodecSupportsDocValues => !Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal);
 
         private static Directory NewFSDirectoryImpl(Type clazz, DirectoryInfo file)
         {

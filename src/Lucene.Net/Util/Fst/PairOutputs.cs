@@ -170,13 +170,7 @@ namespace Lucene.Net.Util.Fst
             return NewPair(output1, output2);
         }
 
-        public override Pair NoOutput
-        {
-            get
-            {
-                return NO_OUTPUT;
-            }
-        }
+        public override Pair NoOutput => NO_OUTPUT;
 
         public override string OutputToString(Pair output)
         {

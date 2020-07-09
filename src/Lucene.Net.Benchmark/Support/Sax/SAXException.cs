@@ -138,10 +138,7 @@ namespace Sax
         /// <summary>
         /// Gets the embedded exception, if any, or <c>null</c> if there is none.
         /// </summary>
-        public virtual Exception Exception
-        {
-            get { return exception; }
-        }
+        public virtual Exception Exception => exception;
 
         /// <summary>
         /// Override ToString to pick up any embedded exception.

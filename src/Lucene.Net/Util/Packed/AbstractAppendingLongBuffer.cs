@@ -52,10 +52,7 @@ namespace Lucene.Net.Util.Packed
             this.acceptableOverheadRatio = acceptableOverheadRatio;
         }
 
-        public int PageSize
-        {
-            get { return pageMask + 1; }
-        }
+        public int PageSize => pageMask + 1;
 
         /// <summary>
         /// Get the number of values that have been added to the buffer.
@@ -190,10 +187,7 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// Whether or not there are remaining values. </summary>
-            public bool HasNext
-            {
-                get { return pOff < currentCount; }
-            }
+            public bool HasNext => pOff < currentCount;
 
             /// <summary>
             /// Return the next long in the buffer. </summary>

@@ -56,22 +56,10 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <returns> The minimum position permitted in a match </returns>
-        public virtual int Start
-        {
-            get
-            {
-                return m_start;
-            }
-        }
+        public virtual int Start => m_start;
 
         /// <returns> The maximum end position permitted in a match. </returns>
-        public virtual int End
-        {
-            get
-            {
-                return m_end;
-            }
-        }
+        public virtual int End => m_end;
 
         public override string ToString(string field)
         {

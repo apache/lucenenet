@@ -490,8 +490,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         public virtual int MaxCodeLen
         {
-            get { return this.maxCodeLen; }
-            set { this.maxCodeLen = value; }
+            get => this.maxCodeLen;
+            set => this.maxCodeLen = value;
         }
     }
 }

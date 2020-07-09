@@ -267,12 +267,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
         // provided in the constructor. This allows us to change the culture on the current
         // thread and work like other .NET components. But culture can be overridden by
         // passing it to the constructor.
-        private CultureInfo Culture
-        {
-            get
-            {
-                return culture ?? CultureInfo.CurrentCulture;
-            }
-        }
+        private CultureInfo Culture => culture ?? CultureInfo.CurrentCulture;
     }
 }

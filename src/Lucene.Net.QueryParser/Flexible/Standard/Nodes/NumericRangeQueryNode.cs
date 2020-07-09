@@ -141,8 +141,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         /// </summary>
         public virtual NumericConfig NumericConfig
         {
-            get { return this.numericConfig; }
-            set { this.numericConfig = value; } // LUCENENET specific: made the field private and added setter (confusing)
+            get => this.numericConfig;
+            set => this.numericConfig = value; // LUCENENET specific: made the field private and added setter (confusing)
         }
 
         public override string ToString()

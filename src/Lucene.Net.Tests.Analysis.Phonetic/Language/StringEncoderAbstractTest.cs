@@ -58,10 +58,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
         protected abstract T CreateStringEncoder();
 
-        public virtual T StringEncoder
-        {
-            get { return this.stringEncoder; }
-        }
+        public virtual T StringEncoder => this.stringEncoder;
 
         [Test]
         public virtual void TestEncodeEmpty()

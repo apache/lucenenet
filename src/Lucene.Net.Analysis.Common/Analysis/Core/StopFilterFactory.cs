@@ -119,29 +119,11 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        public virtual bool EnablePositionIncrements
-        {
-            get
-            {
-                return enablePositionIncrements;
-            }
-        }
+        public virtual bool EnablePositionIncrements => enablePositionIncrements;
 
-        public virtual bool IgnoreCase
-        {
-            get
-            {
-                return ignoreCase;
-            }
-        }
+        public virtual bool IgnoreCase => ignoreCase;
 
-        public virtual CharArraySet StopWords
-        {
-            get
-            {
-                return stopWords;
-            }
-        }
+        public virtual CharArraySet StopWords => stopWords;
 
         public override TokenStream Create(TokenStream input)
         {

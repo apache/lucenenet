@@ -337,13 +337,7 @@ namespace Lucene.Net.Util.Fst
             */
         }
 
-        public FST.INPUT_TYPE InputType
-        {
-            get
-            {
-                return inputType;
-            }
-        }
+        public FST.INPUT_TYPE InputType => inputType;
 
         /// <summary>
         /// Returns bytes used to represent the FST </summary>
@@ -478,10 +472,7 @@ namespace Lucene.Net.Util.Fst
 
         public T EmptyOutput
         {
-            get
-            {
-                return emptyOutput;
-            }
+            get => emptyOutput;
             set
             {
                 if (emptyOutput != null)
@@ -1456,30 +1447,13 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public long NodeCount
-        {
-            get
-            {
-                // 1+ in order to count the -1 implicit final node
-                return 1 + nodeCount;
-            }
-        }
+        public long NodeCount =>
+            // 1+ in order to count the -1 implicit final node
+            1 + nodeCount;
 
-        public long ArcCount
-        {
-            get
-            {
-                return arcCount;
-            }
-        }
+        public long ArcCount => arcCount;
 
-        public long ArcWithOutputCount
-        {
-            get
-            {
-                return arcWithOutputCount;
-            }
-        }
+        public long ArcWithOutputCount => arcWithOutputCount;
 
         /// <summary>
         /// Nodes will be expanded if their depth (distance from the root node) is
@@ -2310,15 +2284,9 @@ namespace Lucene.Net.Util.Fst
                 return FST<T>.Flag(Flags, flag);
             }
 
-            public virtual bool IsLast
-            {
-                get { return Flag(BIT_LAST_ARC); }
-            }
+            public virtual bool IsLast => Flag(BIT_LAST_ARC);
 
-            public virtual bool IsFinal
-            {
-                get { return Flag(BIT_FINAL_ARC); }
-            }
+            public virtual bool IsFinal => Flag(BIT_FINAL_ARC);
 
             public override string ToString()
             {

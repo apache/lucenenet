@@ -184,17 +184,11 @@ namespace Lucene.Net.Search
 
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual FieldComparer[] Comparers
-        {
-            get { return m_comparers; }
-        }
+        public virtual FieldComparer[] Comparers => m_comparers;
 
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual int[] ReverseMul
-        {
-            get { return m_reverseMul; }
-        }
+        public virtual int[] ReverseMul => m_reverseMul;
 
         public virtual void SetComparer(int pos, FieldComparer comparer)
         {
@@ -213,10 +207,7 @@ namespace Lucene.Net.Search
         protected FieldComparer m_firstComparer; // this must always be equal to comparers[0]
         protected readonly int[] m_reverseMul;
 
-        internal FieldComparer FirstComparer
-        {
-            get { return this.m_firstComparer; }
-        }
+        internal FieldComparer FirstComparer => this.m_firstComparer;
 
         // LUCENENET NOTE: We don't need this declaration because we are using
         // a generic constraint on T
@@ -248,9 +239,6 @@ namespace Lucene.Net.Search
         /// Returns the <see cref="SortField"/>s being used by this hit queue. </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        internal virtual SortField[] Fields
-        {
-            get { return m_fields; }
-        }
+        internal virtual SortField[] Fields => m_fields;
     }
 }

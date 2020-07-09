@@ -261,9 +261,9 @@ namespace Lucene.Net.Replicator
             }
         }
 
-        public virtual string CurrentVersion { get { return currentVersion; } }
+        public virtual string CurrentVersion => currentVersion;
 
-        public virtual IDictionary<string, IList<RevisionFile>> CurrentRevisionFiles { get { return currentRevisionFiles; } }
+        public virtual IDictionary<string, IList<RevisionFile>> CurrentRevisionFiles => currentRevisionFiles;
 
         public virtual void RevisionReady(string version,
             IDictionary<string, IList<RevisionFile>> revisionFiles,
@@ -336,8 +336,8 @@ namespace Lucene.Net.Replicator
         /// </summary>
         public virtual InfoStream InfoStream
         {
-            get { return infoStream; }
-            set { infoStream = value ?? InfoStream.NO_OUTPUT; }
+            get => infoStream;
+            set => infoStream = value ?? InfoStream.NO_OUTPUT;
         }
     }
 }

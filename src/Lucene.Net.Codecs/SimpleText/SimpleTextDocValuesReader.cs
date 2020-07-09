@@ -243,10 +243,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
-            public int Length
-            {
-                get { return _outerInstance.maxDoc; }
-            }
+            public int Length => _outerInstance.maxDoc;
         }
 
         public override BinaryDocValues GetBinary(FieldInfo fieldInfo)
@@ -368,10 +365,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
-            public int Length
-            {
-                get { return _outerInstance.maxDoc; }
-            }
+            public int Length => _outerInstance.maxDoc;
         }
 
         public override SortedDocValues GetSorted(FieldInfo fieldInfo)
@@ -475,10 +469,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
-            public override int ValueCount
-            {
-                get { return (int)_field.NumValues; }
-            }
+            public override int ValueCount => (int)_field.NumValues;
         }
 
         public override SortedSetDocValues GetSortedSet(FieldInfo fieldInfo)
@@ -590,10 +581,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
-            public override long ValueCount
-            {
-                get { return _field.NumValues; }
-            }
+            public override long ValueCount => _field.NumValues;
         }
 
         public override IBits GetDocsWithField(FieldInfo field)

@@ -48,13 +48,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the prefix of this query. </summary>
-        public virtual Term Prefix
-        {
-            get
-            {
-                return _prefix;
-            }
-        }
+        public virtual Term Prefix => _prefix;
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {

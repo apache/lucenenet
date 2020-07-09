@@ -115,57 +115,21 @@ namespace Lucene.Net.Analysis.Shingle
         /// The max shingle (token ngram) size
         /// </summary>
         /// <returns> The max shingle (token ngram) size </returns>
-        public int MaxShingleSize
-        {
-            get
-            {
-                return maxShingleSize;
-            }
-        }
+        public int MaxShingleSize => maxShingleSize;
 
         /// <summary>
         /// The min shingle (token ngram) size
         /// </summary>
         /// <returns> The min shingle (token ngram) size </returns>
-        public int MinShingleSize
-        {
-            get
-            {
-                return minShingleSize;
-            }
-        }
+        public int MinShingleSize => minShingleSize;
 
-        public string TokenSeparator
-        {
-            get
-            {
-                return tokenSeparator;
-            }
-        }
+        public string TokenSeparator => tokenSeparator;
 
-        public bool OutputUnigrams
-        {
-            get
-            {
-                return outputUnigrams;
-            }
-        }
+        public bool OutputUnigrams => outputUnigrams;
 
-        public bool OutputUnigramsIfNoShingles
-        {
-            get
-            {
-                return outputUnigramsIfNoShingles;
-            }
-        }
+        public bool OutputUnigramsIfNoShingles => outputUnigramsIfNoShingles;
 
-        public string FillerToken
-        {
-            get
-            {
-                return fillerToken;
-            }
-        }
+        public string FillerToken => fillerToken;
 
         protected override sealed Analyzer GetWrappedAnalyzer(string fieldName)
         {

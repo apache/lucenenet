@@ -110,13 +110,7 @@ namespace Lucene.Net.Index
                     // no-op: the bytes was already filled by our owner's incrementToken
                 }
 
-                public BytesRef BytesRef
-                {
-                    get
-                    {
-                        return bytes;
-                    }
-                }
+                public BytesRef BytesRef => bytes;
 
                 public override void Clear()
                 {

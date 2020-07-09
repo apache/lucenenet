@@ -36,10 +36,7 @@ namespace Lucene.Net.Search.Grouping
         /// <returns>all unique values for each top N group</returns>
         public abstract IEnumerable<GC> Groups { get; }
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return true; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => true;
 
         public virtual void SetScorer(Scorer scorer)
         {

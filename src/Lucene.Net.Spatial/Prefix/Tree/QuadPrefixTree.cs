@@ -66,10 +66,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         private readonly double ymid;
 
         private readonly double gridW;
-        public double GridH
-        {
-            get { return gridH; }
-        }
+        public double GridH => gridH;
         private readonly double gridH;
         
         internal readonly double[] levelW;
@@ -271,10 +268,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return cells;
             }
 
-            public override int SubCellsSize
-            {
-                get { return 4; }
-            }
+            public override int SubCellsSize => 4;
 
             public override Cell GetSubCell(IPoint p)
             {

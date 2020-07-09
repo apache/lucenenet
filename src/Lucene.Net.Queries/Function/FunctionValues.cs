@@ -128,10 +128,7 @@ namespace Lucene.Net.Queries.Function
         }
 
         /// <returns> the number of unique sort ordinals this instance has </returns>
-        public virtual int NumOrd
-        {
-            get { throw new System.NotSupportedException(); }
-        }
+        public virtual int NumOrd => throw new System.NotSupportedException();
 
         public abstract string ToString(int doc);
 

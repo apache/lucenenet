@@ -34,10 +34,7 @@ namespace Lucene.Net.CodeAnalysis
     {
         private const string Title = "Add sealed keyword to class definition";
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds
-        {
-            get { return ImmutableArray.Create(Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedAnalyzer.DiagnosticId); }
-        }
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedAnalyzer.DiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

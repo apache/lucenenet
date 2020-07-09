@@ -29,22 +29,13 @@ namespace Lucene.Net.Index
 
         public T this[int index]
         {
-            get { return _list[index]; }
-            set
-            {
-                _list[index] = value;
-            }
+            get => _list[index];
+            set => _list[index] = value;
         }
 
-        public int Count
-        {
-            get { return _list.Count; }
-        }
+        public int Count => _list.Count;
 
-        public bool IsReadOnly
-        {
-            get { return false; }
-        }
+        public bool IsReadOnly => false;
 
         public void Add(T item)
         {

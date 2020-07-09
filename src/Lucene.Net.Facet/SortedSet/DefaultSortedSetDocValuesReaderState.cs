@@ -108,13 +108,7 @@ namespace Lucene.Net.Facet.SortedSet
         /// <summary>
         /// Returns mapping from prefix to <see cref="SortedSetDocValuesReaderState.OrdRange"/>.
         /// </summary>
-        public override IDictionary<string, OrdRange> PrefixToOrdRange
-        {
-            get
-            {
-                return prefixToOrdRange;
-            }
-        }
+        public override IDictionary<string, OrdRange> PrefixToOrdRange => prefixToOrdRange;
 
         /// <summary>
         /// Returns the <see cref="SortedSetDocValuesReaderState.OrdRange"/> for this dimension.
@@ -129,31 +123,13 @@ namespace Lucene.Net.Facet.SortedSet
         /// <summary>
         /// Indexed field we are reading.
         /// </summary>
-        public override string Field
-        {
-            get
-            {
-                return field;
-            }
-        }
+        public override string Field => field;
 
-        public override IndexReader OrigReader
-        {
-            get
-            {
-                return origReader;
-            }
-        }
+        public override IndexReader OrigReader => origReader;
 
         /// <summary>
         /// Number of unique labels.
         /// </summary>
-        public override int Count
-        {
-            get
-            {
-                return valueCount;
-            }
-        }
+        public override int Count => valueCount;
     }
 }

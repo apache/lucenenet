@@ -272,10 +272,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// Indicates the strict mode for this <see cref="Nysiis"/> encoder.
         /// <c>true</c> if the encoder is configured for strict mode, <c>false</c> otherwise.
         /// </summary>
-        public virtual bool IsStrict
-        {
-            get { return this.strict; }
-        }
+        public virtual bool IsStrict => this.strict;
 
         /// <summary>
         /// Retrieves the NYSIIS code for a given string.

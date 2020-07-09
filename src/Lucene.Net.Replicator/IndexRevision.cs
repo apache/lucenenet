@@ -127,9 +127,9 @@ namespace Lucene.Net.Replicator
             return commit.CompareTo(or.commit);
         }
 
-        public virtual string Version { get { return version; } }
+        public virtual string Version => version;
 
-        public virtual IDictionary<string, IList<RevisionFile>> SourceFiles { get { return sourceFiles; } }
+        public virtual IDictionary<string, IList<RevisionFile>> SourceFiles => sourceFiles;
 
         public virtual Stream Open(string source, string fileName)
         {

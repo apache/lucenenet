@@ -43,10 +43,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             m_clnName = config.Get("collector.class", "");
         }
 
-        public override bool WithCollector
-        {
-            get { return true; }
-        }
+        public override bool WithCollector => true;
 
         protected override ICollector CreateCollector()
         {
@@ -76,24 +73,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             return RunData.GetQueryMaker(this);
         }
 
-        public override bool WithRetrieve
-        {
-            get { return false; }
-        }
+        public override bool WithRetrieve => false;
 
-        public override bool WithSearch
-        {
-            get { return true; }
-        }
+        public override bool WithSearch => true;
 
-        public override bool WithTraverse
-        {
-            get { return false; }
-        }
+        public override bool WithTraverse => false;
 
-        public override bool WithWarm
-        {
-            get { return false; }
-        }
+        public override bool WithWarm => false;
     }
 }

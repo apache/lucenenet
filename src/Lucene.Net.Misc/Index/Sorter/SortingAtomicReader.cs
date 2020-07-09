@@ -131,10 +131,7 @@ namespace Lucene.Net.Index.Sorter
                     return liveDocs.Get(outerInstance.docMap.OldToNew(index));
                 }
 
-                public int Length
-                {
-                    get { return liveDocs.Length; }
-                }
+                public int Length => liveDocs.Length;
             }
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
@@ -241,10 +238,7 @@ namespace Lucene.Net.Index.Sorter
                 return @in.Get(docMap.NewToOld(index));
             }
 
-            public int Length
-            {
-                get { return @in.Length; }
-            }
+            public int Length => @in.Length;
         }
 
         private class SortingSortedDocValues : SortedDocValues
@@ -268,13 +262,7 @@ namespace Lucene.Net.Index.Sorter
                 @in.LookupOrd(ord, result);
             }
 
-            public override int ValueCount
-            {
-                get
-                {
-                    return @in.ValueCount;
-                }
-            }
+            public override int ValueCount => @in.ValueCount;
 
             public override void Get(int docID, BytesRef result)
             {
@@ -313,13 +301,7 @@ namespace Lucene.Net.Index.Sorter
                 @in.LookupOrd(ord, result);
             }
 
-            public override long ValueCount
-            {
-                get
-                {
-                    return @in.ValueCount;
-                }
-            }
+            public override long ValueCount => @in.ValueCount;
 
             public override long LookupTerm(BytesRef key)
             {
@@ -492,15 +474,9 @@ namespace Lucene.Net.Index.Sorter
                 return SlowAdvance(target);
             }
 
-            public override int DocID
-            {
-                get { return docIt < 0 ? -1 : docIt >= upto ? NO_MORE_DOCS : docs[docIt]; }
-            }
+            public override int DocID => docIt < 0 ? -1 : docIt >= upto ? NO_MORE_DOCS : docs[docIt];
 
-            public override int Freq
-            {
-                get { return withFreqs && docIt < upto ? freqs[docIt] : 1; }
-            }
+            public override int Freq => withFreqs && docIt < upto ? freqs[docIt] : 1;
 
             public override int NextDoc()
             {
@@ -513,13 +489,7 @@ namespace Lucene.Net.Index.Sorter
 
             /// <summary>
             /// Returns the wrapped <see cref="DocsEnum"/>. </summary>
-            internal virtual DocsEnum Wrapped
-            {
-                get
-                {
-                    return base.m_input;
-                }
-            }
+            internal virtual DocsEnum Wrapped => base.m_input;
         }
 
         internal class SortingDocsAndPositionsEnum : FilterDocsAndPositionsEnum
@@ -707,20 +677,11 @@ namespace Lucene.Net.Index.Sorter
                 return SlowAdvance(target);
             }
 
-            public override int DocID
-            {
-                get { return docIt < 0 ? -1 : docIt >= upto ? NO_MORE_DOCS : docs[docIt]; }
-            }
+            public override int DocID => docIt < 0 ? -1 : docIt >= upto ? NO_MORE_DOCS : docs[docIt];
 
-            public override int EndOffset
-            {
-                get { return endOffset; }
-            }
+            public override int EndOffset => endOffset;
 
-            public override int Freq
-            {
-                get { return currFreq; }
-            }
+            public override int Freq => currFreq;
 
             public override BytesRef GetPayload()
             {
@@ -767,21 +728,12 @@ namespace Lucene.Net.Index.Sorter
                 return pos;
             }
 
-            public override int StartOffset
-            {
-                get { return startOffset; }
-            }
+            public override int StartOffset => startOffset;
 
             /// <summary>
             /// Returns the wrapped <see cref="DocsAndPositionsEnum"/>.
             /// </summary>
-            internal virtual DocsAndPositionsEnum Wrapped
-            {
-                get
-                {
-                    return m_input;
-                }
-            }
+            internal virtual DocsAndPositionsEnum Wrapped => m_input;
         }
 
         /// <summary>

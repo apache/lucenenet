@@ -46,14 +46,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual bool? Match
         {
-            get
-            {
-                return match;
-            }
-            set
-            {
-                this.match = value;
-            }
+            get => match;
+            set => this.match = value;
         }
 
         /// <summary>

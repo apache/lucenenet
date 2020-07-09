@@ -82,19 +82,13 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public virtual Term Current
-            {
-                get { return term; }
-            }
+            public virtual Term Current => term;
 
             public virtual void Dispose()
             {
             }
 
-            object IEnumerator.Current
-            {
-                get { return Current; }
-            }
+            object IEnumerator.Current => Current;
 
             public virtual bool MoveNext()
             {

@@ -71,13 +71,7 @@ namespace Lucene.Net.Search
                 return "weight(" + outerInstance + ")";
             }
 
-            public override Query Query
-            {
-                get
-                {
-                    return outerInstance;
-                }
-            }
+            public override Query Query => outerInstance;
 
             public override float GetValueForNormalization()
             {
@@ -184,13 +178,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the term of this query. </summary>
-        public virtual Term Term
-        {
-            get
-            {
-                return term;
-            }
-        }
+        public virtual Term Term => term;
 
         public override Weight CreateWeight(IndexSearcher searcher)
         {

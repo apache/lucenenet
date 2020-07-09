@@ -60,29 +60,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
         }
 
-        public virtual bool EnablePositionIncrements
-        {
-            get
-            {
-                return enablePositionIncrements;
-            }
-        }
+        public virtual bool EnablePositionIncrements => enablePositionIncrements;
 
-        public virtual bool IgnoreCase
-        {
-            get
-            {
-                return ignoreCase;
-            }
-        }
+        public virtual bool IgnoreCase => ignoreCase;
 
-        public virtual CharArraySet Words
-        {
-            get
-            {
-                return words;
-            }
-        }
+        public virtual CharArraySet Words => words;
 
         public override TokenStream Create(TokenStream input)
         {

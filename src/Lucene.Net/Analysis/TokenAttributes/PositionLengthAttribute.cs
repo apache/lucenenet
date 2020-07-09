@@ -39,6 +39,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public virtual int PositionLength
         {
+            get => positionLength;
             set
             {
                 if (value < 1)
@@ -46,10 +47,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
                     throw new ArgumentException("Position length must be 1 or greater: got " + value);
                 }
                 this.positionLength = value;
-            }
-            get
-            {
-                return positionLength;
             }
         }
 

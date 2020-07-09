@@ -215,10 +215,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
-        internal virtual int Count
-        {
-            get { return size; }
-        }
+        internal virtual int Count => size;
 
         private class TVFields : Fields
         {
@@ -293,21 +290,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                     return false;
                 }
 
-                public string Current
-                {
-                    get
-                    {
-                        return current;
-                    }
-                }
+                public string Current => current;
 
-                object IEnumerator.Current
-                {
-                    get
-                    {
-                        return Current;
-                    }
-                }
+                object IEnumerator.Current => Current;
 
                 public void Reset()
                 {
@@ -395,35 +380,15 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return termsEnum;
             }
 
-            public override long Count
-            {
-                get { return numTerms; }
-            }
+            public override long Count => numTerms;
 
-            public override long SumTotalTermFreq
-            {
-                get
-                {
-                    return -1;
-                }
-            }
+            public override long SumTotalTermFreq => -1;
 
-            public override long SumDocFreq
-            {
-                get
-                {
-                    // Every term occurs in just one doc:
-                    return numTerms;
-                }
-            }
+            public override long SumDocFreq =>
+                // Every term occurs in just one doc:
+                numTerms;
 
-            public override int DocCount
-            {
-                get
-                {
-                    return 1;
-                }
-            }
+            public override int DocCount => 1;
 
             public override IComparer<BytesRef> Comparer
             {
@@ -440,25 +405,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public override bool HasFreqs
-            {
-                get { return true; }
-            }
+            public override bool HasFreqs => true;
 
-            public override bool HasOffsets
-            {
-                get { return storeOffsets; }
-            }
+            public override bool HasOffsets => storeOffsets;
 
-            public override bool HasPositions
-            {
-                get { return storePositions; }
-            }
+            public override bool HasPositions => storePositions;
 
-            public override bool HasPayloads
-            {
-                get { return false; }
-            }
+            public override bool HasPayloads => false;
         }
 
         internal class TermAndPostings
@@ -601,25 +554,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return Term;
             }
 
-            public override BytesRef Term
-            {
-                get { return termAndPostings[currentTerm].Term; }
-            }
+            public override BytesRef Term => termAndPostings[currentTerm].Term;
 
-            public override long Ord
-            {
-                get { throw new System.NotSupportedException(); }
-            }
+            public override long Ord => throw new System.NotSupportedException();
 
-            public override int DocFreq
-            {
-                get { return 1; }
-            }
+            public override int DocFreq => 1;
 
-            public override long TotalTermFreq
-            {
-                get { return termAndPostings[currentTerm].Freq; }
-            }
+            public override long TotalTermFreq => termAndPostings[currentTerm].Freq;
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags) // ignored
             {
@@ -681,15 +622,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             internal int freq;
             internal IBits liveDocs;
 
-            public override int Freq
-            {
-                get { return freq; }
-            }
+            public override int Freq => freq;
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             public override int NextDoc()
             {
@@ -756,10 +691,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             public override int NextDoc()
             {

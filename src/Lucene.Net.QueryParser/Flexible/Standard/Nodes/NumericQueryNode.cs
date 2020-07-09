@@ -59,8 +59,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         /// </summary>
         public virtual string Field
         {
-            get { return this.field; }
-            set { this.field = value; }
+            get => this.field;
+            set => this.field = value;
         }
 
         /// <summary>
@@ -92,8 +92,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         /// </summary>
         public virtual NumberFormat NumberFormat
         {
-            get { return this.numberFormat; }
-            set { this.numberFormat = value; }
+            get => this.numberFormat;
+            set => this.numberFormat = value;
         }
 
         /// <summary>
@@ -101,8 +101,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         /// </summary>
         public virtual object Value
         {
-            get { return value; }
-            set { this.value = value; }
+            get => value;
+            set => this.value = value;
         }
 
         public override string ToString()

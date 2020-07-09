@@ -60,13 +60,7 @@ namespace Lucene.Net.Collation
             FieldsData = bytes; // so wrong setters cannot be called
         }
 
-        public override string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        public override string Name => name;
 
         public override void SetStringValue(string value)
         {

@@ -693,10 +693,7 @@ namespace Lucene.Net.QueryParsers.Simple
         /// </summary>
         public virtual Occur DefaultOperator
         {
-            get 
-            { 
-                return defaultOperator; 
-            }
+            get => defaultOperator;
             set 
             {
                 if (value != Occur.SHOULD && value != Occur.MUST)
@@ -736,10 +733,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
             internal Occur CurrentOperation 
             {
-                get 
-                { 
-                    return currentOperation; 
-                }
+                get => currentOperation;
                 set
                 {
                     currentOperation = value;
@@ -749,10 +743,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
             internal Occur PreviousOperation
             {
-                get
-                {
-                    return previousOperation;
-                }
+                get => previousOperation;
                 set
                 {
                     previousOperation = value;

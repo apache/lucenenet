@@ -90,10 +90,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             useAddIndexesDir = bool.Parse(@params);
         }
 
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
 
         public override void TearDown()
         {

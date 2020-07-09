@@ -91,21 +91,9 @@ namespace Lucene.Net.Codecs.Lucene46
         {
         }
 
-        public override FieldInfosReader FieldInfosReader
-        {
-            get
-            {
-                return reader;
-            }
-        }
+        public override FieldInfosReader FieldInfosReader => reader;
 
-        public override FieldInfosWriter FieldInfosWriter
-        {
-            get
-            {
-                return writer;
-            }
-        }
+        public override FieldInfosWriter FieldInfosWriter => writer;
 
         /// <summary>
         /// Extension of field infos </summary>

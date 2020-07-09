@@ -401,10 +401,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             m_sc = na;
         }
 
-        public virtual int Length
-        {
-            get { return m_length; }
-        }
+        public virtual int Length => m_length;
 
         public virtual object Clone()
         {
@@ -741,21 +738,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
 
             #region Added for better .NET support
-            public string Current
-            {
-                get
-                {
-                    return curkey;
-                }
-            }
+            public string Current => curkey;
 
-            object IEnumerator.Current
-            {
-                get
-                {
-                    return Current;
-                }
-            }
+            object IEnumerator.Current => Current;
 
             public void Dispose()
             {

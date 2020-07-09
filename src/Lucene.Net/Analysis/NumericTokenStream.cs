@@ -173,13 +173,7 @@ namespace Lucene.Net.Analysis
                 ValueSize = 0;
             }
 
-            public BytesRef BytesRef
-            {
-                get
-                {
-                    return _bytes;
-                }
-            }
+            public BytesRef BytesRef => _bytes;
 
             public void FillBytesRef()
             {
@@ -201,13 +195,7 @@ namespace Lucene.Net.Analysis
                 return (Shift += _precisionStep);
             }
 
-            public long RawValue
-            {
-                get
-                {
-                    return _value & ~((1L << Shift) - 1L);
-                }
-            }
+            public long RawValue => _value & ~((1L << Shift) - 1L);
 
             public int ValueSize { get; private set; }
 
@@ -362,13 +350,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Returns the precision step. </summary>
-        public int PrecisionStep
-        {
-            get
-            {
-                return precisionStep;
-            }
-        }
+        public int PrecisionStep => precisionStep;
 
         // members
         private INumericTermAttribute numericAtt;

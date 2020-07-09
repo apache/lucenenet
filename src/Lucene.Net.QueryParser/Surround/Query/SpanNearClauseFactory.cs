@@ -73,13 +73,13 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         private IDictionary<SpanQuery, float> weightBySpanQuery;
         private BasicQueryFactory qf;
 
-        public virtual IndexReader IndexReader { get { return reader; } }
+        public virtual IndexReader IndexReader => reader;
 
-        public virtual string FieldName { get { return fieldName; } }
+        public virtual string FieldName => fieldName;
 
-        public virtual BasicQueryFactory BasicQueryFactory { get { return qf; } }
+        public virtual BasicQueryFactory BasicQueryFactory => qf;
 
-        public virtual int Count { get { return weightBySpanQuery.Count; } }
+        public virtual int Count => weightBySpanQuery.Count;
 
         public virtual void Clear() { weightBySpanQuery.Clear(); }
 

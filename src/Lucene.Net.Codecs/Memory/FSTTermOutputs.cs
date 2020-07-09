@@ -344,10 +344,7 @@ namespace Lucene.Net.Codecs.Memory
             return new TermData(longs, bytes, docFreq, totalTermFreq);
         }
 
-        public override TermData NoOutput
-        {
-            get { return NO_OUTPUT; }
-        }
+        public override TermData NoOutput => NO_OUTPUT;
 
         public override string OutputToString(TermData data)
         {

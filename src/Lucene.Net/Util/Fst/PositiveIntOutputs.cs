@@ -41,13 +41,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static PositiveInt32Outputs Singleton
-        {
-            get
-            {
-                return singleton;
-            }
-        }
+        public static PositiveInt32Outputs Singleton => singleton;
 
         public override long? Common(long? output1, long? output2)
         {
@@ -129,13 +123,7 @@ namespace Lucene.Net.Util.Fst
             return true;
         }
 
-        public override long? NoOutput
-        {
-            get
-            {
-                return NO_OUTPUT;
-            }
-        }
+        public override long? NoOutput => NO_OUTPUT;
 
         public override string OutputToString(long? output)
         {

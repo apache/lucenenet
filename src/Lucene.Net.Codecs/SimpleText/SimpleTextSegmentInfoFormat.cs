@@ -31,14 +31,8 @@
 
         public const string SI_EXTENSION = "si";
 
-        public override SegmentInfoReader SegmentInfoReader
-        {
-            get { return _reader; }
-        }
+        public override SegmentInfoReader SegmentInfoReader => _reader;
 
-        public override SegmentInfoWriter SegmentInfoWriter
-        {
-            get { return _writer; }
-        }
+        public override SegmentInfoWriter SegmentInfoWriter => _writer;
     }
 }

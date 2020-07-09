@@ -102,15 +102,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             this.deltaPri = deltaPri;
         }
 
-        public virtual bool RunInBackground
-        {
-            get { return runInBackground; }
-        }
+        public virtual bool RunInBackground => runInBackground;
 
-        public virtual int BackgroundDeltaPriority
-        {
-            get { return deltaPri; }
-        }
+        public virtual int BackgroundDeltaPriority => deltaPri;
 
         // LUCENENET specific - made private and
         // added Stop property because volatile
@@ -119,8 +113,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         protected bool Stop
         {
-            get { return stopNow; }
-            set { stopNow = value; }
+            get => stopNow;
+            set => stopNow = value;
         }
         public virtual void StopNow()
         {
@@ -231,18 +225,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <summary>
         /// Gets the run data.
         /// </summary>
-        public virtual PerfRunData RunData
-        {
-            get { return runData; }
-        }
+        public virtual PerfRunData RunData => runData;
 
         /// <summary>
         /// Gets or Sets the depth.
         /// </summary>
         public virtual int Depth
         {
-            get { return depth; }
-            set { depth = value; }
+            get => depth;
+            set => depth = value;
         }
 
         // compute a blank string padding for printing this task indented by its depth  
@@ -277,10 +268,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <summary>
         /// Returns the maxDepthLogStart.
         /// </summary>
-        internal int MaxDepthLogStart
-        {
-            get { return maxDepthLogStart; }
-        }
+        internal int MaxDepthLogStart => maxDepthLogStart;
 
         protected virtual string GetLogMessage(int recsCount)
         {
@@ -291,19 +279,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// Tasks that should never log at start can override this.
         /// Returns <c>true</c> if this task should never log when it start.
         /// </summary>
-        protected virtual bool ShouldNeverLogAtStart
-        {
-            get { return false; }
-        }
+        protected virtual bool ShouldNeverLogAtStart => false;
 
         /// <summary>
         /// Tasks that should not record statistics can override this. 
         /// Returns <c>true</c> if this task should never record its statistics.
         /// </summary>
-        protected virtual bool ShouldNotRecordStats
-        {
-            get { return false; }
-        }
+        protected virtual bool ShouldNotRecordStats => false;
 
         /// <summary>
         /// Task setup work that should not be measured for that specific task. By
@@ -339,10 +321,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// Sub classes that support parameters must override this method to return
         /// <c>true</c> if this task supports command line params.
         /// </summary>
-        public virtual bool SupportsParams
-        {
-            get { return false; }
-        }
+        public virtual bool SupportsParams => false;
 
         /// <summary>
         /// Set the params of this task.
@@ -360,24 +339,21 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <summary>
         /// Gets the Params.
         /// </summary>
-        public virtual string Params
-        {
-            get { return m_params; }
-        }
+        public virtual string Params => m_params;
 
         /// <summary>
         /// Return <c>true</c> if counting is disabled for this task.
         /// </summary>
         public virtual bool DisableCounting
         {
-            get { return disableCounting; }
-            set { disableCounting = value; }
+            get => disableCounting;
+            set => disableCounting = value;
         }
 
         public virtual int AlgLineNum
         {
-            get { return algLineNum; }
-            set { algLineNum = value; }
+            get => algLineNum;
+            set => algLineNum = value;
         }
     }
 }

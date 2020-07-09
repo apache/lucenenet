@@ -75,8 +75,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public virtual TimeZoneInfo TimeZone
         {
-            get { return this.timeZone; }
-            set { this.timeZone = value; }
+            get => this.timeZone;
+            set => this.timeZone = value;
         }
 
         public override string Format(double number)

@@ -539,21 +539,9 @@ namespace Lucene.Net.Cli.CommandLine
                 _enumerator = enumerator;
             }
 
-            public CommandArgument Current
-            {
-                get
-                {
-                    return _enumerator.Current;
-                }
-            }
+            public CommandArgument Current => _enumerator.Current;
 
-            object IEnumerator.Current
-            {
-                get
-                {
-                    return Current;
-                }
-            }
+            object IEnumerator.Current => Current;
 
             public void Dispose()
             {

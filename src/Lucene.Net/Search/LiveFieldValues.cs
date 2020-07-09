@@ -100,10 +100,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
-        public virtual int Count
-        {
-            get { return current.Count + old.Count; }
-        }
+        public virtual int Count => current.Count + old.Count;
 
         /// <summary>
         /// Returns the current value for this id, or <c>null</c> if the

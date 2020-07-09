@@ -79,10 +79,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// </summary>
         /// <seealso cref="IQueryNodeProcessor"/>.
         /// <seealso cref="SetQueryNodeProcessor(IQueryNodeProcessor)"/>
-        public virtual IQueryNodeProcessor QueryNodeProcessor
-        {
-            get { return processor; }
-        }
+        public virtual IQueryNodeProcessor QueryNodeProcessor => processor;
 
         /// <summary>
         /// Sets the processor that will be used to process the query node tree. If
@@ -141,10 +138,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// </summary>
         /// <seealso cref="Config.QueryConfigHandler"/>
         /// <seealso cref="SetQueryConfigHandler(QueryConfigHandler)"/>
-        public virtual QueryConfigHandler QueryConfigHandler
-        {
-            get { return config; }
-        }
+        public virtual QueryConfigHandler QueryConfigHandler => config;
 
         /// <summary>
         /// Returns the query builder used to build a object from the query node tree.
@@ -152,10 +146,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// </summary>
         /// <seealso cref="SetQueryBuilder(IQueryBuilder{TQuery})"/>
         /// <seealso cref="IQueryBuilder{TQuery}"/>
-        public virtual IQueryBuilder<TQuery> QueryBuilder
-        {
-            get { return this.builder; }
-        }
+        public virtual IQueryBuilder<TQuery> QueryBuilder => this.builder;
 
         /// <summary>
         /// Returns the text parser used to build a query node tree from a query
@@ -164,10 +155,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// </summary>
         /// <seealso cref="ISyntaxParser"/>
         /// <seealso cref="SetSyntaxParser(ISyntaxParser)"/>
-        public virtual ISyntaxParser SyntaxParser
-        {
-            get { return this.syntaxParser; }
-        }
+        public virtual ISyntaxParser SyntaxParser => this.syntaxParser;
 
         /// <summary>
         /// Sets the query configuration handler that will be used during query

@@ -41,44 +41,20 @@
         {
         }
 
-        public override PostingsFormat PostingsFormat
-        {
-            get { return _postings; }
-        }
+        public override PostingsFormat PostingsFormat => _postings;
 
-        public override StoredFieldsFormat StoredFieldsFormat
-        {
-            get { return _storedFields; }
-        }
+        public override StoredFieldsFormat StoredFieldsFormat => _storedFields;
 
-        public override TermVectorsFormat TermVectorsFormat
-        {
-            get { return _vectorsFormat; }
-        }
+        public override TermVectorsFormat TermVectorsFormat => _vectorsFormat;
 
-        public override FieldInfosFormat FieldInfosFormat
-        {
-            get { return _fieldInfosFormatRenamed; }
-        }
+        public override FieldInfosFormat FieldInfosFormat => _fieldInfosFormatRenamed;
 
-        public override SegmentInfoFormat SegmentInfoFormat
-        {
-            get { return _segmentInfos; }
-        }
+        public override SegmentInfoFormat SegmentInfoFormat => _segmentInfos;
 
-        public override NormsFormat NormsFormat
-        {
-            get { return _normsFormatRenamed; }
-        }
+        public override NormsFormat NormsFormat => _normsFormatRenamed;
 
-        public override LiveDocsFormat LiveDocsFormat
-        {
-            get { return _liveDocs; }
-        }
+        public override LiveDocsFormat LiveDocsFormat => _liveDocs;
 
-        public override DocValuesFormat DocValuesFormat
-        {
-            get { return _dvFormat; }
-        }
+        public override DocValuesFormat DocValuesFormat => _dvFormat;
     }
 }

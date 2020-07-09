@@ -122,10 +122,7 @@ namespace Lucene.Net.Search.Grouping
         // LUCENENET specific - need an abstract definition of this method, since our interface does not provide an implementation.
         public abstract void SetNextReader(AtomicReaderContext context);
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return true; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => true;
 
         private class OrderByCountAndValueComparer : IComparer<FacetEntry>
         {

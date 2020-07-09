@@ -548,17 +548,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         /// <summary>
         /// Gets the round number.
         /// </summary>
-        public virtual int RoundNumber
-        {
-            get { return roundNumber; }
-        }
+        public virtual int RoundNumber => roundNumber;
 
         /// <summary>
         /// Gets the algorithmText.
         /// </summary>
-        public virtual string AlgorithmText
-        {
-            get { return algorithmText; }
-        }
+        public virtual string AlgorithmText => algorithmText;
     }
 }

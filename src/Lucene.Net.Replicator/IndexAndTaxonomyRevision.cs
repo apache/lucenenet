@@ -85,12 +85,12 @@ namespace Lucene.Net.Replicator
             /// <summary>
             /// Gets the <see cref="SnapshotDeletionPolicy"/> used by the underlying <see cref="Index.IndexWriter"/>.
             /// </summary>
-            public virtual SnapshotDeletionPolicy DeletionPolicy { get { return sdp; } }
+            public virtual SnapshotDeletionPolicy DeletionPolicy => sdp;
 
             /// <summary>
             /// Gets the <see cref="Index.IndexWriter"/> used by this <see cref="DirectoryTaxonomyWriter"/>.
             /// </summary>
-            public virtual IndexWriter IndexWriter { get { return writer; } }
+            public virtual IndexWriter IndexWriter => writer;
         }
 
         public const string INDEX_SOURCE = "index";
@@ -179,9 +179,9 @@ namespace Lucene.Net.Replicator
             return cmp != 0 ? cmp : taxonomyCommit.CompareTo(itr.taxonomyCommit);
         }
 
-        public virtual string Version { get { return version; } }
+        public virtual string Version => version;
 
-        public virtual IDictionary<string, IList<RevisionFile>> SourceFiles { get { return sourceFiles; } }
+        public virtual IDictionary<string, IList<RevisionFile>> SourceFiles => sourceFiles;
 
         /// <exception cref="IOException"></exception>
         public virtual Stream Open(string source, string fileName)

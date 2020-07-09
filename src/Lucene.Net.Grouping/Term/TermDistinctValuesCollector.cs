@@ -106,10 +106,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             return Array.BinarySearch(ords, ord) < 0;
         }
 
-        public override IEnumerable<GroupCount> Groups
-        {
-            get { return groups; }
-        }
+        public override IEnumerable<GroupCount> Groups => groups;
 
         public override void SetNextReader(AtomicReaderContext context)
         {

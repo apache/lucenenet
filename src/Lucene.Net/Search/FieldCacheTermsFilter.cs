@@ -114,13 +114,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        public virtual IFieldCache FieldCache
-        {
-            get
-            {
-                return Search.FieldCache.DEFAULT;
-            }
-        }
+        public virtual IFieldCache FieldCache => Search.FieldCache.DEFAULT;
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {

@@ -119,9 +119,7 @@ namespace Lucene.Net.Index
         /// <c>false</c>.
         /// </summary>
         protected internal virtual bool FlushOnDocCount
-        {
-            get { return m_indexWriterConfig.MaxBufferedDocs != IndexWriterConfig.DISABLE_AUTO_FLUSH; }
-        }
+            => m_indexWriterConfig.MaxBufferedDocs != IndexWriterConfig.DISABLE_AUTO_FLUSH;
 
         /// <summary>
         /// Returns <c>true</c> if this <see cref="FlushPolicy"/> flushes on
@@ -129,9 +127,7 @@ namespace Lucene.Net.Index
         /// <c>false</c>.
         /// </summary>
         protected internal virtual bool FlushOnDeleteTerms
-        {
-            get { return m_indexWriterConfig.MaxBufferedDeleteTerms != IndexWriterConfig.DISABLE_AUTO_FLUSH; }
-        }
+            => m_indexWriterConfig.MaxBufferedDeleteTerms != IndexWriterConfig.DISABLE_AUTO_FLUSH;
 
         /// <summary>
         /// Returns <c>true</c> if this <see cref="FlushPolicy"/> flushes on
@@ -139,8 +135,6 @@ namespace Lucene.Net.Index
         /// <c>false</c>.
         /// </summary>
         protected internal virtual bool FlushOnRAM
-        {
-            get { return m_indexWriterConfig.RAMBufferSizeMB != IndexWriterConfig.DISABLE_AUTO_FLUSH; }
-        }
+            => m_indexWriterConfig.RAMBufferSizeMB != IndexWriterConfig.DISABLE_AUTO_FLUSH;
     }
 }

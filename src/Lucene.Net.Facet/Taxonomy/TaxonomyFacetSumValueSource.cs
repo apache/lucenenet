@@ -71,24 +71,20 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private sealed class FakeScorer : Scorer
         {
-            internal float score_Renamed;
-            internal int docID_Renamed;
+            internal float score;
+            internal int docID;
             internal FakeScorer()
                 : base(null)
             {
             }
             public override float GetScore()
             {
-                return score_Renamed;
+                return score;
             }
-            public override int Freq
-            {
-                get { throw new System.NotSupportedException(); }
-            }
-            public override int DocID
-            {
-                get { return docID_Renamed; }
-            }
+            public override int Freq => throw new System.NotSupportedException();
+
+            public override int DocID => docID;
+
             public override int NextDoc()
             {
                 throw new System.NotSupportedException();
@@ -101,13 +97,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 return 0;
             }
-            public override Weight Weight
-            {
-                get
-                {
-                    throw new System.NotSupportedException();
-                }
-            }
+            public override Weight Weight => throw new System.NotSupportedException();
 
             public override ICollection<ChildScorer> GetChildren()
             {
@@ -140,8 +130,8 @@ namespace Lucene.Net.Facet.Taxonomy
                     ords.Get(doc, scratch);
                     if (keepScores)
                     {
-                        scorer.docID_Renamed = doc;
-                        scorer.score_Renamed = scores[scoresIdx++];
+                        scorer.docID = doc;
+                        scorer.score = scores[scoresIdx++];
                     }
                     float value = (float)functionValues.DoubleVal(doc);
                     for (int i = 0; i < scratch.Length; i++)

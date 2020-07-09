@@ -129,13 +129,7 @@ namespace Lucene.Net.Facet
         /// The default configuration to be used for dimensions that 
         /// are not yet set in the <see cref="FacetsConfig"/>
         /// </returns>
-        protected virtual DimConfig DefaultDimConfig
-        {
-            get
-            {
-                return DEFAULT_DIM_CONFIG;
-            }
-        }
+        protected virtual DimConfig DefaultDimConfig => DEFAULT_DIM_CONFIG;
 
         /// <summary>
         /// Get the current configuration for a dimension.

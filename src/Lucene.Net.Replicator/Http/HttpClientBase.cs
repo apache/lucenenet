@@ -108,8 +108,8 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         public virtual int ConnectionTimeout
         {
-            get { return (int)httpc.Timeout.TotalMilliseconds; }
-            set { httpc.Timeout = TimeSpan.FromMilliseconds(value); }
+            get => (int)httpc.Timeout.TotalMilliseconds;
+            set => httpc.Timeout = TimeSpan.FromMilliseconds(value);
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace Lucene.Net.Replicator.Http
         /// returns <c>false</c>. Note that if you override <see cref="Dispose(bool)"/>, you must call
         /// <see cref="Dispose(bool)"/> on the base class, in order for this instance to be properly disposed.
         /// </summary>
-        public bool IsDisposed { get { return isDisposed; } }
+        public bool IsDisposed => isDisposed;
 
         /// <summary>
         /// Calls the overload <see cref="DoAction{T}(HttpResponseMessage, bool, Func{T})"/> passing <c>true</c> to consume.

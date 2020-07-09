@@ -139,12 +139,6 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the automaton used to create this query </summary>
-        public virtual Automaton Automaton
-        {
-            get
-            {
-                return m_automaton;
-            }
-        }
+        public virtual Automaton Automaton => m_automaton;
     }
 }

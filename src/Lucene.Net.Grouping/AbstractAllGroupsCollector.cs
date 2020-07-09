@@ -41,13 +41,7 @@ namespace Lucene.Net.Search.Grouping
         /// This is a convenience method. The following code snippet has the same effect: <code>GetGroups().Count</code>
         /// </summary>
         /// <returns>The total number of groups for the executed search</returns>
-        public virtual int GroupCount
-        {
-            get
-            {
-                return Groups.Count();
-            }
-        }
+        public virtual int GroupCount => Groups.Count();
 
         /// <summary>
         /// Returns the group values
@@ -93,10 +87,7 @@ namespace Lucene.Net.Search.Grouping
         /// <param name="context">next atomic reader context </param>
         public abstract void SetNextReader(AtomicReaderContext context);
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return true; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => true;
     }
 
     /// <summary>

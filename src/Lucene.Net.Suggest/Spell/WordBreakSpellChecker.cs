@@ -362,14 +362,8 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         public virtual int MinSuggestionFrequency
         {
-            get
-            {
-                return minSuggestionFrequency;
-            }
-            set
-            {
-                this.minSuggestionFrequency = value;
-            }
+            get => minSuggestionFrequency;
+            set => this.minSuggestionFrequency = value;
         }
 
         /// <summary>
@@ -378,14 +372,8 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         public virtual int MaxCombineWordLength
         {
-            get
-            {
-                return maxCombineWordLength;
-            }
-            set
-            {
-                this.maxCombineWordLength = value;
-            }
+            get => maxCombineWordLength;
+            set => this.maxCombineWordLength = value;
         }
 
         /// <summary>
@@ -393,14 +381,8 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         public virtual int MinBreakWordLength
         {
-            get
-            {
-                return minBreakWordLength;
-            }
-            set
-            {
-                this.minBreakWordLength = value;
-            }
+            get => minBreakWordLength;
+            set => this.minBreakWordLength = value;
         }
 
         /// <summary>
@@ -409,14 +391,8 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         public virtual int MaxChanges
         {
-            get
-            {
-                return maxChanges;
-            }
-            set
-            {
-                this.maxChanges = value;
-            }
+            get => maxChanges;
+            set => this.maxChanges = value;
         }
 
         /// <summary>
@@ -425,14 +401,8 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         public virtual int MaxEvaluations
         {
-            get
-            {
-                return maxEvaluations;
-            }
-            set
-            {
-                this.maxEvaluations = value;
-            }
+            get => maxEvaluations;
+            set => this.maxEvaluations = value;
         }
 
         private sealed class LengthThenMaxFreqComparer : IComparer<SuggestWordArrayWrapper>
@@ -529,20 +499,11 @@ namespace Lucene.Net.Search.Spell
 
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-            public SuggestWord[] SuggestWords
-            {
-                get { return suggestWords; }
-            }
+            public SuggestWord[] SuggestWords => suggestWords;
 
-            public int FreqMax
-            {
-                get { return freqMax; }
-            }
+            public int FreqMax => freqMax;
 
-            public int FreqSum
-            {
-                get { return freqSum; }
-            }
+            public int FreqSum => freqSum;
 
             // Required by the PriorityQueue's generic constraint, but we are using
             // IComparer<T> here rather than IComparable<T>
@@ -566,15 +527,9 @@ namespace Lucene.Net.Search.Spell
                 this.numCombinations = numCombinations;
             }
 
-            public CombineSuggestion CombineSuggestion
-            {
-                get { return combineSuggestion; }
-            }
+            public CombineSuggestion CombineSuggestion => combineSuggestion;
 
-            public int NumCombinations
-            {
-                get { return numCombinations; }
-            }
+            public int NumCombinations => numCombinations;
 
             // Required by the PriorityQueue's generic constraint, but we are using
             // IComparer<T> here rather than IComparable<T>

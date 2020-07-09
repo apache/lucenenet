@@ -459,8 +459,8 @@ namespace Lucene.Net.Analysis.Nl
 
         internal virtual IDictionary<string, string> StemDictionary
         {
-            get { return _stemDict; } // LUCENENET NOTE: Added setter per MSDN guidelines
-            set { _stemDict = value; }
+            get => _stemDict; // LUCENENET NOTE: Added setter per MSDN guidelines
+            set => _stemDict = value;
         }
     }
 }

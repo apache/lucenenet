@@ -49,10 +49,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <summary>
         /// return the list of <see cref="WeightedPhraseInfo"/>.
         /// </summary>
-        public virtual IList<WeightedPhraseInfo> PhraseList
-        {
-            get { return phraseList; }
-        }
+        public virtual IList<WeightedPhraseInfo> PhraseList => phraseList;
 
         /// <summary>
         /// a constructor.
@@ -256,26 +253,17 @@ namespace Lucene.Net.Search.VectorHighlight
             /// <summary>
             /// the termsOffsets
             /// </summary>
-            public virtual IList<Toffs> TermsOffsets
-            {
-                get { return termsOffsets; }
-            }
+            public virtual IList<Toffs> TermsOffsets => termsOffsets;
 
             /// <summary>
             /// the boost
             /// </summary>
-            public virtual float Boost
-            {
-                get { return boost; }
-            }
+            public virtual float Boost => boost;
 
             /// <summary>
             /// the termInfos 
             /// </summary>
-            public virtual IList<TermInfo> TermsInfos
-            {
-                get { return termsInfos; }
-            }
+            public virtual IList<TermInfo> TermsInfos => termsInfos;
 
             public WeightedPhraseInfo(IList<TermInfo> terms, float boost)
                     : this(terms, boost, 0)
@@ -382,15 +370,9 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
             }
 
-            public virtual int StartOffset
-            {
-                get { return termsOffsets[0].StartOffset; }
-            }
+            public virtual int StartOffset => termsOffsets[0].StartOffset;
 
-            public virtual int EndOffset
-            {
-                get { return termsOffsets[termsOffsets.Count - 1].EndOffset; }
-            }
+            public virtual int EndOffset => termsOffsets[termsOffsets.Count - 1].EndOffset;
 
             public virtual bool IsOffsetOverlap(WeightedPhraseInfo other)
             {
@@ -420,10 +402,7 @@ namespace Lucene.Net.Search.VectorHighlight
             /// <summary>
             /// the seqnum
             /// </summary>
-            public virtual int Seqnum
-            {
-                get { return seqnum; }
-            }
+            public virtual int Seqnum => seqnum;
 
             public virtual int CompareTo(WeightedPhraseInfo other)
             {
@@ -505,15 +484,12 @@ namespace Lucene.Net.Search.VectorHighlight
                     this.endOffset = endOffset;
                 }
 
-                public virtual int StartOffset
-                {
-                    get { return startOffset; }
-                }
+                public virtual int StartOffset => startOffset;
 
                 public virtual int EndOffset
                 {
-                    get { return endOffset; }
-                    set { endOffset = value; }
+                    get => endOffset;
+                    set => endOffset = value;
                 }
 
                 public virtual int CompareTo(Toffs other)

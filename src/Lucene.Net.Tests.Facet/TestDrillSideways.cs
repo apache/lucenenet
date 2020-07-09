@@ -874,10 +874,7 @@ namespace Lucene.Net.Facet
                 lastDocID = -1;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => false;
         }
 
         private class DrillSidewaysAnonymousInnerClassHelper : DrillSideways

@@ -169,49 +169,19 @@ namespace Lucene.Net.Analysis.Hunspell
 
             internal bool disposed = false;
 
-            public override bool CanRead
-            {
-                get
-                {
-                    return @delegate.CanRead;
-                }
-            }
+            public override bool CanRead => @delegate.CanRead;
 
-            public override bool CanSeek
-            {
-                get
-                {
-                    return @delegate.CanSeek;
-                }
-            }
+            public override bool CanSeek => @delegate.CanSeek;
 
-            public override bool CanWrite
-            {
-                get
-                {
-                    return @delegate.CanWrite;
-                }
-            }
+            public override bool CanWrite => @delegate.CanWrite;
 
-            public override long Length
-            {
-                get
-                {
-                    return @delegate.Length;
-                }
-            }
+            public override long Length => @delegate.Length;
 
             public override long Position
             {
-                get
-                {
-                    return @delegate.Position;
-                }
+                get => @delegate.Position;
 
-                set
-                {
-                    @delegate.Position = value;
-                }
+                set => @delegate.Position = value;
             }
 
             public CloseCheckInputStream(TestDictionary outerInstance, System.IO.Stream @delegate) 
@@ -233,10 +203,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             
 
-            public virtual bool Disposed
-            {
-                get { return this.disposed; }
-            }
+            public virtual bool Disposed => this.disposed;
 
             public override void Flush()
             {

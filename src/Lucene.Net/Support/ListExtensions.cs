@@ -173,14 +173,8 @@ namespace Lucene.Net.Support
 
         public T this[int index]
         {
-            get
-            {
-                return list[fromIndex + index];
-            }
-            set
-            {
-                list[fromIndex + index] = value;
-            }
+            get => list[fromIndex + index];
+            set => list[fromIndex + index] = value;
         }
 
         public void Add(T item)
@@ -215,15 +209,9 @@ namespace Lucene.Net.Support
             }
         }
 
-        public int Count
-        {
-            get { return Math.Max(toIndex - fromIndex, 0); }
-        }
+        public int Count => Math.Max(toIndex - fromIndex, 0);
 
-        public bool IsReadOnly
-        {
-            get { return list.IsReadOnly; }
-        }
+        public bool IsReadOnly => list.IsReadOnly;
 
         public bool Remove(T item)
         {

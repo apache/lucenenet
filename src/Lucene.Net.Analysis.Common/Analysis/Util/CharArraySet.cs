@@ -210,10 +210,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Gets the number of elements contained in the <see cref="CharArraySet"/>.
         /// </summary>
-        public virtual int Count
-        {
-            get { return map.Count; }
-        }
+        public virtual int Count => map.Count;
 
         /// <summary>
         /// <c>true</c> if the <see cref="CharArraySet"/> is read-only; otherwise <c>false</c>.

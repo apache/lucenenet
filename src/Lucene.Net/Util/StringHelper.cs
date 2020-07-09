@@ -95,13 +95,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// @lucene.internal
         /// </summary>
-        public static IComparer<string> VersionComparer
-        {
-            get
-            {
-                return versionComparer;
-            }
-        }
+        public static IComparer<string> VersionComparer => versionComparer;
 
         private static readonly IComparer<string> versionComparer = Comparer<string>.Create((a, b) =>
         {

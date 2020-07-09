@@ -167,10 +167,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             return found ? ToIndexArray(result) : EMPTY_RESULT;
         }
 
-        public TokenInfoFST FST
-        {
-            get { return fst; }
-        }
+        public TokenInfoFST FST => fst;
 
         private static readonly int[][] EMPTY_RESULT = new int[0][];
 

@@ -175,10 +175,7 @@ namespace Lucene.Net.Index
 
             public virtual string GetCrashAfterCreateOutput
             {
-                set
-                {
-                    this.crashAfterCreateOutput = value;
-                }
+                set => this.crashAfterCreateOutput = value;
             }
 
             public override IndexOutput CreateOutput(string name, IOContext cxt)

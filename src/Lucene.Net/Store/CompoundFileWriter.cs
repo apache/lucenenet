@@ -129,23 +129,11 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns the directory of the compound file. </summary>
-        internal Directory Directory
-        {
-            get
-            {
-                return directory;
-            }
-        }
+        internal Directory Directory => directory;
 
         /// <summary>
         /// Returns the name of the compound file. </summary>
-        internal string Name
-        {
-            get
-            {
-                return dataFileName;
-            }
-        }
+        internal string Name => dataFileName;
 
         /// <summary>
         /// Disposes all resources and writes the entry table
@@ -436,13 +424,7 @@ namespace Lucene.Net.Store
                 @delegate.WriteBytes(b, offset, length);
             }
 
-            public override long Checksum
-            {
-                get
-                {
-                    return @delegate.Checksum;
-                }
-            }
+            public override long Checksum => @delegate.Checksum;
         }
     }
 }

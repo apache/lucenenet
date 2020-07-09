@@ -47,13 +47,7 @@ namespace Lucene.Net.Support
 
         private UInt32 crc = 0;
 
-        public long Value
-        {
-            get
-            {
-                return crc & 0xffffffffL;
-            }
-        }
+        public long Value => crc & 0xffffffffL;
 
         public void Reset()
         {

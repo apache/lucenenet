@@ -215,13 +215,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public override int[] Parents
-        {
-            get
-            {
-                return parents;
-            }
-        }
+        public override int[] Parents => parents;
 
         /// <summary>
         /// Returns the children array, where <c>Children[i]</c> denotes the youngest

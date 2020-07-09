@@ -65,10 +65,7 @@ namespace Lucene.Net.Util
                 return true;
             }
 
-            public int Length
-            {
-                get { return _len; }
-            }
+            public int Length => _len;
 
             public override int GetHashCode() // LUCENENET TODO: This wasn't in Lucene - is it needed ?
             {
@@ -93,10 +90,7 @@ namespace Lucene.Net.Util
                 return false;
             }
 
-            public int Length
-            {
-                get { return _len; }
-            }
+            public int Length => _len;
 
             public override int GetHashCode() // LUCENENET TODO: This wasn't in Lucene - is it needed ?
             {

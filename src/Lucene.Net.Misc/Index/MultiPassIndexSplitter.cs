@@ -287,10 +287,7 @@ namespace Lucene.Net.Index
                 UndeleteAll(); // initialize main bitset
             }
 
-            public override int NumDocs
-            {
-                get { return liveDocs.Cardinality(); }
-            }
+            public override int NumDocs => liveDocs.Cardinality();
 
             public void UndeleteAll()
             {
@@ -321,13 +318,7 @@ namespace Lucene.Net.Index
                 liveDocs.Clear(n);
             }
 
-            public override IBits LiveDocs
-            {
-                get
-                {
-                    return liveDocs;
-                }
-            }
+            public override IBits LiveDocs => liveDocs;
         }
     }
 }

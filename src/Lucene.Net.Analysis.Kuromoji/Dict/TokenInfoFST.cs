@@ -42,10 +42,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         // LUCENENET specific - made field private
         // and added public property for reading it.
-        public long? NoOutput
-        {
-            get { return NO_OUTPUT; }
-        }
+        public long? NoOutput => NO_OUTPUT;
 
         public TokenInfoFST(FST<long?> fst, bool fasterButMoreRam)
         {
@@ -110,9 +107,6 @@ namespace Lucene.Net.Analysis.Ja.Dict
         /// <para/>
         /// @lucene.internal 
         /// </summary>
-        internal FST<long?> InternalFST
-        {
-            get { return fst; }
-        }
+        internal FST<long?> InternalFST => fst;
     }
 }

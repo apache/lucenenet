@@ -86,13 +86,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual byte[] Array
-        {
-            get
-            {
-                return array;
-            }
-        }
+        public virtual byte[] Array => array;
 
         /// <summary>
         /// LUCENENET indexer for .NET
@@ -101,25 +95,19 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <returns></returns>
         public virtual byte this[int index]
         {
-            get { return array[index]; }
-            set { array[index] = value; }
+            get => array[index];
+            set => array[index] = value;
         }
 
         /// <summary>
         /// return number of items in array
         /// </summary>
-        public virtual int Length
-        {
-            get { return n; }
-        }
+        public virtual int Length => n;
 
         /// <summary>
         /// returns current capacity of array
         /// </summary>
-        public virtual int Capacity
-        {
-            get { return array.Length; }
-        }
+        public virtual int Capacity => array.Length;
 
         // LUCENENET NOTE: Not needed (replaced with this[])
         //public virtual void Put(int index, sbyte val)

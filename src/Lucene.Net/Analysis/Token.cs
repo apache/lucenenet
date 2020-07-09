@@ -252,6 +252,7 @@ namespace Lucene.Net.Analysis
         /// <seealso cref="IPositionIncrementAttribute"/>
         public virtual int PositionIncrement
         {
+            get => positionIncrement;
             set
             {
                 if (value < 0)
@@ -259,10 +260,6 @@ namespace Lucene.Net.Analysis
                     throw new System.ArgumentException("Increment must be zero or greater: " + value);
                 }
                 this.positionIncrement = value;
-            }
-            get
-            {
-                return positionIncrement;
             }
         }
 
@@ -277,14 +274,8 @@ namespace Lucene.Net.Analysis
         /// <seealso cref="IPositionLengthAttribute"/>
         public virtual int PositionLength
         {
-            set
-            {
-                this.positionLength = value;
-            }
-            get
-            {
-                return positionLength;
-            }
+            get => positionLength;
+            set => this.positionLength = value;
         }
 
         /// <summary>
@@ -297,10 +288,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <seealso cref="SetOffset(int, int)"/>
         /// <seealso cref="IOffsetAttribute"/>
-        public int StartOffset
-        {
-            get { return startOffset; }
-        }
+        public int StartOffset => startOffset;
 
         /// <summary>
         /// Returns this <see cref="Token"/>'s ending offset, one greater than the position of the
@@ -309,10 +297,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <seealso cref="SetOffset(int, int)"/>
         /// <seealso cref="IOffsetAttribute"/>
-        public int EndOffset
-        {
-            get { return endOffset; }
-        }
+        public int EndOffset => endOffset;
 
         /// <summary>
         /// Set the starting and ending offset.
@@ -333,8 +318,8 @@ namespace Lucene.Net.Analysis
         /// <summary>Gets or Sets this <see cref="Token"/>'s lexical type.  Defaults to "word". </summary>
         public string Type
         {
-            get { return type; }
-            set { this.type = value; }
+            get => type;
+            set => this.type = value;
         }
 
         /// <summary>
@@ -346,14 +331,8 @@ namespace Lucene.Net.Analysis
         /// <seealso cref="IFlagsAttribute"/>
         public virtual int Flags
         {
-            get
-            {
-                return flags;
-            }
-            set
-            {
-                this.flags = value;
-            }
+            get => flags;
+            set => this.flags = value;
         }
 
         /// <summary>
@@ -362,14 +341,8 @@ namespace Lucene.Net.Analysis
         /// <seealso cref="IPayloadAttribute"/>
         public virtual BytesRef Payload
         {
-            get
-            {
-                return this.payload;
-            }
-            set
-            {
-                this.payload = value;
-            }
+            get => this.payload;
+            set => this.payload = value;
         }
 
         /// <summary>

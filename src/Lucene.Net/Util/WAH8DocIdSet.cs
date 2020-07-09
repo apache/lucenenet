@@ -591,13 +591,7 @@ namespace Lucene.Net.Util
             this.wordNums = wordNums;
         }
 
-        public override bool IsCacheable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool IsCacheable => true;
 
         public override DocIdSetIterator GetIterator()
         {
@@ -843,10 +837,7 @@ namespace Lucene.Net.Util
                 NextWord();
             }
 
-            public override int DocID
-            {
-                get { return docID; }
-            }
+            public override int DocID => docID;
 
             public override int NextDoc()
             {

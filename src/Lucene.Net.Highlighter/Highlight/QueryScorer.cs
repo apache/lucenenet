@@ -128,18 +128,12 @@ namespace Lucene.Net.Search.Highlight
         }
 
         /// <seealso cref="IScorer.FragmentScore"/>
-        public virtual float FragmentScore
-        {
-            get { return totalScore; }
-        }
+        public virtual float FragmentScore => totalScore;
 
         /// <summary>
         /// The highest weighted term (useful for passing to <see cref="GradientFormatter"/> to set top end of coloring scale).
         /// </summary>
-        public virtual float MaxTermWeight
-        {
-            get { return maxTermWeight; }
-        }
+        public virtual float MaxTermWeight => maxTermWeight;
 
         /// <seealso cref="IScorer.GetTokenScore()"/>
         public virtual float GetTokenScore()
@@ -251,8 +245,8 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         public virtual bool ExpandMultiTermQuery
         {
-            get { return expandMultiTermQuery; }
-            set { this.expandMultiTermQuery = value; }
+            get => expandMultiTermQuery;
+            set => this.expandMultiTermQuery = value;
         }
 
         /// <summary>

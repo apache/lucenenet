@@ -123,13 +123,8 @@ namespace Lucene.Net.Analysis.NGram
 
             public override int PositionIncrement
             {
-                set
-                {
-                }
-                get
-                {
-                    return 0;
-                }
+                get => 0;
+                set { }
             }
         }
 
@@ -144,13 +139,8 @@ namespace Lucene.Net.Analysis.NGram
 
             public override int PositionLength
             {
-                set
-                {
-                }
-                get
-                {
-                    return 0;
-                }
+                get => 0;
+                set { }
             }
         }
 

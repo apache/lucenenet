@@ -81,9 +81,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             return 0;
         }
 
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
     }
 }

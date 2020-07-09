@@ -44,17 +44,11 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public int[] OriginalTermIndexes
-        {
-            get { return originalTermIndexes; }
-        }
+        public int[] OriginalTermIndexes => originalTermIndexes;
 
         /// <summary>
         /// The word combination suggestion
         /// </summary>
-        public SuggestWord Suggestion
-        {
-            get { return suggestion; }
-        }
+        public SuggestWord Suggestion => suggestion;
     }
 }

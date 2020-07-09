@@ -35,8 +35,8 @@ namespace Lucene.Net.Util
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public byte[] Bytes
         {
-            get { return bytes; }
-            set { bytes = value; }
+            get => bytes;
+            set => bytes = value;
         }
         private byte[] bytes;
 

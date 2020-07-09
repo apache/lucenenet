@@ -155,26 +155,26 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public virtual int Begin
         {
-            get { return this.m_begin; }
-            set { this.m_begin = value; }
+            get => this.m_begin;
+            set => this.m_begin = value;
         }
 
         public virtual int End
         {
-            get { return this.m_end; }
-            set { this.m_end = value; }
+            get => this.m_end;
+            set => this.m_end = value;
         }
 
         public virtual string Field
         {
-            get { return this.m_field; }
-            set { this.m_field = value; }
+            get => this.m_field;
+            set => this.m_field = value;
         }
 
         public virtual int PositionIncrement
         {
-            get { return this.m_positionIncrement; }
-            set { this.m_positionIncrement = value; }
+            get => this.m_positionIncrement;
+            set => this.m_positionIncrement = value;
         }
 
         /// <summary>
@@ -182,8 +182,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// </summary>
         public virtual ICharSequence Text
         {
-            get { return this.m_text; }
-            set { this.m_text = value; }
+            get => this.m_text;
+            set => this.m_text = value;
         }
 
         public override IQueryNode CloneTree()
@@ -201,8 +201,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public virtual string Value
         {
-            get { return Text.ToString(); }
-            set { Text = value.AsCharSequence(); }
+            get => Text.ToString();
+            set => Text = value.AsCharSequence();
         }
     }
 }

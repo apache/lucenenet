@@ -187,10 +187,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return bits.Get(index);
             }
 
-            public virtual int Length
-            {
-                get { return size; }
-            }
+            public virtual int Length => size;
         }
 
         // read-write

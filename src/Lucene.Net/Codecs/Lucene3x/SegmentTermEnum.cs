@@ -242,28 +242,19 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the docFreq from the current <see cref="Lucene3x.TermInfo"/> in the enumeration.
         /// Initially invalid, valid after <see cref="Next()"/> called for the first time.
         /// </summary>
-        public int DocFreq
-        {
-            get { return termInfo.DocFreq; }
-        }
+        public int DocFreq => termInfo.DocFreq;
 
         /// <summary>
         /// Returns the freqPointer from the current <see cref="Lucene3x.TermInfo"/> in the enumeration.
         /// Initially invalid, valid after<see cref="Next()"/> called for the first time.
         /// </summary>
-        internal long FreqPointer
-        {
-            get { return termInfo.FreqPointer; }
-        }
+        internal long FreqPointer => termInfo.FreqPointer;
 
         /// <summary>
         /// Returns the proxPointer from the current <see cref="Lucene3x.TermInfo"/> in the enumeration.
         /// Initially invalid, valid after<see cref="Next()"/> called for the first time.
         /// </summary>
-        internal long ProxPointer
-        {
-            get { return termInfo.ProxPointer; }
-        }
+        internal long ProxPointer => termInfo.ProxPointer;
 
         /// <summary>
         /// Closes the enumeration to further activity, freeing resources. </summary>

@@ -84,10 +84,7 @@ namespace Lucene.Net.Search.Spans
                 }
                 return (SpanRewriteMethod)m;
             }
-            set
-            {
-                m_query.MultiTermRewriteMethod = value;
-            }
+            set => m_query.MultiTermRewriteMethod = value;
         }
 
         public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
@@ -95,23 +92,11 @@ namespace Lucene.Net.Search.Spans
             throw new System.NotSupportedException("Query should have been rewritten");
         }
 
-        public override string Field
-        {
-            get
-            {
-                return m_query.Field;
-            }
-        }
+        public override string Field => m_query.Field;
 
         /// <summary>
         /// Returns the wrapped query </summary>
-        public virtual Query WrappedQuery
-        {
-            get
-            {
-                return m_query;
-            }
-        }
+        public virtual Query WrappedQuery => m_query;
 
         public override string ToString(string field)
         {
@@ -252,13 +237,7 @@ namespace Lucene.Net.Search.Spans
                     this.outerInstance = outerInstance;
                 }
 
-                protected override int MaxSize
-                {
-                    get
-                    {
-                        return int.MaxValue;
-                    }
-                }
+                protected override int MaxSize => int.MaxValue;
 
                 protected override SpanOrQuery GetTopLevelQuery()
                 {
@@ -278,13 +257,7 @@ namespace Lucene.Net.Search.Spans
             /// <para/>
             /// NOTE: This was size() in Lucene.
             /// </summary>
-            public int Count
-            {
-                get
-                {
-                    return @delegate.Count;
-                }
-            }
+            public int Count => @delegate.Count;
 
             public override Query Rewrite(IndexReader reader, MultiTermQuery query)
             {

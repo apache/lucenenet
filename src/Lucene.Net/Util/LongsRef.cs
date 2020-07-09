@@ -61,7 +61,7 @@ namespace Lucene.Net.Util
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public long[] Int64s
         {
-            get { return longs; }
+            get => longs;
             set
             {
                 if (value == null)

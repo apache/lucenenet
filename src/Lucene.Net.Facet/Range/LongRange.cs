@@ -194,10 +194,7 @@ namespace Lucene.Net.Facet.Range
                 }
 
 
-                public override IBits Bits
-                {
-                    get { return new BitsAnonymousInnerClassHelper(this); }
-                }
+                public override IBits Bits => new BitsAnonymousInnerClassHelper(this);
 
                 private class BitsAnonymousInnerClassHelper : IBits
                 {
@@ -222,10 +219,7 @@ namespace Lucene.Net.Facet.Range
                     }
 
 
-                    public virtual int Length
-                    {
-                        get { return outerInstance.maxDoc; }
-                    }
+                    public virtual int Length => outerInstance.maxDoc;
                 }
 
                 public override DocIdSetIterator GetIterator()

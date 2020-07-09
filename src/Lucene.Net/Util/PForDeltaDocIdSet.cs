@@ -378,13 +378,7 @@ namespace Lucene.Net.Util
             this.offsets = offsets;
         }
 
-        public override bool IsCacheable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool IsCacheable => true;
 
         public override DocIdSetIterator GetIterator()
         {
@@ -433,10 +427,7 @@ namespace Lucene.Net.Util
                 docID = -1;
             }
 
-            public override int DocID
-            {
-                get { return docID; }
-            }
+            public override int DocID => docID;
 
             internal virtual void PforDecompress(byte token)
             {

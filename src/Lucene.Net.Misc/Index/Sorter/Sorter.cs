@@ -232,10 +232,7 @@ namespace Lucene.Net.Index.Sorter
                 return (int)newToOld.Get(docID);
             }
 
-            public override int Count
-            {
-                get { return maxDoc; }
-            }
+            public override int Count => maxDoc;
         }
 
         /// <summary>
@@ -316,13 +313,7 @@ namespace Lucene.Net.Index.Sorter
         /// different on different <see cref="Search.Sort">sorts</see>.
         /// </para>
         /// </summary>
-        public string ID
-        {
-            get
-            {
-                return sort.ToString();
-            }
-        }
+        public string ID => sort.ToString();
 
         public override string ToString()
         {
@@ -343,14 +334,9 @@ namespace Lucene.Net.Index.Sorter
                 throw new System.NotSupportedException();
             }
 
-            public override int Freq
-            {
-                get { throw new System.NotSupportedException(); }
-            }
-            public override int DocID
-            {
-                get { throw new System.NotSupportedException(); }
-            }
+            public override int Freq => throw new System.NotSupportedException();
+
+            public override int DocID => throw new System.NotSupportedException();
 
             public override int NextDoc()
             {

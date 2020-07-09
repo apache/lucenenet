@@ -215,10 +215,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        public bool IsReadOnly
-        {
-            get { return _dict.IsReadOnly; }
-        }
+        public bool IsReadOnly => _dict.IsReadOnly;
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {

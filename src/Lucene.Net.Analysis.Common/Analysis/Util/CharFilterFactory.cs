@@ -45,10 +45,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// returns a list of all available charfilter names </summary>
-        public static ICollection<string> AvailableCharFilters
-        {
-            get { return loader.AvailableServices; }
-        }
+        public static ICollection<string> AvailableCharFilters => loader.AvailableServices;
 
         /// <summary>
         /// Reloads the factory list.

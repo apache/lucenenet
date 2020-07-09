@@ -124,7 +124,11 @@ namespace Lucene.Net.QueryParsers.Util
         private int originalMaxClauses;
 
         private string defaultField = "field";
-        public string DefaultField { get { return defaultField; } set { defaultField = value; } }
+        public string DefaultField
+        {
+            get => defaultField;
+            set => defaultField = value;
+        }
 
         public override void SetUp()
         {

@@ -197,16 +197,11 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the least element of the <see cref="PriorityQueue{T}"/> in constant time.
         /// Returns <c>null</c> if the queue is empty. </summary>
-        public T Top
-        {
-            get
-            {
-                // We don't need to check size here: if maxSize is 0,
-                // then heap is length 2 array with both entries null.
-                // If size is 0 then heap[1] is already null.
-                return heap[1];
-            }
-        }
+        public T Top =>
+            // We don't need to check size here: if maxSize is 0,
+            // then heap is length 2 array with both entries null.
+            // If size is 0 then heap[1] is already null.
+            heap[1];
 
         /// <summary>
         /// Removes and returns the least element of the <see cref="PriorityQueue{T}"/> in log(size)
@@ -257,10 +252,7 @@ namespace Lucene.Net.Util
         /// Returns the number of elements currently stored in the <see cref="PriorityQueue{T}"/>.
         /// NOTE: This was size() in Lucene.
         /// </summary>
-        public int Count
-        {
-            get { return size; }
-        }
+        public int Count => size;
 
         /// <summary>
         /// Removes all entries from the <see cref="PriorityQueue{T}"/>. </summary>
@@ -318,9 +310,6 @@ namespace Lucene.Net.Util
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        protected T[] HeapArray
-        {
-            get { return heap; }
-        }
+        protected T[] HeapArray => heap;
     }
 }

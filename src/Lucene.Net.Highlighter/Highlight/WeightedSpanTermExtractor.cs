@@ -401,21 +401,9 @@ namespace Lucene.Net.Search.Highlight
 
             internal DelegatingAtomicReader(AtomicReader reader) : base(reader) { }
 
-            public override FieldInfos FieldInfos
-            {
-                get
-                {
-                    throw new NotSupportedException();
-                }
-            }
+            public override FieldInfos FieldInfos => throw new NotSupportedException();
 
-            public override Fields Fields
-            {
-                get
-                {
-                    return new DelegatingFilterFields(base.Fields);
-                }
-            }
+            public override Fields Fields => new DelegatingFilterFields(base.Fields);
 
             private class DelegatingFilterFields : FilterFields
             {
@@ -432,10 +420,7 @@ namespace Lucene.Net.Search.Highlight
                     return list.GetEnumerator();
                 }
 
-                public override int Count
-                {
-                    get { return 1; }
-                }
+                public override int Count => 1;
             }
 
             public override NumericDocValues GetNumericDocValues(string field)
@@ -653,10 +638,7 @@ namespace Lucene.Net.Search.Highlight
 
             public WeightedSpanTerm this[K key]
             {
-                get
-                {
-                    return wrapped[key];
-                }
+                get => wrapped[key];
 
                 set
                 {
@@ -675,37 +657,13 @@ namespace Lucene.Net.Search.Highlight
                 }
             }
 
-            public int Count
-            {
-                get
-                {
-                    return wrapped.Count;
-                }
-            }
+            public int Count => wrapped.Count;
 
-            public bool IsReadOnly
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public bool IsReadOnly => false;
 
-            public ICollection<K> Keys
-            {
-                get
-                {
-                    return wrapped.Keys;
-                }
-            }
+            public ICollection<K> Keys => wrapped.Keys;
 
-            public ICollection<WeightedSpanTerm> Values
-            {
-                get
-                {
-                    return wrapped.Values;
-                }
-            }
+            public ICollection<WeightedSpanTerm> Values => wrapped.Values;
 
             public void Add(KeyValuePair<K, WeightedSpanTerm> item)
             {
@@ -765,19 +723,13 @@ namespace Lucene.Net.Search.Highlight
 
         public virtual bool ExpandMultiTermQuery
         {
-            set { expandMultiTermQuery = value; }
-            get { return expandMultiTermQuery; }
+            set => expandMultiTermQuery = value;
+            get => expandMultiTermQuery;
         }
 
-        public virtual bool IsCachedTokenStream
-        {
-            get { return cachedTokenStream; }
-        }
+        public virtual bool IsCachedTokenStream => cachedTokenStream;
 
-        public virtual TokenStream TokenStream
-        {
-            get { return tokenStream; }
-        }
+        public virtual TokenStream TokenStream => tokenStream;
 
         /// <summary>
         /// By default, <see cref="Analysis.TokenStream"/>s that are not of the type

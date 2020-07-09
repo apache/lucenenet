@@ -373,15 +373,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 return this;
             }
 
-            public override sealed int Freq
-            {
-                get { return m_freq; }
-            }
+            public override sealed int Freq => m_freq;
 
-            public override sealed int DocID
-            {
-                get { return m_doc; }
-            }
+            public override sealed int DocID => m_doc;
 
             public override sealed int Advance(int target)
             {
@@ -857,15 +851,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 return (doc = accum);
             }
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
-            public override int Freq
-            {
-                get { return freq; }
-            }
+            public override int Freq => freq;
 
             public override int Advance(int target)
             {
@@ -946,15 +934,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 return position;
             }
 
-            public override int StartOffset
-            {
-                get { return -1; }
-            }
+            public override int StartOffset => -1;
 
-            public override int EndOffset
-            {
-                get { return -1; }
-            }
+            public override int EndOffset => -1;
 
             /// <summary>
             /// Returns the payload at this position, or <c>null</c> if no
@@ -1094,15 +1076,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 return (doc = accum);
             }
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
-            public override int Freq
-            {
-                get { return freq; }
-            }
+            public override int Freq => freq;
 
             public override int Advance(int target)
             {
@@ -1251,15 +1227,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 return position;
             }
 
-            public override int StartOffset
-            {
-                get { return storeOffsets ? startOffset : -1; }
-            }
+            public override int StartOffset => storeOffsets ? startOffset : -1;
 
-            public override int EndOffset
-            {
-                get { return storeOffsets ? startOffset + offsetLength : -1; }
-            }
+            public override int EndOffset => storeOffsets ? startOffset + offsetLength : -1;
 
             /// <summary>
             /// Returns the payload at this position, or <c>null</c> if no

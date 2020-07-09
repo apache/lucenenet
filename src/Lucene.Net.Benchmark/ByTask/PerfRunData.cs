@@ -234,35 +234,26 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// <summary>
         /// Gets start time in milliseconds.
         /// </summary>
-        public virtual long StartTimeMillis
-        {
-            get { return startTimeMillis; }
-        }
+        public virtual long StartTimeMillis => startTimeMillis;
 
         /// <summary>
         /// Gets the points.
         /// </summary>
-        public virtual Points Points
-        {
-            get { return points; }
-        }
+        public virtual Points Points => points;
 
         /// <summary>
         /// Gets or sets the directory.
         /// </summary>
         public virtual Store.Directory Directory
         {
-            get { return directory; }
-            set { directory = value; }
+            get => directory;
+            set => directory = value;
         }
 
         /// <summary>
         /// Gets the taxonomy directory.
         /// </summary>
-        public virtual Store.Directory TaxonomyDir
-        {
-            get { return taxonomyDir; }
-        }
+        public virtual Store.Directory TaxonomyDir => taxonomyDir;
 
         /// <summary>
         /// Set the taxonomy reader. Takes ownership of that taxonomy reader, that is,
@@ -314,8 +305,8 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// </summary>
         public virtual ITaxonomyWriter TaxonomyWriter
         {
-            get { return taxonomyWriter; }
-            set { taxonomyWriter = value; }
+            get => taxonomyWriter;
+            set => taxonomyWriter = value;
         }
 
         /// <summary>
@@ -394,8 +385,8 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// </summary>
         public virtual IndexWriter IndexWriter
         {
-            get { return indexWriter; }
-            set { indexWriter = value; }
+            get => indexWriter;
+            set => indexWriter = value;
         }
 
         /// <summary>
@@ -403,44 +394,32 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// </summary>
         public virtual Analyzer Analyzer
         {
-            get { return analyzer; }
-            set { analyzer = value; }
+            get => analyzer;
+            set => analyzer = value;
         }
 
         /// <summary>Gets the <see cref="Feeds.ContentSource"/>.</summary>
-        public virtual ContentSource ContentSource
-        {
-            get { return contentSource; }
-        }
+        public virtual ContentSource ContentSource => contentSource;
 
         /// <summary>Returns the <see cref="Feeds.DocMaker"/>.</summary>
-        public virtual DocMaker DocMaker
-        {
-            get { return docMaker; }
-        }
+        public virtual DocMaker DocMaker => docMaker;
 
         /// <summary>Gets the <see cref="Feeds.FacetSource"/>.</summary>
-        public virtual FacetSource FacetSource
-        {
-            get { return facetSource; }
-        }
+        public virtual FacetSource FacetSource => facetSource;
 
         /// <summary>
         /// Gets or sets the culture.
         /// </summary>
         public virtual CultureInfo Locale
         {
-            get { return locale; }
-            set { locale = value; }
+            get => locale;
+            set => locale = value;
         }
 
         /// <summary>
         /// Gets the config.
         /// </summary>
-        public virtual Config Config
-        {
-            get { return config; }
-        }
+        public virtual Config Config => config;
 
         public virtual void ResetInputs()
         {
@@ -482,9 +461,6 @@ namespace Lucene.Net.Benchmarks.ByTask
             }
         }
 
-        public virtual IDictionary<string, AnalyzerFactory> AnalyzerFactories
-        {
-            get { return analyzerFactories; }
-        }
+        public virtual IDictionary<string, AnalyzerFactory> AnalyzerFactories => analyzerFactories;
     }
 }

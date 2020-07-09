@@ -777,8 +777,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                     // Searcher just to find the single exact only
                     // match, if present:
-                    Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher_Renamed;
-                    searcher_Renamed = new Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair>(fst, count * maxSurfaceFormsPerAnalyzedForm,
+                    Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher;
+                    searcher = new Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair>(fst, count * maxSurfaceFormsPerAnalyzedForm,
                         count * maxSurfaceFormsPerAnalyzedForm, weightComparer);
 
                     // NOTE: we could almost get away with only using
@@ -792,13 +792,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         {
                             // This node has END_BYTE arc leaving, meaning it's an
                             // "exact" match:
-                            searcher_Renamed.AddStartPaths(scratchArc, fst.Outputs.Add(path.Output, scratchArc.Output), false,
+                            searcher.AddStartPaths(scratchArc, fst.Outputs.Add(path.Output, scratchArc.Output), false,
                                 path.Input);
                         }
                     }
 
-                    var completions_Renamed = searcher_Renamed.Search();
-                    Debug.Assert(completions_Renamed.IsComplete);
+                    var completions = searcher.Search();
+                    Debug.Assert(completions.IsComplete);
 
                     // NOTE: this is rather inefficient: we enumerate
                     // every matching "exactly the same analyzed form"
@@ -812,7 +812,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // seach: it's bounded by how many prefix start
                     // nodes we have and the
                     // maxSurfaceFormsPerAnalyzedForm:
-                    foreach (var completion in completions_Renamed)
+                    foreach (var completion in completions)
                     {
                         BytesRef output2 = completion.Output.Output2;
                         if (SameSurfaceForm(utf8Key, output2))
@@ -829,21 +829,21 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                 }
 
-                Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher;
-                searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, num - results.Count,
+                Util.Fst.Util.TopNSearcher<PairOutputs<long?, BytesRef>.Pair> searcher2;
+                searcher2 = new TopNSearcherAnonymousInnerClassHelper(this, fst, num - results.Count,
                     num * maxAnalyzedPathsForOneInput, weightComparer, utf8Key, results);
 
                 prefixPaths = GetFullPrefixPaths(prefixPaths, lookupAutomaton, fst);
 
                 foreach (FSTUtil.Path<PairOutputs<long?, BytesRef>.Pair> path in prefixPaths)
                 {
-                    searcher.AddStartPaths(path.FstNode, path.Output, true, path.Input);
+                    searcher2.AddStartPaths(path.FstNode, path.Output, true, path.Input);
                 }
 
-                var completions = searcher.Search();
-                Debug.Assert(completions.IsComplete);
+                var completions2 = searcher2.Search();
+                Debug.Assert(completions2.IsComplete);
 
-                foreach (Util.Fst.Util.Result<PairOutputs<long?, BytesRef>.Pair> completion in completions)
+                foreach (Util.Fst.Util.Result<PairOutputs<long?, BytesRef>.Pair> completion in completions2)
                 {
 
                     LookupResult result = GetLookupResult(completion.Output.Output1, completion.Output.Output2, spare);
@@ -930,10 +930,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        public override long Count
-        {
-            get { return count; }
-        }
+        public override long Count => count;
 
         /// <summary>
         /// Returns all prefix paths to initialize the search.

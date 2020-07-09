@@ -504,13 +504,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        public override long Count
-        {
-            get
-            {
-                return count;
-            }
-        }
+        public override long Count => count;
 
         private int CountGrams(BytesRef token)
         {

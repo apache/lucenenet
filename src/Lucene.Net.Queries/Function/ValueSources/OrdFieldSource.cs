@@ -100,10 +100,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return sindex.GetOrd(doc + off);
             }
-            public override int NumOrd
-            {
-                get { return sindex.ValueCount; }
-            }
+            public override int NumOrd => sindex.ValueCount;
 
             public override bool Exists(int doc)
             {

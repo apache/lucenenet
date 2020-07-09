@@ -118,11 +118,9 @@ namespace Lucene.Net.Index
         private readonly IndexWriter writer;
 
         // called only from assert
-        private bool IsLocked
-        {
+        private bool IsLocked =>
             //LUCENENET TODO: This always returns true - probably incorrect
-            get { return writer == null || true /*Monitor. IsEntered(Writer)*/; }
-        }
+            writer == null || true /*Monitor.IsEntered(writer)*/;
 
         // LUCENENET specific - optimized empty array creation
         private static readonly string[] EMPTY_STRINGS =
@@ -352,13 +350,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public SegmentInfos LastSegmentInfos
-        {
-            get
-            {
-                return lastSegmentInfos;
-            }
-        }
+        public SegmentInfos LastSegmentInfos => lastSegmentInfos;
 
         /// <summary>
         /// Remove the CommitPoints in the commitsToDelete List by
@@ -827,53 +819,17 @@ namespace Lucene.Net.Index
                 return "IndexFileDeleter.CommitPoint(" + segmentsFileName + ")";
             }
 
-            public override int SegmentCount
-            {
-                get
-                {
-                    return segmentCount;
-                }
-            }
+            public override int SegmentCount => segmentCount;
 
-            public override string SegmentsFileName
-            {
-                get
-                {
-                    return segmentsFileName;
-                }
-            }
+            public override string SegmentsFileName => segmentsFileName;
 
-            public override ICollection<string> FileNames
-            {
-                get
-                {
-                    return files;
-                }
-            }
+            public override ICollection<string> FileNames => files;
 
-            public override Directory Directory
-            {
-                get
-                {
-                    return directory;
-                }
-            }
+            public override Directory Directory => directory;
 
-            public override long Generation
-            {
-                get
-                {
-                    return generation;
-                }
-            }
+            public override long Generation => generation;
 
-            public override IDictionary<string, string> UserData
-            {
-                get
-                {
-                    return userData;
-                }
-            }
+            public override IDictionary<string, string> UserData => userData;
 
             /// <summary>
             /// Called only by the deletion policy, to remove this
@@ -888,13 +844,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override bool IsDeleted
-            {
-                get
-                {
-                    return deleted;
-                }
-            }
+            public override bool IsDeleted => deleted;
         }
     }
 }

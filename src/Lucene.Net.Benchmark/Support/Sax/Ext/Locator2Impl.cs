@@ -60,8 +60,8 @@ namespace Sax.Ext
         /// </summary>
         public string XMLVersion
         { 
-            get { return version; }
-            set { version = value; }
+            get => version;
+            set => version = value;
         }
 
         /// <summary>
@@ -69,8 +69,8 @@ namespace Sax.Ext
         /// </summary>
         public Encoding Encoding
         { 
-            get { return encoding; }
-            set { encoding = value; }
+            get => encoding;
+            set => encoding = value;
         }
     }
 }

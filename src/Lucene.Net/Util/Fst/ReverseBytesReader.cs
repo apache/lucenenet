@@ -49,19 +49,10 @@ namespace Lucene.Net.Util.Fst
 
         public override long Position
         {
-            get
-            {
-                return pos;
-            }
-            set
-            {
-                this.pos = (int)value;
-            }
+            get => pos;
+            set => this.pos = (int)value;
         }
 
-        public override bool IsReversed
-        {
-            get { return true; }
-        }
+        public override bool IsReversed => true;
     }
 }

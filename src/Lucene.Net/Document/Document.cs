@@ -216,13 +216,7 @@ namespace Lucene.Net.Documents
         /// <see cref="IndexReader.Document(int)"/>.
         /// </para>
         /// </summary>
-        public IList<IIndexableField> Fields
-        {
-            get
-            {
-                return fields;
-            }
-        }
+        public IList<IIndexableField> Fields => fields;
 
         private static readonly string[] NO_STRINGS =
 #if FEATURE_ARRAYEMPTY

@@ -88,15 +88,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         }
 #endif
 
-        public virtual IMessage MessageObject
-        {
-            get { return this.m_message; }
-        }
+        public virtual IMessage MessageObject => this.m_message;
 
-        public override string Message
-        {
-            get { return GetLocalizedMessage(); }
-        }
+        public override string Message => GetLocalizedMessage();
 
         public virtual string GetLocalizedMessage()
         {

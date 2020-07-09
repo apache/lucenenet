@@ -56,36 +56,18 @@ namespace Lucene.Net.Util.Packed
             return current.Get(index);
         }
 
-        public override int Count
-        {
-            get { return current.Count; }
-        }
+        public override int Count => current.Count;
 
-        public override int BitsPerValue
-        {
-            get
-            {
-                return current.BitsPerValue;
-            }
-        }
+        public override int BitsPerValue => current.BitsPerValue;
 
-        public virtual PackedInt32s.Mutable Mutable
-        {
-            get
-            {
-                return current;
-            }
-        }
+        public virtual PackedInt32s.Mutable Mutable => current;
 
         public override object GetArray()
         {
             return current.GetArray();
         }
 
-        public override bool HasArray
-        {
-            get { return current.HasArray; }
-        }
+        public override bool HasArray => current.HasArray;
 
         private void EnsureCapacity(long value)
         {

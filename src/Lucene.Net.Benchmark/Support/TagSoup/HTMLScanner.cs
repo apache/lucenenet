@@ -357,22 +357,13 @@ namespace TagSoup
 
         // Locator implementation
 
-        public virtual int LineNumber
-        {
-            get { return theLastLine; }
-        }
-        public virtual int ColumnNumber
-        {
-            get { return theLastColumn; }
-        }
-        public virtual string PublicId
-        {
-            get { return thePublicid; }
-        }
-        public virtual string SystemId
-        {
-            get { return theSystemid; }
-        }
+        public virtual int LineNumber => theLastLine;
+
+        public virtual int ColumnNumber => theLastColumn;
+
+        public virtual string PublicId => thePublicid;
+
+        public virtual string SystemId => theSystemid;
 
 
         // Scanner implementation

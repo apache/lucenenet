@@ -125,10 +125,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
                 return relevantDocs.ContainsKey(docName);
             }
 
-            public virtual int MaxRecall
-            {
-                get { return relevantDocs.Count; }
-            }
+            public virtual int MaxRecall => relevantDocs.Count;
         }
 
         // inherit javadocs

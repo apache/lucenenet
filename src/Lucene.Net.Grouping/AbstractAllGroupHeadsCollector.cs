@@ -82,13 +82,7 @@ namespace Lucene.Net.Search.Grouping
         /// LUCENENET NOTE: This was groupHeadsSize() in Lucene
         /// </summary>
         /// <returns>the number of group heads found for a query.</returns>
-        public override int GroupHeadsCount
-        {
-            get
-            {
-                return CollectedGroupHeads.Count;
-            }
-        }
+        public override int GroupHeadsCount => CollectedGroupHeads.Count;
 
         /// <summary>
         /// Returns the group head and puts it into <see cref="TemporalResult"/>.
@@ -143,10 +137,7 @@ namespace Lucene.Net.Search.Grouping
             groupHead.UpdateDocHead(doc);
         }
 
-        public override bool AcceptsDocsOutOfOrder
-        {
-            get { return false; }
-        }
+        public override bool AcceptsDocsOutOfOrder => false;
 
         /// <summary>
         /// Contains the result of group head retrieval.

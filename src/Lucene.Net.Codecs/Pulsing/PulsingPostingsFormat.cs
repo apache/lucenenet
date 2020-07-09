@@ -117,9 +117,6 @@ namespace Lucene.Net.Codecs.Pulsing
             }
         }
 
-        public virtual int FreqCutoff
-        {
-            get { return _freqCutoff; }
-        }
+        public virtual int FreqCutoff => _freqCutoff;
     }
 }

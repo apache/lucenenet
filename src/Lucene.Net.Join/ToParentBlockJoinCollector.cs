@@ -314,10 +314,7 @@ namespace Lucene.Net.Join
             }
         }
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return false; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => false;
 
         private void Enroll(ToParentBlockJoinQuery query, ToParentBlockJoinQuery.BlockJoinScorer scorer)
         {
@@ -551,9 +548,6 @@ namespace Lucene.Net.Join
         /// <see cref="ToParentBlockJoinCollector(Sort, int, bool, bool)"/> on
         /// construction. Else, this returns <see cref="float.NaN"/>.
         /// </summary>
-        public virtual float MaxScore
-        {
-            get { return maxScore; }
-        }
+        public virtual float MaxScore => maxScore;
     }
 }

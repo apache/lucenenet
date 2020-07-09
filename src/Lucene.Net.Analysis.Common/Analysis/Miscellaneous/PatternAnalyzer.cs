@@ -602,13 +602,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.s = s;
             }
 
-            internal string String
-            {
-                get
-                {
-                    return s;
-                }
-            }
+            internal string String => s;
         }
     }
 }

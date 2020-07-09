@@ -49,13 +49,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Gets the lock directory.
         /// </summary>
-        public DirectoryInfo LockDir
-        {
-            get
-            {
-                return m_lockDir;
-            }
-        }
+        public DirectoryInfo LockDir => m_lockDir;
 
         public override string ToString()
         {

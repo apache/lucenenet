@@ -100,15 +100,9 @@ namespace Lucene.Net.Search
                 throw new System.NotSupportedException();
             }
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
-            public override int Freq
-            {
-                get { throw new System.NotSupportedException(); }
-            }
+            public override int Freq => throw new System.NotSupportedException();
 
             public override int NextDoc()
             {
@@ -397,10 +391,7 @@ namespace Lucene.Net.Search
                 this.acceptDocsOutOfOrder = acceptDocsOutOfOrder;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return acceptDocsOutOfOrder; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => acceptDocsOutOfOrder;
 
             public virtual void SetScorer(Scorer scorer)
             {
@@ -478,18 +469,9 @@ namespace Lucene.Net.Search
             this.m_maxDocsToCache = maxDocsToCache;
         }
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return m_other.AcceptsDocsOutOfOrder; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => m_other.AcceptsDocsOutOfOrder;
 
-        public virtual bool IsCached
-        {
-            get
-            {
-                return m_curDocs != null;
-            }
-        }
+        public virtual bool IsCached => m_curDocs != null;
 
         public virtual void SetNextReader(AtomicReaderContext context)
         {

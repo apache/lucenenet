@@ -125,10 +125,7 @@ namespace Lucene.Net.Index
             {
             }
 
-            public override Fields Fields
-            {
-                get { return new TestFields(base.Fields); }
-            }
+            public override Fields Fields => new TestFields(base.Fields);
         }
 
         /// <summary>

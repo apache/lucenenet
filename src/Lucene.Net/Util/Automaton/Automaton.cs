@@ -181,13 +181,7 @@ namespace Lucene.Net.Util.Automaton
         /// default, the flag is not set.
         /// </summary>
         /// <returns> current value of the flag </returns>
-        internal static bool AllowMutate
-        {
-            get
-            {
-                return allow_mutation;
-            }
-        }
+        internal static bool AllowMutate => allow_mutation;
 
         internal virtual void CheckMinimizeAlways()
         {
@@ -927,13 +921,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.IsEmptyString(Automaton)"/>.
         /// </summary>
-        public virtual bool IsEmptyString
-        {
-            get
-            {
-                return BasicOperations.IsEmptyString(this);
-            }
-        }
+        public virtual bool IsEmptyString => BasicOperations.IsEmptyString(this);
 
         /// <summary>
         /// See <see cref="MinimizationOperations.Minimize(Automaton)"/>. Returns the

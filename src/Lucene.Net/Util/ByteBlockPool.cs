@@ -139,8 +139,8 @@ namespace Lucene.Net.Util
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public byte[][] Buffers
         {
-            get { return buffers; }
-            set { buffers = value; }
+            get => buffers;
+            set => buffers = value;
         }
         private byte[][] buffers = new byte[10][];
 
@@ -159,8 +159,8 @@ namespace Lucene.Net.Util
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public byte[] Buffer
         {
-            get { return buffer; }
-            set { buffer = value; }
+            get => buffer;
+            set => buffer = value;
         }
         private byte[] buffer;
 

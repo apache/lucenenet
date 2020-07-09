@@ -156,10 +156,7 @@ namespace Lucene.Net.Codecs.Memory
                 return result;
             }
 
-            public override int Count
-            {
-                get { return fields.Count; }
-            }
+            public override int Count => fields.Count;
 
             [Obsolete("iterate fields and add their Count instead.")]
             public override long UniqueTermCount
@@ -205,8 +202,8 @@ namespace Lucene.Net.Codecs.Memory
                 [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                 public int[] Skips
                 {
-                    get { return skips; }
-                    set { skips = value; }
+                    get => skips;
+                    set => skips = value;
                 }
                 private int[] skips;
 
@@ -219,30 +216,20 @@ namespace Lucene.Net.Codecs.Memory
             {
                 [WritableArray]
                 [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-                public int[] Postings
-                {
-                    get { return postings; }
-                }
+                public int[] Postings => postings;
+
                 private readonly int[] postings;
 
                 [WritableArray]
                 [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-                public byte[] Payloads
-                {
-                    get { return payloads; }
-                }
+                public byte[] Payloads => payloads;
+
                 private readonly byte[] payloads;
 
-                public int DocFreq
-                {
-                    get { return docFreq; }
-                }
+                public int DocFreq => docFreq;
                 private readonly int docFreq;
 
-                public int TotalTermFreq
-                {
-                    get { return totalTermFreq; }
-                }
+                public int TotalTermFreq => totalTermFreq;
                 private readonly int totalTermFreq;
 
                 public LowFreqTerm(int[] postings, byte[] payloads, int docFreq, int totalTermFreq)
@@ -263,42 +250,31 @@ namespace Lucene.Net.Codecs.Memory
             // TODO: maybe specialize into prx/no-prx/no-frq cases?
             private sealed class HighFreqTerm : TermAndSkip
             {
-                public long TotalTermFreq
-                {
-                    get { return totalTermFreq; }
-                }
+                public long TotalTermFreq => totalTermFreq;
                 private readonly long totalTermFreq;
 
                 [WritableArray]
                 [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-                public int[] DocIDs
-                {
-                    get { return docIDs; }
-                }
+                public int[] DocIDs => docIDs;
+
                 private readonly int[] docIDs;
 
                 [WritableArray]
                 [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-                public int[] Freqs
-                {
-                    get { return freqs; }
-                }
+                public int[] Freqs => freqs;
+
                 private readonly int[] freqs;
 
                 [WritableArray]
                 [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-                public int[][] Positions
-                {
-                    get { return positions; }
-                }
+                public int[][] Positions => positions;
+
                 private readonly int[][] positions;
 
                 [WritableArray]
                 [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-                public byte[][][] Payloads
-                {
-                    get { return payloads; }
-                }
+                public byte[][][] Payloads => payloads;
+
                 private readonly byte[][][] payloads;
 
                 public HighFreqTerm(int[] docIDs, int[] freqs, int[][] positions, byte[][][] payloads,
@@ -837,50 +813,23 @@ namespace Lucene.Net.Codecs.Memory
                 return new DirectIntersectTermsEnum(this, compiled, startTerm);
             }
 
-            public override long Count
-            {
-                get { return terms.Length; }
-            }
+            public override long Count => terms.Length;
 
-            public override long SumTotalTermFreq
-            {
-                get { return sumTotalTermFreq; }
-            }
+            public override long SumTotalTermFreq => sumTotalTermFreq;
 
-            public override long SumDocFreq
-            {
-                get { return sumDocFreq; }
-            }
+            public override long SumDocFreq => sumDocFreq;
 
-            public override int DocCount
-            {
-                get { return docCount; }
-            }
+            public override int DocCount => docCount;
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get { return BytesRef.UTF8SortedAsUnicodeComparer; }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-            public override bool HasFreqs
-            {
-                get { return hasFreq; }
-            }
+            public override bool HasFreqs => hasFreq;
 
-            public override bool HasOffsets
-            {
-                get { return hasOffsets; }
-            }
+            public override bool HasOffsets => hasOffsets;
 
-            public override bool HasPositions
-            {
-                get { return hasPos; }
-            }
+            public override bool HasPositions => hasPos;
 
-            public override bool HasPayloads
-            {
-                get { return hasPayloads; }
-            }
+            public override bool HasPayloads => hasPayloads;
 
             private sealed class DirectTermsEnum : TermsEnum
             {
@@ -912,10 +861,7 @@ namespace Lucene.Net.Codecs.Memory
                     termOrd = -1;
                 }
 
-                public override IComparer<BytesRef> Comparer
-                {
-                    get { return BytesRef.UTF8SortedAsUnicodeComparer; }
-                }
+                public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
                 public override BytesRef Next()
                 {
@@ -1028,15 +974,9 @@ namespace Lucene.Net.Codecs.Memory
                     Debug.Assert(term.Equals(scratch));
                 }
 
-                public override BytesRef Term
-                {
-                    get { return scratch; }
-                }
+                public override BytesRef Term => scratch;
 
-                public override long Ord
-                {
-                    get { return termOrd; }
-                }
+                public override long Ord => termOrd;
 
                 public override int DocFreq
                 {
@@ -1420,10 +1360,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override IComparer<BytesRef> Comparer
-                {
-                    get { return BytesRef.UTF8SortedAsUnicodeComparer; }
-                }
+                public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
                 private void Grow()
                 {
@@ -1734,15 +1671,9 @@ namespace Lucene.Net.Codecs.Memory
                     return state;
                 }
 
-                public override BytesRef Term
-                {
-                    get { return scratch; }
-                }
+                public override BytesRef Term => scratch;
 
-                public override long Ord
-                {
-                    get { return termOrd; }
-                }
+                public override long Ord => termOrd;
 
                 public override int DocFreq
                 {
@@ -1929,10 +1860,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int Freq
-            {
-                get { return 1; }
-            }
+            public override int Freq => 1;
 
             public override int Advance(int target)
             {
@@ -2015,10 +1943,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int Freq
-            {
-                get { return postings[upto + 1]; }
-            }
+            public override int Freq => postings[upto + 1];
 
             public override int Advance(int target)
             {
@@ -2040,7 +1965,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly IBits liveDocs;
             private readonly int posMult;
             private int upto;
-            private int freq_Renamed;
+            private int freq;
 
             public LowFreqDocsEnum(IBits liveDocs, int posMult)
             {
@@ -2060,14 +1985,14 @@ namespace Lucene.Net.Codecs.Memory
             {
                 this.postings = postings;
                 upto = -2;
-                freq_Renamed = 0;
+                freq = 0;
                 return this;
             }
 
             // TODO: can do this w/o setting members?
             public override int NextDoc()
             {
-                upto += 2 + freq_Renamed*posMult;
+                upto += 2 + freq*posMult;
                 // if (DEBUG) {
                 //   System.out.println("  nextDoc freq=" + freq + " upto=" + upto + " vs " + postings.length);
                 // }
@@ -2075,8 +2000,8 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     if (upto < postings.Length)
                     {
-                        freq_Renamed = postings[upto + 1];
-                        Debug.Assert(freq_Renamed > 0);
+                        freq = postings[upto + 1];
+                        Debug.Assert(freq > 0);
                         return postings[upto];
                     }
                 }
@@ -2084,13 +2009,13 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     while (upto < postings.Length)
                     {
-                        freq_Renamed = postings[upto + 1];
-                        Debug.Assert(freq_Renamed > 0);
+                        freq = postings[upto + 1];
+                        Debug.Assert(freq > 0);
                         if (liveDocs.Get(postings[upto]))
                         {
                             return postings[upto];
                         }
-                        upto += 2 + freq_Renamed*posMult;
+                        upto += 2 + freq*posMult;
                     }
                 }
                 return NO_MORE_DOCS;
@@ -2116,11 +2041,9 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int Freq
-            {
+            public override int Freq =>
                 // TODO: can I do postings[upto+1]?
-                get { return freq_Renamed; }
-            }
+                freq;
 
             public override int Advance(int target)
             {
@@ -2145,11 +2068,11 @@ namespace Lucene.Net.Codecs.Memory
             private readonly bool hasPayloads;
             private readonly BytesRef payload = new BytesRef();
             private int upto;
-            private int docID_Renamed;
-            private int freq_Renamed;
+            private int docID;
+            private int freq;
             private int skipPositions;
-            private int startOffset_Renamed;
-            private int endOffset_Renamed;
+            private int startOffset;
+            private int endOffset;
             private int lastPayloadOffset;
             private int payloadOffset;
             private int payloadLength;
@@ -2186,9 +2109,9 @@ namespace Lucene.Net.Codecs.Memory
                 this.postings = postings;
                 upto = 0;
                 skipPositions = 0;
-                startOffset_Renamed = -1;
-                endOffset_Renamed = -1;
-                docID_Renamed = -1;
+                startOffset = -1;
+                endOffset = -1;
+                docID = -1;
                 payloadLength = 0;
                 this.payloadBytes = payloadBytes;
                 return this;
@@ -2217,26 +2140,26 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     if (upto < postings.Length)
                     {
-                        docID_Renamed = postings[upto++];
-                        freq_Renamed = postings[upto++];
-                        skipPositions = freq_Renamed;
-                        return docID_Renamed;
+                        docID = postings[upto++];
+                        freq = postings[upto++];
+                        skipPositions = freq;
+                        return docID;
                     }
                 }
                 else
                 {
                     while (upto < postings.Length)
                     {
-                        docID_Renamed = postings[upto++];
-                        freq_Renamed = postings[upto++];
-                        if (liveDocs.Get(docID_Renamed))
+                        docID = postings[upto++];
+                        freq = postings[upto++];
+                        if (liveDocs.Get(docID))
                         {
-                            skipPositions = freq_Renamed;
-                            return docID_Renamed;
+                            skipPositions = freq;
+                            return docID;
                         }
                         if (hasPayloads)
                         {
-                            for (int i = 0; i < freq_Renamed; i++)
+                            for (int i = 0; i < freq; i++)
                             {
                                 upto++;
                                 if (hasOffsets)
@@ -2248,23 +2171,17 @@ namespace Lucene.Net.Codecs.Memory
                         }
                         else
                         {
-                            upto += posMult*freq_Renamed;
+                            upto += posMult*freq;
                         }
                     }
                 }
 
-                return docID_Renamed = NO_MORE_DOCS;
+                return docID = NO_MORE_DOCS;
             }
 
-            public override int DocID
-            {
-                get { return docID_Renamed; }
-            }
+            public override int DocID => docID;
 
-            public override int Freq
-            {
-                get { return freq_Renamed; }
-            }
+            public override int Freq => freq;
 
             public override int NextPosition()
             {
@@ -2274,8 +2191,8 @@ namespace Lucene.Net.Codecs.Memory
                 int pos = postings[upto++];
                 if (hasOffsets)
                 {
-                    startOffset_Renamed = postings[upto++];
-                    endOffset_Renamed = postings[upto++];
+                    startOffset = postings[upto++];
+                    endOffset = postings[upto++];
                 }
                 if (hasPayloads)
                 {
@@ -2286,15 +2203,9 @@ namespace Lucene.Net.Codecs.Memory
                 return pos;
             }
 
-            public override int StartOffset
-            {
-                get { return startOffset_Renamed; }
-            }
+            public override int StartOffset => startOffset;
 
-            public override int EndOffset
-            {
-                get { return endOffset_Renamed; }
-            }
+            public override int EndOffset => endOffset;
 
             public override int Advance(int target)
             {
@@ -2330,7 +2241,7 @@ namespace Lucene.Net.Codecs.Memory
             private int[] freqs;
             private readonly IBits liveDocs;
             private int upto;
-            private int docID_Renamed = -1;
+            private int docID = -1;
 
             public HighFreqDocsEnum(IBits liveDocs)
             {
@@ -2344,23 +2255,17 @@ namespace Lucene.Net.Codecs.Memory
 
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-            public int[] DocIDs
-            {
-                get { return docIDs; }
-            }
+            public int[] DocIDs => docIDs;
 
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-            public int[] Freqs
-            {
-                get { return freqs; }
-            }
+            public int[] Freqs => freqs;
 
             public DocsEnum Reset(int[] docIDs, int[] freqs)
             {
                 this.docIDs = docIDs;
                 this.freqs = freqs;
-                docID_Renamed = upto = -1;
+                docID = upto = -1;
                 return this;
             }
 
@@ -2371,7 +2276,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     try
                     {
-                        return docID_Renamed = docIDs[upto];
+                        return docID = docIDs[upto];
                     }
                     catch (System.IndexOutOfRangeException)
                     {
@@ -2383,18 +2288,15 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         if (liveDocs.Get(docIDs[upto]))
                         {
-                            return docID_Renamed = docIDs[upto];
+                            return docID = docIDs[upto];
                         }
                         upto++;
                     }
                 }
-                return docID_Renamed = NO_MORE_DOCS;
+                return docID = NO_MORE_DOCS;
             }
 
-            public override int DocID
-            {
-                get { return docID_Renamed; }
-            }
+            public override int DocID => docID;
 
             public override int Freq
             {
@@ -2421,7 +2323,7 @@ namespace Lucene.Net.Codecs.Memory
                 upto++;
                 if (upto == docIDs.Length)
                 {
-                    return docID_Renamed = NO_MORE_DOCS;
+                    return docID = NO_MORE_DOCS;
                 }
 
                 // First "grow" outwards, since most advances are to
@@ -2502,12 +2404,12 @@ namespace Lucene.Net.Codecs.Memory
                 if (upto == docIDs.Length)
                 {
                     //System.out.println("    return END");
-                    return docID_Renamed = NO_MORE_DOCS;
+                    return docID = NO_MORE_DOCS;
                 }
                 else
                 {
                     //System.out.println("    return docID=" + docIDs[upto] + " upto=" + upto);
-                    return docID_Renamed = docIDs[upto];
+                    return docID = docIDs[upto];
                 }
             }
 
@@ -2528,7 +2430,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly bool hasOffsets;
             private readonly int posJump;
             private int upto;
-            private int docID_Renamed = -1;
+            private int docID = -1;
             private int posUpto;
             private int[] curPositions;
 
@@ -2541,27 +2443,15 @@ namespace Lucene.Net.Codecs.Memory
 
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-            public int[] DocIDs
-            {
-                get { return docIDs; }
-            }
+            public int[] DocIDs => docIDs;
 
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-            public int[][] Positions
-            {
-                get { return positions; }
-            }
+            public int[][] Positions => positions;
 
-            public int PosJump
-            {
-                get { return posJump; }
-            }
+            public int PosJump => posJump;
 
-            public IBits LiveDocs
-            {
-                get { return liveDocs; }
-            }
+            public IBits LiveDocs => liveDocs;
 
             public DocsAndPositionsEnum Reset(int[] docIDs, int[] freqs, int[][] positions, byte[][][] payloads)
             {
@@ -2582,7 +2472,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         posUpto = -posJump;
                         curPositions = positions[upto];
-                        return docID_Renamed = docIDs[upto];
+                        return docID = docIDs[upto];
                     }
                 }
                 else
@@ -2593,24 +2483,18 @@ namespace Lucene.Net.Codecs.Memory
                         {
                             posUpto = -posJump;
                             curPositions = positions[upto];
-                            return docID_Renamed = docIDs[upto];
+                            return docID = docIDs[upto];
                         }
                         upto++;
                     }
                 }
 
-                return docID_Renamed = NO_MORE_DOCS;
+                return docID = NO_MORE_DOCS;
             }
 
-            public override int Freq
-            {
-                get { return freqs[upto]; }
-            }
+            public override int Freq => freqs[upto];
 
-            public override int DocID
-            {
-                get { return docID_Renamed; }
-            }
+            public override int DocID => docID;
 
             public override int NextPosition()
             {
@@ -2645,7 +2529,7 @@ namespace Lucene.Net.Codecs.Memory
                 upto++;
                 if (upto == docIDs.Length)
                 {
-                    return docID_Renamed = NO_MORE_DOCS;
+                    return docID = NO_MORE_DOCS;
                 }
 
                 // First "grow" outwards, since most advances are to
@@ -2726,14 +2610,14 @@ namespace Lucene.Net.Codecs.Memory
                 if (upto == docIDs.Length)
                 {
                     //System.out.println("    return END");
-                    return docID_Renamed = NO_MORE_DOCS;
+                    return docID = NO_MORE_DOCS;
                 }
                 else
                 {
                     //System.out.println("    return docID=" + docIDs[upto] + " upto=" + upto);
                     posUpto = -posJump;
                     curPositions = positions[upto];
-                    return docID_Renamed = docIDs[upto];
+                    return docID = docIDs[upto];
                 }
             }
 

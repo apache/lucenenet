@@ -292,10 +292,7 @@ namespace Lucene.Net.Index
                 FinishFlush(writer, null, m_frozenUpdates);
             }
 
-            protected internal override bool CanPublish
-            {
-                get { return true; }
-            }
+            protected internal override bool CanPublish => true;
         }
 
         internal sealed class SegmentFlushTicket : FlushTicket
@@ -327,10 +324,7 @@ namespace Lucene.Net.Index
                 failed = true;
             }
 
-            protected internal override bool CanPublish
-            {
-                get { return segment != null || failed; }
-            }
+            protected internal override bool CanPublish => segment != null || failed;
         }
     }
 }

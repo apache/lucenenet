@@ -56,16 +56,10 @@ namespace Lucene.Net.Benchmarks.Quality
             }
 
             /// <summary>Returns the rank: where on the list of returned docs this relevant doc appeared.</summary>
-            public virtual int Rank
-            {
-                get { return rank; }
-            }
+            public virtual int Rank => rank;
 
             /// <summary>Returns the recall: how many relevant docs were returned up to this point, inclusive.</summary>
-            public virtual double Recall
-            {
-                get { return recall; }
-            }
+            public virtual double Recall => recall;
         }
 
         private IList<RecallPoint> recallPoints;
@@ -148,10 +142,7 @@ namespace Lucene.Net.Benchmarks.Quality
         /// <summary>
         /// Return the recall: |{relevant hits found}| / |{relevant hits existing}|.
         /// </summary>
-        public virtual double Recall
-        {
-            get { return recall; }
-        }
+        public virtual double Recall => recall;
 
         /// <summary>
         /// Log information on this <see cref="QualityStats"/> object.
@@ -272,35 +263,23 @@ namespace Lucene.Net.Benchmarks.Quality
         /// <summary>
         /// Returns the time it took to extract doc names for judging the measured query, in milliseconds.
         /// </summary>
-        public virtual long DocNamesExtractTime
-        {
-            get { return docNamesExtractTime; }
-        }
+        public virtual long DocNamesExtractTime => docNamesExtractTime;
 
         /// <summary>
         /// Returns the maximal number of good points.
         /// This is the number of relevant docs known by the judge for the measured query.
         /// </summary>
-        public virtual double MaxGoodPoints
-        {
-            get { return maxGoodPoints; }
-        }
+        public virtual double MaxGoodPoints => maxGoodPoints;
 
         /// <summary>
         /// Returns the number of good points (only relevant points).
         /// </summary>
-        public virtual double NumGoodPoints
-        {
-            get { return numGoodPoints; }
-        }
+        public virtual double NumGoodPoints => numGoodPoints;
 
         /// <summary>
         /// Returns the number of points (both relevant and irrelevant points).
         /// </summary>
-        public virtual double NumPoints
-        {
-            get { return numPoints; }
-        }
+        public virtual double NumPoints => numPoints;
 
         /// <summary>
         /// Returns the recallPoints.
@@ -322,18 +301,12 @@ namespace Lucene.Net.Benchmarks.Quality
         /// <a href="http://www.cnlp.org/publications/02cnlptrec10.pdf">
         /// Question Answering - CNLP at the TREC-10 Question Answering Track</a>.
         /// </remarks>
-        public virtual double MRR
-        {
-            get { return mrr; }
-        }
+        public virtual double MRR => mrr;
 
 
         /// <summary>
         /// Returns the search time in milliseconds for the measured query.
         /// </summary>
-        public virtual long SearchTime
-        {
-            get { return searchTime; }
-        }
+        public virtual long SearchTime => searchTime;
     }
 }

@@ -216,13 +216,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        internal override PackedInt32s.Format Format
-        {
-            get
-            {
-                return PackedInt32s.Format.PACKED_SINGLE_BLOCK;
-            }
-        }
+        internal override PackedInt32s.Format Format => PackedInt32s.Format.PACKED_SINGLE_BLOCK;
 
         public override string ToString()
         {

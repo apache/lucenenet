@@ -33,10 +33,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         private bool quoted;
-        internal bool IsQuoted { get { return quoted; } }
+        internal bool IsQuoted => quoted;
 
-        public virtual string Quote { get { return "\""; }}
-        public virtual string FieldOperator { get { return "/"; } }
+        public virtual string Quote => "\"";
+        public virtual string FieldOperator => "/";
 
         public abstract string ToStringUnquoted();
 

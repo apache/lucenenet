@@ -105,10 +105,7 @@ namespace Lucene.Net.Search
                 this.scorer = scorer;
             }
 
-            public bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public bool AcceptsDocsOutOfOrder => true;
         }
 
         internal sealed class Bucket
@@ -156,10 +153,7 @@ namespace Lucene.Net.Search
                 return new BooleanScorerCollector(mask, this);
             }
 
-            public int Count // LUCENENET NOTE: This was size() in Lucene.
-            {
-                get { return SIZE; }
-            }
+            public int Count => SIZE; // LUCENENET NOTE: This was size() in Lucene.
         }
 
         internal sealed class SubScorer

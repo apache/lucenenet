@@ -122,8 +122,8 @@ namespace Lucene.Net.Index
 
             public int MaxNumSegments // used by IndexWriter
             {
-                get { return maxNumSegments; }
-                set { maxNumSegments = value; }
+                get => maxNumSegments;
+                set => maxNumSegments = value;
             }
             private int maxNumSegments = -1;
 
@@ -199,14 +199,8 @@ namespace Lucene.Net.Index
             /// </summary>
             public virtual SegmentCommitInfo Info
             {
-                set
-                {
-                    this.info = value;
-                }
-                get
-                {
-                    return info;
-                }
+                get => info;
+                set => this.info = value;
             }
 
             /// <summary>
@@ -393,10 +387,7 @@ namespace Lucene.Net.Index
             /// input total size. This is only set once the merge is
             /// initialized by <see cref="IndexWriter"/>.
             /// </summary>
-            public virtual long TotalBytesSize
-            {
-                get { return totalMergeBytes; }
-            }
+            public virtual long TotalBytesSize => totalMergeBytes;
 
             /// <summary>
             /// Returns the total number of documents that are included with this merge.
@@ -417,13 +408,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Return <see cref="Store.MergeInfo"/> describing this merge. </summary>
-            public virtual MergeInfo MergeInfo
-            {
-                get
-                {
-                    return new MergeInfo(TotalDocCount, EstimatedMergeBytes, isExternal, maxNumSegments);
-                }
-            }
+            public virtual MergeInfo MergeInfo => new MergeInfo(TotalDocCount, EstimatedMergeBytes, isExternal, maxNumSegments);
         }
 
         /// <summary>
@@ -525,13 +510,7 @@ namespace Lucene.Net.Index
             /// Returns the <see cref="Store.Directory"/> of the index that hit
             /// the exception.
             /// </summary>
-            public virtual Directory Directory
-            {
-                get
-                {
-                    return dir;
-                }
-            }
+            public virtual Directory Directory => dir;
         }
 
         /// <summary>
@@ -774,10 +753,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public double NoCFSRatio
         {
-            get
-            {
-                return m_noCFSRatio;
-            }
+            get => m_noCFSRatio;
             set
             {
                 if (value < 0.0 || value > 1.0)
@@ -799,10 +775,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public double MaxCFSSegmentSizeMB
         {
-            get
-            {
-                return m_maxCFSSegmentSize / 1024 / 1024.0;
-            }
+            get => m_maxCFSSegmentSize / 1024 / 1024.0;
             set
             {
                 if (value < 0.0)

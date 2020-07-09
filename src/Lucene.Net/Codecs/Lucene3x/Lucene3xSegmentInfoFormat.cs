@@ -56,21 +56,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         public static readonly int UPGRADED_SI_VERSION_START = 0;
         public static readonly int UPGRADED_SI_VERSION_CURRENT = UPGRADED_SI_VERSION_START;
 
-        public override SegmentInfoReader SegmentInfoReader
-        {
-            get
-            {
-                return reader;
-            }
-        }
+        public override SegmentInfoReader SegmentInfoReader => reader;
 
-        public override SegmentInfoWriter SegmentInfoWriter
-        {
-            get
-            {
-                throw new System.NotSupportedException("this codec can only be used for reading");
-            }
-        }
+        public override SegmentInfoWriter SegmentInfoWriter => throw new System.NotSupportedException("this codec can only be used for reading");
 
         // only for backwards compat
         public static readonly string DS_OFFSET_KEY = typeof(Lucene3xSegmentInfoFormat).Name + ".dsoffset";

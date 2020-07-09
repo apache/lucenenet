@@ -103,7 +103,7 @@ namespace Lucene.Net.QueryParsers.Classic
         ///// <summary>
         ///// The actual operator that parser uses to combine query terms
         ///// </summary>
-        //Operator operator_Renamed = OR_OPERATOR;
+        //Operator operator = OR_OPERATOR;
 
 
         //bool lowercaseExpandedTerms = true;
@@ -211,10 +211,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// Returns the default field.
         /// </summary>
-        public virtual string Field
-        {
-            get { return m_field; }
-        }
+        public virtual string Field => m_field;
 
         /// <summary>
         /// Set to true if phrase queries will be automatically generated
@@ -298,8 +295,8 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public virtual CultureInfo Locale // LUCENENET TODO: API - Rename Culture
         {
-            get { return this.locale == null ? CultureInfo.CurrentCulture : this.locale; }
-            set { this.locale = value; }
+            get => this.locale == null ? CultureInfo.CurrentCulture : this.locale;
+            set => this.locale = value;
         }
 
         /// <summary>
@@ -312,8 +309,8 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public virtual TimeZoneInfo TimeZone
         {
-            get { return this.timeZone == null ? TimeZoneInfo.Local : this.timeZone; }
-            set { this.timeZone = value; }
+            get => this.timeZone == null ? TimeZoneInfo.Local : this.timeZone;
+            set => this.timeZone = value;
         }
 
         /// <summary>
@@ -381,8 +378,8 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public virtual bool AnalyzeRangeTerms
         {
-            get { return analyzeRangeTerms; }
-            set { analyzeRangeTerms = value; }
+            get => analyzeRangeTerms;
+            set => analyzeRangeTerms = value;
         }
 
         protected internal virtual void AddClause(IList<BooleanClause> clauses, int conj, int mods, Query q)

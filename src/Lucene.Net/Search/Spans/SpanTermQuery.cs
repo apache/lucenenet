@@ -48,21 +48,9 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Return the term whose spans are matched. </summary>
-        public virtual Term Term
-        {
-            get
-            {
-                return m_term;
-            }
-        }
+        public virtual Term Term => m_term;
 
-        public override string Field
-        {
-            get
-            {
-                return m_term.Field;
-            }
-        }
+        public override string Field => m_term.Field;
 
         public override void ExtractTerms(ISet<Term> terms)
         {

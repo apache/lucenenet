@@ -93,13 +93,7 @@ namespace Lucene.Net.Search.Suggest
             });
         }
 
-        public virtual IComparer<BytesRef> Comparer
-        {
-            get
-            {
-                return comparer;
-            }
-        }
+        public virtual IComparer<BytesRef> Comparer => comparer;
 
         public virtual BytesRef Next()
         {
@@ -131,10 +125,7 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        public virtual long Weight
-        {
-            get { return weight; }
-        }
+        public virtual long Weight => weight;
 
         /// <summary>
         /// Sortes by BytesRef (ascending) then cost (ascending).

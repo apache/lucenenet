@@ -88,21 +88,9 @@ namespace Lucene.Net.Codecs.Lucene42
         {
         }
 
-        public override FieldInfosReader FieldInfosReader
-        {
-            get
-            {
-                return reader;
-            }
-        }
+        public override FieldInfosReader FieldInfosReader => reader;
 
-        public override FieldInfosWriter FieldInfosWriter
-        {
-            get
-            {
-                throw new System.NotSupportedException("this codec can only be used for reading");
-            }
-        }
+        public override FieldInfosWriter FieldInfosWriter => throw new System.NotSupportedException("this codec can only be used for reading");
 
         /// <summary>
         /// Extension of field infos. </summary>

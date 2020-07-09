@@ -51,13 +51,7 @@ namespace Lucene.Net.Store
             digest.Update(b, offset, len);
         }
 
-        public override long Checksum
-        {
-            get
-            {
-                return digest.Value;
-            }
-        }
+        public override long Checksum => digest.Value;
 
         protected override void Dispose(bool disposing)
         {
@@ -72,10 +66,7 @@ namespace Lucene.Net.Store
             return main.GetFilePointer();
         }
 
-        public override long Length
-        {
-            get { return main.Length; }
-        }
+        public override long Length => main.Length;
 
         public override object Clone()
         {

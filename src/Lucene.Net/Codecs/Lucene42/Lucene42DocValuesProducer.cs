@@ -510,13 +510,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
             }
 
-            public override int ValueCount
-            {
-                get
-                {
-                    return (int)entry.NumOrds;
-                }
-            }
+            public override int ValueCount => (int)entry.NumOrds;
 
             public override TermsEnum GetTermsEnum()
             {
@@ -647,13 +641,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
             }
 
-            public override long ValueCount
-            {
-                get
-                {
-                    return entry.NumOrds;
-                }
-            }
+            public override long ValueCount => entry.NumOrds;
 
             public override TermsEnum GetTermsEnum()
             {
@@ -747,13 +735,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return BytesRef.UTF8SortedAsUnicodeComparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
             public override SeekStatus SeekCeil(BytesRef text)
             {
@@ -800,25 +782,13 @@ namespace Lucene.Net.Codecs.Lucene42
                 @in.SeekExact(scratchBytes);
             }
 
-            public override BytesRef Term
-            {
-                get { return @in.Current.Input; }
-            }
+            public override BytesRef Term => @in.Current.Input;
 
-            public override long Ord
-            {
-                get { return @in.Current.Output.GetValueOrDefault(); }
-            }
+            public override long Ord => @in.Current.Output.GetValueOrDefault();
 
-            public override int DocFreq
-            {
-                get { throw new System.NotSupportedException(); }
-            }
+            public override int DocFreq => throw new System.NotSupportedException();
 
-            public override long TotalTermFreq
-            {
-                get { throw new System.NotSupportedException(); }
-            }
+            public override long TotalTermFreq => throw new System.NotSupportedException();
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {

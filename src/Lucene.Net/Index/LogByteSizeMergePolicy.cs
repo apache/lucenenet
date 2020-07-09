@@ -76,6 +76,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual double MaxMergeMB
         {
+            get => ((double)m_maxMergeSize) / 1024 / 1024;
             set
             {
                 m_maxMergeSize = (long)(value * 1024 * 1024);
@@ -83,10 +84,6 @@ namespace Lucene.Net.Index
                 {
                     m_maxMergeSize = long.MaxValue;
                 }
-            }
-            get
-            {
-                return ((double)m_maxMergeSize) / 1024 / 1024;
             }
         }
 
@@ -99,6 +96,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual double MaxMergeMBForForcedMerge
         {
+            get => ((double)m_maxMergeSizeForForcedMerge) / 1024 / 1024;
             set
             {
                 m_maxMergeSizeForForcedMerge = (long)(value * 1024 * 1024);
@@ -106,10 +104,6 @@ namespace Lucene.Net.Index
                 {
                     m_maxMergeSizeForForcedMerge = long.MaxValue;
                 }
-            }
-            get
-            {
-                return ((double)m_maxMergeSizeForForcedMerge) / 1024 / 1024;
             }
         }
 
@@ -126,6 +120,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual double MinMergeMB
         {
+            get => ((double)m_minMergeSize) / 1024 / 1024;
             set
             {
                 m_minMergeSize = (long)(value * 1024 * 1024);
@@ -133,10 +128,6 @@ namespace Lucene.Net.Index
                 {
                     m_minMergeSize = long.MaxValue;
                 }
-            }
-            get
-            {
-                return ((double)m_minMergeSize) / 1024 / 1024;
             }
         }
     }

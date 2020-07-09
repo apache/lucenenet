@@ -439,13 +439,7 @@ namespace Lucene.Net.Codecs.Memory
                 values.Get(ord, result);
             }
 
-            public override int ValueCount
-            {
-                get
-                {
-                    return entry.values.count;
-                }
-            }
+            public override int ValueCount => entry.values.count;
 
             // Leave lookupTerm to super's binary search
 
@@ -516,13 +510,7 @@ namespace Lucene.Net.Codecs.Memory
                 values.Get((int)ord, result);
             }
 
-            public override long ValueCount
-            {
-                get
-                {
-                    return entry.values.count;
-                }
-            }
+            public override long ValueCount => entry.values.count;
 
             public override long OrdAt(int index)
             {

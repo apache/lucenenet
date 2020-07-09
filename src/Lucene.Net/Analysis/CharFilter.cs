@@ -130,10 +130,7 @@ namespace Lucene.Net.Analysis
         /// <para/>
         /// LUCENENET specific. Moved here from the Reader class (in Java) so it can be overridden to provide reader buffering.
         /// </summary>
-        public virtual bool IsReady
-        {
-            get { return false; }
-        }
+        public virtual bool IsReady => false;
 
         /// <summary>
         /// Tells whether this stream supports the <see cref="Mark(int)"/> operation. The default implementation always 
@@ -142,10 +139,7 @@ namespace Lucene.Net.Analysis
         /// LUCENENET specific. Moved here from the Reader class (in Java) so it can be overridden to provide reader buffering.
         /// </summary>
         /// <returns>true if and only if this stream supports the mark operation.</returns>
-        public virtual bool IsMarkSupported
-        {
-            get { return false; }
-        }
+        public virtual bool IsMarkSupported => false;
 
         /// <summary>
         /// Marks the present position in the stream. Subsequent calls to <see cref="Reset"/> will attempt to 

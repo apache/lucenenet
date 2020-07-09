@@ -136,53 +136,17 @@ namespace Lucene.Net.Codecs.Lucene41
         /// Returns the doc pointer of the doc to which the last call of
         /// <seealso cref="MultiLevelSkipListReader.SkipTo(int)"/> has skipped.
         /// </summary>
-        public long DocPointer
-        {
-            get
-            {
-                return lastDocPointer;
-            }
-        }
+        public long DocPointer => lastDocPointer;
 
-        public long PosPointer
-        {
-            get
-            {
-                return lastPosPointer;
-            }
-        }
+        public long PosPointer => lastPosPointer;
 
-        public int PosBufferUpto
-        {
-            get
-            {
-                return lastPosBufferUpto;
-            }
-        }
+        public int PosBufferUpto => lastPosBufferUpto;
 
-        public long PayPointer
-        {
-            get
-            {
-                return lastPayPointer;
-            }
-        }
+        public long PayPointer => lastPayPointer;
 
-        public int PayloadByteUpto
-        {
-            get
-            {
-                return lastPayloadByteUpto;
-            }
-        }
+        public int PayloadByteUpto => lastPayloadByteUpto;
 
-        public int NextSkipDoc
-        {
-            get
-            {
-                return m_skipDoc[0];
-            }
-        }
+        public int NextSkipDoc => m_skipDoc[0];
 
         protected override void SeekChild(int level)
         {

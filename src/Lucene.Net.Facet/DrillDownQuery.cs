@@ -370,20 +370,8 @@ namespace Lucene.Net.Facet
             return query.ToString(field);
         }
 
-        internal BooleanQuery BooleanQuery
-        {
-            get
-            {
-                return query;
-            }
-        }
+        internal BooleanQuery BooleanQuery => query;
 
-        internal IDictionary<string, int?> Dims
-        {
-            get
-            {
-                return drillDownDims;
-            }
-        }
+        internal IDictionary<string, int?> Dims => drillDownDims;
     }
 }

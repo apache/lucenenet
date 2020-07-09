@@ -46,10 +46,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             this.fieldOp = fieldOp;
         }
 
-        public override bool IsFieldsSubQueryAcceptable
-        {
-            get { return false; }
-        }
+        public override bool IsFieldsSubQueryAcceptable => false;
 
         public virtual Search.Query MakeLuceneQueryNoBoost(BasicQueryFactory qf)
         {
@@ -78,9 +75,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             return MakeLuceneQueryNoBoost(qf); /* use this.fieldNames instead of fieldName */
         }
 
-        public virtual IList<string> FieldNames { get { return fieldNames; } }
+        public virtual IList<string> FieldNames => fieldNames;
 
-        public virtual char FieldOperator { get { return fieldOp; } }
+        public virtual char FieldOperator => fieldOp;
 
         public override string ToString()
         {

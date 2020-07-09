@@ -394,10 +394,7 @@ namespace Lucene.Net.Analysis.Standard
 
         public static readonly string[] TOKEN_TYPES = StandardTokenizer.TOKEN_TYPES;
 
-        public int YyChar
-        {
-            get { return yyChar; }
-        }
+        public int YyChar => yyChar;
 
         /// <summary>
         /// Fills ICharTermAttribute with the current token text.
@@ -546,10 +543,7 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>
         /// Returns the current lexical state.
         /// </summary>
-        public int YyState
-        {
-            get { return zzLexicalState; }
-        }
+        public int YyState => zzLexicalState;
 
 
         /// <summary>
@@ -565,10 +559,7 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>
         /// Returns the text matched by the current regular expression.
         /// </summary>
-        public string YyText
-        {
-            get { return new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead); }
-        }
+        public string YyText => new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
 
 
         /// <summary>
@@ -590,10 +581,7 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>
         /// Returns the length of the matched text region.
         /// </summary>
-        public int YyLength
-        {
-            get { return zzMarkedPos - zzStartRead; }
-        }
+        public int YyLength => zzMarkedPos - zzStartRead;
 
 
         /// <summary>

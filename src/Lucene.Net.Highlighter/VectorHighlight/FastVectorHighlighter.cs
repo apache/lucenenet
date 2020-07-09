@@ -267,12 +267,12 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <summary>
         /// return whether phraseHighlight or not.
         /// </summary>
-        public virtual bool IsPhraseHighlight { get { return phraseHighlight; } }
+        public virtual bool IsPhraseHighlight => phraseHighlight;
 
         /// <summary>
         /// return whether fieldMatch or not.
         /// </summary>
-        public virtual bool IsFieldMatch { get { return fieldMatch; } }
+        public virtual bool IsFieldMatch => fieldMatch;
 
         /// <summary>
         /// Gets or Sets the maximum number of phrases to analyze when searching for the highest-scoring phrase.
@@ -280,8 +280,8 @@ namespace Lucene.Net.Search.VectorHighlight
         /// </summary>
         public virtual int PhraseLimit
         {
-            get { return phraseLimit; }
-            set { phraseLimit = value; }
+            get => phraseLimit;
+            set => phraseLimit = value;
         }
     }
 }

@@ -65,20 +65,14 @@ namespace Lucene.Net.Util.Packed
             return sz == 0 ? PageSize : sz;
         }
 
-        internal int PageSize
-        {
-            get { return pageMask + 1; }
-        }
+        internal int PageSize => pageMask + 1;
 
         /// <summary>
         /// The number of values.
         /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
-        public long Count
-        {
-            get { return size; }
-        }
+        public long Count => size;
 
         internal int PageIndex(long index)
         {

@@ -136,20 +136,14 @@ namespace Lucene.Net.Codecs.Sep
             Arrays.Fill(payloadLength, 0);
         }
 
-        internal long PayloadPointer
-        {
-            get { return lastPayloadPointer; }
-        }
+        internal long PayloadPointer => lastPayloadPointer;
 
         /// <summary>
         /// Returns the payload length of the payload stored just before 
         /// the doc to which the last call of <see cref="MultiLevelSkipListReader.SkipTo(int)"/> 
         /// has skipped.
         /// </summary>
-        internal int PayloadLength
-        {
-            get { return lastPayloadLength; }
-        }
+        internal int PayloadLength => lastPayloadLength;
 
         /// <exception cref="System.IO.IOException"/>
         protected override void SeekChild(int level)
@@ -189,20 +183,11 @@ namespace Lucene.Net.Codecs.Sep
             }
         }
 
-        internal Int32IndexInput.Index FreqIndex
-        {
-            get { return lastFreqIndex; }
-        }
+        internal Int32IndexInput.Index FreqIndex => lastFreqIndex;
 
-        internal Int32IndexInput.Index PosIndex
-        {
-            get { return lastPosIndex; }
-        }
+        internal Int32IndexInput.Index PosIndex => lastPosIndex;
 
-        internal Int32IndexInput.Index DocIndex
-        {
-            get { return lastDocIndex; }
-        }
+        internal Int32IndexInput.Index DocIndex => lastDocIndex;
 
         /// <exception cref="System.IO.IOException"/>
         protected override int ReadSkipData(int level, IndexInput skipStream)

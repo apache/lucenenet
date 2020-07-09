@@ -91,20 +91,11 @@ namespace Lucene.Net.Search.Spans
             return true;
         }
 
-        public override int Doc
-        {
-            get { return m_doc; }
-        }
+        public override int Doc => m_doc;
 
-        public override int Start
-        {
-            get { return m_position; }
-        }
+        public override int Start => m_position;
 
-        public override int End
-        {
-            get { return m_position + 1; }
-        }
+        public override int End => m_position + 1;
 
         public override long GetCost()
         {
@@ -130,26 +121,14 @@ namespace Lucene.Net.Search.Spans
         }
 
         // TODO: Remove warning after API has been finalized
-        public override bool IsPayloadAvailable
-        {
-            get
-            {
-                return m_readPayload == false && m_postings.GetPayload() != null;
-            }
-        }
+        public override bool IsPayloadAvailable => m_readPayload == false && m_postings.GetPayload() != null;
 
         public override string ToString()
         {
             return "spans(" + m_term.ToString() + ")@" + (m_doc == -1 ? "START" : (m_doc == int.MaxValue) ? "END" : m_doc + "-" + m_position);
         }
 
-        public virtual DocsAndPositionsEnum Postings
-        {
-            get
-            {
-                return m_postings;
-            }
-        }
+        public virtual DocsAndPositionsEnum Postings => m_postings;
 
         private sealed class EmptyTermSpans : TermSpans
         {
@@ -163,33 +142,18 @@ namespace Lucene.Net.Search.Spans
                 return false;
             }
 
-            public override int Doc
-            {
-                get { return DocIdSetIterator.NO_MORE_DOCS; }
-            }
+            public override int Doc => DocIdSetIterator.NO_MORE_DOCS;
 
-            public override int Start
-            {
-                get { return -1; }
-            }
+            public override int Start => -1;
 
-            public override int End
-            {
-                get { return -1; }
-            }
+            public override int End => -1;
 
             public override ICollection<byte[]> GetPayload()
             {
                 return null;
             }
 
-            public override bool IsPayloadAvailable
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public override bool IsPayloadAvailable => false;
 
             public override long GetCost()
             {

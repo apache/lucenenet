@@ -343,21 +343,9 @@ namespace Lucene.Net.Codecs.Memory
                 private bool ended;
                 private long toReturn;
 
-                public long? Current
-                {
-                    get
-                    {
-                        return toReturn;
-                    }
-                }
+                public long? Current => toReturn;
 
-                object IEnumerator.Current
-                {
-                    get
-                    {
-                        return Current;
-                    }
-                }
+                object IEnumerator.Current => Current;
 
                 // LUCENENET: Remove() not supported by .NET
 

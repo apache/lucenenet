@@ -86,10 +86,7 @@ namespace Lucene.Net.Index
                 return m_input.GetTerms(field);
             }
 
-            public override int Count
-            {
-                get { return m_input.Count; }
-            }
+            public override int Count => m_input.Count;
         }
 
         /// <summary>
@@ -117,62 +114,23 @@ namespace Lucene.Net.Index
                 return m_input.GetIterator(reuse);
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return m_input.Comparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => m_input.Comparer;
 
-            public override long Count
-            {
-                get { return m_input.Count; }
-            }
+            public override long Count => m_input.Count;
 
-            public override long SumTotalTermFreq
-            {
-                get
-                {
-                    return m_input.SumTotalTermFreq;
-                }
-            }
+            public override long SumTotalTermFreq => m_input.SumTotalTermFreq;
 
-            public override long SumDocFreq
-            {
-                get
-                {
-                    return m_input.SumDocFreq;
-                }
-            }
+            public override long SumDocFreq => m_input.SumDocFreq;
 
-            public override int DocCount
-            {
-                get
-                {
-                    return m_input.DocCount;
-                }
-            }
+            public override int DocCount => m_input.DocCount;
 
-            public override bool HasFreqs
-            {
-                get { return m_input.HasFreqs; }
-            }
+            public override bool HasFreqs => m_input.HasFreqs;
 
-            public override bool HasOffsets
-            {
-                get { return m_input.HasOffsets; }
-            }
+            public override bool HasOffsets => m_input.HasOffsets;
 
-            public override bool HasPositions
-            {
-                get { return m_input.HasPositions; }
-            }
+            public override bool HasPositions => m_input.HasPositions;
 
-            public override bool HasPayloads
-            {
-                get { return m_input.HasPayloads; }
-            }
+            public override bool HasPayloads => m_input.HasPayloads;
         }
 
         /// <summary>
@@ -191,10 +149,7 @@ namespace Lucene.Net.Index
                 this.m_input = input;
             }
 
-            public override AttributeSource Attributes
-            {
-                get { return m_input.Attributes; }
-            }
+            public override AttributeSource Attributes => m_input.Attributes;
 
             public override SeekStatus SeekCeil(BytesRef text)
             {
@@ -211,25 +166,13 @@ namespace Lucene.Net.Index
                 return m_input.Next();
             }
 
-            public override BytesRef Term
-            {
-                get { return m_input.Term; }
-            }
+            public override BytesRef Term => m_input.Term;
 
-            public override long Ord
-            {
-                get { return m_input.Ord; }
-            }
+            public override long Ord => m_input.Ord;
 
-            public override int DocFreq
-            {
-                get { return m_input.DocFreq; }
-            }
+            public override int DocFreq => m_input.DocFreq;
 
-            public override long TotalTermFreq
-            {
-                get { return m_input.TotalTermFreq; }
-            }
+            public override long TotalTermFreq => m_input.TotalTermFreq;
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
@@ -241,13 +184,7 @@ namespace Lucene.Net.Index
                 return m_input.DocsAndPositions(liveDocs, reuse, flags);
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return m_input.Comparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => m_input.Comparer;
         }
 
         /// <summary>
@@ -267,20 +204,11 @@ namespace Lucene.Net.Index
                 this.m_input = input;
             }
 
-            public override AttributeSource Attributes
-            {
-                get { return m_input.Attributes; }
-            }
+            public override AttributeSource Attributes => m_input.Attributes;
 
-            public override int DocID
-            {
-                get { return m_input.DocID; }
-            }
+            public override int DocID => m_input.DocID;
 
-            public override int Freq
-            {
-                get { return m_input.Freq; }
-            }
+            public override int Freq => m_input.Freq;
 
             public override int NextDoc()
             {
@@ -314,20 +242,11 @@ namespace Lucene.Net.Index
                 this.m_input = input;
             }
 
-            public override AttributeSource Attributes
-            {
-                get { return m_input.Attributes; }
-            }
+            public override AttributeSource Attributes => m_input.Attributes;
 
-            public override int DocID
-            {
-                get { return m_input.DocID; }
-            }
+            public override int DocID => m_input.DocID;
 
-            public override int Freq
-            {
-                get { return m_input.Freq; }
-            }
+            public override int Freq => m_input.Freq;
 
             public override int NextDoc()
             {
@@ -344,15 +263,9 @@ namespace Lucene.Net.Index
                 return m_input.NextPosition();
             }
 
-            public override int StartOffset
-            {
-                get { return m_input.StartOffset; }
-            }
+            public override int StartOffset => m_input.StartOffset;
 
-            public override int EndOffset
-            {
-                get { return m_input.EndOffset; }
-            }
+            public override int EndOffset => m_input.EndOffset;
 
             public override BytesRef GetPayload()
             {
@@ -391,13 +304,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override FieldInfos FieldInfos
-        {
-            get
-            {
-                return m_input.FieldInfos;
-            }
-        }
+        public override FieldInfos FieldInfos => m_input.FieldInfos;
 
         public override Fields GetTermVectors(int docID)
         {
@@ -405,23 +312,13 @@ namespace Lucene.Net.Index
             return m_input.GetTermVectors(docID);
         }
 
-        public override int NumDocs
-        {
-            get
-            {
-                // Don't call ensureOpen() here (it could affect performance)
-                return m_input.NumDocs;
-            }
-        }
+        public override int NumDocs =>
+            // Don't call ensureOpen() here (it could affect performance)
+            m_input.NumDocs;
 
-        public override int MaxDoc
-        {
-            get
-            {
-                // Don't call ensureOpen() here (it could affect performance)
-                return m_input.MaxDoc;
-            }
-        }
+        public override int MaxDoc =>
+            // Don't call ensureOpen() here (it could affect performance)
+            m_input.MaxDoc;
 
         public override void Document(int docID, StoredFieldVisitor visitor)
         {

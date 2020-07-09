@@ -74,7 +74,7 @@ namespace Lucene.Net.Documents
         // so we can set the data type when it is set.
         protected object FieldsData
         {
-            get { return fieldsData; }
+            get => fieldsData;
             set
             {
                 fieldsData = value;
@@ -613,10 +613,7 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// The field's name
         /// </summary>
-        public virtual string Name
-        {
-            get { return m_name; }
-        }
+        public virtual string Name => m_name;
 
         /// <summary>
         /// Gets or sets the boost factor on this field.
@@ -626,10 +623,7 @@ namespace Lucene.Net.Documents
         ///         or if it omits norms. </exception>
         public virtual float Boost
         {
-            get
-            {
-                return m_boost;
-            }
+            get => m_boost;
             set
             {
                 if (value != 1.0f)
@@ -698,10 +692,7 @@ namespace Lucene.Net.Documents
         /// fields created with these types will always be <see cref="NumericFieldType.INT32"/> when read back from the index.
         /// </summary>
         // LUCENENET specific
-        public virtual NumericFieldType NumericType
-        {
-            get { return numericType; }
-        }
+        public virtual NumericFieldType NumericType => numericType;
 
         /// <summary>
         /// Returns the field value as <see cref="byte"/> or <c>null</c> if the type
@@ -848,17 +839,11 @@ namespace Lucene.Net.Documents
         /// Returns the <see cref="Documents.FieldType"/> for this field as type <see cref="Documents.FieldType"/>. </summary>
         // LUCENENET specific property to prevent the need to cast. The FieldType property was renamed IndexableFieldType
         // in order to accommodate this (more Lucene like) property.
-        public virtual FieldType FieldType
-        {
-            get { return m_type; }
-        }
+        public virtual FieldType FieldType => m_type;
 
         /// <summary>
         /// Returns the <see cref="Documents.FieldType"/> for this field as type <see cref="IIndexableFieldType"/>. </summary>
-        public virtual IIndexableFieldType IndexableFieldType
-        {
-            get { return m_type; }
-        }
+        public virtual IIndexableFieldType IndexableFieldType => m_type;
 
         public virtual TokenStream GetTokenStream(Analyzer analyzer)
         {

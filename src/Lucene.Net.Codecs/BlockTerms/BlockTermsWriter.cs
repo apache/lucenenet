@@ -222,10 +222,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 this.longsSize = postingsWriter.SetField(fieldInfo);
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get { return BytesRef.UTF8SortedAsUnicodeComparer; }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
             public override PostingsConsumer StartTerm(BytesRef text)
             {

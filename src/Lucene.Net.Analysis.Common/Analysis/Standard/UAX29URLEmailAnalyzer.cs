@@ -84,8 +84,8 @@ namespace Lucene.Net.Analysis.Standard
         /// </summary>
         public int MaxTokenLength
         {
-            set { maxTokenLength = value; }
-            get { return maxTokenLength; }
+            set => maxTokenLength = value;
+            get => maxTokenLength;
         }
 
         protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)

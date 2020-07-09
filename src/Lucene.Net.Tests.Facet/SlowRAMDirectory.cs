@@ -42,10 +42,7 @@ namespace Lucene.Net.Facet
 
         public virtual int SleepMillis
         {
-            set
-            {
-                this.sleepMillis = value;
-            }
+            set => this.sleepMillis = value;
         }
 
         public SlowRAMDirectory(int sleepMillis, Random random)
@@ -181,11 +178,7 @@ namespace Lucene.Net.Facet
             {
                 return ii.GetHashCode();
             }
-            public override long Length
-            {
-                get { return ii.Length; }
-            }
-
+            public override long Length => ii.Length;
         }
 
         /// <summary>
@@ -252,13 +245,7 @@ namespace Lucene.Net.Facet
                 io.Seek(pos);
             }
 
-            public override long Checksum
-            {
-                get
-                {
-                    return io.Checksum;
-                }
-            }
+            public override long Checksum => io.Checksum;
         }
 
     }

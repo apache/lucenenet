@@ -169,10 +169,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// Get the number of <see cref="SegTokenPair"/> entries in the table.
         /// </summary>
         /// <returns>number of <see cref="SegTokenPair"/> entries</returns>
-        public virtual int ToCount
-        {
-            get { return tokenPairListTable.Count; }
-        }
+        public virtual int ToCount => tokenPairListTable.Count;
 
         /// <summary>
         /// Find the shortest path with the Viterbi algorithm.

@@ -620,14 +620,9 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-        private string RandomString
-        {
-            get
-            {
-                //return TestUtil.RandomSimpleString(Random());
-                return TestUtil.RandomRealisticUnicodeString(Random);
-            }
-        }
+        private string RandomString =>
+            //return TestUtil.RandomSimpleString(Random);
+            TestUtil.RandomRealisticUnicodeString(Random);
 
         [Test]
         public virtual void TestRandomTerms()

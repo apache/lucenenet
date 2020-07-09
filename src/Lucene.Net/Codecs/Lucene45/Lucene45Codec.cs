@@ -95,35 +95,17 @@ namespace Lucene.Net.Codecs.Lucene45
             docValuesFormat = new PerFieldDocValuesFormatAnonymousInnerClassHelper(this);
         }
 
-        public override sealed StoredFieldsFormat StoredFieldsFormat
-        {
-            get { return fieldsFormat; }
-        }
+        public override sealed StoredFieldsFormat StoredFieldsFormat => fieldsFormat;
 
-        public override sealed TermVectorsFormat TermVectorsFormat
-        {
-            get { return vectorsFormat; }
-        }
+        public override sealed TermVectorsFormat TermVectorsFormat => vectorsFormat;
 
-        public override sealed PostingsFormat PostingsFormat
-        {
-            get { return postingsFormat; }
-        }
+        public override sealed PostingsFormat PostingsFormat => postingsFormat;
 
-        public override FieldInfosFormat FieldInfosFormat
-        {
-            get { return fieldInfosFormat; }
-        }
+        public override FieldInfosFormat FieldInfosFormat => fieldInfosFormat;
 
-        public override SegmentInfoFormat SegmentInfoFormat
-        {
-            get { return infosFormat; }
-        }
+        public override SegmentInfoFormat SegmentInfoFormat => infosFormat;
 
-        public override sealed LiveDocsFormat LiveDocsFormat
-        {
-            get { return liveDocsFormat; }
-        }
+        public override sealed LiveDocsFormat LiveDocsFormat => liveDocsFormat;
 
         /// <summary>
         /// Returns the postings format that should be used for writing
@@ -157,10 +139,7 @@ namespace Lucene.Net.Codecs.Lucene45
             return defaultDVFormat;
         }
 
-        public override sealed DocValuesFormat DocValuesFormat
-        {
-            get { return docValuesFormat; }
-        }
+        public override sealed DocValuesFormat DocValuesFormat => docValuesFormat;
 
         // LUCENENET specific - lazy initialize the codecs to ensure we get the correct type if overridden.
         private PostingsFormat defaultFormat;
@@ -168,9 +147,6 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private readonly NormsFormat normsFormat = new Lucene42NormsFormat();
 
-        public override sealed NormsFormat NormsFormat
-        {
-            get { return normsFormat; }
-        }
+        public override sealed NormsFormat NormsFormat => normsFormat;
     }
 }

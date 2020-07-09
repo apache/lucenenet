@@ -36,25 +36,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
         }
 
-        public override bool WithRetrieve
-        {
-            get { return false; }
-        }
+        public override bool WithRetrieve => false;
 
-        public override bool WithSearch
-        {
-            get { return false; }
-        }
+        public override bool WithSearch => false;
 
-        public override bool WithTraverse
-        {
-            get { return false; }
-        }
+        public override bool WithTraverse => false;
 
-        public override bool WithWarm
-        {
-            get { return true; }
-        }
+        public override bool WithWarm => true;
 
         public override IQueryMaker GetQueryMaker()
         {

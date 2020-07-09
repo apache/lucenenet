@@ -166,7 +166,7 @@ namespace Lucene.Net.Support.Threading
         }
 
         // Gets the maximum concurrency level supported by this scheduler. 
-        public sealed override int MaximumConcurrencyLevel { get { return _maxDegreeOfParallelism; } }
+        public sealed override int MaximumConcurrencyLevel => _maxDegreeOfParallelism;
 
         // Gets an enumerable of the tasks currently scheduled on this scheduler. 
         protected sealed override IEnumerable<Task> GetScheduledTasks()

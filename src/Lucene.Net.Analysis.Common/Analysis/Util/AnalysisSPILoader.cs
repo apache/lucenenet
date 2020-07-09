@@ -128,9 +128,6 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        public ICollection<string> AvailableServices
-        {
-            get { return services.Keys; }
-        }
+        public ICollection<string> AvailableServices => services.Keys;
     }
 }

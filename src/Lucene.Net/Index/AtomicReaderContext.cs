@@ -66,24 +66,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override IList<IndexReaderContext> Children
-        {
-            get { return null; }
-        }
+        public override IList<IndexReaderContext> Children => null;
 
-        public override IndexReader Reader
-        {
-            get { return reader; }
-        }
+        public override IndexReader Reader => reader;
 
         // LUCENENET specific: Can't change return type on override like Java, so adding helper property
         // to avoid a bunch of casting.
-        public AtomicReader AtomicReader
-        {
-            get
-            {
-                return reader;
-            }
-        }
+        public AtomicReader AtomicReader => reader;
     }
 }

@@ -362,18 +362,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
             }
 
             // LUCENENET specific - Added to .NETify
-            public char this[int i]
-            {
-                get { return longTestString[i]; }
-            }
+            public char this[int i] => longTestString[i];
 
-            public int Length
-            {
-                get
-                {
-                    return longTestString.Length;
-                }
-            }
+            public int Length => longTestString.Length;
 
             public ICharSequence Subsequence(int startIndex, int length) // LUCENENET: Changed semantics to startIndex/length to match .NET
             {

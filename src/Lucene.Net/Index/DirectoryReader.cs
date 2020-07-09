@@ -405,16 +405,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the directory this index resides in. </summary>
-        public Directory Directory
-        {
-            get
-            {
-                // Don't ensureOpen here -- in certain cases, when a
-                // cloned/reopened reader needs to commit, it may call
-                // this method on the closed original reader
-                return m_directory;
-            }
-        }
+        public Directory Directory =>
+            // Don't ensureOpen here -- in certain cases, when a
+            // cloned/reopened reader needs to commit, it may call
+            // this method on the closed original reader
+            m_directory;
 
         /// <summary>
         /// Implement this method to support <see cref="OpenIfChanged(DirectoryReader)"/>.

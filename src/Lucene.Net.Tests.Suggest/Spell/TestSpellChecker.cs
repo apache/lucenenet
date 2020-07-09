@@ -582,10 +582,7 @@ namespace Lucene.Net.Search.Spell
                 this.stop = stop;
             }
 
-            public Exception Error
-            {
-                get { return error; }
-            }
+            public Exception Error => error;
 
             public override void Run()
             {

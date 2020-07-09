@@ -152,25 +152,13 @@ namespace Lucene.Net.Facet
                 bits.Set(docId);
             }
 
-            public override DocIdSet DocIdSet
-            {
-                get
-                {
-                    return bits;
-                }
-            }
+            public override DocIdSet DocIdSet => bits;
         }
 
         /// <summary>
         /// True if scores were saved.
         /// </summary>
-        public bool KeepScores
-        {
-            get
-            {
-                return keepScores;
-            }
-        }
+        public bool KeepScores => keepScores;
 
         /// <summary>
         /// Returns the documents matched by the query, one <see cref="MatchingDocs"/> per
@@ -189,16 +177,11 @@ namespace Lucene.Net.Facet
             return matchingDocs;
         }
 
-        public bool AcceptsDocsOutOfOrder
-        {
-            get
-            {
-                // If we are keeping scores then we require in-order
-                // because we append each score to the float[] and
-                // expect that they correlate in order to the hits:
-                return keepScores == false;
-            }
-        }
+        public bool AcceptsDocsOutOfOrder =>
+            // If we are keeping scores then we require in-order
+            // because we append each score to the float[] and
+            // expect that they correlate in order to the hits:
+            keepScores == false;
 
         public void Collect(int doc)
         {

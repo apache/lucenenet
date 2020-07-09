@@ -123,21 +123,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
             bool ICharSequence.HasValue => true; // LUCENENET specific
 
-            public char this[int index]
-            {
-                get
-                {
-                    return cached[index];
-                }
-            }
+            public char this[int index] => cached[index];
 
-            public int Length
-            {
-                get
-                {
-                    return cached.Length;
-                }
-            }
+            public int Length => cached.Length;
 
             // LUCENENET: Convert the startIndex/length to start/end
             public ICharSequence Subsequence(int startIndex, int length)

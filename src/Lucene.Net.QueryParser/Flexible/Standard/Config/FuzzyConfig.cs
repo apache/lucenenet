@@ -34,14 +34,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public virtual int PrefixLength
         {
-            get { return prefixLength; }
-            set { this.prefixLength = value; }
+            get => prefixLength;
+            set => this.prefixLength = value;
         }
 
         public virtual float MinSimilarity
         {
-            get { return minSimilarity; }
-            set { this.minSimilarity = value; }
+            get => minSimilarity;
+            set => this.minSimilarity = value;
         }
     }
 }

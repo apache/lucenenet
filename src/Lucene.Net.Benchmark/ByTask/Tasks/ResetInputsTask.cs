@@ -35,9 +35,6 @@
         }
 
         /// <seealso cref="PerfTask.ShouldNotRecordStats"/>
-        protected override bool ShouldNotRecordStats
-        {
-            get { return true; }
-        }
+        protected override bool ShouldNotRecordStats => true;
     }
 }

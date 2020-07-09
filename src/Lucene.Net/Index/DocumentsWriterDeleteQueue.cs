@@ -341,13 +341,7 @@ namespace Lucene.Net.Index
                 return sliceTail.item == item;
             }
 
-            internal virtual bool IsEmpty
-            {
-                get
-                {
-                    return sliceHead == sliceTail;
-                }
-            }
+            internal virtual bool IsEmpty => sliceHead == sliceTail;
         }
 
         public int NumGlobalTermDeletes => globalBufferedUpdates.numTermDeletes;

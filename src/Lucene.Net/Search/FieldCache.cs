@@ -989,30 +989,15 @@ namespace Lucene.Net.Search
                 this.value = value;
             }
 
-            public object ReaderKey
-            {
-                get { return readerKey; }
-            }
+            public object ReaderKey => readerKey;
 
-            public string FieldName
-            {
-                get { return fieldName; }
-            }
+            public string FieldName => fieldName;
 
-            public Type CacheType
-            {
-                get { return cacheType; }
-            }
+            public Type CacheType => cacheType;
 
-            public object Custom
-            {
-                get { return custom; }
-            }
+            public object Custom => custom;
 
-            public object Value
-            {
-                get { return value; }
-            }
+            public object Value => value;
 
             /// <summary>
             /// Computes (and stores) the estimated size of the cache <see cref="Value"/>
@@ -1028,10 +1013,7 @@ namespace Lucene.Net.Search
             /// The most recently estimated size of the value, <c>null</c> unless 
             /// <see cref="EstimateSize()"/> has been called.
             /// </summary>
-            public string EstimatedSize
-            {
-                get { return size; }
-            }
+            public string EstimatedSize => size;
 
             public override string ToString()
             {

@@ -120,13 +120,7 @@ namespace Lucene.Net.Store
         /// Returns buffer size.
         /// </summary>
         /// <seealso cref="SetBufferSize(int)"/>
-        public int BufferSize
-        {
-            get
-            {
-                return bufferSize;
-            }
-        }
+        public int BufferSize => bufferSize;
 
         private void CheckBufferSize(int bufferSize)
         {

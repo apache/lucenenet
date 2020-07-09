@@ -284,10 +284,7 @@ namespace Lucene.Net.Index
             return result;
         }
 
-        public override int Count
-        {
-            get { return -1; }
-        }
+        public override int Count => -1;
 
         /// <summary>
         /// Call this to get the (merged) <see cref="FieldInfos"/> for a

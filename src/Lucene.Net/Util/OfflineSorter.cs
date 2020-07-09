@@ -670,12 +670,6 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the comparer in use to sort entries </summary>
-        public IComparer<BytesRef> Comparer
-        {
-            get
-            {
-                return comparer;
-            }
-        }
+        public IComparer<BytesRef> Comparer => comparer;
     }
 }

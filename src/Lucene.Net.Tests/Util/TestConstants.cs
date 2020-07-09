@@ -25,13 +25,7 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestConstants : LuceneTestCase
     {
-        private string VersionDetails
-        {
-            get
-            {
-                return " (LUCENE_MAIN_VERSION=" + Constants.LUCENE_MAIN_VERSION + ", LUCENE_MAIN_VERSION(without alpha/beta)=" + Constants.MainVersionWithoutAlphaBeta() + ", LUCENE_VERSION=" + Constants.LUCENE_VERSION + ")";
-            }
-        }
+        private string VersionDetails => " (LUCENE_MAIN_VERSION=" + Constants.LUCENE_MAIN_VERSION + ", LUCENE_MAIN_VERSION(without alpha/beta)=" + Constants.MainVersionWithoutAlphaBeta() + ", LUCENE_VERSION=" + Constants.LUCENE_VERSION + ")";
 
         [Test]
         public virtual void TestLuceneMainVersionConstant()

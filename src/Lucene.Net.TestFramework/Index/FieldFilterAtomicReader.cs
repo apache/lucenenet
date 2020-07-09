@@ -176,14 +176,9 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
             }
 
-            public override int Count
-            {
-                get
-                {
-                    // this information is not cheap, return -1 like MultiFields does:
-                    return -1;
-                }
-            }
+            public override int Count =>
+                // this information is not cheap, return -1 like MultiFields does:
+                -1;
 
             public override IEnumerator<string> GetEnumerator()
             {

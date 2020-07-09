@@ -781,13 +781,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 bytesReader.FillSlice(result, fixedLength * (long)ord, fixedLength);
             }
 
-            public override int ValueCount
-            {
-                get
-                {
-                    return valueCount;
-                }
-            }
+            public override int ValueCount => valueCount;
         }
 
         private SortedDocValues LoadBytesVarSorted(FieldInfo field, IndexInput data, IndexInput index)
@@ -835,13 +829,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 bytesReader.FillSlice(result, startAddress, (int)(endAddress - startAddress));
             }
 
-            public override int ValueCount
-            {
-                get
-                {
-                    return valueCount;
-                }
-            }
+            public override int ValueCount => valueCount;
         }
 
         // detects and corrects LUCENE-4717 in old indexes
@@ -879,13 +867,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 @in.LookupOrd(ord + 1, result);
             }
 
-            public override int ValueCount
-            {
-                get
-                {
-                    return @in.ValueCount - 1;
-                }
-            }
+            public override int ValueCount => @in.ValueCount - 1;
         }
 
         public override SortedSetDocValues GetSortedSet(FieldInfo field)

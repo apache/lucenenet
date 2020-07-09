@@ -250,12 +250,6 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             return trie.GetSizeInBytes();
         }
 
-        public override long Count
-        {
-            get
-            {
-                return count;
-            }
-        }
+        public override long Count => count;
     }
 }

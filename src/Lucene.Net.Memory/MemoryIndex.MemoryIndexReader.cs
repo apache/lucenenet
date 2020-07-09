@@ -63,21 +63,9 @@ namespace Lucene.Net.Index.Memory
                 return outerInstance.sortedFields[pos].Value;
             }
 
-            public override IBits LiveDocs
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public override IBits LiveDocs => null;
 
-            public override FieldInfos FieldInfos
-            {
-                get
-                {
-                    return new FieldInfos(outerInstance.fieldInfos.Values.ToArray(/*new FieldInfo[outerInstance.fieldInfos.Count]*/));
-                }
-            }
+            public override FieldInfos FieldInfos => new FieldInfos(outerInstance.fieldInfos.Values.ToArray(/*new FieldInfo[outerInstance.fieldInfos.Count]*/));
 
             public override NumericDocValues GetNumericDocValues(string field)
             {
@@ -136,21 +124,9 @@ namespace Lucene.Net.Index.Memory
                     internal int upto;
                     private string current;
 
-                    public string Current
-                    {
-                        get
-                        {
-                            return this.current;
-                        }
-                    }
+                    public string Current => this.current;
 
-                    object IEnumerator.Current
-                    {
-                        get
-                        {
-                            return Current;
-                        }
-                    }
+                    object IEnumerator.Current => Current;
 
                     public void Dispose()
                     {
@@ -208,69 +184,28 @@ namespace Lucene.Net.Index.Memory
                         return new MemoryTermsEnum(outerInstance.outerInstance, info);
                     }
 
-                    public override IComparer<BytesRef> Comparer
-                    {
-                        get
-                        {
-                            return BytesRef.UTF8SortedAsUnicodeComparer;
-                        }
-                    }
+                    public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-                    public override long Count
-                    {
-                        get { return info.terms.Count; }
-                    }
+                    public override long Count => info.terms.Count;
 
-                    public override long SumTotalTermFreq
-                    {
-                        get
-                        {
-                            return info.SumTotalTermFreq;
-                        }
-                    }
+                    public override long SumTotalTermFreq => info.SumTotalTermFreq;
 
-                    public override long SumDocFreq
-                    {
-                        get
-                        {
-                            // each term has df=1
-                            return info.terms.Count;
-                        }
-                    }
+                    public override long SumDocFreq =>
+                        // each term has df=1
+                        info.terms.Count;
 
-                    public override int DocCount
-                    {
-                        get
-                        {
-                            return info.terms.Count > 0 ? 1 : 0;
-                        }
-                    }
+                    public override int DocCount => info.terms.Count > 0 ? 1 : 0;
 
-                    public override bool HasFreqs
-                    {
-                        get { return true; }
-                    }
+                    public override bool HasFreqs => true;
 
-                    public override bool HasOffsets
-                    {
-                        get { return outerInstance.outerInstance.outerInstance.storeOffsets; }
-                    }
+                    public override bool HasOffsets => outerInstance.outerInstance.outerInstance.storeOffsets;
 
-                    public override bool HasPositions
-                    {
-                        get { return true; }
-                    }
+                    public override bool HasPositions => true;
 
-                    public override bool HasPayloads
-                    {
-                        get { return false; }
-                    }
+                    public override bool HasPayloads => false;
                 }
 
-                public override int Count
-                {
-                    get { return outerInstance.outerInstance.sortedFields.Length; }
-                }
+                public override int Count => outerInstance.outerInstance.sortedFields.Length;
             }
 
             public override Fields Fields
@@ -371,52 +306,32 @@ namespace Lucene.Net.Index.Memory
                     }
                 }
 
-                public override BytesRef Term
-                {
-                    get { return br; }
-                }
+                public override BytesRef Term => br;
 
-                public override long Ord
-                {
-                    get { return termUpto; }
-                }
+                public override long Ord => termUpto;
 
-                public override int DocFreq
-                {
-                    get { return 1; }
-                }
+                public override int DocFreq => 1;
 
-                public override long TotalTermFreq
-                {
-                    get { return info.sliceArray.freq[info.sortedTerms[termUpto]]; }
-                }
+                public override long TotalTermFreq => info.sliceArray.freq[info.sortedTerms[termUpto]];
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
-                    if (reuse == null || !(reuse is MemoryDocsEnum))
-                    {
-                        reuse = new MemoryDocsEnum(outerInstance);
-                    }
-                    return ((MemoryDocsEnum)reuse).Reset(liveDocs, info.sliceArray.freq[info.sortedTerms[termUpto]]);
+                    if (reuse is null || !(reuse is MemoryDocsEnum toReuse))
+                        toReuse = new MemoryDocsEnum(outerInstance);
+
+                    return toReuse.Reset(liveDocs, info.sliceArray.freq[info.sortedTerms[termUpto]]);
                 }
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
-                    if (reuse == null || !(reuse is MemoryDocsAndPositionsEnum))
-                    {
-                        reuse = new MemoryDocsAndPositionsEnum(outerInstance);
-                    }
+                    if (reuse is null || !(reuse is MemoryDocsAndPositionsEnum toReuse))
+                        toReuse = new MemoryDocsAndPositionsEnum(outerInstance);
+
                     int ord = info.sortedTerms[termUpto];
-                    return ((MemoryDocsAndPositionsEnum)reuse).Reset(liveDocs, info.sliceArray.start[ord], info.sliceArray.end[ord], info.sliceArray.freq[ord]);
+                    return toReuse.Reset(liveDocs, info.sliceArray.start[ord], info.sliceArray.end[ord], info.sliceArray.freq[ord]);
                 }
 
-                public override IComparer<BytesRef> Comparer
-                {
-                    get
-                    {
-                        return BytesRef.UTF8SortedAsUnicodeComparer;
-                    }
-                }
+                public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
                 public override void SeekExact(BytesRef term, TermState state)
                 {
@@ -444,21 +359,18 @@ namespace Lucene.Net.Index.Memory
                 internal bool hasNext;
                 internal IBits liveDocs;
                 internal int doc = -1;
-                internal int freq_Renamed;
+                internal int freq;
 
                 public virtual DocsEnum Reset(IBits liveDocs, int freq)
                 {
                     this.liveDocs = liveDocs;
                     hasNext = true;
                     doc = -1;
-                    this.freq_Renamed = freq;
+                    this.freq = freq;
                     return this;
                 }
 
-                public override int DocID
-                {
-                    get { return doc; }
-                }
+                public override int DocID => doc;
 
                 public override int NextDoc()
                 {
@@ -478,10 +390,7 @@ namespace Lucene.Net.Index.Memory
                     return SlowAdvance(target);
                 }
 
-                public override int Freq
-                {
-                    get { return freq_Renamed; }
-                }
+                public override int Freq => freq;
 
                 public override long GetCost()
                 {
@@ -498,9 +407,9 @@ namespace Lucene.Net.Index.Memory
                 internal IBits liveDocs;
                 internal int doc = -1;
                 internal Int32BlockPool.SliceReader sliceReader;
-                internal int freq_Renamed;
-                internal int startOffset_Renamed;
-                internal int endOffset_Renamed;
+                internal int freq;
+                internal int startOffset;
+                internal int endOffset;
 
                 public MemoryDocsAndPositionsEnum(MemoryIndex.MemoryIndexReader outerInstance)
                 {
@@ -515,15 +424,12 @@ namespace Lucene.Net.Index.Memory
                     posUpto = 0; // for assert
                     hasNext = true;
                     doc = -1;
-                    this.freq_Renamed = freq;
+                    this.freq = freq;
                     return this;
                 }
 
 
-                public override int DocID
-                {
-                    get { return doc; }
-                }
+                public override int DocID => doc;
 
                 public override int NextDoc()
                 {
@@ -543,20 +449,17 @@ namespace Lucene.Net.Index.Memory
                     return SlowAdvance(target);
                 }
 
-                public override int Freq
-                {
-                    get { return freq_Renamed; }
-                }
+                public override int Freq => freq;
 
                 public override int NextPosition()
                 {
-                    Debug.Assert(posUpto++ < freq_Renamed);
-                    Debug.Assert(!sliceReader.IsEndOfSlice, " stores offsets : " + startOffset_Renamed);
+                    Debug.Assert(posUpto++ < freq);
+                    Debug.Assert(!sliceReader.IsEndOfSlice, " stores offsets : " + startOffset);
                     if (outerInstance.outerInstance.storeOffsets)
                     {
                         int pos = sliceReader.ReadInt32();
-                        startOffset_Renamed = sliceReader.ReadInt32();
-                        endOffset_Renamed = sliceReader.ReadInt32();
+                        startOffset = sliceReader.ReadInt32();
+                        endOffset = sliceReader.ReadInt32();
                         return pos;
                     }
                     else
@@ -565,15 +468,9 @@ namespace Lucene.Net.Index.Memory
                     }
                 }
 
-                public override int StartOffset
-                {
-                    get { return startOffset_Renamed; }
-                }
+                public override int StartOffset => startOffset;
 
-                public override int EndOffset
-                {
-                    get { return endOffset_Renamed; }
-                }
+                public override int EndOffset => endOffset;
 
                 public override BytesRef GetPayload()
                 {
@@ -612,14 +509,8 @@ namespace Lucene.Net.Index.Memory
 
             internal IndexSearcher Searcher
             {
-                get // LUCENENET specific: added getter per MSDN guidelines
-                {
-                    return this.searcher;
-                }
-                set
-                {
-                    this.searcher = value;
-                }
+                get => this.searcher; // LUCENENET specific: added getter per MSDN guidelines
+                set => this.searcher = value;
             }
 
             public override int NumDocs

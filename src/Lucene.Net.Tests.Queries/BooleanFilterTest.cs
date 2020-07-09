@@ -139,15 +139,7 @@ namespace Lucene.Net.Tests.Queries
                 return null;
             }
 
-            public override bool IsCacheable
-            {
-                get
-                {
-                    {
-                        return true;
-                    }
-                }
-            }
+            public override bool IsCacheable => true;
         }
 
         private sealed class AnonymousFilter2 : Filter

@@ -80,13 +80,7 @@
             }
         }
 
-        public override string IndexFieldName
-        {
-            get
-            {
-                return field;
-            }
-        }
+        public override string IndexFieldName => field;
 
         /// <summary>
         /// Subclass &amp; override if you change the encoding.

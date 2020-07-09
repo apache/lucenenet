@@ -457,10 +457,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         private OffsetSorter sorter;
 
-        internal OffsetSorter Sorter
-        {
-            get { return this.sorter; }
-        }
+        internal OffsetSorter Sorter => this.sorter;
 
         private void Buffer()
         {
@@ -727,13 +724,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// Determines if the concatenation is empty
             /// </summary>
             /// <returns> <c>true</c> if the concatenation is empty, <c>false</c> otherwise </returns>
-            internal bool IsEmpty
-            {
-                get
-                {
-                    return buffer.Length == 0;
-                }
-            }
+            internal bool IsEmpty => buffer.Length == 0;
 
             /// <summary>
             /// Clears the concatenation and resets its state

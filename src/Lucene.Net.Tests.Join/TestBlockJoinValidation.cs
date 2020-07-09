@@ -201,15 +201,9 @@ namespace Lucene.Net.Tests.Join
             return childQueryWithRandomParent;
         }
 
-        private static int RandomParentId
-        {
-            get { return Random.Next(AMOUNT_OF_PARENT_DOCS*AMOUNT_OF_SEGMENTS); }
-        }
+        private static int RandomParentId => Random.Next(AMOUNT_OF_PARENT_DOCS*AMOUNT_OF_SEGMENTS);
 
-        private static int RandomParentNumber
-        {
-            get { return Random.Next(AMOUNT_OF_PARENT_DOCS); }
-        }
+        private static int RandomParentNumber => Random.Next(AMOUNT_OF_PARENT_DOCS);
 
         private static Query RandomChildQuery(int randomChildNumber)
         {

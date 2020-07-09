@@ -147,10 +147,7 @@ namespace Lucene.Net.Search.Highlight
 
             private int baseDoc;
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => true;
 
             public virtual void Collect(int i)
             {

@@ -68,14 +68,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual int TermCountCutoff
         {
-            set
-            {
-                termCountCutoff = value;
-            }
-            get
-            {
-                return termCountCutoff;
-            }
+            get => termCountCutoff;
+            set => termCountCutoff = value;
         }
 
         /// <summary>
@@ -87,14 +81,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual double DocCountPercent
         {
-            set
-            {
-                docCountPercent = value;
-            }
-            get
-            {
-                return docCountPercent;
-            }
+            get => docCountPercent;
+            set => docCountPercent = value;
         }
 
         protected override BooleanQuery GetTopLevelQuery()

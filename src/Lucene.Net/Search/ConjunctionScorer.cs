@@ -108,10 +108,7 @@ namespace Lucene.Net.Search
             return m_lastDoc = DoNext(lead.Doc);
         }
 
-        public override int DocID
-        {
-            get { return m_lastDoc; }
-        }
+        public override int DocID => m_lastDoc;
 
         public override int NextDoc()
         {
@@ -130,10 +127,7 @@ namespace Lucene.Net.Search
             return sum * coord;
         }
 
-        public override int Freq
-        {
-            get { return m_docsAndFreqs.Length; }
-        }
+        public override int Freq => m_docsAndFreqs.Length;
 
         public override long GetCost()
         {

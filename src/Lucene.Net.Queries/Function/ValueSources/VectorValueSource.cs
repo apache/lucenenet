@@ -38,23 +38,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.m_sources = sources;
         }
 
-        public virtual IList<ValueSource> Sources
-        {
-            get
-            {
-                return m_sources;
-            }
-        }
+        public virtual IList<ValueSource> Sources => m_sources;
 
-        public override int Dimension
-        {
-            get { return m_sources.Count; }
-        }
+        public override int Dimension => m_sources.Count;
 
-        public virtual string Name
-        {
-            get { return "vector"; }
-        }
+        public virtual string Name => "vector";
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {

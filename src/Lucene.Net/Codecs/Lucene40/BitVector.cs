@@ -185,7 +185,7 @@ namespace Lucene.Net.Codecs.Lucene40
         ///// </summary>
         //public int Size()
         //{
-        //    return Size_Renamed;
+        //    return size;
         //}
 
         /// <summary>
@@ -194,10 +194,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// <para/>
         /// This is the equivalent of either size() or length() in Lucene.
         /// </summary>
-        public int Length
-        {
-            get { return size; }
-        }
+        public int Length => size;
 
         /// <summary>
         /// Returns the total number of one bits in this vector.  This is efficiently
@@ -252,13 +249,7 @@ namespace Lucene.Net.Codecs.Lucene40
         // Increment version to change it:
         public readonly static int VERSION_CURRENT = VERSION_CHECKSUM;
 
-        public int Version
-        {
-            get
-            {
-                return version;
-            }
-        }
+        public int Version => version;
 
         /// <summary>
         /// Writes this vector to the file <paramref name="name"/> in Directory

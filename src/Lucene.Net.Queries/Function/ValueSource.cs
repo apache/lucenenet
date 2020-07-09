@@ -179,10 +179,7 @@ namespace Lucene.Net.Queries.Function
             }
 
             // LUCENENET NOTE: This was value(int) in Lucene.
-            public override IComparable this[int slot]
-            {
-                get => values[slot];
-            }
+            public override IComparable this[int slot] => values[slot];
 
             public override int CompareTop(int doc)
             {

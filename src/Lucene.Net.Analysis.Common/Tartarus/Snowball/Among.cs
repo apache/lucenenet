@@ -80,47 +80,35 @@ namespace Lucene.Net.Tartarus.Snowball
         }
 
         /// <summary>search string</summary>
-        public int Length
-        {
-            get { return s_size; }
-        }
+        public int Length => s_size;
+
         private readonly int s_size;
 
         /// <summary>search string</summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public char[] S
-        {
-            get { return s; }
-        }
+        public char[] S => s;
+
         private readonly char[] s;
 
         /// <summary>index to longest matching substring</summary>
-        public int SubstringIndex
-        {
-            get { return substring_i; }
-        }
+        public int SubstringIndex => substring_i;
+
         private readonly int substring_i;
 
         /// <summary>result of the lookup</summary>
-        public int Result
-        {
-            get { return result; }
-        }
+        public int Result => result;
+
         private readonly int result;
 
         /// <summary>method to use if substring matches</summary>
-        public MethodInfo Method
-        {
-            get { return method; }
-        }
+        public MethodInfo Method => method;
+
         private readonly MethodInfo method;
 
         /// <summary>object to invoke method on</summary>
-        public SnowballProgram MethodObject
-        {
-            get { return MethodObject; }
-        }
+        public SnowballProgram MethodObject => MethodObject;
+
         private readonly SnowballProgram methodobject;
     }
 }

@@ -38,20 +38,11 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         }
 
         /// <summary> the number of hyphenation points in the word </summary>
-        public virtual int Length
-        {
-            get { return hyphenPoints.Length; }
-        }
+        public virtual int Length => hyphenPoints.Length;
 
         /// <summary> the hyphenation points </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual int[] HyphenationPoints
-        {
-            get
-            {
-                return hyphenPoints;
-            }
-        }
+        public virtual int[] HyphenationPoints => hyphenPoints;
     }
 }

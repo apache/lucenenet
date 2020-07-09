@@ -520,12 +520,6 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        public override IComparer<BytesRef> Comparer
-        {
-            get
-            {
-                return BytesRef.UTF8SortedAsUnicodeComparer;
-            }
-        }
+        public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
     }
 }

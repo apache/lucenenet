@@ -875,15 +875,9 @@ namespace Lucene.Net.Search.Grouping
                 this.facetEntries = facetEntries;
             }
 
-            public int TotalCount
-            {
-                get { return totalCount; }
-            }
+            public int TotalCount => totalCount;
 
-            public int TotalMissingCount
-            {
-                get { return totalMissingCount; }
-            }
+            public int TotalMissingCount => totalMissingCount;
 
             public IList<TermGroupFacetCollector.FacetEntry> GetFacetEntries()
             {

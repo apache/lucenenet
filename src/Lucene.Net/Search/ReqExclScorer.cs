@@ -101,10 +101,7 @@ namespace Lucene.Net.Search
             return NO_MORE_DOCS;
         }
 
-        public override int DocID
-        {
-            get { return doc; }
-        }
+        public override int DocID => doc;
 
         /// <summary>
         /// Returns the score of the current document matching the query.
@@ -115,10 +112,7 @@ namespace Lucene.Net.Search
             return reqScorer.GetScore(); // reqScorer may be null when next() or skipTo() already return false
         }
 
-        public override int Freq
-        {
-            get { return reqScorer.Freq; }
-        }
+        public override int Freq => reqScorer.Freq;
 
         public override ICollection<ChildScorer> GetChildren()
         {

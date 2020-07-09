@@ -84,10 +84,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was size() in Lucene.
         /// </summary>
         /// <returns> The current size of this <see cref="BytesRefArray"/> </returns>
-        public int Length
-        {
-            get { return lastElement; }
-        }
+        public int Length => lastElement;
 
         /// <summary>
         /// Returns the <i>n'th</i> element of this <see cref="BytesRefArray"/> </summary>
@@ -227,13 +224,7 @@ namespace Lucene.Net.Util
                 return null;
             }
 
-            public virtual IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return comp;
-                }
-            }
+            public virtual IComparer<BytesRef> Comparer => comp;
         }
     }
 }

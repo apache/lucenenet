@@ -252,8 +252,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         public virtual int MaxCodeLen
         {
-            get { return this.maxCodeLen; }
-            set { this.maxCodeLen = value; }
+            get => this.maxCodeLen;
+            set => this.maxCodeLen = value;
         }
 
         //-- BEGIN HANDLERS --//
@@ -1259,24 +1259,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
             }
 
-            public virtual string Primary
-            {
-                get { return this.primary.ToString(); }
-            }
+            public virtual string Primary => this.primary.ToString();
 
-            public virtual string Alternate
-            {
-                get { return this.alternate.ToString(); }
-            }
+            public virtual string Alternate => this.alternate.ToString();
 
-            public virtual bool IsComplete
-            {
-                get
-                {
-                    return this.primary.Length >= this.maxLength &&
-                     this.alternate.Length >= this.maxLength;
-                }
-            }
+            public virtual bool IsComplete =>
+                this.primary.Length >= this.maxLength &&
+                this.alternate.Length >= this.maxLength;
         }
     }
 }

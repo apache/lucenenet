@@ -38,29 +38,11 @@ namespace Lucene.Net.Analysis.Util
 
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual char[] Text
-        {
-            get
-            {
-                return array;
-            }
-        }
+        public virtual char[] Text => array;
 
-        public virtual int Start
-        {
-            get
-            {
-                return start;
-            }
-        }
+        public virtual int Start => start;
 
-        public virtual int Length
-        {
-            get
-            {
-                return length;
-            }
-        }
+        public virtual int Length => length;
 
         /// <summary>
         /// Set a new region of text to be examined by this iterator
@@ -77,13 +59,7 @@ namespace Lucene.Net.Analysis.Util
             this.limit = start + length;
         }
 
-        public override char Current
-        {
-            get
-            {
-                return (index == limit) ? Done : array[index];
-            }
-        }
+        public override char Current => (index == limit) ? Done : array[index];
 
         protected abstract char JreBugWorkaround(char ch);
  
@@ -94,20 +70,11 @@ namespace Lucene.Net.Analysis.Util
             return Current;
         }
 
-        public override int BeginIndex
-        {
-            get { return 0; }
-        }
+        public override int BeginIndex => 0;
 
-        public override int EndIndex
-        {
-            get { return length; }
-        }
+        public override int EndIndex => length;
 
-        public override int Index
-        {
-            get { return index - start; }
-        }
+        public override int Index => index - start;
 
         public override char Last()
         {

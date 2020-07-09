@@ -37,14 +37,14 @@ namespace Lucene.Net.Util.Automaton
     public class StatePair
     {
         internal State s;
-        internal State S1;
-        internal State S2;
+        internal State s1;
+        internal State s2;
 
         internal StatePair(State s, State s1, State s2)
         {
             this.s = s;
-            this.S1 = s1;
-            this.S2 = s2;
+            this.s1 = s1;
+            this.s2 = s2;
         }
 
         /// <summary>
@@ -54,33 +54,21 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="s2"> Second state. </param>
         public StatePair(State s1, State s2)
         {
-            this.S1 = s1;
-            this.S2 = s2;
+            this.s1 = s1;
+            this.s2 = s2;
         }
 
         /// <summary>
         /// Returns first component of this pair.
         /// </summary>
         /// <returns> First state. </returns>
-        public virtual State FirstState
-        {
-            get
-            {
-                return S1;
-            }
-        }
+        public virtual State FirstState => s1;
 
         /// <summary>
         /// Returns second component of this pair.
         /// </summary>
         /// <returns> Second state. </returns>
-        public virtual State SecondState
-        {
-            get
-            {
-                return S2;
-            }
-        }
+        public virtual State SecondState => s2;
 
         /// <summary>
         /// Checks for equality.
@@ -93,7 +81,7 @@ namespace Lucene.Net.Util.Automaton
             if (obj is StatePair)
             {
                 StatePair p = (StatePair)obj;
-                return p.S1 == S1 && p.S2 == S2;
+                return p.s1 == s1 && p.s2 == s2;
             }
             else
             {
@@ -107,7 +95,7 @@ namespace Lucene.Net.Util.Automaton
         /// <returns> Hash code. </returns>
         public override int GetHashCode()
         {
-            return S1.GetHashCode() + S2.GetHashCode();
+            return s1.GetHashCode() + s2.GetHashCode();
         }
     }
 }

@@ -73,10 +73,7 @@ namespace Sax.Helpers
         /// Return the number of attributes in the list.
         /// </summary>
         /// <seealso cref="Attributes.Length"/>
-        public virtual int Length
-        {
-            get { return length; }
-        }
+        public virtual int Length => length;
 
         /// <summary>
         /// Return an attribute's Namespace URI.

@@ -180,14 +180,14 @@ namespace Lucene.Net.Sandbox.Queries
 
         public virtual string FieldName
         {
-            get { return fieldName; }
-            set { this.fieldName = value; }
+            get => fieldName;
+            set => this.fieldName = value;
         }
 
         public KeepMode KeepMode
         {
-            get { return keepMode; }
-            set { keepMode = value; }
+            get => keepMode;
+            set => keepMode = value;
         }
 
 
@@ -220,8 +220,8 @@ namespace Lucene.Net.Sandbox.Queries
 
         public ProcessingMode ProcessingMode
         {
-            get { return processingMode; }
-            set { processingMode = value; }
+            get => processingMode;
+            set => processingMode = value;
         }
     }
 

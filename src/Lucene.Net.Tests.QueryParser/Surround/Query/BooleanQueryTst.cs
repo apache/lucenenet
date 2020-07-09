@@ -46,11 +46,11 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             this.qf = qf;
         }
 
-        public virtual bool Verbose { set { this.verbose = value; } }
+        public virtual bool Verbose { set => this.verbose = value; }
 
-        public virtual string QueryText { get { return this.queryText; } }
+        public virtual string QueryText => this.queryText;
 
-        public virtual int[] ExpectedDocNrs { get { return this.expectedDocNrs; } }
+        public virtual int[] ExpectedDocNrs => this.expectedDocNrs;
 
         internal class TestCollector : ICollector
         { // FIXME: use check hits from Lucene tests
@@ -72,10 +72,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 this.scorer = scorer;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => true;
 
             public virtual void SetNextReader(AtomicReaderContext context)
             {

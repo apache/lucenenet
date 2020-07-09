@@ -79,8 +79,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public virtual int PrefixLength
         {
-            get { return this.prefixLength; }
-            set { this.prefixLength = value; }
+            get => this.prefixLength;
+            set => this.prefixLength = value;
         }
 
         public override string ToQueryString(IEscapeQuerySyntax escaper)
@@ -106,8 +106,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// </summary>
         public virtual float Similarity
         {
-            get { return this.similarity; }
-            set { this.similarity = value; }
+            get => this.similarity;
+            set => this.similarity = value;
         }
 
         public override IQueryNode CloneTree()

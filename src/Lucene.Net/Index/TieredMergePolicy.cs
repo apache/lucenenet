@@ -105,10 +105,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual int MaxMergeAtOnce
         {
-            get
-            {
-                return maxMergeAtOnce;
-            }
+            get => maxMergeAtOnce;
             set
             {
                 if (value < 2)
@@ -129,10 +126,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual int MaxMergeAtOnceExplicit
         {
-            get
-            {
-                return maxMergeAtOnceExplicit;
-            }
+            get => maxMergeAtOnceExplicit;
             set
             {
                 if (value < 2)
@@ -152,10 +146,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual double MaxMergedSegmentMB
         {
-            get
-            {
-                return maxMergedSegmentBytes / 1024 / 1024.0;
-            }
+            get => maxMergedSegmentBytes / 1024 / 1024.0;
             set
             {
                 if (value < 0.0)
@@ -178,10 +169,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual double ReclaimDeletesWeight
         {
-            get
-            {
-                return reclaimDeletesWeight;
-            }
+            get => reclaimDeletesWeight;
             set
             {
                 if (value < 0.0)
@@ -201,10 +189,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual double FloorSegmentMB
         {
-            get
-            {
-                return floorSegmentBytes / (1024 * 1024.0);
-            }
+            get => floorSegmentBytes / (1024 * 1024.0);
             set
             {
                 if (value <= 0.0)
@@ -223,10 +208,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual double ForceMergeDeletesPctAllowed
         {
-            get
-            {
-                return forceMergeDeletesPctAllowed;
-            }
+            get => forceMergeDeletesPctAllowed;
             set
             {
                 if (value < 0.0 || value > 100.0)
@@ -249,10 +231,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual double SegmentsPerTier
         {
-            get
-            {
-                return segsPerTier;
-            }
+            get => segsPerTier;
             set
             {
                 if (value < 2.0)
@@ -584,21 +563,9 @@ namespace Lucene.Net.Index
                 this.finalMergeScore = finalMergeScore;
             }
 
-            public override double Score
-            {
-                get
-                {
-                    return finalMergeScore;
-                }
-            }
+            public override double Score => finalMergeScore;
 
-            public override string Explanation
-            {
-                get
-                {
-                    return "skew=" + string.Format(CultureInfo.InvariantCulture, "{0:F3}", skew) + " nonDelRatio=" + string.Format(CultureInfo.InvariantCulture, "{0:F3}", nonDelRatio);
-                }
-            }
+            public override string Explanation => "skew=" + string.Format(CultureInfo.InvariantCulture, "{0:F3}", skew) + " nonDelRatio=" + string.Format(CultureInfo.InvariantCulture, "{0:F3}", nonDelRatio);
         }
 
         public override MergeSpecification FindForcedMerges(SegmentInfos infos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)

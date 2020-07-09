@@ -156,17 +156,11 @@ namespace Lucene.Net.Benchmarks.ByTask
         /// <summary>
         /// Returns the algorithm.
         /// </summary>
-        public virtual Algorithm Algorithm
-        {
-            get { return algorithm; }
-        }
+        public virtual Algorithm Algorithm => algorithm;
 
         /// <summary>
         /// Returns the runData.
         /// </summary>
-        public virtual PerfRunData RunData
-        {
-            get { return runData; }
-        }
+        public virtual PerfRunData RunData => runData;
     }
 }

@@ -99,15 +99,9 @@ namespace Lucene.Net.Search.Grouping
                 return score;
             }
 
-            public override int Freq
-            {
-                get { throw new InvalidOperationException(); } // TODO: wtf does this class do?
-            }
+            public override int Freq => throw new InvalidOperationException(); // TODO: wtf does this class do?
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             public override int Advance(int target)
             {
@@ -124,13 +118,7 @@ namespace Lucene.Net.Search.Grouping
                 return 1;
             }
 
-            public override Weight Weight
-            {
-                get
-                {
-                    throw new InvalidOperationException();
-                }
-            }
+            public override Weight Weight => throw new InvalidOperationException();
 
             public override ICollection<ChildScorer> GetChildren()
             {
@@ -621,10 +609,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return false; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => false;
 
         public virtual void SetNextReader(AtomicReaderContext context)
         {

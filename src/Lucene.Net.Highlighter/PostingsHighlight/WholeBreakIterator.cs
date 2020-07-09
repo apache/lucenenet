@@ -30,10 +30,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         private int end; 
         private int current;
 
-        public override int Current
-        {
-            get { return current; }
-        }
+        public override int Current => current;
 
         public override int First()
         {
@@ -59,10 +56,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
         }
 
-        public override CharacterIterator Text
-        {
-            get { return text; }
-        }
+        public override CharacterIterator Text => text;
 
         public override int Last()
         {

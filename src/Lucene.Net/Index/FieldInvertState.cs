@@ -83,14 +83,8 @@ namespace Lucene.Net.Index
         /// <returns> the position </returns>
         public int Position
         {
-            get
-            {
-                return position;
-            }
-            internal set // LUCENENET specific to protect private field
-            {
-                position = value;
-            }
+            get => position;
+            internal set => position = value; // LUCENENET specific to protect private field
         }
 
         /// <summary>
@@ -98,14 +92,8 @@ namespace Lucene.Net.Index
         /// <returns> the length </returns>
         public int Length
         {
-            get
-            {
-                return length;
-            }
-            set
-            {
-                this.length = value;
-            }
+            get => length;
+            set => this.length = value;
         }
 
         /// <summary>
@@ -113,14 +101,8 @@ namespace Lucene.Net.Index
         /// <returns> the numOverlap </returns>
         public int NumOverlap
         {
-            get
-            {
-                return numOverlap;
-            }
-            set
-            {
-                this.numOverlap = value;
-            }
+            get => numOverlap;
+            set => this.numOverlap = value;
         }
 
         /// <summary>
@@ -128,14 +110,8 @@ namespace Lucene.Net.Index
         /// <returns> the offset </returns>
         public int Offset
         {
-            get
-            {
-                return offset;
-            }
-            internal set // LUCENENET specific to protect private field
-            {
-                offset = value;
-            }
+            get => offset;
+            internal set => offset = value; // LUCENENET specific to protect private field
         }
 
         /// <summary>
@@ -145,14 +121,8 @@ namespace Lucene.Net.Index
         /// <returns> the boost </returns>
         public float Boost
         {
-            get
-            {
-                return boost;
-            }
-            set
-            {
-                this.boost = value;
-            }
+            get => boost;
+            set => this.boost = value;
         }
 
         /// <summary>
@@ -162,14 +132,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public int MaxTermFrequency
         {
-            get
-            {
-                return maxTermFrequency;
-            }
-            internal set // LUCENENET specific to protect private field
-            {
-                maxTermFrequency = value;
-            }
+            get => maxTermFrequency;
+            internal set => maxTermFrequency = value; // LUCENENET specific to protect private field
         }
 
         /// <summary>
@@ -177,14 +141,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public int UniqueTermCount
         {
-            get
-            {
-                return uniqueTermCount;
-            }
-            internal set // LUCENENET specific to protect private field
-            {
-                uniqueTermCount = value;
-            }
+            get => uniqueTermCount;
+            internal set => uniqueTermCount = value; // LUCENENET specific to protect private field
         }
 
         /// <summary>
@@ -194,14 +152,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public AttributeSource AttributeSource
         {
-            get
-            {
-                return attributeSource;
-            }
-            internal set // LUCENENET specific to protect private field
-            {
-                attributeSource = value;
-            }
+            get => attributeSource;
+            internal set => attributeSource = value; // LUCENENET specific to protect private field
         }
 
         /// <summary>
@@ -209,14 +161,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public string Name
         {
-            get
-            {
-                return name;
-            }
-            internal set // LUCENENET specific to protect private field
-            {
-                name = value;
-            }
+            get => name;
+            internal set => name = value; // LUCENENET specific to protect private field
         }
     }
 }

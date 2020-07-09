@@ -153,15 +153,9 @@ namespace Lucene.Net.Index
                     throw new NotSupportedException();
                 }
 
-                public QueryAndLimit Current
-                {
-                    get { return current; }
-                }
+                public QueryAndLimit Current => current;
 
-                object IEnumerator.Current
-                {
-                    get { return Current; }
-                }
+                object IEnumerator.Current => Current;
             }
         }
     }

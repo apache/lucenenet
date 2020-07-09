@@ -45,40 +45,22 @@ namespace Lucene.Net.Search
         /// By default, an Explanation represents a "match" if the value is positive.
         /// </para> </summary>
         /// <seealso cref="Value"/>
-        public virtual bool IsMatch
-        {
-            get
-            {
-                return (0.0f < Value);
-            }
-        }
+        public virtual bool IsMatch => (0.0f < Value);
 
         /// <summary>
         /// Gets or Sets the value assigned to this explanation node. </summary>
         public virtual float Value
         {
-            get
-            {
-                return val;
-            }
-            set
-            {
-                this.val = value;
-            }
+            get => val;
+            set => this.val = value;
         }
 
         /// <summary>
         /// Gets or Sets the description of this explanation node. </summary>
         public virtual string Description
         {
-            get
-            {
-                return description;
-            }
-            set
-            {
-                this.description = value;
-            }
+            get => description;
+            set => this.description = value;
         }
 
         /// <summary>

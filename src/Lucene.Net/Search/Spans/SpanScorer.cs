@@ -88,20 +88,14 @@ namespace Lucene.Net.Search.Spans
             return true;
         }
 
-        public override int DocID
-        {
-            get { return m_doc; }
-        }
+        public override int DocID => m_doc;
 
         public override float GetScore()
         {
             return m_docScorer.Score(m_doc, m_freq);
         }
 
-        public override int Freq
-        {
-            get { return m_numMatches; }
-        }
+        public override int Freq => m_numMatches;
 
         /// <summary>
         /// Returns the intermediate "sloppy freq" adjusted for edit distance
@@ -109,10 +103,7 @@ namespace Lucene.Net.Search.Spans
         /// @lucene.internal
         /// </summary>
         // only public so .payloads can see it.
-        public virtual float SloppyFreq
-        {
-            get { return m_freq; }
-        }
+        public virtual float SloppyFreq => m_freq;
 
         public override long GetCost()
         {

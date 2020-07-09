@@ -58,38 +58,20 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the freq pointer of the doc to which the last call of
         /// <see cref="MultiLevelSkipListReader.SkipTo(int)"/> has skipped.
         /// </summary>
-        public long FreqPointer
-        {
-            get
-            {
-                return lastFreqPointer;
-            }
-        }
+        public long FreqPointer => lastFreqPointer;
 
         /// <summary>
         /// Returns the prox pointer of the doc to which the last call of
         /// <see cref="MultiLevelSkipListReader.SkipTo(int)"/> has skipped.
         /// </summary>
-        public long ProxPointer
-        {
-            get
-            {
-                return lastProxPointer;
-            }
-        }
+        public long ProxPointer => lastProxPointer;
 
         /// <summary>
         /// Returns the payload length of the payload stored just before
         /// the doc to which the last call of <see cref="MultiLevelSkipListReader.SkipTo(int)"/>
         /// has skipped.
         /// </summary>
-        public int PayloadLength
-        {
-            get
-            {
-                return lastPayloadLength;
-            }
-        }
+        public int PayloadLength => lastPayloadLength;
 
         protected override void SeekChild(int level)
         {

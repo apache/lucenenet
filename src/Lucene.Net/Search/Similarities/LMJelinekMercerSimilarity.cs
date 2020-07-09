@@ -71,13 +71,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Returns the &#955; parameter. </summary>
-        public virtual float Lambda
-        {
-            get
-            {
-                return lambda;
-            }
-        }
+        public virtual float Lambda => lambda;
 
         public override string GetName()
         {

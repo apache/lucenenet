@@ -191,10 +191,7 @@ namespace Lucene.Net.Spatial.Queries
             return op;
         }
 
-        public static IList<SpatialOperation> Values
-        {
-            get { return list; }
-        }
+        public static IList<SpatialOperation> Values => list;
 
         public static bool Is(SpatialOperation op, params SpatialOperation[] tst)
         {
@@ -214,25 +211,13 @@ namespace Lucene.Net.Spatial.Queries
 
         // ================================================= Getters / Setters =============================================
 
-        public virtual bool IsScoreMeaningful
-        {
-            get { return scoreIsMeaningful; }
-        }
+        public virtual bool IsScoreMeaningful => scoreIsMeaningful;
 
-        public virtual bool SourceNeedsArea
-        {
-            get { return sourceNeedsArea; }
-        }
+        public virtual bool SourceNeedsArea => sourceNeedsArea;
 
-        public virtual bool IsTargetNeedsArea
-        {
-            get { return targetNeedsArea; }
-        }
+        public virtual bool IsTargetNeedsArea => targetNeedsArea;
 
-        public virtual string Name
-        {
-            get { return name; }
-        }
+        public virtual string Name => name;
 
         public override string ToString()
         {

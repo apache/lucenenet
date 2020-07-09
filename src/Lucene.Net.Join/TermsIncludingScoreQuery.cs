@@ -144,21 +144,13 @@ namespace Lucene.Net.Join
                 return new ComplexExplanation(false, 0.0f, "Not a match");
             }
 
-            public override bool ScoresDocsOutOfOrder
-            {
-                get
-                {
-                    // We have optimized impls below if we are allowed
-                    // to score out-of-order:
-                    return true;
-                }
-            }
+            public override bool ScoresDocsOutOfOrder =>
+                // We have optimized impls below if we are allowed
+                // to score out-of-order:
+                true;
 
-            public override Query Query
-            {
-                get { return outerInstance; }
-            }
-            
+            public override Query Query => outerInstance;
+
             public override float GetValueForNormalization()
             {
                 return originalWeight.GetValueForNormalization() * outerInstance.Boost*outerInstance.Boost;
@@ -364,7 +356,7 @@ namespace Lucene.Net.Join
 
             internal readonly DocIdSetIterator matchingDocsIterator;
             internal readonly float[] scores;
-            internal readonly long cost_Renamed;
+            internal readonly long cost;
 
             internal int currentDoc = -1;
             
@@ -377,7 +369,7 @@ namespace Lucene.Net.Join
                 scores = new float[maxDoc];
                 FillDocsAndScores(matchingDocs, acceptDocs, termsEnum);
                 matchingDocsIterator = matchingDocs.GetIterator();
-                cost_Renamed = cost;
+                this.cost = cost;
             }
             
             protected virtual void FillDocsAndScores(FixedBitSet matchingDocs, IBits acceptDocs,
@@ -409,16 +401,10 @@ namespace Lucene.Net.Join
                 return scores[currentDoc];
             }
             
-            public override int Freq
-            {
-                get { return 1; }
-            }
+            public override int Freq => 1;
 
-            public override int DocID
-            {
-                get { return currentDoc; }
-            }
-            
+            public override int DocID => currentDoc;
+
             public override int NextDoc()
             {
                 return currentDoc = matchingDocsIterator.NextDoc();
@@ -431,7 +417,7 @@ namespace Lucene.Net.Join
 
             public override long GetCost()
             {
-                return cost_Renamed;
+                return cost;
             }
         }
 

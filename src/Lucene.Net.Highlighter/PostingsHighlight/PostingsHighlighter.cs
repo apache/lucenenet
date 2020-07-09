@@ -832,30 +832,18 @@ namespace Lucene.Net.Search.PostingsHighlight
                 return 0;
             }
 
-            public override int StartOffset
-            {
-                get { return int.MaxValue; }
-            }
+            public override int StartOffset => int.MaxValue;
 
-            public override int EndOffset
-            {
-                get { return int.MaxValue; }
-            }
+            public override int EndOffset => int.MaxValue;
 
             public override BytesRef GetPayload()
             {
                 return null;
             }
 
-            public override int Freq
-            {
-                get { return 0; }
-            }
+            public override int Freq => 0;
 
-            public override int DocID
-            {
-                get { return NO_MORE_DOCS; }
-            }
+            public override int DocID => NO_MORE_DOCS;
 
             public override int NextDoc()
             {

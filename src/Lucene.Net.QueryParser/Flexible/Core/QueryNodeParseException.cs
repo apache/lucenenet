@@ -100,18 +100,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
                 QueryParserMessages.INVALID_SYNTAX_CANNOT_PARSE, query, "");
         }
 
-        public virtual string Query
-        {
-            get { return this.query; }
-        }
+        public virtual string Query => this.query;
 
         /// <summary>
         /// The errorToken in the query
         /// </summary>
         public virtual string ErrorToken
         {
-            get { return this.errorToken; }
-            protected set { this.errorToken = value; }
+            get => this.errorToken;
+            protected set => this.errorToken = value;
         }
 
         public virtual void SetNonLocalizedMessage(IMessage message)
@@ -127,8 +124,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// </summary>
         public virtual int BeginLine
         {
-            get { return this.beginLine; }
-            protected set { this.beginLine = value; }
+            get => this.beginLine;
+            protected set => this.beginLine = value;
         }
 
         /// <summary>
@@ -139,8 +136,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// </summary>
         public virtual int BeginColumn
         {
-            get { return this.beginColumn; }
-            protected set { this.beginColumn = value; }
+            get => this.beginColumn;
+            protected set => this.beginColumn = value;
         }
     }
 }

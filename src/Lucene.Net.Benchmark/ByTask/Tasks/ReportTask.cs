@@ -35,16 +35,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         }
 
         /// <seealso cref="PerfTask.ShouldNeverLogAtStart"/>
-        protected override bool ShouldNeverLogAtStart
-        {
-            get { return true; }
-        }
+        protected override bool ShouldNeverLogAtStart => true;
 
         /// <seealso cref="PerfTask.ShouldNotRecordStats"/>
-        protected override bool ShouldNotRecordStats
-        {
-            get { return true; }
-        }
+        protected override bool ShouldNotRecordStats => true;
 
         /// <summary>
         /// From here start the code used to generate the reports.

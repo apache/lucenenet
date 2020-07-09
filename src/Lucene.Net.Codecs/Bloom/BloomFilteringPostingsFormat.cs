@@ -206,19 +206,10 @@ namespace Lucene.Net.Codecs.Bloom
                 }
             }
 
-            public override int Count
-            {
-                get
-                {
-                    return _delegateFieldsProducer.Count;
-                }
-            }
+            public override int Count => _delegateFieldsProducer.Count;
 
             [Obsolete("iterate fields and add their Count instead.")]
-            public override long UniqueTermCount
-            {
-                get { return _delegateFieldsProducer.UniqueTermCount; }
-            }
+            public override long UniqueTermCount => _delegateFieldsProducer.UniqueTermCount;
 
             internal class BloomFilteredTerms : Terms
             {
@@ -254,50 +245,23 @@ namespace Lucene.Net.Codecs.Bloom
                     
                 }
 
-                public override IComparer<BytesRef> Comparer
-                {
-                    get { return _delegateTerms.Comparer; }
-                }
+                public override IComparer<BytesRef> Comparer => _delegateTerms.Comparer;
 
-                public override long Count
-                {
-                    get { return _delegateTerms.Count; }
-                }
+                public override long Count => _delegateTerms.Count;
 
-                public override long SumTotalTermFreq
-                {
-                    get { return _delegateTerms.SumTotalTermFreq; }
-                }
+                public override long SumTotalTermFreq => _delegateTerms.SumTotalTermFreq;
 
-                public override long SumDocFreq
-                {
-                    get { return _delegateTerms.SumDocFreq; }
-                }
+                public override long SumDocFreq => _delegateTerms.SumDocFreq;
 
-                public override int DocCount
-                {
-                    get { return _delegateTerms.DocCount; }
-                }
+                public override int DocCount => _delegateTerms.DocCount;
 
-                public override bool HasFreqs
-                {
-                    get { return _delegateTerms.HasFreqs; }
-                }
+                public override bool HasFreqs => _delegateTerms.HasFreqs;
 
-                public override bool HasOffsets
-                {
-                    get { return _delegateTerms.HasOffsets; }
-                }
+                public override bool HasOffsets => _delegateTerms.HasOffsets;
 
-                public override bool HasPositions
-                {
-                    get { return _delegateTerms.HasPositions; }
-                }
+                public override bool HasPositions => _delegateTerms.HasPositions;
 
-                public override bool HasPayloads
-                {
-                    get { return _delegateTerms.HasPayloads; }
-                }
+                public override bool HasPayloads => _delegateTerms.HasPayloads;
             }
 
             internal sealed class BloomFilteredTermsEnum : TermsEnum
@@ -321,27 +285,19 @@ namespace Lucene.Net.Codecs.Bloom
                     delegateTermsEnum = null;
                 }
 
-                private TermsEnum Delegate
-                {
-                    get
-                    {
-                        // pull the iterator only if we really need it -
-                        // this can be a relativly heavy operation depending on the 
-                        // delegate postings format and they underlying directory
-                        // (clone IndexInput)
-                        return delegateTermsEnum ?? (delegateTermsEnum = _delegateTerms.GetIterator(_reuseDelegate));
-                    }
-                }
+                private TermsEnum Delegate =>
+                    // pull the iterator only if we really need it -
+                    // this can be a relativly heavy operation depending on the 
+                    // delegate postings format and they underlying directory
+                    // (clone IndexInput)
+                    delegateTermsEnum ?? (delegateTermsEnum = _delegateTerms.GetIterator(_reuseDelegate));
 
                 public override sealed BytesRef Next()
                 {
                     return Delegate.Next();
                 }
 
-                public override sealed IComparer<BytesRef> Comparer
-                {
-                    get { return _delegateTerms.Comparer; }
-                }
+                public override sealed IComparer<BytesRef> Comparer => _delegateTerms.Comparer;
 
                 public override sealed bool SeekExact(BytesRef text)
                 {
@@ -367,25 +323,13 @@ namespace Lucene.Net.Codecs.Bloom
                     Delegate.SeekExact(ord);
                 }
 
-                public override sealed BytesRef Term
-                {
-                    get { return Delegate.Term; }
-                }
+                public override sealed BytesRef Term => Delegate.Term;
 
-                public override sealed long Ord
-                {
-                    get { return Delegate.Ord; }
-                }
+                public override sealed long Ord => Delegate.Ord;
 
-                public override sealed int DocFreq
-                {
-                    get { return Delegate.DocFreq; }
-                }
+                public override sealed int DocFreq => Delegate.DocFreq;
 
-                public override sealed long TotalTermFreq
-                {
-                    get { return Delegate.TotalTermFreq; }
-                }
+                public override sealed long TotalTermFreq => Delegate.TotalTermFreq;
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs,
                     DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
@@ -536,10 +480,7 @@ namespace Lucene.Net.Codecs.Bloom
                 _delegateTermsConsumer.Finish(sumTotalTermFreq, sumDocFreq, docCount);
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get { return _delegateTermsConsumer.Comparer; }
-            }
+            public override IComparer<BytesRef> Comparer => _delegateTermsConsumer.Comparer;
         }
     }
 }

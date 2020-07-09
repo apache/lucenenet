@@ -88,10 +88,7 @@ namespace Lucene.Net.Util
                 return doc = NO_MORE_DOCS;
             }
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             public override long GetCost()
             {
@@ -234,25 +231,13 @@ namespace Lucene.Net.Util
             return new FixedBitSetIterator(bits, numBits, numWords);
         }
 
-        public override IBits Bits
-        {
-            get { return this; }
-        }
+        public override IBits Bits => this;
 
-        public int Length
-        {
-            get { return numBits; }
-        }
+        public int Length => numBits;
 
         /// <summary>
         /// This DocIdSet implementation is cacheable. </summary>
-        public override bool IsCacheable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool IsCacheable => true;
 
         /// <summary>
         /// Expert. </summary>

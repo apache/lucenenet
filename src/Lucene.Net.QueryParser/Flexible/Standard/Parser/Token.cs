@@ -80,10 +80,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// Any subclass of Token that actually wants to return a non-null value can
         /// override this method as appropriate.
         /// </summary>
-        public virtual object Value
-        {
-            get { return null; }
-        }
+        public virtual object Value => null;
 
         /// <summary>
         /// No-argument constructor

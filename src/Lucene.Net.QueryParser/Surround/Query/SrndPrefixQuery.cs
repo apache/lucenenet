@@ -36,10 +36,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         private readonly string prefix;
-        public virtual string Prefix { get { return prefix; } }
+        public virtual string Prefix => prefix;
 
         private readonly char truncator;
-        public virtual char SuffixOperator { get { return truncator; } }
+        public virtual char SuffixOperator => truncator;
 
         public virtual Term GetLucenePrefixTerm(string fieldName)
         {

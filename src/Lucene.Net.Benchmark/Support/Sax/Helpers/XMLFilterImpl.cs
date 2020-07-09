@@ -74,8 +74,8 @@ namespace Sax.Helpers
         /// </remarks>
         public IXMLReader Parent
         {
-            get { return parent; }
-            set { parent = value; }
+            get => parent;
+            set => parent = value;
         }
 
         ////////////////////////////////////////////////////////////////////
@@ -175,8 +175,8 @@ namespace Sax.Helpers
         /// </summary>
         public IEntityResolver EntityResolver
         {
-            get { return entityResolver; }
-            set { entityResolver = value; }
+            get => entityResolver;
+            set => entityResolver = value;
         }
 
         /// <summary>
@@ -184,8 +184,8 @@ namespace Sax.Helpers
         /// </summary>
         public IDTDHandler DTDHandler
         {
-            get { return dtdHandler; }
-            set { dtdHandler = value; }
+            get => dtdHandler;
+            set => dtdHandler = value;
         }
 
         /// <summary>
@@ -193,8 +193,8 @@ namespace Sax.Helpers
         /// </summary>
         public IContentHandler ContentHandler
         {
-            get { return contentHandler; }
-            set { contentHandler = value; }
+            get => contentHandler;
+            set => contentHandler = value;
         }
 
         /// <summary>
@@ -202,8 +202,8 @@ namespace Sax.Helpers
         /// </summary>
         public IErrorHandler ErrorHandler
         {
-            get { return errorHandler; }
-            set { errorHandler = value; }
+            get => errorHandler;
+            set => errorHandler = value;
         }
 
         /// <summary>

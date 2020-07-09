@@ -40,13 +40,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static Int32SequenceOutputs Singleton
-        {
-            get
-            {
-                return singleton;
-            }
-        }
+        public static Int32SequenceOutputs Singleton => singleton;
 
         public override Int32sRef Common(Int32sRef output1, Int32sRef output2)
         {
@@ -162,13 +156,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override Int32sRef NoOutput
-        {
-            get
-            {
-                return NO_OUTPUT;
-            }
-        }
+        public override Int32sRef NoOutput => NO_OUTPUT;
 
         public override string OutputToString(Int32sRef output)
         {

@@ -247,12 +247,6 @@ namespace Lucene.Net.Index
             endConsumer.Finish();
         }
 
-        internal override FieldInfo FieldInfo
-        {
-            get
-            {
-                return fieldInfo;
-            }
-        }
+        internal override FieldInfo FieldInfo => fieldInfo;
     }
 }

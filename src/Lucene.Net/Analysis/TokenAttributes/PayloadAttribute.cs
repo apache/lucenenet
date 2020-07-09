@@ -47,14 +47,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public virtual BytesRef Payload
         {
-            get
-            {
-                return this.payload;
-            }
-            set
-            {
-                this.payload = value;
-            }
+            get => this.payload;
+            set => this.payload = value;
         }
 
         public override void Clear()

@@ -30907,10 +30907,9 @@ namespace Lucene.Net.Analysis.CharFilters
             base.Dispose(disposing);
         }
 
-        internal static int InitialBufferSize
-        {  // Package private, for testing purposes
-            get { return ZZ_BUFFERSIZE; }
-        }
+        internal static int InitialBufferSize =>
+            // Package private, for testing purposes
+            ZZ_BUFFERSIZE;
 
         private class TextSegment : OpenStringBuilder
         {
@@ -30960,10 +30959,7 @@ namespace Lucene.Net.Analysis.CharFilters
             /// <summary>
             /// Returns true when all characters in the text segment have been read
             /// </summary>
-            internal bool IsRead
-            {
-                get { return pos >= m_len; }
-            }
+            internal bool IsRead => pos >= m_len;
         }
 
         /// <summary>
@@ -31086,10 +31082,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /// <summary>
         /// Returns the current lexical state.
         /// </summary>
-        private int YyState
-        {
-            get { return zzLexicalState; }
-        }
+        private int YyState => zzLexicalState;
 
         /// <summary>
         /// Enters a new lexical state
@@ -31125,10 +31118,7 @@ namespace Lucene.Net.Analysis.CharFilters
         /// <summary>
         /// Returns the length of the matched text region.
         /// </summary>
-        private int YyLength
-        {
-            get { return zzMarkedPos - zzStartRead; }
-        }
+        private int YyLength => zzMarkedPos - zzStartRead;
 
         /// <summary>
         /// Reports an error that occured while scanning.

@@ -45,10 +45,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
         }
 
-        public override bool WithRetrieve
-        {
-            get { return true; }
-        }
+        public override bool WithRetrieve => true;
 
 
         protected override Document RetrieveDoc(IndexReader ir, int id)
@@ -78,9 +75,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
 
         /// <seealso cref="PerfTask.SupportsParams"/>
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
     }
 }

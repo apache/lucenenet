@@ -66,17 +66,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <summary>
         /// Gets the schema
         /// </summary>
-        public virtual string Schema
-        {
-            get { return this.schema; }
-        }
+        public virtual string Schema => this.schema;
 
         /// <summary>
         /// Gets the value
         /// </summary>
-        public virtual string Value
-        {
-            get { return this.value; }
-        }
+        public virtual string Value => this.value;
     }
 }

@@ -220,14 +220,14 @@ namespace Lucene.Net.Analysis.Util
                 }
 
                 // find the next set of boundaries
-                int end_Renamed = iterator.Next();
+                int end = iterator.Next();
 
-                if (end_Renamed == BreakIterator.Done)
+                if (end == BreakIterator.Done)
                 {
                     return false; // BreakIterator exhausted
                 }
 
-                SetNextSentence(start, end_Renamed);
+                SetNextSentence(start, end);
                 if (IncrementWord())
                 {
                     return true;

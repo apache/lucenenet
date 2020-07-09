@@ -39,8 +39,8 @@ namespace Lucene.Net.Search.Highlight
 
         public virtual float Score
         {
-            get { return score; }
-            protected internal set { score = value; }
+            get => score;
+            protected internal set => score = value;
         }
 
         // LUCENENET specific - made these fields into properties, since they are for internal consumption
@@ -52,8 +52,8 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         public virtual int FragNum
         {
-	        get { return fragNum; }
-	        protected internal set { fragNum = value; }
+	        get => fragNum;
+            protected internal set => fragNum = value;
         }
 
         /// <param name="frag2">Fragment to be merged into this one</param>

@@ -171,10 +171,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <summary>
         /// field name
         /// </summary>
-        public virtual string FieldName
-        {
-            get { return fieldName; }
-        }
+        public virtual string FieldName => fieldName;
 
         /// <summary>
         /// Returns the top <see cref="TermInfo"/> object of the stack
@@ -203,10 +200,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <summary>
         /// to know whether the stack is empty. Returns true if the stack is empty, false if not
         /// </summary>
-        public virtual bool IsEmpty
-        {
-            get { return termList == null || termList.Count == 0; }
-        }
+        public virtual bool IsEmpty => termList == null || termList.Count == 0;
 
         /// <summary>
         /// Single term with its position/offsets in the document and IDF weight.
@@ -240,12 +234,13 @@ namespace Lucene.Net.Search.VectorHighlight
             /// <summary>
             /// Returns the next TermInfo at this same position. This is a circular list!
             /// </summary>
-            public virtual TermInfo Next { get { return next; } }
-            public virtual string Text { get { return text; } }
-            public virtual int StartOffset { get { return startOffset; } }
-            public virtual int EndOffset { get { return endOffset; } }
-            public virtual int Position { get { return position; } }
-            public virtual float Weight { get { return weight; } }
+            public virtual TermInfo Next => next;
+
+            public virtual string Text => text;
+            public virtual int StartOffset => startOffset;
+            public virtual int EndOffset => endOffset;
+            public virtual int Position => position;
+            public virtual float Weight => weight;
 
             public override string ToString()
             {

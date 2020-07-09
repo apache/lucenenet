@@ -95,13 +95,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Returns the &#956; parameter. </summary>
-        public virtual float Mu
-        {
-            get
-            {
-                return mu;
-            }
-        }
+        public virtual float Mu => mu;
 
         public override string GetName()
         {

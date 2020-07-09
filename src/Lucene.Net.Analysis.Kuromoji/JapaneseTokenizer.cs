@@ -224,8 +224,8 @@ namespace Lucene.Net.Analysis.Ja
         /// </summary>
         public GraphvizFormatter GraphvizFormatter
         {
-            get { return this.dotOut; }
-            set { this.dotOut = value; }
+            get => this.dotOut;
+            set => this.dotOut = value;
         }
 
         protected override void Dispose(bool disposing)

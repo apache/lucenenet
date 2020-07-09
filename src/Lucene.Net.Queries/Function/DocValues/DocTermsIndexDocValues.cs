@@ -63,10 +63,7 @@ namespace Lucene.Net.Queries.Function.DocValues
             return m_termsIndex.GetOrd(doc);
         }
 
-        public override int NumOrd
-        {
-            get { return m_termsIndex.ValueCount; }
-        }
+        public override int NumOrd => m_termsIndex.ValueCount;
 
         public override bool BytesVal(int doc, BytesRef target)
         {

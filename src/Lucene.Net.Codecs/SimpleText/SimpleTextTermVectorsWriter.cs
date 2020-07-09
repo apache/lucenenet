@@ -215,10 +215,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        public override IComparer<BytesRef> Comparer
-        {
-            get { return BytesRef.UTF8SortedAsUnicodeComparer; }
-        }
+        public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
         private void Write(string s)
         {

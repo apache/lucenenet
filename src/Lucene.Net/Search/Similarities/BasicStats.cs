@@ -78,14 +78,8 @@ namespace Lucene.Net.Search.Similarities
         /// Gets or Sets the number of documents. </summary>
         public virtual long NumberOfDocuments
         {
-            get
-            {
-                return m_numberOfDocuments;
-            }
-            set
-            {
-                this.m_numberOfDocuments = value;
-            }
+            get => m_numberOfDocuments;
+            set => this.m_numberOfDocuments = value;
         }
 
         /// <summary>
@@ -93,66 +87,39 @@ namespace Lucene.Net.Search.Similarities
         /// <seealso cref="Index.Terms.SumTotalTermFreq"/>
         public virtual long NumberOfFieldTokens
         {
-            get
-            {
-                return m_numberOfFieldTokens;
-            }
-            set
-            {
-                this.m_numberOfFieldTokens = value;
-            }
+            get => m_numberOfFieldTokens;
+            set => this.m_numberOfFieldTokens = value;
         }
 
         /// <summary>
         /// Returns the average field length. </summary>
         public virtual float AvgFieldLength
         {
-            get
-            {
-                return m_avgFieldLength;
-            }
-            set
-            {
-                this.m_avgFieldLength = value;
-            }
+            get => m_avgFieldLength;
+            set => this.m_avgFieldLength = value;
         }
 
         /// <summary>
         /// Returns the document frequency. </summary>
         public virtual long DocFreq
         {
-            get
-            {
-                return m_docFreq;
-            }
-            set
-            {
-                this.m_docFreq = value;
-            }
+            get => m_docFreq;
+            set => this.m_docFreq = value;
         }
 
         /// <summary>
         /// Returns the total number of occurrences of this term across all documents. </summary>
         public virtual long TotalTermFreq
         {
-            get
-            {
-                return m_totalTermFreq;
-            }
-            set
-            {
-                this.m_totalTermFreq = value;
-            }
+            get => m_totalTermFreq;
+            set => this.m_totalTermFreq = value;
         }
 
         /// <summary>
         /// The field.
         /// </summary>
         // LUCENENET specific
-        public string Field
-        {
-            get { return field; }
-        }
+        public string Field => field;
 
         // -------------------------- Boost-related stuff --------------------------
 
@@ -188,12 +155,6 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Returns the total boost. </summary>
-        public virtual float TotalBoost
-        {
-            get
-            {
-                return m_totalBoost;
-            }
-        }
+        public virtual float TotalBoost => m_totalBoost;
     }
 }

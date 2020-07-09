@@ -164,21 +164,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public int SkipInterval
-        {
-            get
-            {
-                return origEnum.skipInterval;
-            }
-        }
+        public int SkipInterval => origEnum.skipInterval;
 
-        public int MaxSkipLevels
-        {
-            get
-            {
-                return origEnum.maxSkipLevels;
-            }
-        }
+        public int MaxSkipLevels => origEnum.maxSkipLevels;
 
         public void Dispose()
         {
@@ -190,10 +178,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
-        internal long Count
-        {
-            get { return size; }
-        }
+        internal long Count => size;
 
         private ThreadResources GetThreadResources()
         {

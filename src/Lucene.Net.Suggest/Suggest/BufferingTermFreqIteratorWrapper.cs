@@ -60,10 +60,7 @@ namespace Lucene.Net.Search.Suggest
 
         }
 
-        public virtual long Weight
-        {
-            get { return m_freqs[m_curPos]; }
-        }
+        public virtual long Weight => m_freqs[m_curPos];
 
         public virtual BytesRef Next()
         {
@@ -75,12 +72,6 @@ namespace Lucene.Net.Search.Suggest
             return null;
         }
 
-        public virtual IComparer<BytesRef> Comparer
-        {
-            get
-            {
-                return comp;
-            }
-        }
+        public virtual IComparer<BytesRef> Comparer => comp;
     }
 }

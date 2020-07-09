@@ -63,45 +63,24 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public MergeState MergeState
         {
-            get
-            {
-                return this.mergeState; // LUCENENET specific - per MSDN properties should always have a getter
-            }
-            set
-            {
-                this.mergeState = value;
-            }
+            get => this.mergeState; // LUCENENET specific - per MSDN properties should always have a getter
+            set => this.mergeState = value;
         }
 
         /// <summary>
         /// How many sub-readers we are merging. </summary>
         /// <seealso cref="Subs"/>
-        public int NumSubs
-        {
-            get
-            {
-                return numSubs;
-            }
-        }
+        public int NumSubs => numSubs;
 
         /// <summary>
         /// Returns sub-readers we are merging. </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public MultiDocsAndPositionsEnum.EnumWithSlice[] Subs
-        {
-            get { return subs; }
-        }
+        public MultiDocsAndPositionsEnum.EnumWithSlice[] Subs => subs;
 
-        public override int Freq
-        {
-            get { return current.Freq; }
-        }
+        public override int Freq => current.Freq;
 
-        public override int DocID
-        {
-            get { return doc; }
-        }
+        public override int DocID => doc;
 
         public override int Advance(int target)
         {
@@ -151,15 +130,9 @@ namespace Lucene.Net.Codecs
             return current.NextPosition();
         }
 
-        public override int StartOffset
-        {
-            get { return current.StartOffset; }
-        }
+        public override int StartOffset => current.StartOffset;
 
-        public override int EndOffset
-        {
-            get { return current.EndOffset; }
-        }
+        public override int EndOffset => current.EndOffset;
 
         public override BytesRef GetPayload()
         {

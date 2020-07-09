@@ -143,8 +143,8 @@ namespace Sax
         /// <seealso cref="SAXParseException.PublicId"/>
         public virtual string PublicId
         {
-            get { return publicId; }
-            set { publicId = value; }
+            get => publicId;
+            set => publicId = value;
         }
 
         /// <summary>
@@ -171,8 +171,8 @@ namespace Sax
         /// <seealso cref="SAXParseException.SystemId"/>
         public virtual string SystemId
         {
-            get { return systemId; }
-            set { systemId = value; }
+            get => systemId;
+            set => systemId = value;
         }
 
         /// <summary>
@@ -191,8 +191,8 @@ namespace Sax
         /// <seealso cref="System.IO.Stream"/>
         public virtual Stream Stream
         {
-            get { return byteStream; }
-            set { byteStream = value; }
+            get => byteStream;
+            set => byteStream = value;
         }
 
         /// <summary>
@@ -210,8 +210,8 @@ namespace Sax
         /// <seealso cref="Stream"/>
         public virtual Encoding Encoding
         {
-            get { return encoding; }
-            set { encoding = value; }
+            get => encoding;
+            set => encoding = value;
         }
 
         /// <summary>
@@ -225,8 +225,8 @@ namespace Sax
         /// <seealso cref="System.IO.TextReader"/>
         public virtual TextReader TextReader
         {
-            get { return characterStream; }
-            set { characterStream = value; }
+            get => characterStream;
+            set => characterStream = value;
         }
 
         ////////////////////////////////////////////////////////////////////

@@ -43,10 +43,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// The reference acquired from the <see cref="ReferenceManager{G}"/>.
         /// </summary>
-        public T Reference
-        {
-            get { return reference; }
-        }
+        public T Reference => reference;
 
         /// <summary>
         /// Ensures the reference is properly de-referenced from its <see cref="ReferenceManager{G}"/>.

@@ -63,18 +63,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
         }
 
-        public virtual int MinimumMatchingElements
-        {
-            get { return this.minimumMatchingmElements; }
-        }
+        public virtual int MinimumMatchingElements => this.minimumMatchingmElements;
 
         /// <summary>
         /// Gets or sets the field name. Returns null if the field was not specified.
         /// </summary>
         public virtual string Field
         {
-            get { return this.field; }
-            set { this.field = value; }
+            get => this.field;
+            set => this.field = value;
         }
 
 

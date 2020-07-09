@@ -183,13 +183,7 @@ namespace Lucene.Net.Codecs.Asserting
                 @in.Finish(fis, numDocs);
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return @in.Comparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => @in.Comparer;
 
             protected override void Dispose(bool disposing)
             {

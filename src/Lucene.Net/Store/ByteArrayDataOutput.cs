@@ -63,13 +63,7 @@ namespace Lucene.Net.Store
             limit = offset + len;
         }
 
-        public virtual int Position
-        {
-            get
-            {
-                return pos;
-            }
-        }
+        public virtual int Position => pos;
 
         public override void WriteByte(byte b)
         {

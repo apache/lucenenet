@@ -130,11 +130,8 @@ namespace Lucene.Net.Join
                 this.scoreMode = scoreMode;
             }
 
-            public override Query Query
-            {
-                get { return joinQuery; }
-            }
-            
+            public override Query Query => joinQuery;
+
             public override float GetValueForNormalization()
             {
                 return childWeight.GetValueForNormalization() * joinQuery.Boost*joinQuery.Boost;
@@ -193,10 +190,7 @@ namespace Lucene.Net.Join
                 return new ComplexExplanation(false, 0.0f, "Not a match");
             }
 
-            public override bool ScoresDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public override bool ScoresDocsOutOfOrder => false;
         }
 
         internal class BlockJoinScorer : Scorer
@@ -205,7 +199,7 @@ namespace Lucene.Net.Join
             private readonly FixedBitSet _parentBits;
             private readonly ScoreMode _scoreMode;
             private readonly IBits _acceptDocs;
-            private int _parentDocRenamed = -1;
+            private int _parentDoc = -1;
             private int _prevParentDoc;
             private float _parentScore;
             private int _parentFreq;
@@ -229,15 +223,9 @@ namespace Lucene.Net.Join
                 return new List<ChildScorer> { new ChildScorer(_childScorer, "BLOCK_JOIN") };
             }
 
-            internal virtual int ChildCount
-            {
-                get { return _childDocUpto; }
-            }
+            internal virtual int ChildCount => _childDocUpto;
 
-            internal virtual int ParentDoc
-            {
-                get { return _parentDocRenamed; }
-            }
+            internal virtual int ParentDoc => _parentDoc;
 
             internal virtual int[] SwapChildDocs(int[] other)
             {
@@ -280,37 +268,37 @@ namespace Lucene.Net.Join
                     if (_nextChildDoc == NO_MORE_DOCS)
                     {
                         //System.out.println("  end");
-                        return _parentDocRenamed = NO_MORE_DOCS;
+                        return _parentDoc = NO_MORE_DOCS;
                     }
 
                     // Gather all children sharing the same parent as
                     // nextChildDoc
 
-                    _parentDocRenamed = _parentBits.NextSetBit(_nextChildDoc);
+                    _parentDoc = _parentBits.NextSetBit(_nextChildDoc);
 
                     // Parent & child docs are supposed to be
                     // orthogonal:
-                    if (_nextChildDoc == _parentDocRenamed)
+                    if (_nextChildDoc == _parentDoc)
                     {
                         throw new InvalidOperationException("child query must only match non-parent docs, but parent docID=" + _nextChildDoc + " matched childScorer=" + _childScorer.GetType());
                     }
 
                     //System.out.println("  parentDoc=" + parentDoc);
-                    Debug.Assert(_parentDocRenamed != -1);
+                    Debug.Assert(_parentDoc != -1);
 
                     //System.out.println("  nextChildDoc=" + nextChildDoc);
-                    if (_acceptDocs != null && !_acceptDocs.Get(_parentDocRenamed))
+                    if (_acceptDocs != null && !_acceptDocs.Get(_parentDoc))
                     {
                         // Parent doc not accepted; skip child docs until
                         // we hit a new parent doc:
                         do
                         {
                             _nextChildDoc = _childScorer.NextDoc();
-                        } while (_nextChildDoc < _parentDocRenamed);
+                        } while (_nextChildDoc < _parentDoc);
 
                         // Parent & child docs are supposed to be
                         // orthogonal:
-                        if (_nextChildDoc == _parentDocRenamed)
+                        if (_nextChildDoc == _parentDoc)
                         {
                             throw new InvalidOperationException("child query must only match non-parent docs, but parent docID=" + _nextChildDoc + " matched childScorer=" + _childScorer.GetType());
                         }
@@ -353,11 +341,11 @@ namespace Lucene.Net.Join
                         }
                         _childDocUpto++;
                         _nextChildDoc = _childScorer.NextDoc();
-                    } while (_nextChildDoc < _parentDocRenamed);
+                    } while (_nextChildDoc < _parentDoc);
 
                     // Parent & child docs are supposed to be
                     // orthogonal:
-                    if (_nextChildDoc == _parentDocRenamed)
+                    if (_nextChildDoc == _parentDoc)
                     {
                         throw new InvalidOperationException("child query must only match non-parent docs, but parent docID=" + _nextChildDoc + " matched childScorer=" + _childScorer.GetType());
                     }
@@ -378,32 +366,26 @@ namespace Lucene.Net.Join
                     }
 
                     //System.out.println("  return parentDoc=" + parentDoc + " childDocUpto=" + childDocUpto);
-                    return _parentDocRenamed;
+                    return _parentDoc;
                 }
             }
 
-            public override int DocID
-            {
-                get { return _parentDocRenamed; }
-            }
+            public override int DocID => _parentDoc;
 
             public override float GetScore()
             {
                 return _parentScore;
             }
 
-            public override int Freq
-            {
-                get { return _parentFreq; }
-            }
-            
+            public override int Freq => _parentFreq;
+
             public override int Advance(int parentTarget)
             {
 
                 //System.out.println("Q.advance parentTarget=" + parentTarget);
                 if (parentTarget == NO_MORE_DOCS)
                 {
-                    return _parentDocRenamed = NO_MORE_DOCS;
+                    return _parentDoc = NO_MORE_DOCS;
                 }
 
                 if (parentTarget == 0)
@@ -420,7 +402,7 @@ namespace Lucene.Net.Join
                 _prevParentDoc = _parentBits.PrevSetBit(parentTarget - 1);
 
                 //System.out.println("  rolled back to prevParentDoc=" + prevParentDoc + " vs parentDoc=" + parentDoc);
-                Debug.Assert(_prevParentDoc >= _parentDocRenamed);
+                Debug.Assert(_prevParentDoc >= _parentDoc);
                 if (_prevParentDoc > _nextChildDoc)
                 {
                     _nextChildDoc = _childScorer.Advance(_prevParentDoc);
@@ -443,7 +425,7 @@ namespace Lucene.Net.Join
             public virtual Explanation Explain(int docBase)
             {
                 int start = docBase + _prevParentDoc + 1; // +1 b/c prevParentDoc is previous parent doc
-                int end = docBase + _parentDocRenamed - 1; // -1 b/c parentDoc is parent doc
+                int end = docBase + _parentDoc - 1; // -1 b/c parentDoc is parent doc
                 return new ComplexExplanation(true, GetScore(), string.Format("Score based on child doc range from {0} to {1}", start, end));
             }
 

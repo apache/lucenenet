@@ -103,10 +103,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was size() in Lucene.
         /// </summary>
         /// <returns> The number of <see cref="BytesRef"/> values in this <see cref="BytesRefHash"/>. </returns>
-        public int Count
-        {
-            get { return count; }
-        }
+        public int Count => count;
 
         /// <summary>
         /// Populates and returns a <see cref="BytesRef"/> with the bytes for the given

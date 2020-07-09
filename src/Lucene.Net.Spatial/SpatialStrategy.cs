@@ -67,20 +67,14 @@ namespace Lucene.Net.Spatial
             this.fieldName = fieldName;
         }
 
-        public virtual SpatialContext SpatialContext
-        {
-            get { return m_ctx; }
-        }
+        public virtual SpatialContext SpatialContext => m_ctx;
 
         /// <summary>
         /// The name of the field or the prefix of them if there are multiple
         /// fields needed internally.
         /// </summary>
         /// <returns>Not null.</returns>
-        public virtual string FieldName
-        {
-            get { return fieldName; }
-        }
+        public virtual string FieldName => fieldName;
 
         /// <summary>
         /// Returns the IndexableField(s) from the <paramref name="shape"/> that are to be

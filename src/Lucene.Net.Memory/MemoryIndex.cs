@@ -590,10 +590,7 @@ namespace Lucene.Net.Index.Memory
                 this.scorer = scorer;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => true;
 
             public virtual void SetNextReader(AtomicReaderContext context)
             {

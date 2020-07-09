@@ -159,8 +159,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual Operator DefaultOperator
         {
-            get { return QueryConfigHandler.Get(ConfigurationKeys.DEFAULT_OPERATOR); }
-            set { QueryConfigHandler.Set(ConfigurationKeys.DEFAULT_OPERATOR, value); }
+            get => QueryConfigHandler.Get(ConfigurationKeys.DEFAULT_OPERATOR);
+            set => QueryConfigHandler.Set(ConfigurationKeys.DEFAULT_OPERATOR, value);
         }
 
         /// <summary>
@@ -179,10 +179,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 bool? lowercaseExpandedTerms = QueryConfigHandler.Get(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS);
                 return lowercaseExpandedTerms.HasValue ? lowercaseExpandedTerms.Value : true;
             }
-            set
-            {
-                QueryConfigHandler.Set(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS, value);
-            }
+            set => QueryConfigHandler.Set(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS, value);
         }
 
         /// <summary>
@@ -201,10 +198,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 bool? allowLeadingWildcard = QueryConfigHandler.Get(ConfigurationKeys.ALLOW_LEADING_WILDCARD);
                 return allowLeadingWildcard.HasValue ? allowLeadingWildcard.Value : false;
             }
-            set
-            {
-                QueryConfigHandler.Set(ConfigurationKeys.ALLOW_LEADING_WILDCARD, value);
-            }
+            set => QueryConfigHandler.Set(ConfigurationKeys.ALLOW_LEADING_WILDCARD, value);
         }
 
         /// <summary>
@@ -223,10 +217,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 bool? enablePositionsIncrements = QueryConfigHandler.Get(ConfigurationKeys.ENABLE_POSITION_INCREMENTS);
                 return enablePositionsIncrements.HasValue ? enablePositionsIncrements.Value : false;
             }
-            set
-            {
-                QueryConfigHandler.Set(ConfigurationKeys.ENABLE_POSITION_INCREMENTS, value);
-            }
+            set => QueryConfigHandler.Set(ConfigurationKeys.ENABLE_POSITION_INCREMENTS, value);
         }
 
         /// <summary>
@@ -241,14 +232,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual MultiTermQuery.RewriteMethod MultiTermRewriteMethod
         {
-            get
-            {
-                return QueryConfigHandler.Get(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD);
-            }
-            set
-            {
-                QueryConfigHandler.Set(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD, value);
-            }
+            get => QueryConfigHandler.Get(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD);
+            set => QueryConfigHandler.Set(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD, value);
         }
 
         /// <summary>
@@ -313,8 +298,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public virtual IDictionary<string, NumericConfig> NumericConfigMap
         {
-            get { return QueryConfigHandler.Get(ConfigurationKeys.NUMERIC_CONFIG_MAP); }
-            set { QueryConfigHandler.Set(ConfigurationKeys.NUMERIC_CONFIG_MAP, value); }
+            get => QueryConfigHandler.Get(ConfigurationKeys.NUMERIC_CONFIG_MAP);
+            set => QueryConfigHandler.Set(ConfigurationKeys.NUMERIC_CONFIG_MAP, value);
         }
 
         /// <summary>
@@ -327,10 +312,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 var culture = QueryConfigHandler.Get(ConfigurationKeys.LOCALE);
                 return culture == null ? CultureInfo.CurrentCulture : culture;
             }
-            set
-            {
-                QueryConfigHandler.Set(ConfigurationKeys.LOCALE, value);
-            }
+            set => QueryConfigHandler.Set(ConfigurationKeys.LOCALE, value);
         }
 
         public virtual TimeZoneInfo TimeZone
@@ -340,10 +322,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 var timeZone = QueryConfigHandler.Get(ConfigurationKeys.TIMEZONE);
                 return timeZone == null ? TimeZoneInfo.Local : timeZone;
             }
-            set
-            {
-                QueryConfigHandler.Set(ConfigurationKeys.TIMEZONE, value);
-            }
+            set => QueryConfigHandler.Set(ConfigurationKeys.TIMEZONE, value);
         }
 
         /// <summary>
@@ -359,14 +338,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public virtual Analyzer Analyzer
         {
-            get
-            {
-                return QueryConfigHandler.Get(ConfigurationKeys.ANALYZER);
-            }
-            set
-            {
-                QueryConfigHandler.Set(ConfigurationKeys.ANALYZER, value);
-            }
+            get => QueryConfigHandler.Get(ConfigurationKeys.ANALYZER);
+            set => QueryConfigHandler.Set(ConfigurationKeys.ANALYZER, value);
         }
 
         /// <summary>
@@ -380,10 +353,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 int? phraseSlop = QueryConfigHandler.Get(ConfigurationKeys.PHRASE_SLOP);
                 return phraseSlop.HasValue ? phraseSlop.Value : 0;
             }
-            set
-            {
-                QueryConfigHandler.Set(ConfigurationKeys.PHRASE_SLOP, value);
-            }
+            set => QueryConfigHandler.Set(ConfigurationKeys.PHRASE_SLOP, value);
         }
 
         /// <summary>
@@ -420,8 +390,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual IDictionary<string, float?> FieldsBoost
         {
-            get { return QueryConfigHandler.Get(ConfigurationKeys.FIELD_BOOST_MAP); }
-            set { QueryConfigHandler.Set(ConfigurationKeys.FIELD_BOOST_MAP, value); }
+            get => QueryConfigHandler.Get(ConfigurationKeys.FIELD_BOOST_MAP);
+            set => QueryConfigHandler.Set(ConfigurationKeys.FIELD_BOOST_MAP, value);
         }
 
         /// <summary>
@@ -439,10 +409,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// Gets the default <see cref="DateTools.Resolution"/> used for certain field when
         /// no <see cref="DateTools.Resolution"/> is defined for this field.
         /// </summary>
-        public virtual DateTools.Resolution DateResolution
-        {
-            get { return QueryConfigHandler.Get(ConfigurationKeys.DATE_RESOLUTION); }
-        }
+        public virtual DateTools.Resolution DateResolution => QueryConfigHandler.Get(ConfigurationKeys.DATE_RESOLUTION);
 
         /// <summary>
         /// Sets the <see cref="DateTools.Resolution"/> used for each field
@@ -459,8 +426,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual IDictionary<string, DateTools.Resolution?> DateResolutionMap
         {
-            get { return QueryConfigHandler.Get(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP); }
-            set { QueryConfigHandler.Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, value); }
+            get => QueryConfigHandler.Get(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP);
+            set => QueryConfigHandler.Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, value);
         }
     }
 }

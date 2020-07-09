@@ -63,9 +63,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         }
 
         /// <seealso cref="PerfTask.SupportsParams"/>
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
     }
 }

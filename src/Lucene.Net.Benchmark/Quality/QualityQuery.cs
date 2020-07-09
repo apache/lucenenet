@@ -77,10 +77,7 @@ namespace Lucene.Net.Benchmarks.Quality
         /// Gets the ID of this query.
         /// The ID allows to map the quality query with its judgements.
         /// </summary>
-        public virtual string QueryID
-        {
-            get { return queryID; }
-        }
+        public virtual string QueryID => queryID;
 
         /// <summary>
         /// For a nicer sort of input queries before running them.

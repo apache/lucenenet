@@ -99,13 +99,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Returns this codec's name. </summary>
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        public string Name => name;
 
         /// <summary>
         /// Encodes/decodes postings. </summary>
@@ -185,10 +179,7 @@ namespace Lucene.Net.Codecs
 
                 return defaultCodec;
             }
-            set
-            {
-                defaultCodec = value;
-            }
+            set => defaultCodec = value;
         }
 
         /// <summary>

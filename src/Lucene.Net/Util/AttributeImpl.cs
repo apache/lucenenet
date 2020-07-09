@@ -168,18 +168,18 @@ namespace Lucene.Net.Util
                 if (f.IsStatic)
                     continue;
                 //f.setAccessible(true);   // {{Aroush-2.9}} java.lang.reflect.AccessibleObject.setAccessible
-                object value_Renamed = f.GetValue(this);
+                object value = f.GetValue(this);
                 if (buffer.Length > 0)
                 {
                     buffer.Append(',');
                 }
-                if (value_Renamed == null)
+                if (value == null)
                 {
                     buffer.Append(f.Name + "=null");
                 }
                 else
                 {
-                    buffer.Append(f.Name + "=" + value_Renamed);
+                    buffer.Append(f.Name + "=" + value);
                 }
             }
 

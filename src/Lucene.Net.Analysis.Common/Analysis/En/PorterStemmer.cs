@@ -106,13 +106,7 @@ namespace Lucene.Net.Analysis.En
         /// <summary>
         /// Returns the length of the word resulting from the stemming process.
         /// </summary>
-        public virtual int ResultLength
-        {
-            get
-            {
-                return i;
-            }
-        }
+        public virtual int ResultLength => i;
 
         /// <summary>
         /// Returns a reference to a character buffer containing the results of
@@ -121,13 +115,7 @@ namespace Lucene.Net.Analysis.En
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual char[] ResultBuffer
-        {
-            get
-            {
-                return b;
-            }
-        }
+        public virtual char[] ResultBuffer => b;
 
         /* cons(i) is true <=> b[i] is a consonant. */
 

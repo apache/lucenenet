@@ -143,10 +143,7 @@ namespace Lucene.Net.Store
 
         public override long Length
         {
-            get
-            {
-                return file.length;
-            }
+            get => file.length;
             set
             {
             }
@@ -226,12 +223,6 @@ namespace Lucene.Net.Store
             return (long)file.NumBuffers * (long)BUFFER_SIZE;
         }
 
-        public override long Checksum
-        {
-            get
-            {
-                return crc.Value;
-            }
-        }
+        public override long Checksum => crc.Value;
     }
 }

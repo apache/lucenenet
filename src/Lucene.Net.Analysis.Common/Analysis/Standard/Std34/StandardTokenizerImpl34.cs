@@ -744,10 +744,7 @@ namespace Lucene.Net.Analysis.Standard.Std34
 
         public static readonly int HANGUL_TYPE = StandardTokenizer.HANGUL;
 
-        public int YyChar
-        {
-            get { return yyChar; }
-        }
+        public int YyChar => yyChar;
 
         /// <summary>
         /// Fills ICharTermAttribute with the current token text.
@@ -886,10 +883,7 @@ namespace Lucene.Net.Analysis.Standard.Std34
         /// <summary>
         /// Returns the current lexical state.
         /// </summary>
-        public int YyState
-        {
-            get { return zzLexicalState; }
-        }
+        public int YyState => zzLexicalState;
 
         /// <summary>
         /// Enters a new lexical state
@@ -903,10 +897,7 @@ namespace Lucene.Net.Analysis.Standard.Std34
         /// <summary>
         /// Returns the text matched by the current regular expression.
         /// </summary>
-        public string YyText
-        {
-            get { return new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead); }
-        }
+        public string YyText => new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
 
         /// <summary>
         /// Returns the character at position <paramref name="pos"/> from the 
@@ -928,10 +919,7 @@ namespace Lucene.Net.Analysis.Standard.Std34
         /// <summary>
         /// Returns the length of the matched text region.
         /// </summary>
-        public int YyLength
-        {
-            get { return zzMarkedPos - zzStartRead; }
-        }
+        public int YyLength => zzMarkedPos - zzStartRead;
 
         /// <summary>
         /// Reports an error that occured while scanning.

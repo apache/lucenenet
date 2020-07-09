@@ -56,20 +56,14 @@ namespace TagSoup
         /// <summary>
         /// Gets the element type.
         /// </summary>
-        public virtual ElementType Type
-        {
-            get { return _type; }
-        }
+        public virtual ElementType Type => _type;
 
         /// <summary>
         /// Gets the attributes as an Attributes object.
         /// Returning an Attributes makes the attributes mutable.
         /// </summary>
         /// <seealso cref="Attributes" />
-        public virtual Attributes Attributes
-        {
-            get { return _atts; }
-        }
+        public virtual Attributes Attributes => _atts;
 
         /// <summary>
         /// Gets or sets the next element in an element stack or queue.
@@ -79,66 +73,42 @@ namespace TagSoup
         /// <summary>
         /// Gets the name of the element's type.
         /// </summary>
-        public virtual string Name
-        {
-            get { return _type.Name; }
-        }
+        public virtual string Name => _type.Name;
 
         /// <summary>
         /// Gets the namespace name of the element's type.
         /// </summary>
-        public virtual string Namespace
-        {
-            get { return _type.Namespace; }
-        }
+        public virtual string Namespace => _type.Namespace;
 
         /// <summary>
         /// Gets the local name of the element's type.
         /// </summary>
-        public virtual string LocalName
-        {
-            get { return _type.LocalName; }
-        }
+        public virtual string LocalName => _type.LocalName;
 
         /// <summary>
         /// Gets the content model vector of the element's type.
         /// </summary>
-        public virtual int Model
-        {
-            get { return _type.Model; }
-        }
+        public virtual int Model => _type.Model;
 
         /// <summary>
         /// Gets the member-of vector of the element's type.
         /// </summary>
-        public virtual int MemberOf
-        {
-            get { return _type.MemberOf; }
-        }
+        public virtual int MemberOf => _type.MemberOf;
 
         /// <summary>
         /// Gets the flags vector of the element's type.
         /// </summary>
-        public virtual int Flags
-        {
-            get { return _type.Flags; }
-        }
+        public virtual int Flags => _type.Flags;
 
         /// <summary>
         /// Gets the parent element type of the element's type.
         /// </summary>
-        public virtual ElementType Parent
-        {
-            get { return _type.Parent; }
-        }
+        public virtual ElementType Parent => _type.Parent;
 
         /// <summary>
         /// Return true if this element has been preclosed.
         /// </summary>
-        public virtual bool IsPreclosed
-        {
-            get { return _preclosed; }
-        }
+        public virtual bool IsPreclosed => _preclosed;
 
         /// <summary>
         /// Return true if the type of this element can contain the type of

@@ -54,8 +54,8 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         private int maxBasicQueries;
         private int queriesMade;
 
-        public virtual int NrQueriesMade { get { return queriesMade; } }
-        public virtual int MaxBasicQueries { get { return maxBasicQueries; } }
+        public virtual int NrQueriesMade => queriesMade;
+        public virtual int MaxBasicQueries => maxBasicQueries;
 
         public override string ToString()
         {
@@ -65,10 +65,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 + ")";
         }
 
-        private bool AtMax
-        {
-            get { return queriesMade >= maxBasicQueries; }
-        }
+        private bool AtMax => queriesMade >= maxBasicQueries;
 
         protected virtual void CheckMax()
         {

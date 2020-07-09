@@ -204,10 +204,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Indicates whether or not this reader is closed.
         /// </summary>
-        private bool IsClosed
-        {
-            get { return buf == null; }
-        }
+        private bool IsClosed => buf == null;
 
         /// <summary>
         /// Sets a mark position in this reader. The parameter <paramref name="markLimit"/>
@@ -241,13 +238,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         /// <seealso cref="Mark(int)"/>
         /// <seealso cref="Reset()"/>
-        public override bool IsMarkSupported
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool IsMarkSupported => true;
 
 
         /// <summary>

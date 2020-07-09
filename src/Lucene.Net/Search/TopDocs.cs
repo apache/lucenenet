@@ -50,14 +50,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual float MaxScore
         {
-            get
-            {
-                return maxScore;
-            }
-            set
-            {
-                this.maxScore = value;
-            }
+            get => maxScore;
+            set => this.maxScore = value;
         }
 
         /// <summary>

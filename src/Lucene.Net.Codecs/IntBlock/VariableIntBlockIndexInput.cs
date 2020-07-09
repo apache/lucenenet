@@ -93,10 +93,8 @@ namespace Lucene.Net.Codecs.IntBlock
 
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-            public int[] Pending
-            {
-                get { return pending; }
-            }
+            public int[] Pending => pending;
+
             private readonly int[] pending;
             private int upto;
 

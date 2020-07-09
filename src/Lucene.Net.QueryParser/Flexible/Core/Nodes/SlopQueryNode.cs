@@ -59,10 +59,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return GetChildren()[0];
         }
 
-        public virtual int Value
-        {
-            get { return this.value; }
-        }
+        public virtual int Value => this.value;
 
         private string GetValueString()
         {

@@ -134,12 +134,6 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// Convenience method to check if the current type is a gram type
         /// </summary>
         /// <returns> <c>true</c> if the current type is a gram type, <c>false</c> otherwise </returns>
-        public bool IsGramType
-        {
-            get
-            {
-                return CommonGramsFilter.GRAM_TYPE.Equals(typeAttribute.Type, StringComparison.Ordinal);
-            }
-        }
+        public bool IsGramType => CommonGramsFilter.GRAM_TYPE.Equals(typeAttribute.Type, StringComparison.Ordinal);
     }
 }

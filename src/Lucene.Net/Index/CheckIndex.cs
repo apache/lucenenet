@@ -435,14 +435,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual bool CrossCheckTermVectors
         {
-            set
-            {
-                crossCheckTermVectors = value;
-            }
-            get
-            {
-                return crossCheckTermVectors;
-            }
+            get => crossCheckTermVectors;
+            set => crossCheckTermVectors = value;
         }
 
         private bool verbose;
@@ -455,16 +449,11 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual TextWriter InfoStream
         {
-            get
-            {
-                return infoStream;
-            }
-            set
-            {
+            get => infoStream;
+            set =>
                 infoStream = value == null
                     ? null
                     : (value is SafeTextWriterWrapper ? value : new SafeTextWriterWrapper(value));
-            }
         }
 
         /// <summary>
@@ -472,8 +461,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual bool InfoStreamIsVerbose // LUCENENET specific (replaced overload of SetInfoStream with property)
         {
-            get { return this.verbose; }
-            set { this.verbose = value; }
+            get => this.verbose;
+            set => this.verbose = value;
         }
 
         public virtual void FlushInfoStream() // LUCENENET specific

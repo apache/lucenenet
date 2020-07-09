@@ -53,47 +53,23 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns <c>true</c> if the lower endpoint is inclusive </summary>
-        public bool IncludesMin
-        {
-            get { return m_query.IncludesMin; }
-        }
+        public bool IncludesMin => m_query.IncludesMin;
 
         /// <summary>
         /// Returns <c>true</c> if the upper endpoint is inclusive </summary>
-        public bool IncludesMax
-        {
-            get { return m_query.IncludesMax; }
-        }
+        public bool IncludesMax => m_query.IncludesMax;
 
         /// <summary>
         /// Returns the lower value of this range filter </summary>
-        public T? Min
-        {
-            get
-            {
-                return m_query.Min;
-            }
-        }
+        public T? Min => m_query.Min;
 
         /// <summary>
         /// Returns the upper value of this range filter </summary>
-        public T? Max
-        {
-            get
-            {
-                return m_query.Max;
-            }
-        }
+        public T? Max => m_query.Max;
 
         /// <summary>
         /// Returns the precision step. </summary>
-        public int PrecisionStep
-        {
-            get
-            {
-                return m_query.PrecisionStep;
-            }
-        }
+        public int PrecisionStep => m_query.PrecisionStep;
     }
 
     /// <summary>

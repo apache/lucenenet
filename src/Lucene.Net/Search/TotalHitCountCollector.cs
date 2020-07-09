@@ -29,13 +29,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns how many hits matched the search. </summary>
-        public virtual int TotalHits
-        {
-            get
-            {
-                return totalHits;
-            }
-        }
+        public virtual int TotalHits => totalHits;
 
         public virtual void SetScorer(Scorer scorer)
         {
@@ -50,9 +44,6 @@ namespace Lucene.Net.Search
         {
         }
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return true; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => true;
     }
 }

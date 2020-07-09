@@ -92,9 +92,6 @@ namespace Lucene.Net.Util.Packed
             return nextValues;
         }
 
-        public override int Ord
-        {
-            get { return position; }
-        }
+        public override int Ord => position;
     }
 }

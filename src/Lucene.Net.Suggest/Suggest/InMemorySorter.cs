@@ -57,12 +57,6 @@ namespace Lucene.Net.Search.Suggest
             return buffer.GetIterator(comparer);
         }
 
-        public IComparer<BytesRef> Comparer
-        {
-            get
-            {
-                return comparer;
-            }
-        }
+        public IComparer<BytesRef> Comparer => comparer;
     }
 }

@@ -72,23 +72,11 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the encapsulated filter, returns <c>null</c> if a query is wrapped. </summary>
-        public virtual Filter Filter
-        {
-            get
-            {
-                return m_filter;
-            }
-        }
+        public virtual Filter Filter => m_filter;
 
         /// <summary>
         /// Returns the encapsulated query, returns <c>null</c> if a filter is wrapped. </summary>
-        public virtual Query Query
-        {
-            get
-            {
-                return m_query;
-            }
-        }
+        public virtual Query Query => m_query;
 
         public override Query Rewrite(IndexReader reader)
         {
@@ -145,13 +133,7 @@ namespace Lucene.Net.Search
                 this.innerWeight = (outerInstance.m_query == null) ? null : outerInstance.m_query.CreateWeight(searcher);
             }
 
-            public override Query Query
-            {
-                get
-                {
-                    return outerInstance;
-                }
-            }
+            public override Query Query => outerInstance;
 
             public override float GetValueForNormalization()
             {
@@ -221,10 +203,7 @@ namespace Lucene.Net.Search
                 return new ConstantScorer(outerInstance, disi, this, queryWeight);
             }
 
-            public override bool ScoresDocsOutOfOrder
-            {
-                get { return (innerWeight != null) ? innerWeight.ScoresDocsOutOfOrder : false; }
-            }
+            public override bool ScoresDocsOutOfOrder => (innerWeight != null) ? innerWeight.ScoresDocsOutOfOrder : false;
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
@@ -310,10 +289,7 @@ namespace Lucene.Net.Search
                     collector.SetNextReader(context);
                 }
 
-                public virtual bool AcceptsDocsOutOfOrder
-                {
-                    get { return collector.AcceptsDocsOutOfOrder; }
-                }
+                public virtual bool AcceptsDocsOutOfOrder => collector.AcceptsDocsOutOfOrder;
             }
         }
 
@@ -338,10 +314,7 @@ namespace Lucene.Net.Search
                 return docIdSetIterator.NextDoc();
             }
 
-            public override int DocID
-            {
-                get { return docIdSetIterator.DocID; }
-            }
+            public override int DocID => docIdSetIterator.DocID;
 
             public override float GetScore()
             {
@@ -349,10 +322,7 @@ namespace Lucene.Net.Search
                 return theScore;
             }
 
-            public override int Freq
-            {
-                get { return 1; }
-            }
+            public override int Freq => 1;
 
             public override int Advance(int target)
             {

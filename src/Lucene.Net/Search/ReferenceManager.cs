@@ -51,8 +51,8 @@ namespace Lucene.Net.Search
         /// </summary>
         protected G Current
         {
-            get { return current; }
-            set { current = value; }
+            get => current;
+            set => current = value;
         }
 
         private readonly ReentrantLock refreshLock = new ReentrantLock();

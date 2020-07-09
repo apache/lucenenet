@@ -66,10 +66,7 @@ namespace Lucene.Net.Search
                 pqTop = m_pq.UpdateTop();
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public override bool AcceptsDocsOutOfOrder => false;
         }
 
         // Assumes docs are scored in order.
@@ -117,10 +114,7 @@ namespace Lucene.Net.Search
                 pqTop = m_pq.UpdateTop();
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public override bool AcceptsDocsOutOfOrder => false;
 
             public override void SetNextReader(AtomicReaderContext context)
             {
@@ -128,10 +122,7 @@ namespace Lucene.Net.Search
                 afterDoc = after.Doc - docBase;
             }
 
-            protected override int TopDocsCount
-            {
-                get { return collectedHits < m_pq.Count ? collectedHits : m_pq.Count; }
-            }
+            protected override int TopDocsCount => collectedHits < m_pq.Count ? collectedHits : m_pq.Count;
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
@@ -180,10 +171,7 @@ namespace Lucene.Net.Search
                 pqTop = m_pq.UpdateTop();
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public override bool AcceptsDocsOutOfOrder => true;
         }
 
         // Assumes docs are scored out of order.
@@ -232,10 +220,7 @@ namespace Lucene.Net.Search
                 pqTop = m_pq.UpdateTop();
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public override bool AcceptsDocsOutOfOrder => true;
 
             public override void SetNextReader(AtomicReaderContext context)
             {
@@ -243,10 +228,7 @@ namespace Lucene.Net.Search
                 afterDoc = after.Doc - docBase;
             }
 
-            protected override int TopDocsCount
-            {
-                get { return collectedHits < m_pq.Count ? collectedHits : m_pq.Count; }
-            }
+            protected override int TopDocsCount => collectedHits < m_pq.Count ? collectedHits : m_pq.Count;
 
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {

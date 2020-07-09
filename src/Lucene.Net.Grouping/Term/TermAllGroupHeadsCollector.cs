@@ -185,10 +185,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             m_temporalResult.GroupHead = groupHead;
         }
 
-        protected override ICollection<GroupHead> CollectedGroupHeads
-        {
-            get { return groups.Values; }
-        }
+        protected override ICollection<GroupHead> CollectedGroupHeads => groups.Values;
 
         public override void SetNextReader(AtomicReaderContext context)
         {
@@ -221,10 +218,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             private readonly GeneralAllGroupHeadsCollector outerInstance;
             // LUCENENET: Moved groupValue here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
             // need to reference the generic closing type BytesRef.
-            public BytesRef GroupValue
-            {
-                get { return groupValue; }
-            }
+            public BytesRef GroupValue => groupValue;
             private readonly BytesRef groupValue;
 
             internal readonly FieldComparer[] comparers;
@@ -293,10 +287,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        protected override ICollection<GroupHead> CollectedGroupHeads
-        {
-            get { return collectedGroups; }
-        }
+        protected override ICollection<GroupHead> CollectedGroupHeads => collectedGroups;
 
         public override void SetScorer(Scorer scorer)
         {
@@ -394,10 +385,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             private readonly OrdScoreAllGroupHeadsCollector outerInstance;
             // LUCENENET: Moved groupValue here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
             // need to reference the generic closing type BytesRef.
-            public BytesRef GroupValue
-            {
-                get { return groupValue; }
-            }
+            public BytesRef GroupValue => groupValue;
             private readonly BytesRef groupValue;
 
             internal BytesRef[] sortValues;
@@ -523,10 +511,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        protected override ICollection<GroupHead> CollectedGroupHeads
-        {
-            get { return collectedGroups; }
-        }
+        protected override ICollection<GroupHead> CollectedGroupHeads => collectedGroups;
 
         public override void SetScorer(Scorer scorer)
         {
@@ -613,10 +598,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             private readonly OrdAllGroupHeadsCollector outerInstance;
             // LUCENENET: Moved groupValue here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
             // need to reference the generic closing type BytesRef.
-            public BytesRef GroupValue
-            {
-                get { return groupValue; }
-            }
+            public BytesRef GroupValue => groupValue;
             private readonly BytesRef groupValue;
             internal BytesRef[] sortValues;
             internal int[] sortOrds;
@@ -710,10 +692,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        protected override ICollection<GroupHead> CollectedGroupHeads
-        {
-            get { return collectedGroups; }
-        }
+        protected override ICollection<GroupHead> CollectedGroupHeads => collectedGroups;
 
         public override void SetScorer(Scorer scorer)
         {
@@ -781,10 +760,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             private readonly ScoreAllGroupHeadsCollector outerInstance;
             // LUCENENET: Moved groupValue here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
             // need to reference the generic closing type BytesRef.
-            public BytesRef GroupValue
-            {
-                get { return groupValue; }
-            }
+            public BytesRef GroupValue => groupValue;
             private readonly BytesRef groupValue;
             internal float[] scores;
 

@@ -220,13 +220,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public int PayloadLength
-        {
-            get
-            {
-                return payloadLength;
-            }
-        }
+        public int PayloadLength => payloadLength;
 
         public BytesRef GetPayload()
         {
@@ -254,12 +248,6 @@ namespace Lucene.Net.Codecs.Lucene3x
             return payload;
         }
 
-        public bool IsPayloadAvailable
-        {
-            get
-            {
-                return needToLoadPayload && payloadLength > 0;
-            }
-        }
+        public bool IsPayloadAvailable => needToLoadPayload && payloadLength > 0;
     }
 }

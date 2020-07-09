@@ -399,10 +399,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// <summary>
         /// True if we have multiple codepoints sitting in our buffer
         /// </summary>
-        private bool HasBufferedBigram
-        {
-            get { return bufferLen - index > 1; }
-        }
+        private bool HasBufferedBigram => bufferLen - index > 1;
 
         /// <summary>
         /// True if we have a single codepoint sitting in our buffer, where its future

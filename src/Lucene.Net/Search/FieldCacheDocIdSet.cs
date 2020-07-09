@@ -51,18 +51,9 @@ namespace Lucene.Net.Search
         /// This DocIdSet is always cacheable (does not go back
         /// to the reader for iteration)
         /// </summary>
-        public override sealed bool IsCacheable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override sealed bool IsCacheable => true;
 
-        public override sealed IBits Bits
-        {
-            get { return (m_acceptDocs == null) ? (IBits)new BitsAnonymousInnerClassHelper(this) : new BitsAnonymousInnerClassHelper2(this); }
-        }
+        public override sealed IBits Bits => (m_acceptDocs == null) ? (IBits)new BitsAnonymousInnerClassHelper(this) : new BitsAnonymousInnerClassHelper2(this);
 
         private class BitsAnonymousInnerClassHelper : IBits
         {
@@ -78,10 +69,7 @@ namespace Lucene.Net.Search
                 return outerInstance.MatchDoc(docid);
             }
 
-            public virtual int Length
-            {
-                get { return outerInstance.m_maxDoc; }
-            }
+            public virtual int Length => outerInstance.m_maxDoc;
         }
 
         private class BitsAnonymousInnerClassHelper2 : IBits
@@ -98,10 +86,7 @@ namespace Lucene.Net.Search
                 return outerInstance.MatchDoc(docid) && outerInstance.m_acceptDocs.Get(docid);
             }
 
-            public virtual int Length
-            {
-                get { return outerInstance.m_maxDoc; }
-            }
+            public virtual int Length => outerInstance.m_maxDoc;
         }
 
         public override sealed DocIdSetIterator GetIterator()
@@ -136,10 +121,7 @@ namespace Lucene.Net.Search
 
             private int doc;
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             public override int NextDoc()
             {
@@ -200,10 +182,7 @@ namespace Lucene.Net.Search
 
             private int doc;
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             public override int NextDoc()
             {

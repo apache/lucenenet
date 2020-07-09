@@ -82,21 +82,9 @@ namespace Lucene.Net.Search.Spans
             this.field = maskedField;
         }
 
-        public override string Field
-        {
-            get
-            {
-                return field;
-            }
-        }
+        public override string Field => field;
 
-        public virtual SpanQuery MaskedQuery
-        {
-            get
-            {
-                return maskedQuery;
-            }
-        }
+        public virtual SpanQuery MaskedQuery => maskedQuery;
 
         // :NOTE: getBoost and setBoost are not proxied to the maskedQuery
         // ...this is done to be more consistent with things like SpanFirstQuery

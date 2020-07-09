@@ -46,8 +46,8 @@ namespace Lucene.Net.Replicator.AspNetCore
         /// </summary>
         public int StatusCode
         {
-            get { return response.StatusCode; }
-            set { response.StatusCode = value; }
+            get => response.StatusCode;
+            set => response.StatusCode = value;
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Lucene.Net.Replicator.AspNetCore
         /// <remarks>
         /// This simply returns the <see cref="HttpResponse.Body"/>.
         /// </remarks>
-        public Stream Body { get { return response.Body; } }
+        public Stream Body => response.Body;
 
         /// <summary>
         /// Flushes the reponse to the underlying response stream.

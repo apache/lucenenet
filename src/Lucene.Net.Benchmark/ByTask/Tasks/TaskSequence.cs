@@ -99,18 +99,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <summary>
         /// Gets the parallel.
         /// </summary>
-        public virtual bool IsParallel
-        {
-            get { return parallel; }
-        }
+        public virtual bool IsParallel => parallel;
 
         /// <summary>
         /// Gets the repetitions.
         /// </summary>
-        public virtual int Repetitions
-        {
-            get { return repetitions; }
-        }
+        public virtual int Repetitions => repetitions;
 
         private int[] countsByTime;
 
@@ -141,10 +135,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <summary>
         /// Gets the parent.
         /// </summary>
-        public virtual TaskSequence Parent
-        {
-            get { return parent; }
-        }
+        public virtual TaskSequence Parent => parent;
 
         /// <seealso cref="PerfTask.DoLogic()"/>
         public override int DoLogic()
@@ -170,10 +161,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 task.StopNow();
             }
 
-            public virtual int Count
-            {
-                get { return count; }
-            }
+            public virtual int Count => count;
 
             public override void Run()
             {
@@ -370,16 +358,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             private readonly TaskSequence outerInstance;
 
             // LUCENENET specific - expose field through property
-            public int Count
-            {
-                get { return count; }
-            }
+            public int Count => count;
 
             // LUCENENET specific - expose field through property
-            public PerfTask Task
-            {
-                get { return task; }
-            }
+            public PerfTask Task => task;
 
             public ParallelTask(TaskSequence outerInstance, PerfTask task)
             {
@@ -636,10 +618,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <summary>
         /// Gets the tasks.
         /// </summary>
-        public virtual IList<PerfTask> Tasks
-        {
-            get { return tasks; }
-        }
+        public virtual IList<PerfTask> Tasks => tasks;
 
         public override object Clone()
         {
@@ -655,9 +634,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <summary>
         /// Return <c>true</c> if can be collapsed in case it is outermost sequence.
         /// </summary>
-        public virtual bool IsCollapsable
-        {
-            get { return collapsable; }
-        }
+        public virtual bool IsCollapsable => collapsable;
     }
 }

@@ -41,22 +41,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             private readonly string title, body;
 
             // LUCENENET specific - expose field through property
-            public IDictionary<string, string> MetaTags
-            {
-                get { return metaTags; }
-            }
+            public IDictionary<string, string> MetaTags => metaTags;
 
             // LUCENENET specific - expose field through property
-            public string Title
-            {
-                get { return title; }
-            }
+            public string Title => title;
 
             // LUCENENET specific - expose field through property
-            public string Body
-            {
-                get { return body; }
-            }
+            public string Body => body;
 
             public Parser(TextReader reader)
                 : this(new InputSource(reader))

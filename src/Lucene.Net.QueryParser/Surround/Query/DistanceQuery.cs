@@ -40,10 +40,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         private int opDistance;
-        public virtual int OpDistance { get { return opDistance; } }
+        public virtual int OpDistance => opDistance;
 
         private bool ordered;
-        public virtual bool QueriesOrdered { get { return ordered; } }
+        public virtual bool QueriesOrdered => ordered;
 
 
         public virtual string DistanceSubQueryNotAllowed()

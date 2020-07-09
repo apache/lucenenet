@@ -68,11 +68,7 @@ namespace Lucene.Net.Facet
         {
         }
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return false; }
-        }
-
+        public virtual bool AcceptsDocsOutOfOrder => false;
     }
 
 }

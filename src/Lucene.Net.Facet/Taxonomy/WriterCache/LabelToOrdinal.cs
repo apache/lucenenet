@@ -44,13 +44,7 @@
         /// <summary>
         /// return the maximal Ordinal assigned so far
         /// </summary>
-        public virtual int MaxOrdinal
-        {
-            get
-            {
-                return this.m_counter;
-            }
-        }
+        public virtual int MaxOrdinal => this.m_counter;
 
         /// <summary>
         /// Returns the next unassigned ordinal. The default behavior of this method

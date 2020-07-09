@@ -356,14 +356,14 @@ namespace Lucene.Net.Search.VectorHighlight
         
         public virtual char MultiValuedSeparator
         {
-            get { return multiValuedSeparator; }
-            set { multiValuedSeparator = value; }
+            get => multiValuedSeparator;
+            set => multiValuedSeparator = value;
         }
 
         public virtual bool IsDiscreteMultiValueHighlighting
         {
-            get { return discreteMultiValueHighlighting; }
-            set { this.discreteMultiValueHighlighting = value; }
+            get => discreteMultiValueHighlighting;
+            set => this.discreteMultiValueHighlighting = value;
         }
 
         protected virtual string GetPreTag(int num)

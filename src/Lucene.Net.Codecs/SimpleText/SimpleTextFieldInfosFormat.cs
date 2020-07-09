@@ -29,14 +29,8 @@
         private readonly FieldInfosReader _reader = new SimpleTextFieldInfosReader();
         private readonly FieldInfosWriter _writer = new SimpleTextFieldInfosWriter();
 
-        public override FieldInfosReader FieldInfosReader
-        {
-            get { return _reader; }
-        }
+        public override FieldInfosReader FieldInfosReader => _reader;
 
-        public override FieldInfosWriter FieldInfosWriter
-        {
-            get { return _writer; }
-        }
+        public override FieldInfosWriter FieldInfosWriter => _writer;
     }
 }

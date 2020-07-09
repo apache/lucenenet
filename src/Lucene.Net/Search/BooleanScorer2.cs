@@ -144,15 +144,9 @@ namespace Lucene.Net.Search
                 return lastDocScore;
             }
 
-            public override int Freq
-            {
-                get { return 1; }
-            }
+            public override int Freq => 1;
 
-            public override int DocID
-            {
-                get { return scorer.DocID; }
-            }
+            public override int DocID => scorer.DocID;
 
             public override int NextDoc()
             {
@@ -339,10 +333,7 @@ namespace Lucene.Net.Search
             return (prohibitedScorers.Count == 0) ? requiredCountingSumScorer : new ReqExclScorer(requiredCountingSumScorer, ((prohibitedScorers.Count == 1) ? prohibitedScorers[0] : new MinShouldMatchSumScorer(m_weight, prohibitedScorers))); // no prohibited
         }
 
-        public override int DocID
-        {
-            get { return doc; }
-        }
+        public override int DocID => doc;
 
         public override int NextDoc()
         {
@@ -356,10 +347,7 @@ namespace Lucene.Net.Search
             return sum * coordinator.coordFactors[coordinator.nrMatchers];
         }
 
-        public override int Freq
-        {
-            get { return countingSumScorer.Freq; }
-        }
+        public override int Freq => countingSumScorer.Freq;
 
         public override int Advance(int target)
         {

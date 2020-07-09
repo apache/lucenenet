@@ -118,13 +118,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Returns this posting format's name. </summary>
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        public string Name => name;
 
         /// <summary>
         /// Writes a new segment. </summary>

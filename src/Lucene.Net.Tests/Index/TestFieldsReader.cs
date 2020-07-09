@@ -202,10 +202,7 @@ namespace Lucene.Net.Index
             {
             }
 
-            public override long Length
-            {
-                get { return @delegate.Length; }
-            }
+            public override long Length => @delegate.Length;
 
             protected override void Dispose(bool disposing)
             {

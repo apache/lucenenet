@@ -45,13 +45,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Return the wrapped <see cref="Directory"/>. </summary>
-        public Directory Delegate
-        {
-            get
-            {
-                return m_input;
-            }
-        }
+        public Directory Delegate => m_input;
 
         public override string[] ListAll()
         {
@@ -117,13 +111,7 @@ namespace Lucene.Net.Store
             return m_input.GetLockID();
         }
 
-        public override LockFactory LockFactory
-        {
-            get
-            {
-                return m_input.LockFactory;
-            }
-        }
+        public override LockFactory LockFactory => m_input.LockFactory;
 
         public override string ToString()
         {

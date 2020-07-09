@@ -428,15 +428,9 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
             }
 
-            public override int Freq
-            {
-                get { return _freq; }
-            }
+            public override int Freq => _freq;
 
-            public override int DocID
-            {
-                get { return _docId; }
-            }
+            public override int DocID => _docId;
 
             public override int Advance(int target)
             {
@@ -536,15 +530,9 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
             }
 
-            public override int Freq
-            {
-                get { return _freq; }
-            }
+            public override int Freq => _freq;
 
-            public override int DocID
-            {
-                get { return _docId; }
-            }
+            public override int DocID => _docId;
 
             public override int Advance(int target)
             {
@@ -590,15 +578,9 @@ namespace Lucene.Net.Codecs.Pulsing
                 return _position;
             }
 
-            public override int StartOffset
-            {
-                get { return _startOffset; }
-            }
+            public override int StartOffset => _startOffset;
 
-            public override int EndOffset
-            {
-                get { return _startOffset + _offsetLength; }
-            }
+            public override int EndOffset => _startOffset + _offsetLength;
 
             private void SkipPositions()
             {
@@ -709,10 +691,8 @@ namespace Lucene.Net.Codecs.Pulsing
             // we still have to be careful in case someone does Pulsing(Stomping(Pulsing(...
             private readonly IDictionary<PulsingPostingsReader, DocsEnum> _enums = new JCG.Dictionary<PulsingPostingsReader, DocsEnum>(IdentityEqualityComparer<PulsingPostingsReader>.Default);
 
-            public IDictionary<PulsingPostingsReader, DocsEnum> Enums
-            {
-                get { return _enums; }
-            }
+            public IDictionary<PulsingPostingsReader, DocsEnum> Enums => _enums;
+
             public override void Clear()
             {
                 // our state is per-docsenum, so this makes no sense.

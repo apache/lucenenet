@@ -492,10 +492,7 @@ namespace Sax.Helpers
         /// Returns true if namespace declaration attributes are placed into
         /// a namespace.  This behavior is not the default.
         /// </summary>
-        public bool IsNamespaceDeclUris
-        {
-            get { return namespaceDeclUris; }
-        }
+        public bool IsNamespaceDeclUris => namespaceDeclUris;
 
         ////////////////////////////////////////////////////////////////////
         // Internal state.

@@ -32,13 +32,7 @@ namespace Lucene.Net.Search
         {
         }
 
-        public virtual Term Prefix
-        {
-            get
-            {
-                return m_query.Prefix;
-            }
-        }
+        public virtual Term Prefix => m_query.Prefix;
 
         /// <summary>
         /// Prints a user-readable version of this query. </summary>

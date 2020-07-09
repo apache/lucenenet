@@ -90,10 +90,8 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public Transition[][] SortedTransitions
-        {
-            get { return sortedTransitions; }
-        }
+        public Transition[][] SortedTransitions => sortedTransitions;
+
         private readonly Transition[][] sortedTransitions;
 
         /// <summary>

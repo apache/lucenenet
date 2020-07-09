@@ -59,10 +59,7 @@ namespace Lucene.Net.Util.Packed
                 return doc;
             }
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             public override long GetCost()
             {

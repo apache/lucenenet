@@ -140,10 +140,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         /// </summary>
         public virtual IQueryNodeProcessor this[int index]
         {
-            get
-            {
-                return this.processors[index];
-            }
+            get => this.processors[index];
             set
             {
                 IQueryNodeProcessor oldProcessor = this.processors[index];
@@ -210,21 +207,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         /// <summary>
         /// <see cref="ICollection{IQueryNodeProcessor}.Count"/> 
         /// </summary>
-        public virtual int Count
-        {
-            get { return this.processors.Count; }
-        }
+        public virtual int Count => this.processors.Count;
 
         /// <summary>
         /// <see cref="ICollection{IQueryNodeProcessor}.IsReadOnly"/> 
         /// </summary>
-        public virtual bool IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public virtual bool IsReadOnly => false;
 
         public virtual IList<IQueryNodeProcessor> GetRange(int index, int count)
         {

@@ -48,13 +48,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the inner Query </summary>
-        public Query Query
-        {
-            get
-            {
-                return query;
-            }
-        }
+        public Query Query => query;
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
@@ -85,13 +79,7 @@ namespace Lucene.Net.Search
                 return weight.GetScorer(privateContext, acceptDocs);
             }
 
-            public override bool IsCacheable
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public override bool IsCacheable => false;
         }
 
         public override string ToString()

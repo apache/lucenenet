@@ -90,9 +90,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 ignore = st.Current;
         }
 
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
     }
 }

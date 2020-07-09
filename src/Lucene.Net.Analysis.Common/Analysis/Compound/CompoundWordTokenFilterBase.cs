@@ -162,20 +162,11 @@ namespace Lucene.Net.Analysis.Compound
             private readonly ICharSequence txt;
             private readonly int startOffset, endOffset;
 
-            public ICharSequence Text // LUCENENET specific: changed public field into property backed by private field
-            {
-                get { return txt; }
-            }
+            public ICharSequence Text => txt; // LUCENENET specific: changed public field into property backed by private field
 
-            public int StartOffset // LUCENENET specific: changed public field into property backed by private field
-            {
-                get { return startOffset; }
-            }
+            public int StartOffset => startOffset; // LUCENENET specific: changed public field into property backed by private field
 
-            public int EndOffset // LUCENENET specific: changed public field into property backed by private field
-            {
-                get { return endOffset; }
-            }
+            public int EndOffset => endOffset; // LUCENENET specific: changed public field into property backed by private field
 
             /// <summary>
             /// Construct the compound token based on a slice of the current <see cref="CompoundWordTokenFilterBase.m_termAtt"/>. </summary>

@@ -59,16 +59,10 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public sealed class TwoInt64s
         {
-            public long First
-            {
-                get { return first; }
-            }
+            public long First => first;
             private readonly long first;
 
-            public long Second
-            {
-                get { return second; }
-            }
+            public long Second => second;
             private readonly long second;
 
             public TwoInt64s(long first, long second)
@@ -281,13 +275,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override object NoOutput
-        {
-            get
-            {
-                return NO_OUTPUT;
-            }
-        }
+        public override object NoOutput => NO_OUTPUT;
 
         public override string OutputToString(object output)
         {

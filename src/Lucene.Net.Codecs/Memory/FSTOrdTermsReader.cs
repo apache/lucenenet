@@ -171,15 +171,7 @@ namespace Lucene.Net.Codecs.Memory
             return result;
         }
 
-        public override int Count
-        {
-            get
-            {
-                {
-                    return fields.Count;
-                }
-            }
-        }
+        public override int Count => fields.Count;
 
         protected override void Dispose(bool disposing)
         {
@@ -248,62 +240,23 @@ namespace Lucene.Net.Codecs.Memory
                 blockIn.ReadBytes(metaBytesBlock, 0, metaBytesBlock.Length);
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return BytesRef.UTF8SortedAsUnicodeComparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-            public override bool HasFreqs
-            {
-                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
-            }
+            public override bool HasFreqs => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 
-            public override bool HasOffsets
-            {
-                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
-            }
+            public override bool HasOffsets => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
-            public override bool HasPositions
-            {
-                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
-            }
+            public override bool HasPositions => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
-            public override bool HasPayloads
-            {
-                get { return fieldInfo.HasPayloads; }
-            }
+            public override bool HasPayloads => fieldInfo.HasPayloads;
 
-            public override long Count
-            {
-                get { return numTerms; }
-            }
+            public override long Count => numTerms;
 
-            public override long SumTotalTermFreq
-            {
-                get
-                {
-                    return sumTotalTermFreq;
-                }
-            }
+            public override long SumTotalTermFreq => sumTotalTermFreq;
 
-            public override long SumDocFreq
-            {
-                get
-                {
-                    return sumDocFreq;
-                }
-            }
+            public override long SumDocFreq => sumDocFreq;
 
-            public override int DocCount
-            {
-                get
-                {
-                    return docCount;
-                }
-            }
+            public override int DocCount => docCount;
 
             public override TermsEnum GetIterator(TermsEnum reuse)
             {
@@ -344,8 +297,8 @@ namespace Lucene.Net.Codecs.Memory
                 private int[] bytesLength;
 
                 /* Current buffered stats (df & ttf) */
-                private int[] docFreq_Renamed;
-                private long[] totalTermFreq_Renamed;
+                private int[] docFreq;
+                private long[] totalTermFreq;
 
                 internal BaseTermsEnum(TermsReader outerInstance)
                 {
@@ -359,23 +312,17 @@ namespace Lucene.Net.Codecs.Memory
                     this.longs = RectangularArrays.ReturnRectangularArray<long>(INTERVAL, outerInstance.longsSize);
                     this.bytesStart = new int[INTERVAL];
                     this.bytesLength = new int[INTERVAL];
-                    this.docFreq_Renamed = new int[INTERVAL];
-                    this.totalTermFreq_Renamed = new long[INTERVAL];
+                    this.docFreq = new int[INTERVAL];
+                    this.totalTermFreq = new long[INTERVAL];
                     this.statsBlockOrd = -1;
                     this.metaBlockOrd = -1;
                     if (!outerInstance.HasFreqs)
                     {
-                        Arrays.Fill(totalTermFreq_Renamed, -1);
+                        Arrays.Fill(totalTermFreq, -1);
                     }
                 }
 
-                public override IComparer<BytesRef> Comparer
-                {
-                    get
-                    {
-                        return BytesRef.UTF8SortedAsUnicodeComparer;
-                    }
-                }
+                public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
                 /// <summary>
                 /// Decodes stats data into term state. </summary>
@@ -388,8 +335,8 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         RefillStats();
                     }
-                    state.DocFreq = docFreq_Renamed[upto];
-                    state.TotalTermFreq = totalTermFreq_Renamed[upto];
+                    state.DocFreq = docFreq[upto];
+                    state.TotalTermFreq = totalTermFreq[upto];
                 }
 
                 /// <summary>
@@ -419,19 +366,19 @@ namespace Lucene.Net.Codecs.Memory
                         int code = statsReader.ReadVInt32();
                         if (outerInstance.HasFreqs)
                         {
-                            docFreq_Renamed[i] = ((int)((uint)code >> 1));
+                            docFreq[i] = ((int)((uint)code >> 1));
                             if ((code & 1) == 1)
                             {
-                                totalTermFreq_Renamed[i] = docFreq_Renamed[i];
+                                totalTermFreq[i] = docFreq[i];
                             }
                             else
                             {
-                                totalTermFreq_Renamed[i] = docFreq_Renamed[i] + statsReader.ReadVInt64();
+                                totalTermFreq[i] = docFreq[i] + statsReader.ReadVInt64();
                             }
                         }
                         else
                         {
-                            docFreq_Renamed[i] = code;
+                            docFreq[i] = code;
                         }
                     }
                 }
@@ -467,20 +414,11 @@ namespace Lucene.Net.Codecs.Memory
                     return (TermState)state.Clone();
                 }
 
-                public override BytesRef Term
-                {
-                    get { return term; }
-                }
+                public override BytesRef Term => term;
 
-                public override int DocFreq
-                {
-                    get { return state.DocFreq; }
-                }
+                public override int DocFreq => state.DocFreq;
 
-                public override long TotalTermFreq
-                {
-                    get { return state.TotalTermFreq; }
-                }
+                public override long TotalTermFreq => state.TotalTermFreq;
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
@@ -505,10 +443,7 @@ namespace Lucene.Net.Codecs.Memory
                     throw new System.NotSupportedException();
                 }
 
-                public override long Ord
-                {
-                    get { throw new System.NotSupportedException(); }
-                }
+                public override long Ord => throw new System.NotSupportedException();
             }
 
             // Iterates through all terms in this field

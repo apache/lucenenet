@@ -402,18 +402,9 @@ namespace Lucene.Net.Spatial.Prefix
                     cellIter.Reset();
                 }
 
-                public VNode Current
-                {
-                    get
-                    {
-                        return vNode;
-                    }
-                }
+                public VNode Current => vNode;
 
-                object IEnumerator.Current
-                {
-                    get { return Current; }
-                }
+                object IEnumerator.Current => Current;
 
                 #endregion
             }
